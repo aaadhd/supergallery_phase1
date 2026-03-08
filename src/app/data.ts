@@ -1963,9 +1963,9 @@ export const rooms: Room[] = [
   },
   {
     id: '4',
-    title: '리턴전 2026',
+    title: '특별 전시 2026',
     cover: 'return-exhibition',
-    description: '10년 만에 돌아온 재데뷔 전시. 새로운 시작을 알립니다.',
+    description: '선별된 작품들을 한자리에 모은 전시입니다.',
     artistId: '4',
     artist: artists[3],
     works: [works[3], works[8]],

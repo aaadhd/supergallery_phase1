@@ -1,0 +1,9 @@
+[build]
+  command = "pnpm run build"
+  publish = "dist"
+
+# SPA: 모든 경로를 index.html로 (React Router)
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200

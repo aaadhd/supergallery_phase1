@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { Search, Plus, X, GripVertical, Grid, List, Save } from 'lucide-react';
 import { rooms, works as allWorksStatic, artists } from '../data';
 import { workStore, roomStore } from '../store';
@@ -17,23 +17,9 @@ import { getFirstImage } from '../utils/imageHelper';
 export default function RoomEdit() {
   const navigate = useNavigate();
   const { roomId } = useParams();
-  const [searchParams] = useSearchParams();
-  const templateId = searchParams.get('template');
 
-  // 템플릿별 초기값 설정
-  const getInitialTitle = () => {
-    if (templateId === 'portfolio') return '김민서의 포트폴리오 전시';
-    if (templateId === 'theme') return '계절의 조각들 (기획전)';
-    if (templateId === 'return') return '다시 만나는 색채: 리턴전';
-    return '새로운 전시룸';
-  };
-
-  const getInitialDesc = () => {
-    if (templateId === 'portfolio') return '그동안 작업한 주요 작품들을 한눈에 볼 수 있는 전시입니다.';
-    if (templateId === 'theme') return '특정 주제에 따라 선별된 작품들의 이야기입니다.';
-    if (templateId === 'return') return '공백기 이후 새로운 영감을 담아 다시 선보이는 작품들입니다.';
-    return '';
-  };
+  const getInitialTitle = () => '새로운 전시룸';
+  const getInitialDesc = () => '';
 
   // roomStore 또는 정적 데이터에서 현재 룸을 찾음
   const existingRoom = roomId

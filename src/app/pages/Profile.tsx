@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Download, MapPin, Plus, Eye, Edit, X, DollarSign, ThumbsUp, Users, Folder } from 'lucide-react';
+import { Download, MapPin, Plus, Eye, Edit, X, DollarSign, ThumbsUp, Users, Folder, MoreHorizontal, Trash2 } from 'lucide-react';
 import { Image as ImageIcon } from 'lucide-react';
 import { artists, works, rooms, classes } from '../data';
 import { groupWorks } from '../groupData';
@@ -13,6 +13,12 @@ import { SaleStatusButton } from '../components/SaleStatusButton';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from '../components/ui/dropdown-menu';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { imageUrls } from '../imageUrls';
 import { getFirstImage, getImageCount } from '../utils/imageHelper';
@@ -963,7 +969,7 @@ export default function Profile() {
                         return (
                           <div
                             key={work.id}
-                            className="group cursor-pointer"
+                            className="group cursor-pointer relative"
                             onClick={() => navigate(`/work/${work.id}`)}
                           >
                             {/* 이미지 영역 - 정사각형 */}
@@ -978,6 +984,37 @@ export default function Profile() {
                                     className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
                                   />
 
+                                  {/* 본인일 때: ⋯ 메뉴 (이미지 위 레이어) */}
+                                  {isOwnProfile && (
+                                    <div className="absolute right-2 top-2 z-20" onClick={(e) => e.stopPropagation()}>
+                                      <DropdownMenu>
+                                        <DropdownMenuTrigger asChild>
+                                          <button
+                                            type="button"
+                                            className="flex items-center justify-center h-10 w-10 rounded-full bg-[#0057FF] text-white hover:bg-[#0046CC] shadow-lg"
+                                            aria-label="작품 메뉴"
+                                          >
+                                            <MoreHorizontal className="h-5 w-5" strokeWidth={2.5} />
+                                          </button>
+                                        </DropdownMenuTrigger>
+                                        <DropdownMenuContent align="end" sideOffset={4} className="z-[200]">
+                                          <DropdownMenuItem
+                                            className="text-red-600 focus:text-red-600"
+                                            onSelect={(e) => e.preventDefault()}
+                                            onClick={() => {
+                                              if (confirm(`"${work.title}" 작품을 삭제할까요?`)) {
+                                                workStore.removeWork(work.id);
+                                              }
+                                            }}
+                                          >
+                                            <Trash2 className="h-4 w-4 mr-2" />
+                                            삭제
+                                          </DropdownMenuItem>
+                                        </DropdownMenuContent>
+                                      </DropdownMenu>
+                                    </div>
+                                  )}
+
                                   {/* 이미지 개수 배지 - 2장 이상일 때만 표시 */}
                                   {getImageCount(work.image) > 1 && (
                                     <div className="absolute left-3 top-3 z-10">
@@ -988,9 +1025,9 @@ export default function Profile() {
                                     </div>
                                   )}
 
-                                  {/* 호버 오버레이 - 제목 + 통계 */}
-                                  <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-between p-3">
-                                    {/* 상단: 통계 정보 */}
+                                  {/* 호버 오버레이 - 제목 + 통계 (z-10으로 ⋯ 버튼 아래에 두어 버튼이 보이도록) */}
+                                  <div className="absolute inset-0 z-10 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-between p-3">
+                                    {/* 상단: 통계 */}
                                     <div className="flex items-start justify-end gap-2">
                                       <div className="flex items-center gap-1 bg-black/40 backdrop-blur-sm rounded-full px-2.5 py-1">
                                         <ThumbsUp className="h-3 w-3 text-white" />
@@ -1088,6 +1125,39 @@ export default function Profile() {
                           className="group relative cursor-pointer"
                           onClick={() => navigate(`/work/${img.workId}`)}
                         >
+                          {/* 본인일 때만: ⋯ 메뉴 (작품 삭제) */}
+                          {isOwnProfile && (
+                            <div
+                              className="absolute right-2 top-2 z-10"
+                              onClick={(e) => e.stopPropagation()}
+                            >
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <button
+                                    type="button"
+                                    className="flex items-center justify-center h-9 w-9 rounded-full bg-[#0057FF] text-white hover:bg-[#0046CC] shadow-md"
+                                    aria-label="메뉴"
+                                  >
+                                    <MoreHorizontal className="h-4 w-4" />
+                                  </button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end">
+                                  <DropdownMenuItem
+                                    className="text-red-600 focus:text-red-600"
+                                    onClick={() => {
+                                      if (confirm(`"${img.workTitle}" 작품을 삭제할까요?`)) {
+                                        workStore.removeWork(img.workId);
+                                      }
+                                    }}
+                                  >
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    작품 삭제
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
+                          )}
+
                           {/* 이미지 */}
                           <div className="aspect-square rounded-lg overflow-hidden bg-gray-100 border border-gray-200 hover:border-gray-300 transition-all relative">
                             <ImageWithFallback

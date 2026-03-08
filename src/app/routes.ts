@@ -12,7 +12,6 @@ import Upload from './pages/Upload';
 import Profile from './pages/Profile';
 import SearchResults from './pages/SearchResults';
 import Events from './pages/Events';
-import ExhibitionCustomize from './pages/ExhibitionCustomize';
 import SalesManagement from './pages/SalesManagement';
 import Admin from './pages/Admin';
 import ProductDetail from './pages/ProductDetail';
@@ -33,7 +32,6 @@ export const router = createBrowserRouter([
       { path: 'learn', Component: LearnHome },
       { path: 'class/:id', Component: ClassDetail },
       { path: 'upload', Component: Upload },
-      { path: 'exhibition-customize', Component: ExhibitionCustomize },
       { path: 'profile', Component: Profile },
       { path: 'profile/:id', Component: Profile },
       { path: 'search', Component: SearchResults },

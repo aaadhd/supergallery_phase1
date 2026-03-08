@@ -79,6 +79,13 @@ export const workStore = {
     listeners.forEach(listener => listener());
   },
 
+  // 작품 삭제
+  removeWork: (id: string) => {
+    currentWorks = currentWorks.filter(w => w.id !== id);
+    saveWorksToStorage(currentWorks);
+    listeners.forEach(listener => listener());
+  },
+
   // 좋아요 증가
   incrementLikes: (id: string) => {
     const work = currentWorks.find(w => w.id === id);

@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Image as ImageIcon, Type, Video, Grid, Folder, Plus, ArrowDownUp, User, Upload as UploadIcon, X, Info, Monitor, Search, UserPlus, Palette, Download } from 'lucide-react';
+import { Image as ImageIcon, Plus, Upload as UploadIcon, X, Info, Search, UserPlus, Palette, Download } from 'lucide-react';
 import { artists } from '../data';
 import { workStore, draftStore } from '../store';
 import type { Work } from '../data';
@@ -10,8 +10,6 @@ export default function Upload() {
   const navigate = useNavigate();
   const [selectedType, setSelectedType] = useState<string | null>(null);
   const [selectedImageType, setSelectedImageType] = useState<string | null>(null);
-  const [selectedProjectType, setSelectedProjectType] = useState<string | null>(null);
-  const [selectedTemplate, setSelectedTemplate] = useState<string | null>(null);
   const [contents, setContents] = useState<Array<{ id: string; type: 'image' | 'text'; url?: string; text?: string; title?: string; artist?: { id: string; name: string; avatar: string } }>>([]);
   const [selectedContentId, setSelectedContentId] = useState<string | null>(null);
   const [backgroundColor, setBackgroundColor] = useState('#FFFFFF');
@@ -34,15 +32,9 @@ export default function Upload() {
   const [editingTextId, setEditingTextId] = useState<string | null>(null);
   const [artistSearch, setArtistSearch] = useState(''); // 작업자 검색
 
-  // 작품 커스터마이징 상태
-  const [customizeTab, setCustomizeTab] = useState<'frame' | 'effect' | 'lighting'>('effect');
-
-  // 개별 이미지별 커스터마이징 설정
+  // 개별 이미지별 커스터마이징 설정 (액자, 조명만)
   const [imageCustomizations, setImageCustomizations] = useState<Record<string, {
     frame: string;
-    effect: string | null;
-    intensity: number;
-    speed: number;
     lightingAngle: number;
     lightingIntensity: number;
   }>>({});
@@ -93,64 +85,6 @@ export default function Upload() {
   const imageTypes = [
     { id: 'image', icon: ImageIcon, label: '작품 추가' },
     { id: 'drawing', icon: Palette, label: '드로잉 툴에서 가져오기' },
-  ];
-
-  const projectTypes = [
-    { id: 'project', icon: Folder, label: '프로젝트 게재용' },
-    { id: 'new', icon: Plus, label: '새로 만들기 설정' },
-    { id: 'sort', icon: ArrowDownUp, label: '정렬' },
-    { id: 'user', icon: User, label: '사용자 설정' },
-  ];
-
-  const templates = [
-    {
-      id: 'aether',
-      name: '에테르',
-      description: '우주의 빛과 유체가 작품을 감싸요',
-      svgFilter: 'aether',
-    },
-    {
-      id: 'liquid',
-      name: '리퀴드 팔레트',
-      description: '작품의 색상들이 녹아내려 환상적인 물결을 만듭니다',
-      svgFilter: 'liquid',
-    },
-    {
-      id: 'cyber',
-      name: '사이버 인셉션',
-      description: '공간이 뒤틀리며 흐릿한 픽셀 속으로 잠겨듭니다',
-      svgFilter: 'cyber',
-    },
-    {
-      id: 'digital',
-      name: '디지털 피버',
-      description: '작품이 디지털 신호로 깨어나요',
-      svgFilter: 'digital',
-    },
-    {
-      id: 'neon',
-      name: '네온 드림',
-      description: '네온 불빛이 작품 주변을 감싸며 빛납니다',
-      svgFilter: 'neon',
-    },
-    {
-      id: 'vintage',
-      name: '빈티지 필름',
-      description: '오래된 필름 카메라로 촬영한 듯한 따뜻한 감성',
-      svgFilter: 'vintage',
-    },
-    {
-      id: 'frost',
-      name: '프로스트 글래스',
-      description: '서리가 낀 유리창 너머로 보는 듯한 몽환적 느낌',
-      svgFilter: 'frost',
-    },
-    {
-      id: 'hologram',
-      name: '홀로그램',
-      description: '미래적 홀로그램 투영 효과',
-      svgFilter: 'hologram',
-    },
   ];
 
   const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -216,205 +150,6 @@ export default function Upload() {
 
   return (
     <div className="h-screen bg-[#FAFAFA] flex overflow-hidden">
-      {/* SVG 필터 정의 */}
-      <svg className="absolute w-0 h-0" aria-hidden="true">
-        <defs>
-          {/* 에테르: 발광 효과 + 색상 시프트 */}
-          <filter id="aether">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="2" result="blur" />
-            <feColorMatrix
-              in="blur"
-              type="matrix"
-              values="1.2 0 0 0 0.05
-                      0 1.1 0.2 0 0.1
-                      0 0.1 1.3 0 0.15
-                      0 0 0 1 0"
-              result="colorShift"
-            />
-            <feGaussianBlur in="colorShift" stdDeviation="8" result="glow" />
-            <feBlend in="colorShift" in2="glow" mode="screen" result="final" />
-            <feComponentTransfer in="final">
-              <feFuncR type="linear" slope="1.15" />
-              <feFuncG type="linear" slope="1.1" />
-              <feFuncB type="linear" slope="1.25" />
-            </feComponentTransfer>
-          </filter>
-
-          {/* 리퀴드 팔레트: 왜곡 + 유동적 노이즈 */}
-          <filter id="liquid">
-            <feTurbulence type="fractalNoise" baseFrequency="0.02" numOctaves="3" result="noise" />
-            <feDisplacementMap in="SourceGraphic" in2="noise" scale="15" xChannelSelector="R" yChannelSelector="G" result="displace" />
-            <feColorMatrix
-              in="displace"
-              type="saturate"
-              values="1.6"
-              result="saturated"
-            />
-            <feGaussianBlur in="saturated" stdDeviation="0.8" result="blur" />
-            <feBlend in="blur" in2="SourceGraphic" mode="overlay" />
-          </filter>
-
-          {/* 사이버 인셉션: RGB 분리 + 글리치 */}
-          <filter id="cyber">
-            <feOffset in="SourceGraphic" dx="3" dy="0" result="offsetR" />
-            <feOffset in="SourceGraphic" dx="-3" dy="0" result="offsetB" />
-            <feColorMatrix
-              in="offsetR"
-              type="matrix"
-              values="1 0 0 0 0
-                      0 0 0 0 0
-                      0 0 0 0 0
-                      0 0 0 0.7 0"
-              result="redChannel"
-            />
-            <feColorMatrix
-              in="offsetB"
-              type="matrix"
-              values="0 0 0 0 0
-                      0 0 0 0 0
-                      0 0 1 0 0
-                      0 0 0 0.7 0"
-              result="blueChannel"
-            />
-            <feBlend in="redChannel" in2="SourceGraphic" mode="screen" result="blend1" />
-            <feBlend in="blueChannel" in2="blend1" mode="screen" result="blend2" />
-            <feComponentTransfer in="blend2">
-              <feFuncR type="linear" slope="1.3" />
-              <feFuncG type="linear" slope="1.2" />
-              <feFuncB type="linear" slope="1.4" />
-            </feComponentTransfer>
-          </filter>
-
-          {/* 디지털 피버: 스캔라인 + 픽셀 효과 */}
-          <filter id="digital">
-            <feTurbulence type="fractalNoise" baseFrequency="0.8 0.01" numOctaves="1" result="scanlines" />
-            <feColorMatrix
-              in="scanlines"
-              type="matrix"
-              values="0 0 0 0 0
-                      0 0 0 0 0.2
-                      0 0 0 0 0.2
-                      0 0 0 0.15 0"
-              result="scanColor"
-            />
-            <feBlend in="SourceGraphic" in2="scanColor" mode="hard-light" result="scanBlend" />
-            <feComponentTransfer in="scanBlend">
-              <feFuncR type="discrete" tableValues="0 0.25 0.5 0.75 1" />
-              <feFuncG type="discrete" tableValues="0 0.25 0.5 0.75 1" />
-              <feFuncB type="discrete" tableValues="0 0.25 0.5 0.75 1" />
-            </feComponentTransfer>
-          </filter>
-
-          {/* 네온 드림: 강한 발광 + 색상 번짐 */}
-          <filter id="neon">
-            <feGaussianBlur in="SourceGraphic" stdDeviation="0" result="sharp" />
-            <feColorMatrix
-              in="sharp"
-              type="matrix"
-              values="1.5 0 0 0 0
-                      0 1.3 0.3 0 0
-                      0.3 0 1.6 0 0
-                      0 0 0 1 0"
-              result="colorBoost"
-            />
-            <feGaussianBlur in="colorBoost" stdDeviation="12" result="glow1" />
-            <feGaussianBlur in="colorBoost" stdDeviation="6" result="glow2" />
-            <feBlend in="colorBoost" in2="glow1" mode="screen" result="blend1" />
-            <feBlend in="blend1" in2="glow2" mode="color-dodge" result="final" />
-            <feComponentTransfer in="final">
-              <feFuncR type="gamma" amplitude="1.2" exponent="0.9" />
-              <feFuncG type="gamma" amplitude="1.15" exponent="0.95" />
-              <feFuncB type="gamma" amplitude="1.3" exponent="0.85" />
-            </feComponentTransfer>
-          </filter>
-
-          {/* 빈티지 필름: 그레인 노이즈 + 비네팅 */}
-          <filter id="vintage">
-            <feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="4" result="grain" />
-            <feColorMatrix
-              in="grain"
-              type="matrix"
-              values="0 0 0 0 0
-                      0 0 0 0 0
-                      0 0 0 0 0
-                      0 0 0 0.08 0"
-              result="grainAlpha"
-            />
-            <feBlend in="SourceGraphic" in2="grainAlpha" mode="multiply" result="grainBlend" />
-            <feColorMatrix
-              in="grainBlend"
-              type="matrix"
-              values="1.1 0.15 0.05 0 0
-                      0.1 1 0.1 0 0
-                      0.05 0.1 0.8 0 0
-                      0 0 0 1 0"
-              result="sepia"
-            />
-            <feGaussianBlur in="sepia" stdDeviation="0.5" />
-          </filter>
-
-          {/* 프로스트 글래스: 프랙탈 블러 */}
-          <filter id="frost">
-            <feTurbulence type="fractalNoise" baseFrequency="0.05" numOctaves="5" result="frost" />
-            <feDisplacementMap in="SourceGraphic" in2="frost" scale="8" xChannelSelector="R" yChannelSelector="G" result="displaced" />
-            <feGaussianBlur in="displaced" stdDeviation="4" result="blur" />
-            <feColorMatrix
-              in="blur"
-              type="matrix"
-              values="1.15 0 0 0 0.05
-                      0 1.1 0.05 0 0.08
-                      0.05 0.05 1.15 0 0.1
-                      0 0 0 0.95 0"
-              result="tint"
-            />
-            <feBlend in="tint" in2="SourceGraphic" mode="overlay" />
-          </filter>
-
-          {/* 홀로그램: 프리즘 효과 + 무지개 색상 */}
-          <filter id="hologram">
-            <feOffset in="SourceGraphic" dx="2" dy="0" result="offsetR" />
-            <feOffset in="SourceGraphic" dx="0" dy="0" result="offsetG" />
-            <feOffset in="SourceGraphic" dx="-2" dy="0" result="offsetB" />
-            <feColorMatrix
-              in="offsetR"
-              type="matrix"
-              values="0.8 0 0 0 0
-                      0 0 0 0 0
-                      0 0 0 0 0
-                      0 0 0 0.6 0"
-              result="redCh"
-            />
-            <feColorMatrix
-              in="offsetG"
-              type="matrix"
-              values="0 0 0 0 0
-                      0 0.8 0 0 0
-                      0 0 0 0 0
-                      0 0 0 0.6 0"
-              result="greenCh"
-            />
-            <feColorMatrix
-              in="offsetB"
-              type="matrix"
-              values="0 0 0 0 0
-                      0 0 0 0 0
-                      0 0 0.8 0 0
-                      0 0 0 0.6 0"
-              result="blueCh"
-            />
-            <feBlend in="redCh" in2="greenCh" mode="screen" result="blend1" />
-            <feBlend in="blend1" in2="blueCh" mode="screen" result="blend2" />
-            <feTurbulence type="fractalNoise" baseFrequency="0.03" numOctaves="2" result="rainbow" />
-            <feDisplacementMap in="blend2" in2="rainbow" scale="3" result="final" />
-            <feComponentTransfer in="final">
-              <feFuncR type="linear" slope="1.35" />
-              <feFuncG type="linear" slope="1.25" />
-              <feFuncB type="linear" slope="1.4" />
-            </feComponentTransfer>
-          </filter>
-        </defs>
-      </svg>
-
       <input
         ref={fileInputRef}
         type="file"
@@ -858,17 +593,6 @@ export default function Upload() {
         className={`relative flex-1 flex flex-col overflow-y-auto p-12 ${!contents.length ? 'items-center justify-center' : 'items-center justify-start pt-12'}`}
         style={contents.length > 0 ? { backgroundColor } : undefined}
       >
-        {/* 작품 테마 배경 레이어 - 전체 영역 */}
-        {selectedTemplate && contents.length > 0 && (
-          <div
-            className="absolute inset-0 pointer-events-none z-0"
-            style={{
-              filter: `url(#${templates.find(t => t.id === selectedTemplate)?.svgFilter})`,
-              background: 'linear-gradient(135deg, #667eea 0%, #764ba2 25%, #f093fb 50%, #4facfe 75%, #00f2fe 100%)',
-              opacity: 0.3,
-            }}
-          />
-        )}
         {!contents.length ? (
           <>
             <h2 className="text-[20px] text-gray-600 mb-12">
@@ -900,9 +624,6 @@ export default function Upload() {
                 // 개별 이미지 커스터마이징 설정 가져오기
                 const customization = imageCustomizations[content.id] || {
                   frame: 'none',
-                  effect: null,
-                  intensity: 50,
-                  speed: 30,
                   lightingAngle: 45,
                   lightingIntensity: 70,
                 };
@@ -950,16 +671,7 @@ export default function Upload() {
                             src={content.url}
                             alt={`Upload ${index + 1}`}
                             className="w-full h-auto object-cover"
-                            style={
-                              customization.effect
-                                ? {
-                                  filter: `url(#${templates.find(t => t.id === customization.effect)?.svgFilter}) opacity(${customization.intensity}%)`,
-                                  display: 'block',
-                                }
-                                : {
-                                  display: 'block',
-                                }
-                            }
+                            style={{ display: 'block' }}
                           />
 
                           {/* 액자 오버레이 (이미지 위에 덮어씌움) */}
@@ -1054,13 +766,6 @@ export default function Upload() {
               </button>
 
               {/* 현재 적용된 테마 표시 */}
-              {selectedTemplate && (
-                <div className="flex items-center justify-center gap-2 py-4">
-                  <div className="rounded-full bg-black/60 px-6 py-3 text-[15px] text-white backdrop-blur-md">
-                    현재 작품 테마: <span className="font-semibold">{templates.find(t => t.id === selectedTemplate)?.name}</span>
-                  </div>
-                </div>
-              )}
             </div>
           </div>
         )}
@@ -1102,9 +807,6 @@ export default function Upload() {
           const selectedContent = contents[selectedIndex];
           const customization = imageCustomizations[selectedContentId] || {
             frame: 'none',
-            effect: null,
-            intensity: 50,
-            speed: 30,
             lightingAngle: 45,
             lightingIntensity: 70,
           };
