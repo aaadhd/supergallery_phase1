@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Download, MapPin, Plus, Eye, Edit, X, DollarSign, ThumbsUp, Users, Folder, MoreHorizontal, Trash2 } from 'lucide-react';
+import { MapPin, Plus, Eye, Edit, X, DollarSign, ThumbsUp, Users, Folder, MoreHorizontal, Trash2 } from 'lucide-react';
 import { Image as ImageIcon } from 'lucide-react';
 import { artists, works, rooms, classes } from '../data';
 import { groupWorks } from '../groupData';
@@ -109,13 +109,10 @@ export default function Profile() {
   const individualImages = artistWorks.flatMap(work => {
     const images = Array.isArray(work.image) ? work.image : [work.image];
     return images.map((img, idx) => {
-      // contents에서 개별 작품명 찾기
-      const imageTitle = work.contents?.[idx]?.title || '무제';
-
       return {
         workId: work.id,
-        workTitle: work.title, // 작품명
-        imageTitle: imageTitle, // 개별 그림명
+        workTitle: work.title,
+        imageTitle: images.length > 1 ? `${work.title} (${idx + 1}/${images.length})` : work.title,
         imageUrl: img,
         imageIndex: idx,
         totalImages: images.length,
@@ -826,9 +823,6 @@ export default function Profile() {
                     onClick={() => setIsFollowing(!isFollowing)}
                   >
                     {isFollowing ? '팔로잉' : '팔로우'}
-                  </Button>
-                  <Button variant="outline" className="mt-3 w-full">
-                    메시지 보내기
                   </Button>
                 </>
               )}

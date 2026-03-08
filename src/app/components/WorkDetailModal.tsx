@@ -8,6 +8,7 @@ import { Button } from './ui/button';
 import { Textarea } from './ui/textarea';
 import { useState, useEffect, useRef } from 'react';
 import { getFirstImage, getImageCount } from '../utils/imageHelper';
+import { userInteractionStore, workStore } from '../store';
 
 interface WorkDetailModalProps {
   workId: string;
@@ -21,8 +22,8 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
   const defaultWorks = [...works, ...groupWorks];
   const allWorks = providedWorks || defaultWorks;
   const work = allWorks.find(w => w.id === workId);
-  const [isLiked, setIsLiked] = useState(false);
-  const [isSaved, setIsSaved] = useState(false);
+  const [isLiked, setIsLiked] = useState(() => userInteractionStore.isLiked(workId));
+  const [isSaved, setIsSaved] = useState(() => userInteractionStore.isSaved(workId));
   const [isFollowing, setIsFollowing] = useState(false);
   const [showComments, setShowComments] = useState(false);
   const [showPurchase, setShowPurchase] = useState(false);
@@ -39,10 +40,12 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
   // 스크롤 컨테이너 ref
   const scrollContainerRef = useRef<HTMLDivElement>(null);
   
-  // workId가 변경되면 이미지 인덱스를 0으로 리셋하고 스크롤 초기화
+  // workId가 변경되면 이미지 인덱스를 0으로 리셋하고 좋아요/저장 상태 동기화
   useEffect(() => {
     setCurrentImageIndex(0);
     setWorksSlideIndex(0);
+    setIsLiked(userInteractionStore.isLiked(workId));
+    setIsSaved(userInteractionStore.isSaved(workId));
     if (scrollContainerRef.current) {
       scrollContainerRef.current.scrollTop = 0;
     }
@@ -324,12 +327,6 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                           <Plus className="h-4 w-4 mr-1.5" />
                           팔로우
                         </Button>
-                        <Button 
-                          className="h-10 px-6 text-[14px] bg-[#00BFA5] hover:bg-[#00A892] text-white border-0"
-                        >
-                          <MessageCircle className="h-4 w-4 mr-1.5" />
-                          채팅하기
-                        </Button>
                       </div>
                     </div>
                   )}
@@ -557,12 +554,6 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                           <Plus className="h-4 w-4 mr-1.5" />
                           팔로우
                         </Button>
-                        <Button 
-                          className="h-10 px-6 text-[14px] bg-[#00BFA5] hover:bg-[#00A892] text-white border-0"
-                        >
-                          <MessageCircle className="h-4 w-4 mr-1.5" />
-                          채팅하기
-                        </Button>
                       </div>
                     </div>
                   )}
@@ -661,8 +652,13 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
               </button>
 
               {/* 좋아요 버튼 */}
-              <button 
-                onClick={() => setIsLiked(!isLiked)}
+              <button
+                onClick={() => {
+                  userInteractionStore.toggleLike(workId);
+                  if (!isLiked) workStore.updateWork(workId, { likes: (work.likes || 0) + 1 });
+                  else workStore.updateWork(workId, { likes: Math.max(0, (work.likes || 0) - 1) });
+                  setIsLiked(!isLiked);
+                }}
                 className="flex flex-col items-center gap-1.5 group"
               >
                 <div className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors backdrop-blur-sm ${
@@ -693,8 +689,13 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
               </button>
 
               {/* 저장 버튼 */}
-              <button 
-                onClick={() => setIsSaved(!isSaved)}
+              <button
+                onClick={() => {
+                  userInteractionStore.toggleSave(workId);
+                  if (!isSaved) workStore.updateWork(workId, { saves: (work.saves || 0) + 1 });
+                  else workStore.updateWork(workId, { saves: Math.max(0, (work.saves || 0) - 1) });
+                  setIsSaved(!isSaved);
+                }}
                 className="flex flex-col items-center gap-1.5 group"
               >
                 <div className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors backdrop-blur-sm ${
