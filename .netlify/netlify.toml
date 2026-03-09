@@ -7,7 +7,7 @@ headers = []
 [functions."*"]
 
 [build]
-publish = "/Users/im_1688/Documents/vibe/Supergallery/dist"
+publish = "dist"
 publishOrigin = "config"
 commandOrigin = "config"
 command = "pnpm run build"
