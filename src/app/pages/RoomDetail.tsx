@@ -101,11 +101,11 @@ export default function RoomDetail() {
                   className="cursor-pointer"
                   onClick={() => openLightbox(index)}
                 >
-                  <div className="aspect-square overflow-hidden rounded-lg bg-white">
+                  <div className="aspect-square overflow-hidden rounded-lg bg-white flex items-center justify-center">
                     <ImageWithFallback
                       src={imageUrls[getFirstImage(work.image)] || getFirstImage(work.image)}
                       alt={work.title}
-                      className="h-full w-full object-contain transition-transform duration-300 hover:scale-105"
+                      className="w-full h-full min-w-0 min-h-0 object-contain object-center transition-transform duration-300 hover:scale-105"
                     />
                   </div>
                   <div className="mt-3">

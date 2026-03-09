@@ -29,6 +29,7 @@ export const router = createBrowserRouter([
       { path: 'room/:id', Component: RoomDetail },
       { path: 'rooms/create', Component: RoomCreate },
       { path: 'rooms/edit', Component: RoomEdit },
+      { path: 'rooms/edit/:roomId', Component: RoomEdit },
       { path: 'learn', Component: LearnHome },
       { path: 'class/:id', Component: ClassDetail },
       { path: 'upload', Component: Upload },

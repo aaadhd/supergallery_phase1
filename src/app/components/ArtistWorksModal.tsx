@@ -65,22 +65,22 @@ export function ArtistWorksModal({ artistId, onClose }: ArtistWorksModalProps) {
                     // 작품 상세로 이동할 수 있음
                   }}
                 >
-                  {/* 작품 이미지 - 액자 스타일 */}
-                  <div className="relative h-[320px] bg-[#F5F5F0] flex items-center justify-center p-6 mb-4">
+                  {/* 작품 이미지 - 정사각, 비율 유지 */}
+                  <div className="relative aspect-square bg-[#F5F5F0] flex items-center justify-center p-6 mb-4 overflow-hidden">
                     <div className="absolute inset-0 bg-[#F5F5F0]" />
                     
-                    {/* 액자 프레임 */}
-                    <div className="relative w-[75%] h-[90%] bg-white shadow-2xl">
+                    {/* 액자 프레임 - 정사각 */}
+                    <div className="relative w-full h-full max-w-[280px] max-h-[280px] bg-white shadow-2xl aspect-square">
                       {/* 외부 프레임 (검은색) */}
                       <div className="absolute inset-0 bg-[#1a1a1a] p-[14px]">
                         {/* 내부 매트 (흰색 여백) */}
                         <div className="w-full h-full bg-white p-[18px] shadow-inner">
                           {/* 작품 이미지 */}
-                          <div className="relative w-full h-full overflow-hidden">
+                          <div className="relative w-full h-full overflow-hidden flex items-center justify-center bg-white">
                             <ImageWithFallback
                               src={imageUrls[getFirstImage(work.image)] || getFirstImage(work.image)}
                               alt={work.title}
-                              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              className="w-full h-full min-w-0 min-h-0 object-contain object-center group-hover:scale-105 transition-transform duration-300"
                             />
                           </div>
                         </div>

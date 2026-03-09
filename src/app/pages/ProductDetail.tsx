@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { CopyrightProtectedImage } from '../components/work';
 import { Button } from '../components/ui/button';
 import { Star, Package, RefreshCw, Minus, Plus } from 'lucide-react';
 import { works } from '../data';
@@ -197,9 +198,13 @@ export default function ProductDetail() {
                           <div className="w-full h-full bg-white p-[28px] shadow-inner">
                             {/* 작품 이미지 */}
                             <div className="relative w-full h-full overflow-hidden">
-                              <ImageWithFallback
+                              <CopyrightProtectedImage
                                 src={thumbnails[selectedThumbnail]}
                                 alt={work.title}
+                                watermarkText={`© ${work.artist.name} · ${work.title}`}
+                                showWatermark
+                                preventRightClick
+                                preventDrag
                                 className="w-full h-full object-contain"
                               />
                             </div>

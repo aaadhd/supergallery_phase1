@@ -40,6 +40,8 @@ export interface Work {
     editionSize: string;
   };
   owner?: any; // 작품 소유자 (개인 또는 그룹) - groupData.ts의 WorkOwner 타입
+  /** SGF 드로잉 툴에서 가져온 경우 작업 과정 타임랩스 URL */
+  timelapseUrl?: string;
 }
 
 export interface Room {

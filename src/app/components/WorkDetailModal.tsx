@@ -1,5 +1,5 @@
-import { X, Heart, Bookmark, MessageCircle, Send, MoreHorizontal, ChevronLeft, ChevronRight, ShoppingBag, Plus } from 'lucide-react';
-import { Work, Comment, comments as allComments, works } from '../data';
+import { X, Heart, Bookmark, MessageCircle, Send, MoreHorizontal, ChevronLeft, ChevronRight, ShoppingBag, Plus, MapPin } from 'lucide-react';
+import { Work, Comment, comments as allComments, works, artists } from '../data';
 import { groupWorks } from '../groupData';
 import { imageUrls } from '../imageUrls';
 import { ImageWithFallback } from './figma/ImageWithFallback';
@@ -9,6 +9,7 @@ import { Textarea } from './ui/textarea';
 import { useState, useEffect, useRef } from 'react';
 import { getFirstImage, getImageCount } from '../utils/imageHelper';
 import { userInteractionStore, workStore } from '../store';
+import { CopyrightProtectedImage, PinCommentLayer } from './work';
 
 interface WorkDetailModalProps {
   workId: string;
@@ -36,6 +37,13 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
   
   // 작품 목록 슬라이드 인덱스
   const [worksSlideIndex, setWorksSlideIndex] = useState(0);
+
+  // Pin 코멘트 모드
+  const [pinAddMode, setPinAddMode] = useState(false);
+
+  // 이미지 컨테이너 ref (Pin 좌표 계산용) - 여러 장일 때 배열
+  const imageContainerRefs = useRef<(HTMLDivElement | null)[]>([]);
+  const singleImageContainerRef = useRef<HTMLDivElement>(null);
   
   // 스크롤 컨테이너 ref
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -190,11 +198,29 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                         } : {})
                       }}
                     >
-                      <ImageWithFallback
-                        src={imageUrls[image] || image}
-                        alt={`${work.title} - ${index + 1}`}
-                        className={`w-full h-auto object-contain transition-all duration-500 ${showPurchase && selectedOption === 'wood' ? 'shadow-2xl' : ''}`}
-                      />
+                      <div
+                        ref={(el) => { imageContainerRefs.current[index] = el; }}
+                        className="relative"
+                      >
+                        <CopyrightProtectedImage
+                          src={imageUrls[image] || image}
+                          alt={`${work.title} - ${index + 1}`}
+                          watermarkText={`© ${work.artist.name} · ${work.title}`}
+                          showWatermark
+                          preventRightClick
+                          preventDrag
+                          className={`w-full h-auto object-contain transition-all duration-500 ${showPurchase && selectedOption === 'wood' ? 'shadow-2xl' : ''}`}
+                        />
+                        <PinCommentLayer
+                          workId={workId}
+                          imageIndex={index}
+                          containerRefs={imageContainerRefs}
+                          containerIndex={index}
+                          addMode={pinAddMode}
+                          onAddModeChange={setPinAddMode}
+                          currentUser={artists[0]}
+                        />
+                      </div>
                       
                       {/* 우드 프레임 내부 디테일 */}
                       {showPurchase && selectedOption === 'wood' && (
@@ -384,11 +410,11 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                               }}
                               className="group cursor-pointer text-left"
                             >
-                              <div className="relative mb-3 overflow-hidden rounded-lg bg-white/5 border border-white/10">
+                              <div className="relative mb-3 overflow-hidden rounded-lg bg-white/5 border border-white/10 aspect-square flex items-center justify-center">
                                 <ImageWithFallback
                                   src={imageUrls[getFirstImage(relatedWork.image)] || getFirstImage(relatedWork.image)}
                                   alt={relatedWork.title}
-                                  className="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                                  className="w-full h-full min-w-0 min-h-0 object-contain object-center transition-transform duration-300 group-hover:scale-105"
                                 />
                               </div>
                               <div className="text-[14px] font-medium text-white group-hover:text-[#00BFA5] transition-colors mb-1">
@@ -423,12 +449,26 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                       borderRadius: '2px',
                     } : {})
                   }}
-                >
-                  <ImageWithFallback
-                    src={imageUrls[images[0]] || images[0]}
-                    alt={work.title}
-                    className={`max-w-full max-h-[calc(100vh-300px)] object-contain transition-all duration-500 ${showPurchase && selectedOption === 'wood' ? 'shadow-2xl' : ''}`}
-                  />
+                  >
+                  <div ref={singleImageContainerRef} className="relative">
+                    <CopyrightProtectedImage
+                      src={imageUrls[images[0]] || images[0]}
+                      alt={work.title}
+                      watermarkText={`© ${work.artist.name} · ${work.title}`}
+                      showWatermark
+                      preventRightClick
+                      preventDrag
+                      className={`max-w-full max-h-[calc(100vh-300px)] object-contain transition-all duration-500 ${showPurchase && selectedOption === 'wood' ? 'shadow-2xl' : ''}`}
+                    />
+                    <PinCommentLayer
+                      workId={workId}
+                      imageIndex={0}
+                      imageRef={singleImageContainerRef}
+                      addMode={pinAddMode}
+                      onAddModeChange={setPinAddMode}
+                      currentUser={artists[0]}
+                    />
+                  </div>
                   
                   {/* 우드 프레임 내부 디테일 */}
                   {showPurchase && selectedOption === 'wood' && (
@@ -580,11 +620,11 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                           }}
                           className="group cursor-pointer text-left"
                         >
-                          <div className="relative mb-3 overflow-hidden rounded-lg bg-white/5 border border-white/10">
+                          <div className="relative mb-3 overflow-hidden rounded-lg bg-white/5 border border-white/10 aspect-square flex items-center justify-center">
                             <ImageWithFallback
                               src={imageUrls[getFirstImage(relatedWork.image)] || getFirstImage(relatedWork.image)}
                               alt={relatedWork.title}
-                              className="aspect-square w-full object-cover transition-transform duration-300 group-hover:scale-105"
+                              className="w-full h-full min-w-0 min-h-0 object-contain object-center transition-transform duration-300 group-hover:scale-105"
                             />
                           </div>
                           <div className="text-[14px] font-medium text-white group-hover:text-[#00BFA5] transition-colors mb-1">
@@ -720,6 +760,19 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                   <ShoppingBag className="h-5 w-5 text-white" />
                 </div>
                 <span className="text-[11px] text-white">소장하기</span>
+              </button>
+
+              {/* Pin 코멘트 버튼 */}
+              <button 
+                onClick={() => {
+                  setPinAddMode(!pinAddMode);
+                }}
+                className={`flex flex-col items-center gap-1.5 group ${pinAddMode ? 'ring-2 ring-cyan-400 rounded-full' : ''}`}
+              >
+                <div className={`flex h-11 w-11 items-center justify-center rounded-full transition-colors backdrop-blur-sm ${pinAddMode ? 'bg-cyan-500/30' : 'bg-white/10 hover:bg-white/20'}`}>
+                  <MapPin className={`h-5 w-5 ${pinAddMode ? 'text-cyan-400' : 'text-white'}`} />
+                </div>
+                <span className="text-[11px] text-white">핀 코멘트</span>
               </button>
             </div>
           )}

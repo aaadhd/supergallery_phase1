@@ -1,24 +1,38 @@
 import { useState, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Image as ImageIcon, Plus, Upload as UploadIcon, X, Info, Search, UserPlus, Palette, Download } from 'lucide-react';
+import { Image as ImageIcon, Plus, Upload as UploadIcon, X, Info, Search, UserPlus, Palette } from 'lucide-react';
 import { artists } from '../data';
 import { workStore, draftStore } from '../store';
 import type { Work } from '../data';
+import { imageUrls } from '../imageUrls';
+import { extractColorPalette, ColorPaletteResult } from '../utils/colorPalette';
+
+// 드로잉 툴 더미 데이터 (초기 로드용)
+const DUMMY_DRAWINGS = [
+  { id: 'dummy-1', url: imageUrls['spring-memory'] || '', title: '봄날의 벚꽃', timestamp: Date.now() - 86400000 * 2, timelapseUrl: 'https://example.com/timelapse/spring' },
+  { id: 'dummy-2', url: imageUrls['window-light'] || '', title: '창가의 아침빛', timestamp: Date.now() - 86400000 * 1, timelapseUrl: 'https://example.com/timelapse/window' },
+  { id: 'dummy-3', url: imageUrls['quiet-water'] || '', title: '고요한 물결', timestamp: Date.now() - 3600000 * 5 },
+  { id: 'dummy-4', url: imageUrls['line-aesthetics'] || '', title: '선의 미학', timestamp: Date.now() - 3600000 * 2 },
+  { id: 'dummy-5', url: imageUrls['abstract-harmony'] || '', title: '추상적 조화', timestamp: Date.now() - 3600000 },
+];
 
 // 작품 업로드 페이지 - 1~10장의 이미지 업로드 지원
 export default function Upload() {
   const navigate = useNavigate();
-  const [selectedType, setSelectedType] = useState<string | null>(null);
   const [selectedImageType, setSelectedImageType] = useState<string | null>(null);
-  const [contents, setContents] = useState<Array<{ id: string; type: 'image' | 'text'; url?: string; text?: string; title?: string; artist?: { id: string; name: string; avatar: string } }>>([]);
+  const [contents, setContents] = useState<Array<{ id: string; type: 'image' | 'text'; url?: string; text?: string; title?: string; artist?: { id: string; name: string; avatar: string }; fromDrawingTool?: boolean; timelapseUrl?: string }>>([]);
   const [selectedContentId, setSelectedContentId] = useState<string | null>(null);
   const [backgroundColor, setBackgroundColor] = useState('#FFFFFF');
+  const [suggestedBackgrounds, setSuggestedBackgrounds] = useState<ColorPaletteResult['suggestedBackgrounds']>([]);
   const [contentSpacing, setContentSpacing] = useState(16);
   const [isPrivate, setIsPrivate] = useState(false);
   const [agreeToTerms, setAgreeToTerms] = useState(false);
   const [isOriginalWork, setIsOriginalWork] = useState(false);
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [showDrawingImportModal, setShowDrawingImportModal] = useState(false);
+  /** 타임랩스 URL 입력 중인 드로잉 ID (해당 행만 확장) */
+  const [timelapseInputDrawingId, setTimelapseInputDrawingId] = useState<string | null>(null);
+  const [timelapseInputUrl, setTimelapseInputUrl] = useState('');
   const [title, setTitle] = useState(''); // 작품명 (필수)
   const [selectedCategories, setSelectedCategories] = useState<string[]>([]);
   const [detailTags, setDetailTags] = useState<string[]>([]);
@@ -39,16 +53,27 @@ export default function Upload() {
     lightingIntensity: number;
   }>>({});
 
-  // 드로잉 툴에서 완성한 작품 목록
-  const [savedDrawings, setSavedDrawings] = useState<Array<{ id: string; url: string; title: string; timestamp: number }>>([]);
+  // 드로잉 툴에서 완성한 작품 목록 (timelapseUrl: SGF 연동 시 작업 과정 영상)
+  const [savedDrawings, setSavedDrawings] = useState<Array<{ id: string; url: string; title: string; timestamp: number; timelapseUrl?: string }>>([]);
+
 
   // 컴포넌트 마운트 시 localStorage에서 드로잉 작품 불러오기
   useEffect(() => {
     const loadSavedDrawings = () => {
       try {
-        const drawings = localStorage.getItem('artier_drawings');
-        if (drawings) {
-          setSavedDrawings(JSON.parse(drawings));
+        const raw = localStorage.getItem('artier_drawings');
+        if (raw) {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed) && parsed.length > 0) {
+            setSavedDrawings(parsed);
+            return;
+          }
+        }
+        // 저장된 작품이 없으면 더미 데이터로 초기화
+        const seedDrawings = DUMMY_DRAWINGS.filter(d => d.url);
+        if (seedDrawings.length > 0) {
+          localStorage.setItem('artier_drawings', JSON.stringify(seedDrawings));
+          setSavedDrawings(seedDrawings);
         }
       } catch (error) {
         console.error('드로잉 작품 불러오기 실패:', error);
@@ -68,6 +93,7 @@ export default function Upload() {
           url: event.data.imageUrl,
           title: event.data.title || '제목 없음',
           timestamp: Date.now(),
+          timelapseUrl: event.data.timelapseUrl,
         };
 
         // localStorage에 저장
@@ -81,6 +107,24 @@ export default function Upload() {
     window.addEventListener('message', handleMessage);
     return () => window.removeEventListener('message', handleMessage);
   }, []);
+
+  // 업로드한 이미지에 따라 배경색 추천 자동 갱신
+  useEffect(() => {
+    const imageContents = contents.filter(c => c.type === 'image' && c.url);
+    if (imageContents.length === 0) {
+      setSuggestedBackgrounds([]);
+      return;
+    }
+    const firstUrl = imageContents[0].url!;
+    extractColorPalette(firstUrl)
+      .then((res) => {
+        setSuggestedBackgrounds(res.suggestedBackgrounds);
+        if (res.suggestedBackgrounds.length > 0) {
+          setBackgroundColor(res.suggestedBackgrounds[0].bgValue);
+        }
+      })
+      .catch(() => setSuggestedBackgrounds([]));
+  }, [contents]);
 
   const imageTypes = [
     { id: 'image', icon: ImageIcon, label: '작품 추가' },
@@ -447,6 +491,7 @@ export default function Upload() {
                     })) : undefined,
                     groupName: groupName.trim() || undefined,
                     saleStatus: 'none',
+                    timelapseUrl: contents.find(c => c.fromDrawingTool)?.timelapseUrl?.trim() || undefined,
                   };
 
                   workStore.addWork(newWork);
@@ -509,54 +554,110 @@ export default function Upload() {
                   </button>
                 </div>
               ) : (
-                <div className="grid grid-cols-2 gap-8 mb-8">
+                <div className="grid grid-cols-3 gap-8 mb-8">
                   {/* 왼쪽: 드로잉 작품 목록 */}
-                  <div>
-                    <h3 className="text-[15px] font-medium text-gray-900 mb-4">
+                  <div className="col-span-2">
+                    <h3 className="text-[15px] font-semibold text-gray-900 mb-4">
                       저장된 작품 ({savedDrawings.length}개)
                     </h3>
-                    <div className="space-y-3 max-h-96 overflow-y-auto">
+                    <div className="space-y-3 max-h-96 overflow-y-auto pr-1">
                       {savedDrawings.map(drawing => (
-                        <div key={drawing.id} className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg hover:border-gray-300 transition-colors">
-                          <img src={drawing.url} alt={drawing.title} className="h-16 w-16 rounded-lg object-cover flex-shrink-0" />
-                          <div className="flex-1 min-w-0">
-                            <div className="text-[13px] font-medium text-gray-900 truncate">{drawing.title}</div>
-                            <div className="text-[11px] text-gray-500">
-                              {new Date(drawing.timestamp).toLocaleDateString('ko-KR', {
-                                year: 'numeric',
-                                month: 'long',
-                                day: 'numeric',
-                                hour: '2-digit',
-                                minute: '2-digit'
-                              })}
+                        <div key={drawing.id} className="border border-gray-200 rounded-xl overflow-hidden bg-white hover:border-gray-300 hover:shadow-sm transition-all">
+                          <div className="flex gap-4 p-3">
+                            {/* 썸네일 - 작품과 버튼 시각적 연관 강화 */}
+                            <div className="flex-shrink-0">
+                              <img src={drawing.url} alt={drawing.title} className="h-24 w-24 rounded-lg object-cover border border-gray-100" />
+                            </div>
+                            <div className="flex-1 min-w-0 flex flex-col justify-center gap-1">
+                              <div className="text-[13px] font-semibold text-gray-900 truncate">{drawing.title}</div>
+                              <div className="text-[11px] text-gray-500">
+                                {new Date(drawing.timestamp).toLocaleDateString('ko-KR', {
+                                  year: 'numeric',
+                                  month: 'long',
+                                  day: 'numeric',
+                                  hour: '2-digit',
+                                  minute: '2-digit'
+                                })}
+                              </div>
+                              {/* 버튼을 제목/날짜 바로 아래에 배치 - 어떤 작품의 액션인지 명확 */}
+                              <div className="flex gap-2 mt-2">
+                                <button
+                                  onClick={() => {
+                                    setContents([...contents, { id: drawing.id, type: 'image', url: drawing.url, fromDrawingTool: true }]);
+                                    setShowDrawingImportModal(false);
+                                    setTimelapseInputDrawingId(null);
+                                  }}
+                                  className="px-2.5 py-1.5 border border-gray-300 text-gray-700 text-[11px] font-medium rounded-md hover:bg-gray-50 hover:border-gray-400 transition-colors"
+                                >
+                                  이미지 가져오기
+                                </button>
+                                <button
+                                  onClick={() => {
+                                    if (drawing.timelapseUrl) {
+                                      setContents([...contents, { id: drawing.id, type: 'image', url: drawing.url, fromDrawingTool: true, timelapseUrl: drawing.timelapseUrl }]);
+                                      setShowDrawingImportModal(false);
+                                      setTimelapseInputDrawingId(null);
+                                    } else {
+                                      setTimelapseInputDrawingId(timelapseInputDrawingId === drawing.id ? null : drawing.id);
+                                      setTimelapseInputUrl('');
+                                    }
+                                  }}
+                                  className="px-2.5 py-1.5 bg-cyan-500 text-white text-[11px] font-medium rounded-md hover:bg-cyan-600 transition-colors"
+                                >
+                                  타임랩스로 가져오기
+                                </button>
+                              </div>
                             </div>
                           </div>
-                          <button
-                            onClick={() => {
-                              setContents([...contents, { id: drawing.id, type: 'image', url: drawing.url }]);
-                              setShowDrawingImportModal(false);
-                            }}
-                            className="px-4 py-2 bg-cyan-500 text-white text-[13px] font-medium rounded-lg hover:bg-cyan-600 transition-colors flex-shrink-0"
-                          >
-                            추가
-                          </button>
+                          {/* 타임랩스 URL 입력 (연동된 URL이 없을 때만) */}
+                          {timelapseInputDrawingId === drawing.id && !drawing.timelapseUrl && (
+                            <div className="border-t border-gray-100 bg-cyan-50/50 px-3 py-3 flex items-center gap-2">
+                              <input
+                                type="url"
+                                value={timelapseInputUrl}
+                                onChange={(e) => setTimelapseInputUrl(e.target.value)}
+                                placeholder="타임랩스 영상 URL 입력"
+                                className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-[13px] focus:outline-none focus:ring-2 focus:ring-cyan-400"
+                                onKeyDown={(e) => {
+                                  if (e.key === 'Enter') {
+                                    e.preventDefault();
+                                    setContents([...contents, { id: drawing.id, type: 'image', url: drawing.url, fromDrawingTool: true, timelapseUrl: timelapseInputUrl.trim() }]);
+                                    setShowDrawingImportModal(false);
+                                    setTimelapseInputDrawingId(null);
+                                    setTimelapseInputUrl('');
+                                  }
+                                }}
+                              />
+                              <button
+                                onClick={() => {
+                                  setContents([...contents, { id: drawing.id, type: 'image', url: drawing.url, fromDrawingTool: true, timelapseUrl: timelapseInputUrl.trim() }]);
+                                  setShowDrawingImportModal(false);
+                                  setTimelapseInputDrawingId(null);
+                                  setTimelapseInputUrl('');
+                                }}
+                                className="px-4 py-2 bg-cyan-500 text-white text-[13px] font-medium rounded-lg hover:bg-cyan-600 flex-shrink-0"
+                              >
+                                추가
+                              </button>
+                            </div>
+                          )}
                         </div>
                       ))}
                     </div>
                   </div>
 
                   {/* 오른쪽: 드로잉 툴 열기 */}
-                  <div>
-                    <h3 className="text-[15px] font-medium text-gray-900 mb-4">
+                  <div className="col-span-1">
+                    <h3 className="text-[15px] font-semibold text-gray-900 mb-4">
                       새로운 작품 만들기
                     </h3>
-                    <div className="border-2 border-dashed border-gray-200 rounded-lg p-6 text-center">
-                      <div className="mx-auto mb-4 h-16 w-16 rounded-full bg-cyan-100 flex items-center justify-center">
-                        <Palette className="h-8 w-8 text-cyan-500" />
+                    <div className="border-2 border-dashed border-cyan-200 rounded-xl p-8 text-center bg-gradient-to-b from-cyan-50/50 to-white hover:border-cyan-300 transition-colors">
+                      <div className="mx-auto mb-5 h-20 w-20 rounded-2xl bg-cyan-100 flex items-center justify-center shadow-inner">
+                        <Palette className="h-10 w-10 text-cyan-600" />
                       </div>
-                      <p className="text-[13px] text-gray-600 mb-4">
+                      <p className="text-[13px] text-gray-600 leading-relaxed mb-6 max-w-[220px] mx-auto">
                         드로잉 툴을 열어 새로운 작품을 만드세요.<br />
-                        완성된 작품은 자동으로 목록에 추가됩니다.
+                        <span className="text-gray-500">완성된 작품은 자동으로 목록에 추가됩니다.</span>
                       </p>
                       <button
                         onClick={() => {
@@ -564,7 +665,7 @@ export default function Upload() {
                           const urlWithParams = `${drawingToolUrl}?source=artier&returnUrl=${encodeURIComponent(window.location.origin + '/upload')}`;
                           window.open(urlWithParams, '_blank');
                         }}
-                        className="inline-flex items-center gap-2 px-6 py-2.5 bg-cyan-500 text-white text-[14px] font-medium rounded-lg hover:bg-cyan-600 transition-colors"
+                        className="inline-flex items-center gap-2 px-8 py-3 bg-cyan-500 text-white text-[14px] font-semibold rounded-xl hover:bg-cyan-600 shadow-md hover:shadow-lg transition-all"
                       >
                         <Palette className="h-4 w-4" />
                         드로잉 툴 열기
@@ -811,21 +912,6 @@ export default function Upload() {
             lightingIntensity: 70,
           };
 
-          const updateCustomization = (updates: Partial<typeof customization>) => {
-            setImageCustomizations({
-              ...imageCustomizations,
-              [selectedContentId]: { ...customization, ...updates },
-            });
-          };
-
-          const frames = [
-            { id: 'none', name: '액자 없음' },
-            { id: 'modern', name: '모던 블랙' },
-            { id: 'wood', name: '원목' },
-            { id: 'gold', name: '골드' },
-            { id: 'white', name: '화이트' },
-          ];
-
           return (
             <div className="space-y-6">
               {/* 이미지 제목 입력 */}
@@ -936,25 +1022,6 @@ export default function Upload() {
                   </>
                 )}
               </div>
-
-              {/* 액자 선택 */}
-              <div>
-                <label className="block text-[14px] font-semibold text-gray-900 mb-3">액자 스타일</label>
-                <div className="grid grid-cols-3 gap-2">
-                  {frames.map(frame => (
-                    <button
-                      key={frame.id}
-                      onClick={() => updateCustomization({ frame: frame.id })}
-                      className={`py-2.5 px-3 rounded-lg text-[12px] font-medium transition-all ${customization.frame === frame.id
-                        ? 'bg-gray-900 text-white'
-                        : 'bg-gray-100 text-gray-700 hover:bg-gray-200'
-                        }`}
-                    >
-                      {frame.name}
-                    </button>
-                  ))}
-                </div>
-              </div>
             </div>
           );
         })()}
@@ -965,10 +1032,13 @@ export default function Upload() {
           <div className="mb-6">
             <label className="block text-[14px] font-semibold text-gray-900 mb-2">
               배경색상 설정
+              {suggestedBackgrounds.length > 0 && (
+                <span className="ml-1.5 text-[11px] font-normal text-cyan-600">· 작품 색상 기반 자동 추천</span>
+              )}
             </label>
             <div className="flex items-center gap-3">
               <div
-                className="w-12 h-12 rounded-lg border-2 border-gray-300 cursor-pointer"
+                className="w-12 h-12 rounded-lg border-2 border-gray-300 cursor-pointer flex-shrink-0"
                 style={{ backgroundColor }}
                 onClick={() => document.getElementById('bg-color-input')?.click()}
               />
@@ -992,6 +1062,47 @@ export default function Upload() {
                 className="flex-1 px-4 py-2.5 border border-gray-300 rounded-lg text-[14px] font-mono focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent"
               />
             </div>
+            {suggestedBackgrounds.length > 0 && (
+              <div className="mt-3">
+                <p className="text-[12px] text-gray-500 mb-2">작품에서 추출한 추천 배경</p>
+                <div className="grid grid-cols-4 gap-2">
+                  {suggestedBackgrounds.map((bg) => {
+                    const isSelected = backgroundColor === bg.bgValue;
+                    const r = parseInt(bg.bgValue.slice(1, 3), 16);
+                    const g = parseInt(bg.bgValue.slice(3, 5), 16);
+                    const b = parseInt(bg.bgValue.slice(5, 7), 16);
+                    const luminance = (0.299 * r + 0.587 * g + 0.114 * b) / 255;
+                    const isDark = luminance < 0.5;
+                    return (
+                      <button
+                        key={bg.id}
+                        type="button"
+                        onClick={() => setBackgroundColor(bg.bgValue)}
+                        className={`group relative overflow-hidden rounded-xl border-2 transition-all duration-200 ${
+                          isSelected
+                            ? 'border-cyan-500 ring-2 ring-cyan-500/30 shadow-sm'
+                            : 'border-gray-200/80 hover:border-gray-300'
+                        }`}
+                      >
+                        <div
+                          className="aspect-square min-h-12"
+                          style={{ backgroundColor: bg.bgValue }}
+                        />
+                        <div
+                          className={`flex items-center justify-center gap-1 px-2 py-1.5 text-[11px] font-medium ${
+                            isDark ? 'text-white/95' : 'text-gray-700'
+                          }`}
+                          style={{ backgroundColor: isDark ? 'rgba(0,0,0,0.2)' : 'rgba(255,255,255,0.85)' }}
+                        >
+                          {isSelected && <span className="text-cyan-600">✓</span>}
+                          <span className="truncate">{bg.label}</span>
+                        </div>
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+            )}
           </div>
 
           {/* 콘텐츠 간격 설정 */}

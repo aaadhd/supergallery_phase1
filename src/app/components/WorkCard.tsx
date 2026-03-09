@@ -19,12 +19,12 @@ export function WorkCard({ work, showSaleBadge }: WorkCardProps) {
   return (
     <Link to={`/work/${work.id}`} className="group block">
       <div className="relative overflow-hidden rounded-lg bg-muted">
-        {/* 작품 이미지 - 정사각형 영역에 비율 유지 */}
-        <div className="aspect-square overflow-hidden bg-white">
+        {/* 작품 이미지 - 정사각 영역, 원화 비율 유지(letterbox/pillarbox) */}
+        <div className="aspect-square overflow-hidden bg-white flex items-center justify-center">
           <ImageWithFallback
             src={imageUrls[firstImage] || firstImage}
             alt={work.title}
-            className="h-full w-full object-contain transition-transform duration-300 group-hover:scale-105"
+            className="w-full h-full min-w-0 min-h-0 object-contain object-center transition-transform duration-300 group-hover:scale-105"
           />
         </div>
 

@@ -970,25 +970,25 @@ export default function Profile() {
                             <div className="relative aspect-square rounded-lg bg-white overflow-hidden">
                               <div className="relative w-full h-full flex items-center justify-center bg-white p-8">
                                 {/* 흰색 매트 배경 */}
-                                <div className="relative w-full h-full shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-300 group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.15)]">
-                                  {/* 작품 이미지 */}
+                                <div className="relative w-full h-full flex items-center justify-center bg-white shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-300 group-hover:shadow-[0_12px_40px_rgba(0,0,0,0.15)] overflow-hidden">
+                                  {/* 작품 이미지 - 원화 비율 유지, 정사각 영역에 letterbox/pillarbox */}
                                   <ImageWithFallback
                                     src={imageUrls[getFirstImage(work.image)] || getFirstImage(work.image)}
                                     alt={work.title}
-                                    className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.03]"
+                                    className="w-full h-full min-w-0 min-h-0 object-contain object-center transition-transform duration-500 group-hover:scale-[1.03]"
                                   />
 
-                                  {/* 본인일 때: ⋯ 메뉴 (이미지 위 레이어) */}
+                                  {/* 본인일 때: ⋯ 메뉴 (이미지 우측 상단) */}
                                   {isOwnProfile && (
                                     <div className="absolute right-2 top-2 z-20" onClick={(e) => e.stopPropagation()}>
                                       <DropdownMenu>
                                         <DropdownMenuTrigger asChild>
                                           <button
                                             type="button"
-                                            className="flex items-center justify-center h-10 w-10 rounded-full bg-[#0057FF] text-white hover:bg-[#0046CC] shadow-lg"
+                                            className="flex items-center justify-center h-7 w-7 rounded-full bg-slate-700/90 text-white hover:bg-slate-800 shadow-md backdrop-blur-sm"
                                             aria-label="작품 메뉴"
                                           >
-                                            <MoreHorizontal className="h-5 w-5" strokeWidth={2.5} />
+                                            <MoreHorizontal className="h-3.5 w-3.5" strokeWidth={2.5} />
                                           </button>
                                         </DropdownMenuTrigger>
                                         <DropdownMenuContent align="end" sideOffset={4} className="z-[200]">
@@ -1120,45 +1120,43 @@ export default function Profile() {
                           onClick={() => navigate(`/work/${img.workId}`)}
                         >
                           {/* 본인일 때만: ⋯ 메뉴 (작품 삭제) */}
-                          {isOwnProfile && (
-                            <div
-                              className="absolute right-2 top-2 z-10"
-                              onClick={(e) => e.stopPropagation()}
-                            >
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <button
-                                    type="button"
-                                    className="flex items-center justify-center h-9 w-9 rounded-full bg-[#0057FF] text-white hover:bg-[#0046CC] shadow-md"
-                                    aria-label="메뉴"
-                                  >
-                                    <MoreHorizontal className="h-4 w-4" />
-                                  </button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end">
-                                  <DropdownMenuItem
-                                    className="text-red-600 focus:text-red-600"
-                                    onClick={() => {
-                                      if (confirm(`"${img.workTitle}" 작품을 삭제할까요?`)) {
-                                        workStore.removeWork(img.workId);
-                                      }
-                                    }}
-                                  >
-                                    <Trash2 className="h-4 w-4 mr-2" />
-                                    작품 삭제
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </div>
-                          )}
-
                           {/* 이미지 */}
-                          <div className="aspect-square rounded-lg overflow-hidden bg-gray-100 border border-gray-200 hover:border-gray-300 transition-all relative">
+                          <div className="aspect-square rounded-lg overflow-hidden bg-white border border-gray-200 hover:border-gray-300 transition-all relative flex items-center justify-center">
                             <ImageWithFallback
                               src={imageUrls[img.imageUrl] || img.imageUrl}
                               alt={`${img.workTitle} - ${img.imageIndex + 1}`}
-                              className="h-full w-full object-cover group-hover:scale-105 transition-transform duration-300"
+                              className="w-full h-full min-w-0 min-h-0 object-contain object-center group-hover:scale-105 transition-transform duration-300"
                             />
+
+                            {/* 본인일 때: ⋯ 메뉴 (이미지 우측 상단) */}
+                            {isOwnProfile && (
+                              <div className="absolute right-2 top-2 z-10" onClick={(e) => e.stopPropagation()}>
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <button
+                                      type="button"
+                                      className="flex items-center justify-center h-7 w-7 rounded-full bg-slate-700/90 text-white hover:bg-slate-800 shadow-md backdrop-blur-sm"
+                                      aria-label="메뉴"
+                                    >
+                                      <MoreHorizontal className="h-3.5 w-3.5" />
+                                    </button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end">
+                                    <DropdownMenuItem
+                                      className="text-red-600 focus:text-red-600"
+                                      onClick={() => {
+                                        if (confirm(`"${img.workTitle}" 작품을 삭제할까요?`)) {
+                                          workStore.removeWork(img.workId);
+                                        }
+                                      }}
+                                    >
+                                      <Trash2 className="h-4 w-4 mr-2" />
+                                      작품 삭제
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </div>
+                            )}
 
                             {/* 호버 오버레이 - 정보 */}
                             <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent opacity-0 group-hover:opacity-100 transition-all duration-300 flex flex-col justify-between p-2.5">

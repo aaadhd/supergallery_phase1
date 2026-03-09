@@ -1,48 +1,51 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { DollarSign, TrendingUp, Download, Eye, X, Edit2, Plus, ShieldCheck, Clock, Package } from 'lucide-react';
+import { artists } from '../data';
 import { workStore } from '../store';
 import { Work } from '../data';
 import { Button } from '../components/ui/button';
 import { getFirstImage } from '../utils/imageHelper';
+import { imageUrls } from '../imageUrls';
 
 export default function SalesManagement() {
   const navigate = useNavigate();
   const [works, setWorks] = useState<Work[]>([]);
+  const currentUserId = artists[0].id; // 현재 로그인 사용자
 
-  // workStore 구독
+  // workStore 구독 — 내 작품만 필터링
   useEffect(() => {
-    const update = () => setWorks(workStore.getWorks());
+    const update = () => {
+      const allWorks = workStore.getWorks();
+      setWorks(allWorks.filter(w => w.artistId === currentUserId));
+    };
     update();
     return workStore.subscribe(update);
-  }, []);
+  }, [currentUserId]);
 
   // 소장하기 설정 모달
   const [collectionModalWorkId, setCollectionModalWorkId] = useState<string | null>(null);
   const [allowDownload, setAllowDownload] = useState(true);
   const [allowPrint, setAllowPrint] = useState(true);
-  const [priceType, setPriceType] = useState<'free' | 'paid'>('free');
   const [price, setPrice] = useState('5000');
-  const [fileFormats, setFileFormats] = useState<string[]>(['JPG', 'PNG']);
-  const [resolution, setResolution] = useState('high');
 
   // 모달 열 때 기존 설정 불러오기
   const openCollectionModal = (work: Work) => {
     const opts = work.saleOptions;
-    setPriceType(opts?.download?.price ? 'paid' : 'free');
-    setPrice(opts?.download?.price ? String(opts.download.price) : '5000');
+    const existingPrice = opts?.download?.price;
+    setPrice(existingPrice && existingPrice > 0 ? String(existingPrice) : '5000');
     setAllowDownload(!!opts?.download);
     setAllowPrint(!!opts?.print);
     setCollectionModalWorkId(work.id);
   };
 
-  // 설정 저장 → workStore 반영
+  // 설정 저장 → workStore 반영 (액자 판매이므로 무료 없음, 최소 가격 적용)
   const handleSaveSettings = () => {
     if (!collectionModalWorkId) return;
-    const parsedPrice = parseInt(price) || 0;
+    const parsedPrice = Math.max(parseInt(price) || 5000, 1000); // 최소 1,000원
     workStore.updateWork(collectionModalWorkId, {
       saleOptions: {
-        download: allowDownload ? { price: priceType === 'paid' ? parsedPrice : 0 } : undefined,
+        download: allowDownload ? { price: parsedPrice } : undefined,
         print: allowPrint
           ? { sizes: [{ size: 'A3', price: parsedPrice + 50000 }, { size: 'A2', price: parsedPrice + 100000 }] }
           : undefined,
@@ -135,97 +138,20 @@ export default function SalesManagement() {
 
                 <div>
                   <label className="block text-[14px] font-medium text-gray-900 mb-3">가격 설정</label>
-                  <div className="flex gap-3 mb-3">
-                    <button
-                      onClick={() => setPriceType('free')}
-                      className={`flex-1 py-2.5 rounded-lg border transition-colors ${priceType === 'free'
-                        ? 'bg-gray-900 text-white border-gray-900'
-                        : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'
-                        }`}
-                    >
-                      무료
-                    </button>
-                    <button
-                      onClick={() => setPriceType('paid')}
-                      className={`flex-1 py-2.5 rounded-lg border transition-colors ${priceType === 'paid'
-                        ? 'bg-gray-900 text-white border-gray-900'
-                        : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'
-                        }`}
-                    >
-                      유료
-                    </button>
-                  </div>
-                  {priceType === 'paid' && (
-                    <div className="relative">
-                      <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[14px] text-gray-500">₩</span>
-                      <input
-                        type="number"
-                        value={price}
-                        onChange={(e) => setPrice(e.target.value)}
-                        placeholder="0"
-                        className="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-lg text-[14px] focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent"
-                      />
-                    </div>
-                  )}
-                </div>
-
-                <div>
-                  <label className="block text-[14px] font-medium text-gray-900 mb-3">제공 파일 형식</label>
-                  <div className="grid grid-cols-4 gap-2">
-                    {['JPG', 'PNG', 'TIFF', 'PSD'].map((format) => (
-                      <button
-                        key={format}
-                        onClick={() => {
-                          if (fileFormats.includes(format)) {
-                            setFileFormats(fileFormats.filter(f => f !== format));
-                          } else {
-                            setFileFormats([...fileFormats, format]);
-                          }
-                        }}
-                        className={`py-2.5 rounded-lg border text-[13px] transition-colors ${fileFormats.includes(format)
-                          ? 'bg-gray-900 text-white border-gray-900'
-                          : 'bg-white text-gray-700 border-gray-300 hover:border-gray-400'
-                          }`}
-                      >
-                        {format}
-                      </button>
-                    ))}
+                  <p className="text-[12px] text-gray-500 mb-2">액자/프린트 판매이므로 최소 1,000원 이상 설정됩니다.</p>
+                  <div className="relative">
+                    <span className="absolute left-4 top-1/2 -translate-y-1/2 text-[14px] text-gray-500">₩</span>
+                    <input
+                      type="number"
+                      min={1000}
+                      value={price}
+                      onChange={(e) => setPrice(e.target.value)}
+                      placeholder="5000"
+                      className="w-full pl-8 pr-4 py-2.5 border border-gray-300 rounded-lg text-[14px] focus:outline-none focus:ring-2 focus:ring-cyan-400 focus:border-transparent"
+                    />
                   </div>
                 </div>
 
-                <div>
-                  <label className="block text-[14px] font-medium text-gray-900 mb-3">제공 해상도</label>
-                  <div className="space-y-2">
-                    {[
-                      { id: 'web', label: '웹용 (1920px)', desc: '웹 및 소셜미디어용' },
-                      { id: 'high', label: '고해상도 (4K)', desc: '프린트 및 전시용' },
-                      { id: 'original', label: '원본', desc: '원본 파일 그대로' },
-                    ].map((res) => (
-                      <button
-                        key={res.id}
-                        onClick={() => setResolution(res.id)}
-                        className={`w-full text-left p-3 rounded-lg border transition-colors ${resolution === res.id
-                          ? 'bg-cyan-50 border-cyan-500'
-                          : 'bg-white border-gray-300 hover:border-gray-400'
-                          }`}
-                      >
-                        <div className="flex items-center justify-between">
-                          <div>
-                            <div className="text-[13px] font-medium text-gray-900">{res.label}</div>
-                            <div className="text-[11px] text-gray-500">{res.desc}</div>
-                          </div>
-                          {resolution === res.id && (
-                            <div className="h-5 w-5 bg-cyan-500 rounded-full flex items-center justify-center">
-                              <svg className="h-3 w-3 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={3} d="M5 13l4 4L19 7" />
-                              </svg>
-                            </div>
-                          )}
-                        </div>
-                      </button>
-                    ))}
-                  </div>
-                </div>
               </div>
             </div>
 
@@ -349,19 +275,22 @@ export default function SalesManagement() {
                 </thead>
                 <tbody className="divide-y divide-gray-200">
                   {approvedWorks.map((work) => {
-                    const imgSrc = getFirstImage(work.image);
+                    const imgKey = getFirstImage(work.image);
+                    const imgSrc = imageUrls[imgKey] || imgKey;
                     const dlPrice = work.saleOptions?.download?.price;
                     return (
                       <tr key={work.id} className="hover:bg-gray-50 transition-colors">
                         {/* 작품 썸네일 + 제목 */}
                         <td className="px-6 py-4">
                           <div className="flex items-center gap-3">
-                            <img
-                              src={imgSrc}
-                              alt={work.title}
-                              className="w-12 h-12 rounded-lg object-cover flex-shrink-0 bg-gray-100"
-                              onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/48'; }}
-                            />
+                            <div className="w-12 h-12 rounded-lg overflow-hidden flex-shrink-0 bg-gray-100 flex items-center justify-center">
+                              <img
+                                src={imgSrc}
+                                alt={work.title}
+                                className="w-full h-full object-contain"
+                                onError={(e) => { (e.target as HTMLImageElement).src = 'https://via.placeholder.com/48'; }}
+                              />
+                            </div>
                             <div>
                               <div className="text-[14px] font-medium text-gray-900">{work.title}</div>
                               <div className="text-[12px] text-gray-500">{work.artist?.name}</div>
@@ -370,11 +299,11 @@ export default function SalesManagement() {
                         </td>
                         {/* 가격 */}
                         <td className="px-6 py-4">
-                          {dlPrice ? (
+                          {dlPrice && dlPrice > 0 ? (
                             <span className="text-[14px] font-medium text-gray-900">₩{dlPrice.toLocaleString()}</span>
                           ) : (
-                            <span className="inline-flex items-center px-2.5 py-1 bg-green-50 text-green-600 rounded-full text-[12px] font-medium">
-                              무료
+                            <span className="inline-flex items-center px-2.5 py-1 bg-amber-50 text-amber-700 rounded-full text-[12px] font-medium">
+                              가격 설정 필요
                             </span>
                           )}
                         </td>

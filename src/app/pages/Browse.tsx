@@ -1,12 +1,10 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Search, SlidersHorizontal, Eye, ThumbsUp, Bookmark, ChevronRight, ChevronLeft, DollarSign, TrendingUp, ShoppingBag, Heart, Star, Zap, Download, Image as ImageIcon, Gift, Frame, Sparkles, X, ChevronUp, ChevronDown, Users } from 'lucide-react';
+import { SlidersHorizontal, Eye, ThumbsUp, ChevronRight, ChevronLeft, ShoppingBag, Image as ImageIcon, X, ChevronUp, ChevronDown, Users } from 'lucide-react';
 import { useNavigate, useSearchParams } from 'react-router-dom';
-import { Input } from '../components/ui/input';
-import { Button } from '../components/ui/button';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { artists } from '../data';
 import { workStore } from '../store';
-import { groups, groupWorks, WorkOwner, getOwnerName, getOwnerAvatar, getOwnerTypeLabel } from '../groupData';
+import { groupWorks } from '../groupData';
 import { imageUrls } from '../imageUrls';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { WorkDetailModal } from '../components/WorkDetailModal';
@@ -22,14 +20,6 @@ const categories = [
   { id: 'divider', label: '', active: false, type: 'divider' },
   { id: 'individual', label: '개인 전시', active: false, type: 'owner' },
   { id: 'group', label: '그룹 전시', active: false, type: 'owner' },
-];
-
-// 마켓플레이스 전용 카테고리 - 프리미엄 실물 액자
-const marketplaceCategories = [
-  { id: 'all', label: '전체', icon: null },
-  { id: 'museum', label: '뮤지엄 아트 프린트', icon: ImageIcon },
-  { id: 'wood', label: '클래식 우드 액자', icon: Frame },
-  { id: 'acrylic', label: '모던 아크릴 액자', icon: Sparkles },
 ];
 
 const promotionBanners = [
@@ -56,30 +46,8 @@ const promotionBanners = [
   },
 ];
 
-const artworkCards = [
-  { id: 1, image: 'https://images.unsplash.com/photo-1765410845694-20ecb7847d5a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMGRpZ2l0YWwlMjBhcnQlMjBwYWludGluZ3xlbnwxfHx8fDE3NzIwOTQ3MTZ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', title: '따뜻한 여름날의 풍경', category: '일러스트', artistId: 0, likes: 1234, views: 8567 },
-  { id: 2, image: 'https://images.unsplash.com/photo-1762119594563-fc90dabb6161?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx3YXRlcmNvbG9yJTIwbGFuZHNjYXBlJTIwaWxsdXN0cmF0aW9ufGVufDF8fHx8MTc3MjE4NjAxMXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', title: '깊은 밤의 고요', category: '디지털아트', artistId: 1, likes: 2456, views: 12340 },
-  { id: 3, image: 'https://images.unsplash.com/photo-1731322292458-79e4d358d074?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb250ZW1wb3JhcnklMjBhcnQlMjBzY3VscHR1cmV8ZW58MXx8fHwxNzcyMTcxNzIyfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', title: '자연의 숨결', category: '수채화', artistId: 2, likes: 3421, views: 15678 },
-  { id: 4, image: 'https://images.unsplash.com/photo-1771166042140-facef5f08ba7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtaW5pbWFsaXN0JTIwZHJhd2luZyUyMHNrZXRjaHxlbnwxfHx8fDE3NzIxNzY3NzN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', title: '감성적인 순간', category: '사진', artistId: 0, likes: 876, views: 5432 },
-  { id: 5, image: 'https://images.unsplash.com/photo-1736175549681-c24c552da1e2?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjb2xvcmZ1bCUyMGlsbHVzdHJhdGlvbiUyMGRlc2lnbnxlbnwxfHx8fDE3NzIxODYwMTN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', title: '어두운 구조', category: '드로잉', artistId: 1, likes: 4567, views: 9876 },
-  { id: 6, image: 'https://images.unsplash.com/photo-1765408217738-39fac9c0b3d7?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBkaWdpdGFsJTIwYXJ0d29ya3xlbnwxfHx8fDE3NzIxODYwMTN8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', title: '빛나는 아침', category: '수채화', artistId: 2, likes: 1987, views: 11234 },
-  { id: 7, image: 'https://images.unsplash.com/photo-1584534570458-15eda6d0330c?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcnRpc3RpYyUyMHBob3RvZ3JhcGh5JTIwY3JlYXRpdmV8ZW58MXx8fHwxNzcyMTU2NTIyfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', title: '가을 오후', category: '일러스트', artistId: 3, likes: 5432, views: 14567 },
-  { id: 8, image: 'https://images.unsplash.com/photo-1579167728798-a1cf3d595960?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx2aW50YWdlJTIwd2F0ZXJjb2xvciUyMHBhaW50aW5nfGVufDF8fHx8MTc3MjE4NjAxM3ww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', title: '차가운 하늘', category: '사진', artistId: 0, likes: 678, views: 4321 },
-  { id: 9, image: 'https://images.unsplash.com/photo-1743965127369-6e28d86e2460?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxnZW9tZXRyaWMlMjBhYnN0cmFjdCUyMGFydHxlbnwxfHx8fDE3NzIxMjgxMDh8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', title: '고요한 대지', category: '디지털아트', artistId: 1, likes: 3210, views: 13456 },
-  { id: 10, image: 'https://images.unsplash.com/photo-1688589935455-7793f9f52a2d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxuYXR1cmUlMjBsYW5kc2NhcGUlMjBwYWludGluZ3xlbnwxfHx8fDE3NzIxODYwMTR8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', title: '달콤한 추억', category: '일러스트', artistId: 2, likes: 2789, views: 10234 },
-  { id: 11, image: 'https://images.unsplash.com/photo-1622308855618-4e3d149c578a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHx1cmJhbiUyMHN0cmVldCUyMGFydHxlbnwxfHx8fDE3NzIxODYwMTR8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', title: '밤의 도시', category: '사진', artistId: 3, likes: 4123, views: 16789 },
-  { id: 12, image: 'https://images.unsplash.com/photo-1763615445790-64c644be359b?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxwYXN0ZWwlMjBjb2xvciUyMGlsbHVzdHJhdGlvbnxlbnwxfHx8fDE3NzIxODYwMTV8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', title: '황금빛 순간', category: '수채화', artistId: 0, likes: 1543, views: 7890 },
-  { id: 13, image: 'https://images.unsplash.com/photo-1665076034878-1bf3eb03a853?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxmaW5lJTIwYXJ0JTIwcG9ydHJhaXR8ZW58MXx8fHwxNzcyMTgxNDg4fDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', title: '숲속 풍경', category: '드로잉', artistId: 1, likes: 3876, views: 12987 },
-  { id: 14, image: 'https://images.unsplash.com/photo-1761847078579-c4c3a2ed495f?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxzdXJyZWFsJTIwZGlnaXRhbCUyMGNvbXBvc2l0aW9ufGVufDF8fHx8MTc3MjE4NjAxNXww&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', title: '보라빛 꿈', category: '디지털아트', artistId: 2, likes: 2345, views: 9543 },
-  { id: 15, image: 'https://images.unsplash.com/photo-1633081528845-1c0b71d8a010?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxib3RhbmljYWwlMjBpbGx1c3RyYXRpb24lMjBhcnR8ZW58MXx8fHwxNzcyMDc4NjUwfDA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', title: '따뜻한 햇살', category: '일러스트', artistId: 3, likes: 5678, views: 18765 },
-  { id: 16, image: 'https://images.unsplash.com/photo-1765410845694-20ecb7847d5a?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhYnN0cmFjdCUyMGRpZ2l0YWwlMjBhcnQlMjBwYWludGluZ3xlbnwxfHx8fDE3NzIwOTQ3MTZ8MA&ixlib=rb-4.1.0&q=80&w=1080&utm_source=figma&utm_medium=referral', title: '모던 아트', category: '그래픽', artistId: 0, likes: 1234, views: 6543 },
-];
-
 // 작가 ID 기반으로 카테고리 추론하는 헬퍼 함수
 function getCategoryByArtist(artistId: string): 'art' | 'fashion' | 'craft' | 'product' {
-  // 개인 작가
-  // 회화/미술 작가: 1~3, 7, 11~25
-  const artArtists = ['1', '2', '3', '7', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24', '25'];
   // 공예 작가: 4, 6, 9 (섬유, 자수, 도자)
   const craftArtists = ['4', '6', '9'];
   // 제품 디자인 작가: 5, 8 (가구, 제품)
@@ -116,11 +84,8 @@ export default function Browse() {
   }, []);
 
   const [activeCategory, setActiveCategory] = useState('all');
-  const [hoveredCard, setHoveredCard] = useState<number | null>(null);
   const [currentBanner, setCurrentBanner] = useState(0);
   const [selectedWork, setSelectedWork] = useState<string | null>(null);
-  const [likedWorks, setLikedWorks] = useState<Set<number>>(new Set());
-
   // 팔로잉 중인 작가 ID 관리
   const [followingArtists, setFollowingArtists] = useState<Set<string>>(new Set());
 
@@ -217,18 +182,6 @@ export default function Browse() {
     setCurrentBanner((prev) => (prev - 1 + promotionBanners.length) % promotionBanners.length);
   };
 
-  const toggleLike = (workId: number, e: React.MouseEvent) => {
-    e.stopPropagation();
-    setLikedWorks(prev => {
-      const newSet = new Set(prev);
-      if (newSet.has(workId)) {
-        newSet.delete(workId);
-      } else {
-        newSet.add(workId);
-      }
-      return newSet;
-    });
-  };
 
   // 작가 필터링된 작품 목록
   const filteredWorks = useMemo(() => {
@@ -255,7 +208,7 @@ export default function Browse() {
         // 카테고리 필터 (art, fashion, craft, product)
         filtered = filtered.filter(work => {
           // category가 없으면 작가 ID 기반으로 카테고리 추론
-          const workCategory = work.category || getCategoryByArtist(work.artist.id);
+          const workCategory = (work as any).category || getCategoryByArtist(work.artist.id);
           return workCategory === activeCategory;
         });
       }
@@ -437,20 +390,16 @@ export default function Browse() {
       <div className="mx-auto max-w-[1440px] px-6 py-8">
         <div className="grid grid-cols-3 gap-8">
           {filteredWorks.flatMap((work, idx) => {
+            const w = work as any;
             const artist = work.artist;
             const likes = work.likes;
             const views = 1234 + idx * 234; // 조회수 임시 데이터
-            const isHovered = hoveredCard === parseInt(work.id);
 
             // 마켓플레이스용 추가 정보 - idx 기반으로 고정
             const basePrice = 10000 + idx * 5000;
             const hasDiscount = idx % 3 === 0;
             const discountPercent = hasDiscount ? [10, 20, 30][idx % 3] : 0;
             const finalPrice = hasDiscount ? Math.floor(basePrice * (1 - discountPercent / 100)) : basePrice;
-            const isBestseller = idx % 5 === 0;
-            const limitedStock = idx % 4 === 0 ? (idx % 5) + 1 : null; // 고정된 값
-            const rating = (3.0 + (idx % 20) * 0.1).toFixed(1); // 3.0 ~ 5.0 고정
-            const reviewCount = 10 + idx * 15; // 고정된 리뷰 수
 
             // 프리미엄 액자 유형
             const frameTypes: ('museum' | 'wood' | 'acrylic')[] = [];
@@ -522,8 +471,6 @@ export default function Browse() {
               <div
                 key={work.id}
                 className="group transition-all duration-300"
-                onMouseEnter={() => setHoveredCard(parseInt(work.id))}
-                onMouseLeave={() => setHoveredCard(null)}
               >
                 {/* 이미지 영역 */}
                 <div
@@ -622,15 +569,13 @@ export default function Browse() {
                       </button>
                     </div>
                   ) : (
-                    /* 일반 모드: 갤러리 전시 스타일 */
+                    /* 일반 모드: 정사각 영역 + 원화 비율 유지(letterbox/pillarbox) */
                     <div className="relative w-full h-full flex items-center justify-center bg-white p-6">
-                      {/* 흰색 매트 배경 */}
-                      <div className="relative w-full h-full shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-300 group-hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)]">
-                        {/* 작품 이미지 */}
+                      <div className="relative w-full h-full flex items-center justify-center bg-white shadow-[0_4px_20px_rgba(0,0,0,0.08)] transition-all duration-300 group-hover:shadow-[0_8px_30px_rgba(0,0,0,0.12)] overflow-hidden rounded-sm">
                         <ImageWithFallback
                           src={imageUrls[getFirstImage(work.image)] || getFirstImage(work.image)}
                           alt={work.title}
-                          className="h-full w-full object-cover transition-transform duration-500 group-hover:scale-[1.02]"
+                          className="w-full h-full min-w-0 min-h-0 object-contain object-center transition-transform duration-500 group-hover:scale-[1.02]"
                         />
 
                         {/* 이미지 개수 배지 - 2장 이상일 때만 표시 */}
@@ -737,17 +682,17 @@ export default function Browse() {
                         <div
                           className="flex items-center gap-1.5"
                           onMouseEnter={() => {
-                            if (work.coOwners && work.coOwners.length > 0) {
+                            if (w.coOwners && w.coOwners.length > 0) {
                               setHoveredArtist(work.id);
                             }
                           }}
                           onMouseLeave={() => setHoveredArtist(null)}
                         >
                           {/* 그룹명이 있으면 그룹명 표시, 없으면 작가 이름 표시 */}
-                          {work.groupName ? (
+                          {w.groupName ? (
                             <>
                               <span className="text-[13px] text-[#696969] hover:text-[#191919] transition-colors font-medium">
-                                {work.groupName}
+                                {w.groupName}
                               </span>
                               <Users className="h-3 w-3 text-gray-500" />
                             </>
@@ -777,16 +722,16 @@ export default function Browse() {
                         </div>
 
                         {/* 호버 시 그룹 멤버/공동 작업자 목록 */}
-                        {work.coOwners && work.coOwners.length > 0 && hoveredArtist === work.id && (
+                        {w.coOwners && w.coOwners.length > 0 && hoveredArtist === work.id && (
                           <div
                             className="absolute left-0 top-full mt-1 z-[100] w-72 bg-white rounded-lg shadow-xl border border-gray-200 p-3"
                             onMouseEnter={() => setHoveredArtist(work.id)}
                             onMouseLeave={() => setHoveredArtist(null)}
                           >
-                            <div className="text-[11px] font-semibold text-gray-900 mb-3">{work.groupName ? '그룹 멤버' : '그룹 작업자'}</div>
+                            <div className="text-[11px] font-semibold text-gray-900 mb-3">{w.groupName ? '그룹 멤버' : '그룹 작업자'}</div>
                             <div className="space-y-2">
                               {/* 그룹이 아닐 때만 메인 작가 표시 */}
-                              {!work.groupName && (
+                              {!w.groupName && (
                                 <div className="flex items-center justify-between gap-2 p-1.5 hover:bg-gray-50 rounded transition-colors">
                                   <div
                                     className="flex items-center gap-2 flex-1 cursor-pointer"
@@ -818,7 +763,7 @@ export default function Browse() {
                                 </div>
                               )}
                               {/* 그룹 소유자들 */}
-                              {work.coOwners.map(coOwner => (
+                              {w.coOwners.map((coOwner: any) => (
                                 <div
                                   key={coOwner.id}
                                   className="flex items-center justify-between gap-2 p-1.5 hover:bg-gray-50 rounded transition-colors"
@@ -859,18 +804,18 @@ export default function Browse() {
 
 
                       {/* 그룹 소유자 아바타 표시 (그룹명이 없을 때만) */}
-                      {!work.groupName && work.coOwners && work.coOwners.length > 0 && (
+                      {!w.groupName && w.coOwners && w.coOwners.length > 0 && (
                         <div className="flex items-center -space-x-2">
-                          {work.coOwners.slice(0, 3).map((coOwner, index) => (
+                          {w.coOwners.slice(0, 3).map((coOwner: any) => (
                             <Avatar key={coOwner.id} className="h-6 w-6 border-2 border-white">
                               <AvatarImage src={coOwner.avatar} alt={coOwner.name} />
                               <AvatarFallback className="text-[10px]">{coOwner.name[0]}</AvatarFallback>
                             </Avatar>
                           ))}
-                          {work.coOwners.length > 3 && (
+                          {w.coOwners.length > 3 && (
                             <div className="h-6 w-6 rounded-full bg-gray-200 border-2 border-white flex items-center justify-center">
                               <span className="text-[9px] font-medium text-gray-600">
-                                +{work.coOwners.length - 3}
+                                +{w.coOwners.length - 3}
                               </span>
                             </div>
                           )}
@@ -930,9 +875,9 @@ export default function Browse() {
                       <div className="col-span-9">
                         <div className="grid grid-cols-4 gap-6">
                           {works
-                            .filter(w => w.artist.id === expandedArtist.id)
+                            .filter(ow => ow.artist.id === expandedArtist.id)
                             .slice(0, 4)
-                            .map((otherWork, otherIdx) => {
+                            .map((otherWork) => {
                               return (
                                 <div
                                   key={otherWork.id}
@@ -943,11 +888,11 @@ export default function Browse() {
                                   }}
                                 >
                                   {/* 작품 이미지 */}
-                                  <div className="relative aspect-square bg-white mb-4 overflow-hidden">
+                                  <div className="relative aspect-square bg-white mb-4 overflow-hidden flex items-center justify-center">
                                     <ImageWithFallback
                                       src={imageUrls[getFirstImage(otherWork.image)] || getFirstImage(otherWork.image)}
                                       alt={otherWork.title}
-                                      className="w-full h-full object-cover transition-transform group-hover/other:scale-105"
+                                      className="w-full h-full min-w-0 min-h-0 object-contain object-center transition-transform group-hover/other:scale-105"
                                     />
                                   </div>
 

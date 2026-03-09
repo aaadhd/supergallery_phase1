@@ -86,24 +86,6 @@ export const workStore = {
     listeners.forEach(listener => listener());
   },
 
-  // 좋아요 증가
-  incrementLikes: (id: string) => {
-    const work = currentWorks.find(w => w.id === id);
-    if (work) {
-      const newLikes = (work.likes || 0) + 1;
-      workStore.updateWork(id, { likes: newLikes });
-    }
-  },
-
-  // 저장 증가
-  incrementSaves: (id: string) => {
-    const work = currentWorks.find(w => w.id === id);
-    if (work) {
-      const newSaves = (work.saves || 0) + 1;
-      workStore.updateWork(id, { saves: newSaves });
-    }
-  },
-
   // 판매 심사 요청
   requestSale: (id: string, requestData: {
     description: string;
@@ -131,7 +113,8 @@ export const workStore = {
   rejectSale: (id: string) => {
     workStore.updateWork(id, {
       saleStatus: 'none',
-      saleRequestDate: undefined
+      saleRequestDate: undefined,
+      saleRequest: undefined,
     });
   },
 

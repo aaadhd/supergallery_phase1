@@ -197,11 +197,13 @@ export default function RoomEdit() {
                               }`}
                             onClick={() => toggleWork(work.id)}
                           >
-                            <ImageWithFallback
-                              src={imageUrls[getFirstImage(work.image)] || getFirstImage(work.image)}
-                              alt={work.title}
-                              className="aspect-square object-cover"
-                            />
+                            <div className="aspect-square overflow-hidden bg-white flex items-center justify-center">
+                              <ImageWithFallback
+                                src={imageUrls[getFirstImage(work.image)] || getFirstImage(work.image)}
+                                alt={work.title}
+                                className="w-full h-full min-w-0 min-h-0 object-contain object-center"
+                              />
+                            </div>
                             <div className="absolute right-2 top-2">
                               <Checkbox
                                 checked={selectedWorks.includes(work.id)}
@@ -232,11 +234,11 @@ export default function RoomEdit() {
                     const work = allAvailableWorks.find(w => w.id === workId);
                     if (!work) return null;
                     return (
-                      <div key={workId} className="relative group">
+                      <div key={workId} className="relative group aspect-square overflow-hidden rounded-lg bg-white flex items-center justify-center">
                         <ImageWithFallback
                           src={imageUrls[getFirstImage(work.image)] || getFirstImage(work.image)}
                           alt={work.title}
-                          className="aspect-square rounded-lg object-cover"
+                          className="w-full h-full min-w-0 min-h-0 object-contain object-center"
                         />
                         <Button
                           variant="destructive"
@@ -290,12 +292,11 @@ export default function RoomEdit() {
                   if (!work) return null;
                   return (
                     <div key={workId} className="space-y-2">
-                      <div className={`overflow-hidden rounded-lg ${layout === 'wall' ? 'aspect-[3/4]' : 'aspect-square'
-                        }`}>
+                      <div className="overflow-hidden rounded-lg bg-white flex items-center justify-center aspect-square">
                         <ImageWithFallback
                           src={imageUrls[getFirstImage(work.image)] || getFirstImage(work.image)}
                           alt={work.title}
-                          className="h-full w-full object-cover"
+                          className="w-full h-full min-w-0 min-h-0 object-contain object-center"
                         />
                       </div>
                       <p className="font-medium">{work.title}</p>
