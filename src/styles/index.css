@@ -1,3 +1,118 @@
 @import './fonts.css';
 @import './tailwind.css';
 @import './theme.css';
+
+/* === 50대 UX 최적화 === */
+
+/* 기본 폰트 크기 증가 */
+html {
+  font-size: 17px;
+}
+
+/* 모든 버튼 최소 터치 타겟 44px */
+button, [role="button"], a.btn, .btn {
+  min-height: 44px;
+}
+
+/* 입력 필드도 충분한 크기 */
+input, textarea, select {
+  font-size: 16px !important; /* iOS zoom 방지 */
+}
+
+/* 카드 간격 넉넉하게 + 경계 명확하게 */
+.card, [data-card] {
+  margin-bottom: 1rem;
+  border-radius: 12px;
+  border: 1px solid #E0E0E0;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
+
+/* 호버 효과 — 시니어도 인식 가능하도록 항상 보이는 경계 + 호버 시 강조 */
+.card:hover, [data-card]:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
+}
+
+/* 리스트 아이템 간격 */
+.list-item, [data-list-item] {
+  padding: 16px;
+  border-radius: 12px;
+}
+
+/* 포커스 상태 명확하게 */
+:focus-visible {
+  outline: 3px solid #0057FF;
+  outline-offset: 2px;
+}
+
+/* 부드러운 전환 — 모든 인터랙티브 요소 */
+button, [role="button"], a, .card, [data-card] {
+  transition: box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
+}
+
+/* 스크롤바 시인성 개선 (시니어 UX) */
+::-webkit-scrollbar {
+  width: 10px;
+}
+::-webkit-scrollbar-track {
+  background: #F0F0F0;
+}
+::-webkit-scrollbar-thumb {
+  background: #BFBFBF;
+  border-radius: 5px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #999;
+}
+
+@keyframes fade-in-up {
+  0% {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slow-pan {
+  0% { transform: scale(1.02) translate(0, 0); }
+  50% { transform: scale(1.06) translate(-1%, -1%); }
+  100% { transform: scale(1.03) translate(1%, 1%); }
+}
+
+@keyframes slow-pan-reverse {
+  0% { transform: scale(1.03) translate(1%, -1%); }
+  50% { transform: scale(1.02) translate(-1%, 0%); }
+  100% { transform: scale(1.06) translate(0%, 1%); }
+}
+
+@keyframes slow-pan-horizontal {
+  0% { transform: scale(1.05) translateX(-2%); }
+  100% { transform: scale(1.05) translateX(2%); }
+}
+
+@keyframes slow-pan-vertical {
+  0% { transform: scale(1.05) translateY(-2%); }
+  100% { transform: scale(1.05) translateY(2%); }
+}
+
+@keyframes slow-zoom {
+  0% { transform: scale(1.01) translate(0,0); }
+  100% { transform: scale(1.08) translate(0,0); }
+}
+
+@keyframes slow-drift {
+  0% { transform: scale(1.04) translate(-1%, -1%); }
+  25% { transform: scale(1.06) translate(1%, -1%); }
+  50% { transform: scale(1.04) translate(1%, 1%); }
+  75% { transform: scale(1.06) translate(-1%, 1%); }
+  100% { transform: scale(1.04) translate(-1%, -1%); }
+}
+
+.animate-slow-pan { animation: slow-pan 20s ease-in-out infinite alternate; }
+.animate-slow-pan-reverse { animation: slow-pan-reverse 25s ease-in-out infinite alternate; }
+.animate-slow-pan-horizontal { animation: slow-pan-horizontal 18s ease-in-out infinite alternate; }
+.animate-slow-pan-vertical { animation: slow-pan-vertical 22s ease-in-out infinite alternate; }
+.animate-slow-zoom { animation: slow-zoom 15s ease-in-out infinite alternate; }
+.animate-slow-drift { animation: slow-drift 30s ease-in-out infinite; }

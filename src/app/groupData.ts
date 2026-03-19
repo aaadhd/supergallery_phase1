@@ -198,10 +198,8 @@ export const groupWorks = [
     likes: 1245,
     saves: 567,
     comments: 89,
-    isForSale: true,
     description: '전통 한국화를 디지털 기법으로 재해석한 협업 프로젝트',
     tags: ['디지털아트', '한국화', '협업', '스튜디오'],
-    saleStatus: 'approved' as const,
     editorsPick: true,
     saleOptions: {
       download: { price: 85000 },
@@ -230,10 +228,8 @@ export const groupWorks = [
     likes: 2134,
     saves: 892,
     comments: 134,
-    isForSale: true,
     description: '서울의 다양한 야경을 작가들의 시선으로 담은 공동 작업',
     tags: ['서울', '야경', '도시', '공동작업'],
-    saleStatus: 'approved' as const,
     editorsPick: true,
     saleOptions: {
       download: { price: 95000 },
@@ -259,10 +255,8 @@ export const groupWorks = [
     likes: 1876,
     saves: 734,
     comments: 102,
-    isForSale: true,
     description: '미래적 감성과 아날로그 정서의 조화',
     tags: ['사이버펑크', '미래', '감성', '에이전시'],
-    saleStatus: 'unlocked' as const,
     saleOptions: {
       download: { price: 78000 },
       print: { sizes: [{ size: 'A3', price: 158000 }, { size: 'A2', price: 238000 }] }
@@ -291,10 +285,8 @@ export const groupWorks = [
     likes: 3421,
     saves: 1432,
     comments: 198,
-    isForSale: true,
     description: '봄의 따뜻한 순간들을 담은 감성 일러스트 시리즈',
     tags: ['봄', '일러스트', '감성', '팀작업'],
-    saleStatus: 'approved' as const,
     editorsPick: true,
     saleOptions: {
       download: { price: 68000 },
@@ -327,10 +319,8 @@ export const groupWorks = [
     likes: 2987,
     saves: 1123,
     comments: 167,
-    isForSale: true,
     description: '전통 매듭을 네온 효과로 재해석한 실험적 프로젝트',
     tags: ['전통', '매듭', '현대화', '공예'],
-    saleStatus: 'approved' as const,
     saleOptions: {
       download: { price: 92000 },
       print: { sizes: [{ size: 'A3', price: 172000 }, { size: 'A2', price: 252000 }] }
@@ -358,10 +348,8 @@ export const groupWorks = [
     likes: 1654,
     saves: 678,
     comments: 92,
-    isForSale: true,
     description: '한옥 건축의 아름다움을 빈티지 감성으로',
     tags: ['한옥', '건축', '빈티지', '전통'],
-    saleStatus: 'approved' as const,
     saleOptions: {
       download: { price: 75000 },
       print: { sizes: [{ size: 'A3', price: 155000 }, { size: 'A2', price: 235000 }] }
@@ -387,10 +375,8 @@ export const groupWorks = [
     likes: 2543,
     saves: 987,
     comments: 156,
-    isForSale: true,
     description: '독창적인 캐릭터 개발 및 스토리텔링',
     tags: ['캐릭터디자인', 'IP', '일러스트', '스튜디오'],
-    saleStatus: 'approved' as const,
     editorsPick: true,
     saleOptions: {
       download: { price: 98000 },
@@ -419,10 +405,8 @@ export const groupWorks = [
     likes: 1987,
     saves: 745,
     comments: 118,
-    isForSale: true,
     description: 'F&B 브랜드를 위한 미니멀 푸드 포토그래피',
     tags: ['푸드포토', '미니멀', '브랜딩', '팀'],
-    saleStatus: 'approved' as const,
     saleOptions: {
       download: { price: 72000 },
       print: { sizes: [{ size: 'A3', price: 152000 }, { size: 'A2', price: 232000 }] }
@@ -450,10 +434,8 @@ export const groupWorks = [
     likes: 3156,
     saves: 1234,
     comments: 187,
-    isForSale: true,
     description: '프리미엄 제품 디자인 3D 렌더링',
     tags: ['제품디자인', '3D렌더링', '모던', '스튜디오'],
-    saleStatus: 'approved' as const,
     editorsPick: true,
     saleOptions: {
       download: { price: 105000 },
@@ -481,10 +463,8 @@ export const groupWorks = [
     likes: 2678,
     saves: 1089,
     comments: 143,
-    isForSale: true,
     description: '한글의 아름다움을 현대적으로 해석',
     tags: ['타이포그래피', '한글', '그래픽디자인', '컬렉티브'],
-    saleStatus: 'approved' as const,
     saleOptions: {
       download: { price: 82000 },
       print: { sizes: [{ size: 'A3', price: 162000 }, { size: 'A2', price: 242000 }] }
@@ -513,10 +493,8 @@ export const groupWorks = [
     likes: 4123,
     saves: 1687,
     comments: 224,
-    isForSale: true,
     description: '2026 S/S 패션 화보 시리즈',
     tags: ['패션', '에디토리얼', '포트레이트', '에이전시'],
-    saleStatus: 'approved' as const,
     editorsPick: true,
     saleOptions: {
       download: { price: 115000 },
@@ -550,10 +528,8 @@ export const groupWorks = [
     likes: 3845,
     saves: 1567,
     comments: 203,
-    isForSale: true,
     description: '제주 자연을 담은 사계절 풍경 사진',
     tags: ['자연사진', '풍경', '제주', '컬렉티브'],
-    saleStatus: 'approved' as const,
     editorsPick: true,
     saleOptions: {
       download: { price: 88000 },
@@ -583,10 +559,8 @@ export const groupWorks = [
     likes: 2765,
     saves: 1134,
     comments: 167,
-    isForSale: true,
     description: '미니멀 인테리어 공간 비주얼라이제이션',
     tags: ['인테리어', '공간디자인', '3D', '스튜디오'],
-    saleStatus: 'approved' as const,
     saleOptions: {
       download: { price: 92000 },
       print: { sizes: [{ size: 'A3', price: 172000 }, { size: 'A2', price: 252000 }] }

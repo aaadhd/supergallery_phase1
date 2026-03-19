@@ -8,22 +8,13 @@ export interface Draft {
   title: string;
   contents: Array<{
     id: string;
-    type: 'image' | 'text';
+    type: 'image';
     url?: string;
-    text?: string;
     title?: string;
     artist?: { id: string; name: string; avatar: string }
   }>;
   tags: string[];
   categories: string[];
-  imageCustomizations: Record<string, {
-    frame: string;
-    effect: string | null;
-    intensity: number;
-    speed: number;
-    lightingAngle: number;
-    lightingIntensity: number;
-  }>;
   savedAt: string;
 }
 
@@ -84,38 +75,6 @@ export const workStore = {
     currentWorks = currentWorks.filter(w => w.id !== id);
     saveWorksToStorage(currentWorks);
     listeners.forEach(listener => listener());
-  },
-
-  // 판매 심사 요청
-  requestSale: (id: string, requestData: {
-    description: string;
-    interview: string;
-    price: string;
-    editionSize: string;
-  }) => {
-    workStore.updateWork(id, {
-      saleStatus: 'requested',
-      saleRequestDate: new Date().toISOString(),
-      saleRequest: requestData // 요청 데이터 저장
-    });
-  },
-
-  // 판매 심사 승인
-  approveSale: (id: string) => {
-    workStore.updateWork(id, {
-      saleStatus: 'approved',
-      isForSale: true,
-      saleApprovalDate: new Date().toISOString()
-    });
-  },
-
-  // 판매 심사 거절
-  rejectSale: (id: string) => {
-    workStore.updateWork(id, {
-      saleStatus: 'none',
-      saleRequestDate: undefined,
-      saleRequest: undefined,
-    });
   },
 
   // 변경사항 구독
@@ -231,8 +190,6 @@ export interface UserProfile {
   headline: string;
   bio: string;
   location: string;
-  fields: string[];
-  bannerImg: string | null;
 }
 
 const defaultProfile: UserProfile = {
@@ -241,8 +198,6 @@ const defaultProfile: UserProfile = {
   headline: '',
   bio: '',
   location: '',
-  fields: ['파인아트'],
-  bannerImg: null,
 };
 
 const loadProfileFromStorage = (): UserProfile => {
@@ -332,59 +287,4 @@ export const useInteractionStore = () => {
   const [, forceUpdate] = useState({});
   useEffect(() => userInteractionStore.subscribe(() => forceUpdate({})), []);
   return userInteractionStore;
-};
-
-// ===== 전시룸 데이터 관리 =====
-
-import { Room } from './data';
-
-const loadRoomsFromStorage = (): Room[] => {
-  if (typeof window === 'undefined') return [];
-  const stored = localStorage.getItem('artier_rooms');
-  if (stored) {
-    try { return JSON.parse(stored); } catch { }
-  }
-  return [];
-};
-
-const saveRoomsToStorage = (rooms: Room[]) => {
-  if (typeof window !== 'undefined') {
-    localStorage.setItem('artier_rooms', JSON.stringify(rooms));
-  }
-};
-
-let currentUserRooms: Room[] = loadRoomsFromStorage();
-const roomListeners: (() => void)[] = [];
-
-export const roomStore = {
-  getRooms: () => currentUserRooms,
-  getRoom: (id: string) => currentUserRooms.find(r => r.id === id),
-  addRoom: (room: Room) => {
-    currentUserRooms = [room, ...currentUserRooms];
-    saveRoomsToStorage(currentUserRooms);
-    roomListeners.forEach(l => l());
-  },
-  updateRoom: (id: string, updates: Partial<Room>) => {
-    currentUserRooms = currentUserRooms.map(r => r.id === id ? { ...r, ...updates } : r);
-    saveRoomsToStorage(currentUserRooms);
-    roomListeners.forEach(l => l());
-  },
-  deleteRoom: (id: string) => {
-    currentUserRooms = currentUserRooms.filter(r => r.id !== id);
-    saveRoomsToStorage(currentUserRooms);
-    roomListeners.forEach(l => l());
-  },
-  subscribe: (listener: () => void) => {
-    roomListeners.push(listener);
-    return () => {
-      const idx = roomListeners.indexOf(listener);
-      if (idx > -1) roomListeners.splice(idx, 1);
-    };
-  },
-};
-
-export const useRoomStore = () => {
-  const [, forceUpdate] = useState({});
-  useEffect(() => roomStore.subscribe(() => forceUpdate({})), []);
-  return roomStore;
 };

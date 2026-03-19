@@ -18,64 +18,14 @@ export interface Work {
   likes: number;
   saves: number;
   comments: number;
-  isForSale: boolean;
   description?: string;
   tags?: string[];
   category?: 'art' | 'fashion' | 'craft' | 'product'; // 카테고리 필터링용
   coOwners?: Artist[]; // 공동 소유자 (여러 명의 아티스트)
-  groupName?: string; // 공동 작업 시 그룹명 (예: "한국전통화컬렉티브", "컬러스케치팀")
-  saleOptions?: {
-    download?: { price: number };
-    print?: { sizes: { size: string; price: number }[] };
-    license?: { available: boolean };
-  };
-  // 판매 권한 시스템
-  saleStatus?: 'none' | 'requested' | 'approved';
-  saleRequestDate?: string; // 심사 요청 날짜
-  saleApprovalDate?: string; // 승인 날짜
-  saleRequest?: { // 판매 심사 요청 데이터
-    description: string;
-    interview: string;
-    price: string;
-    editionSize: string;
-  };
+  groupName?: string; // 공동 작업 시 그룹명 (예: "00문화센터 수채화반", "00동호회")
   owner?: any; // 작품 소유자 (개인 또는 그룹) - groupData.ts의 WorkOwner 타입
-  /** SGF 드로잉 툴에서 가져온 경우 작업 과정 타임랩스 URL */
-  timelapseUrl?: string;
-}
-
-export interface Room {
-  id: string;
-  title: string;
-  cover: string;
-  description: string;
-  artistId: string;
-  artist: Artist;
-  works: Work[];
-  views: number;
-  visitors: number;
-}
-
-export interface Class {
-  id: string;
-  title: string;
-  cover: string;
-  instructor: Artist;
-  price: number;
-  level: string;
-  students: number;
-  rating: number;
-  description?: string;
-  curriculum?: string[];
-}
-
-export interface Comment {
-  id: string;
-  userId: string;
-  user: Artist;
-  content: string;
-  createdAt: string;
-  likes: number;
+  taggedEmails?: string[]; // 강사가 태그한 수강생 이메일 목록
+  isInstructorUpload?: boolean; // 강사가 수강생 대신 올린 작품 여부
 }
 
 // 아티스트 더미 데이터
@@ -119,20 +69,11 @@ export const works: Work[] = [
     likes: 245,
     saves: 89,
     comments: 12,
-    isForSale: true,
     category: 'art',
     coOwners: [artists[1], artists[2]], // 공동 작업 예제
     groupName: '한국전통화컬렉티브', // 그룹명
     description: '오후의 햇살이 창을 통해 들어오는 순간을 포착한 작품입니다. 빛의 변화를 3장의 이미지로 담았습니다.',
     tags: ['빛', '인테리어', '디지털회화', '시리즈'],
-    saleOptions: {
-      download: { price: 35000 },
-      print: { sizes: [{ size: 'A3', price: 85000 }, { size: 'A2', price: 125000 }] },
-      license: { available: true }
-    },
-    saleStatus: 'approved',
-    editorsPick: true,
-    saleApprovalDate: '2026-02-15'
   },
   {
     id: '6',
@@ -143,13 +84,11 @@ export const works: Work[] = [
     likes: 334,
     saves: 142,
     comments: 19,
-    isForSale: false,
     category: 'art',
     coOwners: [artists[3], artists[4]],
     groupName: '컬러스케치팀',
     description: '봄의 따뜻함을 색으로 표현한 작품.',
     tags: ['봄', '따뜻함', '파스텔'],
-    saleStatus: 'none'
   },
   {
     id: '13',
@@ -160,17 +99,8 @@ export const works: Work[] = [
     likes: 78,
     saves: 34,
     comments: 5,
-    isForSale: false,
     description: '고요한 아침, 도시가 깨어나는 순간을 담았습니다.',
     tags: ['도시', '아침', '빛'],
-    saleStatus: 'requested',
-    saleRequestDate: '2026-03-05T09:30:00',
-    saleRequest: {
-      description: '고요한 아침, 도시가 깨어나는 순간을 담았습니다. 첫 햇살이 빌딩 사이로 스며들며 만들어내는 드라마틱한 빛의 변화를 표현했습니다.',
-      interview: '바쁜 일상 속에서 우리가 놓치는 아름다운 순간들이 있습니다. 이른 아침 도시의 고요함, 첫 햇살이 만들어내는 황금빛 순간을 영원히 간직하고 싶었습니다.',
-      price: '320000',
-      editionSize: '50'
-    }
   },
   {
     id: '14',
@@ -181,15 +111,8 @@ export const works: Work[] = [
     likes: 156,
     saves: 112,
     comments: 23,
-    isForSale: true,
     description: '달빛 아래 펼쳐진 신비로운 정원의 모습.',
     tags: ['달빛', '정원', '밤'],
-    saleStatus: 'unlocked',
-    saleApprovalDate: '2026-03-03',
-    saleOptions: {
-      download: { price: 38000 },
-      print: { sizes: [{ size: 'A3', price: 88000 }, { size: 'A2', price: 128000 }] }
-    }
   },
   {
     id: '15',
@@ -200,17 +123,8 @@ export const works: Work[] = [
     likes: 412,
     saves: 189,
     comments: 34,
-    isForSale: true,
     description: '여름이 저물어가는 순간의 감성을 담았습니다.',
     tags: ['여름', '감성', '노스탤지어'],
-    saleStatus: 'approved',
-    editorsPick: true,
-    saleApprovalDate: '2026-02-28',
-    saleOptions: {
-      download: { price: 42000 },
-      print: { sizes: [{ size: 'A3', price: 95000 }, { size: 'A2', price: 145000 }] },
-      license: { available: true }
-    }
   },
   {
     id: '16',
@@ -221,10 +135,8 @@ export const works: Work[] = [
     likes: 67,
     saves: 28,
     comments: 7,
-    isForSale: false,
     description: '구름 사이로 비치는 하늘의 모습.',
     tags: ['하늘', '구름', '자연'],
-    saleStatus: 'none'
   },
   {
     id: '17',
@@ -235,17 +147,8 @@ export const works: Work[] = [
     likes: 92,
     saves: 41,
     comments: 11,
-    isForSale: false,
     description: '눈 내린 겨울 산책로의 고요한 풍경.',
     tags: ['겨울', '눈', '산책'],
-    saleStatus: 'requested',
-    saleRequestDate: '2026-03-06T14:20:00',
-    saleRequest: {
-      description: '눈이 내린 후의 고요한 산책로를 표현한 작품입니다. 하얀 눈으로 덮인 길과 나무들의 순백의 아름다움을 담았습니다.',
-      interview: '겨울의 고요함과 순수함을 좋아합니다. 눈이 내린 후 세상이 고요해지는 그 순간의 평화로움을 담고 싶었습니다.',
-      price: '280000',
-      editionSize: '25'
-    }
   },
 
   // === 김영자 작품 (6개) - 동양화 전통 작가 ===
@@ -258,16 +161,8 @@ export const works: Work[] = [
     likes: 412,
     saves: 156,
     comments: 28,
-    isForSale: true,
     description: '바람이 만들어내는 자연의 패턴을 수묵으로 표현했습니다.',
     tags: ['동양화', '추상', '수묵'],
-    saleOptions: {
-      download: { price: 45000 },
-      print: { sizes: [{ size: 'A3', price: 95000 }, { size: 'A2', price: 145000 }] },
-    },
-    saleStatus: 'unlocked',
-    unlockThreshold: 150,
-    saleApprovalDate: '2026-03-01'
   },
   {
     id: '7',
@@ -278,13 +173,8 @@ export const works: Work[] = [
     likes: 456,
     saves: 187,
     comments: 23,
-    isForSale: true,
     description: '물의 고요함과 반사되는 빛을 동양화 기법으로 담았습니다.',
     tags: ['수묵화', '평화', '자연'],
-    saleOptions: {
-      download: { price: 42000 },
-      print: { sizes: [{ size: 'A3', price: 92000 }, { size: 'A2', price: 140000 }] },
-    }
   },
   {
     id: '12',
@@ -295,14 +185,8 @@ export const works: Work[] = [
     likes: 678,
     saves: 312,
     comments: 48,
-    isForSale: true,
     description: '수묵의 번짐을 이용한 현대적 추상화.',
     tags: ['추상', '수묵', '현대동양화'],
-    saleOptions: {
-      download: { price: 60000 },
-      print: { sizes: [{ size: 'A3', price: 110000 }, { size: 'A2', price: 170000 }] },
-      license: { available: true }
-    }
   },
   {
     id: '18',
@@ -313,15 +197,8 @@ export const works: Work[] = [
     likes: 523,
     saves: 267,
     comments: 34,
-    isForSale: true,
     description: '전통 매화도를 현대적 감각으로 재해석했습니다.',
     tags: ['매화', '전통', '동양화'],
-    saleOptions: {
-      download: { price: 48000 },
-      print: { sizes: [{ size: 'A3', price: 98000 }, { size: 'A2', price: 148000 }] },
-    },
-    saleStatus: 'approved',
-    editorsPick: true
   },
   {
     id: '19',
@@ -332,13 +209,8 @@ export const works: Work[] = [
     likes: 389,
     saves: 145,
     comments: 21,
-    isForSale: true,
     description: '산과 물, 그 사이의 여백으로 명상의 시간을 표현했습니다.',
     tags: ['산수화', '명상', '여백'],
-    saleOptions: {
-      download: { price: 55000 },
-      print: { sizes: [{ size: 'A3', price: 105000 }, { size: 'A2', price: 155000 }] },
-    }
   },
   {
     id: '20',
@@ -349,7 +221,6 @@ export const works: Work[] = [
     likes: 234,
     saves: 98,
     comments: 15,
-    isForSale: false,
     description: '먹의 농담으로 표현한 대나무의 절개.',
     tags: ['대나무', '사군자', '전통']
   },
@@ -364,11 +235,8 @@ export const works: Work[] = [
     likes: 189,
     saves: 67,
     comments: 8,
-    isForSale: false,
     description: '도심 공원의 가을 오후를 유화 기법으로 그렸습니다.',
     tags: ['풍경', '유화', '가을'],
-    saleStatus: 'requested',
-    saleRequestDate: '2026-03-05'
   },
   {
     id: '8',
@@ -379,14 +247,8 @@ export const works: Work[] = [
     likes: 289,
     saves: 103,
     comments: 15,
-    isForSale: true,
     description: '저녁 노을의 색감을 아크릴로 표현했습니다.',
     tags: ['노을', '아크릴', '색감'],
-    saleOptions: {
-      download: { price: 38000 },
-      print: { sizes: [{ size: 'A3', price: 88000 }, { size: 'A2', price: 130000 }] },
-      license: { available: true }
-    }
   },
   {
     id: '21',
@@ -397,13 +259,8 @@ export const works: Work[] = [
     likes: 445,
     saves: 178,
     comments: 26,
-    isForSale: true,
     description: '빛나는 도시의 밤을 캔버스에 담았습니다.',
     tags: ['도시', '야경', '현대회화'],
-    saleOptions: {
-      download: { price: 52000 },
-      print: { sizes: [{ size: 'A3', price: 102000 }, { size: 'A2', price: 152000 }] },
-    }
   },
   {
     id: '22',
@@ -414,13 +271,8 @@ export const works: Work[] = [
     likes: 312,
     saves: 134,
     comments: 19,
-    isForSale: true,
     description: '자연을 추상적으로 해석한 작품.',
     tags: ['추상', '풍경', '현대미술'],
-    saleOptions: {
-      download: { price: 45000 },
-      print: { sizes: [{ size: 'A3', price: 95000 }, { size: 'A2', price: 145000 }] },
-    }
   },
   {
     id: '23',
@@ -431,7 +283,6 @@ export const works: Work[] = [
     likes: 267,
     saves: 89,
     comments: 12,
-    isForSale: false,
     description: '마음속 풍경을 색과 형태로 표현했습니다.',
     tags: ['추상', '감성', '내면']
   },
@@ -446,14 +297,8 @@ export const works: Work[] = [
     likes: 578,
     saves: 234,
     comments: 42,
-    isForSale: true,
     description: '섬유로 직조한 정원의 이야기.',
     tags: ['섬유공예', '정원', '텍스타일'],
-    saleOptions: {
-      download: { price: 40000 },
-      print: { sizes: [{ size: 'A3', price: 90000 }, { size: 'A2', price: 135000 }] },
-      license: { available: true }
-    }
   },
   {
     id: '9',
@@ -464,13 +309,8 @@ export const works: Work[] = [
     likes: 512,
     saves: 221,
     comments: 34,
-    isForSale: true,
     description: '백자 작품을 디지털로 기록한 시리즈.',
     tags: ['도자기', '정물', '백자'],
-    saleOptions: {
-      download: { price: 55000 },
-      print: { sizes: [{ size: 'A3', price: 105000 }, { size: 'A2', price: 160000 }] },
-    }
   },
   {
     id: '24',
@@ -481,15 +321,8 @@ export const works: Work[] = [
     likes: 687,
     saves: 298,
     comments: 45,
-    isForSale: true,
     description: '전통 자수 기법으로 만든 만다라 문양.',
     tags: ['자수', '만다라', '전통공예'],
-    saleOptions: {
-      download: { price: 65000 },
-      print: { sizes: [{ size: 'A3', price: 115000 }, { size: 'A2', price: 175000 }] },
-    },
-    saleStatus: 'approved',
-    editorsPick: true
   },
   {
     id: '25',
@@ -500,7 +333,6 @@ export const works: Work[] = [
     likes: 423,
     saves: 167,
     comments: 28,
-    isForSale: true,
     description: '섬유 예술로 표현한 서정적 작품.',
     tags: ['섬유', '텍스타일', '서정']
   },
@@ -513,7 +345,6 @@ export const works: Work[] = [
     likes: 356,
     saves: 142,
     comments: 22,
-    isForSale: true,
     description: '고려청자의 아름다움을 기록한 작품.',
     tags: ['청자', '도자', '전통']
   },
@@ -526,7 +357,6 @@ export const works: Work[] = [
     likes: 289,
     saves: 98,
     comments: 17,
-    isForSale: false,
     description: '전통 보자기의 색과 문양을 현대적으로.',
     tags: ['보자기', '패턴', '전통']
   },
@@ -541,13 +371,8 @@ export const works: Work[] = [
     likes: 621,
     saves: 289,
     comments: 51,
-    isForSale: true,
     description: '한국 전통 가구를 수채화로 스케치했습니다.',
     tags: ['가구', '수채화', '제품디자인'],
-    saleOptions: {
-      download: { price: 50000 },
-      print: { sizes: [{ size: 'A3', price: 100000 }, { size: 'A2', price: 155000 }] },
-    }
   },
   {
     id: '10',
@@ -558,7 +383,6 @@ export const works: Work[] = [
     likes: 397,
     saves: 168,
     comments: 21,
-    isForSale: false,
     description: '숲 사이로 스며드는 아침 햇살을 수채로.',
     tags: ['숲', '수채화', '자연']
   },
@@ -571,13 +395,8 @@ export const works: Work[] = [
     likes: 534,
     saves: 212,
     comments: 29,
-    isForSale: true,
     description: '다양한 찻잔을 관찰하고 그린 수채화 시리즈.',
     tags: ['찻잔', '수채화', '정물'],
-    saleOptions: {
-      download: { price: 42000 },
-      print: { sizes: [{ size: 'A3', price: 92000 }, { size: 'A2', price: 142000 }] },
-    }
   },
   {
     id: '29',
@@ -588,13 +407,8 @@ export const works: Work[] = [
     likes: 445,
     saves: 178,
     comments: 25,
-    isForSale: true,
     description: '시대별 의자 디자인을 일러스트로 기록.',
     tags: ['의자', '디자인', '일러스트'],
-    saleOptions: {
-      download: { price: 55000 },
-      print: { sizes: [{ size: 'A3', price: 105000 }, { size: 'A2', price: 155000 }] },
-    }
   },
   {
     id: '30',
@@ -605,7 +419,6 @@ export const works: Work[] = [
     likes: 378,
     saves: 156,
     comments: 19,
-    isForSale: true,
     description: '한옥 창문의 아름다움을 담은 수채화.',
     tags: ['한옥', '전통', '수채화']
   },
@@ -620,16 +433,8 @@ export const works: Work[] = [
     likes: 756,
     saves: 334,
     comments: 52,
-    isForSale: true,
     description: '궁중 자수 기법을 재현한 작품.',
     tags: ['궁중자수', '전통', '섬유예술'],
-    saleOptions: {
-      download: { price: 75000 },
-      print: { sizes: [{ size: 'A3', price: 125000 }, { size: 'A2', price: 185000 }] },
-      license: { available: true }
-    },
-    saleStatus: 'approved',
-    editorsPick: true
   },
   {
     id: '32',
@@ -640,7 +445,6 @@ export const works: Work[] = [
     likes: 423,
     saves: 189,
     comments: 27,
-    isForSale: true,
     description: '한국 전통 모시의 아름다운 질감을 표현.',
     tags: ['모시', '섬유', '질감']
   },
@@ -653,7 +457,6 @@ export const works: Work[] = [
     likes: 534,
     saves: 223,
     comments: 31,
-    isForSale: true,
     description: '전통 매듭의 반복 문양을 디지털화.',
     tags: ['매듭', '문양', '전통공예']
   },
@@ -666,7 +469,6 @@ export const works: Work[] = [
     likes: 612,
     saves: 267,
     comments: 38,
-    isForSale: true,
     description: '전통 병풍에 수놓은 화조도.',
     tags: ['병풍', '화조도', '자수']
   },
@@ -679,7 +481,6 @@ export const works: Work[] = [
     likes: 289,
     saves: 112,
     comments: 18,
-    isForSale: false,
     description: '천연 염색 실의 색상을 연구한 작업.',
     tags: ['염색', '색상', '섬유']
   },
@@ -694,13 +495,8 @@ export const works: Work[] = [
     likes: 645,
     saves: 289,
     comments: 43,
-    isForSale: true,
     description: '내면의 감정을 색과 형태로 표현한 추상화.',
     tags: ['추상', '감정', '현대미술'],
-    saleOptions: {
-      download: { price: 58000 },
-      print: { sizes: [{ size: 'A3', price: 108000 }, { size: 'A2', price: 162000 }] },
-    }
   },
   {
     id: '37',
@@ -711,15 +507,8 @@ export const works: Work[] = [
     likes: 523,
     saves: 234,
     comments: 35,
-    isForSale: true,
     description: '시간이 쌓이는 과정을 레이어로 표현.',
     tags: ['시간', '레이어', '추상'],
-    saleOptions: {
-      download: { price: 62000 },
-      print: { sizes: [{ size: 'A3', price: 112000 }, { size: 'A2', price: 168000 }] },
-    },
-    saleStatus: 'approved',
-    editorsPick: true
   },
   {
     id: '38',
@@ -730,7 +519,6 @@ export const works: Work[] = [
     likes: 412,
     saves: 178,
     comments: 28,
-    isForSale: true,
     description: '침묵과 고요함을 색으로 담았습니다.',
     tags: ['고요', '침묵', '색감']
   },
@@ -743,7 +531,6 @@ export const works: Work[] = [
     likes: 356,
     saves: 145,
     comments: 22,
-    isForSale: true,
     description: '자연스러운 흐름과 움직임의 표현.',
     tags: ['흐름', '움직임', '추상']
   },
@@ -756,7 +543,6 @@ export const works: Work[] = [
     likes: 289,
     saves: 98,
     comments: 16,
-    isForSale: false,
     description: '마음 깊은 곳의 풍경.',
     tags: ['내면', '깊이', '추상']
   },
@@ -771,13 +557,8 @@ export const works: Work[] = [
     likes: 534,
     saves: 212,
     comments: 31,
-    isForSale: true,
     description: '다양한 나무의 결을 관찰하고 기록한 작업.',
     tags: ['나무', '목공예', '질감'],
-    saleOptions: {
-      download: { price: 48000 },
-      print: { sizes: [{ size: 'A3', price: 98000 }, { size: 'A2', price: 148000 }] },
-    }
   },
   {
     id: '42',
@@ -788,7 +569,6 @@ export const works: Work[] = [
     likes: 445,
     saves: 189,
     comments: 26,
-    isForSale: true,
     description: '조선시대 장롱의 아름다움을 그림으로.',
     tags: ['장롱', '전통가구', '목공']
   },
@@ -801,7 +581,6 @@ export const works: Work[] = [
     likes: 378,
     saves: 156,
     comments: 21,
-    isForSale: true,
     description: '전통 가구의 정교한 설계도를 손그림으로.',
     tags: ['설계도', '가구', '손그림']
   },
@@ -814,7 +593,6 @@ export const works: Work[] = [
     likes: 312,
     saves: 134,
     comments: 19,
-    isForSale: false,
     description: '오래된 나무가 품은 시간의 이야기.',
     tags: ['나무', '시간', '공예']
   },
@@ -829,16 +607,8 @@ export const works: Work[] = [
     likes: 823,
     saves: 378,
     comments: 56,
-    isForSale: true,
     description: '전통 달항아리의 은은한 아름다움.',
     tags: ['백자', '달항아리', '도자기'],
-    saleOptions: {
-      download: { price: 68000 },
-      print: { sizes: [{ size: 'A3', price: 118000 }, { size: 'A2', price: 178000 }] },
-      license: { available: true }
-    },
-    saleStatus: 'approved',
-    editorsPick: true
   },
   {
     id: '46',
@@ -849,7 +619,6 @@ export const works: Work[] = [
     likes: 612,
     saves: 267,
     comments: 38,
-    isForSale: true,
     description: '분청사기의 자유로운 문양을 기록.',
     tags: ['분청', '문양', '도자']
   },
@@ -862,7 +631,6 @@ export const works: Work[] = [
     likes: 534,
     saves: 223,
     comments: 32,
-    isForSale: true,
     description: '다도 문화 속 찻사발의 아름다움.',
     tags: ['찻사발', '다도', '도자']
   },
@@ -875,7 +643,6 @@ export const works: Work[] = [
     likes: 445,
     saves: 189,
     comments: 27,
-    isForSale: true,
     description: '도자 작업 과정을 담은 손그림 스케치.',
     tags: ['도자', '공예', '손그림']
   },
@@ -888,7 +655,6 @@ export const works: Work[] = [
     likes: 378,
     saves: 156,
     comments: 23,
-    isForSale: false,
     description: '청화백자의 푸른 문양 연구.',
     tags: ['청화백자', '문양', '전통']
   },
@@ -903,15 +669,8 @@ export const works: Work[] = [
     likes: 712,
     saves: 312,
     comments: 47,
-    isForSale: true,
     description: '한복의 우아한 선을 패션 일러스트로.',
     tags: ['한복', '패션일러스트', '전통'],
-    saleOptions: {
-      download: { price: 58000 },
-      print: { sizes: [{ size: 'A3', price: 108000 }, { size: 'A2', price: 162000 }] },
-    },
-    saleStatus: 'approved',
-    editorsPick: true
   },
   {
     id: '51',
@@ -922,7 +681,6 @@ export const works: Work[] = [
     likes: 623,
     saves: 278,
     comments: 39,
-    isForSale: true,
     description: '전통 문양을 현대 텍스타일로 재해석.',
     tags: ['텍스타일', '패턴', '디자인']
   },
@@ -935,7 +693,6 @@ export const works: Work[] = [
     likes: 534,
     saves: 234,
     comments: 33,
-    isForSale: true,
     description: '우아한 여인의 자태를 일러스트로.',
     tags: ['패션', '일러스트', '우아함']
   },
@@ -948,7 +705,6 @@ export const works: Work[] = [
     likes: 445,
     saves: 189,
     comments: 26,
-    isForSale: true,
     description: '색동 저고리의 색 조합 연구.',
     tags: ['색동', '색상', '전통']
   },
@@ -961,7 +717,6 @@ export const works: Work[] = [
     likes: 378,
     saves: 156,
     comments: 22,
-    isForSale: false,
     description: '옷자락이 만드는 우아한 움직임.',
     tags: ['움직임', '패션', '드로잉']
   },
@@ -976,13 +731,8 @@ export const works: Work[] = [
     likes: 512,
     saves: 223,
     comments: 31,
-    isForSale: true,
     description: '난초를 수묵으로 그린 사군자 작품.',
     tags: ['난초', '사군자', '수묵화'],
-    saleOptions: {
-      download: { price: 52000 },
-      print: { sizes: [{ size: 'A3', price: 102000 }, { size: 'A2', price: 152000 }] },
-    }
   },
   {
     id: '56',
@@ -993,7 +743,6 @@ export const works: Work[] = [
     likes: 445,
     saves: 189,
     comments: 27,
-    isForSale: true,
     description: '서예와 수묵화를 결합한 작업.',
     tags: ['서예', '수묵', '융합']
   },
@@ -1006,7 +755,6 @@ export const works: Work[] = [
     likes: 378,
     saves: 156,
     comments: 22,
-    isForSale: true,
     description: '먹이 번지는 우연의 아름다움.',
     tags: ['수묵', '번짐', '우연']
   },
@@ -1019,7 +767,6 @@ export const works: Work[] = [
     likes: 312,
     saves: 134,
     comments: 19,
-    isForSale: false,
     description: '매화의 향기를 수묵으로 담다.',
     tags: ['매화', '사군자', '향기']
   },
@@ -1034,13 +781,8 @@ export const works: Work[] = [
     likes: 634,
     saves: 278,
     comments: 41,
-    isForSale: true,
     description: '화려한 모란을 유화로 그린 정물화.',
     tags: ['모란', '정물화', '유화'],
-    saleOptions: {
-      download: { price: 55000 },
-      print: { sizes: [{ size: 'A3', price: 105000 }, { size: 'A2', price: 158000 }] },
-    }
   },
   {
     id: '60',
@@ -1051,7 +793,6 @@ export const works: Work[] = [
     likes: 523,
     saves: 234,
     comments: 34,
-    isForSale: true,
     description: '사계절 꽃을 수채화로 담은 시리즈.',
     tags: ['꽃', '수채화', '사계절']
   },
@@ -1064,7 +805,6 @@ export const works: Work[] = [
     likes: 445,
     saves: 189,
     comments: 27,
-    isForSale: true,
     description: '전통적인 구도의 과일 정물화.',
     tags: ['과일', '정물', '전통회화']
   },
@@ -1077,7 +817,6 @@ export const works: Work[] = [
     likes: 378,
     saves: 156,
     comments: 23,
-    isForSale: false,
     description: '하얀 백합의 은은한 향기를 그림으로.',
     tags: ['백합', '꽃', '향기']
   },
@@ -1092,15 +831,8 @@ export const works: Work[] = [
     likes: 892,
     saves: 423,
     comments: 67,
-    isForSale: true,
     description: '벚꽃 길을 산책하는 따뜻한 오후를 디지털 수채로 표현했습니다.',
     tags: ['벚꽃', '디지털수채화', '봄'],
-    saleOptions: {
-      download: { price: 42000 },
-      print: { sizes: [{ size: 'A3', price: 92000 }, { size: 'A2', price: 142000 }] },
-    },
-    saleStatus: 'approved',
-    editorsPick: true
   },
   {
     id: '64',
@@ -1111,13 +843,8 @@ export const works: Work[] = [
     likes: 723,
     saves: 334,
     comments: 52,
-    isForSale: true,
     description: '카페 창가에서 바라본 일상의 풍경.',
     tags: ['카페', '일상', '디지털페인팅'],
-    saleOptions: {
-      download: { price: 38000 },
-      print: { sizes: [{ size: 'A3', price: 88000 }, { size: 'A2', price: 138000 }] },
-    }
   },
   {
     id: '65',
@@ -1128,13 +855,8 @@ export const works: Work[] = [
     likes: 654,
     saves: 298,
     comments: 45,
-    isForSale: true,
     description: '봄비가 내리는 창밖 풍경을 감성적으로.',
     tags: ['봄비', '감성', '수채화'],
-    saleOptions: {
-      download: { price: 40000 },
-      print: { sizes: [{ size: 'A3', price: 90000 }, { size: 'A2', price: 140000 }] },
-    }
   },
   {
     id: '66',
@@ -1145,7 +867,6 @@ export const works: Work[] = [
     likes: 567,
     saves: 245,
     comments: 38,
-    isForSale: true,
     description: '골목길 오래된 책방의 정겨운 모습.',
     tags: ['책방', '골목', '디지털드로잉']
   },
@@ -1158,7 +879,6 @@ export const works: Work[] = [
     likes: 489,
     saves: 212,
     comments: 31,
-    isForSale: true,
     description: '햇살 가득한 정원에서 보내는 평화로운 오후.',
     tags: ['정원', '평화', '수채화']
   },
@@ -1171,7 +891,6 @@ export const works: Work[] = [
     likes: 412,
     saves: 189,
     comments: 27,
-    isForSale: false,
     description: '올해 첫눈이 내리는 날의 설렘.',
     tags: ['첫눈', '겨울', '감성']
   },
@@ -1186,16 +905,8 @@ export const works: Work[] = [
     likes: 1234,
     saves: 567,
     comments: 89,
-    isForSale: true,
     description: '35년 수채화 경력으로 그린 한강의 아름다운 노을.',
     tags: ['한강', '노을', '디지털수채화'],
-    saleOptions: {
-      download: { price: 58000 },
-      print: { sizes: [{ size: 'A3', price: 108000 }, { size: 'A2', price: 168000 }] },
-      license: { available: true }
-    },
-    saleStatus: 'approved',
-    editorsPick: true
   },
   {
     id: '70',
@@ -1206,13 +917,8 @@ export const works: Work[] = [
     likes: 876,
     saves: 412,
     comments: 63,
-    isForSale: true,
     description: '전통 수채 기법으로 담아낸 남산 타워의 풍경.',
     tags: ['남산', '랜드마크', '수채화'],
-    saleOptions: {
-      download: { price: 52000 },
-      print: { sizes: [{ size: 'A3', price: 102000 }, { size: 'A2', price: 158000 }] },
-    }
   },
   {
     id: '71',
@@ -1223,13 +929,8 @@ export const works: Work[] = [
     likes: 1045,
     saves: 489,
     comments: 74,
-    isForSale: true,
     description: '가을 경복궁의 아름다운 단풍.',
     tags: ['경복궁', '단풍', '가을'],
-    saleOptions: {
-      download: { price: 55000 },
-      print: { sizes: [{ size: 'A3', price: 105000 }, { size: 'A2', price: 162000 }] },
-    }
   },
   {
     id: '72',
@@ -1240,7 +941,6 @@ export const works: Work[] = [
     likes: 723,
     saves: 334,
     comments: 51,
-    isForSale: true,
     description: '고향의 시골 풍경을 추억하며 그린 작품.',
     tags: ['시골', '추억', '풍경화']
   },
@@ -1253,7 +953,6 @@ export const works: Work[] = [
     likes: 654,
     saves: 298,
     comments: 46,
-    isForSale: true,
     description: '아침 안개 속 고요한 산의 모습.',
     tags: ['안개', '산', '아침']
   },
@@ -1266,7 +965,6 @@ export const works: Work[] = [
     likes: 567,
     saves: 256,
     comments: 39,
-    isForSale: true,
     description: '강변을 따라 이어진 산책로의 평화로운 풍경.',
     tags: ['강변', '산책', '풍경']
   },
@@ -1279,7 +977,6 @@ export const works: Work[] = [
     likes: 489,
     saves: 223,
     comments: 34,
-    isForSale: false,
     description: '한옥의 아름다운 곡선과 처마를 수채로.',
     tags: ['한옥', '전통', '건축']
   },
@@ -1294,14 +991,8 @@ export const works: Work[] = [
     likes: 923,
     saves: 445,
     comments: 71,
-    isForSale: true,
     description: '비워둔 공간이 만드는 아름다움.',
     tags: ['여백', '미니멀', '동양화'],
-    saleOptions: {
-      download: { price: 48000 },
-      print: { sizes: [{ size: 'A3', price: 98000 }, { size: 'A2', price: 148000 }] },
-    },
-    saleStatus: 'approved'
   },
   {
     id: '77',
@@ -1312,13 +1003,8 @@ export const works: Work[] = [
     likes: 812,
     saves: 378,
     comments: 58,
-    isForSale: true,
     description: '여백 속 외로이 핀 한 송이 매화.',
     tags: ['매화', '여백', '디지털수묵'],
-    saleOptions: {
-      download: { price: 45000 },
-      print: { sizes: [{ size: 'A3', price: 95000 }, { size: 'A2', price: 145000 }] },
-    }
   },
   {
     id: '78',
@@ -1329,7 +1015,6 @@ export const works: Work[] = [
     likes: 701,
     saves: 323,
     comments: 49,
-    isForSale: true,
     description: '보이지 않는 바람을 여백으로 표현.',
     tags: ['바람', '흔적', '추상']
   },
@@ -1342,7 +1027,6 @@ export const works: Work[] = [
     likes: 634,
     saves: 289,
     comments: 42,
-    isForSale: true,
     description: '어둠 속 홀로 빛나는 달.',
     tags: ['달', '미니멀', '밤']
   },
@@ -1355,7 +1039,6 @@ export const works: Work[] = [
     likes: 556,
     saves: 245,
     comments: 36,
-    isForSale: false,
     description: '소리 없는 침묵을 그림으로.',
     tags: ['침묵', '고요', '여백']
   },
@@ -1370,13 +1053,8 @@ export const works: Work[] = [
     likes: 789,
     saves: 356,
     comments: 54,
-    isForSale: true,
     description: '소소한 아침 식사 풍경을 디지털로 기록.',
     tags: ['아침', '식탁', '일상'],
-    saleOptions: {
-      download: { price: 35000 },
-      print: { sizes: [{ size: 'A3', price: 85000 }, { size: 'A2', price: 135000 }] },
-    }
   },
   {
     id: '82',
@@ -1387,13 +1065,8 @@ export const works: Work[] = [
     likes: 678,
     saves: 312,
     comments: 47,
-    isForSale: true,
     description: '햇살 좋은 날 빨래를 너는 평범한 일상.',
     tags: ['빨래', '일상', '햇살'],
-    saleOptions: {
-      download: { price: 32000 },
-      print: { sizes: [{ size: 'A3', price: 82000 }, { size: 'A2', price: 132000 }] },
-    }
   },
   {
     id: '83',
@@ -1404,7 +1077,6 @@ export const works: Work[] = [
     likes: 601,
     saves: 278,
     comments: 41,
-    isForSale: true,
     description: '창가에 놓인 작은 화분의 사랑스러움.',
     tags: ['화분', '식물', '창가']
   },
@@ -1417,7 +1089,6 @@ export const works: Work[] = [
     likes: 545,
     saves: 245,
     comments: 37,
-    isForSale: true,
     description: '매일 지나치는 동네 빵집의 따뜻한 풍경.',
     tags: ['빵집', '동네', '일상']
   },
@@ -1430,7 +1101,6 @@ export const works: Work[] = [
     likes: 489,
     saves: 212,
     comments: 32,
-    isForSale: true,
     description: '비 오는 날 창문에 맺힌 빗방울.',
     tags: ['비', '창문', '감성']
   },
@@ -1443,7 +1113,6 @@ export const works: Work[] = [
     likes: 423,
     saves: 189,
     comments: 28,
-    isForSale: false,
     description: '가족을 위해 저녁을 준비하는 시간.',
     tags: ['저녁', '요리', '가족']
   },
@@ -1458,15 +1127,8 @@ export const works: Work[] = [
     likes: 1012,
     saves: 478,
     comments: 76,
-    isForSale: true,
     description: '숲 깊은 곳의 신비로운 풍경을 디지털로.',
     tags: ['숲', '자연', '디지털드로잉'],
-    saleOptions: {
-      download: { price: 48000 },
-      print: { sizes: [{ size: 'A3', price: 98000 }, { size: 'A2', price: 148000 }] },
-    },
-    saleStatus: 'approved',
-    editorsPick: true
   },
   {
     id: '88',
@@ -1477,13 +1139,8 @@ export const works: Work[] = [
     likes: 834,
     saves: 389,
     comments: 61,
-    isForSale: true,
     description: '이끼가 자란 바위의 질감을 세밀하게.',
     tags: ['이끼', '바위', '질감'],
-    saleOptions: {
-      download: { price: 42000 },
-      print: { sizes: [{ size: 'A3', price: 92000 }, { size: 'A2', price: 142000 }] },
-    }
   },
   {
     id: '89',
@@ -1494,7 +1151,6 @@ export const works: Work[] = [
     likes: 723,
     saves: 334,
     comments: 52,
-    isForSale: true,
     description: '오래된 나무의 굵은 뿌리.',
     tags: ['나무', '뿌리', '자연']
   },
@@ -1507,7 +1163,6 @@ export const works: Work[] = [
     likes: 656,
     saves: 298,
     comments: 46,
-    isForSale: true,
     description: '숲속을 지나는 좁은 오솔길.',
     tags: ['오솔길', '산책', '숲']
   },
@@ -1520,7 +1175,6 @@ export const works: Work[] = [
     likes: 589,
     saves: 267,
     comments: 41,
-    isForSale: true,
     description: '나뭇잎 사이로 비치는 따스한 햇살.',
     tags: ['햇살', '나뭇잎', '빛']
   },
@@ -1533,7 +1187,6 @@ export const works: Work[] = [
     likes: 512,
     saves: 234,
     comments: 36,
-    isForSale: false,
     description: '새벽 안개 속 고요한 숲.',
     tags: ['새벽', '안개', '숲']
   },
@@ -1548,16 +1201,8 @@ export const works: Work[] = [
     likes: 1123,
     saves: 534,
     comments: 85,
-    isForSale: true,
     description: '전통 민화 호작도를 현대적으로 재해석.',
     tags: ['민화', '호랑이', '디지털페인팅'],
-    saleOptions: {
-      download: { price: 55000 },
-      print: { sizes: [{ size: 'A3', price: 105000 }, { size: 'A2', price: 162000 }] },
-      license: { available: true }
-    },
-    saleStatus: 'approved',
-    editorsPick: true
   },
   {
     id: '94',
@@ -1568,13 +1213,8 @@ export const works: Work[] = [
     likes: 945,
     saves: 445,
     comments: 69,
-    isForSale: true,
     description: '부귀를 상징하는 모란 민화.',
     tags: ['모란', '민화', '전통'],
-    saleOptions: {
-      download: { price: 52000 },
-      print: { sizes: [{ size: 'A3', price: 102000 }, { size: 'A2', price: 155000 }] },
-    }
   },
   {
     id: '95',
@@ -1585,7 +1225,6 @@ export const works: Work[] = [
     likes: 867,
     saves: 401,
     comments: 63,
-    isForSale: true,
     description: '장수를 기원하는 십장생 민화.',
     tags: ['십장생', '민화', '장수']
   },
@@ -1598,7 +1237,6 @@ export const works: Work[] = [
     likes: 789,
     saves: 356,
     comments: 55,
-    isForSale: true,
     description: '조선시대 책과 문방구를 그린 민화.',
     tags: ['책거리', '민화', '전통']
   },
@@ -1611,7 +1249,6 @@ export const works: Work[] = [
     likes: 712,
     saves: 323,
     comments: 49,
-    isForSale: false,
     description: '꽃과 새가 어우러진 화조 민화.',
     tags: ['화조도', '민화', '새']
   },
@@ -1626,14 +1263,8 @@ export const works: Work[] = [
     likes: 956,
     saves: 445,
     comments: 72,
-    isForSale: true,
     description: '오후 햇살이 만든 창문 그림자의 아름다움.',
     tags: ['그림자', '빛', '디지털페인팅'],
-    saleOptions: {
-      download: { price: 46000 },
-      print: { sizes: [{ size: 'A3', price: 96000 }, { size: 'A2', price: 146000 }] },
-    },
-    saleStatus: 'approved'
   },
   {
     id: '99',
@@ -1644,13 +1275,8 @@ export const works: Work[] = [
     likes: 823,
     saves: 389,
     comments: 61,
-    isForSale: true,
     description: '좁은 골목길에 스며드는 햇살.',
     tags: ['골목', '햇살', '감성'],
-    saleOptions: {
-      download: { price: 42000 },
-      print: { sizes: [{ size: 'A3', price: 92000 }, { size: 'A2', price: 142000 }] },
-    }
   },
   {
     id: '100',
@@ -1661,7 +1287,6 @@ export const works: Work[] = [
     likes: 745,
     saves: 345,
     comments: 54,
-    isForSale: true,
     description: '노을빛이 물든 도시 풍경.',
     tags: ['노을', '빛', '도시']
   },
@@ -1674,7 +1299,6 @@ export const works: Work[] = [
     likes: 678,
     saves: 312,
     comments: 48,
-    isForSale: true,
     description: '바닥에 드리운 나무 그림자의 패턴.',
     tags: ['나무', '그림자', '패턴']
   },
@@ -1687,7 +1311,6 @@ export const works: Work[] = [
     likes: 601,
     saves: 278,
     comments: 42,
-    isForSale: true,
     description: '방 안으로 들어오는 아침 햇살.',
     tags: ['아침', '햇살', '따뜻함']
   },
@@ -1700,7 +1323,6 @@ export const works: Work[] = [
     likes: 534,
     saves: 245,
     comments: 37,
-    isForSale: false,
     description: '밤 가로등이 만드는 빛과 그림자.',
     tags: ['가로등', '밤', '그림자']
   },
@@ -1715,16 +1337,8 @@ export const works: Work[] = [
     likes: 1456,
     saves: 678,
     comments: 103,
-    isForSale: true,
     description: '40년 화가 인생이 담긴 서울의 사계절.',
     tags: ['서울', '사계절', '디지털수채화'],
-    saleOptions: {
-      download: { price: 68000 },
-      print: { sizes: [{ size: 'A3', price: 118000 }, { size: 'A2', price: 178000 }] },
-      license: { available: true }
-    },
-    saleStatus: 'approved',
-    editorsPick: true
   },
   {
     id: '105',
@@ -1735,13 +1349,8 @@ export const works: Work[] = [
     likes: 1234,
     saves: 589,
     comments: 91,
-    isForSale: true,
     description: '전통과 현대가 공존하는 북촌의 아름다움.',
     tags: ['북촌', '한옥', '전통'],
-    saleOptions: {
-      download: { price: 62000 },
-      print: { sizes: [{ size: 'A3', price: 112000 }, { size: 'A2', price: 168000 }] },
-    }
   },
   {
     id: '106',
@@ -1752,7 +1361,6 @@ export const works: Work[] = [
     likes: 1089,
     saves: 512,
     comments: 79,
-    isForSale: true,
     description: '인사동 거리의 활기찬 풍경.',
     tags: ['인사동', '거리', '풍경화']
   },
@@ -1765,7 +1373,6 @@ export const works: Work[] = [
     likes: 967,
     saves: 456,
     comments: 71,
-    isForSale: true,
     description: '가을 단풍이 아름다운 덕수궁 돌담길.',
     tags: ['덕수궁', '돌담길', '가을']
   },
@@ -1778,7 +1385,6 @@ export const works: Work[] = [
     likes: 856,
     saves: 401,
     comments: 64,
-    isForSale: true,
     description: '도심 속 휴식처 청계천의 평화로움.',
     tags: ['청계천', '도심', '물']
   },
@@ -1791,7 +1397,6 @@ export const works: Work[] = [
     likes: 734,
     saves: 345,
     comments: 53,
-    isForSale: true,
     description: '한강을 가로지르는 다리의 웅장함.',
     tags: ['한강', '다리', '풍경']
   },
@@ -1804,7 +1409,6 @@ export const works: Work[] = [
     likes: 623,
     saves: 289,
     comments: 45,
-    isForSale: false,
     description: '활기 넘치는 남대문 시장의 일상.',
     tags: ['시장', '남대문', '일상']
   },
@@ -1819,11 +1423,8 @@ export const works: Work[] = [
     likes: 891,
     saves: 423,
     comments: 67,
-    isForSale: true,
     description: '우주의 빛과 유체가 작품을 감싸는 에테르 효과로 표현한 작품입니다.',
     tags: ['우주', '빛', '에테르효과', '환상'],
-    saleStatus: 'approved',
-    editorsPick: true
   },
   {
     id: '112',
@@ -1834,10 +1435,8 @@ export const works: Work[] = [
     likes: 1234,
     saves: 567,
     comments: 89,
-    isForSale: true,
     description: '작품의 색상들이 녹아내려 환상적인 물결을 만드는 리퀴드 효과 작품입니다.',
     tags: ['액체', '색상', '리퀴드효과', '추상'],
-    saleStatus: 'approved'
   },
   {
     id: '113',
@@ -1848,11 +1447,8 @@ export const works: Work[] = [
     likes: 1567,
     saves: 789,
     comments: 134,
-    isForSale: true,
     description: '공간이 뒤틀리며 흐릿한 픽셀 속으로 잠기는 사이버 효과 작품입니다.',
     tags: ['사이버', '디지털', '사이버효과', '미래'],
-    saleStatus: 'approved',
-    editorsPick: true
   },
   {
     id: '114',
@@ -1863,10 +1459,8 @@ export const works: Work[] = [
     likes: 2103,
     saves: 934,
     comments: 176,
-    isForSale: true,
     description: '작품이 디지털 신호로 깨어나는 디지털 피버 효과 시리즈입니다.',
     tags: ['디지털', '신호', '디지털효과', '테크'],
-    saleStatus: 'approved'
   },
   {
     id: '115',
@@ -1877,11 +1471,8 @@ export const works: Work[] = [
     likes: 2876,
     saves: 1245,
     comments: 234,
-    isForSale: true,
     description: '네온 불빛이 작품 주변을 감싸며 빛나는 네온 드림 효과 작품입니다.',
     tags: ['네온', '빛', '네온효과', '야경'],
-    saleStatus: 'approved',
-    editorsPick: true
   },
   {
     id: '116',
@@ -1892,10 +1483,8 @@ export const works: Work[] = [
     likes: 1543,
     saves: 678,
     comments: 98,
-    isForSale: true,
     description: '오래된 필름 카메라로 촬영한 듯한 따뜻한 감성의 빈티지 효과 작품입니다.',
     tags: ['빈티지', '필름', '빈티지효과', '레트로'],
-    saleStatus: 'approved'
   },
   {
     id: '117',
@@ -1906,10 +1495,8 @@ export const works: Work[] = [
     likes: 1987,
     saves: 845,
     comments: 145,
-    isForSale: true,
     description: '서리가 낀 유리창 너머로 보는 듯한 몽환적 느낌의 프로스트 글래스 효과 작품입니다.',
     tags: ['서리', '유리', '프로스트효과', '겨울'],
-    saleStatus: 'approved'
   },
   {
     id: '118',
@@ -1920,111 +1507,8 @@ export const works: Work[] = [
     likes: 3421,
     saves: 1567,
     comments: 287,
-    isForSale: true,
     description: '미래적 홀로그램 투영 효과로 표현한 10장의 작품 시리즈입니다. 다양한 각도와 빛의 반사를 담았습니다.',
     tags: ['홀로그램', '미래', '홀로그램효과', '프리즘'],
-    saleStatus: 'approved',
-    editorsPick: true
-  },
-];
-
-// 전시룸 더미 데이터
-export const rooms: Room[] = [
-  {
-    id: '1',
-    title: '봄빛의 기억',
-    cover: 'spring-memory-room',
-    description: '봄의 따뜻함과 기억을 담은 개인전입니다. 2024년 봄에 그린 작품들을 모았습니다.',
-    artistId: '1',
-    artist: artists[0],
-    works: [works[0], works[5], works[10]],
-    views: 2845,
-    visitors: 312
-  },
-  {
-    id: '2',
-    title: '고요한 오후',
-    cover: 'quiet-afternoon',
-    description: '일상 속 고요한 순간들을 포착한 작품 모음.',
-    artistId: '2',
-    artist: artists[1],
-    works: [works[1], works[6], works[11]],
-    views: 3621,
-    visitors: 428
-  },
-  {
-    id: '3',
-    title: '라인의 미학',
-    cover: 'line-aesthetics',
-    description: '라인과 형태로 표현하는 미니멀 드로잉 전시.',
-    artistId: '3',
-    artist: artists[2],
-    works: [works[2], works[7]],
-    views: 1923,
-    visitors: 245
-  },
-  {
-    id: '4',
-    title: '특별 전시 2026',
-    cover: 'return-exhibition',
-    description: '선별된 작품들을 한자리에 모은 전시입니다.',
-    artistId: '4',
-    artist: artists[3],
-    works: [works[3], works[8]],
-    views: 5234,
-    visitors: 687
-  },
-];
-
-// 클래스 더미 데이터
-export const classes: Class[] = [
-  {
-    id: '1',
-    title: '디지털 수채의 색감',
-    cover: 'watercolor-class',
-    instructor: artists[0],
-    price: 89000,
-    level: '초급',
-    students: 234,
-    rating: 4.8,
-    description: '디지털 수채화의 기본부터 색감 표현까지 배우는 클래스입니다.',
-    curriculum: ['수채 브러시 이해하기', '색 혼합의 기초', '레이어 활용법', '실전 연습']
-  },
-  {
-    id: '2',
-    title: '인물 명암 빠르게 잡기',
-    cover: 'portrait-shading',
-    instructor: artists[1],
-    price: 125000,
-    level: '중급',
-    students: 189,
-    rating: 4.9,
-    description: '인물화의 명암을 효과적으로 표현하는 기법을 배웁니다.',
-    curriculum: ['빛의 방향 이해', '명암 단계 나누기', '얼굴 구조 파악', '실습 프로젝트']
-  },
-  {
-    id: '3',
-    title: '라인드로잉의 리듬',
-    cover: 'line-drawing',
-    instructor: artists[2],
-    price: 75000,
-    level: '초급',
-    students: 312,
-    rating: 4.7,
-    description: '자유롭고 리듬감 있는 라인 드로잉을 배우는 클래스.',
-    curriculum: ['선 긋기 연습', '리듬감 익히기', '형태 잡기', '응용 작품 만들기']
-  },
-  {
-    id: '4',
-    title: '풍경화 마스터 클래스',
-    cover: 'landscape-master',
-    instructor: artists[4],
-    price: 158000,
-    level: '고급',
-    students: 127,
-    rating: 4.9,
-    description: '전문가 수준의 풍경화 기법을 심화 학습합니다.',
-    curriculum: ['원근법 완성', '대기 원근', '디테일 표현', '최종 프로젝트']
   },
 ];
 
@@ -2147,12 +1631,4 @@ export const imageQueries: Record<string, string> = {
   'cheonggyecheon': 'cheonggyecheon stream seoul watercolor',
   'hangang-bridge': 'han river bridge seoul painting',
   'namdaemun-market': 'namdaemun market seoul watercolor',
-  'spring-memory-room': 'art gallery spring',
-  'quiet-afternoon': 'peaceful afternoon art',
-  'line-aesthetics': 'minimalist line art',
-  'return-exhibition': 'art exhibition gallery',
-  'watercolor-class': 'watercolor painting class',
-  'portrait-shading': 'portrait shading drawing',
-  'line-drawing': 'line drawing sketch',
-  'landscape-master': 'landscape painting class',
 };
