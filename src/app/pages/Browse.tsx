@@ -1,8 +1,10 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { Heart, ChevronRight, ChevronLeft, Image as ImageIcon, Users } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
-import { artists, Work } from '../data';
+import { artists, Work, Artist } from '../data';
+import { HoverCard, HoverCardTrigger, HoverCardContent } from '../components/ui/hover-card';
+import { UserPlus } from 'lucide-react';
 import { workStore } from '../store';
 import { groupWorks } from '../groupData';
 import { imageUrls } from '../imageUrls';
@@ -72,6 +74,7 @@ function shuffle<T>(arr: T[]): T[] {
 // ---------------------------------------------------------------------------
 export default function Browse() {
   const navigate = useNavigate();
+  const params = useParams();
 
   // -- Work data from store (includes user-uploaded works) -------------------
   const [works, setWorks] = useState(workStore.getWorks());
@@ -84,6 +87,50 @@ export default function Browse() {
   const [activeCategory, setActiveCategory] = useState<string>('all');
   const [currentBanner, setCurrentBanner] = useState(0);
   const [selectedWork, setSelectedWork] = useState<string | null>(null);
+
+  // -- Scroll position tracking for modal open/close -----------------------
+  const scrollPosRef = useRef<number>(0);
+
+  // -- Open modal from URL on mount (direct link /works/:id) ---------------
+  useEffect(() => {
+    if (params.id && !selectedWork) {
+      setSelectedWork(params.id);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  // -- Browser back/forward handling for modal URL -------------------------
+  useEffect(() => {
+    const handlePopState = () => {
+      const match = window.location.pathname.match(/^\/works\/(.+)$/);
+      if (match) {
+        setSelectedWork(match[1]);
+      } else {
+        setSelectedWork(null);
+        requestAnimationFrame(() => {
+          window.scrollTo(0, scrollPosRef.current);
+        });
+      }
+    };
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
+
+  const openWork = useCallback((workId: string) => {
+    scrollPosRef.current = window.scrollY;
+    setSelectedWork(workId);
+    window.history.pushState({ workId }, '', `/works/${workId}`);
+  }, []);
+
+  const closeWork = useCallback(() => {
+    setSelectedWork(null);
+    if (window.location.pathname.startsWith('/works/')) {
+      window.history.pushState(null, '', '/');
+    }
+    requestAnimationFrame(() => {
+      window.scrollTo(0, scrollPosRef.current);
+    });
+  }, []);
 
   // -- "Previously seen" tracking for random feed ---------------------------
   const seenIdsRef = useRef<Set<string>>(new Set());
@@ -263,7 +310,7 @@ export default function Browse() {
                 key={work.id}
                 work={work}
                 index={idx}
-                onSelect={() => setSelectedWork(work.id)}
+                onSelect={() => openWork(work.id)}
                 onArtistClick={(artistId) => navigate(`/profile/${artistId}`)}
               />
             ))}
@@ -277,8 +324,11 @@ export default function Browse() {
       {selectedWork !== null && (
         <WorkDetailModal
           workId={selectedWork}
-          onClose={() => setSelectedWork(null)}
-          onNavigate={(newWorkId) => setSelectedWork(newWorkId)}
+          onClose={closeWork}
+          onNavigate={(newWorkId) => {
+            setSelectedWork(newWorkId);
+            window.history.replaceState({ workId: newWorkId }, '', `/works/${newWorkId}`);
+          }}
           allWorks={filteredWorks}
         />
       )}
@@ -297,9 +347,12 @@ interface WorkCardProps {
 }
 
 function WorkCard({ work, index, onSelect, onArtistClick }: WorkCardProps) {
+  const navigate = useNavigate();
   const artist = work.artist;
   const likes = work.likes ?? 0;
   const groupName = (work as any).groupName;
+  const coOwners = (work as any).coOwners as Artist[] | undefined;
+  const hasCoOwnersNoGroup = !groupName && coOwners && coOwners.length > 0;
   const imageSrc = resolveImage(getFirstImage(work.image));
   const imageCount = getImageCount(work.image);
 
@@ -354,15 +407,43 @@ function WorkCard({ work, index, onSelect, onArtistClick }: WorkCardProps) {
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 min-w-0">
             {groupName ? (
-              <button
-                className="flex items-center gap-2 text-[15px] text-[#696969] hover:text-[#191919] transition-colors truncate"
-                onClick={(e) => {
-                  e.stopPropagation();
-                }}
-              >
-                <Users className="h-[18px] w-[18px] shrink-0" />
-                <span className="truncate">{groupName}</span>
-              </button>
+              <HoverCard openDelay={200} closeDelay={100}>
+                <HoverCardTrigger asChild>
+                  <button
+                    className="flex items-center gap-2 text-[15px] text-[#696969] hover:text-[#191919] transition-colors truncate"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Users className="h-[18px] w-[18px] shrink-0" />
+                    <span className="truncate">{groupName}</span>
+                  </button>
+                </HoverCardTrigger>
+                <HoverCardContent className="w-72 p-3" onClick={(e) => e.stopPropagation()}>
+                  <p className="text-xs text-muted-foreground px-1 mb-2">참여 작가</p>
+                  <MemberRow artist={artist} onNavigate={(id) => navigate(`/profile/${id}`)} />
+                  {coOwners?.map((co) => (
+                    <MemberRow key={co.id} artist={co} onNavigate={(id) => navigate(`/profile/${id}`)} />
+                  ))}
+                </HoverCardContent>
+              </HoverCard>
+            ) : hasCoOwnersNoGroup ? (
+              <HoverCard openDelay={200} closeDelay={100}>
+                <HoverCardTrigger asChild>
+                  <button
+                    className="flex items-center gap-2 text-[15px] text-[#696969] hover:text-[#191919] transition-colors truncate"
+                    onClick={(e) => e.stopPropagation()}
+                  >
+                    <Users className="h-[18px] w-[18px] shrink-0" />
+                    <span className="truncate">여러 작업자</span>
+                  </button>
+                </HoverCardTrigger>
+                <HoverCardContent className="w-72 p-3" onClick={(e) => e.stopPropagation()}>
+                  <p className="text-xs text-muted-foreground px-1 mb-2">참여 작가</p>
+                  <MemberRow artist={artist} onNavigate={(id) => navigate(`/profile/${id}`)} />
+                  {coOwners.map((co) => (
+                    <MemberRow key={co.id} artist={co} onNavigate={(id) => navigate(`/profile/${id}`)} />
+                  ))}
+                </HoverCardContent>
+              </HoverCard>
             ) : (
               <button
                 className="flex items-center gap-2 text-[15px] text-[#696969] hover:text-[#191919] transition-colors truncate"
@@ -390,6 +471,25 @@ function WorkCard({ work, index, onSelect, onArtistClick }: WorkCardProps) {
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+// ===========================================================================
+// MemberRow -- popover member row for group/co-owner works
+// ===========================================================================
+function MemberRow({ artist, onNavigate }: { artist: Artist; onNavigate: (id: string) => void }) {
+  return (
+    <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
+      <img src={artist.avatar} alt={artist.name} className="h-9 w-9 rounded-full object-cover shrink-0" />
+      <span className="flex-1 text-sm font-medium text-[#191919] truncate">{artist.name}</span>
+      <button
+        onClick={(e) => { e.stopPropagation(); onNavigate(artist.id); }}
+        className="flex items-center gap-1 text-xs px-3 py-1.5 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors"
+      >
+        <UserPlus className="h-3 w-3" />
+        팔로우
+      </button>
     </div>
   );
 }

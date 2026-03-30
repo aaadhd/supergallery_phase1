@@ -12,6 +12,7 @@ export const router = createBrowserRouter([
     children: [
       { index: true, Component: Browse },
       { path: 'browse', Component: Browse },
+      { path: 'works/:id', Component: Browse },
       { path: 'upload', Component: Upload },
       { path: 'profile', Component: Profile },
       { path: 'profile/:id', Component: Profile },

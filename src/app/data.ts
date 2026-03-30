@@ -26,6 +26,8 @@ export interface Work {
   owner?: any; // 작품 소유자 (개인 또는 그룹) - groupData.ts의 WorkOwner 타입
   taggedEmails?: string[]; // 강사가 태그한 수강생 이메일 목록
   isInstructorUpload?: boolean; // 강사가 수강생 대신 올린 작품 여부
+  pick?: boolean; // Artier's Pick 선정작
+  editorsPick?: boolean; // 에디터 선정 (groupData 호환)
 }
 
 // 아티스트 더미 데이터
@@ -907,6 +909,7 @@ export const works: Work[] = [
     comments: 89,
     description: '35년 수채화 경력으로 그린 한강의 아름다운 노을.',
     tags: ['한강', '노을', '디지털수채화'],
+    pick: true,
   },
   {
     id: '70',
@@ -993,6 +996,7 @@ export const works: Work[] = [
     comments: 71,
     description: '비워둔 공간이 만드는 아름다움.',
     tags: ['여백', '미니멀', '동양화'],
+    pick: true,
   },
   {
     id: '77',
@@ -1129,6 +1133,7 @@ export const works: Work[] = [
     comments: 76,
     description: '숲 깊은 곳의 신비로운 풍경을 디지털로.',
     tags: ['숲', '자연', '디지털드로잉'],
+    pick: true,
   },
   {
     id: '88',
@@ -1203,6 +1208,7 @@ export const works: Work[] = [
     comments: 85,
     description: '전통 민화 호작도를 현대적으로 재해석.',
     tags: ['민화', '호랑이', '디지털페인팅'],
+    pick: true,
   },
   {
     id: '94',
@@ -1339,6 +1345,7 @@ export const works: Work[] = [
     comments: 103,
     description: '40년 화가 인생이 담긴 서울의 사계절.',
     tags: ['서울', '사계절', '디지털수채화'],
+    pick: true,
   },
   {
     id: '105',

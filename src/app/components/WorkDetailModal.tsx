@@ -1,14 +1,18 @@
-import { X, Heart, Bookmark, Share2, ChevronLeft, ChevronRight, UserPlus, Users } from 'lucide-react';
+import { X, Heart, Bookmark, Share2, ChevronLeft, ChevronRight, UserPlus, Users, Link2, MessageCircle } from 'lucide-react';
 import { Work, Artist, works, artists } from '../data';
 import { groupWorks } from '../groupData';
 import { imageUrls } from '../imageUrls';
 import { ImageWithFallback } from './figma/ImageWithFallback';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useState, useEffect, useRef } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { getFirstImage } from '../utils/imageHelper';
-import { userInteractionStore, workStore } from '../store';
+import { userInteractionStore, workStore, authStore } from '../store';
 import { CopyrightProtectedImage } from './work';
 import { toast } from 'sonner';
+import { LoginPromptModal } from './LoginPromptModal';
+import { Popover, PopoverTrigger, PopoverContent } from './ui/popover';
+import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from './ui/tooltip';
 
 interface WorkDetailModalProps {
   workId: string;
@@ -27,8 +31,24 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
   const [isFollowing, setIsFollowing] = useState(false);
   const [isZoomed, setIsZoomed] = useState(false);
   const [zoomOrigin, setZoomOrigin] = useState('center center');
+  const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [isShareOpen, setIsShareOpen] = useState(false);
 
+  const navigate = useNavigate();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
+
+  const handleArtistClick = (artistId: string) => {
+    onClose();
+    navigate(`/profile/${artistId}`);
+  };
+
+  const requireAuth = (action: () => void) => {
+    if (!authStore.isLoggedIn()) {
+      setShowLoginPrompt(true);
+      return;
+    }
+    action();
+  };
 
   // Reset state when workId changes
   useEffect(() => {
@@ -52,6 +72,12 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
   }, [onClose]);
 
   if (!work) return null;
+
+  const isPick = (work as any).editorsPick === true || (work as any).pick === true;
+  const hasCoOwners = (work as any).coOwners && (work as any).coOwners.length > 0;
+  const groupName = (work as any).groupName as string | undefined;
+  const isGroupWork = !!groupName || hasCoOwners;
+  const displayArtistName = groupName ? groupName : hasCoOwners ? '여러 작업자' : work.artist.name;
 
   const images = Array.isArray(work.image) ? work.image : [work.image];
   const totalImages = images.length;
@@ -97,9 +123,11 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
     setIsSaved(newSaved);
   };
 
-  const handleShare = () => {
-    navigator.clipboard.writeText(window.location.href);
+  const handleCopyLink = () => {
+    const workUrl = `${window.location.origin}/works/${workId}`;
+    navigator.clipboard.writeText(workUrl);
     toast.success('링크가 복사되었습니다');
+    setIsShareOpen(false);
   };
 
   return (
@@ -123,18 +151,43 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
           {/* Header: artist info + follow */}
           <div className="w-full flex items-center justify-between mb-3">
             <div className="flex items-center gap-4">
-              <Avatar className="h-12 w-12 border-2 border-white/20">
-                <AvatarImage src={work.artist.avatar} alt={work.artist.name} />
-                <AvatarFallback className="text-lg">{work.artist.name[0]}</AvatarFallback>
-              </Avatar>
+              {isGroupWork ? (
+                <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 border-2 border-white/20">
+                  <Users className="h-6 w-6 text-white" />
+                </div>
+              ) : (
+                <button onClick={() => handleArtistClick(work.artist.id)} className="rounded-full">
+                  <Avatar className="h-12 w-12 border-2 border-white/20 cursor-pointer">
+                    <AvatarImage src={work.artist.avatar} alt={work.artist.name} />
+                    <AvatarFallback className="text-lg">{work.artist.name[0]}</AvatarFallback>
+                  </Avatar>
+                </button>
+              )}
               <div className="flex flex-col sm:flex-row sm:items-center gap-1 sm:gap-3">
                 <h2 className="text-white text-[20px] font-bold leading-tight">{work.title}</h2>
                 <span className="hidden sm:inline text-white/50">·</span>
-                <span className="text-white/80 text-[16px]">{work.artist.name}</span>
+                {isGroupWork ? (
+                  <span className="text-white/80 text-[16px]">{displayArtistName}</span>
+                ) : (
+                  <span
+                    className="text-white/80 text-[16px] cursor-pointer hover:text-white hover:underline transition-colors"
+                    onClick={() => handleArtistClick(work.artist.id)}
+                  >
+                    {displayArtistName}
+                  </span>
+                )}
+                {isPick && (
+                  <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/20 text-amber-400 text-[13px] font-semibold whitespace-nowrap">
+                    <svg className="h-3.5 w-3.5" fill="currentColor" viewBox="0 0 20 20">
+                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.957c.3.921-.755 1.688-1.54 1.118l-3.37-2.448a1 1 0 00-1.176 0l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.287-3.957a1 1 0 00-.364-1.118L2.063 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.957z" />
+                    </svg>
+                    Artier's Pick
+                  </span>
+                )}
               </div>
             </div>
             <button
-              onClick={() => setIsFollowing(!isFollowing)}
+              onClick={() => requireAuth(() => setIsFollowing(!isFollowing))}
               className={`flex items-center gap-2 px-5 py-2.5 rounded-lg text-[15px] font-medium transition-colors min-h-[44px] ${
                 isFollowing
                   ? 'bg-white/10 text-white hover:bg-white/20'
@@ -231,21 +284,26 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                     </div>
                   )}
                   <div className="space-y-4">
-                    <ArtistRow artist={work.artist} />
+                    <ArtistRow artist={work.artist} onArtistClick={handleArtistClick} />
                     {work.coOwners.map((coOwner) => (
-                      <ArtistRow key={coOwner.id} artist={coOwner} />
+                      <ArtistRow key={coOwner.id} artist={coOwner} onArtistClick={handleArtistClick} />
                     ))}
                   </div>
                 </div>
               ) : (
                 <div className="bg-[#1a1a1a] rounded-2xl border border-white/10 p-10 text-center">
-                  <div className="mb-5 flex justify-center">
+                  <div className="mb-5 flex justify-center cursor-pointer" onClick={() => handleArtistClick(work.artist.id)}>
                     <Avatar className="h-20 w-20 border-2 border-white/20">
                       <AvatarImage src={work.artist.avatar} alt={work.artist.name} />
                       <AvatarFallback className="text-[24px] font-semibold bg-white/10 text-white">{work.artist.name[0]}</AvatarFallback>
                     </Avatar>
                   </div>
-                  <h3 className="mb-2 text-[20px] font-semibold text-white">{work.artist.name}</h3>
+                  <h3
+                    className="mb-2 text-[20px] font-semibold text-white cursor-pointer hover:underline transition-colors"
+                    onClick={() => handleArtistClick(work.artist.id)}
+                  >
+                    {work.artist.name}
+                  </h3>
                   {work.artist.bio && (
                     <p className="mb-5 text-[14px] text-white/70">{work.artist.bio}</p>
                   )}
@@ -312,7 +370,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
           <div className="fixed top-1/2 -translate-y-1/2 right-5 flex flex-col items-center gap-5 z-50">
             {/* Follow (avatar) */}
             <button
-              onClick={() => setIsFollowing(!isFollowing)}
+              onClick={() => requireAuth(() => setIsFollowing(!isFollowing))}
               className="flex flex-col items-center gap-1.5"
               aria-label={isFollowing ? '팔로잉' : '팔로우'}
             >
@@ -329,11 +387,16 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                   </div>
                 )}
               </div>
-              <span className="text-[12px] text-white">{work.artist.name}</span>
+              <span
+                className="text-[12px] text-white cursor-pointer hover:underline"
+                onClick={(e) => { e.stopPropagation(); handleArtistClick(work.artist.id); }}
+              >
+                {work.artist.name}
+              </span>
             </button>
 
             {/* Like */}
-            <button onClick={handleLike} className="flex flex-col items-center gap-1.5" aria-label="좋아요">
+            <button onClick={() => requireAuth(handleLike)} className="flex flex-col items-center gap-1.5" aria-label="좋아요">
               <div className={`flex h-12 w-12 items-center justify-center rounded-full transition-colors backdrop-blur-sm ${
                 isLiked ? 'bg-[#FF2E63]' : 'bg-white/10 hover:bg-white/20'
               }`}>
@@ -344,7 +407,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
             </button>
 
             {/* Save / Bookmark */}
-            <button onClick={handleSave} className="flex flex-col items-center gap-1.5" aria-label="저장">
+            <button onClick={() => requireAuth(handleSave)} className="flex flex-col items-center gap-1.5" aria-label="저장">
               <div className={`flex h-12 w-12 items-center justify-center rounded-full transition-colors backdrop-blur-sm ${
                 isSaved ? 'bg-white' : 'bg-white/10 hover:bg-white/20'
               }`}>
@@ -354,15 +417,47 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
             </button>
 
             {/* Share */}
-            <button onClick={handleShare} className="flex flex-col items-center gap-1.5 mt-2" aria-label="공유">
-              <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors backdrop-blur-sm">
-                <Share2 className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-[12px] text-white">공유</span>
-            </button>
+            <Popover open={isShareOpen} onOpenChange={setIsShareOpen}>
+              <PopoverTrigger asChild>
+                <button className="flex flex-col items-center gap-1.5 mt-2" aria-label="공유">
+                  <div className="flex h-12 w-12 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors backdrop-blur-sm">
+                    <Share2 className="h-5 w-5 text-white" />
+                  </div>
+                  <span className="text-[12px] text-white">공유</span>
+                </button>
+              </PopoverTrigger>
+              <PopoverContent side="left" align="center" className="w-48 p-2 bg-[#2a2a2a] border-white/10 z-[110]">
+                <button
+                  onClick={handleCopyLink}
+                  className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-white hover:bg-white/10 transition-colors text-[14px]"
+                >
+                  <Link2 className="h-4 w-4" />
+                  링크 복사
+                </button>
+                <TooltipProvider>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <button
+                        disabled
+                        className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-white/40 cursor-not-allowed text-[14px]"
+                      >
+                        <MessageCircle className="h-4 w-4" />
+                        카카오톡 공유
+                      </button>
+                    </TooltipTrigger>
+                    <TooltipContent side="left">
+                      <p>준비 중입니다</p>
+                    </TooltipContent>
+                  </Tooltip>
+                </TooltipProvider>
+              </PopoverContent>
+            </Popover>
           </div>
         </div>
       </div>
+
+      {/* Login prompt modal */}
+      <LoginPromptModal open={showLoginPrompt} onClose={() => setShowLoginPrompt(false)} />
     </div>
   );
 }
@@ -409,15 +504,22 @@ function CoOwnerSection({ work }: { work: Work }) {
 /* ------------------------------------------------------------------ */
 /*  Reusable artist row for group works                               */
 /* ------------------------------------------------------------------ */
-function ArtistRow({ artist }: { artist: Artist }) {
+function ArtistRow({ artist, onArtistClick }: { artist: Artist; onArtistClick?: (id: string) => void }) {
   return (
     <div className="flex items-center gap-4 p-4 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
-      <Avatar className="h-14 w-14 border-2 border-white/20">
-        <AvatarImage src={artist.avatar} alt={artist.name} />
-        <AvatarFallback className="text-[18px] font-semibold bg-white/10 text-white">{artist.name[0]}</AvatarFallback>
-      </Avatar>
+      <button onClick={() => onArtistClick?.(artist.id)} className="rounded-full shrink-0">
+        <Avatar className="h-14 w-14 border-2 border-white/20 cursor-pointer">
+          <AvatarImage src={artist.avatar} alt={artist.name} />
+          <AvatarFallback className="text-[18px] font-semibold bg-white/10 text-white">{artist.name[0]}</AvatarFallback>
+        </Avatar>
+      </button>
       <div className="flex-1 min-w-0">
-        <h4 className="text-[16px] font-semibold text-white mb-1 truncate">{artist.name}</h4>
+        <h4
+          className="text-[16px] font-semibold text-white mb-1 truncate cursor-pointer hover:underline"
+          onClick={() => onArtistClick?.(artist.id)}
+        >
+          {artist.name}
+        </h4>
         {artist.bio && <p className="text-[14px] text-white/60 truncate">{artist.bio}</p>}
       </div>
       <button className="flex items-center gap-1.5 h-10 px-5 text-[14px] border border-white/20 text-white hover:bg-white/10 rounded-lg transition-colors min-h-[44px]">

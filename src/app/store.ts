@@ -288,3 +288,44 @@ export const useInteractionStore = () => {
   useEffect(() => userInteractionStore.subscribe(() => forceUpdate({})), []);
   return userInteractionStore;
 };
+
+// ===== 인증 상태 관리 =====
+
+const loadAuthFromStorage = (): boolean => {
+  if (typeof window === 'undefined') return true;
+  const stored = localStorage.getItem('artier_auth');
+  if (stored !== null) {
+    try { return JSON.parse(stored); } catch { return true; }
+  }
+  return true;
+};
+
+let isLoggedIn = loadAuthFromStorage();
+const authListeners: (() => void)[] = [];
+
+export const authStore = {
+  isLoggedIn: () => isLoggedIn,
+  login: () => {
+    isLoggedIn = true;
+    localStorage.setItem('artier_auth', 'true');
+    authListeners.forEach(l => l());
+  },
+  logout: () => {
+    isLoggedIn = false;
+    localStorage.setItem('artier_auth', 'false');
+    authListeners.forEach(l => l());
+  },
+  subscribe: (listener: () => void) => {
+    authListeners.push(listener);
+    return () => {
+      const idx = authListeners.indexOf(listener);
+      if (idx > -1) authListeners.splice(idx, 1);
+    };
+  },
+};
+
+export const useAuthStore = () => {
+  const [, forceUpdate] = useState({});
+  useEffect(() => authStore.subscribe(() => forceUpdate({})), []);
+  return authStore;
+};

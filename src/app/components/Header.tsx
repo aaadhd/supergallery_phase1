@@ -12,17 +12,24 @@ import {
 } from './ui/dropdown-menu';
 import { artists } from '../data';
 import { useState } from 'react';
+import { useAuthStore } from '../store';
 
 export function Header() {
   const navigate = useNavigate();
   const [language, setLanguage] = useState<'ko' | 'en'>('ko');
+  const auth = useAuthStore();
   const currentUser = artists[0];
+  const loggedIn = auth.isLoggedIn();
 
   const handleLogout = () => {
     if (confirm('로그아웃하시겠습니까?')) {
+      auth.logout();
       navigate('/');
-      alert('로그아웃되었습니다.');
     }
+  };
+
+  const handleLogin = () => {
+    auth.login();
   };
 
   return (
@@ -55,43 +62,51 @@ export function Header() {
 
           {/* 우측 액션 */}
           <div className="flex items-center gap-4 ml-auto">
-            {/* 업로드 버튼 — 크고 눈에 띄게 */}
-            <Button size="default" className="gap-2 text-base px-5 py-2.5" onClick={() => navigate('/upload')}>
-              <Plus className="h-5 w-5" />
-              작품 올리기
-            </Button>
-
-            {/* 프로필 메뉴 */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button variant="ghost" size="icon" className="rounded-full h-10 w-10">
-                  <Avatar className="h-9 w-9">
-                    <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
-                    <AvatarFallback>{currentUser.name[0]}</AvatarFallback>
-                  </Avatar>
+            {loggedIn ? (
+              <>
+                {/* 업로드 버튼 — 크고 눈에 띄게 */}
+                <Button size="default" className="gap-2 text-base px-5 py-2.5" onClick={() => navigate('/upload')}>
+                  <Plus className="h-5 w-5" />
+                  작품 올리기
                 </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="w-56">
-                <DropdownMenuLabel>
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium">{currentUser.name}</p>
-                    <p className="text-xs text-muted-foreground">{currentUser.bio}</p>
-                  </div>
-                </DropdownMenuLabel>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={() => navigate('/profile')} className="text-sm py-2">
-                  내 프로필
-                </DropdownMenuItem>
-                <DropdownMenuSeparator />
-                <DropdownMenuItem
-                  onClick={handleLogout}
-                  className="flex items-center gap-2 text-red-600 focus:text-red-600 py-2"
-                >
-                  <LogOut className="h-4 w-4" />
-                  로그아웃
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+
+                {/* 프로필 메뉴 */}
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button variant="ghost" size="icon" className="rounded-full h-10 w-10">
+                      <Avatar className="h-9 w-9">
+                        <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
+                        <AvatarFallback>{currentUser.name[0]}</AvatarFallback>
+                      </Avatar>
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-56">
+                    <DropdownMenuLabel>
+                      <div className="flex flex-col space-y-1">
+                        <p className="text-sm font-medium">{currentUser.name}</p>
+                        <p className="text-xs text-muted-foreground">{currentUser.bio}</p>
+                      </div>
+                    </DropdownMenuLabel>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem onClick={() => navigate('/profile')} className="text-sm py-2">
+                      내 프로필
+                    </DropdownMenuItem>
+                    <DropdownMenuSeparator />
+                    <DropdownMenuItem
+                      onClick={handleLogout}
+                      className="flex items-center gap-2 text-red-600 focus:text-red-600 py-2"
+                    >
+                      <LogOut className="h-4 w-4" />
+                      로그아웃
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              </>
+            ) : (
+              <Button size="default" className="gap-2 text-base px-6 py-2.5" onClick={handleLogin}>
+                로그인
+              </Button>
+            )}
 
             {/* 언어 변경 */}
             <DropdownMenu>
