@@ -121,7 +121,7 @@ export function PinCommentLayer({
                   }
                 }}
                 placeholder="이 부분에 대한 피드백..."
-                className="flex-1 bg-transparent text-white text-[13px] outline-none placeholder:text-white/50"
+                className="flex-1 bg-transparent text-white text-xs outline-none placeholder:text-white/50"
               />
               <button
                 onClick={() => setEditingPin(null)}
@@ -133,7 +133,7 @@ export function PinCommentLayer({
             <button
               onClick={handleSubmitPin}
               disabled={!newComment.trim()}
-              className="px-4 py-1.5 bg-cyan-500 text-white text-[12px] font-medium rounded-full hover:bg-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-1.5 bg-cyan-500 text-white text-xs font-medium rounded-full hover:bg-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               저장
             </button>
@@ -166,11 +166,11 @@ function PinMarker({
           <div className="flex items-start gap-2">
             <Avatar className="h-6 w-6 flex-shrink-0">
               <AvatarImage src={pin.userAvatar} />
-              <AvatarFallback className="text-[10px]">{pin.userName[0]}</AvatarFallback>
+              <AvatarFallback className="text-xs">{pin.userName[0]}</AvatarFallback>
             </Avatar>
             <div className="flex-1 min-w-0">
-              <p className="text-white/80 text-[11px] font-medium">{pin.userName}</p>
-              <p className="text-white text-[13px] mt-0.5">{pin.content}</p>
+              <p className="text-white/80 text-xs font-medium">{pin.userName}</p>
+              <p className="text-white text-xs mt-0.5">{pin.content}</p>
             </div>
             <button
               onClick={onRemove}

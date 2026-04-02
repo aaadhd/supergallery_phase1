@@ -1,9 +1,43 @@
-import { createBrowserRouter } from 'react-router-dom';
+import { createBrowserRouter, redirect } from 'react-router-dom';
 import Layout from './Layout';
 import Browse from './pages/Browse';
 import Upload from './pages/Upload';
 import Profile from './pages/Profile';
 import Events from './pages/Events';
+import EventDetail from './pages/EventDetail';
+import Terms from './pages/Terms';
+import Privacy from './pages/Privacy';
+import NotFound from './pages/NotFound';
+import Onboarding from './pages/Onboarding';
+import Login from './pages/Login';
+import InvitationLanding from './pages/InvitationLanding';
+import Signup from './pages/Signup';
+import PasswordReset from './pages/PasswordReset';
+import Search from './pages/Search';
+import Notifications from './pages/Notifications';
+import About from './pages/About';
+import Faq from './pages/Faq';
+import Contact from './pages/Contact';
+import Notices from './pages/Notices';
+import NoticeDetail from './pages/NoticeDetail';
+import ServerError from './pages/ServerError';
+import AdminLayout from './admin/AdminLayout';
+import AdminDashboard from './admin/AdminDashboard';
+import UnresolvedIssues from './admin/UnresolvedIssues';
+import LaunchChecklist from './admin/LaunchChecklist';
+import PartnerArtists from './admin/PartnerArtists';
+import EventParticipants from './admin/EventParticipants';
+import ContentReview from './admin/ContentReview';
+import WorkManagement from './admin/WorkManagement';
+import PickManagement from './admin/PickManagement';
+import BannerManagement from './admin/BannerManagement';
+import EventManagement from './admin/EventManagement';
+import ReportManagement from './admin/ReportManagement';
+import MemberManagement from './admin/MemberManagement';
+import Settings from './pages/Settings';
+import NotificationSettings from './pages/NotificationSettings';
+import Maintenance from './pages/Maintenance';
+import ExhibitionDetail from './pages/ExhibitionDetail';
 
 export const router = createBrowserRouter([
   {
@@ -11,12 +45,54 @@ export const router = createBrowserRouter([
     Component: Layout,
     children: [
       { index: true, Component: Browse },
-      { path: 'browse', Component: Browse },
+      { path: 'browse', loader: () => redirect('/') },
       { path: 'works/:id', Component: Browse },
       { path: 'upload', Component: Upload },
       { path: 'profile', Component: Profile },
       { path: 'profile/:id', Component: Profile },
+      { path: 'me', loader: () => redirect('/profile') },
       { path: 'events', Component: Events },
+      { path: 'events/:id', Component: EventDetail },
+      { path: 'search', Component: Search },
+      { path: 'notifications', Component: Notifications },
+      { path: 'settings', Component: Settings },
+      { path: 'settings/notifications', Component: NotificationSettings },
+      { path: 'exhibitions/:id', Component: ExhibitionDetail },
+      { path: 'about', Component: About },
+      { path: 'faq', Component: Faq },
+      { path: 'contact', Component: Contact },
+      { path: 'notices', Component: Notices },
+      { path: 'notices/:id', Component: NoticeDetail },
+      { path: '500', Component: ServerError },
+      { path: 'terms', Component: Terms },
+      { path: 'privacy', Component: Privacy },
+      { path: '*', Component: NotFound },
+    ],
+  },
+  // 온보딩·초대·로그인 (Layout 밖 — Header/Footer 없음)
+  { path: '/onboarding', Component: Onboarding },
+  { path: '/login', Component: Login },
+  { path: '/invite/:code', Component: InvitationLanding },
+  { path: '/maintenance', Component: Maintenance },
+  { path: '/signup', Component: Signup },
+  { path: '/reset-password', Component: PasswordReset },
+  // Admin (접근 제어는 AdminLayout 내부에서 처리)
+  {
+    path: '/admin',
+    Component: AdminLayout,
+    children: [
+      { index: true, Component: AdminDashboard },
+      { path: 'issues', Component: UnresolvedIssues },
+      { path: 'checklist', Component: LaunchChecklist },
+      { path: 'partners', Component: PartnerArtists },
+      { path: 'events', Component: EventParticipants },
+      { path: 'content-review', Component: ContentReview },
+      { path: 'works', Component: WorkManagement },
+      { path: 'picks', Component: PickManagement },
+      { path: 'banners', Component: BannerManagement },
+      { path: 'managed-events', Component: EventManagement },
+      { path: 'reports', Component: ReportManagement },
+      { path: 'members', Component: MemberManagement },
     ],
   },
 ]);

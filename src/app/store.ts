@@ -1,6 +1,7 @@
 // 전역 상태 관리 (간단한 구현)
 import { useState, useEffect } from 'react';
 import { Work, works as initialWorks } from './data';
+import { pointsRecallIfQuickDelete } from './utils/pointsBackground';
 
 // 초안 타입 정의
 export interface Draft {
@@ -72,6 +73,7 @@ export const workStore = {
 
   // 작품 삭제
   removeWork: (id: string) => {
+    pointsRecallIfQuickDelete(id);
     currentWorks = currentWorks.filter(w => w.id !== id);
     saveWorksToStorage(currentWorks);
     listeners.forEach(listener => listener());
@@ -190,6 +192,10 @@ export interface UserProfile {
   headline: string;
   bio: string;
   location: string;
+  interests?: string[];
+  avatarUrl?: string;
+  /** Phase 1: 프로필에서 자율 토글 — 강사 배지·수강생 작품 탭 */
+  isInstructor?: boolean;
 }
 
 const defaultProfile: UserProfile = {
@@ -329,3 +335,162 @@ export const useAuthStore = () => {
   useEffect(() => authStore.subscribe(() => forceUpdate({})), []);
   return authStore;
 };
+
+// ===== 팔로우 상태 관리 =====
+
+const loadFollowsFromStorage = (): string[] => {
+  if (typeof window === 'undefined') return [];
+  const stored = localStorage.getItem('artier_follows');
+  if (stored) {
+    try { return JSON.parse(stored); } catch { return []; }
+  }
+  return [];
+};
+
+let currentFollows = loadFollowsFromStorage();
+const followListeners: (() => void)[] = [];
+
+const saveFollows = () => {
+  localStorage.setItem('artier_follows', JSON.stringify(currentFollows));
+  followListeners.forEach(l => l());
+};
+
+export const followStore = {
+  getFollows: () => currentFollows,
+  isFollowing: (id: string) => currentFollows.includes(id),
+  toggle: (id: string) => {
+    if (currentFollows.includes(id)) {
+      currentFollows = currentFollows.filter(f => f !== id);
+    } else {
+      currentFollows = [...currentFollows, id];
+    }
+    saveFollows();
+  },
+  getCount: () => currentFollows.length,
+  subscribe: (listener: () => void) => {
+    followListeners.push(listener);
+    return () => {
+      const idx = followListeners.indexOf(listener);
+      if (idx > -1) followListeners.splice(idx, 1);
+    };
+  },
+};
+
+export const useFollowStore = () => {
+  const [, forceUpdate] = useState({});
+  useEffect(() => followStore.subscribe(() => forceUpdate({})), []);
+  return followStore;
+};
+
+// ===== 계정 정지 (로그인 차단 — 정책: 계정 정지 및 제재) =====
+
+const SUSPEND_KEY = 'artier_account_suspension';
+
+export interface AccountSuspension {
+  active: boolean;
+  reason?: string;
+  /** ISO 날짜 문자열; null이면 기간 없이 표시(영구 정지 안내) */
+  until: string | null;
+}
+
+function loadSuspension(): AccountSuspension {
+  if (typeof window === 'undefined') return { active: false, until: null };
+  try {
+    const raw = localStorage.getItem(SUSPEND_KEY);
+    if (!raw) return { active: false, until: null };
+    const p = JSON.parse(raw) as AccountSuspension;
+    if (!p.active) return { active: false, until: null };
+    if (p.until) {
+      const end = new Date(p.until).getTime();
+      if (!Number.isNaN(end) && end < Date.now()) {
+        localStorage.removeItem(SUSPEND_KEY);
+        return { active: false, until: null };
+      }
+    }
+    return { active: true, reason: p.reason, until: p.until ?? null };
+  } catch {
+    return { active: false, until: null };
+  }
+}
+
+let suspension = loadSuspension();
+const suspensionListeners: (() => void)[] = [];
+
+export const accountSuspensionStore = {
+  get: () => suspension,
+  set: (next: AccountSuspension) => {
+    suspension = next;
+    if (typeof window !== 'undefined') {
+      if (next.active) localStorage.setItem(SUSPEND_KEY, JSON.stringify(next));
+      else localStorage.removeItem(SUSPEND_KEY);
+    }
+    suspensionListeners.forEach((l) => l());
+  },
+  clear: () => accountSuspensionStore.set({ active: false, until: null }),
+  subscribe: (l: () => void) => {
+    suspensionListeners.push(l);
+    return () => {
+      const i = suspensionListeners.indexOf(l);
+      if (i > -1) suspensionListeners.splice(i, 1);
+    };
+  },
+};
+
+export const useAccountSuspensionStore = () => {
+  const [, forceUpdate] = useState({});
+  useEffect(() => accountSuspensionStore.subscribe(() => forceUpdate({})), []);
+  return accountSuspensionStore;
+};
+
+// ===== 탈퇴 후 작가 익명화 (정책: 회원 탈퇴 처리) =====
+
+const WITHDRAWN_ARTISTS_KEY = 'artier_withdrawn_artists';
+
+export const withdrawnArtistStore = {
+  getIds(): string[] {
+    if (typeof window === 'undefined') return [];
+    try {
+      return JSON.parse(localStorage.getItem(WITHDRAWN_ARTISTS_KEY) || '[]') as string[];
+    } catch {
+      return [];
+    }
+  },
+  mark(artistId: string) {
+    if (typeof window === 'undefined') return;
+    const ids = new Set(withdrawnArtistStore.getIds());
+    ids.add(artistId);
+    localStorage.setItem(WITHDRAWN_ARTISTS_KEY, JSON.stringify([...ids]));
+  },
+  isWithdrawn(artistId: string) {
+    return withdrawnArtistStore.getIds().includes(artistId);
+  },
+};
+
+const ANON_DISPLAY = '삭제된 사용자';
+const ANON_AVATAR =
+  'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100&h=100&fit=crop';
+
+/** 데모: 현재 로그인 사용자(첫 번째 시드 작가) 기준 탈퇴 처리 */
+export function performAccountWithdrawal(currentArtistId: string) {
+  withdrawnArtistStore.mark(currentArtistId);
+  workStore.getWorks().forEach((w) => {
+    if (w.artistId !== currentArtistId) return;
+    workStore.updateWork(w.id, {
+      artist: {
+        ...w.artist,
+        id: w.artist.id,
+        name: ANON_DISPLAY,
+        avatar: ANON_AVATAR,
+        bio: undefined,
+      },
+    });
+  });
+  currentInteractions = { liked: [], saved: [] };
+  localStorage.setItem('artier_interactions', JSON.stringify(currentInteractions));
+  interactionListeners.forEach((l) => l());
+  currentFollows = [];
+  saveFollows();
+  const draftIds = draftStore.getDrafts().map((d) => d.id);
+  draftIds.forEach((id) => draftStore.deleteDraft(id));
+  authStore.logout();
+}

@@ -58,7 +58,7 @@ export function CopyrightProtectedImage({
           aria-hidden
         >
           <div
-            className="text-white/10 text-[11px] font-medium tracking-widest whitespace-nowrap"
+            className="text-white/10 text-xs font-medium tracking-widest whitespace-nowrap"
             style={{
               transform: 'rotate(-25deg)',
               textShadow: '0 1px 2px rgba(0,0,0,0.3)',

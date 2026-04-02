@@ -47,11 +47,11 @@ export function ColorPaletteSuggestion({
         onClick={() => setExpanded(!expanded)}
         className="w-full flex items-center justify-between px-4 py-3 text-left hover:bg-white/5 transition-colors"
       >
-        <span className="flex items-center gap-2 text-white text-[14px] font-medium">
+        <span className="flex items-center gap-2 text-white text-sm font-medium">
           <Palette className="h-4 w-4 text-cyan-400" />
           작품 색상 팔레트
         </span>
-        <span className="text-white/60 text-[12px]">
+        <span className="text-white/60 text-xs">
           {expanded ? '접기' : '펼치기'}
         </span>
       </button>
@@ -59,7 +59,7 @@ export function ColorPaletteSuggestion({
         <div className="px-4 pb-4 space-y-4">
           {/* 추출된 색상 */}
           <div>
-            <p className="text-white/70 text-[12px] mb-2">작품에서 추출한 색상</p>
+            <p className="text-white/70 text-xs mb-2">작품에서 추출한 색상</p>
             <div className="flex flex-wrap gap-2">
               {result.colors.map((color, i) => (
                 <div
@@ -73,7 +73,7 @@ export function ColorPaletteSuggestion({
           </div>
           {/* 배경 제안 */}
           <div>
-            <p className="text-white/70 text-[12px] mb-2">추천 전시 배경</p>
+            <p className="text-white/70 text-xs mb-2">추천 전시 배경</p>
             <div className="grid grid-cols-4 gap-2">
               {result.suggestedBackgrounds.map((bg) => (
                 <button
@@ -85,7 +85,7 @@ export function ColorPaletteSuggestion({
                     className="w-full aspect-square rounded-md border border-white/20"
                     style={{ backgroundColor: bg.bgValue }}
                   />
-                  <span className="text-[10px] text-white/80 group-hover:text-white truncate max-w-full">
+                  <span className="text-xs text-white/80 group-hover:text-white truncate max-w-full">
                     {bg.label}
                   </span>
                 </button>

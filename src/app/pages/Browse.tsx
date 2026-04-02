@@ -1,72 +1,33 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import { Heart, ChevronRight, ChevronLeft, Image as ImageIcon, Users } from 'lucide-react';
+import { Heart, Bookmark, ChevronRight, ChevronLeft, Image as ImageIcon, Users } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { artists, Work, Artist } from '../data';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '../components/ui/hover-card';
 import { UserPlus } from 'lucide-react';
-import { workStore } from '../store';
+import { workStore, userInteractionStore, useInteractionStore, authStore, useAuthStore, followStore, useFollowStore } from '../store';
 import { groupWorks } from '../groupData';
 import { imageUrls } from '../imageUrls';
 import { WorkDetailModal } from '../components/WorkDetailModal';
+import { LoginPromptModal } from '../components/LoginPromptModal';
+import { CoachMark } from '../components/CoachMark';
 import { getFirstImage, getImageCount } from '../utils/imageHelper';
-
-// ---------------------------------------------------------------------------
-// Categories -- Phase 1 MVP: 전체 / 개인전시 / 공동전시
-// ---------------------------------------------------------------------------
-const categories = [
-  { id: 'all', label: '전체' },
-  { id: 'individual', label: '개인전시' },
-  { id: 'group', label: '공동전시' },
-] as const;
-
-// ---------------------------------------------------------------------------
-// Promotion banners (max 3)
-// ---------------------------------------------------------------------------
-const promotionBanners = [
-  {
-    id: 1,
-    image:
-      'https://images.unsplash.com/photo-1758923530822-3e58cf11011e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBhcnQlMjBleGhpYml0aW9uJTIwYmFubmVyfGVufDF8fHx8MTc3Mjc3MzI4OXww&ixlib=rb-4.1.0&q=80&w=1080',
-    title: '봄맞이 특별 전시',
-    subtitle: '국내 작가 100인의 신작 공개',
-    tag: 'NEW',
-  },
-  {
-    id: 2,
-    image:
-      'https://images.unsplash.com/photo-1597306957833-433de12c3af6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkaWdpdGFsJTIwYXJ0JTIwc2FsZSUyMHByb21vdGlvbnxlbnwxfHx8fDE3NzI3NzMyODl8MA&ixlib=rb-4.1.0&q=80&w=1080',
-    title: '디지털 아트 기획전',
-    subtitle: '인기 작가들의 디지털 아트 모음',
-    tag: 'HOT',
-  },
-  {
-    id: 3,
-    image:
-      'https://images.unsplash.com/photo-1767706508363-b2a729df06fb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjcmVhdGl2ZSUyMGRlc2lnbiUyMGV2ZW50JTIwcG9zdGVyfGVufDF8fHx8MTc3Mjc3MzI5MHww&ixlib=rb-4.1.0&q=80&w=1080',
-    title: '신인 작가 지원 프로그램',
-    subtitle: '당신의 작품을 세상에 선보이세요',
-    tag: 'EVENT',
-  },
-];
+import { isWorkVisibleOnPublicFeed } from '../utils/feedVisibility';
+import { pointsOnBrowseDailyVisit } from '../utils/pointsBackground';
+import { useI18n } from '../i18n/I18nProvider';
+import { AnimatePresence } from 'framer-motion';
+import { orderWorksForBrowseFeed } from '../utils/feedOrdering';
+import { loadSeenWorkIds, rememberSeenWork } from '../utils/seenFeedWorks';
 
 // ---------------------------------------------------------------------------
 // Helpers
 // ---------------------------------------------------------------------------
 
+const FEED_PAGE_SIZE = 24;
+
 /** Resolve an image key through the imageUrls map, falling back to the raw key. */
 function resolveImage(key: string): string {
   return imageUrls[key] || key;
-}
-
-/** Fisher-Yates shuffle (returns new array). */
-function shuffle<T>(arr: T[]): T[] {
-  const a = [...arr];
-  for (let i = a.length - 1; i > 0; i--) {
-    const j = Math.floor(Math.random() * (i + 1));
-    [a[i], a[j]] = [a[j], a[i]];
-  }
-  return a;
 }
 
 // ---------------------------------------------------------------------------
@@ -74,7 +35,58 @@ function shuffle<T>(arr: T[]): T[] {
 // ---------------------------------------------------------------------------
 export default function Browse() {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const params = useParams();
+
+  const categories = useMemo(
+    () =>
+      [
+        { id: 'all' as const, label: t('browse.tabAll') },
+        { id: 'individual' as const, label: t('browse.tabSolo') },
+        { id: 'group' as const, label: t('browse.tabGroup') },
+      ] as const,
+    [t],
+  );
+
+  useEffect(() => {
+    pointsOnBrowseDailyVisit();
+  }, []);
+
+  const promotionBanners = useMemo(
+    () => [
+      {
+        id: 1,
+        image:
+          'https://images.unsplash.com/photo-1758923530822-3e58cf11011e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBhcnQlMjBleGhpYml0aW9uJTIwYmFubmVyfGVufDF8fHx8MTc3Mjc3MzI4OXww&ixlib=rb-4.1.0&q=80&w=1080',
+        title: t('browse.banner1Title'),
+        subtitle: t('browse.banner1Subtitle'),
+        tag: t('browse.bannerTagNew'),
+      },
+      {
+        id: 2,
+        image:
+          'https://images.unsplash.com/photo-1597306957833-433de12c3af6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkaWdpdGFsJTIwYXJ0JTIwc2FsZSUyMHByb21vdGlvbnxlbnwxfHx8fDE3NzI3NzMyODl8MA&ixlib=rb-4.1.0&q=80&w=1080',
+        title: t('browse.banner2Title'),
+        subtitle: t('browse.banner2Subtitle'),
+        tag: t('browse.bannerTagHot'),
+      },
+      {
+        id: 3,
+        image:
+          'https://images.unsplash.com/photo-1767706508363-b2a729df06fb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjcmVhdGl2ZSUyMGRlc2lnbiUyMGV2ZW50JTIwcG9zdGVyfGVufDF8fHx8MTc3Mjc3MzI5MHww&ixlib=rb-4.1.0&q=80&w=1080',
+        title: t('browse.banner3Title'),
+        subtitle: t('browse.banner3Subtitle'),
+        tag: t('browse.bannerTagEvent'),
+      },
+    ],
+    [t],
+  );
+
+  // -- Stores ---------------------------------------------------------------
+  const interactions = useInteractionStore();
+  const auth = useAuthStore();
+  const follows = useFollowStore();
+  const [loginPromptOpen, setLoginPromptOpen] = useState(false);
 
   // -- Work data from store (includes user-uploaded works) -------------------
   const [works, setWorks] = useState(workStore.getWorks());
@@ -116,7 +128,11 @@ export default function Browse() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
+  const [feedEpoch, setFeedEpoch] = useState(0);
+
   const openWork = useCallback((workId: string) => {
+    rememberSeenWork(workId);
+    setFeedEpoch((e) => e + 1);
     scrollPosRef.current = window.scrollY;
     setSelectedWork(workId);
     window.history.pushState({ workId }, '', `/works/${workId}`);
@@ -132,17 +148,14 @@ export default function Browse() {
     });
   }, []);
 
-  // -- "Previously seen" tracking for random feed ---------------------------
-  const seenIdsRef = useRef<Set<string>>(new Set());
-
   // -- Banner controls ------------------------------------------------------
   const nextBanner = useCallback(
     () => setCurrentBanner((p) => (p + 1) % promotionBanners.length),
-    [],
+    [promotionBanners.length],
   );
   const prevBanner = useCallback(
     () => setCurrentBanner((p) => (p - 1 + promotionBanners.length) % promotionBanners.length),
-    [],
+    [promotionBanners.length],
   );
 
   // Auto-rotate banner every 5 seconds
@@ -151,7 +164,7 @@ export default function Browse() {
     return () => clearInterval(timer);
   }, [nextBanner]);
 
-  // -- Combine individual + group works & shuffle once ----------------------
+  // -- Combine + PRD 근사 피드 순서(Pick → 신규 → 가중) + 시청 이력 반영 -------
   const allWorks = useMemo(() => {
     const enhancedGroupWorks = groupWorks.map((work) => {
       if (work.owner && work.owner.type === 'group') {
@@ -160,72 +173,103 @@ export default function Browse() {
       }
       return work;
     });
-    const combined = [...works, ...enhancedGroupWorks];
-
-    // Prioritise unseen works, then append seen ones at the end
-    const unseen = combined.filter((w) => !seenIdsRef.current.has(w.id));
-    const seen = combined.filter((w) => seenIdsRef.current.has(w.id));
-    const ordered = [...shuffle(unseen), ...shuffle(seen)];
-
-    // Track newly shown works
-    ordered.forEach((w) => seenIdsRef.current.add(w.id));
-    return ordered;
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [works]);
+    const combined = [...works, ...enhancedGroupWorks] as Work[];
+    const seen = loadSeenWorkIds();
+    return orderWorksForBrowseFeed(combined, seen);
+  }, [works, feedEpoch]);
 
   // -- Category filtering ---------------------------------------------------
+  const reportedWorkIds = useMemo(() => {
+    try {
+      return new Set(JSON.parse(localStorage.getItem('artier_reported_works') || '[]') as string[]);
+    } catch { return new Set<string>(); }
+  }, [works]);
+
   const filteredWorks = useMemo(() => {
-    if (activeCategory === 'all') return allWorks;
+    const visibleWorks = allWorks.filter(
+      (w: any) => !w.isHidden && !reportedWorkIds.has(w.id) && isWorkVisibleOnPublicFeed(w as Work),
+    );
+    if (activeCategory === 'all') return visibleWorks;
+
+    const isGroupWork = (w: any) => {
+      if (w.primaryExhibitionType === 'group') return true;
+      if (w.primaryExhibitionType === 'solo') return false;
+      // 레거시: owner.type 또는 isInstructorUpload+groupName
+      if (w.owner?.type === 'group') return true;
+      if (w.isInstructorUpload && w.groupName) return true;
+      return false;
+    };
+
     if (activeCategory === 'individual') {
-      return allWorks.filter(
-        (w) => !(w as any).owner || (w as any).owner.type === 'individual',
+      return visibleWorks.filter(
+        (w) => !isGroupWork(w) || (w as any).showInSoloTab === true,
       );
     }
     // group
-    return allWorks.filter(
-      (w) => (w as any).owner && (w as any).owner.type === 'group',
-    );
+    return visibleWorks.filter((w) => isGroupWork(w));
   }, [allWorks, activeCategory]);
+
+  const [feedVisibleCount, setFeedVisibleCount] = useState(FEED_PAGE_SIZE);
+  useEffect(() => {
+    setFeedVisibleCount(FEED_PAGE_SIZE);
+  }, [activeCategory, filteredWorks.length]);
+
+  const displayedWorks = useMemo(
+    () => filteredWorks.slice(0, feedVisibleCount),
+    [filteredWorks, feedVisibleCount],
+  );
+
+  const feedSentinelRef = useRef<HTMLDivElement>(null);
+  useEffect(() => {
+    const el = feedSentinelRef.current;
+    if (!el || displayedWorks.length >= filteredWorks.length) return;
+    const ob = new IntersectionObserver(
+      (entries) => {
+        if (!entries[0]?.isIntersecting) return;
+        setFeedVisibleCount((c) => Math.min(c + FEED_PAGE_SIZE, filteredWorks.length));
+      },
+      { root: null, rootMargin: '320px', threshold: 0 },
+    );
+    ob.observe(el);
+    return () => ob.disconnect();
+  }, [filteredWorks.length, displayedWorks.length]);
 
   // =========================================================================
   // RENDER
   // =========================================================================
   return (
-    <div className="min-h-screen bg-[#F8F8F8]">
+    <div className="min-h-screen bg-white">
       {/* ----------------------------------------------------------------- */}
       {/* HERO BANNER CAROUSEL                                              */}
       {/* ----------------------------------------------------------------- */}
-      <div className="bg-white border-b border-[#E5E5E5]">
-        <div className="mx-auto max-w-[1440px] px-6 py-8">
+      <div className="bg-white">
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-4 sm:py-6">
           <div className="relative group">
-            {/* Slider */}
-            <div className="overflow-hidden rounded-2xl">
+            <div className="overflow-hidden rounded-xl sm:rounded-2xl">
               <div
                 className="flex transition-transform duration-500 ease-out"
                 style={{ transform: `translateX(-${currentBanner * 100}%)` }}
               >
                 {promotionBanners.map((banner) => (
                   <div key={banner.id} className="w-full shrink-0 relative cursor-pointer">
-                    <div className="relative h-[280px] overflow-hidden">
+                    <div className="relative h-[160px] sm:h-[220px] lg:h-[280px] overflow-hidden">
                       <ImageWithFallback
                         src={banner.image}
                         alt={banner.title}
                         className="w-full h-full object-cover"
                       />
-                      {/* Gradient overlay */}
                       <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent" />
-                      {/* Text */}
-                      <div className="absolute inset-0 flex flex-col justify-center px-12">
+                      <div className="absolute inset-0 flex flex-col justify-center px-5 sm:px-8 lg:px-12">
                         <div className="max-w-[600px]">
                           {banner.tag && (
-                            <span className="inline-block px-3 py-1 text-xs font-bold tracking-wider text-white bg-[#0057FF] rounded-full mb-3">
+                            <span className="inline-block px-2 py-0.5 sm:px-2.5 sm:py-0.5 text-[10px] sm:text-[11px] font-bold tracking-wider text-white bg-[#6366F1] rounded-full mb-1.5 sm:mb-2">
                               {banner.tag}
                             </span>
                           )}
-                          <h2 className="text-[32px] font-bold text-white mb-2 leading-tight">
+                          <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-1 sm:mb-2 leading-tight">
                             {banner.title}
                           </h2>
-                          <p className="text-base text-white/90 font-normal">
+                          <p className="text-[13px] sm:text-sm text-white/90 font-normal hidden sm:block">
                             {banner.subtitle}
                           </p>
                         </div>
@@ -239,27 +283,26 @@ export default function Browse() {
             {/* Prev / Next */}
             <button
               onClick={prevBanner}
-              className="absolute left-4 top-1/2 -translate-y-1/2 h-11 w-11 flex items-center justify-center bg-white/90 hover:bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 h-7 w-7 sm:h-8 sm:w-8 flex items-center justify-center bg-white/90 hover:bg-white rounded-full shadow-md opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
             >
-              <ChevronLeft className="h-5 w-5 text-[#191919]" />
+              <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#18181B]" />
             </button>
             <button
               onClick={nextBanner}
-              className="absolute right-4 top-1/2 -translate-y-1/2 h-11 w-11 flex items-center justify-center bg-white/90 hover:bg-white rounded-full shadow-lg opacity-0 group-hover:opacity-100 transition-opacity"
+              className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 h-7 w-7 sm:h-8 sm:w-8 flex items-center justify-center bg-white/90 hover:bg-white rounded-full shadow-md opacity-100 sm:opacity-0 sm:group-hover:opacity-100 transition-opacity"
             >
-              <ChevronRight className="h-5 w-5 text-[#191919]" />
+              <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#18181B]" />
             </button>
 
-            {/* Indicators */}
-            <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex items-center gap-2">
+            <div className="absolute bottom-2.5 sm:bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1 sm:gap-1.5">
               {promotionBanners.map((_, i) => (
                 <button
                   key={i}
                   onClick={() => setCurrentBanner(i)}
-                  className={`h-2 rounded-full transition-all ${
+                  className={`h-[5px] sm:h-1.5 rounded-full transition-all ${
                     currentBanner === i
-                      ? 'w-7 bg-white'
-                      : 'w-2 bg-white/50 hover:bg-white/70'
+                      ? 'w-4 sm:w-5 bg-white'
+                      : 'w-[5px] sm:w-1.5 bg-white/50 hover:bg-white/70'
                   }`}
                 />
               ))}
@@ -271,25 +314,25 @@ export default function Browse() {
       {/* ----------------------------------------------------------------- */}
       {/* CATEGORY FILTER TABS                                              */}
       {/* ----------------------------------------------------------------- */}
-      <div className="sticky top-[65px] z-40 border-b border-[#E5E5E5] bg-white">
-        <div className="mx-auto flex h-[64px] max-w-[1440px] items-center px-6 gap-3">
+      <div className="sticky top-[53px] sm:top-[65px] z-40 bg-white">
+        <div className="mx-auto flex h-11 sm:h-12 max-w-[1440px] items-center px-4 sm:px-6 gap-1.5 sm:gap-2">
           {categories.map((cat) => (
             <button
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`shrink-0 rounded-full px-5 py-2.5 text-base font-medium transition-all ${
+              className={`shrink-0 rounded-full px-3.5 sm:px-4 py-1.5 sm:py-2 text-[13px] sm:text-sm font-medium transition-all border ${
                 activeCategory === cat.id
-                  ? 'bg-[#191919] text-white shadow-sm'
-                  : 'bg-[#F3F3F3] text-[#191919] hover:bg-[#E8E8E8]'
+                  ? 'border-[#18181B] text-[#18181B] bg-white'
+                  : 'border-[#E5E7EB] text-[#71717A] hover:border-[#A1A1AA] hover:text-[#18181B] bg-white'
               }`}
             >
               {cat.label}
             </button>
           ))}
 
-          {/* Work count */}
-          <span className="ml-auto text-sm text-[#999]">
-            {filteredWorks.length}개의 작품
+          <span className="ml-auto text-xs sm:text-sm text-[#A1A1AA]">
+            {filteredWorks.length}
+            {t('browse.itemsCountSuffix')}
           </span>
         </div>
       </div>
@@ -297,23 +340,50 @@ export default function Browse() {
       {/* ----------------------------------------------------------------- */}
       {/* MASONRY-STYLE WORK GRID                                           */}
       {/* ----------------------------------------------------------------- */}
-      <div className="mx-auto max-w-[1440px] px-6 py-8">
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-4 sm:py-8 pb-20 md:pb-8">
         {filteredWorks.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center">
-            <p className="text-lg text-[#999] mb-2">표시할 작품이 없습니다</p>
-            <p className="text-sm text-[#bbb]">다른 카테고리를 선택해 보세요</p>
+            <p className="text-base text-[#A1A1AA] mb-2">{t('browse.emptyTitle')}</p>
+            <p className="text-[13px] text-[#B4B4BC]">{t('browse.emptyHint')}</p>
           </div>
         ) : (
-          <div className="columns-1 sm:columns-2 lg:columns-3 gap-8 space-y-8">
-            {filteredWorks.map((work, idx) => (
+          <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-5 sm:gap-6 lg:gap-8 space-y-5 sm:space-y-6 lg:space-y-8">
+            {displayedWorks.map((work, idx) => (
               <WorkCard
                 key={work.id}
                 work={work}
                 index={idx}
                 onSelect={() => openWork(work.id)}
                 onArtistClick={(artistId) => navigate(`/profile/${artistId}`)}
+                isLiked={interactions.isLiked(work.id)}
+                isSaved={interactions.isSaved(work.id)}
+                isLoggedIn={auth.isLoggedIn()}
+                onToggleLike={(id) => {
+                  if (!auth.isLoggedIn()) { setLoginPromptOpen(true); return; }
+                  userInteractionStore.toggleLike(id);
+                  const delta = userInteractionStore.isLiked(id) ? 1 : -1;
+                  workStore.updateWork(id, { likes: (workStore.getWork(id)?.likes ?? 0) + delta });
+                }}
+                onToggleSave={(id) => {
+                  if (!auth.isLoggedIn()) { setLoginPromptOpen(true); return; }
+                  userInteractionStore.toggleSave(id);
+                  const delta = userInteractionStore.isSaved(id) ? 1 : -1;
+                  workStore.updateWork(id, { saves: (workStore.getWork(id)?.saves ?? 0) + delta });
+                }}
+                isFollowing={(artistId) => follows.isFollowing(artistId)}
+                onToggleFollow={(artistId) => {
+                  if (!auth.isLoggedIn()) { setLoginPromptOpen(true); return; }
+                  followStore.toggle(artistId);
+                }}
               />
             ))}
+            {displayedWorks.length < filteredWorks.length && (
+              <div
+                ref={feedSentinelRef}
+                className="break-inside-avoid [column-span:all] w-full min-h-[120px] flex items-center justify-center py-6"
+                aria-hidden
+              />
+            )}
           </div>
         )}
       </div>
@@ -321,17 +391,25 @@ export default function Browse() {
       {/* ----------------------------------------------------------------- */}
       {/* WORK DETAIL MODAL                                                 */}
       {/* ----------------------------------------------------------------- */}
-      {selectedWork !== null && (
-        <WorkDetailModal
-          workId={selectedWork}
-          onClose={closeWork}
-          onNavigate={(newWorkId) => {
-            setSelectedWork(newWorkId);
-            window.history.replaceState({ workId: newWorkId }, '', `/works/${newWorkId}`);
-          }}
-          allWorks={filteredWorks}
-        />
-      )}
+      <AnimatePresence>
+        {selectedWork !== null && (
+          <WorkDetailModal
+            key="work-detail"
+            workId={selectedWork}
+            onClose={closeWork}
+            onNavigate={(newWorkId) => {
+              rememberSeenWork(newWorkId);
+              setFeedEpoch((e) => e + 1);
+              setSelectedWork(newWorkId);
+              window.history.replaceState({ workId: newWorkId }, '', `/works/${newWorkId}`);
+            }}
+            allWorks={filteredWorks}
+          />
+        )}
+      </AnimatePresence>
+
+      <LoginPromptModal open={loginPromptOpen} onClose={() => setLoginPromptOpen(false)} />
+      <CoachMark id="browse" />
     </div>
   );
 }
@@ -344,12 +422,21 @@ interface WorkCardProps {
   index: number;
   onSelect: () => void;
   onArtistClick: (artistId: string) => void;
+  isLiked: boolean;
+  isSaved: boolean;
+  isLoggedIn: boolean;
+  onToggleLike: (id: string) => void;
+  onToggleSave: (id: string) => void;
+  isFollowing: (artistId: string) => boolean;
+  onToggleFollow: (artistId: string) => void;
 }
 
-function WorkCard({ work, index, onSelect, onArtistClick }: WorkCardProps) {
+function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, isLoggedIn, onToggleLike, onToggleSave, isFollowing, onToggleFollow }: WorkCardProps) {
   const navigate = useNavigate();
+  const { t } = useI18n();
   const artist = work.artist;
   const likes = work.likes ?? 0;
+  const saves = work.saves ?? 0;
   const groupName = (work as any).groupName;
   const coOwners = (work as any).coOwners as Artist[] | undefined;
   const hasCoOwnersNoGroup = !groupName && coOwners && coOwners.length > 0;
@@ -358,16 +445,16 @@ function WorkCard({ work, index, onSelect, onArtistClick }: WorkCardProps) {
 
   return (
     <div
-      className="break-inside-avoid group bg-white rounded-2xl overflow-hidden border border-[#E0E0E0] shadow-md hover:shadow-xl transition-shadow duration-300 cursor-pointer"
+      className="break-inside-avoid group overflow-hidden cursor-pointer"
       style={{ animationDelay: `${(index % 12) * 40}ms` }}
       onClick={onSelect}
     >
       {/* Image */}
-      <div className="relative w-full overflow-hidden">
+      <div className="relative w-full overflow-hidden rounded-sm">
         <ImageWithFallback
           src={imageSrc}
           alt={work.title}
-          className="w-full h-auto object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
+          className="w-full h-auto object-cover"
         />
 
         {/* Image count badge */}
@@ -380,26 +467,43 @@ function WorkCard({ work, index, onSelect, onArtistClick }: WorkCardProps) {
           </div>
         )}
 
-        {/* Hover overlay with like button */}
-        <div className="absolute inset-0 bg-gradient-to-t from-black/50 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300 z-10">
-          <div className="absolute top-3 right-3">
+        {/* Like & Save buttons — touch: always visible / hover device: show on hover */}
+        <div className="absolute inset-0 hover-overlay-bg z-10 pointer-events-none">
+          <div className="absolute top-2 right-2 flex gap-1.5 hover-action pointer-events-auto">
             <button
-              className="h-10 w-10 bg-white/90 hover:bg-white backdrop-blur-sm rounded-full flex items-center justify-center text-[#191919] transition-colors shadow-md"
+              className={`h-8 w-8 rounded-full flex items-center justify-center transition-colors ${
+                isLiked
+                  ? 'bg-red-500 text-white active:bg-red-600'
+                  : 'bg-white/90 text-[#18181B] shadow-sm active:bg-white'
+              }`}
               onClick={(e) => {
                 e.stopPropagation();
-                // TODO: like toggle action
+                onToggleLike(work.id);
               }}
             >
-              <Heart className="h-5 w-5" />
+              <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
+            </button>
+            <button
+              className={`h-8 w-8 rounded-full flex items-center justify-center transition-colors ${
+                isSaved
+                  ? 'bg-indigo-500 text-white active:bg-indigo-600'
+                  : 'bg-white/90 text-[#18181B] shadow-sm active:bg-white'
+              }`}
+              onClick={(e) => {
+                e.stopPropagation();
+                onToggleSave(work.id);
+              }}
+            >
+              <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-current' : ''}`} />
             </button>
           </div>
         </div>
       </div>
 
       {/* Info section */}
-      <div className="p-5">
+      <div className="pt-2.5 pb-4 sm:pb-6">
         {/* Title */}
-        <h3 className="text-[17px] font-semibold text-[#191919] leading-snug mb-3 line-clamp-2">
+        <h3 className="text-sm font-medium text-[#18181B] leading-snug mb-1.5 line-clamp-2">
           {work.title}
         </h3>
 
@@ -410,18 +514,23 @@ function WorkCard({ work, index, onSelect, onArtistClick }: WorkCardProps) {
               <HoverCard openDelay={200} closeDelay={100}>
                 <HoverCardTrigger asChild>
                   <button
-                    className="flex items-center gap-2 text-[15px] text-[#696969] hover:text-[#191919] transition-colors truncate"
-                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center gap-2 text-[13px] text-[#696969] hover:text-[#18181B] transition-colors truncate"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (window.matchMedia('(hover: none)').matches) {
+                        onArtistClick(artist.id);
+                      }
+                    }}
                   >
-                    <Users className="h-[18px] w-[18px] shrink-0" />
+                    <Users className="h-4 w-4 shrink-0" />
                     <span className="truncate">{groupName}</span>
                   </button>
                 </HoverCardTrigger>
                 <HoverCardContent className="w-72 p-3" onClick={(e) => e.stopPropagation()}>
-                  <p className="text-xs text-muted-foreground px-1 mb-2">참여 작가</p>
-                  <MemberRow artist={artist} onNavigate={(id) => navigate(`/profile/${id}`)} />
+                  <p className="text-xs text-muted-foreground px-1 mb-2">{t('browse.artistLabel')}</p>
+                  <MemberRow artist={artist} isFollowing={isFollowing(artist.id)} onToggleFollow={() => onToggleFollow(artist.id)} onNavigate={(id) => navigate(`/profile/${id}`)} />
                   {coOwners?.map((co) => (
-                    <MemberRow key={co.id} artist={co} onNavigate={(id) => navigate(`/profile/${id}`)} />
+                    <MemberRow key={co.id} artist={co} isFollowing={isFollowing(co.id)} onToggleFollow={() => onToggleFollow(co.id)} onNavigate={(id) => navigate(`/profile/${id}`)} />
                   ))}
                 </HoverCardContent>
               </HoverCard>
@@ -429,24 +538,29 @@ function WorkCard({ work, index, onSelect, onArtistClick }: WorkCardProps) {
               <HoverCard openDelay={200} closeDelay={100}>
                 <HoverCardTrigger asChild>
                   <button
-                    className="flex items-center gap-2 text-[15px] text-[#696969] hover:text-[#191919] transition-colors truncate"
-                    onClick={(e) => e.stopPropagation()}
+                    className="flex items-center gap-2 text-[13px] text-[#696969] hover:text-[#18181B] transition-colors truncate"
+                    onClick={(e) => {
+                      e.stopPropagation();
+                      if (window.matchMedia('(hover: none)').matches) {
+                        onArtistClick(artist.id);
+                      }
+                    }}
                   >
-                    <Users className="h-[18px] w-[18px] shrink-0" />
-                    <span className="truncate">여러 작업자</span>
+                    <Users className="h-4 w-4 shrink-0" />
+                    <span className="truncate">{t('browse.groupArtistsLabel')}</span>
                   </button>
                 </HoverCardTrigger>
                 <HoverCardContent className="w-72 p-3" onClick={(e) => e.stopPropagation()}>
-                  <p className="text-xs text-muted-foreground px-1 mb-2">참여 작가</p>
-                  <MemberRow artist={artist} onNavigate={(id) => navigate(`/profile/${id}`)} />
+                  <p className="text-xs text-muted-foreground px-1 mb-2">{t('browse.artistLabel')}</p>
+                  <MemberRow artist={artist} isFollowing={isFollowing(artist.id)} onToggleFollow={() => onToggleFollow(artist.id)} onNavigate={(id) => navigate(`/profile/${id}`)} />
                   {coOwners.map((co) => (
-                    <MemberRow key={co.id} artist={co} onNavigate={(id) => navigate(`/profile/${id}`)} />
+                    <MemberRow key={co.id} artist={co} isFollowing={isFollowing(co.id)} onToggleFollow={() => onToggleFollow(co.id)} onNavigate={(id) => navigate(`/profile/${id}`)} />
                   ))}
                 </HoverCardContent>
               </HoverCard>
             ) : (
               <button
-                className="flex items-center gap-2 text-[15px] text-[#696969] hover:text-[#191919] transition-colors truncate"
+                className="flex items-center gap-2 text-[13px] text-[#696969] hover:text-[#18181B] transition-colors truncate"
                 onClick={(e) => {
                   e.stopPropagation();
                   onArtistClick(artist.id);
@@ -464,10 +578,22 @@ function WorkCard({ work, index, onSelect, onArtistClick }: WorkCardProps) {
             )}
           </div>
 
-          {/* Like count */}
-          <div className="flex items-center gap-1.5 text-[15px] text-[#888] shrink-0 ml-2">
-            <Heart className="h-[18px] w-[18px]" />
-            <span>{likes >= 1000 ? `${(likes / 1000).toFixed(1)}k` : likes}</span>
+          {/* Like & save counts */}
+          <div className="flex items-center gap-3 shrink-0 ml-2">
+            <button
+              className={`flex items-center gap-1 text-[13px] transition-colors ${isLiked ? 'text-red-500' : 'text-[#888] hover:text-red-400'}`}
+              onClick={(e) => { e.stopPropagation(); onToggleLike(work.id); }}
+            >
+              <Heart className={`h-3.5 w-3.5 ${isLiked ? 'fill-current' : ''}`} />
+              <span>{likes >= 1000 ? `${(likes / 1000).toFixed(1)}k` : likes}</span>
+            </button>
+            <button
+              className={`flex items-center gap-1 text-[13px] transition-colors ${isSaved ? 'text-indigo-500' : 'text-[#888] hover:text-indigo-400'}`}
+              onClick={(e) => { e.stopPropagation(); onToggleSave(work.id); }}
+            >
+              <Bookmark className={`h-3.5 w-3.5 ${isSaved ? 'fill-current' : ''}`} />
+              <span>{saves >= 1000 ? `${(saves / 1000).toFixed(1)}k` : saves}</span>
+            </button>
           </div>
         </div>
       </div>
@@ -478,17 +604,27 @@ function WorkCard({ work, index, onSelect, onArtistClick }: WorkCardProps) {
 // ===========================================================================
 // MemberRow -- popover member row for group/co-owner works
 // ===========================================================================
-function MemberRow({ artist, onNavigate }: { artist: Artist; onNavigate: (id: string) => void }) {
+function MemberRow({ artist, onNavigate, isFollowing, onToggleFollow }: { artist: Artist; onNavigate: (id: string) => void; isFollowing: boolean; onToggleFollow: () => void }) {
+  const { t } = useI18n();
   return (
-    <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-gray-50 transition-colors">
+    <div className="flex items-center gap-3 p-2 rounded-lg hover:bg-[#FAFAFA] transition-colors">
       <img src={artist.avatar} alt={artist.name} className="h-9 w-9 rounded-full object-cover shrink-0" />
-      <span className="flex-1 text-sm font-medium text-[#191919] truncate">{artist.name}</span>
       <button
         onClick={(e) => { e.stopPropagation(); onNavigate(artist.id); }}
-        className="flex items-center gap-1 text-xs px-3 py-1.5 border border-gray-200 rounded-lg hover:bg-gray-100 transition-colors"
+        className="flex-1 text-sm font-medium text-[#18181B] truncate text-left hover:underline"
+      >
+        {artist.name}
+      </button>
+      <button
+        onClick={(e) => { e.stopPropagation(); onToggleFollow(); }}
+        className={`flex items-center gap-1 text-xs px-3 py-1.5 rounded-lg transition-colors ${
+          isFollowing
+            ? 'bg-[#18181B] text-white hover:bg-[#3F3F46]'
+            : 'border border-[#E5E7EB] hover:bg-[#F4F4F5]'
+        }`}
       >
         <UserPlus className="h-3 w-3" />
-        팔로우
+        {isFollowing ? t('social.following') : t('social.follow')}
       </button>
     </div>
   );

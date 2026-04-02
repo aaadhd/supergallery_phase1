@@ -19,17 +19,9 @@ input, textarea, select {
   font-size: 16px !important; /* iOS zoom 방지 */
 }
 
-/* 카드 간격 넉넉하게 + 경계 명확하게 */
+/* 카드 간격 */
 .card, [data-card] {
   margin-bottom: 1rem;
-  border-radius: 12px;
-  border: 1px solid #E0E0E0;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-}
-
-/* 호버 효과 — 시니어도 인식 가능하도록 항상 보이는 경계 + 호버 시 강조 */
-.card:hover, [data-card]:hover {
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.14);
 }
 
 /* 리스트 아이템 간격 */
@@ -38,9 +30,62 @@ input, textarea, select {
   border-radius: 12px;
 }
 
+/* 모바일 safe-area 하단 패딩 */
+.safe-area-bottom {
+  padding-bottom: env(safe-area-inset-bottom, 0px);
+}
+
+/* ── Hover / Touch 분기 ── */
+
+/* 터치 디바이스: 항상 보임 */
+.hover-action {
+  opacity: 1;
+  transition: opacity 200ms ease;
+}
+.hover-overlay {
+  transition: background-color 200ms ease, opacity 200ms ease;
+}
+
+/* hover 가능한 디바이스(마우스): 숨겼다가 hover 시 표시 */
+@media (hover: hover) and (pointer: fine) {
+  .hover-action {
+    opacity: 0;
+  }
+  .group:hover .hover-action {
+    opacity: 1;
+  }
+  .hover-overlay-bg {
+    background-color: transparent;
+  }
+  .group:hover .hover-overlay-bg {
+    background-color: rgba(0, 0, 0, 0.05);
+  }
+  .hover-scale {
+    transition: transform 300ms ease;
+  }
+  .group:hover .hover-scale {
+    transform: scale(1.03);
+  }
+}
+
+/* 터치 디바이스에서는 그라데이션 오버레이를 항상 약하게 보여줌 */
+.touch-gradient-overlay {
+  opacity: 1;
+  background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 60%);
+}
+@media (hover: hover) and (pointer: fine) {
+  .touch-gradient-overlay {
+    opacity: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 40%, transparent 100%);
+  }
+  .group:hover .touch-gradient-overlay {
+    opacity: 1;
+  }
+}
+
 /* 포커스 상태 명확하게 */
 :focus-visible {
-  outline: 3px solid #0057FF;
+  outline: 3px solid #6366F1;
   outline-offset: 2px;
 }
 
@@ -116,3 +161,20 @@ button, [role="button"], a, .card, [data-card] {
 .animate-slow-pan-vertical { animation: slow-pan-vertical 22s ease-in-out infinite alternate; }
 .animate-slow-zoom { animation: slow-zoom 15s ease-in-out infinite alternate; }
 .animate-slow-drift { animation: slow-drift 30s ease-in-out infinite; }
+
+@keyframes confetti-pop {
+  0% {
+    opacity: 0;
+    transform: translate(0, 0) scale(0.15) rotate(0deg);
+  }
+  35% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0.9;
+    transform: translate(var(--tx, 0), var(--ty, 0)) scale(1) rotate(220deg);
+  }
+}
+.confetti-piece {
+  animation: confetti-pop 0.95s ease-out forwards;
+}

@@ -1,0 +1,354 @@
+import { useState, useEffect, useMemo } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Heart, UserPlus, Star, Bell, Check, Calendar } from 'lucide-react';
+import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
+import { Button } from '../components/ui/button';
+import { artists } from '../data';
+import type { Locale } from '../i18n/uiStrings';
+import type { MessageKey } from '../i18n/messages';
+import { useI18n } from '../i18n/I18nProvider';
+import { loadNotificationSettings, type NotificationSettingsState } from './Settings';
+
+const STORAGE_KEY = 'artier_notifications';
+const MAX_NOTIFICATIONS = 200;
+const NOTIF_RETENTION_MS = 90 * 86400000;
+
+interface Notification {
+  id: string;
+  type: 'like' | 'follow' | 'pick' | 'system' | 'event';
+  message: string;
+  fromUser?: { name: string; avatar: string; id: string };
+  workId?: string;
+  read: boolean;
+  createdAt: string;
+}
+
+function generateSeedNotifications(): Notification[] {
+  const now = Date.now();
+  return [
+    {
+      id: 'n1',
+      type: 'like',
+      message: '님이 회원님의 작품 "빛의 여정"을 좋아합니다',
+      fromUser: { name: artists[1].name, avatar: artists[1].avatar, id: artists[1].id },
+      workId: 'w1',
+      read: false,
+      createdAt: new Date(now - 1000 * 60 * 30).toISOString(),
+    },
+    {
+      id: 'n2',
+      type: 'follow',
+      message: '님이 회원님을 팔로우합니다',
+      fromUser: { name: artists[2].name, avatar: artists[2].avatar, id: artists[2].id },
+      read: false,
+      createdAt: new Date(now - 1000 * 60 * 60 * 2).toISOString(),
+    },
+    {
+      id: 'n3',
+      type: 'like',
+      message: '님이 회원님의 작품 "고요한 아침"을 좋아합니다',
+      fromUser: { name: artists[3].name, avatar: artists[3].avatar, id: artists[3].id },
+      workId: 'w2',
+      read: true,
+      createdAt: new Date(now - 1000 * 60 * 60 * 24).toISOString(),
+    },
+    {
+      id: 'n4',
+      type: 'pick',
+      message: '축하합니다! "산길의 봄"이 Artier\'s Pick으로 선정되었습니다',
+      read: true,
+      createdAt: new Date(now - 1000 * 60 * 60 * 48).toISOString(),
+    },
+    {
+      id: 'n5',
+      type: 'follow',
+      message: '님이 회원님을 팔로우합니다',
+      fromUser: {
+        name: artists[4]?.name || '이수연',
+        avatar: artists[4]?.avatar || '',
+        id: artists[4]?.id || '5',
+      },
+      read: true,
+      createdAt: new Date(now - 1000 * 60 * 60 * 72).toISOString(),
+    },
+    {
+      id: 'n6',
+      type: 'system',
+      message: 'Artier에 오신 것을 환영합니다! 첫 작품을 업로드해 보세요.',
+      read: true,
+      createdAt: new Date(now - 1000 * 60 * 60 * 168).toISOString(),
+    },
+    {
+      id: 'n7',
+      type: 'event',
+      message: '「나의 첫 디지털 캔버스」 이벤트가 진행 중입니다. 지금 참여해 보세요.',
+      read: false,
+      createdAt: new Date(now - 1000 * 60 * 45).toISOString(),
+    },
+  ];
+}
+
+function normalizeNotifications(list: Notification[]): Notification[] {
+  const cutoff = Date.now() - NOTIF_RETENTION_MS;
+  const filtered = list.filter((n) => {
+    const ts = new Date(n.createdAt).getTime();
+    return !Number.isNaN(ts) && ts >= cutoff;
+  });
+  filtered.sort((a, b) => new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime());
+  return filtered.slice(0, MAX_NOTIFICATIONS);
+}
+
+function loadNotifications(): Notification[] {
+  try {
+    const stored = localStorage.getItem(STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored) as Notification[];
+      if (Array.isArray(parsed) && !parsed.some((n) => n.id === 'n7')) {
+        const seed = generateSeedNotifications().find((n) => n.id === 'n7');
+        if (seed) {
+          const merged = normalizeNotifications([seed, ...parsed]);
+          localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+          return merged;
+        }
+      }
+      return Array.isArray(parsed) ? normalizeNotifications(parsed) : normalizeNotifications(generateSeedNotifications());
+    }
+  } catch {}
+  const seed = normalizeNotifications(generateSeedNotifications());
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
+  return seed;
+}
+
+function formatRelativeTime(
+  dateStr: string,
+  t: (key: MessageKey) => string,
+  locale: Locale,
+): string {
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return t('notifications.timeJustNow');
+  if (mins < 60) return t('notifications.timeMinutes').replace('{n}', String(mins));
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return t('notifications.timeHours').replace('{n}', String(hours));
+  const days = Math.floor(hours / 24);
+  if (days < 7) return t('notifications.timeDays').replace('{n}', String(days));
+  return new Date(dateStr).toLocaleDateString(locale === 'en' ? 'en-US' : 'ko-KR');
+}
+
+const typeIcons = {
+  like: Heart,
+  follow: UserPlus,
+  pick: Star,
+  system: Bell,
+  event: Calendar,
+} as const;
+
+const typeColors = {
+  like: 'bg-red-50 text-red-500',
+  follow: 'bg-indigo-50 text-indigo-500',
+  pick: 'bg-amber-50 text-amber-500',
+  system: 'bg-[#FAFAFA] text-gray-500',
+  event: 'bg-emerald-50 text-emerald-600',
+} as const;
+
+function passesPrefs(n: Notification, p: NotificationSettingsState): boolean {
+  switch (n.type) {
+    case 'like':
+      return p.like;
+    case 'follow':
+      return p.newFollower;
+    case 'pick':
+      return p.weeklyTheme;
+    case 'event':
+      return p.groupExhibitionInvite;
+    case 'system':
+      return p.marketing;
+    default:
+      return true;
+  }
+}
+
+type CategoryTab = 'all' | Notification['type'];
+
+export default function Notifications() {
+  const navigate = useNavigate();
+  const { t, locale } = useI18n();
+  const [notifications, setNotifications] = useState<Notification[]>(loadNotifications);
+  const [readFilter, setReadFilter] = useState<'all' | 'unread'>('all');
+  const [categoryTab, setCategoryTab] = useState<CategoryTab>('all');
+  const [prefs, setPrefs] = useState<NotificationSettingsState>(() => loadNotificationSettings());
+
+  useEffect(() => {
+    const next = normalizeNotifications(notifications);
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    if (next.length !== notifications.length) setNotifications(next);
+  }, [notifications]);
+
+  useEffect(() => {
+    const syncPrefs = () => setPrefs(loadNotificationSettings());
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === 'artier_notification_settings') syncPrefs();
+    };
+    window.addEventListener('storage', onStorage);
+    window.addEventListener('artier-notification-prefs', syncPrefs);
+    return () => {
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener('artier-notification-prefs', syncPrefs);
+    };
+  }, []);
+
+  const filtered = useMemo(() => {
+    let list = notifications;
+    if (readFilter === 'unread') list = list.filter((n) => !n.read);
+    if (categoryTab !== 'all') list = list.filter((n) => n.type === categoryTab);
+    return list.filter((n) => passesPrefs(n, prefs));
+  }, [notifications, readFilter, categoryTab, prefs]);
+
+  const unreadCount = notifications.filter((n) => !n.read).length;
+
+  const markAsRead = (id: string) => {
+    setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
+  };
+
+  const markAllRead = () => {
+    setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
+  };
+
+  const handleClick = (notif: Notification) => {
+    markAsRead(notif.id);
+    if (notif.type === 'event') {
+      navigate('/events');
+      return;
+    }
+    if (notif.workId) navigate(`/works/${notif.workId}`);
+    else if (notif.fromUser) navigate(`/profile/${notif.fromUser.id}`);
+  };
+
+  const categoryChips: { id: CategoryTab; label: string }[] = [
+    { id: 'all', label: t('notifications.categoryAll') },
+    { id: 'like', label: t('notifications.categoryLike') },
+    { id: 'follow', label: t('notifications.categoryFollow') },
+    { id: 'pick', label: t('notifications.categoryPick') },
+    { id: 'event', label: t('notifications.categoryEvent') },
+    { id: 'system', label: t('notifications.categorySystem') },
+  ];
+
+  return (
+    <div className="min-h-screen bg-white pb-20 md:pb-0">
+      <div className="bg-white border-b border-[#E5E7EB]">
+        <div className="mx-auto max-w-[700px] px-4 sm:px-6 py-5 sm:py-8">
+          <div className="flex items-center justify-between gap-3">
+            <h1 className="text-xl sm:text-2xl font-bold text-[#18181B]">{t('notifications.title')}</h1>
+            <div className="flex items-center gap-2 shrink-0">
+              <Link
+                to="/settings#notifications"
+                className="text-xs sm:text-sm text-[#6366F1] hover:underline font-medium"
+              >
+                {t('notifications.settingsLink')}
+              </Link>
+              {unreadCount > 0 && (
+                <Button variant="ghost" size="sm" onClick={markAllRead} className="text-sm text-gray-500">
+                  <Check className="h-4 w-4 mr-1" />
+                  {t('notifications.markAll')}
+                </Button>
+              )}
+            </div>
+          </div>
+
+          <div className="flex gap-2 sm:gap-3 mt-4 sm:mt-5 flex-wrap">
+            <button
+              type="button"
+              onClick={() => setReadFilter('all')}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                readFilter === 'all' ? 'bg-[#18181B] text-white' : 'bg-[#F4F4F5] text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              {t('notifications.filterAll')}
+            </button>
+            <button
+              type="button"
+              onClick={() => setReadFilter('unread')}
+              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                readFilter === 'unread' ? 'bg-[#18181B] text-white' : 'bg-[#F4F4F5] text-gray-600 hover:bg-gray-200'
+              }`}
+            >
+              {t('notifications.filterUnread')} {unreadCount > 0 && `(${unreadCount})`}
+            </button>
+          </div>
+
+          <div className="flex gap-2 mt-3 overflow-x-auto pb-1 scrollbar-hide -mx-1 px-1">
+            {categoryChips.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => setCategoryTab(c.id)}
+                className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                  categoryTab === c.id
+                    ? 'border-[#6366F1] bg-indigo-50 text-[#4338CA]'
+                    : 'border-[#E5E7EB] text-[#71717A] hover:border-[#D4D4D8]'
+                }`}
+              >
+                {c.label}
+              </button>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      <div className="mx-auto max-w-[700px] px-4 sm:px-6 py-4 sm:py-6">
+        {filtered.length === 0 ? (
+          <div className="text-center py-12 sm:py-20">
+            <Bell className="h-12 w-12 text-gray-200 mx-auto mb-3" />
+            <h3 className="text-sm sm:text-base font-semibold text-gray-600 mb-2">
+              {readFilter === 'unread' ? t('notifications.emptyUnread') : t('notifications.empty')}
+            </h3>
+            <p className="text-[13px] text-gray-400">{t('notifications.emptyHint')}</p>
+          </div>
+        ) : (
+          <div className="space-y-2">
+            {filtered.map((notif) => {
+              const Icon = typeIcons[notif.type];
+              const colorClass = typeColors[notif.type];
+              return (
+                <button
+                  key={notif.id}
+                  type="button"
+                  onClick={() => handleClick(notif)}
+                  className={`flex items-start gap-3 sm:gap-4 w-full p-4 sm:p-5 rounded-xl text-left transition-colors ${
+                    notif.read ? 'bg-white hover:bg-[#FAFAFA]' : 'bg-indigo-50/50 hover:bg-indigo-50'
+                  }`}
+                >
+                  {notif.fromUser ? (
+                    <Avatar className="h-10 w-10 shrink-0">
+                      <AvatarImage src={notif.fromUser.avatar} alt={notif.fromUser.name} />
+                      <AvatarFallback>{notif.fromUser.name[0]}</AvatarFallback>
+                    </Avatar>
+                  ) : (
+                    <div className={`h-10 w-10 shrink-0 rounded-full flex items-center justify-center ${colorClass}`}>
+                      <Icon className="h-4 w-4" />
+                    </div>
+                  )}
+                  <div className="flex-1 min-w-0">
+                    <p className="text-[13px] sm:text-sm text-[#3F3F46] leading-relaxed">
+                      {notif.fromUser && <span className="font-semibold">{notif.fromUser.name}</span>}
+                      {notif.message}
+                    </p>
+                    <div className="flex items-center gap-3 mt-1.5">
+                      <span className="text-xs text-gray-400">
+                        {formatRelativeTime(notif.createdAt, t, locale)}
+                      </span>
+                      {!notif.read && <span className="h-2 w-2 rounded-full bg-[#6366F1]" />}
+                    </div>
+                  </div>
+                  <div className={`h-9 w-9 shrink-0 rounded-full flex items-center justify-center ${colorClass}`}>
+                    <Icon className="h-4 w-4" />
+                  </div>
+                </button>
+              );
+            })}
+          </div>
+        )}
+      </div>
+    </div>
+  );
+}

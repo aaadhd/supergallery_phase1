@@ -67,12 +67,12 @@ export function TimelapsePlayer({
       {/* 헤더 */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
         <div>
-          <h4 className="text-white text-[14px] font-semibold">{title}</h4>
+          <h4 className="text-white text-sm font-semibold">{title}</h4>
           {artistName && (
-            <p className="text-white/60 text-[12px]">{artistName}</p>
+            <p className="text-white/60 text-xs">{artistName}</p>
           )}
         </div>
-        <span className="px-2 py-0.5 rounded text-[10px] font-medium bg-cyan-500/20 text-cyan-300">
+        <span className="px-2 py-0.5 rounded text-xs font-medium bg-cyan-500/20 text-cyan-300">
           SGF 연동
         </span>
       </div>
@@ -92,11 +92,11 @@ export function TimelapsePlayer({
         ) : (
           /* 플레이스홀더 - 실제 타임랩스 미연동 시 */
           <div className="flex flex-col items-center gap-4 text-white/50">
-            <div className="w-20 h-20 rounded-full border-2 border-dashed border-white/30 flex items-center justify-center">
-              <Play className="h-10 w-10 ml-1" />
+            <div className="w-14 h-14 rounded-full border-2 border-dashed border-white/30 flex items-center justify-center">
+              <Play className="h-7 w-7 ml-0.5" />
             </div>
-            <p className="text-[13px]">SGF 드로잉 툴에서 제작한 작품은</p>
-            <p className="text-[13px]">작업 과정 타임랩스를 감상할 수 있습니다</p>
+            <p className="text-xs">SGF 드로잉 툴에서 제작한 작품은</p>
+            <p className="text-xs">작업 과정 타임랩스를 감상할 수 있습니다</p>
           </div>
         )}
 
@@ -131,7 +131,7 @@ export function TimelapsePlayer({
               <select
                 value={speed}
                 onChange={(e) => setSpeed(Number(e.target.value))}
-                className="h-7 px-2 rounded bg-white/10 text-white text-[12px] border-none focus:ring-1 focus:ring-cyan-500"
+                className="h-7 px-2 rounded bg-white/10 text-white text-xs border-none focus:ring-1 focus:ring-cyan-500"
               >
                 <option value={0.5}>0.5x</option>
                 <option value={1}>1x</option>
@@ -139,7 +139,7 @@ export function TimelapsePlayer({
                 <option value={2}>2x</option>
               </select>
             </div>
-            <span className="text-white/70 text-[12px]">
+            <span className="text-white/70 text-xs">
               {Math.floor(progress / 100 * 2)}:{(Math.floor(progress % 100) * 0.6).toFixed(0).padStart(2, '0')} / 2:00
             </span>
           </div>

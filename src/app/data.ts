@@ -9,10 +9,22 @@ export interface Artist {
   following?: number;
 }
 
+// 이미지별 작가 지정 (1 이미지 = 1 작가)
+export interface ImageArtistAssignment {
+  type: 'member' | 'non-member';
+  // member인 경우
+  memberId?: string;
+  memberName?: string;
+  memberAvatar?: string;
+  // non-member인 경우 (향후 초대/가입 연동용)
+  displayName?: string;
+  phoneNumber?: string;
+}
+
 export interface Work {
   id: string;
   title: string;
-  image: string | string[]; // 1~10장의 이미지 지원
+  image: string | string[]; // 1~20장의 이미지 지원
   artistId: string;
   artist: Artist;
   likes: number;
@@ -20,14 +32,23 @@ export interface Work {
   comments: number;
   description?: string;
   tags?: string[];
-  category?: 'art' | 'fashion' | 'craft' | 'product'; // 카테고리 필터링용
-  coOwners?: Artist[]; // 공동 소유자 (여러 명의 아티스트)
-  groupName?: string; // 공동 작업 시 그룹명 (예: "00문화센터 수채화반", "00동호회")
-  owner?: any; // 작품 소유자 (개인 또는 그룹) - groupData.ts의 WorkOwner 타입
-  taggedEmails?: string[]; // 강사가 태그한 수강생 이메일 목록
-  isInstructorUpload?: boolean; // 강사가 수강생 대신 올린 작품 여부
-  pick?: boolean; // Artier's Pick 선정작
-  editorsPick?: boolean; // 에디터 선정 (groupData 호환)
+  category?: 'art' | 'fashion' | 'craft' | 'product';
+  coOwners?: Artist[]; // 레거시 호환용
+  groupName?: string; // 그룹전시 시 그룹명
+  owner?: any; // groupData.ts WorkOwner 타입 호환
+  taggedEmails?: string[]; // 강사가 태그한 수강생 이메일
+  isInstructorUpload?: boolean; // 강사 대리 업로드 여부
+  pick?: boolean; // Artier's Pick
+  editorsPick?: boolean;
+  // Phase 1 신규 필드
+  primaryExhibitionType?: 'solo' | 'group'; // 전시 유형 (강사+그룹명 → group, 그 외 → solo)
+  showInSoloTab?: boolean; // 그룹전시이지만 개인전시 탭에도 노출
+  imageArtists?: ImageArtistAssignment[]; // 이미지별 작가 지정 (인덱스 = 이미지 인덱스)
+  isHidden?: boolean; // 비공개 여부
+  /** 둘러보기 피드 편입 — 미지정·승인 = 피드 노출, 대기·반려 = 피드 제외 (콘텐츠 운영 정책) */
+  feedReviewStatus?: 'pending' | 'approved' | 'rejected';
+  /** 업로드일 (검수 목록용, 선택) */
+  uploadedAt?: string;
 }
 
 // 아티스트 더미 데이터
