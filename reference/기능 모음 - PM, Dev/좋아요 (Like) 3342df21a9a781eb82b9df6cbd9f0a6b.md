@@ -1,6 +1,8 @@
 # 좋아요 (Like)
 
-관련 화면: 작업물 상세 모달, 둘러보기, 내 프로필 (좋아요 탭)
+최종 편집 일시: 2026년 4월 3일 오전 11:10
+화면 모음: https://www.notion.so/3352df21a9a780a8ad0fdb1bb428d279, https://www.notion.so/3352df21a9a780cabba6e6786e7252f1, https://www.notion.so/3352df21a9a78124b0ebc155fe84354c, https://www.notion.so/3352df21a9a781278708ccc1dcf1cfcc, https://www.notion.so/3352df21a9a781c6b21cc496828051f7
+📋 유저스토리 기반 WBS v2: 나는 마음에 드는 작품에 좋아요를 누를 수 있어야 한다 (https://www.notion.so/3352df21a9a78196a25be62e1a23d640?pvs=21)
 
 ## 개요
 
@@ -59,4 +61,4 @@ Like (
 - [x]  자신의 작품 좋아요 가능 여부 → **가능** ✅ (제한하면 예외 처리 복잡도 증가 대비 실익 없음)
 - [x]  비로그인 좋아요 클릭 → **로그인 유도 모달** ✅
 - [x]  좋아요 알림 기본값 → **ON** ✅ (콘텐츠 운영 정책 알림 운영 정책 표 참조)
-- [ ]  좋아요 수 카운트 방식 (실시간 vs 캐싱) — 개발자 결정
+- [x]  좋아요 수 카운트 방식 → **PM 추천: [works.like](http://works.like)_count 캐싱** ✅ (실시간 COUNT는 트래픽 증가 시 부담. 캐싱 + 비동기 반영이 성능상 유리. ⚠️ 개발자 최종 결정 필요)

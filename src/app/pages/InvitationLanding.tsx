@@ -1,10 +1,11 @@
 import { useEffect } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Share2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuthStore } from '../store';
 import { allEvents } from './EventDetail';
 import { useI18n } from '../i18n/I18nProvider';
+import { Button } from '../components/ui/button';
 
 type InvitePayload = {
   title: string;
@@ -53,10 +54,12 @@ function defaultInviterName(code: string): string {
 
 export default function InvitationLanding() {
   const { code } = useParams<{ code: string }>();
+  const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const auth = useAuthStore();
   const { t } = useI18n();
   const data = resolveInvite(code);
+  const forceExpired = searchParams.get('expired') === '1';
 
   useEffect(() => {
     const brand = t('brand.name');
@@ -112,9 +115,35 @@ export default function InvitationLanding() {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4">
         <p className="text-zinc-600 text-center">{t('invite.invalid')}</p>
-        <Link to="/" className="mt-4 text-sm font-medium text-[#6366F1] hover:underline">
+        <Link to="/" className="mt-4 text-sm font-medium text-primary lg:hover:underline">
           {t('invite.browse')}
         </Link>
+      </div>
+    );
+  }
+
+  if (forceExpired) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 py-12">
+        <div className="max-w-md text-center">
+          <p className="text-xs font-semibold uppercase tracking-wide text-amber-700 mb-2">{t('invite.expiredBadge')}</p>
+          <h1 className="text-xl font-bold text-zinc-900 mb-3">{t('invite.expiredTitle')}</h1>
+          <p className="text-sm text-zinc-600 leading-relaxed">{t('invite.expiredBody')}</p>
+          <div className="mt-8 flex flex-col gap-3">
+            <Link
+              to="/search"
+              className="w-full rounded-xl bg-primary py-3.5 text-sm font-semibold text-primary-foreground text-center transition lg:hover:opacity-90"
+            >
+              {t('invite.expiredCtaSearch')}
+            </Link>
+            <Link
+              to="/"
+              className="w-full rounded-xl border border-zinc-200 py-3.5 text-sm font-semibold text-zinc-700 text-center lg:hover:bg-zinc-50"
+            >
+              {t('invite.browse')}
+            </Link>
+          </div>
+        </div>
       </div>
     );
   }
@@ -136,7 +165,7 @@ export default function InvitationLanding() {
               </p>
             </div>
             <div className="p-6 sm:p-8">
-              <p className="text-xs font-medium uppercase tracking-wide text-[#6366F1]">
+              <p className="text-xs font-medium uppercase tracking-wide text-primary">
                 {t('invite.exhibitionLabel')}
               </p>
               <h1 className="mt-1 text-xl font-bold text-zinc-900 leading-snug">{data.title}</h1>
@@ -146,38 +175,36 @@ export default function InvitationLanding() {
               </p>
               <div className="mt-8 flex flex-col gap-3">
                 {auth.isLoggedIn() ? (
-                  <button
+                  <Button
                     type="button"
                     onClick={handleParticipate}
-                    className="w-full rounded-xl py-3.5 text-sm font-semibold text-white transition hover:opacity-90"
-                    style={{ backgroundColor: '#6366F1' }}
+                    className="w-full rounded-xl bg-primary py-3.5 text-sm font-semibold text-primary-foreground transition lg:hover:opacity-90"
                   >
                     {t('invite.participate')}
-                  </button>
+                  </Button>
                 ) : (
-                  <button
+                  <Button
                     type="button"
                     onClick={handleParticipate}
-                    className="w-full rounded-xl py-3.5 text-sm font-semibold text-white transition hover:opacity-90"
-                    style={{ backgroundColor: '#6366F1' }}
+                    className="w-full rounded-xl bg-primary py-3.5 text-sm font-semibold text-primary-foreground transition lg:hover:opacity-90"
                   >
                     {t('invite.loginToParticipate')}
-                  </button>
+                  </Button>
                 )}
                 <Link
                   to="/"
-                  className="flex w-full items-center justify-center rounded-xl border border-zinc-200 py-3.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-50"
+                  className="flex w-full items-center justify-center rounded-xl border border-zinc-200 py-3.5 text-sm font-semibold text-zinc-700 lg:hover:bg-zinc-50"
                 >
                   {t('invite.browse')}
                 </Link>
-                <button
+                <Button
                   type="button"
                   onClick={share}
-                  className="flex w-full items-center justify-center gap-2 py-2 text-sm font-medium text-zinc-500 hover:text-zinc-800"
+                  className="flex w-full items-center justify-center gap-2 py-2 text-sm font-medium text-zinc-500 lg:hover:text-zinc-800"
                 >
                   <Share2 className="h-4 w-4" />
                   {t('invite.share')}
-                </button>
+                </Button>
               </div>
             </div>
           </div>

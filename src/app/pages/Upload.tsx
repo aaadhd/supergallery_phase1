@@ -15,6 +15,7 @@ import {
   resolveCanonicalGroupName,
   setLastUsedGroupName,
 } from '../utils/groupNameRegistry';
+import { Button } from '../components/ui/button';
 import { pointsOnWorkPublished } from '../utils/pointsBackground';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
@@ -303,7 +304,7 @@ export default function Upload() {
       primaryExhibitionType,
       showInSoloTab: primaryExhibitionType === 'group' ? showInSoloTab : undefined,
       imageArtists,
-      feedReviewStatus: 'pending',
+      feedReviewStatus: import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true' ? 'approved' : 'pending',
       uploadedAt,
     };
 
@@ -314,11 +315,13 @@ export default function Upload() {
 
     if (isInstructorUpload && taggedEmails.length > 0) {
       toast.success(tn('upload.toastInviteSent', { n: String(taggedEmails.length) }));
+    } else if (import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true') {
+      toast.success(t('upload.toastPublishedImmediate'));
     } else {
       toast.success(t('upload.toastPublished'));
     }
 
-    setTimeout(() => navigate('/profile'), 600);
+    setTimeout(() => navigate('/me'), 600);
   };
 
   // ----- 초안 저장 -----
@@ -346,7 +349,7 @@ export default function Upload() {
 
     draftStore.saveDraft(draft);
     toast.success(t('upload.toastDraftSaved'));
-    navigate('/profile');
+    navigate('/me');
   };
 
   // ----- 재정렬 핸들러 -----
@@ -384,21 +387,21 @@ export default function Upload() {
     return (
       <div className="min-h-screen" style={{ backgroundColor }}>
         <div className="sticky top-0 z-20 flex items-center justify-between px-4 py-3 bg-white/90 backdrop-blur-sm border-b border-[#F0F0F0]">
-          <button onClick={() => setPreviewMode(false)} className="flex items-center gap-2 text-sm text-gray-600 hover:text-black transition-colors">
+          <Button onClick={() => setPreviewMode(false)} className="flex items-center gap-2 text-sm text-gray-600 lg:hover:text-black transition-colors">
             <ArrowLeft className="h-4 w-4" /> {t('upload.previewBack')}
-          </button>
+          </Button>
           <span className="flex items-center gap-1.5 text-sm text-gray-500">
             <Eye className="h-4 w-4" /> {t('upload.previewTitle')}
           </span>
-          <button
+          <Button
             onClick={() => {
               setPreviewMode(false);
               setShowDetailsModal(true);
             }}
-            className="px-4 py-2 bg-[#18181B] text-white text-sm rounded-lg hover:bg-black transition-colors"
+            className="px-4 py-2 bg-[#18181B] text-white text-sm rounded-lg lg:hover:bg-black transition-colors"
           >
             {t('upload.publish')}
-          </button>
+          </Button>
         </div>
         <div className="max-w-3xl mx-auto p-4 sm:p-8">
           <div className={gridClass} style={layoutMode === 'list' ? { gap: `${contentSpacing}px` } : undefined}>
@@ -424,15 +427,15 @@ export default function Upload() {
         <Toaster position="top-center" richColors />
         <div className="sticky top-0 z-20 flex items-center justify-between px-4 py-3 bg-white border-b border-[#F0F0F0]">
           <span className="text-base font-semibold text-[#18181B]">{t('upload.reorderMode')}</span>
-          <button
+          <Button
             onClick={() => {
               setReorderMode(false);
               toast.success(t('upload.toastOrderSaved'));
             }}
-            className="px-5 py-2 bg-[#18181B] text-white text-sm rounded-lg hover:bg-black transition-colors"
+            className="px-5 py-2 bg-[#18181B] text-white text-sm rounded-lg lg:hover:bg-black transition-colors"
           >
             {t('upload.reorderDone')}
-          </button>
+          </Button>
         </div>
         <div className="max-w-2xl mx-auto p-4 sm:p-6 space-y-3">
           {contents.map((c, i) => (
@@ -444,7 +447,7 @@ export default function Upload() {
               onDragEnd={handleDragEnd}
               onDragOver={(e) => e.preventDefault()}
               className={`flex items-center gap-3 p-3 border rounded-xl transition-all cursor-grab active:cursor-grabbing ${
-                dragIndex === i ? 'border-[#6366F1] bg-indigo-50 shadow-sm' : 'border-[#F0F0F0] bg-white'
+                dragIndex === i ? 'border-primary bg-muted shadow-sm' : 'border-[#F0F0F0] bg-white'
               }`}
             >
               <GripVertical className="h-5 w-5 text-gray-400 flex-shrink-0" />
@@ -486,31 +489,31 @@ export default function Upload() {
             {/* 헤더 */}
             <div className="flex items-center justify-between border-b border-[#E5E7EB] px-8 py-5">
               <h2 className="text-xl font-semibold text-[#18181B]">{t('upload.detailsModalTitle')}</h2>
-              <button
+              <Button
                 onClick={() => setShowDetailsModal(false)}
-                className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-[#F4F4F5] transition-colors"
+                className="flex h-10 w-10 items-center justify-center rounded-full lg:hover:bg-[#F4F4F5] transition-colors"
               >
                 <X className="h-5 w-5 text-gray-500" />
-              </button>
+              </Button>
             </div>
 
             {/* 컨텐츠 */}
             <div className="p-8 overflow-y-auto flex-1 space-y-6">
               {/* 강사 대리 업로드 토글 */}
-              <div className="flex items-center justify-between p-4 bg-indigo-50 border border-indigo-200 rounded-xl">
+              <div className="flex items-center justify-between p-4 bg-muted border border-border rounded-xl">
                 <div>
-                  <p className="text-base font-medium text-indigo-900">
+                  <p className="text-base font-medium text-foreground">
                     {t('upload.instructorToggleTitle')}
                   </p>
-                  <p className="text-sm text-indigo-600 mt-0.5">{t('upload.instructorToggleDesc')}</p>
+                  <p className="text-sm text-muted-foreground mt-0.5">{t('upload.instructorToggleDesc')}</p>
                 </div>
-                <button
+                <Button
                   onClick={() => {
                     setIsInstructorUpload(!isInstructorUpload);
                     setIsOriginalWork(false);
                   }}
                   className={`relative w-14 h-8 rounded-full transition-colors ${
-                    isInstructorUpload ? 'bg-indigo-500' : 'bg-gray-300'
+                    isInstructorUpload ? 'bg-muted0' : 'bg-gray-300'
                   }`}
                 >
                   <span
@@ -518,12 +521,12 @@ export default function Upload() {
                       isInstructorUpload ? 'translate-x-7' : 'translate-x-1'
                     }`}
                   />
-                </button>
+                </Button>
               </div>
 
               {/* 수강생 이메일 태그 (강사 모드) */}
               {isInstructorUpload && (
-                <div className="p-4 bg-indigo-50/50 border border-indigo-100 rounded-xl space-y-3">
+                <div className="p-4 bg-muted/50 border border-border rounded-xl space-y-3">
                   <label className="block text-base font-medium text-[#18181B]">
                     <Mail className="h-4 w-4 inline-block mr-1.5 -mt-0.5" />
                     {t('upload.studentEmailLabel')}
@@ -534,24 +537,24 @@ export default function Upload() {
                     onChange={(e) => setEmailInput(e.target.value)}
                     onKeyDown={handleAddEmail}
                     placeholder={t('upload.studentEmailPlaceholder')}
-                    className="w-full px-4 py-3 border border-[#D1D5DB] rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-indigo-400 focus:border-transparent"
+                    className="w-full px-4 py-3 border border-[#D1D5DB] rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
                   />
                   {taggedEmails.length > 0 && (
                     <div className="flex flex-wrap gap-2">
                       {taggedEmails.map((email) => (
                         <span
                           key={email}
-                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-indigo-100 text-indigo-800 text-sm rounded-full"
+                          className="inline-flex items-center gap-1.5 px-3 py-1.5 bg-muted text-foreground text-sm rounded-full"
                         >
                           {email}
-                          <button
+                          <Button
                             onClick={() =>
                               setTaggedEmails(taggedEmails.filter((e) => e !== email))
                             }
-                            className="hover:text-indigo-950"
+                            className="lg:hover:text-foreground"
                           >
                             <X className="h-3.5 w-3.5" />
-                          </button>
+                          </Button>
                         </span>
                       ))}
                     </div>
@@ -582,7 +585,7 @@ export default function Upload() {
                 </label>
                 <div className="grid grid-cols-4 gap-2">
                   {UPLOAD_CATEGORIES.map(({ value, labelKey }) => (
-                    <button
+                    <Button
                       key={value}
                       onClick={() => {
                         if (selectedCategories.includes(value)) {
@@ -594,11 +597,11 @@ export default function Upload() {
                       className={`px-3 py-3 text-base rounded-lg border transition-colors min-h-[44px] ${
                         selectedCategories.includes(value)
                           ? 'bg-gray-900 text-white border-gray-900'
-                          : 'bg-white text-gray-700 border-[#D1D5DB] hover:border-gray-400'
+                          : 'bg-white text-gray-700 border-[#D1D5DB] lg:hover:border-gray-400'
                       }`}
                     >
                       {t(labelKey)}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
@@ -624,14 +627,14 @@ export default function Upload() {
                         className="px-3 py-1.5 bg-[#F4F4F5] text-gray-700 text-sm rounded-full flex items-center gap-2"
                       >
                         {tag}
-                        <button
+                        <Button
                           onClick={() =>
                             setDetailTags(detailTags.filter((_, i) => i !== index))
                           }
-                          className="hover:text-[#18181B]"
+                          className="lg:hover:text-[#18181B]"
                         >
                           <X className="h-3.5 w-3.5" />
-                        </button>
+                        </Button>
                       </span>
                     ))}
                   </div>
@@ -670,9 +673,9 @@ export default function Upload() {
                   >
                     {groupSuggestions.map((name) => (
                       <li key={name}>
-                        <button
+                        <Button
                           type="button"
-                          className="w-full text-left px-3 py-2 hover:bg-[#F4F4F5] text-[#18181B]"
+                          className="w-full text-left px-3 py-2 lg:hover:bg-[#F4F4F5] text-[#18181B]"
                           onMouseDown={(e) => e.preventDefault()}
                           onClick={() => {
                             setGroupName(name);
@@ -680,7 +683,7 @@ export default function Upload() {
                           }}
                         >
                           {name}
-                        </button>
+                        </Button>
                       </li>
                     ))}
                   </ul>
@@ -706,15 +709,15 @@ export default function Upload() {
 
               {/* 개인전시 탭에도 노출 (강사 업로드 시) */}
               {isInstructorUpload && (
-                <div className="flex items-center justify-between p-4 bg-indigo-50 border border-indigo-200 rounded-xl">
+                <div className="flex items-center justify-between p-4 bg-muted border border-border rounded-xl">
                   <div>
-                    <p className="text-base font-medium text-indigo-900">{t('upload.soloTabTitle')}</p>
-                    <p className="text-sm text-indigo-600 mt-0.5">{t('upload.soloTabDesc')}</p>
+                    <p className="text-base font-medium text-foreground">{t('upload.soloTabTitle')}</p>
+                    <p className="text-sm text-muted-foreground mt-0.5">{t('upload.soloTabDesc')}</p>
                   </div>
-                  <button
+                  <Button
                     onClick={() => setShowInSoloTab(!showInSoloTab)}
                     className={`relative w-14 h-8 rounded-full transition-colors ${
-                      showInSoloTab ? 'bg-indigo-500' : 'bg-gray-300'
+                      showInSoloTab ? 'bg-muted0' : 'bg-gray-300'
                     }`}
                   >
                     <span
@@ -722,7 +725,7 @@ export default function Upload() {
                         showInSoloTab ? 'translate-x-7' : 'translate-x-1'
                       }`}
                     />
-                  </button>
+                  </Button>
                 </div>
               )}
 
@@ -749,18 +752,18 @@ export default function Upload() {
 
             {/* 푸터 */}
             <div className="flex items-center justify-end gap-3 border-t border-[#E5E7EB] px-8 py-5">
-              <button
+              <Button
                 onClick={() => setShowDetailsModal(false)}
-                className="px-6 py-3 text-base text-gray-700 hover:bg-[#F4F4F5] rounded-lg transition-colors min-h-[44px]"
+                className="px-6 py-3 text-base text-gray-700 lg:hover:bg-[#F4F4F5] rounded-lg transition-colors min-h-[44px]"
               >
                 {t('upload.close')}
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={handlePublish}
-                className="px-8 py-3 bg-cyan-500 text-white text-base font-medium rounded-lg hover:bg-cyan-600 transition-colors min-h-[44px]"
+                className="px-8 py-3 bg-cyan-500 text-white text-base font-medium rounded-lg lg:hover:bg-cyan-600 transition-colors min-h-[44px]"
               >
                 {t('upload.publish')}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -780,7 +783,7 @@ export default function Upload() {
             onDragOver={handleDragOver}
             onDrop={handleDrop}
             onClick={() => fileInputRef.current?.click()}
-            className="w-full max-w-2xl cursor-pointer rounded-2xl border-2 border-dashed border-[#D1D5DB] bg-white p-10 sm:p-12 text-center transition-all hover:border-cyan-400 hover:bg-cyan-50/30"
+            className="w-full max-w-2xl cursor-pointer rounded-2xl border-2 border-dashed border-[#D1D5DB] bg-white p-10 sm:p-12 text-center transition-all lg:hover:border-cyan-400 lg:hover:bg-cyan-50/30"
           >
             <div className="mx-auto mb-3 h-16 w-16 rounded-full bg-cyan-100 flex items-center justify-center">
               <ImageIcon className="h-7 w-7 text-cyan-500" />
@@ -812,7 +815,7 @@ export default function Upload() {
                       className="w-full h-auto object-cover block"
                     />
                     {/* 삭제 버튼 */}
-                    <button
+                    <Button
                       onClick={(e) => {
                         e.stopPropagation();
                         setContents(contents.filter((c) => c.id !== content.id));
@@ -820,23 +823,23 @@ export default function Upload() {
                           setSelectedContentId(null);
                         }
                       }}
-                      className="absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition-colors hover:bg-black/80 z-10"
+                      className="absolute top-4 right-4 flex h-10 w-10 items-center justify-center rounded-full bg-black/60 text-white backdrop-blur-sm transition-colors lg:hover:bg-black/80 z-10"
                     >
                       <X className="h-5 w-5" />
-                    </button>
+                    </Button>
                   </div>
                 </div>
               ))}
 
               {/* 이미지 추가 버튼 */}
               {contents.length < 20 && (
-                <button
+                <Button
                   onClick={() => fileInputRef.current?.click()}
-                  className="w-full py-4 border-2 border-dashed border-[#D1D5DB] rounded-2xl text-base text-gray-600 hover:border-cyan-400 hover:text-cyan-600 transition-colors bg-white/50 backdrop-blur-sm min-h-[44px]"
+                  className="w-full py-4 border-2 border-dashed border-[#D1D5DB] rounded-2xl text-base text-gray-600 lg:hover:border-cyan-400 lg:hover:text-cyan-600 transition-colors bg-white/50 backdrop-blur-sm min-h-[44px]"
                 >
                   <Plus className="h-5 w-5 inline-block mr-1 -mt-0.5" />
                   {tn('upload.addImageProgress', { n: String(contents.length) })}
-                </button>
+                </Button>
               )}
             </div>
           </div>
@@ -847,13 +850,13 @@ export default function Upload() {
       <div className="w-full md:w-80 bg-white border-t md:border-t-0 md:border-l border-[#E5E7EB] p-4 sm:p-6 overflow-y-auto flex flex-col shrink-0 max-h-[40vh] md:max-h-none">
         {/* 이미지 추가 & 레이아웃 */}
         <div className="mb-6 space-y-3">
-          <button
+          <Button
             onClick={() => fileInputRef.current?.click()}
-            className="w-full flex items-center justify-center gap-2 p-4 border-2 border-[#E5E7EB] rounded-xl hover:border-[#6366F1] transition-colors min-h-[44px]"
+            className="w-full flex items-center justify-center gap-2 p-4 border-2 border-[#E5E7EB] rounded-xl lg:hover:border-primary transition-colors min-h-[44px]"
           >
             <ImageIcon className="h-5 w-5 text-gray-700" />
             <span className="text-base font-medium text-gray-700">{t('upload.addImage')}</span>
-          </button>
+          </Button>
           <p className="text-[11px] text-[#A1A1AA] leading-snug">{t('upload.cameraHint')}</p>
 
           {contents.length > 0 && (
@@ -869,36 +872,36 @@ export default function Upload() {
                       ['grid-3', Grid3X3, 'upload.layoutGrid3'],
                     ] as const
                   ).map(([mode, Icon, labelKey]) => (
-                    <button
+                    <Button
                       key={mode}
                       onClick={() => setLayoutMode(mode as LayoutMode)}
                       className={`flex-1 flex items-center justify-center gap-1.5 py-2 rounded-md text-sm transition-colors ${
-                        layoutMode === mode ? 'bg-white text-[#18181B] shadow-sm font-medium' : 'text-gray-500 hover:text-gray-700'
+                        layoutMode === mode ? 'bg-white text-[#18181B] shadow-sm font-medium' : 'text-gray-500 lg:hover:text-gray-700'
                       }`}
                     >
                       <Icon className="h-4 w-4" />
                       {t(labelKey)}
-                    </button>
+                    </Button>
                   ))}
                 </div>
               </div>
 
               {/* 재정렬 & 미리보기 */}
               <div className="flex gap-2">
-                <button
+                <Button
                   onClick={() => setReorderMode(true)}
-                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 border border-[#E5E7EB] rounded-lg text-sm text-gray-700 hover:border-[#6366F1] hover:text-[#6366F1] transition-colors"
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 border border-[#E5E7EB] rounded-lg text-sm text-gray-700 lg:hover:border-primary lg:hover:text-primary transition-colors"
                 >
                   <GripVertical className="h-4 w-4" />
                   {t('upload.reorder')}
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => setPreviewMode(true)}
-                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 border border-[#E5E7EB] rounded-lg text-sm text-gray-700 hover:border-[#6366F1] hover:text-[#6366F1] transition-colors"
+                  className="flex-1 flex items-center justify-center gap-1.5 py-2.5 border border-[#E5E7EB] rounded-lg text-sm text-gray-700 lg:hover:border-primary lg:hover:text-primary transition-colors"
                 >
                   <Eye className="h-4 w-4" />
                   {t('upload.preview')}
-                </button>
+                </Button>
               </div>
             </>
           )}
@@ -955,7 +958,7 @@ export default function Upload() {
 
                   {/* 회원/비회원 탭 */}
                   <div className="flex gap-2 mb-3">
-                    <button
+                    <Button
                       onClick={() => setContents(contents.map(c => c.id === selectedContentId ? { ...c, artistType: 'member', nonMemberArtist: undefined } : c))}
                       className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
                         (!selectedContent.artistType || selectedContent.artistType === 'member' || selectedContent.artistType === 'self')
@@ -963,8 +966,8 @@ export default function Upload() {
                       }`}
                     >
                       {t('upload.artistTabMember')}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       onClick={() => setContents(contents.map(c => c.id === selectedContentId ? { ...c, artistType: 'non-member', artist: undefined } : c))}
                       className={`px-3 py-1.5 text-sm rounded-lg transition-colors ${
                         selectedContent.artistType === 'non-member'
@@ -972,7 +975,7 @@ export default function Upload() {
                       }`}
                     >
                       {t('upload.artistTabNonMember')}
-                    </button>
+                    </Button>
                   </div>
 
                   {selectedContent.artistType === 'non-member' ? (
@@ -1018,12 +1021,12 @@ export default function Upload() {
                         <img src={selectedContent.artist.avatar} alt={selectedContent.artist.name} className="h-8 w-8 rounded-full object-cover" />
                         <span className="text-base font-medium text-[#18181B]">{selectedContent.artist.name}</span>
                       </div>
-                      <button
+                      <Button
                         onClick={() => setContents(contents.map(c => c.id === selectedContentId ? { ...c, artist: undefined } : c))}
-                        className="text-gray-400 hover:text-gray-600 transition-colors"
+                        className="text-gray-400 lg:hover:text-gray-600 transition-colors"
                       >
                         <X className="h-4 w-4" />
-                      </button>
+                      </Button>
                     </div>
                   ) : (
                     <>
@@ -1043,7 +1046,7 @@ export default function Upload() {
                             .filter((a) => a.name.toLowerCase().includes(artistSearch.toLowerCase()))
                             .slice(0, 5)
                             .map((artist) => (
-                              <button
+                              <Button
                                 key={artist.id}
                                 onClick={() => {
                                   setContents(contents.map(c =>
@@ -1053,14 +1056,14 @@ export default function Upload() {
                                   ));
                                   setArtistSearch('');
                                 }}
-                                className="w-full flex items-center gap-3 px-3 py-3 hover:bg-[#FAFAFA] transition-colors text-left min-h-[44px]"
+                                className="w-full flex items-center gap-3 px-3 py-3 lg:hover:bg-[#FAFAFA] transition-colors text-left min-h-[44px]"
                               >
                                 <img src={artist.avatar} alt={artist.name} className="h-8 w-8 rounded-full object-cover" />
                                 <div>
                                   <div className="text-base font-medium text-[#18181B]">{artist.name}</div>
                                   <div className="text-sm text-gray-500">{artist.bio}</div>
                                 </div>
-                              </button>
+                              </Button>
                             ))}
                           {artists.filter(a => a.name.toLowerCase().includes(artistSearch.toLowerCase())).length === 0 && (
                             <div className="px-4 py-3 text-base text-gray-500 text-center">
@@ -1133,13 +1136,13 @@ export default function Upload() {
           </div>
 
           {/* 세부 정보 설정 버튼 */}
-          <button
+          <Button
             onClick={() => setShowDetailsModal(true)}
-            className="w-full flex items-center justify-center gap-2 py-3.5 px-4 bg-green-50 border border-green-300 rounded-lg hover:bg-green-100 transition-colors min-h-[44px]"
+            className="w-full flex items-center justify-center gap-2 py-3.5 px-4 bg-green-50 border border-green-300 rounded-lg lg:hover:bg-green-100 transition-colors min-h-[44px]"
           >
             <Info className="h-5 w-5 text-green-600" />
             <span className="text-base font-semibold text-green-700">{t('upload.openDetails')}</span>
-          </button>
+          </Button>
 
           {/* 창작물 확인 */}
           <div className="p-4 bg-amber-50 rounded-xl border border-amber-200">
@@ -1157,30 +1160,30 @@ export default function Upload() {
           </div>
 
           {/* 발행 버튼 */}
-          <button
+          <Button
             disabled={contents.length === 0 || !isOriginalWork}
             onClick={() => setShowDetailsModal(true)}
             className={`w-full py-3.5 rounded-full text-base font-semibold transition-all min-h-[44px] ${
               contents.length > 0 && isOriginalWork
-                ? 'bg-green-600 text-white hover:bg-green-700'
+                ? 'bg-green-600 text-white lg:hover:bg-green-700'
                 : 'bg-gray-200 text-gray-400 cursor-not-allowed'
             }`}
           >
             {t('upload.publish')}
-          </button>
+          </Button>
 
           {/* 초안 저장 */}
-          <button
+          <Button
             disabled={contents.length === 0}
             onClick={handleSaveDraft}
             className={`w-full py-3.5 rounded-full text-base font-semibold transition-all min-h-[44px] ${
               contents.length > 0
-                ? 'bg-indigo-600 text-white hover:bg-indigo-700'
+                ? 'bg-primary text-white lg:hover:bg-primary/90'
                 : 'bg-gray-200 text-gray-400 cursor-not-allowed'
             }`}
           >
             {t('upload.saveDraft')}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

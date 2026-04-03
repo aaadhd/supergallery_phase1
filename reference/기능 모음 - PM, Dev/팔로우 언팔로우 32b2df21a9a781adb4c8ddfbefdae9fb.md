@@ -1,7 +1,8 @@
 # 팔로우 / 언팔로우
 
-관련 화면: 작가 프로필, 내 프로필, 작업물 상세 모달
-화면 모음 - PM, PD, Dev v2: 내 프로필 (https://www.notion.so/3352df21a9a781278708ccc1dcf1cfcc?pvs=21), 팔로워 / 팔로잉 목록 (https://www.notion.so/3352df21a9a781729dc4f0a182e0ece4?pvs=21), 작가 프로필 (https://www.notion.so/3352df21a9a78182897bd669d7580490?pvs=21)
+최종 편집 일시: 2026년 3월 23일 오전 1:01
+화면 모음: https://www.notion.so/3352df21a9a780a6aa95e6355e360443, https://www.notion.so/3352df21a9a780d49c9adf24c710d3c6, https://www.notion.so/3352df21a9a78182897bd669d7580490,https://www.notion.so/3352df21a9a780d49c9adf24c710d3c6, https://www.notion.so/3352df21a9a78126bf76c92dcabdd025, https://www.notion.so/3352df21a9a781278708ccc1dcf1cfcc, https://www.notion.so/3352df21a9a781729dc4f0a182e0ece4, https://www.notion.so/3352df21a9a78182897bd669d7580490
+📋 유저스토리 기반 WBS v2: 나는 다른 작가의 프로필에서 그 작가의 전시만 볼 수 있어야 한다 (https://www.notion.so/3352df21a9a78114b3d2cd41cbc7125f?pvs=21), 나는 마음에 드는 작가를 팔로우하고 신작 알림을 받고 싶다 (https://www.notion.so/3352df21a9a781a69e05cdef8907f66c?pvs=21)
 
 ## 개요
 

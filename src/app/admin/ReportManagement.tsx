@@ -1,6 +1,16 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
 import { CheckCircle2, EyeOff, Ban } from 'lucide-react';
+import { Button } from '../components/ui/button';
+import { workStore } from '../store';
+import {
+  loadUserReports,
+  updateUserReport,
+  removeUserReport,
+  REPORTS_CHANGED_EVENT,
+  REPORTS_STORAGE_KEY,
+  type StoredUserReport,
+} from '../utils/reportsStore';
 
 type ReportState = '대기' | '처리완료';
 type ReportKind = '작품' | '댓글' | '프로필';
@@ -14,18 +24,6 @@ type ReportRow = {
   status: ReportState;
 };
 
-type StoredUserReport = {
-  id: string;
-  targetType: string;
-  targetId?: string;
-  targetName: string;
-  reason?: string;
-  reasonKey?: string;
-  reasonLabel?: string;
-  detail: string;
-  createdAt: string;
-};
-
 function mapUserReportToRow(r: StoredUserReport): ReportRow {
   const kind: ReportKind = r.targetType === 'work' ? '작품' : '프로필';
   const detail = r.detail?.trim() || '';
@@ -34,33 +32,20 @@ function mapUserReportToRow(r: StoredUserReport): ReportRow {
       ? `${r.targetName} — ${detail.slice(0, 100)}${detail.length > 100 ? '…' : ''}`
       : r.targetName;
   const reportedAt = r.createdAt ? r.createdAt.slice(0, 10) : '';
+  const status: ReportState = r.adminStatus === 'resolved' ? '처리완료' : '대기';
   return {
     id: r.id,
     target,
     kind,
     reason: r.reason ?? r.reasonLabel ?? r.reasonKey ?? '',
     reportedAt,
-    status: '대기',
+    status,
   };
 }
 
-function loadUserReportsFromStorage(): ReportRow[] {
-  try {
-    const raw = JSON.parse(localStorage.getItem('artier_reports') || '[]') as StoredUserReport[];
-    if (!Array.isArray(raw)) return [];
-    return raw.map(mapUserReportToRow);
-  } catch {
-    return [];
-  }
+function mergeReportRows(): ReportRow[] {
+  return loadUserReports().map(mapUserReportToRow);
 }
-
-const initialReports: ReportRow[] = [
-  { id: 'r1', target: '작품 #1042 — 도시의 빛', kind: '작품', reason: '저작권 의심', reportedAt: '2026-03-30', status: '대기' },
-  { id: 'r2', target: '댓글 — 사용자 min_art', kind: '댓글', reason: '욕설/비방', reportedAt: '2026-03-29', status: '대기' },
-  { id: 'r3', target: '프로필 — gallery_spam', kind: '프로필', reason: '스팸 링크', reportedAt: '2026-03-28', status: '처리완료' },
-  { id: 'r4', target: '작품 #982 — 무제', kind: '작품', reason: '부적절 콘텐츠', reportedAt: '2026-03-27', status: '대기' },
-  { id: 'r5', target: '댓글 — 사용자 anon_7', kind: '댓글', reason: '괴롭힘', reportedAt: '2026-03-26', status: '처리완료' },
-];
 
 function stateBadge(s: ReportState) {
   if (s === '처리완료') return 'bg-emerald-50 text-emerald-700 border border-emerald-200';
@@ -78,18 +63,29 @@ function kindBadge(k: ReportKind) {
 
 export default function ReportManagement() {
   const [loading, setLoading] = useState(true);
-  const [rows, setRows] = useState<ReportRow[]>(() => {
-    const user = loadUserReportsFromStorage();
-    const ids = new Set(user.map((r) => r.id));
-    return [...user, ...initialReports.filter((r) => !ids.has(r.id))];
-  });
+  const [rows, setRows] = useState<ReportRow[]>(mergeReportRows);
   const [statusFilter, setStatusFilter] = useState('전체');
   const [typeFilter, setTypeFilter] = useState('전체');
+
+  const refreshRows = useCallback(() => setRows(mergeReportRows()), []);
 
   useEffect(() => {
     const t = window.setTimeout(() => setLoading(false), 320);
     return () => window.clearTimeout(t);
   }, []);
+
+  useEffect(() => {
+    refreshRows();
+    window.addEventListener(REPORTS_CHANGED_EVENT, refreshRows);
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === REPORTS_STORAGE_KEY) refreshRows();
+    };
+    window.addEventListener('storage', onStorage);
+    return () => {
+      window.removeEventListener(REPORTS_CHANGED_EVENT, refreshRows);
+      window.removeEventListener('storage', onStorage);
+    };
+  }, [refreshRows]);
 
   const filtered = useMemo(() => {
     return rows.filter((r) => {
@@ -100,18 +96,28 @@ export default function ReportManagement() {
   }, [rows, statusFilter, typeFilter]);
 
   const markDone = (id: string) => {
-    setRows((prev) => prev.map((r) => (r.id === id ? { ...r, status: '처리완료' as const } : r)));
-    toast.success('확인 완료 처리되었습니다.');
+    if (!loadUserReports().some((r) => r.id === id)) return;
+    updateUserReport(id, { adminStatus: 'resolved' });
+    toast.success('처리 완료로 저장했습니다.');
   };
 
   const makePrivate = (id: string) => {
-    setRows((prev) => prev.map((r) => (r.id === id ? { ...r, status: '처리완료' as const } : r)));
-    toast.success('비공개 처리되었습니다. (목업)');
+    const raw = loadUserReports().find((r) => r.id === id);
+    if (!raw) return;
+    if (raw.targetType === 'work' && raw.targetId) {
+      workStore.updateWork(raw.targetId, { isHidden: true });
+      updateUserReport(id, { adminStatus: 'resolved' });
+      toast.success('작품을 비공개로 저장했습니다. Artier 둘러보기·검색에서 제외됩니다.');
+      return;
+    }
+    updateUserReport(id, { adminStatus: 'resolved' });
+    toast.message('작품 신고만 피드에서 숨깁니다. 이 신고는 완료 처리만 반영했습니다.');
   };
 
   const ignore = (id: string) => {
-    setRows((prev) => prev.filter((r) => r.id !== id));
-    toast.message('신고를 무시하고 목록에서 제거했습니다. (목업)');
+    if (!loadUserReports().some((r) => r.id === id)) return;
+    removeUserReport(id);
+    toast.message('목록에서 제거했습니다.');
   };
 
   if (loading) {
@@ -126,8 +132,13 @@ export default function ReportManagement() {
   return (
     <div className="min-h-full">
       <h1 className="text-xl font-bold text-gray-900">신고 관리</h1>
-      <p className="text-sm text-gray-500 mt-1 mb-6">
-        운영 정책: 일반 신고는 접수 후 7일 이내, 불법 콘텐츠(미성년자·성인물 등)는 24시간 이내 우선 검토합니다.
+      <p className="text-sm text-gray-500 mt-1 mb-2">
+        Artier에서 접수한 신고는 이 브라우저의 <code className="text-xs bg-slate-100 px-1 rounded">localStorage (artier_reports)</code>와
+        공유됩니다. 신고 직후 이 탭을 열어 두면 목록이 곧바로 갱신됩니다.
+      </p>
+      <p className="text-sm text-gray-500 mb-6">
+        「비공개」는 <strong>작품 신고</strong>일 때 해당 작품에 비공개 플래그를 저장해 둘러보기·검색에서 숨깁니다. 운영 콘솔 진입: 주소창에{' '}
+        <code className="text-xs bg-slate-100 px-1 rounded">/admin/reports</code>
       </p>
 
       <div className="flex flex-wrap gap-3 mb-6">
@@ -154,7 +165,7 @@ export default function ReportManagement() {
 
       {filtered.length === 0 ? (
         <div className="rounded-lg border border-dashed border-[#E4E4E7] py-16 text-center text-sm text-gray-500">
-          조건에 맞는 신고가 없습니다.
+          접수된 신고가 없습니다. Artier에서 로그인한 뒤 작품 ⋯ 메뉴에서 신고해 보세요.
         </div>
       ) : (
         <div className="border border-[#E4E4E7] rounded-lg overflow-hidden overflow-x-auto">
@@ -171,7 +182,7 @@ export default function ReportManagement() {
             </thead>
             <tbody>
               {filtered.map((r) => (
-                <tr key={r.id} className="border-b border-[#F0F0F0] hover:bg-[#FAFAFA] transition-colors">
+                <tr key={r.id} className="border-b border-[#F0F0F0] lg:hover:bg-[#FAFAFA] transition-colors">
                   <td className="px-4 py-3 text-gray-900 max-w-[200px]">{r.target}</td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${kindBadge(r.kind)}`}>
@@ -187,31 +198,32 @@ export default function ReportManagement() {
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex flex-wrap justify-end gap-2">
-                      <button
+                      <Button
                         type="button"
                         disabled={r.status === '처리완료'}
                         onClick={() => markDone(r.id)}
-                        className="text-sm px-3 py-1.5 rounded-lg bg-[#6366F1] text-white hover:bg-[#4F46E5] disabled:opacity-40 disabled:pointer-events-none"
+                        className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90 disabled:opacity-40 disabled:pointer-events-none"
                       >
                         <CheckCircle2 className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
                         확인 완료
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="button"
+                        disabled={r.status === '처리완료'}
                         onClick={() => makePrivate(r.id)}
-                        className="text-sm px-3 py-1.5 rounded-lg border border-[#E4E4E7] text-gray-700 hover:bg-gray-50"
+                        className="text-sm px-3 py-1.5 rounded-lg border border-[#E4E4E7] text-gray-700 lg:hover:bg-gray-50"
                       >
                         <EyeOff className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
                         비공개
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="button"
                         onClick={() => ignore(r.id)}
-                        className="text-sm px-3 py-1.5 rounded-lg text-gray-500 hover:bg-gray-100"
+                        className="text-sm px-3 py-1.5 rounded-lg text-gray-500 lg:hover:bg-gray-100"
                       >
                         <Ban className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
                         무시
-                      </button>
+                      </Button>
                     </div>
                   </td>
                 </tr>

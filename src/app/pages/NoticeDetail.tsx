@@ -2,9 +2,10 @@ import { Link, useNavigate, useParams } from 'react-router-dom';
 import { getNoticeById, getNoticeNeighbors, getNoticeContent, getNoticeTitle } from '../data/notices';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
+import { Button } from '../components/ui/button';
 
 const CATEGORY_COLORS: Record<string, string> = {
-  서비스: 'bg-indigo-50 text-indigo-600',
+  서비스: 'bg-muted text-muted-foreground',
   이벤트: 'bg-amber-50 text-amber-600',
   정책: 'bg-red-50 text-red-600',
   기타: 'bg-[#F4F4F5] text-gray-600',
@@ -33,7 +34,7 @@ export default function NoticeDetail() {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-16">
         <p className="text-[#71717A] mb-6">{t('noticeDetail.notFound')}</p>
-        <Link to="/notices" className="text-[#6366F1] font-medium hover:underline">
+        <Link to="/notices" className="text-primary font-medium lg:hover:underline">
           {t('noticeDetail.backList')}
         </Link>
       </div>
@@ -44,13 +45,13 @@ export default function NoticeDetail() {
     <div className="min-h-screen bg-white pb-20 md:pb-0">
       <div className="bg-white border-b border-[#E5E7EB]">
         <div className="mx-auto max-w-[800px] px-6 py-8">
-          <button
+          <Button
             type="button"
             onClick={() => navigate('/notices')}
-            className="text-sm text-gray-500 hover:text-[#3F3F46] transition-colors mb-4"
+            className="text-sm text-gray-500 lg:hover:text-[#3F3F46] transition-colors mb-4"
           >
             {t('noticeDetail.back')}
-          </button>
+          </Button>
           <div className="flex items-center gap-2 mb-3">
             <span
               className={`px-2.5 py-1 rounded-full text-xs font-medium ${CATEGORY_COLORS[notice.category] ?? CATEGORY_COLORS['기타']}`}
@@ -83,7 +84,7 @@ export default function NoticeDetail() {
             {prev ? (
               <Link
                 to={`/notices/${prev.id}`}
-                className="text-[#6366F1] hover:underline truncate max-w-full"
+                className="text-primary lg:hover:underline truncate max-w-full"
               >
                 {t('noticeDetail.prev').replace('{title}', getNoticeTitle(prev, locale))}
               </Link>
@@ -93,7 +94,7 @@ export default function NoticeDetail() {
             {next ? (
               <Link
                 to={`/notices/${next.id}`}
-                className="text-[#6366F1] hover:underline truncate max-w-full sm:text-right sm:ml-auto"
+                className="text-primary lg:hover:underline truncate max-w-full sm:text-right sm:ml-auto"
               >
                 {t('noticeDetail.next').replace('{title}', getNoticeTitle(next, locale))}
               </Link>
@@ -103,7 +104,7 @@ export default function NoticeDetail() {
           </div>
           <Link
             to="/notices"
-            className="inline-flex justify-center sm:justify-end text-sm font-medium text-[#18181B] border border-[#E5E7EB] rounded-lg px-4 py-2 hover:bg-[#FAFAFA] transition-colors"
+            className="inline-flex justify-center sm:justify-end text-sm font-medium text-[#18181B] border border-[#E5E7EB] rounded-lg px-4 py-2 lg:hover:bg-[#FAFAFA] transition-colors"
           >
             {t('noticeDetail.toList')}
           </Link>

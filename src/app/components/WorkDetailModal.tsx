@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { X, Heart, Bookmark, Share2, ChevronLeft, ChevronRight, UserPlus, Users, Link2, MessageCircle, Flag } from 'lucide-react';
+import { X, Heart, Bookmark, Share2, ChevronLeft, ChevronRight, UserPlus, Users, Link2, MessageCircle, Flag, Mail } from 'lucide-react';
 import { useI18n } from '../i18n/I18nProvider';
 import { Work, Artist, works, artists } from '../data';
 import { groupWorks } from '../groupData';
@@ -15,19 +15,22 @@ import { toast } from 'sonner';
 import { LoginPromptModal } from './LoginPromptModal';
 import { ReportModal } from './ReportModal';
 import { Popover, PopoverTrigger, PopoverContent } from './ui/popover';
-import { Tooltip, TooltipTrigger, TooltipContent, TooltipProvider } from './ui/tooltip';
 import DeepZoomViewer from './DeepZoomViewer';
+import { Button } from './ui/button';
 
 interface WorkDetailModalProps {
   workId: string;
   onClose: () => void;
   onNavigate?: (workId: string) => void;
   allWorks?: Work[];
+  /** 신고 접수 후 부모(예: 둘러보기)에서 피드 숨김 목록을 갱신할 때 */
+  onWorkReported?: () => void;
 }
 
-export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: providedWorks }: WorkDetailModalProps) {
+export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: providedWorks, onWorkReported }: WorkDetailModalProps) {
   const { t } = useI18n();
-  const defaultWorks = [...works, ...groupWorks];
+  // groupWorks는 owner·saleOptions 등 확장 필드가 있어 시드 Work와 합쳐도 UI는 동일 필드만 사용
+  const defaultWorks = [...works, ...groupWorks] as Work[];
   const allWorks = providedWorks || defaultWorks;
   const work = allWorks.find(w => w.id === workId);
 
@@ -80,9 +83,9 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
 
   if (!work) return null;
 
-  const isPick = (work as any).editorsPick === true || (work as any).pick === true;
-  const hasCoOwners = (work as any).coOwners && (work as any).coOwners.length > 0;
-  const groupName = (work as any).groupName as string | undefined;
+  const isPick = work.editorsPick === true || work.pick === true;
+  const hasCoOwners = !!work.coOwners?.length;
+  const groupName = work.groupName;
   const isGroupWork = !!groupName || hasCoOwners;
   const displayArtistName = groupName ? groupName : work.artist.name;
 
@@ -132,16 +135,38 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
     setIsSaved(nowSaved);
   };
 
+  const workShareUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/exhibitions/${workId}`;
+
+  const buildInvitationCardText = () => {
+    if (!work) return '';
+    return t('workDetail.inviteCardBody')
+      .replace('{artist}', work.artist.name)
+      .replace('{title}', work.title)
+      .replace('{url}', workShareUrl)
+      .replace('{brand}', t('brand.name'));
+  };
+
   const handleCopyLink = () => {
-    const workUrl = `${window.location.origin}/works/${workId}`;
-    navigator.clipboard.writeText(workUrl);
+    navigator.clipboard.writeText(workShareUrl);
     toast.success(t('workDetail.toastLinkCopied'));
+    setIsShareOpen(false);
+  };
+
+  const handleCopyInvitation = () => {
+    navigator.clipboard.writeText(buildInvitationCardText());
+    toast.success(t('workDetail.toastInviteCopied'));
+    setIsShareOpen(false);
+  };
+
+  const handleKakaoShare = () => {
+    navigator.clipboard.writeText(buildInvitationCardText());
+    toast.success(t('workDetail.toastKakaoCopied'));
     setIsShareOpen(false);
   };
 
   return (
     <motion.div
-      className="fixed inset-0 z-[100] flex items-center justify-center"
+      className="dark fixed inset-0 z-[100] flex items-center justify-center"
       initial={{ opacity: 0 }}
       animate={{ opacity: 1 }}
       exit={{ opacity: 0 }}
@@ -166,13 +191,15 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
         <div className="flex flex-col w-full px-3 sm:px-6 lg:px-16 pt-[20px] sm:pt-[40px]">
 
           {/* Close button */}
-          <button
+          <Button
+            type="button"
+            variant="toolbar"
             onClick={onClose}
-            className="fixed right-4 top-4 flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors z-50"
+            className="fixed right-4 top-4 z-50 flex h-9 w-9 items-center justify-center rounded-full bg-white/10 text-white lg:hover:bg-white/20"
             aria-label={t('workDetail.close')}
           >
             <X className="h-5 w-5" />
-          </button>
+          </Button>
 
           {/* Header: artist info + follow */}
           <div className="w-full flex items-center justify-between mb-3 px-2 sm:px-0">
@@ -182,12 +209,17 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                   <Users className="h-5 w-5 text-white" />
                 </div>
               ) : (
-                <button onClick={() => handleArtistClick(work.artist.id)} className="rounded-full">
+                <Button
+                  type="button"
+                  variant="toolbar"
+                  onClick={() => handleArtistClick(work.artist.id)}
+                  className="h-auto w-auto rounded-full p-0 lg:hover:bg-white/10"
+                >
                   <Avatar className="h-10 w-10 border-2 border-white/20 cursor-pointer">
                     <AvatarImage src={work.artist.avatar} alt={work.artist.name} />
                     <AvatarFallback className="text-sm">{work.artist.name[0]}</AvatarFallback>
                   </Avatar>
-                </button>
+                </Button>
               )}
               <div className="flex flex-col sm:flex-row sm:items-center gap-0.5 sm:gap-3 min-w-0">
                 <h2 className="text-white text-sm sm:text-lg font-bold leading-tight truncate">{work.title}</h2>
@@ -196,7 +228,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                   <span className="text-white/80 text-[13px] sm:text-sm">{displayArtistName}</span>
                 ) : (
                   <span
-                    className="text-white/80 text-[13px] sm:text-sm cursor-pointer hover:text-white hover:underline transition-colors"
+                    className="text-white/80 text-[13px] sm:text-sm cursor-pointer lg:hover:text-white lg:hover:underline transition-colors"
                     onClick={() => handleArtistClick(work.artist.id)}
                   >
                     {displayArtistName}
@@ -212,17 +244,19 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                 )}
               </div>
             </div>
-            <button
+            <Button
+              type="button"
+              variant="toolbar"
               onClick={() => requireAuth(() => followStore.toggle(work.artist.id))}
-              className={`hidden sm:flex items-center gap-1.5 px-4 py-2 rounded-lg text-[13px] font-medium transition-colors min-h-[36px] shrink-0 ${
+              className={`hidden sm:flex min-h-[36px] shrink-0 items-center gap-1.5 rounded-lg border-0 px-4 py-2 text-[13px] font-medium transition-colors ${
                 follows.isFollowing(work.artist.id)
-                  ? 'bg-white/10 text-white hover:bg-white/20'
-                  : 'bg-white text-[#18181B] hover:bg-white/90'
+                  ? 'bg-white/10 text-white lg:hover:bg-white/20'
+                  : 'bg-white text-[#18181B] lg:hover:bg-white/90'
               }`}
             >
               <UserPlus className="h-4 w-4" />
               {follows.isFollowing(work.artist.id) ? t('social.following') : t('social.follow')}
-            </button>
+            </Button>
           </div>
 
           {/* Scrollable image + info area */}
@@ -277,10 +311,10 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
               )}
 
               {/* Category */}
-              {(work as any).category && (
+              {work.category && (
                 <div className="mb-4">
                   <span className="inline-block px-3.5 py-1.5 rounded-full bg-white/10 text-white/70 text-[13px]">
-                    {(work as any).category}
+                    {work.category}
                   </span>
                 </div>
               )}
@@ -302,22 +336,22 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
 
             {/* Artist profile card */}
             <div className="max-w-[900px] w-full mx-auto px-5 sm:px-6 py-6">
-              {(work as any).coOwners && (work as any).coOwners.length > 0 ? (
+              {work.coOwners && work.coOwners.length > 0 ? (
                 <div className="bg-[#1A1A2E] rounded-2xl border border-white/10 p-5 sm:p-6">
-                  {(work as any).groupName && (
+                  {work.groupName && (
                     <div className="text-center mb-6 pb-4 border-b border-white/10">
-                      <h3 className="text-lg font-bold text-white mb-2">{(work as any).groupName}</h3>
+                      <h3 className="text-lg font-bold text-white mb-2">{work.groupName}</h3>
                       <p className="text-[13px] text-white/70">
                         {t('workDetail.participantCount').replace(
                           '{n}',
-                          String((work as any).coOwners.length + 1),
+                          String(work.coOwners.length + 1),
                         )}
                       </p>
                     </div>
                   )}
                   <div className="space-y-4">
                     <ArtistRow artist={work.artist} onArtistClick={handleArtistClick} />
-                    {(work as any).coOwners.map((coOwner: any) => (
+                    {work.coOwners.map((coOwner) => (
                       <ArtistRow key={coOwner.id} artist={coOwner} onArtistClick={handleArtistClick} />
                     ))}
                   </div>
@@ -331,7 +365,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                     </Avatar>
                   </div>
                   <h3
-                    className="mb-2 text-base font-semibold text-white cursor-pointer hover:underline transition-colors"
+                    className="mb-2 text-base font-semibold text-white cursor-pointer lg:hover:underline transition-colors"
                     onClick={() => handleArtistClick(work.artist.id)}
                   >
                     {work.artist.name}
@@ -347,24 +381,28 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
             {relatedWorks.length > 0 && (
               <div className="max-w-[900px] w-full mx-auto px-5 sm:px-6 pb-10">
                 <h2 className="text-lg font-semibold text-white mb-4">{t('workDetail.relatedWorks')}</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
                   {relatedWorks.slice(0, 8).map((rw) => (
                     <button
+                      type="button"
                       key={rw.id}
-                      onClick={(e) => { e.stopPropagation(); onNavigate?.(rw.id); }}
-                      className="group cursor-pointer text-left"
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onNavigate?.(rw.id);
+                      }}
+                      className="group min-w-0 w-full text-left rounded-xl p-0 border-0 bg-transparent cursor-pointer shadow-none focus:outline-none focus-visible:ring-2 focus-visible:ring-white/40 focus-visible:ring-offset-2 focus-visible:ring-offset-black"
                     >
-                      <div className="relative mb-3 overflow-hidden rounded-xl bg-white/5 border border-white/10 aspect-square flex items-center justify-center">
+                      <div className="relative mb-2 sm:mb-3 overflow-hidden rounded-xl bg-white/5 border border-white/10 aspect-square flex items-center justify-center">
                         <ImageWithFallback
                           src={imageUrls[getFirstImage(rw.image)] || getFirstImage(rw.image)}
                           alt={rw.title}
                           className="w-full h-full object-contain hover-scale"
                         />
                       </div>
-                      <div className="text-[13px] font-medium text-white group-hover:text-[#00BFA5] transition-colors mb-1 truncate">
+                      <div className="text-[13px] font-medium text-white lg:group-hover:text-primary transition-colors mb-0.5 sm:mb-1 truncate px-0.5">
                         {rw.title}
                       </div>
-                      <div className="text-xs text-white/60">{work.artist.name}</div>
+                      <div className="text-xs text-white/60 truncate px-0.5">{displayArtistName}</div>
                     </button>
                   ))}
                 </div>
@@ -375,11 +413,12 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
           {/* Prev/next work navigation */}
           {prevWork && (
             <button
+              type="button"
               onClick={() => onNavigate?.(prevWork.id)}
-              className="fixed bottom-16 sm:bottom-5 left-3 sm:left-5 flex flex-col items-center gap-1 z-50"
+              className="fixed bottom-16 sm:bottom-5 left-3 sm:left-5 z-50 flex flex-col items-center gap-1 p-0 m-0 border-0 bg-transparent shadow-none cursor-pointer"
               aria-label={t('workDetail.prevWork')}
             >
-              <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors backdrop-blur-sm">
+              <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/10 text-white lg:hover:bg-white/20 transition-colors backdrop-blur-sm">
                 <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5" />
               </div>
               <span className="text-white text-xs hidden sm:block">{t('workDetail.prev')}</span>
@@ -387,11 +426,12 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
           )}
           {nextWork && (
             <button
+              type="button"
               onClick={() => onNavigate?.(nextWork.id)}
-              className="fixed bottom-16 sm:bottom-5 right-3 sm:right-5 flex flex-col items-center gap-1 z-50"
+              className="fixed bottom-16 sm:bottom-5 right-3 sm:right-5 z-50 flex flex-col items-center gap-1 p-0 m-0 border-0 bg-transparent shadow-none cursor-pointer"
               aria-label={t('workDetail.nextWork')}
             >
-              <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/10 text-white hover:bg-white/20 transition-colors backdrop-blur-sm">
+              <div className="flex h-8 w-8 sm:h-10 sm:w-10 items-center justify-center rounded-full bg-white/10 text-white lg:hover:bg-white/20 transition-colors backdrop-blur-sm">
                 <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5" />
               </div>
               <span className="text-white text-xs hidden sm:block">{t('workDetail.next')}</span>
@@ -401,9 +441,11 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
           {/* Right-side action buttons (desktop) */}
           <div className="hidden sm:flex fixed top-1/2 -translate-y-1/2 right-4 flex-col items-center gap-3 z-50">
             {/* Follow (avatar) */}
-            <button
+            <Button
+              type="button"
+              variant="toolbar"
               onClick={() => requireAuth(() => followStore.toggle(work.artist.id))}
-              className="flex flex-col items-center gap-1.5"
+              className="flex h-auto min-h-0 flex-col items-center gap-1.5 py-1 text-white"
               aria-label={follows.isFollowing(work.artist.id) ? t('social.following') : t('social.follow')}
             >
               <div className="relative flex h-10 w-10 items-center justify-center">
@@ -412,7 +454,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                   <AvatarFallback>{work.artist.name[0]}</AvatarFallback>
                 </Avatar>
                 {follows.isFollowing(work.artist.id) && (
-                  <div className="absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-[#6366F1] border-2 border-black">
+                  <div className="absolute -bottom-0.5 -right-0.5 flex h-5 w-5 items-center justify-center rounded-full bg-primary border-2 border-black">
                     <svg className="h-3 w-3 text-white" fill="currentColor" viewBox="0 0 16 16">
                       <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
                     </svg>
@@ -420,82 +462,105 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                 )}
               </div>
               <span
-                className="text-xs text-white cursor-pointer hover:underline"
+                className="text-xs text-white cursor-pointer lg:hover:underline"
                 onClick={(e) => { e.stopPropagation(); handleArtistClick(work.artist.id); }}
               >
                 {work.artist.name}
               </span>
-            </button>
+            </Button>
 
             {/* Like */}
-            <button onClick={() => requireAuth(handleLike)} className="flex flex-col items-center gap-1.5" aria-label={t('workDetail.like')}>
+            <Button
+              type="button"
+              variant="toolbar"
+              onClick={() => requireAuth(handleLike)}
+              className="flex h-auto min-h-0 flex-col items-center gap-1.5 py-1 text-white"
+              aria-label={t('workDetail.like')}
+            >
               <div className={`flex h-10 w-10 items-center justify-center rounded-full transition-colors backdrop-blur-sm ${
-                isLiked ? 'bg-[#FF2E63]' : 'bg-white/10 hover:bg-white/20'
+                isLiked ? 'bg-[#FF2E63]' : 'bg-white/10 lg:hover:bg-white/20'
               }`}>
                 <Heart className={`h-4.5 w-4.5 ${isLiked ? 'text-white fill-white' : 'text-white'}`} />
               </div>
               <span className="text-xs text-white">{t('workDetail.like')}</span>
               <span className="text-[11px] text-white/70">{(work.likes || 0).toLocaleString()}</span>
-            </button>
+            </Button>
 
             {/* Save / Bookmark */}
-            <button onClick={() => requireAuth(handleSave)} className="flex flex-col items-center gap-1.5" aria-label={t('workDetail.save')}>
+            <Button
+              type="button"
+              variant="toolbar"
+              onClick={() => requireAuth(handleSave)}
+              className="flex h-auto min-h-0 flex-col items-center gap-1.5 py-1 text-white"
+              aria-label={t('workDetail.save')}
+            >
               <div className={`flex h-10 w-10 items-center justify-center rounded-full transition-colors backdrop-blur-sm ${
-                isSaved ? 'bg-white' : 'bg-white/10 hover:bg-white/20'
+                isSaved ? 'bg-white' : 'bg-white/10 lg:hover:bg-white/20'
               }`}>
                 <Bookmark className={`h-4.5 w-4.5 ${isSaved ? 'text-[#18181B] fill-[#18181B]' : 'text-white'}`} />
               </div>
               <span className="text-xs text-white">{t('workDetail.save')}</span>
-            </button>
+            </Button>
 
             {/* Share */}
             <Popover open={isShareOpen} onOpenChange={setIsShareOpen}>
               <PopoverTrigger asChild>
-                <button className="flex flex-col items-center gap-1.5 mt-2" aria-label={t('workDetail.share')}>
-                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 transition-colors backdrop-blur-sm">
+                <Button
+                  type="button"
+                  variant="toolbar"
+                  className="mt-2 flex h-auto min-h-0 flex-col items-center gap-1.5 py-1 text-white"
+                  aria-label={t('workDetail.share')}
+                >
+                  <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 lg:hover:bg-white/20 transition-colors backdrop-blur-sm">
                     <Share2 className="h-4.5 w-4.5 text-white" />
                   </div>
                   <span className="text-xs text-white">{t('workDetail.share')}</span>
-                </button>
+                </Button>
               </PopoverTrigger>
-              <PopoverContent side="left" align="center" className="w-48 p-2 bg-[#2a2a2a] border-white/10 z-[110]">
-                <button
+              <PopoverContent side="left" align="center" className="w-[min(100vw-2rem,17rem)] p-2 bg-[#2a2a2a] border-white/10 z-[110]">
+                <Button
+                  type="button"
+                  variant="toolbar"
+                  onClick={handleCopyInvitation}
+                  className="flex h-auto w-full items-center justify-start gap-3 rounded-lg px-3 py-2.5 text-left text-[13px] text-white"
+                >
+                  <Mail className="h-4 w-4 shrink-0" />
+                  {t('workDetail.copyInviteCard')}
+                </Button>
+                <Button
+                  type="button"
+                  variant="toolbar"
                   onClick={handleCopyLink}
-                  className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-white hover:bg-white/10 transition-colors text-[13px]"
+                  className="flex h-auto w-full items-center justify-start gap-3 rounded-lg px-3 py-2.5 text-[13px] text-white"
                 >
                   <Link2 className="h-4 w-4" />
                   {t('workDetail.copyLink')}
-                </button>
-                <TooltipProvider>
-                  <Tooltip>
-                    <TooltipTrigger asChild>
-                      <button
-                        disabled
-                        className="flex items-center gap-3 w-full px-3 py-2.5 rounded-lg text-white/40 cursor-not-allowed text-[13px]"
-                      >
-                        <MessageCircle className="h-4 w-4" />
-                        {t('workDetail.kakaoShare')}
-                      </button>
-                    </TooltipTrigger>
-                    <TooltipContent side="left">
-                      <p>{t('workDetail.kakaoSoon')}</p>
-                    </TooltipContent>
-                  </Tooltip>
-                </TooltipProvider>
+                </Button>
+                <Button
+                  type="button"
+                  variant="toolbar"
+                  onClick={handleKakaoShare}
+                  className="flex h-auto w-full items-center justify-start gap-3 rounded-lg px-3 py-2.5 text-left text-[13px] text-white"
+                >
+                  <MessageCircle className="h-4 w-4 shrink-0" />
+                  {t('workDetail.kakaoShare')}
+                </Button>
               </PopoverContent>
             </Popover>
 
             {/* Report */}
-            <button
+            <Button
+              type="button"
+              variant="toolbar"
               onClick={() => requireAuth(() => setShowReport(true))}
-              className="flex flex-col items-center gap-1.5 mt-2"
+              className="mt-2 flex h-auto min-h-0 flex-col items-center gap-1.5 py-1 text-white"
               aria-label={t('workDetail.report')}
             >
-              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 hover:bg-red-500/30 transition-colors backdrop-blur-sm">
+              <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/10 lg:hover:bg-red-500/30 transition-colors backdrop-blur-sm">
                 <Flag className="h-4.5 w-4.5 text-white" />
               </div>
               <span className="text-xs text-white">{t('workDetail.report')}</span>
-            </button>
+            </Button>
           </div>
         </div>
       </motion.div>
@@ -503,28 +568,77 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
       {/* Mobile bottom action bar */}
       <div className="sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#1A1A2E]/95 backdrop-blur-sm border-t border-white/10 px-4 py-3 safe-area-bottom">
         <div className="flex items-center justify-around">
-          <button onClick={() => requireAuth(handleLike)} className="flex flex-col items-center gap-1">
+          <button
+            type="button"
+            onClick={() => requireAuth(handleLike)}
+            className="flex flex-col items-center gap-1 p-1.5 -m-1 border-0 bg-transparent shadow-none cursor-pointer"
+          >
             <Heart className={`h-6 w-6 ${isLiked ? 'text-[#FF2E63] fill-[#FF2E63]' : 'text-white'}`} />
             <span className="text-[11px] text-white/70">{(work.likes || 0).toLocaleString()}</span>
           </button>
-          <button onClick={() => requireAuth(handleSave)} className="flex flex-col items-center gap-1">
+          <button
+            type="button"
+            onClick={() => requireAuth(handleSave)}
+            className="flex flex-col items-center gap-1 p-1.5 -m-1 border-0 bg-transparent shadow-none cursor-pointer"
+          >
             <Bookmark className={`h-6 w-6 ${isSaved ? 'text-white fill-white' : 'text-white'}`} />
             <span className="text-[11px] text-white/70">{t('workDetail.save')}</span>
           </button>
-          <button onClick={handleCopyLink} className="flex flex-col items-center gap-1">
-            <Share2 className="h-6 w-6 text-white" />
-            <span className="text-[11px] text-white/70">{t('workDetail.share')}</span>
-          </button>
+          <Popover open={isShareOpen} onOpenChange={setIsShareOpen}>
+            <PopoverTrigger asChild>
+              <button
+                type="button"
+                className="flex flex-col items-center gap-1 p-1.5 -m-1 border-0 bg-transparent shadow-none cursor-pointer"
+              >
+                <Share2 className="h-6 w-6 text-white" />
+                <span className="text-[11px] text-white/70">{t('workDetail.share')}</span>
+              </button>
+            </PopoverTrigger>
+            <PopoverContent side="top" className="w-[min(100vw-2rem,17rem)] p-2 bg-[#2a2a2a] border-white/10 z-[110] mb-2">
+              <Button
+                type="button"
+                variant="toolbar"
+                onClick={handleCopyInvitation}
+                className="flex h-auto w-full items-center justify-start gap-3 rounded-lg px-3 py-2.5 text-left text-[13px] text-white"
+              >
+                <Mail className="h-4 w-4 shrink-0" />
+                {t('workDetail.copyInviteCard')}
+              </Button>
+              <Button
+                type="button"
+                variant="toolbar"
+                onClick={handleCopyLink}
+                className="flex h-auto w-full items-center justify-start gap-3 rounded-lg px-3 py-2.5 text-[13px] text-white"
+              >
+                <Link2 className="h-4 w-4" />
+                {t('workDetail.copyLink')}
+              </Button>
+              <Button
+                type="button"
+                variant="toolbar"
+                onClick={handleKakaoShare}
+                className="flex h-auto w-full items-center justify-start gap-3 rounded-lg px-3 py-2.5 text-left text-[13px] text-white"
+              >
+                <MessageCircle className="h-4 w-4 shrink-0" />
+                {t('workDetail.kakaoShare')}
+              </Button>
+            </PopoverContent>
+          </Popover>
           <button
+            type="button"
             onClick={() => requireAuth(() => followStore.toggle(work.artist.id))}
-            className="flex flex-col items-center gap-1"
+            className="flex flex-col items-center gap-1 p-1.5 -m-1 border-0 bg-transparent shadow-none cursor-pointer"
           >
-            <UserPlus className={`h-6 w-6 ${follows.isFollowing(work.artist.id) ? 'text-[#6366F1]' : 'text-white'}`} />
+            <UserPlus className={`h-6 w-6 ${follows.isFollowing(work.artist.id) ? 'text-primary' : 'text-white'}`} />
             <span className="text-[11px] text-white/70">
               {follows.isFollowing(work.artist.id) ? t('social.following') : t('social.follow')}
             </span>
           </button>
-          <button onClick={() => requireAuth(() => setShowReport(true))} className="flex flex-col items-center gap-1">
+          <button
+            type="button"
+            onClick={() => requireAuth(() => setShowReport(true))}
+            className="flex flex-col items-center gap-1 p-1.5 -m-1 border-0 bg-transparent shadow-none cursor-pointer"
+          >
             <Flag className="h-6 w-6 text-white" />
             <span className="text-[11px] text-white/70">{t('workDetail.report')}</span>
           </button>
@@ -539,7 +653,9 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
         targetType="work"
         targetId={workId}
         targetName={work.title}
-        onReported={onClose}
+        onReported={() => {
+          onWorkReported?.();
+        }}
       />
     </motion.div>
   );
@@ -552,15 +668,15 @@ function CoOwnerSection({ work }: { work: Work }) {
   const { t } = useI18n();
   const hasGroup = !!work.groupName;
   const hasCoOwners = work.coOwners && work.coOwners.length > 0;
-  const isInstructor = (work as any).isInstructorUpload === true;
-  const taggedEmails = (work as any).taggedEmails as string[] | undefined;
+  const isInstructor = work.isInstructorUpload === true;
+  const taggedEmails = work.taggedEmails;
 
   if (!hasGroup && !hasCoOwners && !isInstructor && !taggedEmails?.length) return null;
 
   return (
     <div className="flex flex-wrap items-center gap-3 mb-6">
       {hasGroup && (
-        <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-[#00BFA5]/15 text-[#00BFA5] text-[13px] font-medium">
+        <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-primary/15 text-primary text-[13px] font-medium">
           <Users className="h-4 w-4" />
           {work.groupName}
         </span>
@@ -599,33 +715,40 @@ function ArtistRow({ artist, onArtistClick }: { artist: Artist; onArtistClick?: 
   };
 
   return (
-    <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 hover:bg-white/10 transition-colors">
-      <button onClick={() => onArtistClick?.(artist.id)} className="rounded-full shrink-0">
+    <div className="flex items-center gap-3 p-3 rounded-xl bg-white/5 lg:hover:bg-white/10 transition-colors">
+      <Button
+        type="button"
+        variant="toolbar"
+        onClick={() => onArtistClick?.(artist.id)}
+        className="h-auto w-auto shrink-0 rounded-full p-0"
+      >
         <Avatar className="h-11 w-11 border-2 border-white/20 cursor-pointer">
           <AvatarImage src={artist.avatar} alt={artist.name} />
           <AvatarFallback className="text-sm font-semibold bg-white/10 text-white">{artist.name[0]}</AvatarFallback>
         </Avatar>
-      </button>
+      </Button>
       <div className="flex-1 min-w-0">
         <h4
-          className="text-[15px] font-semibold text-white mb-1 truncate cursor-pointer hover:underline"
+          className="text-[15px] font-semibold text-white mb-1 truncate cursor-pointer lg:hover:underline"
           onClick={() => onArtistClick?.(artist.id)}
         >
           {artist.name}
         </h4>
         {artist.bio && <p className="text-[13px] text-white/60 truncate">{artist.bio}</p>}
       </div>
-      <button
+      <Button
+        type="button"
+        variant="toolbar"
         onClick={handleFollow}
-        className={`flex items-center gap-1.5 h-9 px-4 text-[13px] rounded-lg transition-colors min-h-[36px] ${
+        className={`flex h-9 min-h-[36px] items-center gap-1.5 rounded-lg px-4 text-[13px] transition-colors ${
           isFollowing
-            ? 'bg-white/15 text-white hover:bg-white/20'
-            : 'border border-white/20 text-white hover:bg-white/10'
+            ? 'border-0 bg-white/15 text-white lg:hover:bg-white/20'
+            : 'border border-white/20 text-white lg:hover:bg-white/10'
         }`}
       >
         <UserPlus className="h-3.5 w-3.5" />
         {isFollowing ? t('social.following') : t('social.follow')}
-      </button>
+      </Button>
     </div>
   );
 }

@@ -59,7 +59,7 @@ export default function AdminDashboard() {
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Link to="/admin/issues">
-          <Card className="hover:shadow-md transition-shadow cursor-pointer">
+          <Card className="lg:hover:shadow-md transition-shadow cursor-pointer">
             <CardHeader className="pb-2">
               <CardDescription className="flex items-center gap-2">
                 <AlertCircle className="w-4 h-4" />
@@ -80,7 +80,7 @@ export default function AdminDashboard() {
         </Link>
 
         <Link to="/admin/checklist">
-          <Card className="hover:shadow-md transition-shadow cursor-pointer">
+          <Card className="lg:hover:shadow-md transition-shadow cursor-pointer">
             <CardHeader className="pb-2">
               <CardDescription className="flex items-center gap-2">
                 <CheckSquare className="w-4 h-4" />
@@ -96,7 +96,7 @@ export default function AdminDashboard() {
         </Link>
 
         <Link to="/admin/partners">
-          <Card className="hover:shadow-md transition-shadow cursor-pointer">
+          <Card className="lg:hover:shadow-md transition-shadow cursor-pointer">
             <CardHeader className="pb-2">
               <CardDescription className="flex items-center gap-2">
                 <Users className="w-4 h-4" />

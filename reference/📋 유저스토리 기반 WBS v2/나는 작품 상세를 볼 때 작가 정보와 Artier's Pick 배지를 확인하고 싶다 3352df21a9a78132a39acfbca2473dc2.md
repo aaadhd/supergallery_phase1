@@ -17,3 +17,4 @@ US-ID: US-E04
 • Pick 선정작에 배지 표시
 • URL 변경 (history.pushState /works/:id)
 페르소나: 🟣 감상자
+최종 편집 일시: 2026년 4월 2일 오전 1:47

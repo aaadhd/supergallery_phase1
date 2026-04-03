@@ -5,7 +5,7 @@ import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
 
 const CATEGORY_COLORS: Record<string, string> = {
-  서비스: 'bg-indigo-50 text-indigo-600',
+  서비스: 'bg-muted text-muted-foreground',
   이벤트: 'bg-amber-50 text-amber-600',
   정책: 'bg-red-50 text-red-600',
   기타: 'bg-[#F4F4F5] text-gray-600',
@@ -50,14 +50,14 @@ export default function Notices() {
               <Link
                 key={notice.id}
                 to={`/notices/${notice.id}`}
-                className={`flex items-center gap-4 w-full p-5 rounded-xl text-left transition-colors bg-white hover:bg-[#FAFAFA] ${
-                  notice.isPinned ? 'border-2 border-indigo-200' : 'border border-[#E5E7EB]'
+                className={`flex items-center gap-4 w-full p-5 rounded-xl text-left transition-colors bg-white lg:hover:bg-[#FAFAFA] ${
+                  notice.isPinned ? 'border-2 border-border' : 'border border-[#E5E7EB]'
                 }`}
               >
                 <div className="flex-1 min-w-0">
                   <div className="flex items-center gap-2 mb-1.5">
                     {notice.isPinned ? (
-                      <span className="px-2 py-0.5 rounded bg-indigo-500 text-white text-xs font-bold">
+                      <span className="px-2 py-0.5 rounded bg-primary text-primary-foreground text-xs font-bold">
                         {t('notices.pinned')}
                       </span>
                     ) : null}

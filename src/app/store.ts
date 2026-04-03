@@ -1,7 +1,10 @@
 // 전역 상태 관리 (간단한 구현)
 import { useState, useEffect } from 'react';
 import { Work, works as initialWorks } from './data';
+import { isSupabaseConfigured } from './services/supabaseClient';
 import { pointsRecallIfQuickDelete } from './utils/pointsBackground';
+import { adjustArtistFollowerDelta, clearFollowerDeltas } from './utils/artistFollowDelta';
+import { clearMockSession } from './services/sessionTokens';
 
 // 초안 타입 정의
 export interface Draft {
@@ -24,6 +27,7 @@ export interface Draft {
 // 로컬 스토리지에서 작품 데이터 불러오기
 const loadWorksFromStorage = (): Work[] => {
   if (typeof window === 'undefined') return initialWorks;
+  if (isSupabaseConfigured()) return [];
 
   const stored = localStorage.getItem('artier_works');
   if (stored) {
@@ -38,7 +42,7 @@ const loadWorksFromStorage = (): Work[] => {
 
 // 로컬 스토리지에 작품 데이터 저장
 const saveWorksToStorage = (works: Work[]) => {
-  if (typeof window !== 'undefined') {
+  if (typeof window !== 'undefined' && !isSupabaseConfigured()) {
     localStorage.setItem('artier_works', JSON.stringify(works));
   }
 };
@@ -59,6 +63,7 @@ export const workStore = {
     currentWorks = [work, ...currentWorks];
     saveWorksToStorage(currentWorks);
     listeners.forEach(listener => listener());
+    if (typeof window !== 'undefined') window.dispatchEvent(new Event('artier-works-changed'));
     return work.id;
   },
 
@@ -69,6 +74,7 @@ export const workStore = {
     );
     saveWorksToStorage(currentWorks);
     listeners.forEach(listener => listener());
+    if (typeof window !== 'undefined') window.dispatchEvent(new Event('artier-works-changed'));
   },
 
   // 작품 삭제
@@ -77,6 +83,20 @@ export const workStore = {
     currentWorks = currentWorks.filter(w => w.id !== id);
     saveWorksToStorage(currentWorks);
     listeners.forEach(listener => listener());
+    if (typeof window !== 'undefined') window.dispatchEvent(new Event('artier-works-changed'));
+  },
+
+  /** Supabase에서 가져온 목록으로 메모리만 교체 (localStorage에는 저장하지 않음) */
+  replaceWorksFromRemote: (works: Work[]) => {
+    currentWorks = works;
+    listeners.forEach((listener) => listener());
+  },
+
+  /** 다른 탭·창에서 `artier_works`가 바뀐 뒤 메모리와 화면을 맞출 때 (Supabase 모드에서는 무시) */
+  syncFromLocalStorage: () => {
+    if (typeof window === 'undefined' || isSupabaseConfigured()) return;
+    currentWorks = loadWorksFromStorage();
+    listeners.forEach((listener) => listener());
   },
 
   // 변경사항 구독
@@ -319,6 +339,7 @@ export const authStore = {
   logout: () => {
     isLoggedIn = false;
     localStorage.setItem('artier_auth', 'false');
+    clearMockSession();
     authListeners.forEach(l => l());
   },
   subscribe: (listener: () => void) => {
@@ -361,8 +382,10 @@ export const followStore = {
   toggle: (id: string) => {
     if (currentFollows.includes(id)) {
       currentFollows = currentFollows.filter(f => f !== id);
+      adjustArtistFollowerDelta(id, -1);
     } else {
       currentFollows = [...currentFollows, id];
+      adjustArtistFollowerDelta(id, 1);
     }
     saveFollows();
   },
@@ -471,7 +494,14 @@ const ANON_AVATAR =
   'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100&h=100&fit=crop';
 
 /** 데모: 현재 로그인 사용자(첫 번째 시드 작가) 기준 탈퇴 처리 */
-export function performAccountWithdrawal(currentArtistId: string) {
+export function performAccountWithdrawal(currentArtistId: string, withdrawReasonId?: string) {
+  if (typeof window !== 'undefined' && withdrawReasonId) {
+    try {
+      localStorage.setItem('artier_demo_last_withdraw_reason', withdrawReasonId);
+    } catch {
+      /* ignore */
+    }
+  }
   withdrawnArtistStore.mark(currentArtistId);
   workStore.getWorks().forEach((w) => {
     if (w.artistId !== currentArtistId) return;
@@ -489,6 +519,7 @@ export function performAccountWithdrawal(currentArtistId: string) {
   localStorage.setItem('artier_interactions', JSON.stringify(currentInteractions));
   interactionListeners.forEach((l) => l());
   currentFollows = [];
+  clearFollowerDeltas();
   saveFollows();
   const draftIds = draftStore.getDrafts().map((d) => d.id);
   draftIds.forEach((id) => draftStore.deleteDraft(id));

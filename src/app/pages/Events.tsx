@@ -5,6 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store';
 import { LoginPromptModal } from '../components/LoginPromptModal';
 import { useI18n } from '../i18n/I18nProvider';
+import { Button } from '../components/ui/button';
 
 export default function Events() {
   const navigate = useNavigate();
@@ -117,7 +118,7 @@ export default function Events() {
 
                       <div className="absolute inset-0 flex flex-col justify-center px-5 sm:px-8 lg:px-10">
                         <div className="max-w-[600px]">
-                          <span className="inline-block px-2 py-0.5 sm:px-2.5 sm:py-0.5 text-[10px] sm:text-[11px] font-bold tracking-wider text-white bg-[#6366F1] rounded-full mb-2 sm:mb-3">
+                          <span className="inline-block px-2 py-0.5 sm:px-2.5 sm:py-0.5 text-[10px] sm:text-[11px] font-bold tracking-wider text-white bg-primary rounded-full mb-2 sm:mb-3">
                             {t('events.badge')}
                           </span>
                           <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-2 sm:mb-3 leading-tight">
@@ -140,27 +141,30 @@ export default function Events() {
               </div>
             </div>
 
-            <button
+            <Button
+              variant="ghost"
               onClick={prevBanner}
-              className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 h-7 w-7 sm:h-8 sm:w-8 flex items-center justify-center bg-white/90 hover:bg-white rounded-full shadow-md transition-opacity"
+              className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 h-7 w-7 sm:h-8 sm:w-8 flex items-center justify-center bg-white/90 lg:hover:bg-white rounded-full shadow-md transition-opacity"
             >
               <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#18181B]" />
-            </button>
-            <button
+            </Button>
+            <Button
+              variant="ghost"
               onClick={nextBanner}
-              className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 h-7 w-7 sm:h-8 sm:w-8 flex items-center justify-center bg-white/90 hover:bg-white rounded-full shadow-md transition-opacity"
+              className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 h-7 w-7 sm:h-8 sm:w-8 flex items-center justify-center bg-white/90 lg:hover:bg-white rounded-full shadow-md transition-opacity"
             >
               <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#18181B]" />
-            </button>
+            </Button>
 
             <div className="absolute bottom-2.5 sm:bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1 sm:gap-1.5">
               {promotionBanners.map((_, index) => (
-                <button
+                <Button
+                  variant="ghost"
                   key={index}
                   onClick={() => setCurrentBanner(index)}
                   className={`h-[5px] sm:h-1.5 rounded-full transition-all ${currentBanner === index
                     ? 'w-4 sm:w-5 bg-white'
-                    : 'w-[5px] sm:w-1.5 bg-white/50 hover:bg-white/70'
+                    : 'w-[5px] sm:w-1.5 bg-white/50 lg:hover:bg-white/70'
                   }`}
                 />
               ))}
@@ -180,22 +184,23 @@ export default function Events() {
               {currentEvent.description}
             </p>
             <div className="flex gap-3">
-              <button
+              <Button
                 onClick={() => navigate(`/events/${currentEvent.id}`)}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-[#18181B] text-white rounded-lg text-sm font-medium hover:bg-[#000000] transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium"
               >
                 {t('events.viewDetail')}
                 <ArrowRight className="h-5 w-5" />
-              </button>
-              <button
+              </Button>
+              <Button
+                variant="outline"
                 onClick={() => {
                   if (!auth.isLoggedIn()) { setLoginPromptOpen(true); return; }
                   navigate(`/upload?event=${currentEvent.id}&eventTitle=${encodeURIComponent(currentEvent.title)}`);
                 }}
-                className="inline-flex items-center gap-2 px-5 py-2.5 bg-white text-[#18181B] border border-[#D1D5DB] rounded-lg text-sm font-medium hover:bg-[#FAFAFA] transition-colors"
+                className="inline-flex items-center gap-2 px-5 py-2.5 rounded-lg text-sm font-medium border-[#D1D5DB] lg:hover:bg-[#FAFAFA]"
               >
                 {t('events.participate')}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -219,7 +224,7 @@ export default function Events() {
                   className="w-full h-full object-cover"
                 />
                 <div className="absolute top-4 right-4">
-                  <span className="px-3 py-1.5 text-xs font-bold text-white bg-[#6366F1] rounded-full">
+                  <span className="px-3 py-1.5 text-xs font-bold text-white bg-primary rounded-full">
                     {t('events.comingSoonBadge')}
                   </span>
                 </div>
@@ -247,13 +252,14 @@ export default function Events() {
         <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-10 sm:py-12 text-center">
           <h2 className="text-xl sm:text-2xl font-bold mb-3">{t('events.ctaTitle')}</h2>
           <p className="text-[15px] text-white/80 mb-8">{t('events.ctaLead')}</p>
-          <button
+          <Button
+            variant="secondary"
             onClick={() => setShowNotifyModal(true)}
-            className="inline-flex items-center gap-2 px-6 py-2.5 bg-white text-[#18181B] rounded-lg text-sm font-bold hover:bg-[#F4F4F5] transition-colors"
+            className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold text-[#18181B] bg-white lg:hover:bg-[#F4F4F5]"
           >
             <Bell className="h-5 w-5" />
             {t('events.ctaNotify')}
-          </button>
+          </Button>
         </div>
       </div>
 
@@ -263,12 +269,14 @@ export default function Events() {
       {showNotifyModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/50">
           <div className="bg-white rounded-2xl p-5 sm:p-6 w-full max-w-md mx-4 relative">
-            <button
+            <Button
+              variant="ghost"
+              size="icon"
               onClick={() => { setShowNotifyModal(false); setNotifySubmitted(false); setNotifyEmail(''); }}
-              className="absolute top-4 right-4 p-2 hover:bg-[#F4F4F5] rounded-full"
+              className="absolute top-4 right-4 rounded-full lg:hover:bg-[#F4F4F5]"
             >
               <X className="h-5 w-5" />
-            </button>
+            </Button>
 
             {notifySubmitted ? (
               <div className="text-center py-6">
@@ -285,15 +293,15 @@ export default function Events() {
                   value={notifyEmail}
                   onChange={(e) => setNotifyEmail(e.target.value)}
                   placeholder={t('events.notifyEmailPlaceholder')}
-                  className="w-full px-4 py-3.5 text-sm border border-[#E5E7EB] rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-[#6366F1]"
+                  className="w-full px-4 py-3.5 text-sm border border-[#E5E7EB] rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-primary"
                   onKeyDown={(e) => e.key === 'Enter' && handleNotifySubmit()}
                 />
-                <button
+                <Button
                   onClick={handleNotifySubmit}
-                  className="w-full py-3.5 bg-[#18181B] text-white rounded-lg text-sm font-bold hover:bg-[#000000] transition-colors"
+                  className="w-full py-3.5 rounded-lg text-sm font-bold"
                 >
                   {t('events.notifySubmit')}
-                </button>
+                </Button>
               </>
             )}
           </div>

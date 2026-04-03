@@ -4,15 +4,17 @@
 
 /* === 50대 UX 최적화 === */
 
-/* 기본 폰트 크기 증가 */
+/* theme.css --font-size(16px) 기준 */
 html {
-  font-size: 17px;
+  font-size: 16px;
+  /* iOS 더블탭 줌 지연 완화, 가로 스와이브 의도와 충돌 줄임 */
+  touch-action: manipulation;
 }
 
-/* 모든 버튼 최소 터치 타겟 44px */
-button, [role="button"], a.btn, .btn {
-  min-height: 44px;
-}
+/**
+ * 전역 button min-height 제거: shadcn icon(h-8 w-8) 등이 세로로만 늘어나 비율이 깨지던 원인.
+ * 터치 타깃은 pointer-coarse 유틸·컴포넌트별 min 크기로 맞춤.
+ */
 
 /* 입력 필드도 충분한 크기 */
 input, textarea, select {
@@ -46,12 +48,20 @@ input, textarea, select {
   transition: background-color 200ms ease, opacity 200ms ease;
 }
 
-/* hover 가능한 디바이스(마우스): 숨겼다가 hover 시 표시 */
-@media (hover: hover) and (pointer: fine) {
+/* 터치(거친 포인터): 항상 표시 — 일부 태블릿이 (hover:hover)로 잘못 보고하는 경우 보정 */
+@media (pointer: coarse) {
+  .hover-action {
+    opacity: 1 !important;
+  }
+}
+
+/* 마우스 등 정밀 포인터 + 데스크톱 너비: 호버·포커스 시에만 표시 (태블릿·모바일은 호버 효과 없음) */
+@media (hover: hover) and (pointer: fine) and (min-width: 1024px) {
   .hover-action {
     opacity: 0;
   }
-  .group:hover .hover-action {
+  .group:hover .hover-action,
+  .group:focus-within .hover-action {
     opacity: 1;
   }
   .hover-overlay-bg {
@@ -73,7 +83,7 @@ input, textarea, select {
   opacity: 1;
   background: linear-gradient(to top, rgba(0,0,0,0.5) 0%, transparent 60%);
 }
-@media (hover: hover) and (pointer: fine) {
+@media (hover: hover) and (pointer: fine) and (min-width: 1024px) {
   .touch-gradient-overlay {
     opacity: 0;
     background: linear-gradient(to top, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0.3) 40%, transparent 100%);
@@ -85,7 +95,7 @@ input, textarea, select {
 
 /* 포커스 상태 명확하게 */
 :focus-visible {
-  outline: 3px solid #6366F1;
+  outline: 2px solid oklch(0.145 0 0);
   outline-offset: 2px;
 }
 
@@ -105,8 +115,10 @@ button, [role="button"], a, .card, [data-card] {
   background: #BFBFBF;
   border-radius: 5px;
 }
-::-webkit-scrollbar-thumb:hover {
-  background: #999;
+@media (hover: hover) and (pointer: fine) and (min-width: 1024px) {
+  ::-webkit-scrollbar-thumb:hover {
+    background: #999;
+  }
 }
 
 @keyframes fade-in-up {

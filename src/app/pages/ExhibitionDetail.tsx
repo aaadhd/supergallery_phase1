@@ -8,6 +8,7 @@ import { imageUrls } from '../imageUrls';
 import { getFirstImage } from '../utils/imageHelper';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
+import { Button } from '../components/ui/button';
 
 type ExhibitionType = 'solo' | 'group';
 
@@ -24,7 +25,7 @@ type MockExhibitionConfig = {
   coverKey: string;
 };
 
-const MOCK_EXHIBITION_CONFIG: Record<string, MockExhibitionConfig> = {
+export const MOCK_EXHIBITION_CONFIG: Record<string, MockExhibitionConfig> = {
   'solo-light': {
     id: 'solo-light',
     titleKey: 'exhibition.soloLightTitle',
@@ -61,6 +62,11 @@ const MOCK_EXHIBITION_CONFIG: Record<string, MockExhibitionConfig> = {
   },
 };
 
+/** 기획전용 큐레이션 전시 ID — 동일 경로에서 일반 작품(피드) 딥링크와 구분 */
+export function isCuratedExhibitionId(id: string | undefined): boolean {
+  return id != null && id in MOCK_EXHIBITION_CONFIG;
+}
+
 type ResolvedExhibition = MockExhibitionConfig & {
   title: string;
   description: string;
@@ -75,7 +81,7 @@ function NotFoundBlock({ title, homeLabel }: { title: string; homeLabel: string 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-20">
       <p className="text-[#52525B] text-center mb-6">{title}</p>
-      <Link to="/" className="text-[15px] font-medium text-[#6366F1] hover:underline">
+      <Link to="/" className="text-[15px] font-medium text-primary lg:hover:underline">
         {homeLabel}
       </Link>
     </div>
@@ -194,7 +200,7 @@ export default function ExhibitionDetail() {
         <div className="mt-10 sm:mt-14 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
           <div className="flex-1 min-w-0 space-y-6">
             <div>
-              <p className="text-[13px] font-medium text-[#6366F1] mb-2">{typeLabel}</p>
+              <p className="text-[13px] font-medium text-primary mb-2">{typeLabel}</p>
               <h1 className="text-2xl sm:text-3xl font-semibold text-[#18181B] tracking-tight">
                 {exhibition.title}
               </h1>
@@ -211,7 +217,7 @@ export default function ExhibitionDetail() {
                   className="w-12 h-12 rounded-full object-cover border border-[#F0F0F0]"
                 />
                 <div>
-                  <p className="text-[15px] font-medium text-[#18181B] group-hover:text-[#6366F1] transition-colors">
+                  <p className="text-[15px] font-medium text-[#18181B] lg:group-hover:text-primary transition-colors">
                     {primaryArtist.name}
                   </p>
                   <p className="text-[13px] text-[#71717A]">{primarySub}</p>
@@ -237,7 +243,7 @@ export default function ExhibitionDetail() {
                     <li key={a.id}>
                       <Link
                         to={`/profile/${a.id}`}
-                        className="inline-flex items-center gap-2 rounded-full border border-[#F0F0F0] pl-1 pr-3 py-1 hover:border-[#6366F1]/40 transition-colors bg-white"
+                        className="inline-flex items-center gap-2 rounded-full border border-[#F0F0F0] pl-1 pr-3 py-1 lg:hover:border-primary/40 transition-colors bg-white"
                       >
                         <ImageWithFallback
                           src={a.avatar}
@@ -254,26 +260,26 @@ export default function ExhibitionDetail() {
           </div>
 
           <div className="flex flex-row sm:flex-col gap-2 shrink-0">
-            <button
+            <Button
               type="button"
               onClick={toggleLike}
               className={`inline-flex items-center justify-center gap-2 rounded-lg border px-4 py-2.5 text-sm font-medium transition-colors ${
                 liked
-                  ? 'border-[#6366F1] bg-[#6366F1]/5 text-[#6366F1]'
-                  : 'border-[#F0F0F0] text-[#18181B] hover:border-[#D4D4D8]'
+                  ? 'border-primary bg-primary/5 text-primary'
+                  : 'border-[#F0F0F0] text-[#18181B] lg:hover:border-[#D4D4D8]'
               }`}
             >
               <Heart className={`w-4 h-4 ${liked ? 'fill-current' : ''}`} aria-hidden />
               {t('workDetail.like')}
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               onClick={handleShare}
-              className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#F0F0F0] px-4 py-2.5 text-sm font-medium text-[#18181B] hover:border-[#D4D4D8] transition-colors"
+              className="inline-flex items-center justify-center gap-2 rounded-lg border border-[#F0F0F0] px-4 py-2.5 text-sm font-medium text-[#18181B] lg:hover:border-[#D4D4D8] transition-colors"
             >
               <Share2 className="w-4 h-4" />
               {t('workDetail.share')}
-            </button>
+            </Button>
           </div>
         </div>
 
@@ -281,24 +287,24 @@ export default function ExhibitionDetail() {
           <h2 className="text-lg font-semibold text-[#18181B] mb-8">{t('exhibition.worksHeading')}</h2>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
             {exhibitionWorks.map((work) => (
-              <button
+              <Button
                 key={work.id}
                 type="button"
-                onClick={() => navigate(`/works/${work.id}`)}
+                onClick={() => navigate(`/exhibitions/${work.id}`)}
                 className="text-left group"
               >
                 <div className="aspect-[4/5] overflow-hidden rounded-lg border border-[#F0F0F0] bg-[#FAFAFA] mb-3">
                   <ImageWithFallback
                     src={resolveWorkImageSrc(work)}
                     alt=""
-                    className="w-full h-full object-cover transition-transform duration-300 group-hover:scale-[1.02]"
+                    className="w-full h-full object-cover transition-transform duration-300 lg:group-hover:scale-[1.02]"
                   />
                 </div>
-                <p className="text-sm font-medium text-[#18181B] group-hover:text-[#6366F1] transition-colors line-clamp-2">
+                <p className="text-sm font-medium text-[#18181B] lg:group-hover:text-primary transition-colors line-clamp-2">
                   {work.title}
                 </p>
                 <p className="text-xs text-[#71717A] mt-0.5">{work.artist.name}</p>
-              </button>
+              </Button>
             ))}
           </div>
         </section>
@@ -314,13 +320,13 @@ export default function ExhibitionDetail() {
                   <li key={ex.rid}>
                     <Link
                       to={`/exhibitions/${ex.rid}`}
-                      className="flex gap-4 p-4 rounded-xl border border-[#F0F0F0] hover:border-[#D4D4D8] transition-colors bg-white"
+                      className="flex gap-4 p-4 rounded-xl border border-[#F0F0F0] lg:hover:border-[#D4D4D8] transition-colors bg-white"
                     >
                       <div className="w-24 h-24 shrink-0 overflow-hidden rounded-lg border border-[#F0F0F0]">
                         <ImageWithFallback src={thumb} alt="" className="w-full h-full object-cover" />
                       </div>
                       <div className="min-w-0 py-0.5">
-                        <p className="text-[13px] text-[#6366F1] mb-1">{relType}</p>
+                        <p className="text-[13px] text-primary mb-1">{relType}</p>
                         <p className="font-medium text-[#18181B] line-clamp-2">{ex.title}</p>
                         <p className="text-xs text-[#71717A] mt-2">
                           {ex.startDate} — {ex.endDate}

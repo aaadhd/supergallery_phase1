@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { UserX, UserCheck } from 'lucide-react';
+import { Button } from '../components/ui/button';
 
 type MemberStatus = '활성' | '정지';
 
@@ -97,9 +98,9 @@ export default function MemberManagement() {
             </thead>
             <tbody>
               {filtered.map((m) => (
-                <tr key={m.id} className="border-b border-[#F0F0F0] hover:bg-[#FAFAFA] transition-colors">
+                <tr key={m.id} className="border-b border-[#F0F0F0] lg:hover:bg-[#FAFAFA] transition-colors">
                   <td className="px-4 py-3">
-                    <div className="w-10 h-10 rounded-full bg-[#6366F1]/15 text-[#4338CA] text-xs font-bold flex items-center justify-center border border-indigo-100">
+                    <div className="w-10 h-10 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center border border-border">
                       {m.avatar}
                     </div>
                   </td>
@@ -112,24 +113,24 @@ export default function MemberManagement() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right space-x-2 whitespace-nowrap">
-                    <button
+                    <Button
                       type="button"
                       disabled={m.status === '정지'}
                       onClick={() => suspend(m.id)}
-                      className="text-sm px-3 py-1.5 rounded-lg border border-red-200 text-red-700 hover:bg-red-50 disabled:opacity-40 disabled:pointer-events-none"
+                      className="text-sm px-3 py-1.5 rounded-lg border border-red-200 text-red-700 lg:hover:bg-red-50 disabled:opacity-40 disabled:pointer-events-none"
                     >
                       <UserX className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
                       정지
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
                       disabled={m.status === '활성'}
                       onClick={() => unsuspend(m.id)}
-                      className="text-sm px-3 py-1.5 rounded-lg bg-[#6366F1] text-white hover:bg-[#4F46E5] disabled:opacity-40 disabled:pointer-events-none"
+                      className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90 disabled:opacity-40 disabled:pointer-events-none"
                     >
                       <UserCheck className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
                       해제
-                    </button>
+                    </Button>
                   </td>
                 </tr>
               ))}

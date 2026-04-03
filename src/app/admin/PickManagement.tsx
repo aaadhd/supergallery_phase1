@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { GripVertical, Search, X } from 'lucide-react';
+import { Button } from '../components/ui/button';
 
 type PickItem = { id: string; title: string; artist: string; thumb: string };
 
@@ -88,9 +89,9 @@ export default function PickManagement() {
       {search && searchResults.length > 0 && (
         <div className="mb-6 border border-[#E4E4E7] rounded-lg divide-y divide-[#F0F0F0]">
           {searchResults.map((c) => (
-            <div key={c.id} className="flex items-center justify-between px-4 py-3 hover:bg-[#FAFAFA]">
+            <div key={c.id} className="flex items-center justify-between px-4 py-3 lg:hover:bg-[#FAFAFA]">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded bg-[#6366F1]/10 text-[#6366F1] text-xs font-bold flex items-center justify-center border border-indigo-100">
+                <div className="w-10 h-10 rounded bg-primary/10 text-primary text-xs font-bold flex items-center justify-center border border-border">
                   {c.thumb}
                 </div>
                 <div>
@@ -98,14 +99,14 @@ export default function PickManagement() {
                   <p className="text-xs text-gray-500">{c.artist}</p>
                 </div>
               </div>
-              <button
+              <Button
                 type="button"
                 onClick={() => addPick(c)}
                 disabled={picks.length >= MAX_PICKS}
-                className="text-sm px-3 py-1.5 rounded-lg bg-[#6366F1] text-white hover:bg-[#4F46E5] disabled:opacity-40"
+                className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90 disabled:opacity-40"
               >
                 추가
-              </button>
+              </Button>
             </div>
           ))}
         </div>
@@ -120,21 +121,21 @@ export default function PickManagement() {
           {picks.map((p, i) => (
             <div
               key={p.id}
-              className="border border-[#E4E4E7] rounded-lg p-3 hover:bg-[#FAFAFA] transition-colors relative group"
+              className="border border-[#E4E4E7] rounded-lg p-3 lg:hover:bg-[#FAFAFA] transition-colors relative group"
             >
-              <div className="aspect-square rounded-md bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center text-sm font-semibold text-[#6366F1] border border-[#F0F0F0] mb-2">
+              <div className="aspect-square rounded-md bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center text-sm font-semibold text-primary border border-[#F0F0F0] mb-2">
                 {p.thumb}
               </div>
               <p className="text-xs font-medium text-gray-900 truncate">{p.title}</p>
               <p className="text-xs text-gray-500 truncate">{p.artist}</p>
-              <button
+              <Button
                 type="button"
                 onClick={() => removePick(p.id)}
-                className="absolute top-2 right-2 p-1 rounded-md bg-white border border-[#E4E4E7] text-gray-500 hover:text-red-600 opacity-0 group-hover:opacity-100 transition-opacity"
+                className="absolute top-2 right-2 p-1 rounded-md bg-white border border-[#E4E4E7] text-gray-500 lg:hover:text-red-600 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity"
                 aria-label="제거"
               >
                 <X className="w-3.5 h-3.5" />
-              </button>
+              </Button>
             </div>
           ))}
         </div>
@@ -143,20 +144,20 @@ export default function PickManagement() {
       <h2 className="text-sm font-semibold text-gray-700 mb-3">순서 (드래그 자리 표시)</h2>
       <ol className="border border-[#E4E4E7] rounded-lg divide-y divide-[#F0F0F0]">
         {picks.map((p, idx) => (
-          <li key={p.id} className="flex items-center gap-3 px-4 py-3 hover:bg-[#FAFAFA]">
+          <li key={p.id} className="flex items-center gap-3 px-4 py-3 lg:hover:bg-[#FAFAFA]">
             <span className="text-xs text-gray-400 w-6 tabular-nums">{idx + 1}.</span>
             <GripVertical className="w-4 h-4 text-gray-300 shrink-0" aria-hidden />
             <div className="flex-1 min-w-0">
               <span className="text-sm font-medium text-gray-900">{p.title}</span>
               <span className="text-sm text-gray-500"> · {p.artist}</span>
             </div>
-            <button
+            <Button
               type="button"
               onClick={() => removePick(p.id)}
-              className="text-sm px-3 py-1.5 rounded-lg border border-[#E4E4E7] text-gray-600 hover:bg-white"
+              className="text-sm px-3 py-1.5 rounded-lg border border-[#E4E4E7] text-gray-600 lg:hover:bg-white"
             >
               제거
-            </button>
+            </Button>
           </li>
         ))}
       </ol>

@@ -33,7 +33,7 @@ export function CookieConsent() {
             <h3 className="text-[15px] font-semibold text-[#18181B] mb-1">{t('cookie.title')}</h3>
             <p className="text-[13px] text-gray-600 leading-relaxed">
               {t('cookie.body')}
-              <Link to="/privacy" className="text-[#6366F1] hover:underline">
+              <Link to="/privacy" className="text-primary lg:hover:underline">
                 {t('cookie.privacyLink')}
               </Link>
               {t('cookie.bodyAfter')}
@@ -41,7 +41,7 @@ export function CookieConsent() {
             <div className="flex flex-wrap gap-3 mt-4">
               <Button
                 onClick={() => accept('all')}
-                className="bg-[#18181B] hover:bg-[#3F3F46] text-[13px] px-6"
+                className="bg-[#18181B] lg:hover:bg-[#3F3F46] text-[13px] px-6"
               >
                 {t('cookie.acceptAll')}
               </Button>
@@ -54,13 +54,13 @@ export function CookieConsent() {
               </Button>
             </div>
           </div>
-          <button
+          <Button
             onClick={() => accept('essential')}
-            className="shrink-0 flex h-8 w-8 items-center justify-center rounded-full hover:bg-[#F4F4F5] transition-colors"
+            className="shrink-0 flex h-8 w-8 items-center justify-center rounded-full lg:hover:bg-[#F4F4F5] transition-colors"
             aria-label={t('cookie.close')}
           >
             <X className="h-4 w-4 text-gray-400" />
-          </button>
+          </Button>
         </div>
       </div>
     </div>

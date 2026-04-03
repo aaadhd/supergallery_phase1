@@ -47,9 +47,9 @@ export function WorkCard({ work, showSaleBadge }: WorkCardProps) {
   
   return (
     <>
-      <Link to={`/works/${work.id}`} className="group block">
-        <div className="relative overflow-hidden rounded-sm">
-          <div className="aspect-square overflow-hidden bg-white flex items-center justify-center">
+      <Link to={`/exhibitions/${work.id}`} className="group block">
+        <div className="relative overflow-hidden rounded-xl bg-card ring-1 ring-black/[0.06] shadow-sm transition-[box-shadow,transform] duration-300 lg:group-hover:shadow-md lg:group-hover:ring-primary/15">
+          <div className="aspect-square overflow-hidden bg-muted/30 flex items-center justify-center">
             <CopyrightProtectedImage
               src={imageUrls[firstImage] || firstImage}
               alt={work.title}
@@ -68,7 +68,7 @@ export function WorkCard({ work, showSaleBadge }: WorkCardProps) {
             </div>
           )}
 
-          {showSaleBadge && (work as any).isForSale && (
+          {showSaleBadge && work.isForSale && (
             <div className="absolute right-3 top-3">
               <div className="flex items-center gap-1 rounded-full bg-white/95 px-3 py-1 text-xs font-medium backdrop-blur">
                 <ShoppingBag className="h-3 w-3" />
@@ -81,16 +81,16 @@ export function WorkCard({ work, showSaleBadge }: WorkCardProps) {
           <div className="absolute top-2 right-2 flex gap-1.5 hover-action z-10">
             <Button
               size="icon"
-              variant="secondary"
-              className={`h-8 w-8 rounded-full shadow-sm ${isLiked ? 'bg-red-500 text-white active:bg-red-600' : 'bg-white/90 active:bg-white'}`}
+              variant="ghost"
+              className={`h-8 w-8 rounded-full shadow-sm pointer-coarse:h-11 pointer-coarse:w-11 pointer-coarse:min-h-11 pointer-coarse:min-w-11 active:scale-95 touch-manipulation lg:hover:!bg-inherit ${isLiked ? 'bg-red-500 text-white active:bg-red-600 lg:hover:!bg-red-500' : 'bg-white/90 active:bg-white lg:hover:!bg-white'}`}
               onClick={handleLike}
             >
               <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
             </Button>
             <Button
               size="icon"
-              variant="secondary"
-              className={`h-8 w-8 rounded-full shadow-sm ${isSaved ? 'bg-[#6366F1] text-white active:bg-[#4F46E5]' : 'bg-white/90 active:bg-white'}`}
+              variant="ghost"
+              className={`h-8 w-8 rounded-full shadow-sm pointer-coarse:h-11 pointer-coarse:w-11 pointer-coarse:min-h-11 pointer-coarse:min-w-11 active:scale-95 touch-manipulation lg:hover:!bg-inherit ${isSaved ? 'bg-primary text-primary-foreground active:bg-primary/90 lg:hover:!bg-primary' : 'bg-white/90 active:bg-white lg:hover:!bg-white'}`}
               onClick={handleSave}
             >
               <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-current' : ''}`} />
@@ -98,8 +98,8 @@ export function WorkCard({ work, showSaleBadge }: WorkCardProps) {
           </div>
         </div>
 
-        <div className="mt-3 space-y-2">
-          <h3 className="font-medium text-foreground transition-colors group-hover:text-primary">
+        <div className="mt-3.5 space-y-2">
+          <h3 className="font-semibold text-foreground text-[15px] leading-snug tracking-tight transition-colors lg:group-hover:text-primary pointer-coarse:active:text-primary">
             {work.title}
           </h3>
 

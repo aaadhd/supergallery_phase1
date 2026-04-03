@@ -1,6 +1,7 @@
 import { useState, useEffect, type FormEvent } from 'react';
 import { toast } from 'sonner';
 import { GripVertical, Plus } from 'lucide-react';
+import { Button } from '../components/ui/button';
 
 type BannerStatus = '활성' | '비활성';
 
@@ -99,14 +100,14 @@ export default function BannerManagement() {
     <div className="min-h-full">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <h1 className="text-xl font-bold text-gray-900">배너 관리</h1>
-        <button
+        <Button
           type="button"
           onClick={() => setShowForm((v) => !v)}
-          className="text-sm px-3 py-1.5 rounded-lg bg-[#6366F1] text-white hover:bg-[#4F46E5] inline-flex items-center gap-1.5"
+          className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90 inline-flex items-center gap-1.5"
         >
           <Plus className="w-4 h-4" />
           새 배너
-        </button>
+        </Button>
       </div>
 
       {showForm && (
@@ -144,16 +145,16 @@ export default function BannerManagement() {
             </select>
           </div>
           <div className="flex gap-2">
-            <button type="submit" className="text-sm px-3 py-1.5 rounded-lg bg-[#6366F1] text-white">
+            <Button type="submit" className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white">
               저장
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               onClick={() => setShowForm(false)}
               className="text-sm px-3 py-1.5 rounded-lg border border-[#E4E4E7]"
             >
               취소
-            </button>
+            </Button>
           </div>
         </form>
       )}
@@ -167,31 +168,31 @@ export default function BannerManagement() {
           {banners.map((b, idx) => (
             <li
               key={b.id}
-              className="border border-[#E4E4E7] rounded-lg p-4 flex flex-col sm:flex-row gap-4 hover:bg-[#FAFAFA] transition-colors"
+              className="border border-[#E4E4E7] rounded-lg p-4 flex flex-col sm:flex-row gap-4 lg:hover:bg-[#FAFAFA] transition-colors"
             >
               <div className="flex items-start gap-2 shrink-0">
                 <span className="text-xs text-gray-400 tabular-nums pt-1 w-5">{idx + 1}</span>
                 <GripVertical className="w-5 h-5 text-gray-300 mt-0.5" aria-hidden />
-                <div className="w-full sm:w-40 h-24 rounded-lg bg-gradient-to-br from-[#6366F1]/15 to-indigo-50 border border-[#E4E4E7] flex items-center justify-center text-sm font-semibold text-[#6366F1]">
+                <div className="w-full sm:w-40 h-24 rounded-lg bg-gradient-to-br from-primary/10 to-muted border border-[#E4E4E7] flex items-center justify-center text-sm font-semibold text-primary">
                   {b.preview}
                 </div>
               </div>
               <div className="flex-1 min-w-0 space-y-1">
                 <p className="text-sm font-semibold text-gray-900">{b.title}</p>
-                <p className="text-xs text-[#6366F1] break-all">{b.linkUrl}</p>
+                <p className="text-xs text-primary break-all">{b.linkUrl}</p>
                 <p className="text-xs text-gray-500">{b.period}</p>
                 <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${statusBadge(b.status)}`}>
                   {b.status}
                 </span>
               </div>
               <div className="flex sm:flex-col gap-2 justify-end">
-                <button
+                <Button
                   type="button"
                   onClick={() => toggleStatus(b.id)}
-                  className="text-sm px-3 py-1.5 rounded-lg border border-[#E4E4E7] text-gray-700 hover:bg-white"
+                  className="text-sm px-3 py-1.5 rounded-lg border border-[#E4E4E7] text-gray-700 lg:hover:bg-white"
                 >
                   {b.status === '활성' ? '비활성으로' : '활성으로'}
-                </button>
+                </Button>
               </div>
             </li>
           ))}

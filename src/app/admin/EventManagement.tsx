@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { Pencil, Users, Plus } from 'lucide-react';
+import { Button } from '../components/ui/button';
 
 type EventStatus = '진행중' | '예정' | '종료';
 
@@ -20,7 +21,7 @@ const initialEvents: EventRow[] = [
 ];
 
 function statusBadge(s: EventStatus) {
-  if (s === '진행중') return 'bg-[#6366F1]/10 text-[#4338CA] border border-indigo-200';
+  if (s === '진행중') return 'bg-primary/10 text-primary border border-border';
   if (s === '예정') return 'bg-amber-50 text-amber-800 border border-amber-200';
   return 'bg-gray-100 text-gray-600 border border-gray-200';
 }
@@ -75,14 +76,14 @@ export default function EventManagement() {
     <div className="min-h-full">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-6">
         <h1 className="text-xl font-bold text-gray-900">이벤트 관리</h1>
-        <button
+        <Button
           type="button"
           onClick={addEvent}
-          className="text-sm px-3 py-1.5 rounded-lg bg-[#6366F1] text-white hover:bg-[#4F46E5] inline-flex items-center gap-1.5"
+          className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90 inline-flex items-center gap-1.5"
         >
           <Plus className="w-4 h-4" />
           이벤트 추가
-        </button>
+        </Button>
       </div>
 
       {sorted.length === 0 ? (
@@ -103,7 +104,7 @@ export default function EventManagement() {
             </thead>
             <tbody>
               {sorted.map((ev) => (
-                <tr key={ev.id} className="border-b border-[#F0F0F0] hover:bg-[#FAFAFA] transition-colors">
+                <tr key={ev.id} className="border-b border-[#F0F0F0] lg:hover:bg-[#FAFAFA] transition-colors">
                   <td className="px-4 py-3 font-medium text-gray-900">{ev.name}</td>
                   <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{ev.period}</td>
                   <td className="px-4 py-3 text-gray-600 tabular-nums">{ev.participants.toLocaleString()}</td>
@@ -113,22 +114,22 @@ export default function EventManagement() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right space-x-2 whitespace-nowrap">
-                    <button
+                    <Button
                       type="button"
                       onClick={() => edit(ev.id)}
-                      className="text-sm px-3 py-1.5 rounded-lg border border-[#E4E4E7] text-gray-700 hover:bg-gray-50"
+                      className="text-sm px-3 py-1.5 rounded-lg border border-[#E4E4E7] text-gray-700 lg:hover:bg-gray-50"
                     >
                       <Pencil className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
                       편집
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
                       onClick={() => viewParticipants(ev)}
-                      className="text-sm px-3 py-1.5 rounded-lg bg-[#6366F1] text-white hover:bg-[#4F46E5]"
+                      className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90"
                     >
                       <Users className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
                       참여자
-                    </button>
+                    </Button>
                   </td>
                 </tr>
               ))}

@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { X, Upload, Compass } from 'lucide-react';
 import { authStore, profileStore } from '../store';
 import { useI18n } from '../i18n/I18nProvider';
+import { Button } from './ui/button';
 
 const STORAGE_PREFIX = 'artier_coach_marks';
 
@@ -13,7 +14,7 @@ function storageRootKey(): string {
   try {
     if (!authStore.isLoggedIn()) return 'guest';
     const p = profileStore.getProfile();
-    const raw = (p.email || p.nickname || p.name || 'user').slice(0, 96);
+    const raw = (p.nickname || p.name || 'user').slice(0, 96);
     return raw.replace(/[^\w@.\uAC00-\uD7A3-]/g, '_');
   } catch {
     return 'guest';
@@ -77,20 +78,20 @@ export function CoachMark({ id }: CoachMarkProps) {
   return (
     <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-[90] animate-in slide-in-from-bottom-4 fade-in duration-500">
       <div className="flex items-start gap-3 bg-[#18181B] text-white rounded-2xl shadow-2xl px-4 py-3.5 max-w-[400px]">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-[#6366F1]">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary">
           <Icon className="h-5 w-5" />
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="text-sm font-semibold mb-1">{title}</h3>
           <p className="text-xs text-white/70 leading-relaxed">{description}</p>
         </div>
-        <button
+        <Button
           type="button"
           onClick={dismiss}
-          className="shrink-0 h-7 w-7 flex items-center justify-center rounded-full hover:bg-white/10 transition-colors"
+          className="shrink-0 h-7 w-7 flex items-center justify-center rounded-full lg:hover:bg-white/10 transition-colors"
         >
           <X className="h-4 w-4 text-white/50" />
-        </button>
+        </Button>
       </div>
     </div>
   );

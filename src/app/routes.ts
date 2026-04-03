@@ -1,4 +1,4 @@
-import { createBrowserRouter, redirect } from 'react-router-dom';
+import { createBrowserRouter, redirect, type LoaderFunctionArgs } from 'react-router-dom';
 import Layout from './Layout';
 import Browse from './pages/Browse';
 import Upload from './pages/Upload';
@@ -37,7 +37,14 @@ import MemberManagement from './admin/MemberManagement';
 import Settings from './pages/Settings';
 import NotificationSettings from './pages/NotificationSettings';
 import Maintenance from './pages/Maintenance';
-import ExhibitionDetail from './pages/ExhibitionDetail';
+import ExhibitionRoute from './pages/ExhibitionRoute';
+import FlowDemoTools from './pages/FlowDemoTools';
+import DemoReferenceToolkit from './pages/DemoReferenceToolkit';
+function redirectWorksToExhibitions({ params }: LoaderFunctionArgs) {
+  const id = params.id;
+  if (!id) return redirect('/');
+  return redirect(`/exhibitions/${id}`);
+}
 
 export const router = createBrowserRouter([
   {
@@ -46,18 +53,22 @@ export const router = createBrowserRouter([
     children: [
       { index: true, Component: Browse },
       { path: 'browse', loader: () => redirect('/') },
-      { path: 'works/:id', Component: Browse },
+      { path: 'works/:id', loader: redirectWorksToExhibitions },
       { path: 'upload', Component: Upload },
       { path: 'profile', Component: Profile },
       { path: 'profile/:id', Component: Profile },
-      { path: 'me', loader: () => redirect('/profile') },
+      { path: 'me', Component: Profile },
+      { path: 'me/edit', loader: () => redirect('/settings') },
       { path: 'events', Component: Events },
       { path: 'events/:id', Component: EventDetail },
       { path: 'search', Component: Search },
       { path: 'notifications', Component: Notifications },
       { path: 'settings', Component: Settings },
       { path: 'settings/notifications', Component: NotificationSettings },
-      { path: 'exhibitions/:id', Component: ExhibitionDetail },
+      { path: 'exhibitions/:id', Component: ExhibitionRoute },
+      { path: 'demo', Component: FlowDemoTools },
+      { path: 'demo/reference', Component: DemoReferenceToolkit },
+      { path: 'points', loader: () => redirect('/') },
       { path: 'about', Component: About },
       { path: 'faq', Component: Faq },
       { path: 'contact', Component: Contact },

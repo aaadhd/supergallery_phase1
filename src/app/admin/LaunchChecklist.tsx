@@ -5,6 +5,7 @@ import { Progress } from '../components/ui/progress';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '../components/ui/select';
+import { Button } from '../components/ui/button';
 import { useChecklistStore } from './adminStore';
 import { CHECKLIST_CATEGORY, CHECKLIST_STATUS, STATUS_COLORS } from './constants';
 
@@ -101,20 +102,20 @@ export default function LaunchChecklist() {
                   return (
                     <div
                       key={item.id}
-                      className={`flex items-start gap-3 px-4 py-3 hover:bg-gray-50 transition-colors ${
+                      className={`flex items-start gap-3 px-4 py-3 lg:hover:bg-gray-50 transition-colors ${
                         item.status === '완료' ? 'opacity-60' : ''
                       } ${isOverdue ? 'bg-red-50' : ''}`}
                     >
-                      <button
+                      <Button
                         onClick={() => handleToggle(item.id)}
-                        className="mt-0.5 text-gray-400 hover:text-gray-700"
+                        className="mt-0.5 text-gray-400 lg:hover:text-gray-700"
                       >
                         {item.status === '완료' ? (
                           <CheckSquare className="w-5 h-5 text-green-600" />
                         ) : (
                           <Square className="w-5 h-5" />
                         )}
-                      </button>
+                      </Button>
                       <div className="flex-1 min-w-0">
                         <p className={`text-sm font-medium ${item.status === '완료' ? 'line-through text-gray-500' : 'text-gray-900'}`}>
                           {item.title}

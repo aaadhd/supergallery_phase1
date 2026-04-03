@@ -6,6 +6,7 @@ import type { Work } from '../data';
 import { getFirstImage } from '../utils/imageHelper';
 import { imageUrls } from '../imageUrls';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { Button } from '../components/ui/button';
 
 type ReviewStatusUi = '대기중' | '승인' | '반려';
 
@@ -77,7 +78,9 @@ export default function ContentReview() {
     <div className="min-h-full">
       <h1 className="text-xl font-bold mb-1 text-gray-900">콘텐츠 검토</h1>
       <p className="text-sm text-gray-500 mb-6">
-        업로드된 전시는 검수 전까지 둘러보기 피드에 나오지 않습니다. 본인 프로필에는 즉시 노출됩니다.
+        업로드된 전시는 검수 전까지 둘러보기 피드에 나오지 않습니다. 본인 프로필에는 즉시 노출됩니다. 로컬 개발에서 관리자 화면은{' '}
+        <code className="text-xs bg-gray-100 px-1 rounded">/admin/content-review</code> · 먼저 일반 로그인이 필요합니다(
+        <code className="text-xs bg-gray-100 px-1 rounded">npm run dev</code> 기준).
       </p>
 
       <div className="flex flex-wrap gap-3 mb-6">
@@ -130,7 +133,7 @@ export default function ContentReview() {
                 const key = getFirstImage(w.image);
                 const src = imageUrls[key] || key;
                 return (
-                  <tr key={w.id} className="border-b border-[#F0F0F0] hover:bg-[#FAFAFA] transition-colors">
+                  <tr key={w.id} className="border-b border-[#F0F0F0] lg:hover:bg-[#FAFAFA] transition-colors">
                     <td className="px-4 py-3">
                       <div className="w-12 h-12 rounded-md overflow-hidden border border-[#E4E4E7] bg-[#F4F4F5]">
                         <ImageWithFallback src={src} alt="" className="w-full h-full object-cover" />
@@ -145,24 +148,24 @@ export default function ContentReview() {
                       </span>
                     </td>
                     <td className="px-4 py-3 text-right space-x-2 whitespace-nowrap">
-                      <button
+                      <Button
                         type="button"
                         disabled={ui !== '대기중'}
                         onClick={() => approve(w.id)}
-                        className="text-sm px-3 py-1.5 rounded-lg bg-[#6366F1] text-white hover:bg-[#4F46E5] disabled:opacity-40 disabled:pointer-events-none"
+                        className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90 disabled:opacity-40 disabled:pointer-events-none"
                       >
                         <Check className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
                         승인
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="button"
                         disabled={ui !== '대기중'}
                         onClick={() => reject(w.id)}
-                        className="text-sm px-3 py-1.5 rounded-lg border border-[#E4E4E7] text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:pointer-events-none"
+                        className="text-sm px-3 py-1.5 rounded-lg border border-[#E4E4E7] text-gray-700 lg:hover:bg-gray-50 disabled:opacity-40 disabled:pointer-events-none"
                       >
                         <X className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
                         반려
-                      </button>
+                      </Button>
                     </td>
                   </tr>
                 );

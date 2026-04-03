@@ -9,7 +9,7 @@ export function scoreWorkMatch(w: Work, lowerQuery: string): number {
   const an = w.artist.name.toLowerCase();
   if (an.includes(lowerQuery)) s += 8;
   if (an.startsWith(lowerQuery)) s += 4;
-  const gn = (w as { groupName?: string }).groupName?.toLowerCase();
+  const gn = w.groupName?.toLowerCase();
   if (gn && gn.includes(lowerQuery)) s += 7;
   if (w.description?.toLowerCase().includes(lowerQuery)) s += 3;
   if (w.tags?.some((tag) => tag.toLowerCase().includes(lowerQuery))) s += 4;

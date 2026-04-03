@@ -2,6 +2,8 @@
  * Phase 1 프론트 전용 — 실 API 연결 시 `VITE_API_BASE_URL` 설정.
  * OAuth·메일·파일 업로드 URL은 백엔드 스펙에 맞게 이 모듈을 확장하면 됩니다.
  */
+export { demoAuthHeader } from './sessionTokens';
+
 const base = () => (import.meta.env.VITE_API_BASE_URL as string | undefined)?.replace(/\/$/, '') ?? '';
 
 export function isApiConfigured(): boolean {

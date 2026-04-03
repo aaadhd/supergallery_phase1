@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { EyeOff, Trash2 } from 'lucide-react';
+import { Button } from '../components/ui/button';
 
 type WorkVisibility = '공개' | '비공개';
 
@@ -23,7 +24,7 @@ const initialWorks: WorkRow[] = [
 ];
 
 function visBadge(v: WorkVisibility) {
-  if (v === '공개') return 'bg-indigo-50 text-[#4338CA] border border-indigo-200';
+  if (v === '공개') return 'bg-muted text-primary border border-border';
   return 'bg-gray-100 text-gray-600 border border-gray-200';
 }
 
@@ -112,7 +113,7 @@ export default function WorkManagement() {
             </thead>
             <tbody>
               {filtered.map((w) => (
-                <tr key={w.id} className="border-b border-[#F0F0F0] hover:bg-[#FAFAFA] transition-colors">
+                <tr key={w.id} className="border-b border-[#F0F0F0] lg:hover:bg-[#FAFAFA] transition-colors">
                   <td className="px-4 py-3">
                     <div className="w-12 h-12 rounded-md bg-gray-100 flex items-center justify-center text-xs text-gray-500 border border-[#E4E4E7]">
                       {w.thumb}
@@ -127,23 +128,23 @@ export default function WorkManagement() {
                     </span>
                   </td>
                   <td className="px-4 py-3 text-right space-x-2 whitespace-nowrap">
-                    <button
+                    <Button
                       type="button"
                       disabled={w.visibility === '비공개'}
                       onClick={() => makePrivate(w.id)}
-                      className="text-sm px-3 py-1.5 rounded-lg border border-[#E4E4E7] text-gray-700 hover:bg-gray-50 disabled:opacity-40 disabled:pointer-events-none"
+                      className="text-sm px-3 py-1.5 rounded-lg border border-[#E4E4E7] text-gray-700 lg:hover:bg-gray-50 disabled:opacity-40 disabled:pointer-events-none"
                     >
                       <EyeOff className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
                       비공개
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
                       onClick={() => remove(w.id)}
-                      className="text-sm px-3 py-1.5 rounded-lg bg-red-50 text-red-700 border border-red-100 hover:bg-red-100"
+                      className="text-sm px-3 py-1.5 rounded-lg bg-red-50 text-red-700 border border-red-100 lg:hover:bg-red-100"
                     >
                       <Trash2 className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
                       삭제
-                    </button>
+                    </Button>
                   </td>
                 </tr>
               ))}

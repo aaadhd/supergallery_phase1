@@ -1,7 +1,9 @@
 # 작품 수정 / 삭제
 
-관련 화면: 내 프로필 (작품 관리 탭), 어드민 (관리자 기능)
-화면 모음 - PM, PD, Dev v2: 내 프로필 (https://www.notion.so/3352df21a9a781278708ccc1dcf1cfcc?pvs=21)
+정책 모음: https://www.notion.so/3342df21a9a781cdb58fcff50720b990
+최종 편집 일시: 2026년 3월 31일 오후 3:26
+화면 모음: https://www.notion.so/3352df21a9a78037af3ce1c436ceaa0c, https://www.notion.so/3352df21a9a780ecba27eaabb1c60bb2, https://www.notion.so/3352df21a9a781278708ccc1dcf1cfcc, https://www.notion.so/3352df21a9a781a2ba7fcbd716998c2f,https://www.notion.so/3352df21a9a78037af3ce1c436ceaa0c, https://www.notion.so/3352df21a9a7804baf76ed3ec93b792d, https://www.notion.so/3352df21a9a7806b81f1c517b5261074, https://www.notion.so/3352df21a9a780cabba6e6786e7252f1, https://www.notion.so/3352df21a9a780ea8820ef2369070399, https://www.notion.so/3352df21a9a780ecba27eaabb1c60bb2, https://www.notion.so/3352df21a9a781278708ccc1dcf1cfcc,https://www.notion.so/3352df21a9a78037af3ce1c436ceaa0c, https://www.notion.so/3352df21a9a78093b7d3ec394116a2b0, https://www.notion.so/3352df21a9a781278708ccc1dcf1cfcc, https://www.notion.so/3352df21a9a781a2ba7fcbd716998c2f
+📋 유저스토리 기반 WBS v2: 나는 특정 작품을 일시적으로 비공개로 바꿀 수 있어야 한다 (https://www.notion.so/3352df21a9a781a1b09ddaeae4bacb00?pvs=21), 나는 내 프로필 페이지에서 내 전시·작품·좋아요·저장·초안을 한눈에 관리하고 싶다 (https://www.notion.so/3352df21a9a781a2b284f8bf654ed68c?pvs=21), 나는 올린 작품을 수정하거나 삭제할 수 있어야 한다 (https://www.notion.so/3352df21a9a781cd9094d986589f2ccc?pvs=21)
 
 ## 개요
 

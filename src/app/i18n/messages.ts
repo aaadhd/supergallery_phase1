@@ -9,6 +9,7 @@ const koMessages = {
   'nav.uploadShort': '올리기',
   'nav.search': '검색',
   'nav.profile': '프로필',
+  'nav.points': '내 포인트',
   'nav.my': 'MY',
   'nav.settings': '설정',
   'nav.admin': '운영 관리',
@@ -41,6 +42,202 @@ const koMessages = {
   'footer.jurisdictionValue': '서울중앙지방법원',
   'footer.emailCollectionNotice':
     '본 사이트에 게시된 이메일 주소가 전자우편 수집 프로그램이나 그 밖의 기술적 장치를 이용하여 무단으로 수집되는 것을 거부합니다. (정보통신망법)',
+  'footer.demoLink': '플로우 데모',
+  'demo.title': '플로우 데모',
+  'demo.lead':
+    '상단의 「Phase 1 유저 플로우 — 화면 바로가기」에서 문서 14개 흐름별 URL을 한꺼번에 열 수 있습니다. 아래 도구로 알림·초대·탈퇴는 데모 전용으로 시연합니다.',
+  'demo.sectionInvite': '초대 링크 만료',
+  'demo.sectionInviteHint': '만료 전용 화면으로 이동합니다.',
+  'demo.btnInviteExpired': '만료 화면 보기',
+  'demo.sectionNotif': '알림 시뮬',
+  'demo.sectionNotifHint': '알림함에 샘플 알림을 추가합니다.',
+  'demo.btnNotifNewWork': '신작 알림',
+  'demo.btnNotifFollow': '팔로우 알림',
+  'demo.btnNotifGroup': '그룹 초대',
+  'demo.linkOpenNotif': '알림함 열기',
+  'demo.sectionWithdraw': '탈퇴 플로우',
+  'demo.sectionWithdrawHint': '설정에서 사유 선택 후 탈퇴 확인까지 진행할 수 있습니다.',
+  'demo.sectionAdminGate': '어드민 접근 (프로덕션 빌드)',
+  'demo.sectionAdminGateHint':
+    '배포 미리보기에서는 로그인만으로 /admin 이 열리지 않습니다. 이 브라우저에서만 잠금을 해제하면 됩니다. 스테이징 전체를 열어야 하면 VITE_ADMIN_OPEN=true 를 사용하세요.',
+  'demo.sectionAdminDevNote': '개발 서버(DEV)에서는 로그인만으로 어드민에 들어갈 수 있습니다.',
+  'demo.btnAdminUnlock': '이 브라우저에서 어드민 잠금 해제',
+  'demo.btnAdminLock': '어드민 잠금 다시 켜기',
+  'demo.toastAdminUnlocked': '이 브라우저에서 /admin 접근이 허용되었습니다.',
+  'demo.toastAdminLocked': '어드민 브라우저 잠금을 다시 켰습니다.',
+  'demo.linkSettings': '설정으로 이동',
+  'demo.toastNotifPushed': '알림함에 추가했습니다.',
+  'demo.sampleWorkTitle': '데모 작품',
+  'demo.notifNewWorkMsg': '팔로우한 작가의 신작이 등록되었습니다: {title}',
+  'demo.notifFollowMsg': '누군가 당신을 팔로우하기 시작했습니다.',
+  'demo.notifGroupInviteMsg': '그룹 초대가 도착했습니다.',
+  'demo.linkReferenceToolkit': '기획 검수: JWT·GeoIP·이메일(❌ 항목 데모)',
+  'refStub.title': 'Reference ❌ 항목 — 로컬 검수 도구',
+  'refStub.lead':
+    'JWT 세션(모의), GeoIP 조회, 이메일 템플릿 미리보기, 이메일 발송 조건 표를 한 화면에서 확인합니다. 실서비스 토큰 검증·메일 발송은 포함되지 않습니다.',
+  'refStub.backDemo': '← 플로우 데모로',
+  'refStub.jwtTitle': '1. 세션 / JWT (모의)',
+  'refStub.jwtLead':
+    '로그인·회원가입·GNB 빠른 로그인 시 로컬에 액세스·리프레시 토큰 형태가 저장됩니다. 액세스 유효기간은 데모용 15분입니다.',
+  'refStub.jwtEmpty': '세션이 없습니다. 로그인한 뒤 다시 열어 주세요.',
+  'refStub.jwtSub': '주체(sub)',
+  'refStub.jwtAccessLabel': 'Access',
+  'refStub.jwtRefreshLabel': 'Refresh',
+  'refStub.jwtAccessExpires': '액세스 만료',
+  'refStub.jwtRefreshExpires': '리프레시 만료',
+  'refStub.jwtExpired': '만료됨',
+  'refStub.jwtRefreshCta': '리프레시로 액세스 재발급 (데모)',
+  'refStub.jwtHint':
+    '로그아웃 시 토큰은 삭제됩니다. `Authorization: Bearer …` 헤더 조합은 `demoAuthHeader()`(sessionTokens)에서 확인할 수 있습니다.',
+  'refStub.jwtToastRefreshed': '액세스 토큰을 다시 발급했습니다.',
+  'refStub.jwtToastNoSession': '유효한 리프레시 세션이 없습니다.',
+  'refStub.geoTitle': '2. GeoIP (국가 감지)',
+  'refStub.geoLead':
+    'ipapi.co로 공인 IP 기준 국가를 조회합니다. 실패 시 타임존·locale 기반 폴백 값이 표시됩니다. 1시간 캐시(세션 스토리지)됩니다.',
+  'refStub.geoCta': '국가 조회',
+  'refStub.geoAgain': '캐시 무시하고 다시',
+  'refStub.geoLoading': '조회 중…',
+  'refStub.geoCode': '국가 코드',
+  'refStub.geoName': '국가',
+  'refStub.geoRegion': '지역',
+  'refStub.geoSource': '출처',
+  'refStub.geoSourceIpapi': 'ipapi.co',
+  'refStub.geoSourceFallback': '로컬 폴백',
+  'refStub.tplTitle': '3. 이메일 알림 템플릿 (미리보기 · PRD 10종)',
+  'refStub.tplLead':
+    '기능 모음 「이메일 알림 템플릿」과 동일한 10종입니다. 실제 발송 없이 문구만 확인합니다. 좋아요·팔로우 등은 인앱(및 옵트인 이메일)로 별도 정의됩니다.',
+  'refStub.tplWelcomeSubject': 'Artier에 오신 것을 환영합니다 🎨',
+  'refStub.tplWelcomeBody':
+    '{nickname}님, 환영해요!\nArtier는 나의 그림이 전시가 되는 디지털 갤러리예요.\n작품을 올리면 자동으로 나만의 전시가 열리고, 다른 작가들의 작품도 감상할 수 있어요.\n먼저 프로필을 완성해보세요!\n\nCTA: 프로필 완성하기 → /me/edit',
+  'refStub.tplVerifySubject': '[Artier] 이메일 주소를 인증해주세요',
+  'refStub.tplVerifyBody':
+    '안녕하세요, {nickname}님.\nArtier 계정의 이메일 인증을 완료해주세요.\n아래 버튼을 누르면 인증이 완료됩니다.\n이 링크는 30분간 유효해요.\n만료된 경우 로그인 후 재발송을 요청해주세요.\n\nCTA: 이메일 인증하기 → {verify_url}',
+  'refStub.tplResetSubject': '[Artier] 비밀번호 재설정 링크입니다',
+  'refStub.tplResetBody':
+    '안녕하세요.\n비밀번호 재설정이 요청되었습니다.\n아래 버튼을 눌러 새 비밀번호를 설정해주세요.\n이 링크는 1시간 동안 유효해요.\n이 요청을 하지 않으셨다면 이 이메일을 무시해주세요. 비밀번호는 변경되지 않습니다.\n\nCTA: 비밀번호 재설정 → {reset_url}',
+  'refStub.tplPwdChangedSubject': '[Artier] 비밀번호가 변경되었습니다',
+  'refStub.tplPwdChangedBody':
+    '안녕하세요, {nickname}님.\n{date}에 비밀번호가 변경되었습니다.\n본인이 변경한 것이 아니라면 즉시 비밀번호를 재설정하거나 고객센터로 문의해주세요.',
+  'refStub.tplPickSubject': "🎉 내 작품이 이번 주 Artier's Pick에 선정됐어요!",
+  'refStub.tplPickBody':
+    "{nickname}님, 축하해요!\n'{work_title}'이(가) 이번 주 Artier's Pick에 선정되었어요.\n작품이 둘러보기 피드 상단에 노출되고, 더 많은 분들이 감상할 수 있게 됩니다.\n앞으로도 멋진 작품 기대할게요!\n\nCTA: 내 작품 보기 → {exhibition_url}",
+  'refStub.tplWeeklySubject': '🏅 내 작품이 이번 주 위클리 베스트에 선정됐어요!',
+  'refStub.tplWeeklyBody':
+    "{nickname}님, 축하해요!\n'{work_title}'이(가) 이번 주 위클리 베스트에 선정되었어요.\n많은 분들이 {nickname}님의 작품에 관심을 보여주셨어요.\n앞으로도 멋진 작품 기대할게요!\n\nCTA: 내 작품 보기 → {exhibition_url}",
+  'refStub.tplPolicySubject': '[Artier] 이용약관 및 개인정보처리방침 변경 안내',
+  'refStub.tplPolicyBody':
+    '안녕하세요, Artier입니다.\n이용약관 및 개인정보처리방침이 아래와 같이 변경될 예정입니다.\n• 시행일: {effective_date}\n• 주요 변경 내용: (운영팀이 작성)\n변경 전문은 아래에서 확인하실 수 있습니다.\n계속 이용하시면 변경된 약관에 동의하신 것으로 간주됩니다.\n\nCTA: 변경 내용 확인하기 → {policy_url}',
+  'refStub.tplMarketingSubject': '(캠페인별 운영팀 작성)',
+  'refStub.tplMarketingBody':
+    '(캠페인별 본문 — 수신 거부 링크 필수, 정보통신망법)\n푸터: 본 메일은 마케팅 정보 수신에 동의하신 분께 발송됩니다. 수신을 원하지 않으시면 [수신 거부]를 클릭해주세요.',
+  'refStub.tplSuspendSubject': '[Artier] 계정 이용이 제한되었습니다',
+  'refStub.tplSuspendBody':
+    '안녕하세요, {nickname}님.\n커뮤니티 가이드라인 위반으로 인해 계정 이용이 제한되었습니다.\n• 사유: {reason}\n• 기간: {period}\n이의가 있으신 경우 문의하기를 통해 연락해주세요.\n\nCTA: 문의하기 → /contact',
+  'refStub.tplWithdrawSubject': '[Artier] 회원 탈퇴가 완료되었습니다',
+  'refStub.tplWithdrawBody':
+    '안녕하세요.\n{date}에 Artier 탈퇴가 완료되었습니다.\n• 기존에 올린 작품은 \'작가 미상\'으로 전시에 유지됩니다.\n• 닉네임은 영구적으로 잠금 처리되어 다른 분이 사용할 수 없습니다.\n• 개인정보는 관련 법령에 따라 처리됩니다.\n다시 만날 수 있기를 바랍니다.',
+  'refStub.rulesTitle': '4. 이메일 발송 목록 (기능 모음 마스터 표)',
+  'refStub.rulesLead':
+    '「이메일 알림 템플릿」문서의 트리거·필수 여부와 동일합니다. 인앱 알림은 「알림 통합 트리거 표」를 참고하세요.',
+  'refStub.rulesColNo': '#',
+  'refStub.rulesColName': '템플릿명',
+  'refStub.rulesColTrigger': '발송 트리거',
+  'refStub.rulesColReq': '필수/선택',
+  'refStub.emailMasterBlock':
+    '1|회원가입 환영|회원가입 완료 시|필수\n2|이메일 인증|이메일 가입 후 인증 요청 시|필수\n3|비밀번호 재설정|비밀번호 찾기 요청 시|필수\n4|비밀번호 변경 완료|비밀번호 변경 성공 시|권장\n5|Artier\'s Pick 선정|어드민이 Pick 배지 부여 시|필수\n6|위클리 베스트 선정|어드민이 위클리 베스트 배지 부여 시|필수\n7|공지사항 (정책 변경)|이용약관/개인정보처리방침 변경 시|법적 의무\n8|마케팅 이메일|이벤트/캠페인 (수신 동의자만)|선택 동의자\n9|계정 정지 안내|어드민이 계정 정지 처리 시|필수\n10|회원 탈퇴 완료|탈퇴 처리 완료 시|권장',
+  'flowMap.heading': 'Phase 1 유저 플로우 — 화면 바로가기',
+  'flowMap.intro':
+    '아래는 `SuperGallery Phase 1 유저 플로우` 문서 흐름과 대응하는 URL입니다(15번 블록은 기획 검수용 데모). 로그인이 필요한 화면은 GNB에서 로그인한 뒤 이용하세요.',
+  'flowMap.section01': `1. 회원가입 / 로그인
+/login|이메일·비밀번호 로그인
+/signup|이메일 회원가입
+/signup?demo=email_sent|이메일 인증 발송 안내(시연)
+/signup?demo=email_expired|인증 링크 만료(시연)
+/signup?demo=region|국가별 가입 옵션 레이아웃(시연)
+/reset-password|비밀번호 찾기
+/reset-password?demo=link_expired|재설정 링크 만료(시연)
+/reset-password?demo=new_password|새 비밀번호 입력(시연)
+/login?demo=suspended|계정 정지 적용(시연) — 이후 로그인 시 차단 메시지
+/login?demo=clear_suspension|정지 해제(시연)`,
+  'flowMap.section02': `2. 작품 업로드 → 전시
+/upload|업로드 에디터(로그인 필요)`,
+  'flowMap.section03': `3. 둘러보기 → 작업물 상세 → 반응
+/|둘러보기 피드
+/exhibitions/1|전시 상세·작업물 모달 딥링크 예시(PRD URL)`,
+  'flowMap.section04': `4. 그룹전시(업로드에서 자동 분류)
+/exhibitions/group-nature|그룹 전시 상세 예시`,
+  'flowMap.section05': `5. 내 프로필 · 작품 관리 · 설정
+/me|내 프로필 (PRD IA)
+/profile|내 프로필 (동일 화면, 예전 경로)
+/profile/2|타인 프로필 예시
+/me/edit|프로필 편집 → 설정으로 연결(PRD)
+/settings|계정 설정 · 탈퇴(사유·비밀번호 확인)
+/settings/notifications|푸시·알림 종류 설정`,
+  'flowMap.section06': `6. 검색
+/search|통합 검색(작품명·작가명·전시명·그룹명, PRD P1)`,
+  'flowMap.section07': `7. 알림
+/notifications|알림 목록
+위 섹션의 시연 버튼으로 샘플 알림 추가 가능`,
+  'flowMap.section08': `8. 공지사항
+/notices|목록
+/notices/notice-1|공지 상세 예시`,
+  'flowMap.section09': `9. 작가 프로필(타인)
+/profile/3|다른 작가 프로필 예시`,
+  'flowMap.section10': `10. 에러 페이지
+/__flow_map_404__|404 Not Found(임의 경로)
+/500|500 Server Error`,
+  'flowMap.section11': `11. 온보딩
+/onboarding|가입 직후 온보딩(동일 경로)`,
+  'flowMap.section12': `12. 비가입자 초대 링크
+/invite/SPRING2026|유효 링크 예시
+/invite/SPRING2026?expired=1|7일 만료 안내(시연)
+/invite/INVALID999|잘못된 코드(무효 안내)`,
+  'flowMap.section13': `13. 이벤트 참여
+/events|이벤트 목록
+/events/1|이벤트 상세 예시`,
+  'flowMap.section14': `14. 포인트 적립 · 조회
+Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 는 Phase 2. 로컬 적립 로직은 가입·온보딩·둘러보기·업로드 등에서 계속 동작.`,
+  'flowMap.section15': `15. 기획 검수 — reference ❌ 데모
+/demo/reference|모의 JWT·GeoIP·이메일 템플릿·발송 조건 표`,
+  'points.title': '포인트',
+  'points.back': '뒤로',
+  'points.apLabel': 'AP (활동)',
+  'points.ppLabel': 'PP (프리미엄)',
+  'points.ppHint': '유료·이벤트 지급. 데모에서는 아래 버튼으로만 증가합니다.',
+  'points.filterAll': '전체',
+  'points.filterEarn': '적립',
+  'points.filterUse': '사용·차감',
+  'points.empty': '내역이 없습니다. 둘러보기·가입·업로드 등을 하면 AP가 쌓입니다.',
+  'points.demoNote': '표시 데이터는 브라우저 로컬 저장소 기준입니다. 실서비스와 다를 수 있습니다.',
+  'points.demoToolbarTitle': '시연: PP 샘플 적립',
+  'points.demoPpButton': 'PP +50 (데모)',
+  'points.linkFlowMap': '← 플로우 데모(/demo)로 돌아가기',
+  'signupDemo.demoBanner': '시연용 화면입니다. 실제 메일이 발송되지 않습니다.',
+  'signupDemo.emailSentTitle': '이메일을 확인해 주세요',
+  'signupDemo.emailSentBody':
+    '입력하신 주소로 인증 메일을 보냈습니다.\n30분 이내에 링크를 눌러 주세요.\n(시연: 재발송 버튼은 UI만 있습니다.)',
+  'signupDemo.resendEmail': '인증 메일 다시 보내기',
+  'signupDemo.emailExpiredTitle': '인증 링크가 만료되었습니다',
+  'signupDemo.emailExpiredBody': '30분이 지난 링크입니다. 아래에서 다시 발송을 요청할 수 있습니다.',
+  'signupDemo.backToSignup': '회원가입 화면으로',
+  'signupDemo.regionBanner': '시연: 유저 플로우의 국가별 가입 옵션(한국 / 해외) 레이아웃 참고',
+  'signupDemo.regionKr': '한국',
+  'signupDemo.regionKrOpts': '카카오 · 이메일 (웹 Phase 1. 휴대폰 가입은 Phase 2 앱)',
+  'signupDemo.regionIntl': '해외',
+  'signupDemo.regionIntlOpts': 'Google · Apple · 이메일 (실제 연동은 Phase 2+)',
+  'passwordResetDemo.expiredTitle': '재설정 링크가 만료되었습니다',
+  'passwordResetDemo.expiredBody': '1시간이 지난 링크입니다. 이메일을 다시 입력해 재요청해 주세요.',
+  'passwordResetDemo.resendCta': '비밀번호 찾기 다시 하기',
+  'passwordResetDemo.newPwTitle': '새 비밀번호 설정',
+  'passwordResetDemo.newPwHint': '유효한 재설정 링크를 연 것으로 가정한 시연 화면입니다.',
+  'passwordResetDemo.newPwLabel': '새 비밀번호',
+  'passwordResetDemo.newPwConfirm': '새 비밀번호 확인',
+  'passwordResetDemo.newPwSubmit': '비밀번호 변경',
+  'passwordResetDemo.pwMismatchOrPolicy': '비밀번호 정책을 확인하거나, 두 입력이 일치하는지 확인해 주세요.',
+  'passwordResetDemo.pwSuccessToast': '비밀번호가 변경되었습니다(시연).',
+  'passwordResetDemo.doneTitle': '재설정이 완료되었습니다',
+  'passwordResetDemo.doneBody': '새 비밀번호로 로그인해 주세요.',
+  'loginDemo.suspendReason': '콘텐츠·신고 정책 위반 (시연)',
   'browse.tabAll': '전체',
   'browse.tabSolo': '개인전시',
   'browse.tabGroup': '그룹전시',
@@ -55,6 +252,7 @@ const koMessages = {
   'login.loading': '로그인 중...',
   'login.forgot': '비밀번호를 잊으셨나요?',
   'login.or': '또는',
+  'login.ageNotice': '만 14세 미만은 가입·이용할 수 없습니다.',
   'login.signupPrompt': '계정이 없으신가요?',
   'login.signup': '회원가입',
   'login.emailPlaceholder': '이메일',
@@ -100,18 +298,25 @@ const koMessages = {
   'browse.banner2Subtitle': '인기 작가들의 디지털 아트 모음',
   'browse.banner3Title': '신인 작가 지원 프로그램',
   'browse.banner3Subtitle': '당신의 작품을 세상에 선보이세요',
+  'browse.banner4Title': "이번 주 Artier's Pick",
+  'browse.banner4Subtitle': '운영팀이 고른 주간 우수작을 만나보세요',
+  'browse.banner5Title': '주간 테마 기획전',
+  'browse.banner5Subtitle': '테마에 맞춘 작품 큐레이션',
   'browse.bannerTagNew': 'NEW',
   'browse.bannerTagHot': 'HOT',
   'browse.bannerTagEvent': 'EVENT',
+  'browse.bannerTagPick': 'PICK',
   'browse.emptyTitle': '표시할 작품이 없습니다',
   'browse.emptyHint': '다른 카테고리를 선택해 보세요',
   'browse.itemsCountSuffix': '개',
   'browse.artistLabel': '작가',
   'browse.groupArtistsLabel': '그룹 작가',
+  'browse.workCardMore': '작품 더보기',
   'signup.title': '회원가입',
   'signup.passwordPolicyError': '비밀번호는 8자 이상이며 영문과 숫자를 모두 포함해야 합니다.',
   'signup.passwordHint': '영문과 숫자를 모두 포함해 8자 이상 입력해 주세요.',
-  'search.placeholder': '작품, 작가, 전시명을 검색하세요',
+  'search.placeholder': '작품명, 작가명, 전시명, 그룹명 검색',
+  'search.autocompleteHeading': '자동완성',
   'search.recent': '최근 검색',
   'search.clearRecent': '전체 삭제',
   'search.suggestedKeywords': '추천 키워드',
@@ -144,6 +349,8 @@ const koMessages = {
   'events.notifyDoneLead': '새로운 이벤트 소식을 보내드릴게요',
   'events.active': '진행 중',
   'events.upcoming': '예정',
+  'events.detailNotFound': '이벤트를 찾을 수 없습니다.',
+  'events.detailBackLink': '이벤트 목록으로 돌아가기',
   'upload.groupLabel': '그룹명',
   'upload.cameraHint':
     '카메라·스마트폰으로 촬영한 사진(EXIF에 기종 정보가 있으면)은 업로드할 수 없습니다. 디지털 드로잉 파일을 올려주세요.',
@@ -165,7 +372,9 @@ const koMessages = {
   'upload.errArtistPerImage': '각 작품마다 작가를 지정해야 발행할 수 있어요.',
   'upload.errNonMemberIncomplete': '비회원 작가 등록 시 이름과 전화번호를 입력해야 해요.',
   'upload.toastInviteSent': '수강생 {n}명에게 초대 알림이 발송되었습니다',
-  'upload.toastPublished': '작품이 등록되었습니다. 둘러보기 피드에는 운영 검수 승인 후 노출됩니다.',
+  'upload.toastPublished':
+    '작품이 등록되었습니다. 둘러보기에는 검수 승인 후 노출됩니다. 로그인 후 주소창에 /admin/content-review 를 열어 승인할 수 있습니다.',
+  'upload.toastPublishedImmediate': '작품이 등록되었으며 둘러보기 피드에 바로 노출됩니다. (자동 승인 모드)',
   'upload.toastDraftSaved': '초안이 저장되었습니다.',
   'upload.toastOrderSaved': '순서가 저장되었습니다.',
   'upload.confirmStudent': '수강생의 업로드 동의를 확인했습니다',
@@ -393,9 +602,14 @@ const koMessages = {
   'workDetail.copyLink': '링크 복사',
   'workDetail.kakaoShare': '카카오톡 공유',
   'workDetail.kakaoSoon': '준비 중입니다',
+  'workDetail.toastKakaoCopied': '카카오톡에 붙여넣을 문구를 복사했습니다.',
   'workDetail.relatedWorks': '관련 작품',
   'workDetail.participantCount': '참여 작가 {n}명',
   'workDetail.toastLinkCopied': '링크가 복사되었습니다',
+  'workDetail.copyInviteCard': '초대장 문구 복사',
+  'workDetail.inviteCardBody':
+    '내 전시에 초대합니다.\n\n{artist} — 「{title}」\n{url}\n\n— {brand}',
+  'workDetail.toastInviteCopied': '초대장 문구가 복사되었습니다',
   'workDetail.coWork': '공동 작업',
   'workDetail.instructorUpload': '강사 업로드',
   'workDetail.participants': '참여',
@@ -414,6 +628,11 @@ const koMessages = {
   'invite.loginToParticipate': '로그인하고 참여하기',
   'invite.share': '공유하기',
   'invite.docTitle': '{title} · 초대 · {brand}',
+  'invite.expiredBadge': '링크 만료',
+  'invite.expiredTitle': '초대 링크가 만료되었습니다',
+  'invite.expiredBody':
+    '발송 후 7일이 지난 링크입니다. 전시나 작품은 검색·둘러보기에서 찾아보실 수 있어요.',
+  'invite.expiredCtaSearch': '검색으로 찾기',
 
   'error404.message': '요청하신 페이지를 찾을 수 없습니다.',
   'error404.home': '둘러보기로 돌아가기',
@@ -454,6 +673,8 @@ const koMessages = {
   'signup.agreeTerms': '이용약관 동의',
   'signup.agreePrivacy': '개인정보 수집·이용 동의',
   'signup.agreeAge': '만 14세 이상입니다',
+  'signup.ageRestrictionLead':
+    'Artier는 만 14세 미만 회원 가입을 받지 않습니다. (전자상거래 등에서의 소비자보호에 관한 법률 등 준수)',
   'signup.agreeMktEmail': '마케팅 정보 수신 동의 (이메일)',
   'signup.agreeMktPush': '마케팅 정보 수신 동의 (푸시 알림)',
   'events.badge': 'EVENT',
@@ -578,6 +799,13 @@ const koMessages = {
   'settings.withdrawPwPh': '비밀번호 입력',
   'settings.withdrawSubmit': '탈퇴하기',
   'settings.withdrawBusy': '처리 중…',
+  'settings.withdrawReasonSection': '탈퇴 사유를 선택해 주세요',
+  'settings.withdrawReasonLowUse': '서비스를 잘 사용하지 않아요',
+  'settings.withdrawReasonOtherService': '다른 서비스를 이용하고 있어요',
+  'settings.withdrawReasonPrivacy': '개인정보·보안이 걱정돼요',
+  'settings.withdrawReasonExpDifficult': '이용이 불편해요',
+  'settings.withdrawReasonOther': '기타',
+  'settings.withdrawReasonPickErr': '탈퇴 사유를 선택해 주세요.',
   'settings.confirmLogout': '로그아웃하시겠습니까?',
   'settings.toastLogout': '로그아웃되었습니다.',
   'settings.toastWithdrawPw': '비밀번호를 입력해 주세요.',
@@ -588,15 +816,20 @@ const koMessages = {
   'report.leadArtist': '{name}님을 신고합니다.',
   'report.policyNote':
     '접수 후 운영 정책에 따라 검토합니다. 일반 신고는 7일 이내, 관련 법에 따른 긴급 건은 우선 처리됩니다.',
-  'report.reasonCopyright': '저작권 침해 또는 도용',
-  'report.reasonInappropriate': '부적절한 콘텐츠 (선정적/폭력적)',
-  'report.reasonSpam': '스팸 또는 광고',
-  'report.reasonHate': '혐오 표현',
+  'report.reasonCopyright': '저작권 침해',
+  'report.reasonInappropriate': '부적절한 콘텐츠',
+  'report.reasonSpam': '스팸',
+  'report.reasonMisleading': '허위 작업물',
   'report.reasonOther': '기타',
-  'report.detailPlaceholder': '추가 설명 (선택, 200자 이내)',
+  'report.detailPlaceholder': '추가 설명 (선택, 최대 200자)',
   'report.submit': '신고하기',
   'report.errReason': '신고 사유를 선택해 주세요.',
-  'report.toastSuccess': '신고가 접수되었습니다. 운영팀이 검토합니다.',
+  'report.toastSuccess': '신고가 접수되었습니다.',
+  'report.toastDuplicate': '이미 신고한 대상입니다.',
+  'report.step2Title': '신고가 접수되었습니다',
+  'report.step2Body':
+    '운영팀이 7일 이내 검토합니다. 관련 법에 따른 긴급 건은 우선 처리됩니다. 허위 신고는 제재될 수 있습니다.',
+  'report.okClose': '확인',
   'cookie.title': '쿠키 사용 안내',
   'cookie.body':
     "Artier는 서비스 이용에 필요한 필수 쿠키를 사용합니다. '전체 동의'를 선택하시면 서비스 개선을 위한 분석 쿠키도 함께 사용됩니다. 자세한 내용은 ",
@@ -652,6 +885,7 @@ const enMessages: Record<MessageKey, string> = {
   'nav.uploadShort': 'Upload',
   'nav.search': 'Search',
   'nav.profile': 'Profile',
+  'nav.points': 'My points',
   'nav.my': 'MY',
   'nav.settings': 'Settings',
   'nav.admin': 'Admin',
@@ -684,6 +918,202 @@ const enMessages: Record<MessageKey, string> = {
   'footer.jurisdictionValue': 'Seoul Central District Court',
   'footer.emailCollectionNotice':
     'We prohibit the unauthorized collection of email addresses posted on this site using harvesting software or other automated or technical means. (Act on Promotion of Information and Communications Network Utilization and Information Protection, etc.)',
+  'footer.demoLink': 'Flow demo',
+  'demo.title': 'Flow demo',
+  'demo.lead':
+    'Use the flow index at the top to open every Phase 1 screen by URL. Below: demo-only tools for notifications, invites, and withdrawal.',
+  'demo.sectionInvite': 'Invite link expired',
+  'demo.sectionInviteHint': 'Opens the expired-invite screen.',
+  'demo.btnInviteExpired': 'View expired screen',
+  'demo.sectionNotif': 'Notification simulation',
+  'demo.sectionNotifHint': 'Adds sample items to your notification inbox.',
+  'demo.btnNotifNewWork': 'New work',
+  'demo.btnNotifFollow': 'Follow',
+  'demo.btnNotifGroup': 'Group invite',
+  'demo.linkOpenNotif': 'Open notifications',
+  'demo.sectionWithdraw': 'Account deletion',
+  'demo.sectionWithdrawHint': 'In Settings, pick a reason and complete the withdrawal flow.',
+  'demo.sectionAdminGate': 'Admin access (production build)',
+  'demo.sectionAdminGateHint':
+    'In a production preview, /admin is not available with login alone. Unlock for this browser only, or set VITE_ADMIN_OPEN=true for staging-wide access.',
+  'demo.sectionAdminDevNote': 'On the dev server, logging in is enough to open the admin area.',
+  'demo.btnAdminUnlock': 'Unlock admin for this browser',
+  'demo.btnAdminLock': 'Lock admin again for this browser',
+  'demo.toastAdminUnlocked': 'This browser may now open /admin.',
+  'demo.toastAdminLocked': 'Admin browser unlock cleared.',
+  'demo.linkSettings': 'Go to Settings',
+  'demo.toastNotifPushed': 'Added to notifications.',
+  'demo.sampleWorkTitle': 'Demo work',
+  'demo.notifNewWorkMsg': 'A followed artist posted new work: {title}',
+  'demo.notifFollowMsg': 'Someone started following you.',
+  'demo.notifGroupInviteMsg': 'You received a group invitation.',
+  'demo.linkReferenceToolkit': 'PM review: JWT, GeoIP, email (former ❌ demo)',
+  'refStub.title': 'Reference ❌ items — local review toolkit',
+  'refStub.lead':
+    'Mock JWT session, GeoIP lookup, email template previews, and an email trigger matrix in one place. No real token verification or mail delivery.',
+  'refStub.backDemo': '← Back to flow demo',
+  'refStub.jwtTitle': '1. Session / JWT (mock)',
+  'refStub.jwtLead':
+    'After login, signup, or quick GNB login, mock access & refresh tokens are stored locally. Access TTL is 15 minutes for demo.',
+  'refStub.jwtEmpty': 'No session yet. Log in and open this page again.',
+  'refStub.jwtSub': 'Subject (sub)',
+  'refStub.jwtAccessLabel': 'Access',
+  'refStub.jwtRefreshLabel': 'Refresh',
+  'refStub.jwtAccessExpires': 'Access expires',
+  'refStub.jwtRefreshExpires': 'Refresh expires',
+  'refStub.jwtExpired': 'expired',
+  'refStub.jwtRefreshCta': 'Refresh access token (demo)',
+  'refStub.jwtHint':
+    'Tokens clear on logout. For `Authorization: Bearer …`, see `demoAuthHeader()` in sessionTokens.',
+  'refStub.jwtToastRefreshed': 'Issued a new access token.',
+  'refStub.jwtToastNoSession': 'No valid refresh session.',
+  'refStub.geoTitle': '2. GeoIP (country)',
+  'refStub.geoLead':
+    'Uses ipapi.co from the browser. On failure, shows a timezone/locale fallback. Cached 1h in sessionStorage.',
+  'refStub.geoCta': 'Detect country',
+  'refStub.geoAgain': 'Retry (skip cache)',
+  'refStub.geoLoading': 'Loading…',
+  'refStub.geoCode': 'Country code',
+  'refStub.geoName': 'Country',
+  'refStub.geoRegion': 'Region',
+  'refStub.geoSource': 'Source',
+  'refStub.geoSourceIpapi': 'ipapi.co',
+  'refStub.geoSourceFallback': 'Local fallback',
+  'refStub.tplTitle': '3. Email templates (preview · PRD set of 10)',
+  'refStub.tplLead':
+    'Same 10 templates as the feature doc. No sending. Likes/follows use in-app (and opt-in email) per the notification matrix.',
+  'refStub.tplWelcomeSubject': 'Welcome to Artier 🎨',
+  'refStub.tplWelcomeBody':
+    'Hi {nickname},\nWelcome to Artier — a digital gallery where your art becomes an exhibition.\nUpload your work and it automatically becomes your own exhibition. You can also discover and enjoy other artists\' works.\nStart by completing your profile!\n\nCTA: Complete your profile → /me/edit',
+  'refStub.tplVerifySubject': '[Artier] Please verify your email address',
+  'refStub.tplVerifyBody':
+    'Hi {nickname},\nPlease verify your email for your Artier account.\nClick the button below to complete verification.\nThis link is valid for 30 minutes.\nIf it has expired, log in and request a new one.\n\nCTA: Verify email → {verify_url}',
+  'refStub.tplResetSubject': '[Artier] Reset your password',
+  'refStub.tplResetBody':
+    'Hi,\nA password reset was requested for your account.\nClick the button below to set a new password.\nThis link is valid for 1 hour.\nIf you didn\'t request this, you can safely ignore this email. Your password will not be changed.\n\nCTA: Reset password → {reset_url}',
+  'refStub.tplPwdChangedSubject': '[Artier] Your password has been changed',
+  'refStub.tplPwdChangedBody':
+    'Hi {nickname},\nYour password was changed on {date}.\nIf you did not make this change, please reset your password immediately or contact support.',
+  'refStub.tplPickSubject': "🎉 Your work was selected as this week's Artier's Pick!",
+  'refStub.tplPickBody':
+    "Congratulations, {nickname}!\nYour work '{work_title}' has been selected as this week's Artier's Pick.\nIt will be featured at the top of the Browse feed for more people to discover.\nKeep creating amazing work!\n\nCTA: View my work → {exhibition_url}",
+  'refStub.tplWeeklySubject': "🏅 Your work was selected as this week's Weekly Best!",
+  'refStub.tplWeeklyBody':
+    "Congratulations, {nickname}!\nYour work '{work_title}' has been selected as this week's Weekly Best.\nMany people showed interest in your artwork.\nKeep up the great work!\n\nCTA: View my work → {exhibition_url}",
+  'refStub.tplPolicySubject': '[Artier] Updates to our Terms and Privacy Policy',
+  'refStub.tplPolicyBody':
+    "Hello,\nWe're updating our Terms of Service and Privacy Policy.\n• Effective date: {effective_date}\n• Key changes: (written by ops team)\nYou can review the full updated terms below.\nContinued use of Artier after the effective date constitutes acceptance.\n\nCTA: Review changes → {policy_url}",
+  'refStub.tplMarketingSubject': '(Per campaign, by ops team)',
+  'refStub.tplMarketingBody':
+    '(Campaign body — unsubscribe link required)\nFooter: You opted in to marketing emails. [Unsubscribe] to stop receiving these.',
+  'refStub.tplSuspendSubject': '[Artier] Your account has been restricted',
+  'refStub.tplSuspendBody':
+    'Hi {nickname},\nYour account has been restricted due to a community guidelines violation.\n• Reason: {reason}\n• Duration: {period}\nIf you believe this is an error, please contact us.\n\nCTA: Contact → /contact',
+  'refStub.tplWithdrawSubject': '[Artier] Your account has been deleted',
+  'refStub.tplWithdrawBody':
+    "Hello,\nYour Artier account was deleted on {date}.\n• Works you posted remain in exhibitions as 'anonymous artist'.\n• Your nickname is permanently locked and cannot be reused.\n• Personal data is handled per applicable law.\nWe hope to see you again.",
+  'refStub.rulesTitle': '4. Email send list (feature doc master table)',
+  'refStub.rulesLead':
+    'Same triggers and required/optional flags as the email template doc. In-app notifications: see the integrated trigger table.',
+  'refStub.rulesColNo': '#',
+  'refStub.rulesColName': 'Template',
+  'refStub.rulesColTrigger': 'Trigger',
+  'refStub.rulesColReq': 'Required / optional',
+  'refStub.emailMasterBlock':
+    '1|Welcome email|After signup completes|Required\n2|Email verification|After email signup requests verification|Required\n3|Password reset|Forgot-password request|Required\n4|Password changed|After password change succeeds|Recommended\n5|Artier\'s Pick selected|Admin assigns Pick badge|Required\n6|Weekly Best selected|Admin assigns Weekly Best badge|Required\n7|Policy change notice|Terms/Privacy policy change|Legal obligation\n8|Marketing email|Events/campaigns (marketing opt-in only)|Opt-in\n9|Account suspension notice|Admin suspends account|Required\n10|Account deletion complete|After withdrawal completes|Recommended',
+  'flowMap.heading': 'Phase 1 user flows — screen index',
+  'flowMap.intro':
+    'Each block maps to the Phase 1 user-flow doc (block 15 is a PM review demo). Log in from the header for pages that require auth.',
+  'flowMap.section01': `1. Sign up / login
+/login|Email & password login
+/signup|Email sign-up form
+/signup?demo=email_sent|Email verification sent (demo)
+/signup?demo=email_expired|Verification link expired (demo)
+/signup?demo=region|KR vs intl options layout (demo)
+/reset-password|Forgot password
+/reset-password?demo=link_expired|Reset link expired (demo)
+/reset-password?demo=new_password|Set new password (demo)
+/login?demo=suspended|Apply suspension (demo) — then try login
+/login?demo=clear_suspension|Clear suspension (demo)`,
+  'flowMap.section02': `2. Upload → exhibition
+/upload|Upload editor (login required)`,
+  'flowMap.section03': `3. Browse → work detail → reactions
+/|Browse feed
+/exhibitions/1|Exhibition / work modal deep link (PRD URL)`,
+  'flowMap.section04': `4. Group exhibition (from upload tags)
+/exhibitions/group-nature|Sample group exhibition`,
+  'flowMap.section05': `5. Profile · work management · settings
+/me|My profile (PRD IA)
+/profile|My profile (same screen, legacy path)
+/profile/2|Another user’s profile (sample)
+/me/edit|Profile edit → redirects to Settings (PRD)
+/settings|Account settings · withdrawal
+/settings/notifications|Notification preferences`,
+  'flowMap.section06': `6. Search
+/search|Unified search (work, artist, exhibition, group — PRD P1)`,
+  'flowMap.section07': `7. Notifications
+/notifications|Inbox
+Use the buttons above to push demo notifications`,
+  'flowMap.section08': `8. Notices
+/notices|List
+/notices/notice-1|Sample notice detail`,
+  'flowMap.section09': `9. Artist profile (others)
+/profile/3|Sample artist profile`,
+  'flowMap.section10': `10. Error pages
+/__flow_map_404__|404 Not Found
+/500|500 Server Error`,
+  'flowMap.section11': `11. Onboarding
+/onboarding|Post sign-up onboarding`,
+  'flowMap.section12': `12. Non-member invite link
+/invite/SPRING2026|Valid sample code
+/invite/SPRING2026?expired=1|Expired link (demo)
+/invite/INVALID999|Invalid code`,
+  'flowMap.section13': `13. Events
+/events|Event list
+/events/1|Sample event detail`,
+  'flowMap.section14': `14. Points earn / view
+Phase 1: background earn only (PRD & user flow). Points UI and /points are Phase 2. Local earn hooks still run on signup, onboarding, browse, upload, etc.`,
+  'flowMap.section15': `15. PM review — reference ❌ demo
+/demo/reference|Mock JWT, GeoIP, email templates, send-rule table`,
+  'points.title': 'Points',
+  'points.back': 'Back',
+  'points.apLabel': 'AP (activity)',
+  'points.ppLabel': 'PP (premium)',
+  'points.ppHint': 'From purchases or campaigns. In demo, use the button below.',
+  'points.filterAll': 'All',
+  'points.filterEarn': 'Earned',
+  'points.filterUse': 'Spent / deducted',
+  'points.empty': 'No entries yet. Browse, sign up, or upload to earn AP.',
+  'points.demoNote': 'Data is read from local storage only; production may differ.',
+  'points.demoToolbarTitle': 'Demo: add sample PP',
+  'points.demoPpButton': 'PP +50 (demo)',
+  'points.linkFlowMap': '← Back to /demo',
+  'signupDemo.demoBanner': 'Demo screen only. No email is sent.',
+  'signupDemo.emailSentTitle': 'Check your email',
+  'signupDemo.emailSentBody':
+    'We sent a verification link.\nPlease open it within 30 minutes.\n(Demo: resend is UI-only.)',
+  'signupDemo.resendEmail': 'Resend verification email',
+  'signupDemo.emailExpiredTitle': 'Verification link expired',
+  'signupDemo.emailExpiredBody': 'This link is older than 30 minutes. Request a new one below.',
+  'signupDemo.backToSignup': 'Back to sign up',
+  'signupDemo.regionBanner': 'Demo: KR vs international sign-up options (user-flow reference)',
+  'signupDemo.regionKr': 'Korea',
+  'signupDemo.regionKrOpts': 'Kakao · email (web Phase 1; phone signup is Phase 2 app)',
+  'signupDemo.regionIntl': 'International',
+  'signupDemo.regionIntlOpts': 'Google · Apple · email (integration in later phases)',
+  'passwordResetDemo.expiredTitle': 'Reset link expired',
+  'passwordResetDemo.expiredBody': 'This link is older than one hour. Request a new reset email.',
+  'passwordResetDemo.resendCta': 'Start password reset again',
+  'passwordResetDemo.newPwTitle': 'Set a new password',
+  'passwordResetDemo.newPwHint': 'Demo: assumes you opened a valid reset link.',
+  'passwordResetDemo.newPwLabel': 'New password',
+  'passwordResetDemo.newPwConfirm': 'Confirm new password',
+  'passwordResetDemo.newPwSubmit': 'Update password',
+  'passwordResetDemo.pwMismatchOrPolicy': 'Check the password rules and matching fields.',
+  'passwordResetDemo.pwSuccessToast': 'Password updated (demo).',
+  'passwordResetDemo.doneTitle': 'Password reset complete',
+  'passwordResetDemo.doneBody': 'Sign in with your new password.',
+  'loginDemo.suspendReason': 'Policy violation (demo suspension)',
   'browse.tabAll': 'All',
   'browse.tabSolo': 'Solo',
   'browse.tabGroup': 'Group',
@@ -698,6 +1128,7 @@ const enMessages: Record<MessageKey, string> = {
   'login.loading': 'Signing in...',
   'login.forgot': 'Forgot password?',
   'login.or': 'or',
+  'login.ageNotice': 'Users under 14 cannot sign up or use the service.',
   'login.signupPrompt': "Don't have an account?",
   'login.signup': 'Sign up',
   'login.emailPlaceholder': 'Email',
@@ -743,18 +1174,25 @@ const enMessages: Record<MessageKey, string> = {
   'browse.banner2Subtitle': 'A curated collection of popular digital art',
   'browse.banner3Title': 'Emerging artist program',
   'browse.banner3Subtitle': 'Introduce your work to the world',
+  'browse.banner4Title': "This week's Artier's Pick",
+  'browse.banner4Subtitle': 'Weekly selections from the team',
+  'browse.banner5Title': 'Weekly themed exhibition',
+  'browse.banner5Subtitle': 'Curated works for this week’s theme',
   'browse.bannerTagNew': 'NEW',
   'browse.bannerTagHot': 'HOT',
   'browse.bannerTagEvent': 'EVENT',
+  'browse.bannerTagPick': 'PICK',
   'browse.emptyTitle': 'No works to show',
   'browse.emptyHint': 'Try another category',
   'browse.itemsCountSuffix': ' works',
   'browse.artistLabel': 'Artist',
   'browse.groupArtistsLabel': 'Group artists',
+  'browse.workCardMore': 'Work actions',
   'signup.title': 'Sign up',
   'signup.passwordPolicyError': 'Password must be at least 8 characters and include both letters and numbers.',
   'signup.passwordHint': 'Use at least 8 characters with both letters and numbers.',
-  'search.placeholder': 'Search works, artists, or exhibition titles',
+  'search.placeholder': 'Search by work, artist, exhibition, or group name',
+  'search.autocompleteHeading': 'Suggestions',
   'search.recent': 'Recent searches',
   'search.clearRecent': 'Clear all',
   'search.suggestedKeywords': 'Suggested keywords',
@@ -787,6 +1225,8 @@ const enMessages: Record<MessageKey, string> = {
   'events.notifyDoneLead': 'We will send you updates about new events',
   'events.active': 'Live',
   'events.upcoming': 'Upcoming',
+  'events.detailNotFound': 'This event could not be found.',
+  'events.detailBackLink': 'Back to events',
   'upload.groupLabel': 'Group name',
   'upload.cameraHint':
     'Photos from cameras or phones (when EXIF includes device info) cannot be uploaded. Use digital artwork files.',
@@ -810,7 +1250,8 @@ const enMessages: Record<MessageKey, string> = {
   'upload.errNonMemberIncomplete': 'Non-member artists need a name and phone number.',
   'upload.toastInviteSent': 'Invitation sent to {n} students',
   'upload.toastPublished':
-    'Work saved. It will appear on the public feed after moderator approval.',
+    'Work saved. It appears on Browse after moderator approval. When logged in, open /admin/content-review in the address bar to approve.',
+  'upload.toastPublishedImmediate': 'Published and shown on Browse immediately. (auto-approve mode)',
   'upload.toastDraftSaved': 'Draft saved.',
   'upload.toastOrderSaved': 'Order saved.',
   'upload.confirmStudent': 'I confirm consent to upload students’ work',
@@ -1039,9 +1480,14 @@ const enMessages: Record<MessageKey, string> = {
   'workDetail.copyLink': 'Copy link',
   'workDetail.kakaoShare': 'Share via KakaoTalk',
   'workDetail.kakaoSoon': 'Coming soon',
+  'workDetail.toastKakaoCopied': 'Copied text to paste in KakaoTalk.',
   'workDetail.relatedWorks': 'More from this artist',
   'workDetail.participantCount': '{n} contributing artists',
   'workDetail.toastLinkCopied': 'Link copied to clipboard',
+  'workDetail.copyInviteCard': 'Copy invitation message',
+  'workDetail.inviteCardBody':
+    "You're invited to my exhibition on Artier.\n\n{artist} — \"{title}\"\n{url}\n\n— {brand}",
+  'workDetail.toastInviteCopied': 'Invitation text copied',
   'workDetail.coWork': 'Collaboration',
   'workDetail.instructorUpload': 'Instructor upload',
   'workDetail.participants': 'Participants',
@@ -1060,6 +1506,11 @@ const enMessages: Record<MessageKey, string> = {
   'invite.loginToParticipate': 'Log in to join',
   'invite.share': 'Share',
   'invite.docTitle': '{title} · Invite · {brand}',
+  'invite.expiredBadge': 'Link expired',
+  'invite.expiredTitle': 'This invitation link has expired',
+  'invite.expiredBody':
+    'This link was valid for 7 days after it was sent. You can still find exhibitions and works via search or Browse.',
+  'invite.expiredCtaSearch': 'Search',
 
   'error404.message': 'We could not find that page.',
   'error404.home': 'Back to browse',
@@ -1099,6 +1550,8 @@ const enMessages: Record<MessageKey, string> = {
   'signup.agreeTerms': 'Terms of service',
   'signup.agreePrivacy': 'Privacy policy',
   'signup.agreeAge': 'I am 14 or older',
+  'signup.ageRestrictionLead':
+    'Artier does not allow accounts for users under 14 (consumer protection and related regulations).',
   'signup.agreeMktEmail': 'Marketing (email)',
   'signup.agreeMktPush': 'Marketing (push)',
   'events.badge': 'EVENT',
@@ -1223,6 +1676,13 @@ const enMessages: Record<MessageKey, string> = {
   'settings.withdrawPwPh': 'Enter password',
   'settings.withdrawSubmit': 'Delete account',
   'settings.withdrawBusy': 'Processing…',
+  'settings.withdrawReasonSection': 'Why are you leaving?',
+  'settings.withdrawReasonLowUse': 'I rarely use the service',
+  'settings.withdrawReasonOtherService': 'I use another service',
+  'settings.withdrawReasonPrivacy': 'Privacy or security concerns',
+  'settings.withdrawReasonExpDifficult': 'The experience is inconvenient',
+  'settings.withdrawReasonOther': 'Other',
+  'settings.withdrawReasonPickErr': 'Please select a reason.',
   'settings.confirmLogout': 'Log out?',
   'settings.toastLogout': 'You have been logged out.',
   'settings.toastWithdrawPw': 'Please enter your password.',
@@ -1233,15 +1693,20 @@ const enMessages: Record<MessageKey, string> = {
   'report.leadArtist': 'You are reporting {name}.',
   'report.policyNote':
     'We review reports according to our policies. Most reports are handled within about seven days; urgent legal matters are prioritized.',
-  'report.reasonCopyright': 'Copyright infringement or theft',
-  'report.reasonInappropriate': 'Inappropriate content (sexual/violent)',
-  'report.reasonSpam': 'Spam or advertising',
-  'report.reasonHate': 'Hate speech',
+  'report.reasonCopyright': 'Copyright infringement',
+  'report.reasonInappropriate': 'Inappropriate content',
+  'report.reasonSpam': 'Spam',
+  'report.reasonMisleading': 'Misleading work',
   'report.reasonOther': 'Other',
   'report.detailPlaceholder': 'Additional details (optional, max 200 characters)',
   'report.submit': 'Submit report',
   'report.errReason': 'Please select a reason.',
-  'report.toastSuccess': 'Report received. Our team will review it.',
+  'report.toastSuccess': 'Your report has been submitted.',
+  'report.toastDuplicate': 'You have already reported this.',
+  'report.step2Title': 'Report received',
+  'report.step2Body':
+    'Our team will review within 7 business days. Urgent cases required by law are prioritized. False reports may be penalized.',
+  'report.okClose': 'OK',
   'cookie.title': 'Cookies',
   'cookie.body':
     'Artier uses essential cookies to run the service. If you accept all, we also use analytics cookies to improve the product. See our ',

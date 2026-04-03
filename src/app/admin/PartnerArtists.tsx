@@ -3,6 +3,7 @@ import { Badge } from '../components/ui/badge';
 import {
   Table, TableHeader, TableBody, TableHead, TableRow, TableCell,
 } from '../components/ui/table';
+import { Button } from '../components/ui/button';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '../components/ui/select';
@@ -179,16 +180,16 @@ export default function PartnerArtists() {
                           className="text-xs border rounded px-2 py-1 flex-1 min-w-0"
                           autoFocus
                         />
-                        <button
+                        <Button
                           onClick={() => saveNote(partner.id)}
-                          className="text-xs text-blue-600 hover:text-blue-800 whitespace-nowrap"
+                          className="text-xs text-blue-600 lg:hover:text-blue-800 whitespace-nowrap"
                         >
                           저장
-                        </button>
+                        </Button>
                       </div>
                     ) : (
                       <span
-                        className="text-xs text-gray-500 truncate block cursor-pointer hover:text-gray-800"
+                        className="text-xs text-gray-500 truncate block cursor-pointer lg:hover:text-gray-800"
                         onClick={() => startEditNote(partner.id, partner.notes)}
                         title="클릭하여 편집"
                       >

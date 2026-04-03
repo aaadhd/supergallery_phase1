@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { X, Plus, Minus, RotateCcw } from 'lucide-react';
 import { useI18n } from '../i18n/I18nProvider';
+import { Button } from './ui/button';
 
 export type DeepZoomViewerProps = {
   src: string;
@@ -168,38 +169,38 @@ export default function DeepZoomViewer({ src, alt, open, onClose }: DeepZoomView
         <span className="rounded-lg bg-white/10 px-2.5 py-1 text-xs font-medium text-white/90 backdrop-blur-sm">
           ×{scale.toFixed(1)}
         </span>
-        <button
+        <Button
           type="button"
           onClick={() => setScale(s => clampScale(s - ZOOM_STEP))}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition lg:hover:bg-white/20"
           aria-label={t('deepZoom.zoomOut')}
         >
           <Minus className="h-5 w-5" />
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={() => setScale(s => clampScale(s + ZOOM_STEP))}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition lg:hover:bg-white/20"
           aria-label={t('deepZoom.zoomIn')}
         >
           <Plus className="h-5 w-5" />
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={resetView}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition lg:hover:bg-white/20"
           aria-label={t('deepZoom.fit')}
         >
           <RotateCcw className="h-5 w-5" />
-        </button>
-        <button
+        </Button>
+        <Button
           type="button"
           onClick={onClose}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition hover:bg-white/20"
+          className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition lg:hover:bg-white/20"
           aria-label={t('deepZoom.close')}
         >
           <X className="h-6 w-6" />
-        </button>
+        </Button>
       </div>
 
       <div

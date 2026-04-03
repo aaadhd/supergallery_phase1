@@ -21,6 +21,8 @@ interface Notification {
   workId?: string;
   read: boolean;
   createdAt: string;
+  /** 플로우 데모에서 넣은 알림 — 알림 설정과 무관하게 목록에 표시 */
+  demo?: boolean;
 }
 
 function generateSeedNotifications(): Notification[] {
@@ -145,13 +147,14 @@ const typeIcons = {
 
 const typeColors = {
   like: 'bg-red-50 text-red-500',
-  follow: 'bg-indigo-50 text-indigo-500',
+  follow: 'bg-muted text-primary',
   pick: 'bg-amber-50 text-amber-500',
   system: 'bg-[#FAFAFA] text-gray-500',
   event: 'bg-emerald-50 text-emerald-600',
 } as const;
 
 function passesPrefs(n: Notification, p: NotificationSettingsState): boolean {
+  if (n.demo) return true;
   switch (n.type) {
     case 'like':
       return p.like;
@@ -220,7 +223,7 @@ export default function Notifications() {
       navigate('/events');
       return;
     }
-    if (notif.workId) navigate(`/works/${notif.workId}`);
+    if (notif.workId) navigate(`/exhibitions/${notif.workId}`);
     else if (notif.fromUser) navigate(`/profile/${notif.fromUser.id}`);
   };
 
@@ -242,7 +245,7 @@ export default function Notifications() {
             <div className="flex items-center gap-2 shrink-0">
               <Link
                 to="/settings#notifications"
-                className="text-xs sm:text-sm text-[#6366F1] hover:underline font-medium"
+                className="text-xs sm:text-sm text-primary lg:hover:underline font-medium"
               >
                 {t('notifications.settingsLink')}
               </Link>
@@ -256,40 +259,40 @@ export default function Notifications() {
           </div>
 
           <div className="flex gap-2 sm:gap-3 mt-4 sm:mt-5 flex-wrap">
-            <button
+            <Button
               type="button"
               onClick={() => setReadFilter('all')}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                readFilter === 'all' ? 'bg-[#18181B] text-white' : 'bg-[#F4F4F5] text-gray-600 hover:bg-gray-200'
+                readFilter === 'all' ? 'bg-[#18181B] text-white' : 'bg-[#F4F4F5] text-gray-600 lg:hover:bg-gray-200'
               }`}
             >
               {t('notifications.filterAll')}
-            </button>
-            <button
+            </Button>
+            <Button
               type="button"
               onClick={() => setReadFilter('unread')}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                readFilter === 'unread' ? 'bg-[#18181B] text-white' : 'bg-[#F4F4F5] text-gray-600 hover:bg-gray-200'
+                readFilter === 'unread' ? 'bg-[#18181B] text-white' : 'bg-[#F4F4F5] text-gray-600 lg:hover:bg-gray-200'
               }`}
             >
               {t('notifications.filterUnread')} {unreadCount > 0 && `(${unreadCount})`}
-            </button>
+            </Button>
           </div>
 
           <div className="flex gap-2 mt-3 overflow-x-auto pb-1 scrollbar-hide -mx-1 px-1">
             {categoryChips.map((c) => (
-              <button
+              <Button
                 key={c.id}
                 type="button"
                 onClick={() => setCategoryTab(c.id)}
                 className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                   categoryTab === c.id
-                    ? 'border-[#6366F1] bg-indigo-50 text-[#4338CA]'
-                    : 'border-[#E5E7EB] text-[#71717A] hover:border-[#D4D4D8]'
+                    ? 'border-primary bg-muted text-primary'
+                    : 'border-[#E5E7EB] text-[#71717A] lg:hover:border-[#D4D4D8]'
                 }`}
               >
                 {c.label}
-              </button>
+              </Button>
             ))}
           </div>
         </div>
@@ -310,12 +313,12 @@ export default function Notifications() {
               const Icon = typeIcons[notif.type];
               const colorClass = typeColors[notif.type];
               return (
-                <button
+                <Button
                   key={notif.id}
                   type="button"
                   onClick={() => handleClick(notif)}
                   className={`flex items-start gap-3 sm:gap-4 w-full p-4 sm:p-5 rounded-xl text-left transition-colors ${
-                    notif.read ? 'bg-white hover:bg-[#FAFAFA]' : 'bg-indigo-50/50 hover:bg-indigo-50'
+                    notif.read ? 'bg-white lg:hover:bg-[#FAFAFA]' : 'bg-muted/50 lg:hover:bg-muted'
                   }`}
                 >
                   {notif.fromUser ? (
@@ -337,13 +340,13 @@ export default function Notifications() {
                       <span className="text-xs text-gray-400">
                         {formatRelativeTime(notif.createdAt, t, locale)}
                       </span>
-                      {!notif.read && <span className="h-2 w-2 rounded-full bg-[#6366F1]" />}
+                      {!notif.read && <span className="h-2 w-2 rounded-full bg-primary" />}
                     </div>
                   </div>
                   <div className={`h-9 w-9 shrink-0 rounded-full flex items-center justify-center ${colorClass}`}>
                     <Icon className="h-4 w-4" />
                   </div>
-                </button>
+                </Button>
               );
             })}
           </div>

@@ -6,9 +6,23 @@ import { useEffect, useState } from 'react';
 import { useAuthStore } from '../store';
 import { LoginPromptModal } from '../components/LoginPromptModal';
 import { useI18n } from '../i18n/I18nProvider';
+import { Button } from '../components/ui/button';
+
+export type ShowcaseEventStatus = 'active' | 'upcoming' | 'ended';
+
+export interface ShowcaseEvent {
+  id: number;
+  image: string;
+  title: string;
+  subtitle: string;
+  description: string;
+  period: string;
+  participants: string;
+  status: ShowcaseEventStatus;
+}
 
 // 이벤트 데이터 (Events.tsx와 공유 — 향후 별도 store로 분리 가능)
-export const allEvents = [
+export const allEvents: ShowcaseEvent[] = [
   {
     id: 1,
     image: 'https://images.unsplash.com/photo-1758923530822-3e58cf11011e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBhcnQlMjBleGhpYml0aW9uJTIwYmFubmVyfGVufDF8fHx8MTc3Mjc3MzI4OXww&ixlib=rb-4.1.0&q=80&w=1080',
@@ -73,7 +87,7 @@ export default function EventDetail() {
     if (id) analytics.eventDetailView(id);
   }, [id]);
 
-  const isEnded = (event as any)?.status === 'ended';
+  const isEnded = event?.status === 'ended';
 
   const handleParticipate = () => {
     if (!auth.isLoggedIn()) {
@@ -86,8 +100,10 @@ export default function EventDetail() {
   if (!event) {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4 sm:px-6 pb-20 md:pb-0">
-        <p className="text-lg text-[#71717A] mb-6">이벤트를 찾을 수 없습니다.</p>
-        <Link to="/events" className="text-[15px] text-[#6366F1] hover:underline">이벤트 목록으로 돌아가기</Link>
+        <p className="text-lg text-[#71717A] mb-6">{t('events.detailNotFound')}</p>
+        <Link to="/events" className="text-[15px] text-primary lg:hover:underline">
+          {t('events.detailBackLink')}
+        </Link>
       </div>
     );
   }
@@ -100,7 +116,7 @@ export default function EventDetail() {
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
         <div className="absolute inset-0 flex flex-col justify-end px-4 sm:px-6 pb-6 sm:pb-10">
           <div className="mx-auto max-w-[1440px] w-full">
-            <span className="inline-block px-4 py-1.5 text-xs font-bold tracking-wider text-white bg-[#6366F1] rounded-full mb-4">
+            <span className="inline-block px-4 py-1.5 text-xs font-bold tracking-wider text-white bg-primary rounded-full mb-4">
               {event.status === 'active' ? 'EVENT' : 'COMING SOON'}
             </span>
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-2">{event.title}</h1>
@@ -111,7 +127,7 @@ export default function EventDetail() {
 
       {/* Content */}
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-6 sm:py-12">
-        <Link to="/events" className="inline-flex items-center gap-2 text-xs sm:text-sm text-[#71717A] hover:text-[#18181B] mb-5 sm:mb-8">
+        <Link to="/events" className="inline-flex items-center gap-2 text-xs sm:text-sm text-[#71717A] lg:hover:text-[#18181B] mb-5 sm:mb-8">
           <ArrowLeft className="w-4 h-4" /> {t('eventDetail.backToList')}
         </Link>
 
@@ -138,7 +154,7 @@ export default function EventDetail() {
 
           <p className="text-xs sm:text-sm text-[#71717A] mb-6 sm:mb-8">
             {t('eventDetail.notifHint')}{' '}
-            <Link to="/settings#notifications" className="text-[#6366F1] font-medium hover:underline">
+            <Link to="/settings#notifications" className="text-primary font-medium lg:hover:underline">
               {t('notifications.settingsLink')}
             </Link>
           </p>
@@ -148,13 +164,13 @@ export default function EventDetail() {
               참여가 마감된 이벤트입니다
             </div>
           ) : (
-            <button
+            <Button
               onClick={handleParticipate}
-              className="inline-flex items-center gap-2 px-5 sm:px-8 py-3 sm:py-3.5 bg-[#18181B] text-white rounded-lg text-[13px] sm:text-sm font-medium hover:bg-[#000000] transition-colors w-full sm:w-auto justify-center"
+              className="inline-flex items-center gap-2 px-5 sm:px-8 py-3 sm:py-3.5 bg-[#18181B] text-white rounded-lg text-[13px] sm:text-sm font-medium lg:hover:bg-[#000000] transition-colors w-full sm:w-auto justify-center"
             >
               참여하기
               <ArrowRight className="h-5 w-5" />
-            </button>
+            </Button>
           )}
         </div>
       </div>

@@ -1,5 +1,6 @@
 import { useState, useRef, useEffect } from 'react';
 import { Play, Pause, RotateCcw, Maximize2 } from 'lucide-react';
+import { Button } from '../ui/button';
 
 interface TimelapsePlayerProps {
   /** 타임랩스 영상 URL (미구현 시 빈 문자열) */
@@ -112,22 +113,22 @@ export function TimelapsePlayer({
           />
           <div className="flex items-center justify-between mt-2">
             <div className="flex items-center gap-2">
-              <button
+              <Button
                 onClick={handlePlayPause}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 lg:hover:bg-white/20 text-white transition-colors"
               >
                 {isPlaying ? (
                   <Pause className="h-4 w-4" />
                 ) : (
                   <Play className="h-4 w-4 ml-0.5" />
                 )}
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={handleReset}
-                className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 hover:bg-white/20 text-white transition-colors"
+                className="flex h-8 w-8 items-center justify-center rounded-full bg-white/10 lg:hover:bg-white/20 text-white transition-colors"
               >
                 <RotateCcw className="h-4 w-4" />
-              </button>
+              </Button>
               <select
                 value={speed}
                 onChange={(e) => setSpeed(Number(e.target.value))}

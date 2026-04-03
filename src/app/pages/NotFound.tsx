@@ -9,7 +9,7 @@ export default function NotFound() {
       <p className="text-lg text-[#71717A] mb-8">{t('error404.message')}</p>
       <Link
         to="/"
-        className="inline-flex items-center px-8 py-3.5 bg-[#18181B] text-white rounded-lg text-sm font-medium hover:bg-[#000000] transition-colors"
+        className="inline-flex items-center px-8 py-3.5 bg-[#18181B] text-white rounded-lg text-sm font-medium lg:hover:bg-[#000000] transition-colors"
       >
         {t('error404.home')}
       </Link>

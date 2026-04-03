@@ -8,7 +8,7 @@ export default function Maintenance() {
   return (
     <div className="min-h-screen bg-[#FAFAFA] flex flex-col items-center justify-center px-6 py-16 text-center">
       <div className="rounded-full border border-[#F0F0F0] bg-white p-5 mb-8 shadow-sm">
-        <Wrench className="w-14 h-14 text-[#6366F1]" strokeWidth={1.25} aria-hidden />
+        <Wrench className="w-14 h-14 text-primary" strokeWidth={1.25} aria-hidden />
       </div>
       <h1 className="text-xl sm:text-2xl font-semibold text-[#18181B] mb-4 max-w-md">
         {t('maintenance.title')}
@@ -24,7 +24,7 @@ export default function Maintenance() {
         {t('maintenance.contact')}{' '}
         <a
           href={`mailto:${CONTACT_EMAIL}`}
-          className="text-[#6366F1] font-medium hover:underline"
+          className="text-primary font-medium lg:hover:underline"
         >
           {CONTACT_EMAIL}
         </a>

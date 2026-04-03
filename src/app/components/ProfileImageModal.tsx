@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { User } from 'lucide-react';
 import { useI18n } from '../i18n/I18nProvider';
+import { Button } from './ui/button';
 
 export type ProfileImageModalProps = {
   open: boolean;
@@ -90,38 +91,37 @@ export default function ProfileImageModal({
           onChange={handleFile}
         />
 
-        <button
+        <Button
           type="button"
           onClick={() => inputRef.current?.click()}
-          className="mt-6 w-full rounded-xl border border-zinc-200 py-3 text-sm font-semibold text-zinc-800 transition hover:bg-zinc-50"
+          className="mt-6 w-full rounded-xl border border-zinc-200 py-3 text-sm font-semibold text-zinc-800 transition lg:hover:bg-zinc-50"
         >
           {t('profilePhoto.change')}
-        </button>
+        </Button>
 
-        <button
+        <Button
           type="button"
           onClick={() => setPreview('__default')}
-          className="mt-3 w-full text-center text-sm font-medium text-[#6366F1] hover:underline"
+          className="mt-3 w-full text-center text-sm font-medium text-primary lg:hover:underline"
         >
           {t('profilePhoto.reset')}
-        </button>
+        </Button>
 
         <div className="mt-8 flex gap-3">
-          <button
+          <Button
             type="button"
             onClick={handleCancel}
-            className="flex-1 rounded-xl border border-zinc-200 py-3.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-50"
+            className="flex-1 rounded-xl border border-zinc-200 py-3.5 text-sm font-semibold text-zinc-700 lg:hover:bg-zinc-50"
           >
             {t('loginPrompt.cancel')}
-          </button>
-          <button
+          </Button>
+          <Button
             type="button"
             onClick={handleSave}
-            className="flex-1 rounded-xl py-3.5 text-sm font-semibold text-white transition hover:opacity-90"
-            style={{ backgroundColor: '#6366F1' }}
+            className="flex-1 rounded-xl bg-primary py-3.5 text-sm font-semibold text-primary-foreground transition lg:hover:opacity-90"
           >
             {t('profilePhoto.save')}
-          </button>
+          </Button>
         </div>
       </div>
     </div>

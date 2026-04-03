@@ -1,11 +1,20 @@
+# Artier (SuperGallery Phase 1) — 로컬 프로토타입
 
-  # Finalize design (복사)
+Figma 기반 번들에서 Phase 1 PRD에 맞춰 확장한 웹 앱입니다. 백엔드 없이 **localStorage**로 동작합니다.
 
-  This is a code bundle for Finalize design (복사). The original project is available at https://www.figma.com/design/RerhfTIwvZdvA5rOJyVx5d/Finalize-design--%EB%B3%B5%EC%82%AC-.
+## 실행 방법
 
-  ## Running the code
+```bash
+pnpm install
+pnpm dev
+```
 
-  Run `npm i` to install the dependencies.
+브라우저에서 표시되는 주소(기본 `http://localhost:5173`)로 접속합니다.
 
-  Run `npm run dev` to start the development server.
+프로덕션 빌드 미리보기:
+
+```bash
+pnpm build
+pnpm preview
+```
   

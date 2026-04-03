@@ -1,5 +1,5 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Plus, Globe, Check, LogOut, Settings, Search, Bell, Home, CalendarDays, User } from 'lucide-react';
+import { Plus, Globe, Check, LogOut, Search, Bell, Home, CalendarDays, User } from 'lucide-react';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import {
@@ -13,6 +13,7 @@ import {
 import { artists } from '../data';
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '../store';
+import { persistMockSession } from '../services/sessionTokens';
 import { useI18n } from '../i18n/I18nProvider';
 import type { Locale } from '../i18n/uiStrings';
 
@@ -57,6 +58,7 @@ export function Header() {
 
   const handleLogin = () => {
     auth.login();
+    persistMockSession('gnb-quick-login');
     const onboardingDone = localStorage.getItem('artier_onboarding_done');
     if (!onboardingDone) {
       navigate('/onboarding');
@@ -65,21 +67,36 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-[#F0F0F0] bg-white">
-        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-3 sm:py-4">
+      <header className="sticky top-0 z-50 w-full border-b border-border/80 bg-background/75 backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-background/65 shadow-[0_1px_0_rgba(0,0,0,0.04)]">
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-3 sm:py-3.5">
           <div className="flex items-center justify-between gap-3 sm:gap-8">
-            <Link to="/" className="flex items-center gap-2 shrink-0">
-              <div className="flex h-8 w-8 sm:h-9 sm:w-9 items-center justify-center rounded-lg bg-primary">
-                <span className="text-base sm:text-lg font-bold text-white">A</span>
+            <Link
+              to="/"
+              className="flex items-center gap-2.5 shrink-0 rounded-xl pr-2 -ml-1 pl-1 lg:hover:bg-muted/60 transition-colors"
+            >
+              <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm ring-1 ring-primary/25">
+                <span className="text-base sm:text-lg font-bold tracking-tight">A</span>
               </div>
-              <span className="text-lg sm:text-xl font-semibold">{t('brand.name')}</span>
+              <span className="text-lg sm:text-xl font-semibold tracking-tight text-foreground">{t('brand.name')}</span>
             </Link>
 
-            <nav className="hidden md:flex items-center gap-6">
-              <Link to="/" className="text-sm font-medium text-foreground/80 transition-colors hover:text-foreground">
+            <nav className="hidden md:flex items-center gap-1">
+              <Link
+                to="/"
+                className={`relative px-3.5 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  location.pathname === '/' ? 'text-foreground bg-muted/90' : 'text-muted-foreground lg:hover:text-foreground lg:hover:bg-muted/50'
+                }`}
+              >
                 {t('nav.browse')}
               </Link>
-              <Link to="/events" className="text-sm font-medium text-foreground/80 transition-colors hover:text-foreground">
+              <Link
+                to="/events"
+                className={`relative px-3.5 py-2 text-sm font-medium rounded-lg transition-colors ${
+                  location.pathname.startsWith('/events')
+                    ? 'text-foreground bg-muted/90'
+                    : 'text-muted-foreground lg:hover:text-foreground lg:hover:bg-muted/50'
+                }`}
+              >
                 {t('nav.events')}
               </Link>
             </nav>
@@ -88,10 +105,10 @@ export function Header() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-9 w-9 sm:h-10 sm:w-10 rounded-full"
+                className="h-9 w-9 sm:h-10 sm:w-10 rounded-full text-muted-foreground lg:hover:text-foreground"
                 onClick={() => navigate('/search')}
               >
-                <Search className="h-5 w-5 text-gray-600" />
+                <Search className="h-5 w-5" />
               </Button>
 
               {loggedIn ? (
@@ -99,10 +116,10 @@ export function Header() {
                   <Button
                     variant="ghost"
                     size="icon"
-                    className="h-9 w-9 sm:h-10 sm:w-10 rounded-full relative"
+                    className="h-9 w-9 sm:h-10 sm:w-10 rounded-full relative text-muted-foreground lg:hover:text-foreground"
                     onClick={() => navigate('/notifications')}
                   >
-                    <Bell className="h-5 w-5 text-gray-600" />
+                    <Bell className="h-5 w-5" />
                     {unreadCount > 0 && (
                       <span className="absolute -top-0.5 -right-0.5 flex h-[18px] sm:h-5 min-w-[18px] sm:min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-bold text-white">
                         {unreadCount > 99 ? '99+' : unreadCount}
@@ -112,7 +129,7 @@ export function Header() {
 
                   <Button
                     size="default"
-                    className="hidden sm:flex gap-2 text-sm px-5 py-2.5"
+                    className="hidden sm:flex gap-2 text-sm px-5 py-2.5 rounded-full shadow-sm"
                     onClick={() => navigate('/upload')}
                   >
                     <Plus className="h-5 w-5" />
@@ -139,15 +156,11 @@ export function Header() {
                         </div>
                       </DropdownMenuLabel>
                       <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => navigate('/profile')} className="text-sm py-2">
+                      <DropdownMenuItem onClick={() => navigate('/me')} className="text-sm py-2">
                         {t('nav.profile')}
                       </DropdownMenuItem>
                       <DropdownMenuItem onClick={() => navigate('/settings')} className="text-sm py-2">
                         {t('nav.settings')}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate('/admin')} className="flex items-center gap-2 text-sm py-2">
-                        <Settings className="h-4 w-4" />
-                        {t('nav.admin')}
                       </DropdownMenuItem>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem
@@ -172,8 +185,12 @@ export function Header() {
 
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
-                  <Button variant="ghost" size="icon" className="hidden sm:flex h-9 w-9 rounded-full">
-                    <Globe className="h-5 w-5 text-gray-600" />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="hidden sm:flex h-9 w-9 rounded-full text-muted-foreground lg:hover:text-foreground"
+                  >
+                    <Globe className="h-5 w-5" />
                   </Button>
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" className="w-32">
@@ -192,48 +209,54 @@ export function Header() {
         </div>
       </header>
 
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white border-t border-[#F0F0F0] safe-area-bottom">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/92 backdrop-blur-lg border-t border-border/80 safe-area-bottom shadow-[0_-4px_24px_rgba(0,0,0,0.06)]">
         <div className="flex items-center justify-around h-14">
-          <button
+          <Button
+            variant="ghost"
             type="button"
             onClick={() => navigate('/')}
-            className={`flex flex-col items-center gap-0.5 px-3 py-1.5 ${location.pathname === '/' ? 'text-primary' : 'text-gray-400'}`}
+            className={`h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 ${location.pathname === '/' ? 'text-primary' : 'text-gray-400'}`}
           >
             <Home className="h-5 w-5" />
             <span className="text-[11px] font-medium">{t('nav.browse')}</span>
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
             type="button"
             onClick={() => navigate('/events')}
-            className={`flex flex-col items-center gap-0.5 px-3 py-1.5 ${location.pathname.startsWith('/events') ? 'text-primary' : 'text-gray-400'}`}
+            className={`h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 ${location.pathname.startsWith('/events') ? 'text-primary' : 'text-gray-400'}`}
           >
             <CalendarDays className="h-5 w-5" />
             <span className="text-[11px] font-medium">{t('nav.events')}</span>
-          </button>
+          </Button>
           {loggedIn && (
-            <button type="button" onClick={() => navigate('/upload')} className="flex flex-col items-center gap-0.5 px-3 py-1.5 text-gray-400">
+            <Button variant="ghost" type="button" onClick={() => navigate('/upload')} className="h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 text-gray-400">
               <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary -mt-3 shadow-lg">
                 <Plus className="h-5 w-5 text-white" />
               </div>
               <span className="text-[11px] font-medium text-primary -mt-0.5">{t('nav.uploadShort')}</span>
-            </button>
+            </Button>
           )}
-          <button
+          <Button
+            variant="ghost"
             type="button"
             onClick={() => navigate('/search')}
-            className={`flex flex-col items-center gap-0.5 px-3 py-1.5 ${location.pathname === '/search' ? 'text-primary' : 'text-gray-400'}`}
+            className={`h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 ${location.pathname === '/search' ? 'text-primary' : 'text-gray-400'}`}
           >
             <Search className="h-5 w-5" />
             <span className="text-[11px] font-medium">{t('nav.search')}</span>
-          </button>
-          <button
+          </Button>
+          <Button
+            variant="ghost"
             type="button"
-            onClick={() => navigate(loggedIn ? '/profile' : '/')}
-            className={`flex flex-col items-center gap-0.5 px-3 py-1.5 ${location.pathname.startsWith('/profile') ? 'text-primary' : 'text-gray-400'}`}
+            onClick={() => navigate(loggedIn ? '/me' : '/')}
+            className={`h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 ${
+              location.pathname.startsWith('/profile') || location.pathname.startsWith('/me') ? 'text-primary' : 'text-gray-400'
+            }`}
           >
             <User className="h-5 w-5" />
             <span className="text-[11px] font-medium">{loggedIn ? t('nav.profile') : t('nav.my')}</span>
-          </button>
+          </Button>
         </div>
       </nav>
     </>

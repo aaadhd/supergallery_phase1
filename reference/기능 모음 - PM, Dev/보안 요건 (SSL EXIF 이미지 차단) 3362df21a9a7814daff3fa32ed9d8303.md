@@ -1,5 +1,10 @@
 # 보안 요건 (SSL/EXIF/이미지 차단)
 
+정책 모음: https://www.notion.so/3342df21a9a781cdb58fcff50720b990
+최종 편집 일시: 2026년 4월 2일 오전 11:06
+화면 모음: https://www.notion.so/3352df21a9a780f4b80ff1d74486179b, https://www.notion.so/3352df21a9a78124b0ebc155fe84354c, https://www.notion.so/3352df21a9a781c6b21cc496828051f7,https://www.notion.so/3352df21a9a78017bca6f284428ca7c2, https://www.notion.so/3352df21a9a780f4b80ff1d74486179b, https://www.notion.so/3352df21a9a781c6b21cc496828051f7
+📋 유저스토리 기반 WBS v2: 나는 내 작품이 공유될 때 직접 저장되지 않도록 보호받고 싶다 (https://www.notion.so/3352df21a9a78134b41de3e063350a0b?pvs=21), 작품은 보호받아야 한다 — 보안 요건을 충족해야 한다 (https://www.notion.so/3352df21a9a781b59360e9f3d7f076fc?pvs=21)
+
 ## 개요
 
 저작권 보호 및 개인정보 보호를 위해 서비스 전반에 적용해야 하는 보안 요건 정의. 전 Sprint에 걸쳐 개발 시 반드시 준수.

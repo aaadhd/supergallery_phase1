@@ -45,6 +45,8 @@ export interface Work {
   showInSoloTab?: boolean; // 그룹전시이지만 개인전시 탭에도 노출
   imageArtists?: ImageArtistAssignment[]; // 이미지별 작가 지정 (인덱스 = 이미지 인덱스)
   isHidden?: boolean; // 비공개 여부
+  /** 컬렉터블/판매 배지 등 (UI 데모) */
+  isForSale?: boolean;
   /** 둘러보기 피드 편입 — 미지정·승인 = 피드 노출, 대기·반려 = 피드 제외 (콘텐츠 운영 정책) */
   feedReviewStatus?: 'pending' | 'approved' | 'rejected';
   /** 업로드일 (검수 목록용, 선택) */

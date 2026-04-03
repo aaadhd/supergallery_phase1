@@ -3,6 +3,7 @@ import { MapPin, X } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { pinCommentStore, PinComment } from '../../store/pinCommentStore';
 import { artists } from '../../data';
+import { Button } from '../ui/button';
 
 interface PinCommentLayerProps {
   workId: string;
@@ -123,20 +124,20 @@ export function PinCommentLayer({
                 placeholder="이 부분에 대한 피드백..."
                 className="flex-1 bg-transparent text-white text-xs outline-none placeholder:text-white/50"
               />
-              <button
+              <Button
                 onClick={() => setEditingPin(null)}
-                className="text-white/60 hover:text-white p-0.5"
+                className="text-white/60 lg:hover:text-white p-0.5"
               >
                 <X className="h-4 w-4" />
-              </button>
+              </Button>
             </div>
-            <button
+            <Button
               onClick={handleSubmitPin}
               disabled={!newComment.trim()}
-              className="px-4 py-1.5 bg-cyan-500 text-white text-xs font-medium rounded-full hover:bg-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-1.5 bg-cyan-500 text-white text-xs font-medium rounded-full lg:hover:bg-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed"
             >
               저장
-            </button>
+            </Button>
           </div>
         </div>
       )}
@@ -160,7 +161,7 @@ function PinMarker({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <MapPin className="h-6 w-6 text-cyan-400 fill-cyan-400/80 drop-shadow cursor-pointer hover:scale-110 transition-transform" />
+      <MapPin className="h-6 w-6 text-cyan-400 fill-cyan-400/80 drop-shadow cursor-pointer lg:hover:scale-110 transition-transform" />
       {hovered && (
         <div className="absolute left-1/2 -translate-x-1/2 top-full mt-1 w-56 bg-black/95 rounded-lg border border-white/20 p-3 shadow-xl">
           <div className="flex items-start gap-2">
@@ -172,12 +173,12 @@ function PinMarker({
               <p className="text-white/80 text-xs font-medium">{pin.userName}</p>
               <p className="text-white text-xs mt-0.5">{pin.content}</p>
             </div>
-            <button
+            <Button
               onClick={onRemove}
-              className="text-white/50 hover:text-red-400 p-0.5 flex-shrink-0"
+              className="text-white/50 lg:hover:text-red-400 p-0.5 flex-shrink-0"
             >
               <X className="h-3.5 w-3.5" />
-            </button>
+            </Button>
           </div>
         </div>
       )}

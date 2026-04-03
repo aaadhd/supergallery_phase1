@@ -22,6 +22,7 @@ import { getFirstImage, getImageCount } from '../utils/imageHelper';
 import { ReportModal } from '../components/ReportModal';
 import { LoginPromptModal } from '../components/LoginPromptModal';
 import { isPublicInstructor, setPublicInstructor } from '../utils/instructorPublic';
+import { getDisplayFollowerCount } from '../utils/artistFollowDelta';
 import type { MessageKey } from '../i18n/messages';
 import { useI18n } from '../i18n/I18nProvider';
 
@@ -127,7 +128,7 @@ export default function Profile() {
   const savedWorks = storeWorks.filter(w => savedIds.includes(w.id) && w.artistId !== profileArtist.id);
 
   // 전시 유형 판별 — primaryExhibitionType 우선, 레거시 fallback
-  const isGroupExhibition = (w: any) => {
+  const isGroupExhibition = (w: Work) => {
     if (w.primaryExhibitionType === 'group') return true;
     if (w.primaryExhibitionType === 'solo') return false;
     if (w.isInstructorUpload && w.groupName) return true;
@@ -136,7 +137,7 @@ export default function Profile() {
 
   const filteredWorks = artistWorks.filter(work => {
     if (exhibitionFilter === 'all') return true;
-    if (exhibitionFilter === 'solo') return !isGroupExhibition(work) || (work as any).showInSoloTab;
+    if (exhibitionFilter === 'solo') return !isGroupExhibition(work) || work.showInSoloTab;
     if (exhibitionFilter === 'group') return isGroupExhibition(work);
     return true;
   });
@@ -197,12 +198,12 @@ export default function Profile() {
             {/* 헤더 */}
             <div className="flex items-center justify-between border-b border-[#E5E7EB] px-6 py-5">
               <h2 className="text-lg font-semibold text-[#18181B]">{t('profile.edit')}</h2>
-              <button
+              <Button
                 onClick={() => setShowProfileEditModal(false)}
-                className="flex h-10 w-10 items-center justify-center rounded-full hover:bg-[#F4F4F5] transition-colors"
+                className="flex h-10 w-10 items-center justify-center rounded-full lg:hover:bg-[#F4F4F5] transition-colors"
               >
                 <X className="h-5 w-5 text-gray-500" />
-              </button>
+              </Button>
             </div>
 
             {/* 폼 */}
@@ -310,7 +311,7 @@ export default function Profile() {
                     type="checkbox"
                     checked={profileIsInstructor}
                     onChange={(e) => setProfileIsInstructor(e.target.checked)}
-                    className="mt-1 h-4 w-4 rounded border-[#D1D5DB] text-[#6366F1]"
+                    className="mt-1 h-4 w-4 rounded border-[#D1D5DB] text-primary"
                   />
                   <label htmlFor="instructor-toggle" className="text-sm text-[#3F3F46] cursor-pointer">
                     <span className="font-semibold text-[#18181B]">{t('profile.instructorToggle')}</span>
@@ -322,13 +323,13 @@ export default function Profile() {
 
             {/* 푸터 */}
             <div className="flex items-center justify-end gap-3 border-t border-[#E5E7EB] px-6 py-4">
-              <button
+              <Button
                 onClick={() => setShowProfileEditModal(false)}
-                className="px-6 py-3 text-[15px] text-gray-700 hover:bg-[#F4F4F5] rounded-lg transition-colors"
+                className="px-6 py-3 text-[15px] text-gray-700 lg:hover:bg-[#F4F4F5] rounded-lg transition-colors"
               >
                 {t('loginPrompt.cancel')}
-              </button>
-              <button
+              </Button>
+              <Button
                 onClick={() => {
                   profileStore.updateProfile({
                     name: profileNickname.trim() || displayName,
@@ -342,10 +343,10 @@ export default function Profile() {
                   setShowProfileEditModal(false);
                   toast.success(t('profile.toastProfileSaved'));
                 }}
-                className="px-8 py-3 bg-[#6366F1] text-white text-[15px] font-medium rounded-lg hover:bg-[#4F46E5] transition-colors"
+                className="px-8 py-3 bg-primary text-white text-[15px] font-medium rounded-lg lg:hover:bg-primary/90 transition-colors"
               >
                 {t('profile.saveProfile')}
-              </button>
+              </Button>
             </div>
           </div>
         </div>
@@ -363,19 +364,19 @@ export default function Profile() {
                   <AvatarFallback className="text-lg sm:text-xl">{profileArtist.name[0]}</AvatarFallback>
                 </Avatar>
                 {isOwnProfile && (
-                  <button
+                  <Button
                     onClick={() => setShowProfileImageModal(true)}
-                    className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-white border border-[#E4E4E7] shadow-sm flex items-center justify-center text-gray-600 hover:bg-[#F4F4F5] transition-colors"
+                    className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-white border border-[#E4E4E7] shadow-sm flex items-center justify-center text-gray-600 lg:hover:bg-[#F4F4F5] transition-colors"
                   >
                     <Camera className="h-4 w-4" />
-                  </button>
+                  </Button>
                 )}
               </div>
 
               <div className="mt-4 sm:mt-6 flex flex-wrap items-center gap-2">
                 <h1 className="text-xl sm:text-2xl font-semibold">{displayName}</h1>
                 {instructorVisible && (
-                  <span className="inline-flex items-center rounded-full bg-indigo-100 text-indigo-800 text-[11px] font-semibold px-2.5 py-0.5">
+                  <span className="inline-flex items-center rounded-full bg-muted text-foreground text-[11px] font-semibold px-2.5 py-0.5">
                     {t('profile.instructorBadge')}
                   </span>
                 )}
@@ -409,20 +410,22 @@ export default function Profile() {
 
               {/* 팔로워/팔로잉 */}
               <div className="mt-4 flex items-center gap-5 text-sm">
-                <button
+                <Button
                   onClick={() => { setFollowModalTab('followers'); setShowFollowersModal(true); }}
-                  className="hover:opacity-70 transition-opacity"
+                  className="lg:hover:opacity-70 transition-opacity"
                 >
-                  <span className="font-semibold text-[#18181B]">{profileArtist.followers?.toLocaleString() || '0'}</span>
+                  <span className="font-semibold text-[#18181B]">
+                    {getDisplayFollowerCount(profileArtist).toLocaleString()}
+                  </span>
                   <span className="text-gray-500 ml-1">{t('profile.followModalFollowers')}</span>
-                </button>
-                <button
+                </Button>
+                <Button
                   onClick={() => { setFollowModalTab('following'); setShowFollowersModal(true); }}
-                  className="hover:opacity-70 transition-opacity"
+                  className="lg:hover:opacity-70 transition-opacity"
                 >
                   <span className="font-semibold text-[#18181B]">{profileArtist.following?.toLocaleString() || '0'}</span>
                   <span className="text-gray-500 ml-1">{t('profile.followModalFollowing')}</span>
-                </button>
+                </Button>
               </div>
 
               {/* 팔로우 + 신고 버튼 (타인 프로필) */}
@@ -441,7 +444,7 @@ export default function Profile() {
                   <Button
                     variant="outline"
                     size="icon"
-                    className="h-9 w-9 shrink-0 text-gray-500 hover:text-red-500 hover:border-red-300"
+                    className="h-9 w-9 shrink-0 text-gray-500 lg:hover:text-red-500 lg:hover:border-red-300"
                     onClick={() => {
                       if (!auth.isLoggedIn()) { setLoginPromptOpen(true); return; }
                       setShowReportModal(true);
@@ -463,7 +466,7 @@ export default function Profile() {
                     setProfileIsInstructor(!!savedProfile.isInstructor);
                     setShowProfileEditModal(true);
                   }}
-                  className="mt-6 w-full bg-[#6366F1] hover:bg-[#4F46E5] text-sm py-3"
+                  className="mt-6 w-full bg-primary lg:hover:bg-primary/90 text-sm py-3"
                 >
                   {t('profile.edit')}
                 </Button>
@@ -532,17 +535,17 @@ export default function Profile() {
                           f === 'all' ? t('profile.filterAll') : f === 'solo' ? t('profile.filterSolo') : t('profile.filterGroup');
                         const count = f === 'all' ? artistWorks.length : f === 'solo' ? soloCount : groupCount;
                         return (
-                          <button
+                          <Button
                             key={f}
                             onClick={() => setExhibitionFilter(f)}
                             className={`px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-all border ${
                               exhibitionFilter === f
                                 ? 'border-[#18181B] text-[#18181B]'
-                                : 'border-[#E5E7EB] text-[#71717A] hover:border-[#A1A1AA]'
+                                : 'border-[#E5E7EB] text-[#71717A] lg:hover:border-[#A1A1AA]'
                             }`}
                           >
                             {label} {count}
-                          </button>
+                          </Button>
                         );
                       })}
                     </div>
@@ -565,7 +568,7 @@ export default function Profile() {
                         <div
                           key={work.id}
                           className="group cursor-pointer relative"
-                          onClick={() => navigate(`/works/${work.id}`)}
+                          onClick={() => navigate(`/exhibitions/${work.id}`)}
                         >
                           <div className="relative aspect-square rounded-sm overflow-hidden bg-white">
                             <div className="relative w-full h-full flex items-center justify-center bg-white">
@@ -581,13 +584,13 @@ export default function Profile() {
                                   <div className="absolute right-2 top-2 z-20" onClick={(e) => e.stopPropagation()}>
                                     <DropdownMenu>
                                       <DropdownMenuTrigger asChild>
-                                        <button
+                                        <Button
                                           type="button"
-                                          className="flex items-center justify-center h-7 w-7 rounded-full bg-black/60 text-white hover:bg-black/80 hover-action"
+                                          className="flex items-center justify-center h-7 w-7 rounded-full bg-black/60 text-white lg:hover:bg-black/80 hover-action"
                                           aria-label={t('profile.workMenuA11y')}
                                         >
                                           <MoreHorizontal className="h-4 w-4" strokeWidth={2.5} />
-                                        </button>
+                                        </Button>
                                       </DropdownMenuTrigger>
                                       <DropdownMenuContent align="end" sideOffset={4}>
                                         <DropdownMenuItem
@@ -649,7 +652,7 @@ export default function Profile() {
                                   </div>
                                 )}
 
-                                {/* 오버레이 — touch: 하단 그라데이션 항상 / hover: 전체 오버레이 */}
+                                {/* 오버레이 — touch: 하단 그라데이션 항상 / lg:hover: 전체 오버레이 */}
                                 <div className="absolute inset-0 z-10 touch-gradient-overlay flex flex-col justify-between p-3">
                                   <div className="flex items-start justify-end gap-2 hover-action">
                                     <div className="flex items-center gap-1 bg-black/40 backdrop-blur-sm rounded-full px-2.5 py-1">
@@ -729,11 +732,11 @@ export default function Profile() {
                       {studentWorksList.map((work) => {
                         const credit = firstStudentLabel(work, profileArtist.id);
                         return (
-                          <button
+                          <Button
                             key={work.id}
                             type="button"
-                            onClick={() => navigate(`/works/${work.id}`)}
-                            className="group text-left rounded-xl border border-[#F0F0F0] overflow-hidden bg-white hover:border-[#E4E4E7] transition-colors"
+                            onClick={() => navigate(`/exhibitions/${work.id}`)}
+                            className="group text-left rounded-xl border border-[#F0F0F0] overflow-hidden bg-white lg:hover:border-[#E4E4E7] transition-colors"
                           >
                             <div className="relative aspect-square bg-white">
                               <ImageWithFallback
@@ -751,12 +754,12 @@ export default function Profile() {
                                 </p>
                               )}
                               {credit && (
-                                <p className="text-xs text-indigo-700 mt-2 font-medium">
+                                <p className="text-xs text-muted-foreground mt-2 font-medium">
                                   {t('profile.studentCredit')}: {credit}
                                 </p>
                               )}
                             </div>
-                          </button>
+                          </Button>
                         );
                       })}
                     </div>
@@ -775,7 +778,7 @@ export default function Profile() {
                             <div
                               key={work.id}
                               className="group cursor-pointer relative"
-                              onClick={() => navigate(`/works/${work.id}`)}
+                              onClick={() => navigate(`/exhibitions/${work.id}`)}
                             >
                               <div className="relative aspect-square rounded-sm overflow-hidden bg-white">
                                 <ImageWithFallback
@@ -788,13 +791,13 @@ export default function Profile() {
                                   <div className="absolute right-2 top-2 z-20" onClick={(e) => e.stopPropagation()}>
                                     <DropdownMenu>
                                       <DropdownMenuTrigger asChild>
-                                        <button
+                                        <Button
                                           type="button"
-                                          className="flex items-center justify-center h-7 w-7 rounded-full bg-black/60 text-white hover:bg-black/80 hover-action"
+                                          className="flex items-center justify-center h-7 w-7 rounded-full bg-black/60 text-white lg:hover:bg-black/80 hover-action"
                                           aria-label={t('profile.workMenuA11y')}
                                         >
                                           <MoreHorizontal className="h-3.5 w-3.5" />
-                                        </button>
+                                        </Button>
                                       </DropdownMenuTrigger>
                                       <DropdownMenuContent align="end" sideOffset={4}>
                                         <DropdownMenuItem
@@ -838,7 +841,7 @@ export default function Profile() {
 
                                 {!isMyUpload && (
                                   <div className="absolute left-2 top-2 z-10">
-                                    <span className="flex items-center gap-1 rounded-full bg-[#6366F1]/90 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur-sm">
+                                    <span className="flex items-center gap-1 rounded-full bg-primary/90 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur-sm">
                                       <Tag className="h-3 w-3" />
                                       {t('profile.tagged')}
                                     </span>
@@ -886,7 +889,7 @@ export default function Profile() {
                         <div
                           key={work.id}
                           className="group cursor-pointer"
-                          onClick={() => navigate(`/works/${work.id}`)}
+                          onClick={() => navigate(`/exhibitions/${work.id}`)}
                         >
                           <div className="relative aspect-square rounded-sm overflow-hidden bg-white">
                             <ImageWithFallback
@@ -924,7 +927,7 @@ export default function Profile() {
                         <div
                           key={work.id}
                           className="group cursor-pointer"
-                          onClick={() => navigate(`/works/${work.id}`)}
+                          onClick={() => navigate(`/exhibitions/${work.id}`)}
                         >
                           <div className="relative aspect-square rounded-sm overflow-hidden bg-white">
                             <ImageWithFallback
@@ -982,9 +985,9 @@ export default function Profile() {
                               <div className="absolute right-2 top-2 z-20" onClick={(e) => e.stopPropagation()}>
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
-                                    <button className="flex items-center justify-center h-7 w-7 rounded-full bg-black/60 text-white hover:bg-black/80 hover-action">
+                                    <Button className="flex items-center justify-center h-7 w-7 rounded-full bg-black/60 text-white lg:hover:bg-black/80 hover-action">
                                       <MoreHorizontal className="h-3.5 w-3.5" />
-                                    </button>
+                                    </Button>
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent align="end" sideOffset={4}>
                                     <DropdownMenuItem className="text-[13px]" onClick={() => navigate(`/upload?draft=${draft.id}`)}>
@@ -1044,26 +1047,27 @@ export default function Profile() {
           <div className="relative z-10 w-full max-w-md bg-white rounded-2xl shadow-2xl mx-4 max-h-[70vh] flex flex-col">
             <div className="flex items-center justify-between border-b border-[#E5E7EB] px-6 py-4">
               <div className="flex gap-4">
-                <button
+                <Button
                   onClick={() => setFollowModalTab('followers')}
                   className={`text-[15px] font-semibold pb-1 transition-colors ${
                     followModalTab === 'followers' ? 'text-[#18181B] border-b-2 border-gray-900' : 'text-gray-400'
                   }`}
                 >
-                  {t('profile.followModalFollowers')} {profileArtist.followers?.toLocaleString() || '0'}
-                </button>
-                <button
+                  {t('profile.followModalFollowers')}{' '}
+                  {getDisplayFollowerCount(profileArtist).toLocaleString()}
+                </Button>
+                <Button
                   onClick={() => setFollowModalTab('following')}
                   className={`text-[15px] font-semibold pb-1 transition-colors ${
                     followModalTab === 'following' ? 'text-[#18181B] border-b-2 border-gray-900' : 'text-gray-400'
                   }`}
                 >
                   {t('profile.followModalFollowing')} {profileArtist.following?.toLocaleString() || '0'}
-                </button>
+                </Button>
               </div>
-              <button onClick={() => setShowFollowersModal(false)} className="flex h-9 w-9 items-center justify-center rounded-full hover:bg-[#F4F4F5]">
+              <Button onClick={() => setShowFollowersModal(false)} className="flex h-9 w-9 items-center justify-center rounded-full lg:hover:bg-[#F4F4F5]">
                 <X className="h-5 w-5 text-gray-500" />
-              </button>
+              </Button>
             </div>
             <div className="overflow-y-auto flex-1 p-4">
               {(() => {
@@ -1079,7 +1083,7 @@ export default function Profile() {
                 ) : (
                   <div className="space-y-2">
                     {sampleList.map((artist) => (
-                      <div key={artist.id} className="flex items-center gap-3 p-3 rounded-xl hover:bg-[#FAFAFA] transition-colors">
+                      <div key={artist.id} className="flex items-center gap-3 p-3 rounded-xl lg:hover:bg-[#FAFAFA] transition-colors">
                         <Avatar
                           className="h-11 w-11 cursor-pointer"
                           onClick={() => { setShowFollowersModal(false); navigate(`/profile/${artist.id}`); }}
@@ -1088,12 +1092,12 @@ export default function Profile() {
                           <AvatarFallback>{artist.name[0]}</AvatarFallback>
                         </Avatar>
                         <div className="flex-1 min-w-0">
-                          <button
+                          <Button
                             onClick={() => { setShowFollowersModal(false); navigate(`/profile/${artist.id}`); }}
-                            className="text-sm font-semibold text-[#18181B] hover:underline truncate block text-left"
+                            className="text-sm font-semibold text-[#18181B] lg:hover:underline truncate block text-left"
                           >
                             {artist.name}
-                          </button>
+                          </Button>
                           {artist.bio && <p className="text-xs text-gray-500 truncate">{artist.bio}</p>}
                         </div>
                         <Button

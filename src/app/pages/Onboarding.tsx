@@ -6,6 +6,7 @@ import { profileStore } from '../store';
 import { pointsOnOnboardingStep1Complete } from '../utils/pointsBackground';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
+import { Button } from '../components/ui/button';
 
 const INTEREST_TAG_IDS = [
   'painting',
@@ -32,7 +33,7 @@ function tagLabelKey(id: InterestTagId): MessageKey {
 }
 
 const TOTAL_STEPS = 5;
-const ACCENT = '#6366F1';
+const ACCENT = '#171717';
 
 export default function Onboarding() {
   const navigate = useNavigate();
@@ -160,24 +161,24 @@ export default function Onboarding() {
                     </div>
                     <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 mb-2">{welcomeTitle}</h1>
                     <p className="text-sm text-zinc-500 mb-8">{t('onboarding.welcomeLead')}</p>
-                    <button
+                    <Button
                       type="button"
                       onClick={goNext}
-                      className="w-full rounded-xl py-3.5 text-sm font-semibold text-white transition hover:opacity-90 active:scale-[0.99]"
+                      className="w-full rounded-xl py-3.5 text-sm font-semibold text-white transition lg:hover:opacity-90 active:scale-[0.99]"
                       style={{ backgroundColor: ACCENT }}
                     >
                       {t('onboarding.start')}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
                       onClick={() => {
                         localStorage.setItem('artier_onboarding_done', 'true');
                         navigate('/');
                       }}
-                      className="mt-4 w-full text-center text-sm text-zinc-400 hover:text-zinc-600 transition-colors"
+                      className="mt-4 w-full text-center text-sm text-zinc-400 lg:hover:text-zinc-600 transition-colors"
                     >
                       {t('onboarding.later')}
-                    </button>
+                    </Button>
                   </div>
                 </>
               )}
@@ -200,7 +201,7 @@ export default function Onboarding() {
                       }
                     }}
                     placeholder={t('onboarding.nicknamePlaceholder')}
-                    className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-[#6366F1]/30 focus:border-[#6366F1]"
+                    className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
                     maxLength={20}
                     autoFocus
                   />
@@ -209,21 +210,21 @@ export default function Onboarding() {
                     <p className="mt-2 text-sm text-red-500">{nicknameError}</p>
                   ) : null}
                   <div className="mt-8 flex gap-3">
-                    <button
+                    <Button
                       type="button"
                       onClick={goBack}
-                      className="flex-1 rounded-xl border border-zinc-200 py-3.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-50"
+                      className="flex-1 rounded-xl border border-zinc-200 py-3.5 text-sm font-semibold text-zinc-700 lg:hover:bg-zinc-50"
                     >
                       {t('onboarding.back')}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
                       onClick={handleNicknameNext}
-                      className="flex-1 rounded-xl py-3.5 text-sm font-semibold text-white transition hover:opacity-90"
+                      className="flex-1 rounded-xl py-3.5 text-sm font-semibold text-white transition lg:hover:opacity-90"
                       style={{ backgroundColor: ACCENT }}
                     >
                       {t('onboarding.next')}
-                    </button>
+                    </Button>
                   </div>
                 </>
               )}
@@ -236,42 +237,42 @@ export default function Onboarding() {
                     {INTEREST_TAG_IDS.map(id => {
                       const on = selectedInterests.includes(id);
                       return (
-                        <button
+                        <Button
                           key={id}
                           type="button"
                           onClick={() => toggleInterest(id)}
                           className={`rounded-xl border px-3 py-2.5 text-sm font-medium transition-all ${
                             on
-                              ? 'border-[#6366F1] text-[#6366F1] bg-[#6366F1]/8'
-                              : 'border-zinc-200 text-zinc-600 hover:border-zinc-300 bg-white'
+                              ? 'border-primary text-primary bg-primary/8'
+                              : 'border-zinc-200 text-zinc-600 lg:hover:border-zinc-300 bg-white'
                           }`}
                         >
                           {t(tagLabelKey(id))}
-                        </button>
+                        </Button>
                       );
                     })}
                   </div>
                   <div className="mt-8 flex gap-3">
-                    <button
+                    <Button
                       type="button"
                       onClick={goBack}
-                      className="flex-1 rounded-xl border border-zinc-200 py-3.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-50"
+                      className="flex-1 rounded-xl border border-zinc-200 py-3.5 text-sm font-semibold text-zinc-700 lg:hover:bg-zinc-50"
                     >
                       {t('onboarding.back')}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
                       onClick={handleInterestsNext}
                       disabled={selectedInterests.length < 1}
                       className={`flex-1 rounded-xl py-3.5 text-sm font-semibold transition ${
                         selectedInterests.length >= 1
-                          ? 'text-white hover:opacity-90'
+                          ? 'text-white lg:hover:opacity-90'
                           : 'bg-zinc-100 text-zinc-400 cursor-not-allowed'
                       }`}
                       style={selectedInterests.length >= 1 ? { backgroundColor: ACCENT } : undefined}
                     >
                       {t('onboarding.next')}
-                    </button>
+                    </Button>
                   </div>
                 </>
               )}
@@ -288,13 +289,13 @@ export default function Onboarding() {
                     onChange={handleFileChange}
                   />
                   <div className="flex flex-col items-center gap-6">
-                    <button
+                    <Button
                       type="button"
                       onClick={() => fileInputRef.current?.click()}
                       className="group relative cursor-pointer rounded-full border-0 bg-transparent p-0"
                     >
                       <div
-                        className="flex h-40 w-40 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-zinc-200 bg-zinc-50 transition group-hover:border-[#6366F1]/50"
+                        className="flex h-40 w-40 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-zinc-200 bg-zinc-50 transition lg:group-hover:border-primary/50"
                       >
                         {profileImage ? (
                           <img src={profileImage} alt="" className="h-full w-full object-cover" />
@@ -302,40 +303,40 @@ export default function Onboarding() {
                           <Camera className="h-10 w-10 text-zinc-300" strokeWidth={1.25} />
                         )}
                       </div>
-                    </button>
+                    </Button>
                     <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-center">
-                      <button
+                      <Button
                         type="button"
                         onClick={() => fileInputRef.current?.click()}
-                        className="text-center text-sm font-medium text-[#6366F1] hover:underline"
+                        className="text-center text-sm font-medium text-primary lg:hover:underline"
                       >
                         {t('onboarding.uploadPhoto')}
-                      </button>
-                      <button
+                      </Button>
+                      <Button
                         type="button"
                         onClick={() => setProfileImage(null)}
-                        className="text-sm text-zinc-400 hover:text-zinc-600"
+                        className="text-sm text-zinc-400 lg:hover:text-zinc-600"
                       >
                         {t('onboarding.skip')}
-                      </button>
+                      </Button>
                     </div>
                   </div>
                   <div className="mt-8 flex gap-3">
-                    <button
+                    <Button
                       type="button"
                       onClick={goBack}
-                      className="flex-1 rounded-xl border border-zinc-200 py-3.5 text-sm font-semibold text-zinc-700 hover:bg-zinc-50"
+                      className="flex-1 rounded-xl border border-zinc-200 py-3.5 text-sm font-semibold text-zinc-700 lg:hover:bg-zinc-50"
                     >
                       {t('onboarding.back')}
-                    </button>
-                    <button
+                    </Button>
+                    <Button
                       type="button"
                       onClick={goNext}
-                      className="flex-1 rounded-xl py-3.5 text-sm font-semibold text-white transition hover:opacity-90"
+                      className="flex-1 rounded-xl py-3.5 text-sm font-semibold text-white transition lg:hover:opacity-90"
                       style={{ backgroundColor: ACCENT }}
                     >
                       {t('onboarding.next')}
-                    </button>
+                    </Button>
                   </div>
                 </>
               )}
@@ -350,14 +351,14 @@ export default function Onboarding() {
                     <p className="text-base text-zinc-600 mb-8">
                       {t('onboarding.doneWelcome').replace('{name}', nickname.trim())}
                     </p>
-                    <button
+                    <Button
                       type="button"
                       onClick={finishOnboarding}
-                      className="w-full rounded-xl py-3.5 text-sm font-semibold text-white transition hover:opacity-90"
+                      className="w-full rounded-xl py-3.5 text-sm font-semibold text-white transition lg:hover:opacity-90"
                       style={{ backgroundColor: ACCENT }}
                     >
                       {t('onboarding.browseStart')}
-                    </button>
+                    </Button>
                   </div>
                 </>
               )}
@@ -372,18 +373,17 @@ export default function Onboarding() {
 
 function ConfettiBurst() {
   const pieces = [
-    { c: '#6366F1', x: -28, y: -8, r: 6, delay: 0 },
-    { c: '#818CF8', x: 32, y: 4, r: 5, delay: 0.05 },
-    { c: '#A5B4FC', x: -12, y: 28, r: 4, delay: 0.1 },
-    { c: '#6366F1', x: 40, y: -20, r: 4, delay: 0.08 },
-    { c: '#4F46E5', x: 8, y: -36, r: 5, delay: 0.12 },
-    { c: '#C7D2FE', x: -40, y: 16, r: 3, delay: 0.15 },
+    { c: '#171717', x: -28, y: -8, r: 6, delay: 0 },
+    { c: '#525252', x: 32, y: 4, r: 5, delay: 0.05 },
+    { c: '#A3A3A3', x: -12, y: 28, r: 4, delay: 0.1 },
+    { c: '#262626', x: 40, y: -20, r: 4, delay: 0.08 },
+    { c: '#404040', x: 8, y: -36, r: 5, delay: 0.12 },
+    { c: '#D4D4D4', x: -40, y: 16, r: 3, delay: 0.15 },
   ];
   return (
     <div className="relative flex h-full w-full items-center justify-center">
       <div
-        className="absolute flex h-16 w-16 items-center justify-center rounded-full text-2xl font-bold text-white shadow-lg"
-        style={{ backgroundColor: '#6366F1' }}
+        className="absolute flex h-16 w-16 items-center justify-center rounded-full bg-primary text-2xl font-bold text-primary-foreground shadow-lg"
       >
         ✓
       </div>
