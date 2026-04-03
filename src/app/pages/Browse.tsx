@@ -381,7 +381,7 @@ export default function Browse() {
       </div>
 
       {/* ----------------------------------------------------------------- */}
-      {/* MASONRY-STYLE WORK GRID                                           */}
+      {/* WORK GRID (정사각 셀 · 프로필과 동일 object-contain)                  */}
       {/* ----------------------------------------------------------------- */}
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-4 sm:py-8 pb-20 md:pb-8">
         {filteredWorks.length === 0 ? (
@@ -390,7 +390,7 @@ export default function Browse() {
             <p className="text-[13px] text-muted-foreground/80">{t('browse.emptyHint')}</p>
           </div>
         ) : (
-          <div className="columns-1 sm:columns-2 lg:columns-3 xl:columns-4 gap-5 sm:gap-6 lg:gap-8 space-y-5 sm:space-y-6 lg:space-y-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[1.625rem] sm:gap-[2.275rem] lg:gap-[2.6rem]">
             {displayedWorks.map((work, idx) => (
               <WorkCard
                 key={work.id}
@@ -429,7 +429,7 @@ export default function Browse() {
             {displayedWorks.length < filteredWorks.length && (
               <div
                 ref={feedSentinelRef}
-                className="break-inside-avoid [column-span:all] w-full min-h-[120px] flex items-center justify-center py-6"
+                className="col-span-full w-full min-h-[120px] flex items-center justify-center py-6"
                 aria-hidden
               />
             )}
@@ -547,17 +547,18 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
 
   return (
     <div
-      className="break-inside-avoid group overflow-hidden cursor-pointer"
+      className="group overflow-hidden cursor-pointer"
       style={{ animationDelay: `${(index % 12) * 40}ms` }}
       onClick={onSelect}
     >
-      {/* Image */}
-      <div className="relative w-full overflow-hidden rounded-sm">
-        <ImageWithFallback
-          src={imageSrc}
-          alt={work.title}
-          className="w-full h-auto object-cover"
-        />
+      {/* Image — 프로필과 동일: 정사각 영역 + 비율 유지 */}
+      <div className="relative aspect-square w-full overflow-hidden rounded-sm bg-white">
+        <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-white">
+          <ImageWithFallback
+            src={imageSrc}
+            alt={work.title}
+            className="h-full w-full min-h-0 min-w-0 object-contain object-center"
+          />
 
         {/* Image count badge */}
         {imageCount > 1 && (
@@ -627,6 +628,7 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
               </DropdownMenuContent>
             </DropdownMenu>
           </div>
+        </div>
         </div>
       </div>
 

@@ -381,7 +381,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
             {relatedWorks.length > 0 && (
               <div className="max-w-[900px] w-full mx-auto px-5 sm:px-6 pb-10">
                 <h2 className="text-lg font-semibold text-white mb-4">{t('workDetail.relatedWorks')}</h2>
-                <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 sm:gap-4">
+                <div className="grid grid-cols-2 sm:grid-cols-3 gap-[1.3rem] sm:gap-[1.95rem]">
                   {relatedWorks.slice(0, 8).map((rw) => (
                     <button
                       type="button"

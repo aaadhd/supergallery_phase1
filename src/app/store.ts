@@ -1,10 +1,12 @@
 // 전역 상태 관리 (간단한 구현)
 import { useState, useEffect } from 'react';
 import { Work, works as initialWorks } from './data';
-import { isSupabaseConfigured } from './services/supabaseClient';
 import { pointsRecallIfQuickDelete } from './utils/pointsBackground';
 import { adjustArtistFollowerDelta, clearFollowerDeltas } from './utils/artistFollowDelta';
 import { clearMockSession } from './services/sessionTokens';
+
+/** localStorage에 예전 Unsplash 시드만 있으면 갱신되지 않아 피드가 비거나 옛 데이터만 보일 수 있음 → 버전 불일치 시 시드로 리셋 */
+const WORKS_STORAGE_VERSION = 'local-gallery-v2';
 
 // 초안 타입 정의
 export interface Draft {
@@ -27,7 +29,11 @@ export interface Draft {
 // 로컬 스토리지에서 작품 데이터 불러오기
 const loadWorksFromStorage = (): Work[] => {
   if (typeof window === 'undefined') return initialWorks;
-  if (isSupabaseConfigured()) return [];
+
+  const version = localStorage.getItem('artier_works_version');
+  if (version !== WORKS_STORAGE_VERSION) {
+    return initialWorks;
+  }
 
   const stored = localStorage.getItem('artier_works');
   if (stored) {
@@ -42,9 +48,9 @@ const loadWorksFromStorage = (): Work[] => {
 
 // 로컬 스토리지에 작품 데이터 저장
 const saveWorksToStorage = (works: Work[]) => {
-  if (typeof window !== 'undefined' && !isSupabaseConfigured()) {
-    localStorage.setItem('artier_works', JSON.stringify(works));
-  }
+  if (typeof window === 'undefined') return;
+  localStorage.setItem('artier_works_version', WORKS_STORAGE_VERSION);
+  localStorage.setItem('artier_works', JSON.stringify(works));
 };
 
 // 작품 데이터 관리
@@ -86,15 +92,9 @@ export const workStore = {
     if (typeof window !== 'undefined') window.dispatchEvent(new Event('artier-works-changed'));
   },
 
-  /** Supabase에서 가져온 목록으로 메모리만 교체 (localStorage에는 저장하지 않음) */
-  replaceWorksFromRemote: (works: Work[]) => {
-    currentWorks = works;
-    listeners.forEach((listener) => listener());
-  },
-
-  /** 다른 탭·창에서 `artier_works`가 바뀐 뒤 메모리와 화면을 맞출 때 (Supabase 모드에서는 무시) */
+  /** 다른 탭·창에서 `artier_works`가 바뀐 뒤 메모리와 화면을 맞출 때 */
   syncFromLocalStorage: () => {
-    if (typeof window === 'undefined' || isSupabaseConfigured()) return;
+    if (typeof window === 'undefined') return;
     currentWorks = loadWorksFromStorage();
     listeners.forEach((listener) => listener());
   },

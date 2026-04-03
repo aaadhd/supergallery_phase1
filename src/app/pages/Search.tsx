@@ -334,7 +334,7 @@ export default function Search() {
                 <h2 className="text-lg font-semibold text-[#18181B] mb-4">
                   {t('search.worksHeading').replace('{n}', String(results.works.length))}
                 </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3 sm:gap-5">
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[1.625rem] sm:gap-[2.275rem] lg:gap-[2.6rem]">
                   {results.works.map((work) => (
                     <Button
                       key={work.id}

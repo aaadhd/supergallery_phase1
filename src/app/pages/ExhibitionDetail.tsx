@@ -285,7 +285,7 @@ export default function ExhibitionDetail() {
 
         <section className="mt-16 sm:mt-20">
           <h2 className="text-lg font-semibold text-[#18181B] mb-8">{t('exhibition.worksHeading')}</h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-[1.625rem] sm:gap-[2.6rem]">
             {exhibitionWorks.map((work) => (
               <Button
                 key={work.id}

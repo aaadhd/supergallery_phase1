@@ -563,7 +563,7 @@ export default function Profile() {
 
                   {/* 작품 그리드 */}
                   {filteredWorks.length > 0 ? (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 sm:gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[1.625rem] sm:gap-[2.275rem] lg:gap-[2.6rem]">
                       {filteredWorks.map((work) => (
                         <div
                           key={work.id}
@@ -728,7 +728,7 @@ export default function Profile() {
                       <p className="text-xs text-[#A1A1AA] mt-2 max-w-md mx-auto">{t('profile.studentWorksHint')}</p>
                     </div>
                   ) : (
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[1.625rem] sm:gap-[2.275rem] lg:gap-[2.6rem]">
                       {studentWorksList.map((work) => {
                         const credit = firstStudentLabel(work, profileArtist.id);
                         return (
@@ -771,7 +771,7 @@ export default function Profile() {
                   {(() => {
                     const allMyWorks = [...artistWorks, ...taggedWorks];
                     return allMyWorks.length > 0 ? (
-                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+                      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-[1.625rem] sm:gap-[2.275rem] lg:gap-[2.6rem]">
                         {allMyWorks.map((work) => {
                           const isMyUpload = work.artistId === profileArtist.id;
                           return (
@@ -884,7 +884,7 @@ export default function Profile() {
                 {/* ===== 좋아요 탭 (본인만) ===== */}
                 <TabsContent value="likes" className="mt-6">
                   {likedWorks.length > 0 ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-[1.625rem] sm:gap-[2.275rem] lg:gap-[2.6rem]">
                       {likedWorks.map((work) => (
                         <div
                           key={work.id}
@@ -922,7 +922,7 @@ export default function Profile() {
                 {/* ===== 저장 탭 (본인만) ===== */}
                 <TabsContent value="saved" className="mt-6">
                   {savedWorks.length > 0 ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-[1.625rem] sm:gap-[2.275rem] lg:gap-[2.6rem]">
                       {savedWorks.map((work) => (
                         <div
                           key={work.id}
@@ -960,7 +960,7 @@ export default function Profile() {
                 {/* ===== 초안 탭 (본인만) ===== */}
                 <TabsContent value="drafts" className="mt-6">
                   {drafts.length > 0 ? (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-5">
+                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-[1.625rem] sm:gap-[2.275rem] lg:gap-[2.6rem]">
                       {drafts.map((draft) => {
                         const thumbUrl = draft.contents.find(c => c.type === 'image' && c.url)?.url;
                         return (

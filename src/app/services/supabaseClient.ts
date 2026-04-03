@@ -1,6 +1,7 @@
 /**
  * Supabase는 **공식 JS 클라이언트 패키지 없이** PostgREST `fetch`로만 연결합니다.
- * `npm install` 없이도 dev 서버가 뜨고, URL·anon 키를 넣으면 선택적으로 동작합니다.
+ * 앱은 현재 시드 + localStorage만 사용하고, 마운트 시 이 API로 작품을 가져오지 않습니다.
+ * 다시 쓸 때 fetchWorksFromSupabase + workStore 갱신을 Bootstrap 등에 연결하면 됩니다.
  */
 
 export function isSupabaseConfigured(): boolean {
