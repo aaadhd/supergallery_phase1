@@ -5,48 +5,48 @@
  * 토큰은 shadcn + Tailwind @theme와 동기화. Figma Variables와 1:1 맞출 때는
  * Dev Mode에서 해당 프레임 선택 후 MCP로 변수를 다시 읽어 이 파일을 갱신하면 됩니다.
  *
- * 브랜드 액센트: #00BFA5 (코드·컴포넌트에 이미 사용 중인 ARTIER 틸)
+ * 악센트: 차분한 모호/플럼(oklch 328°) — 온라인 갤러리 톤. 로고 A 칩 등 국소 틸은 컴포넌트에서 유지 가능.
  */
 :root {
   --font-size: 16px;
   --font-family:
     'Pretendard', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI',
     'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
-  --background: oklch(0.985 0.006 85);
-  --foreground: oklch(0.2 0.02 265);
-  --card: oklch(0.998 0.003 85);
-  --card-foreground: oklch(0.2 0.02 265);
-  --popover: oklch(0.998 0.003 85);
-  --popover-foreground: oklch(0.2 0.02 265);
-  /* Primary ≈ #00BFA5 */
-  --primary: oklch(0.72 0.129 181);
-  --primary-foreground: oklch(0.99 0.01 181);
-  --secondary: oklch(0.96 0.012 85);
-  --secondary-foreground: oklch(0.28 0.02 265);
-  --muted: oklch(0.955 0.01 85);
-  --muted-foreground: oklch(0.5 0.02 265);
-  --accent: oklch(0.94 0.04 181);
-  --accent-foreground: oklch(0.22 0.06 181);
+  --background: oklch(0.97 0.014 85);
+  --foreground: oklch(0.21 0.022 280);
+  --card: oklch(0.995 0.008 85);
+  --card-foreground: oklch(0.21 0.022 280);
+  --popover: oklch(0.995 0.008 85);
+  --popover-foreground: oklch(0.21 0.022 280);
+  /* 모호·딥 플럼 악센트 — 가상 갤러리(atelier) 톤, 브랜드 틸보다 차분 */
+  --primary: oklch(0.5 0.075 328);
+  --primary-foreground: oklch(0.985 0.01 328);
+  --secondary: oklch(0.955 0.018 85);
+  --secondary-foreground: oklch(0.28 0.022 280);
+  --muted: oklch(0.935 0.022 85);
+  --muted-foreground: oklch(0.48 0.022 280);
+  --accent: oklch(0.93 0.035 328);
+  --accent-foreground: oklch(0.32 0.07 328);
   --destructive: oklch(0.577 0.245 27.325);
   --destructive-foreground: oklch(0.985 0 0);
-  --border: oklch(0.9 0.012 85);
-  --input: oklch(0.9 0.012 85);
-  --input-background: oklch(0.998 0.003 85);
+  --border: oklch(0.875 0.018 85);
+  --input: oklch(0.875 0.018 85);
+  --input-background: oklch(0.995 0.008 85);
   --switch-background: oklch(0.815 0 0);
   --font-weight-medium: 600;
   --font-weight-normal: 400;
-  --ring: oklch(0.58 0.11 181);
+  --ring: oklch(0.52 0.08 328);
   --chart-1: oklch(0.35 0 0);
   --chart-2: oklch(0.45 0 0);
   --chart-3: oklch(0.55 0 0);
   --chart-4: oklch(0.65 0 0);
   --chart-5: oklch(0.75 0 0);
   /* DSG: 12px 기준 코너 (프레임 가이드에 맞춤, 필요 시 Figma radius 토큰으로 조정) */
-  --radius: 0.75rem;
+  --radius: 0.5rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);
-  --sidebar-primary: oklch(0.72 0.129 181);
-  --sidebar-primary-foreground: oklch(0.99 0.01 181);
+  --sidebar-primary: oklch(0.5 0.075 328);
+  --sidebar-primary-foreground: oklch(0.985 0.01 328);
   --sidebar-accent: oklch(0.97 0 0);
   --sidebar-accent-foreground: oklch(0.205 0 0);
   --sidebar-border: oklch(0.922 0 0);
@@ -60,8 +60,8 @@
   --card-foreground: oklch(0.985 0 0);
   --popover: oklch(0.205 0 0);
   --popover-foreground: oklch(0.985 0 0);
-  --primary: oklch(0.78 0.11 181);
-  --primary-foreground: oklch(0.16 0.03 181);
+  --primary: oklch(0.72 0.09 328);
+  --primary-foreground: oklch(0.14 0.04 328);
   --secondary: oklch(0.269 0 0);
   --secondary-foreground: oklch(0.985 0 0);
   --muted: oklch(0.269 0 0);
@@ -74,7 +74,7 @@
   --input: oklch(1 0 0 / 15%);
   --input-background: oklch(0.205 0 0);
   --switch-background: oklch(0.439 0 0);
-  --ring: oklch(0.62 0.1 181);
+  --ring: oklch(0.68 0.09 328);
   --chart-1: oklch(0.85 0 0);
   --chart-2: oklch(0.7 0 0);
   --chart-3: oklch(0.55 0 0);
@@ -82,12 +82,12 @@
   --chart-5: oklch(0.25 0 0);
   --sidebar: oklch(0.205 0 0);
   --sidebar-foreground: oklch(0.985 0 0);
-  --sidebar-primary: oklch(0.78 0.11 181);
-  --sidebar-primary-foreground: oklch(0.16 0.03 181);
+  --sidebar-primary: oklch(0.72 0.09 328);
+  --sidebar-primary-foreground: oklch(0.14 0.04 328);
   --sidebar-accent: oklch(0.269 0 0);
   --sidebar-accent-foreground: oklch(0.985 0 0);
   --sidebar-border: oklch(1 0 0 / 10%);
-  --sidebar-ring: oklch(0.62 0.1 181);
+  --sidebar-ring: oklch(0.68 0.09 328);
 }
 
 @theme inline {
@@ -147,48 +147,49 @@
     font-family: var(--font-family);
   }
 
+  /* 기본 단계 살짝 축소 — 한 패밀리(Pretendard)로 통일 */
   h1 {
-    font-size: var(--text-2xl);
+    font-size: 1.375rem;
     font-weight: var(--font-weight-medium);
     line-height: 1.35;
     letter-spacing: -0.02em;
   }
 
   h2 {
-    font-size: var(--text-xl);
+    font-size: 1.25rem;
     font-weight: var(--font-weight-medium);
     line-height: 1.4;
-    letter-spacing: -0.018em;
-  }
-
-  h3 {
-    font-size: var(--text-lg);
-    font-weight: var(--font-weight-medium);
-    line-height: 1.45;
     letter-spacing: -0.015em;
   }
 
+  h3 {
+    font-size: 1.0625rem;
+    font-weight: var(--font-weight-medium);
+    line-height: 1.45;
+    letter-spacing: -0.012em;
+  }
+
   h4 {
-    font-size: var(--text-base);
+    font-size: 0.9375rem;
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
-    letter-spacing: -0.01em;
+    letter-spacing: -0.008em;
   }
 
   label {
-    font-size: var(--text-base);
+    font-size: 0.9375rem;
     font-weight: var(--font-weight-medium);
     line-height: 1.5;
   }
 
   button {
-    font-size: var(--text-base);
+    font-size: 0.9375rem;
     font-weight: var(--font-weight-medium);
-    line-height: 1.5;
+    line-height: 1.45;
   }
 
   input {
-    font-size: var(--text-base);
+    font-size: 1rem;
     font-weight: var(--font-weight-normal);
     line-height: 1.5;
   }

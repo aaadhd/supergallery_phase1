@@ -277,38 +277,41 @@ export default function Browse() {
   // RENDER
   // =========================================================================
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-full bg-background">
       {/* ----------------------------------------------------------------- */}
-      {/* HERO BANNER CAROUSEL                                              */}
+      {/* HERO — 에디토리얼 갤러리 톤                                              */}
       {/* ----------------------------------------------------------------- */}
       <div className="bg-background">
-        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-4 sm:py-6">
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 pt-4 sm:pt-6 pb-2 sm:pb-3">
+          <p className="text-[11px] sm:text-xs text-muted-foreground tracking-[0.14em] uppercase mb-2">
+            {t('browse.heroKicker')}
+          </p>
           <div className="relative group">
-            <div className="overflow-hidden rounded-xl sm:rounded-2xl ring-1 ring-black/[0.07] shadow-md">
+            <div className="overflow-hidden sm:rounded-sm ring-1 ring-foreground/[0.08] shadow-[0_28px_80px_-32px_rgba(35,32,40,0.45)]">
               <div
-                className="flex transition-transform duration-500 ease-out"
+                className="flex transition-transform duration-700 ease-[cubic-bezier(0.33,1,0.68,1)]"
                 style={{ transform: `translateX(-${currentBanner * 100}%)` }}
               >
                 {promotionBanners.map((banner) => (
                   <div key={banner.id} className="w-full shrink-0 relative cursor-pointer">
-                    <div className="relative h-[160px] sm:h-[220px] lg:h-[280px] overflow-hidden">
+                    <div className="relative h-[170px] sm:h-[220px] lg:h-[280px] overflow-hidden">
                       <ImageWithFallback
                         src={banner.image}
                         alt={banner.title}
                         className="w-full h-full object-cover"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-r from-black/60 via-black/40 to-transparent" />
-                      <div className="absolute inset-0 flex flex-col justify-center px-5 sm:px-8 lg:px-12">
-                        <div className="max-w-[600px]">
+                      <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-black/10" />
+                      <div className="absolute inset-0 flex flex-col justify-center px-6 sm:px-10 lg:px-16">
+                        <div className="max-w-[640px]">
                           {banner.tag && (
-                            <span className="inline-block px-2 py-0.5 sm:px-2.5 sm:py-0.5 text-[10px] sm:text-[11px] font-bold tracking-wider text-white bg-primary rounded-full mb-1.5 sm:mb-2">
+                            <span className="inline-block px-2.5 py-1 text-[10px] sm:text-[11px] font-semibold tracking-[0.14em] uppercase text-white border border-white/35 bg-white/5 backdrop-blur-[2px] mb-3">
                               {banner.tag}
                             </span>
                           )}
-                          <h2 className="text-lg sm:text-xl lg:text-2xl font-bold text-white mb-1 sm:mb-2 leading-tight">
+                          <h2 className="text-lg sm:text-2xl lg:text-3xl font-semibold text-white mb-1.5 sm:mb-2 leading-snug tracking-tight">
                             {banner.title}
                           </h2>
-                          <p className="text-[13px] sm:text-sm text-white/90 font-normal hidden sm:block">
+                          <p className="text-xs sm:text-sm text-white/80 font-normal max-w-xl leading-relaxed hidden sm:block">
                             {banner.subtitle}
                           </p>
                         </div>
@@ -319,32 +322,31 @@ export default function Browse() {
               </div>
             </div>
 
-            {/* Prev / Next */}
             <Button
               variant="ghost"
               onClick={prevBanner}
-              className="absolute left-2 sm:left-3 top-1/2 -translate-y-1/2 h-7 w-7 sm:h-8 sm:w-8 flex items-center justify-center bg-white/90 lg:hover:bg-white rounded-full shadow-md opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity"
+              className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 h-9 w-9 sm:h-10 sm:w-10 flex items-center justify-center bg-white/92 lg:hover:bg-white rounded-full shadow-md border border-black/5 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity"
             >
-              <ChevronLeft className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#18181B]" />
+              <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5 text-foreground/80" />
             </Button>
             <Button
               variant="ghost"
               onClick={nextBanner}
-              className="absolute right-2 sm:right-3 top-1/2 -translate-y-1/2 h-7 w-7 sm:h-8 sm:w-8 flex items-center justify-center bg-white/90 lg:hover:bg-white rounded-full shadow-md opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity"
+              className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 h-9 w-9 sm:h-10 sm:w-10 flex items-center justify-center bg-white/92 lg:hover:bg-white rounded-full shadow-md border border-black/5 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity"
             >
-              <ChevronRight className="h-3.5 w-3.5 sm:h-4 sm:w-4 text-[#18181B]" />
+              <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 text-foreground/80" />
             </Button>
 
-            <div className="absolute bottom-2.5 sm:bottom-3 left-1/2 -translate-x-1/2 flex items-center gap-1 sm:gap-1.5">
+            <div className="absolute bottom-3 sm:bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
               {promotionBanners.map((_, i) => (
                 <Button
                   variant="ghost"
                   key={i}
                   onClick={() => setCurrentBanner(i)}
-                  className={`h-[5px] sm:h-1.5 rounded-full transition-all ${
+                  className={`h-1 sm:h-1.5 rounded-full transition-all p-0 min-h-0 min-w-0 ${
                     currentBanner === i
-                      ? 'w-4 sm:w-5 bg-white'
-                      : 'w-[5px] sm:w-1.5 bg-white/50 lg:hover:bg-white/70'
+                      ? 'w-8 sm:w-10 bg-white'
+                      : 'w-1.5 sm:w-1.5 bg-white/45 lg:hover:bg-white/65'
                   }`}
                 />
               ))}
@@ -354,26 +356,26 @@ export default function Browse() {
       </div>
 
       {/* ----------------------------------------------------------------- */}
-      {/* CATEGORY FILTER TABS                                              */}
+      {/* CATEGORY — 언더라인 탭                                                  */}
       {/* ----------------------------------------------------------------- */}
-      <div className="sticky top-[53px] sm:top-[65px] z-40 bg-background/88 backdrop-blur-md border-b border-border/70 shadow-[0_6px_20px_-12px_rgba(0,0,0,0.12)]">
-        <div className="mx-auto flex h-11 sm:h-12 max-w-[1440px] items-center px-4 sm:px-6 gap-1.5 sm:gap-2">
+      <div className="sticky top-0 z-40 border-b border-border/60 bg-background/90 backdrop-blur-lg backdrop-saturate-150">
+        <div className="mx-auto flex min-h-11 sm:min-h-12 max-w-[1440px] items-end gap-5 sm:gap-7 px-4 sm:px-8 lg:px-12">
           {categories.map((cat) => (
             <Button
               variant="ghost"
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`shrink-0 rounded-full px-3.5 sm:px-4 py-1.5 sm:py-2 text-[13px] sm:text-sm font-medium transition-all border ${
+              className={`relative shrink-0 h-auto rounded-none px-0 pb-2.5 pt-1.5 text-xs sm:text-[13px] font-medium transition-colors shadow-none hover:bg-transparent ${
                 activeCategory === cat.id
-                  ? 'border-primary text-primary bg-primary/10 shadow-sm'
-                  : 'border-border text-muted-foreground bg-card/80 lg:hover:border-primary/30 lg:hover:text-foreground'
+                  ? 'text-foreground after:absolute after:left-0 after:right-0 after:bottom-0 after:h-0.5 after:bg-primary'
+                  : 'text-muted-foreground hover:text-foreground'
               }`}
             >
               {cat.label}
             </Button>
           ))}
 
-          <span className="ml-auto text-xs sm:text-sm text-muted-foreground tabular-nums">
+          <span className="ml-auto self-center pb-2 text-[10px] sm:text-[11px] text-muted-foreground tabular-nums">
             {filteredWorks.length}
             {t('browse.itemsCountSuffix')}
           </span>
@@ -381,9 +383,19 @@ export default function Browse() {
       </div>
 
       {/* ----------------------------------------------------------------- */}
-      {/* WORK GRID (정사각 셀 · 프로필과 동일 object-contain)                  */}
+      {/* WORK GRID                                                           */}
       {/* ----------------------------------------------------------------- */}
-      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-4 sm:py-8 pb-20 md:pb-8">
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-6 sm:py-8 pb-6 md:pb-8">
+        {filteredWorks.length > 0 && (
+          <header className="mb-6 sm:mb-8 max-w-xl">
+            <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground mb-1">
+              {t('browse.collectionKicker')}
+            </p>
+            <h2 className="text-lg sm:text-xl font-semibold text-foreground tracking-tight">
+              {t('browse.collectionHeading')}
+            </h2>
+          </header>
+        )}
         {filteredWorks.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center rounded-2xl border border-dashed border-border bg-muted/20">
             <p className="text-base text-muted-foreground mb-2">{t('browse.emptyTitle')}</p>
@@ -546,14 +558,14 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
   const imageCount = getImageCount(work.image);
 
   return (
-    <div
-      className="group overflow-hidden cursor-pointer"
+    <article
+      className="group cursor-pointer overflow-hidden rounded-sm bg-card ring-1 ring-foreground/[0.07] shadow-[0_2px_24px_-12px_rgba(35,32,40,0.2)] transition-shadow duration-300 lg:hover:shadow-[0_20px_48px_-28px_rgba(35,32,40,0.28)]"
       style={{ animationDelay: `${(index % 12) * 40}ms` }}
       onClick={onSelect}
     >
-      {/* Image — 프로필과 동일: 정사각 영역 + 비율 유지 */}
-      <div className="relative aspect-square w-full overflow-hidden rounded-sm bg-white">
-        <div className="relative flex h-full w-full items-center justify-center overflow-hidden bg-white">
+      {/* 정사각 뷰 + 화이트 매트 */}
+      <div className="relative aspect-square w-full overflow-hidden bg-[oklch(0.96_0.012_85)]">
+        <div className="relative flex h-full w-full items-center justify-center overflow-hidden">
           <ImageWithFallback
             src={imageSrc}
             alt={work.title}
@@ -632,10 +644,9 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
         </div>
       </div>
 
-      {/* Info section */}
-      <div className="pt-2.5 pb-4 sm:pb-6">
-        {/* Title */}
-        <h3 className="text-sm font-medium text-[#18181B] leading-snug mb-1.5 line-clamp-2">
+      {/* Info */}
+      <div className="px-3 pt-3 pb-4 sm:px-3.5 sm:pb-5 bg-card">
+        <h3 className="text-[13px] font-medium text-foreground leading-snug mb-1 line-clamp-2">
           {work.title}
         </h3>
 
@@ -649,7 +660,7 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
                   <Button
                     variant="ghost"
                     type="button"
-                    className="flex items-center gap-2 min-h-10 min-w-0 max-w-full text-[13px] text-[#696969] lg:hover:text-[#18181B] active:text-[#18181B] transition-colors truncate touch-manipulation rounded-md px-1 -mx-1"
+                    className="flex items-center gap-2 min-h-10 min-w-0 max-w-full text-[13px] text-muted-foreground lg:hover:text-foreground active:text-foreground transition-colors truncate touch-manipulation rounded-md px-1 -mx-1"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <Users className="h-4 w-4 shrink-0" />
@@ -670,7 +681,7 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
                   <Button
                     variant="ghost"
                     type="button"
-                    className="flex items-center gap-2 min-h-10 min-w-0 max-w-full text-[13px] text-[#696969] lg:hover:text-[#18181B] active:text-[#18181B] transition-colors truncate touch-manipulation rounded-md px-1 -mx-1"
+                    className="flex items-center gap-2 min-h-10 min-w-0 max-w-full text-[13px] text-muted-foreground lg:hover:text-foreground active:text-foreground transition-colors truncate touch-manipulation rounded-md px-1 -mx-1"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <Users className="h-4 w-4 shrink-0" />
@@ -688,7 +699,7 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
               <Button
                 variant="ghost"
                 type="button"
-                className="flex items-center gap-2 min-h-10 min-w-0 max-w-full text-[13px] text-[#696969] lg:hover:text-[#18181B] active:text-[#18181B] transition-colors truncate touch-manipulation rounded-md px-1 -mx-1"
+                className="flex items-center gap-2 min-h-10 min-w-0 max-w-full text-[13px] text-muted-foreground lg:hover:text-foreground active:text-foreground transition-colors truncate touch-manipulation rounded-md px-1 -mx-1"
                 onClick={(e) => {
                   e.stopPropagation();
                   onArtistClick(artist.id);
@@ -711,7 +722,7 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
             <Button
               variant="ghost"
               type="button"
-              className={`min-h-10 min-w-10 sm:min-h-0 sm:min-w-0 flex items-center justify-center gap-1 px-2 -mr-1 text-[13px] transition-colors touch-manipulation active:opacity-70 rounded-md ${isLiked ? 'text-red-500' : 'text-[#888] lg:hover:text-red-400'}`}
+              className={`min-h-10 min-w-10 sm:min-h-0 sm:min-w-0 flex items-center justify-center gap-1 px-2 -mr-1 text-[13px] transition-colors touch-manipulation active:opacity-70 rounded-md ${isLiked ? 'text-red-500' : 'text-muted-foreground lg:hover:text-red-400'}`}
               onClick={(e) => { e.stopPropagation(); onToggleLike(work.id); }}
             >
               <Heart className={`h-3.5 w-3.5 ${isLiked ? 'fill-current' : ''}`} />
@@ -720,7 +731,7 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
             <Button
               variant="ghost"
               type="button"
-              className={`min-h-10 min-w-10 sm:min-h-0 sm:min-w-0 flex items-center justify-center gap-1 px-2 -mr-1 text-[13px] transition-colors touch-manipulation active:opacity-70 rounded-md ${isSaved ? 'text-primary' : 'text-[#888] lg:hover:text-foreground'}`}
+              className={`min-h-10 min-w-10 sm:min-h-0 sm:min-w-0 flex items-center justify-center gap-1 px-2 -mr-1 text-[13px] transition-colors touch-manipulation active:opacity-70 rounded-md ${isSaved ? 'text-primary' : 'text-muted-foreground lg:hover:text-foreground'}`}
               onClick={(e) => { e.stopPropagation(); onToggleSave(work.id); }}
             >
               <Bookmark className={`h-3.5 w-3.5 ${isSaved ? 'fill-current' : ''}`} />
@@ -729,7 +740,7 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
           </div>
         </div>
       </div>
-    </div>
+    </article>
   );
 }
 

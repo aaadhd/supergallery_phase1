@@ -18,6 +18,8 @@ const TITLE_BY_PATH: { prefix: string; ko: string; en: string }[] = [
 
 export default function Layout() {
   const { pathname } = useLocation();
+  /** 홈 둘러보기: 스크롤은 main만, 푸터는 항상 화면 하단에 보임 */
+  const browseDocked = pathname === '/';
   const [localeTick, setLocaleTick] = useState(0);
 
   useEffect(() => {
@@ -31,6 +33,19 @@ export default function Layout() {
     const hit = TITLE_BY_PATH.find((t) => pathname.startsWith(t.prefix));
     document.title = hit ? (loc === 'en' ? hit.en : hit.ko) : loc === 'en' ? 'Artier — Digital art gallery' : 'Artier — 디지털 갤러리';
   }, [pathname, localeTick]);
+
+  if (browseDocked) {
+    return (
+      <div className="flex h-dvh min-h-0 flex-col bg-background max-md:pb-[calc(3.5rem+env(safe-area-inset-bottom,0px))]">
+        <Header />
+        <main id="browse-scroll-root" className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain">
+          <Outlet />
+        </main>
+        <Footer docked />
+        <CookieConsent />
+      </div>
+    );
+  }
 
   return (
     <div className="min-h-screen flex flex-col">

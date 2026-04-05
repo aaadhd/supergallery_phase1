@@ -90,6 +90,14 @@ export const artists: Artist[] = [
   { id: 'local-sketch', name: '오한결', avatar: 'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop', bio: '일상 디지털 스케치', followers: 412, following: 112 },
   { id: 'local-abstract', name: '최파랑', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop', bio: '붓터치 추상 초상', followers: 1320, following: 88 },
   { id: 'local-studio', name: '스튜디오 로컬', avatar: 'https://images.unsplash.com/photo-1547425260-76bcadfb4f2c?w=100&h=100&fit=crop', bio: '기타 로컬 에셋', followers: 100, following: 20 },
+  // WebP fileView 등 감상 기반 메타 (localPublicGalleryWorks)
+  { id: 'local-rilin', name: '릴린', avatar: 'https://images.unsplash.com/photo-1515886657613-9f3515b0c78f?w=100&h=100&fit=crop', bio: '수채풍 푸드·소품 일러스트', followers: 890, following: 54 },
+  { id: 'local-haeb', name: '해브', avatar: 'https://images.unsplash.com/photo-1583511655857-d19b40a7a54e?w=100&h=100&fit=crop', bio: '따뜻한 동물 일러스트', followers: 620, following: 40 },
+  { id: 'local-sunnysun', name: '써니선', avatar: 'https://images.unsplash.com/photo-1522075469751-3a6694fb2f61?w=100&h=100&fit=crop', bio: '미니멀 일상 드로잉', followers: 510, following: 72 },
+  { id: 'local-webtoon-clean', name: '윤도훈', avatar: 'https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?w=100&h=100&fit=crop', bio: '깔끔한 라인의 캐릭터·풍경', followers: 1100, following: 81 },
+  { id: 'local-cozy-illus', name: '박하은', avatar: 'https://images.unsplash.com/photo-1487412720507-e7ab37603c6f?w=100&h=100&fit=crop', bio: '포근한 수채 일러스트', followers: 730, following: 59 },
+  { id: 'local-minimal-graphic', name: '노민혁', avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop', bio: '미니멀·도형 중심 그래픽', followers: 445, following: 33 },
+  { id: 'local-fileview-general', name: '믹스 컬렉션', avatar: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=100&h=100&fit=crop', bio: '로컬 WebP 일러스트 묶음', followers: 200, following: 15 },
 ];
 
 // 둘러보기 시드: public/images (localGalleryManifest.json, 갱신: generate-local-gallery-manifest.mjs)

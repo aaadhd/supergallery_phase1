@@ -67,8 +67,8 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-border/80 bg-background/75 backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-background/65 shadow-[0_1px_0_rgba(0,0,0,0.04)]">
-        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-3 sm:py-3.5">
+      <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-background/72">
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-3 sm:py-3.5">
           <div className="flex items-center justify-between gap-3 sm:gap-8">
             <Link
               to="/"
@@ -77,13 +77,13 @@ export function Header() {
               <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm ring-1 ring-primary/25">
                 <span className="text-base sm:text-lg font-bold tracking-tight">A</span>
               </div>
-              <span className="text-lg sm:text-xl font-semibold tracking-tight text-foreground">{t('brand.name')}</span>
+              <span className="text-base sm:text-lg font-semibold tracking-tight text-foreground">{t('brand.name')}</span>
             </Link>
 
             <nav className="hidden md:flex items-center gap-1">
               <Link
                 to="/"
-                className={`relative px-3.5 py-2 text-sm font-medium rounded-lg transition-colors ${
+                className={`relative px-3 py-1.5 text-[13px] font-medium rounded-lg transition-colors ${
                   location.pathname === '/' ? 'text-foreground bg-muted/90' : 'text-muted-foreground lg:hover:text-foreground lg:hover:bg-muted/50'
                 }`}
               >
@@ -91,7 +91,7 @@ export function Header() {
               </Link>
               <Link
                 to="/events"
-                className={`relative px-3.5 py-2 text-sm font-medium rounded-lg transition-colors ${
+                className={`relative px-3 py-1.5 text-[13px] font-medium rounded-lg transition-colors ${
                   location.pathname.startsWith('/events')
                     ? 'text-foreground bg-muted/90'
                     : 'text-muted-foreground lg:hover:text-foreground lg:hover:bg-muted/50'
