@@ -1,5 +1,5 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
+import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { MapPin, Plus, Eye, EyeOff, X, ThumbsUp, Users, Folder, MoreHorizontal, Trash2, Tag, UserPlus, Camera, Share2, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Image as ImageIcon } from 'lucide-react';
 import ProfileImageModal from '../components/ProfileImageModal';
@@ -7,6 +7,15 @@ import { artists, type Work } from '../data';
 import { workStore, draftStore, profileStore, userInteractionStore, followStore, useFollowStore, useAuthStore, withdrawnArtistStore } from '../store';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';
+import { Input } from '../components/ui/input';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '../components/ui/dialog';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../components/ui/tabs';
 import {
   DropdownMenu,
@@ -22,7 +31,13 @@ import { LoginPromptModal } from '../components/LoginPromptModal';
 import { getDisplayFollowerCount } from '../utils/artistFollowDelta';
 import type { MessageKey } from '../i18n/messages';
 import { useI18n } from '../i18n/I18nProvider';
-import { displayProminentHeadline, displayExhibitionTitle, displayPieceTitle, displayPieceTitleAtIndex } from '../utils/workDisplay';
+import {
+  displayProminentHeadline,
+  displayExhibitionTitle,
+  displayPieceTitle,
+  displayPieceTitleAtIndex,
+  pieceTitlesEditableSnapshot,
+} from '../utils/workDisplay';
 import { REJECTION_REASON_LABEL_KEY } from '../utils/reviewLabels';
 import { openConfirm } from '../components/ConfirmDialog';
 import { containsProfanity } from '../utils/profanityFilter';
@@ -69,10 +84,13 @@ function locationDisplayLabel(stored: string, tr: (k: MessageKey) => string): st
   return k ? tr(k) : stored;
 }
 
+type ProfileTabValue = 'exhibition' | 'works' | 'student-works' | 'likes' | 'saved' | 'drafts';
+
 // Profile 페이지 — Phase 1 MVP
 export default function Profile() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { t, locale } = useI18n();
   const follows = useFollowStore();
   const auth = useAuthStore();
@@ -82,6 +100,9 @@ export default function Profile() {
   const [loginPromptOpen, setLoginPromptOpen] = useState(false);
   const [detailWorkId, setDetailWorkId] = useState<string | null>(null);
   const [worksViewerIndex, setWorksViewerIndex] = useState<number | null>(null);
+  const [pieceTitleEdit, setPieceTitleEdit] = useState<{ workId: string; imgIndex: number } | null>(null);
+  const [pieceTitleDraft, setPieceTitleDraft] = useState('');
+  const [profileTab, setProfileTab] = useState<ProfileTabValue>('exhibition');
   const [profileLinks, setProfileLinks] = useState<{ label: string; url: string }[]>([]);
 
   const [profileInterests, setProfileInterests] = useState<string[]>([]);
@@ -139,7 +160,7 @@ export default function Profile() {
     name: profileArtist.name,
     nickname: '',
     headline: profileArtist.bio || '',
-    bio: profileArtist.bio || '',
+    bio: '',
     location: '',
     externalLinks: [] as { label: string; url: string }[],
     interests: [] as string[],
@@ -164,6 +185,8 @@ export default function Profile() {
 
     return [...own, ...participating];
   }, [storeWorks, profileArtist.id, isOwnProfile]);
+
+  const storeWorkIdSet = useMemo(() => new Set(storeWorks.map((w) => w.id)), [storeWorks]);
 
   // 좋아요/저장 탭용 — storeWorks + groupWorks 통합 검색
   const allWorksPool = useMemo(() => {
@@ -238,6 +261,49 @@ export default function Profile() {
     });
   }, [artistWorks, taggedWorks, profileArtist.id, imageUrls, t]);
 
+  useEffect(() => {
+    if (!pieceTitleEdit) {
+      setPieceTitleDraft('');
+      return;
+    }
+    const w = workStore.getWork(pieceTitleEdit.workId);
+    if (!w) {
+      setPieceTitleEdit(null);
+      return;
+    }
+    const snap = pieceTitlesEditableSnapshot(w);
+    setPieceTitleDraft(snap[pieceTitleEdit.imgIndex] ?? '');
+  }, [pieceTitleEdit]);
+
+  const savePieceTitleFromModal = () => {
+    if (!pieceTitleEdit) return;
+    const w = workStore.getWork(pieceTitleEdit.workId);
+    if (!w) {
+      setPieceTitleEdit(null);
+      return;
+    }
+    const trimmed = pieceTitleDraft.trim().slice(0, 120);
+    if (containsProfanity(trimmed)) {
+      toast.error(t('profile.worksManagePieceTitleProfanity'));
+      return;
+    }
+    const snap = pieceTitlesEditableSnapshot(w);
+    const next = [...snap];
+    const { imgIndex } = pieceTitleEdit;
+    if (imgIndex < 0 || imgIndex >= next.length) {
+      setPieceTitleEdit(null);
+      return;
+    }
+    next[imgIndex] = trimmed;
+    const updates: Partial<Work> = { imagePieceTitles: next };
+    if (next.length === 1 || imgIndex === 0) {
+      updates.title = next[0] ?? '';
+    }
+    workStore.updateWork(pieceTitleEdit.workId, updates);
+    toast.success(t('profile.worksManagePieceTitleToast'));
+    setPieceTitleEdit(null);
+  };
+
   // 작품 관리 뷰어 키보드 네비게이션
   useEffect(() => {
     if (worksViewerIndex === null) return;
@@ -256,6 +322,24 @@ export default function Profile() {
     () => storeWorks.some((w) => w.artistId === profileArtist.id && w.isInstructorUpload === true),
     [storeWorks, profileArtist.id],
   );
+
+  const allowedProfileTabs = useMemo((): ProfileTabValue[] => {
+    const tabs: ProfileTabValue[] = ['exhibition'];
+    if (isOwnProfile) tabs.push('works', 'likes', 'saved', 'drafts');
+    if (instructorVisible) tabs.push('student-works');
+    return tabs;
+  }, [isOwnProfile, instructorVisible]);
+
+  useEffect(() => {
+    const q = searchParams.get('tab');
+    if (q && allowedProfileTabs.includes(q as ProfileTabValue)) {
+      setProfileTab(q as ProfileTabValue);
+    }
+  }, [searchParams, allowedProfileTabs]);
+
+  useEffect(() => {
+    setProfileTab((prev) => (allowedProfileTabs.includes(prev) ? prev : 'exhibition'));
+  }, [allowedProfileTabs]);
 
   const studentWorksList = useMemo(() => {
     if (!instructorVisible) return [];
@@ -652,7 +736,7 @@ export default function Profile() {
 
             {/* 오른쪽: 탭 컨텐츠 */}
             <div className="flex-1 py-4 sm:py-8">
-              <Tabs defaultValue="exhibition" className="w-full">
+              <Tabs value={profileTab} onValueChange={(v) => setProfileTab(v as ProfileTabValue)} className="w-full">
                 <TabsList className="h-auto p-0 bg-transparent border-b border-border/40 rounded-none w-full justify-start gap-0 overflow-x-auto scrollbar-hide">
                   <TabsTrigger
                     value="exhibition"
@@ -756,7 +840,7 @@ export default function Profile() {
                                   <DropdownMenuTrigger asChild>
                                     <Button
                                       type="button"
-                                      className="flex items-center justify-center h-7 w-7 rounded-full bg-black/60 text-white"
+                                      className="flex h-7 w-7 items-center justify-center rounded-full bg-black/60 p-0 text-white shadow-none hover:bg-black/75 hover:text-white"
                                       aria-label={t('profile.workMenuA11y')}
                                     >
                                       <MoreHorizontal className="h-4 w-4" strokeWidth={2.5} />
@@ -829,12 +913,20 @@ export default function Profile() {
                                   </div>
                                 )}
                                 {isOwnProfile && work.feedReviewStatus === 'pending' && (
-                                  <span className="inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium bg-muted/95 text-foreground border border-border backdrop-blur-sm w-fit">
+                                  <span
+                                    className="inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium bg-muted/95 text-foreground border border-border backdrop-blur-sm w-fit"
+                                    title={t('review.badgePendingHint')}
+                                    aria-label={`${t('review.badgePending')} · ${t('review.badgePendingHint')}`}
+                                  >
                                     {t('review.badgePending')}
                                   </span>
                                 )}
                                 {isOwnProfile && work.feedReviewStatus === 'rejected' && (
-                                  <span className="inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium bg-red-500/95 text-white backdrop-blur-sm w-fit">
+                                  <span
+                                    className="inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium bg-red-500/95 text-white backdrop-blur-sm w-fit"
+                                    title={t('review.badgeRejectedHint')}
+                                    aria-label={`${t('review.badgeRejected')} · ${t('review.badgeRejectedHint')}`}
+                                  >
                                     {t('review.badgeRejected')}
                                   </span>
                                 )}
@@ -890,11 +982,18 @@ export default function Profile() {
                       {studentWorksList.map((work) => {
                         const credit = firstStudentLabel(work, profileArtist.id);
                         return (
-                          <button
+                          <div
                             key={work.id}
-                            type="button"
+                            role="button"
+                            tabIndex={0}
                             onClick={() => setDetailWorkId(work.id)}
-                            className="group text-left rounded-xl border border-border/40 overflow-hidden bg-white lg:hover:border-border transition-colors flex flex-col"
+                            onKeyDown={(e) => {
+                              if (e.key === 'Enter' || e.key === ' ') {
+                                e.preventDefault();
+                                setDetailWorkId(work.id);
+                              }
+                            }}
+                            className="group cursor-pointer text-left rounded-xl border border-border/40 overflow-hidden bg-white lg:hover:border-border transition-colors flex flex-col relative"
                           >
                             <div className="relative aspect-square bg-white w-full">
                               <ImageWithFallback
@@ -902,6 +1001,86 @@ export default function Profile() {
                                 alt={displayProminentHeadline(work, t('work.untitled'))}
                                 className="w-full h-full object-contain object-center"
                               />
+
+                              {isOwnProfile && (
+                                <div className="absolute right-2 top-2 z-20" onClick={(e) => e.stopPropagation()}>
+                                  <DropdownMenu>
+                                    <DropdownMenuTrigger asChild>
+                                      <Button
+                                        type="button"
+                                        className="flex h-7 w-7 items-center justify-center rounded-full bg-black/60 p-0 text-white shadow-none hover:bg-black/75 hover:text-white"
+                                        aria-label={t('profile.workMenuA11y')}
+                                      >
+                                        <MoreHorizontal className="h-4 w-4" strokeWidth={2.5} />
+                                      </Button>
+                                    </DropdownMenuTrigger>
+                                    <DropdownMenuContent align="end" sideOffset={4}>
+                                      <DropdownMenuItem
+                                        className="text-[13px]"
+                                        onSelect={(e) => e.preventDefault()}
+                                        onClick={() => navigate(`/upload?edit=${work.id}`)}
+                                      >
+                                        <Tag className="h-4 w-4 mr-2" />
+                                        {t('profile.editWork')}
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem
+                                        className="text-[13px]"
+                                        onSelect={(e) => e.preventDefault()}
+                                        onClick={() => {
+                                          workStore.updateWork(work.id, { isHidden: !work.isHidden });
+                                          toast(
+                                            work.isHidden
+                                              ? t('profile.toastWorkPublic')
+                                              : t('profile.toastWorkPrivate'),
+                                          );
+                                        }}
+                                      >
+                                        {work.isHidden ? (
+                                          <><Eye className="h-4 w-4 mr-2" />{t('profile.menuMakePublic')}</>
+                                        ) : (
+                                          <><EyeOff className="h-4 w-4 mr-2" />{t('profile.menuSetPrivateShort')}</>
+                                        )}
+                                      </DropdownMenuItem>
+                                      <DropdownMenuItem
+                                        className="text-destructive focus:text-destructive text-[13px]"
+                                        onSelect={(e) => e.preventDefault()}
+                                        onClick={async () => {
+                                          const ok = await openConfirm({
+                                            title: t('profile.deleteWorkConfirm').replace(
+                                              '{title}',
+                                              displayProminentHeadline(work, t('work.untitled')),
+                                            ),
+                                            destructive: true,
+                                            confirmLabel: t('profile.delete'),
+                                          });
+                                          if (ok) workStore.removeWork(work.id);
+                                        }}
+                                      >
+                                        <Trash2 className="h-4 w-4 mr-2" />
+                                        {t('profile.delete')}
+                                      </DropdownMenuItem>
+                                    </DropdownMenuContent>
+                                  </DropdownMenu>
+                                </div>
+                              )}
+
+                              {getImageCount(work.image) > 1 && (
+                                <div className="absolute left-2 top-2 z-10">
+                                  <div className="flex items-center gap-1 rounded-full bg-black/70 px-2 py-1 text-[11px] font-medium text-white backdrop-blur-sm">
+                                    <ImageIcon className="h-3 w-3" />
+                                    {getImageCount(work.image)}
+                                  </div>
+                                </div>
+                              )}
+
+                              {work.isHidden && (
+                                <div className="absolute left-2 bottom-2 z-10">
+                                  <span className="flex items-center gap-1 rounded-full bg-orange-500/90 px-2 py-0.5 text-[11px] font-medium text-white">
+                                    <EyeOff className="h-3 w-3" />
+                                    {t('profile.workPrivateBadge')}
+                                  </span>
+                                </div>
+                              )}
                             </div>
                             <div className="p-3 sm:p-4 w-full">
                               <p className="text-sm font-semibold text-foreground line-clamp-2">{displayProminentHeadline(work, t('work.untitled'))}</p>
@@ -917,7 +1096,7 @@ export default function Profile() {
                                 </p>
                               )}
                             </div>
-                          </button>
+                          </div>
                         );
                       })}
                     </div>
@@ -928,18 +1107,54 @@ export default function Profile() {
                 <TabsContent value="works" className="mt-6">
                   {worksManageFlatImages.length > 0 ? (
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-[1.625rem] sm:gap-[2.275rem] lg:gap-[2.6rem]">
-                      {worksManageFlatImages.map((fi, flatIdx) => (
+                      {worksManageFlatImages.map((fi, flatIdx) => {
+                        const canEditPieceTitle = storeWorkIdSet.has(fi.work.id);
+                        return (
                         <div
                           key={`${fi.work.id}-img-${fi.imgIndex}`}
-                          className="group cursor-pointer relative"
-                          onClick={() => setWorksViewerIndex(flatIdx)}
+                          className="group relative"
                         >
-                          <div className="relative aspect-square rounded-sm overflow-hidden bg-white">
+                          <div
+                            className="relative aspect-square rounded-sm overflow-hidden bg-white cursor-pointer"
+                            onClick={(e) => {
+                              if ((e.target as HTMLElement).closest('[data-works-manage-menu]')) return;
+                              setWorksViewerIndex(flatIdx);
+                            }}
+                          >
                             <ImageWithFallback
                               src={fi.imgSrc}
                               alt={fi.pieceTitle}
                               className="w-full h-full object-contain object-center"
                             />
+                            {canEditPieceTitle && (
+                              <div
+                                className="absolute right-2 top-2 z-20"
+                                data-works-manage-menu
+                                onClick={(e) => e.stopPropagation()}
+                              >
+                                <DropdownMenu>
+                                  <DropdownMenuTrigger asChild>
+                                    <Button
+                                      type="button"
+                                      className="flex h-7 w-7 items-center justify-center rounded-full bg-black/60 p-0 text-white shadow-none hover:bg-black/75 hover:text-white"
+                                      aria-label={t('profile.worksManageMenuAria')}
+                                    >
+                                      <MoreHorizontal className="h-4 w-4" strokeWidth={2.5} />
+                                    </Button>
+                                  </DropdownMenuTrigger>
+                                  <DropdownMenuContent align="end" sideOffset={4}>
+                                    <DropdownMenuItem
+                                      className="text-[13px]"
+                                      onSelect={() =>
+                                        setPieceTitleEdit({ workId: fi.work.id, imgIndex: fi.imgIndex })
+                                      }
+                                    >
+                                      {t('profile.worksManageRenamePiece')}
+                                    </DropdownMenuItem>
+                                  </DropdownMenuContent>
+                                </DropdownMenu>
+                              </div>
+                            )}
                             {fi.work.isHidden && (
                               <div className="absolute left-2 bottom-2 z-10">
                                 <span className="flex items-center gap-1 rounded-full bg-orange-500/90 px-2 py-0.5 text-[11px] text-white">
@@ -949,11 +1164,16 @@ export default function Profile() {
                               </div>
                             )}
                           </div>
-                          <div className="pt-2">
+                          <button
+                            type="button"
+                            className="w-full text-left pt-2 cursor-pointer"
+                            onClick={() => setWorksViewerIndex(flatIdx)}
+                          >
                             <p className="text-sm font-medium text-foreground truncate">{fi.pieceTitle}</p>
-                          </div>
+                          </button>
                         </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   ) : (
                     <div className="py-16 text-center">
@@ -1321,6 +1541,43 @@ export default function Profile() {
           </div>
         );
       })()}
+
+      <Dialog
+        open={pieceTitleEdit !== null}
+        onOpenChange={(open) => {
+          if (!open) setPieceTitleEdit(null);
+        }}
+      >
+        <DialogContent className="sm:max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t('profile.worksManagePieceTitleDialogTitle')}</DialogTitle>
+            <DialogDescription>{t('profile.worksManagePieceTitleDialogDesc')}</DialogDescription>
+          </DialogHeader>
+          <div className="space-y-2 py-1">
+            <label htmlFor="profile-piece-title-input" className="text-sm font-medium text-foreground">
+              {t('upload.pieceTitleLabel')}{' '}
+              <span className="font-normal text-muted-foreground">{t('upload.labelOptional')}</span>
+            </label>
+            <Input
+              id="profile-piece-title-input"
+              value={pieceTitleDraft}
+              onChange={(e) => setPieceTitleDraft(e.target.value.slice(0, 120))}
+              maxLength={120}
+              placeholder={t('work.untitled')}
+              className="min-h-[44px] text-[15px]"
+              autoComplete="off"
+            />
+          </div>
+          <DialogFooter className="flex-col-reverse gap-2 sm:flex-row sm:justify-end">
+            <Button type="button" variant="outline" className="min-h-[44px] w-full sm:w-auto" onClick={() => setPieceTitleEdit(null)}>
+              {t('profile.worksManagePieceTitleCancel')}
+            </Button>
+            <Button type="button" className="min-h-[44px] w-full sm:w-auto" onClick={savePieceTitleFromModal}>
+              {t('profile.worksManagePieceTitleSave')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {rejectedModalWork && (
         <div

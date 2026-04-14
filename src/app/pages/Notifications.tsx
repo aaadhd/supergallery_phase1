@@ -280,7 +280,17 @@ export default function Notifications() {
                 readFilter === 'unread' ? 'bg-foreground text-white' : 'bg-muted text-muted-foreground lg:hover:bg-muted'
               }`}
             >
-              {t('notifications.filterUnread')} {unreadCount > 0 && `(${unreadCount})`}
+              <span className="inline-flex items-center gap-1.5">
+                {t('notifications.filterUnread')}
+                {unreadCount > 0 && (
+                  <span
+                    aria-label={`${unreadCount}개 미확인`}
+                    className="inline-flex min-w-[20px] h-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[11px] font-semibold text-white"
+                  >
+                    {unreadCount > 99 ? '99+' : unreadCount}
+                  </span>
+                )}
+              </span>
             </Button>
           </div>
 

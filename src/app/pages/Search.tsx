@@ -373,7 +373,34 @@ export default function Search() {
               <div className="text-center py-12 sm:py-20">
                 <SearchIcon className="h-12 w-12 text-muted-foreground/20 mx-auto mb-3" />
                 <h3 className="text-sm sm:text-base font-semibold text-foreground mb-2">{t('search.noResults').replace('{query}', searchTerm)}</h3>
-                <p className="text-[13px] sm:text-sm text-muted-foreground">{t('search.noResultsHint')}</p>
+                <p className="text-[13px] sm:text-sm text-muted-foreground mb-6">{t('search.noResultsHint')}</p>
+
+                {recentSearches.length > 0 && (
+                  <div className="mb-6">
+                    <p className="text-xs text-muted-foreground mb-2">{t('search.tryRecent')}</p>
+                    <div className="flex flex-wrap items-center justify-center gap-2">
+                      {recentSearches.slice(0, 5).map((term) => (
+                        <button
+                          key={term}
+                          type="button"
+                          onClick={() => { setQuery(term); setSearchParams({ q: term }); }}
+                          className="min-h-[36px] rounded-full border border-border px-3 text-[13px] text-foreground lg:hover:bg-muted/50"
+                        >
+                          {term}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                )}
+
+                <Button
+                  type="button"
+                  variant="outline"
+                  onClick={() => navigate('/browse')}
+                  className="min-h-[44px]"
+                >
+                  {t('search.goBrowse')}
+                </Button>
               </div>
             )}
           </div>

@@ -388,9 +388,9 @@ export default function Browse() {
               variant="ghost"
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`relative shrink-0 h-auto rounded-none px-0 pb-2.5 pt-1.5 text-xs sm:text-[13px] font-medium transition-colors shadow-none hover:bg-transparent ${
+              className={`relative shrink-0 h-auto rounded-md px-1.5 pb-2.5 pt-1.5 text-xs sm:text-[13px] font-medium transition-colors shadow-none hover:bg-transparent focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none ${
                 activeCategory === cat.id
-                  ? 'text-foreground after:absolute after:left-0 after:right-0 after:bottom-0 after:h-0.5 after:bg-primary'
+                  ? 'text-foreground after:absolute after:left-1.5 after:right-1.5 after:bottom-0 after:h-0.5 after:bg-primary'
                   : 'text-muted-foreground hover:text-foreground'
               }`}
             >
@@ -416,9 +416,27 @@ export default function Browse() {
           </header>
         )}
         {filteredWorks.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 text-center rounded-2xl border border-dashed border-border bg-muted/20">
-            <p className="text-sm text-muted-foreground mb-2">{t('browse.emptyTitle')}</p>
-            <p className="text-[13px] text-muted-foreground/80">{t('browse.emptyHint')}</p>
+          <div className="flex flex-col items-center justify-center py-20 sm:py-24 text-center rounded-2xl border border-dashed border-border bg-muted/20 px-6">
+            <p className="text-sm text-foreground font-medium mb-2">{t('browse.emptyTitle')}</p>
+            <p className="text-[13px] text-muted-foreground mb-6">{t('browse.emptyHint')}</p>
+            <div className="flex flex-wrap items-center justify-center gap-2">
+              <Button
+                type="button"
+                variant="default"
+                onClick={() => navigate('/upload')}
+                className="min-h-[44px]"
+              >
+                {t('browse.emptyCtaUpload')}
+              </Button>
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setActiveCategory('all')}
+                className="min-h-[44px]"
+              >
+                {t('browse.emptyCtaAll')}
+              </Button>
+            </div>
           </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[1.625rem] sm:gap-[2.275rem] lg:gap-[2.6rem]">
@@ -522,7 +540,7 @@ export default function Browse() {
               setSelectedWork(newWorkId);
               window.history.replaceState({ workId: newWorkId }, '', `/exhibitions/${newWorkId}`);
             }}
-            allWorks={filteredWorks}
+            allWorks={allWorks}
             onWorkReported={() => setHideRevision((n) => n + 1)}
           />
         )}

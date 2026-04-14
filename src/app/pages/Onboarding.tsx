@@ -222,7 +222,7 @@ export default function Onboarding() {
                     type="tel"
                     value={phone}
                     onChange={e => setPhone(e.target.value)}
-                    placeholder="010-0000-0000"
+                    placeholder={t('onboarding.phonePlaceholder')}
                     className="w-full rounded-xl border border-border px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
                   />
                   <p className="mt-1 text-xs text-muted-foreground">{t('onboarding.phoneHint')}</p>

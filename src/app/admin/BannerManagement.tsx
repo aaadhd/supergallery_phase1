@@ -159,7 +159,7 @@ export default function BannerManagement() {
           type="button"
           disabled={atLimit}
           onClick={() => setShowForm((v) => !v)}
-          className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90 inline-flex items-center gap-1.5 disabled:opacity-40 disabled:pointer-events-none"
+          className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90 inline-flex items-center gap-1.5 disabled:opacity-50 disabled:pointer-events-none"
         >
           <Plus className="w-4 h-4" />
           새 배너
@@ -346,7 +346,7 @@ function SortableBannerRow({ banner: b, index: idx, onToggleActive, onRemove }: 
           type="button"
           onClick={() => onToggleActive(b.id, !b.isActive)}
           disabled={expired}
-          className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-white disabled:opacity-40 disabled:pointer-events-none"
+          className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-white disabled:opacity-50 disabled:pointer-events-none"
         >
           {b.isActive ? '비활성으로' : '활성으로'}
         </Button>

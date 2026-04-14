@@ -1,8 +1,21 @@
 import type { Work } from '../data';
 
+const PIECE_TITLE_MAX_LEN = 120;
+
+/**
+ * 로컬 JSON·레거시 데이터에서 title / imagePieceTitles 셀에
+ * 숫자, 문자열 "undefined"/"null" 등이 들어온 경우를 표시용으로 정리합니다.
+ */
+export function normalizeStoredPieceTitle(raw: unknown): string {
+  if (raw === undefined || raw === null) return '';
+  const s = typeof raw === 'string' ? raw.trim() : String(raw).trim();
+  if (s === '' || s === 'undefined' || s === 'null') return '';
+  return s.slice(0, PIECE_TITLE_MAX_LEN);
+}
+
 /** 화면에 쓰는 작품명: 비어 있으면 무제(또는 i18n 문구) */
 export function displayPieceTitle(work: Pick<Work, 'title'>, untitledLabel: string): string {
-  const s = work.title?.trim();
+  const s = normalizeStoredPieceTitle((work as { title?: unknown }).title);
   return s ? s : untitledLabel;
 }
 
@@ -10,9 +23,28 @@ export function displayPieceTitle(work: Pick<Work, 'title'>, untitledLabel: stri
 export function displayPieceTitleAtIndex(work: Work, index: number, untitledLabel: string): string {
   const arr = work.imagePieceTitles;
   if (Array.isArray(arr) && index >= 0 && index < arr.length) {
-    return displayPieceTitle({ title: arr[index] ?? '' }, untitledLabel);
+    const cell = normalizeStoredPieceTitle(arr[index]);
+    return displayPieceTitle({ title: cell }, untitledLabel);
   }
   return displayPieceTitle(work, untitledLabel);
+}
+
+/** 편집용: 이미지 장수와 동일한 길이의 장별 제목 스냅샷(비어 있으면 빈 문자열). */
+export function pieceTitlesEditableSnapshot(work: Work): string[] {
+  const imgs = Array.isArray(work.image) ? work.image : [work.image];
+  const n = imgs.length;
+  const prev = work.imagePieceTitles ?? [];
+  return Array.from({ length: n }, (_, i) => {
+    if (i < prev.length) {
+      const c = normalizeStoredPieceTitle(prev[i]);
+      if (c) return c;
+    }
+    if (i === 0) {
+      const t0 = normalizeStoredPieceTitle(work.title);
+      if (t0) return t0;
+    }
+    return '';
+  });
 }
 
 /**
@@ -44,7 +76,7 @@ export function displayGroupOrgName(work: Work): string | undefined {
  * (작품명 미입력이라도 전시명으로 식별)
  */
 export function displayProminentHeadline(work: Work, untitledLabel: string): string {
-  const piece = work.title?.trim();
+  const piece = normalizeStoredPieceTitle(work.title);
   if (piece) return piece;
   return displayExhibitionTitle(work, untitledLabel);
 }

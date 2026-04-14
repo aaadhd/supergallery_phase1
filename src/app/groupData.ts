@@ -630,6 +630,72 @@ const _rawGroupWorks = [
       { type: 'member' as const, memberId: '7' },
     ],
   },
+
+  // ── 강사 업로드 작품 (isInstructorUpload) ──
+  {
+    id: 'gw-inst-1',
+    title: '봄날의 수채화 수업',
+    exhibitionName: '봄의 정원 — 윤서연 수채화 클래스 전시',
+    primaryExhibitionType: 'group' as const,
+    image: gwImgs(5),
+    owner: { type: 'group' as const, data: groups[3] },
+    artistId: groups[3].id,
+    artist: { id: groups[3].id, name: groups[3].name, avatar: groups[3].avatar, bio: groups[3].bio, followers: groups[3].followers },
+    likes: 1340, saves: 489, comments: 63,
+    isInstructorUpload: true,
+    _instructorId: 'local-botanical',
+    feedReviewStatus: 'approved' as const,
+    _forceImageArtists: [
+      { type: 'member' as const, memberId: 'local-rilin' },
+      { type: 'member' as const, memberId: 'local-cozy-illus' },
+      { type: 'member' as const, memberId: 'local-daily-diary' },
+      { type: 'member' as const, memberId: '1' },
+      { type: 'member' as const, memberId: 'local-warm-palette' },
+    ],
+  },
+  {
+    id: 'gw-inst-2',
+    title: '캐릭터 일러스트 워크숍',
+    exhibitionName: '나만의 캐릭터 — 조성호 일러스트 아카데미',
+    primaryExhibitionType: 'group' as const,
+    image: gwImgs(4),
+    owner: { type: 'group' as const, data: groups[6] },
+    artistId: groups[6].id,
+    artist: { id: groups[6].id, name: groups[6].name, avatar: groups[6].avatar, bio: groups[6].bio, followers: groups[6].followers },
+    likes: 2105, saves: 876, comments: 98,
+    isInstructorUpload: true,
+    _instructorId: 'local-character',
+    feedReviewStatus: 'approved' as const,
+    _forceImageArtists: [
+      { type: 'member' as const, memberId: 'local-pop' },
+      { type: 'member' as const, memberId: 'local-sketch' },
+      { type: 'member' as const, memberId: 'local-sunnysun' },
+      { type: 'member' as const, memberId: 'local-haeb' },
+    ],
+  },
+  {
+    id: 'gw-inst-3',
+    title: '야경 디지털 페인팅 실습',
+    exhibitionName: '밤의 도시 — 서정우 디지털 아카데미 성과전',
+    primaryExhibitionType: 'group' as const,
+    image: gwImgs(6),
+    owner: { type: 'group' as const, data: groups[1] },
+    artistId: groups[1].id,
+    artist: { id: groups[1].id, name: groups[1].name, avatar: groups[1].avatar, bio: groups[1].bio, followers: groups[1].followers },
+    likes: 1789, saves: 623, comments: 81,
+    isInstructorUpload: true,
+    editorsPick: true,
+    _instructorId: 'local-night-scene',
+    feedReviewStatus: 'approved' as const,
+    _forceImageArtists: [
+      { type: 'member' as const, memberId: 'local-abstract' },
+      { type: 'member' as const, memberId: '1' },
+      { type: 'member' as const, memberId: 'local-fantasy' },
+      { type: 'member' as const, memberId: 'local-minimal-graphic' },
+      { type: 'member' as const, memberId: 'local-webtoon-clean' },
+      { type: 'member' as const, memberId: 'local-botanical' },
+    ],
+  },
 ];
 
 const _NON_MEMBER_GUESTS = [
@@ -701,10 +767,14 @@ export function hydrateGroupWorks(allArtists: Artist[]) {
     const leadArtist = firstMember?.type === 'member' && firstMember.memberId
       ? allArtists.find(a => a.id === firstMember.memberId) : undefined;
 
+    const isInstructorWork = (gw as any).isInstructorUpload === true;
+    const instructorArtistId = isInstructorWork ? (gw as any)._instructorId as string | undefined : undefined;
+    const resolvedInstructorArtist = instructorArtistId ? allArtists.find(a => a.id === instructorArtistId) : undefined;
+
     return {
       ...gw,
-      artistId: leadArtist?.id ?? gw.artistId,
-      artist: leadArtist ?? gw.artist,
+      artistId: isInstructorWork && resolvedInstructorArtist ? resolvedInstructorArtist.id : (leadArtist?.id ?? gw.artistId),
+      artist: isInstructorWork && resolvedInstructorArtist ? resolvedInstructorArtist : (leadArtist ?? gw.artist),
       imageArtists,
       imagePieceTitles,
       groupName: group.name,

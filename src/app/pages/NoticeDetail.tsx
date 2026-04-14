@@ -81,26 +81,28 @@ export default function NoticeDetail() {
           className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-2 border-t border-border/40"
           aria-label={t('noticeDetail.navA11y')}
         >
-          <div className="flex flex-col sm:flex-row gap-3 text-sm">
+          <div className="flex flex-col sm:flex-row gap-3 text-sm min-w-0 flex-1">
             {prev ? (
               <Link
                 to={`/notices/${prev.id}`}
-                className="text-primary lg:hover:underline truncate max-w-full"
+                className="text-primary lg:hover:underline truncate min-w-0 sm:flex-1"
+                title={getNoticeTitle(prev, locale)}
               >
                 {t('noticeDetail.prev').replace('{title}', getNoticeTitle(prev, locale))}
               </Link>
             ) : (
-              <span className="text-muted-foreground">{t('noticeDetail.prevNone')}</span>
+              <span className="text-muted-foreground sm:flex-1">{t('noticeDetail.prevNone')}</span>
             )}
             {next ? (
               <Link
                 to={`/notices/${next.id}`}
-                className="text-primary lg:hover:underline truncate max-w-full sm:text-right sm:ml-auto"
+                className="text-primary lg:hover:underline truncate min-w-0 sm:flex-1 sm:text-right"
+                title={getNoticeTitle(next, locale)}
               >
                 {t('noticeDetail.next').replace('{title}', getNoticeTitle(next, locale))}
               </Link>
             ) : (
-              <span className="text-muted-foreground sm:text-right sm:ml-auto">{t('noticeDetail.nextNone')}</span>
+              <span className="text-muted-foreground sm:flex-1 sm:text-right">{t('noticeDetail.nextNone')}</span>
             )}
           </div>
           <Link

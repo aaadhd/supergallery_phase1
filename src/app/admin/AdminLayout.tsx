@@ -94,7 +94,7 @@ export default function AdminLayout() {
         <div className="max-w-[1200px] mx-auto p-6">
           <Outlet />
         </div>
-        <Toaster position="top-center" richColors />
+        <Toaster position="top-center" richColors toastOptions={{ duration: 5000 }} />
       </main>
     </div>
   );

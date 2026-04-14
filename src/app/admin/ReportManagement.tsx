@@ -202,7 +202,7 @@ export default function ReportManagement() {
                         type="button"
                         disabled={r.status === '처리완료'}
                         onClick={() => markDone(r.id)}
-                        className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90 disabled:opacity-40 disabled:pointer-events-none"
+                        className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90 disabled:opacity-50 disabled:pointer-events-none"
                       >
                         <CheckCircle2 className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
                         확인 완료

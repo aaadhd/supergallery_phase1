@@ -14,6 +14,7 @@ import { openConfirm } from '../components/ConfirmDialog';
 import { PasswordInput } from '../components/ui/password-input';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
+import { getFontScale, setFontScale, type FontScale } from '../utils/fontScale';
 
 const STORAGE_KEY = 'artier_notification_settings';
 
@@ -111,6 +112,7 @@ export default function Settings() {
   const auth = useAuthStore();
   const { t } = useI18n();
   const [notifications, setNotifications] = useState<NotificationSettingsState>(loadNotificationSettings);
+  const [fontScale, setFontScaleState] = useState<FontScale>(() => getFontScale());
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [withdrawPassword, setWithdrawPassword] = useState('');
   const [withdrawReason, setWithdrawReason] = useState<WithdrawReasonId | ''>('');
@@ -138,6 +140,11 @@ export default function Settings() {
   const handleToggle = (key: keyof NotificationSettingsState, value: boolean) => {
     const next = { ...notifications, [key]: value };
     persistNotifications(next);
+  };
+
+  const handleFontScale = (next: FontScale) => {
+    setFontScaleState(next);
+    setFontScale(next);
   };
 
   const handleLogout = async () => {
@@ -174,7 +181,7 @@ export default function Settings() {
 
   return (
     <div className="min-h-screen bg-white pb-20 md:pb-0">
-      <Toaster position="top-center" richColors />
+      <Toaster position="top-center" richColors toastOptions={{ duration: 5000 }} />
       <div className="mx-auto max-w-lg px-5 sm:px-6 py-10 sm:py-12">
         <h1 className="text-2xl font-semibold text-foreground tracking-tight mb-10">{t('settings.title')}</h1>
 
@@ -185,6 +192,37 @@ export default function Settings() {
           <div className="rounded-lg border border-border/40 overflow-hidden bg-white px-4 py-4">
             <p className="text-xs text-muted-foreground mb-1">{t('settings.emailLabel')}</p>
             <p className="text-[15px] text-foreground">{demoEmail}</p>
+          </div>
+        </section>
+
+
+        <section className="mb-10" id="font-scale">
+          <h2 className="text-[13px] font-medium uppercase tracking-wide text-muted-foreground mb-3">
+            {t('settings.sectionFontScale')}
+          </h2>
+          <p className="text-xs text-muted-foreground mb-3">{t('settings.fontScaleIntro')}</p>
+          <div className="rounded-lg border border-border/40 bg-white p-2 grid grid-cols-3 gap-2" role="radiogroup" aria-label={t('settings.sectionFontScale')}>
+            {(['small', 'medium', 'large'] as const).map((opt) => {
+              const active = fontScale === opt;
+              const labelKey = `settings.fontScale_${opt}` as MessageKey;
+              const sizeClass = opt === 'small' ? 'text-sm' : opt === 'medium' ? 'text-base' : 'text-lg';
+              return (
+                <button
+                  key={opt}
+                  type="button"
+                  role="radio"
+                  aria-checked={active}
+                  onClick={() => handleFontScale(opt)}
+                  className={`min-h-[48px] rounded-md border px-3 py-2 ${sizeClass} transition-colors ${
+                    active
+                      ? 'border-primary bg-primary/10 text-foreground font-medium'
+                      : 'border-border/60 text-muted-foreground hover:bg-muted/50'
+                  }`}
+                >
+                  {t(labelKey)}
+                </button>
+              );
+            })}
           </div>
         </section>
 
@@ -303,7 +341,7 @@ export default function Settings() {
                 {WITHDRAW_REASON_IDS.map((id) => (
                   <label
                     key={id}
-                    className={`flex items-start gap-3 p-3 rounded-lg border cursor-pointer text-sm ${
+                    className={`flex min-h-[44px] items-center gap-3 p-3 rounded-lg border cursor-pointer text-sm transition-colors ${
                       withdrawReason === id ? 'border-primary bg-muted/50' : 'border-border lg:hover:bg-muted/40'
                     }`}
                   >
@@ -313,7 +351,7 @@ export default function Settings() {
                       value={id}
                       checked={withdrawReason === id}
                       onChange={() => setWithdrawReason(id)}
-                      className="mt-0.5 h-4 w-4 text-primary accent-primary"
+                      className="h-5 w-5 shrink-0 text-primary accent-primary"
                     />
                     <span className="text-foreground">{t(WITHDRAW_REASON_KEYS[id])}</span>
                   </label>
@@ -329,7 +367,7 @@ export default function Settings() {
                 autoComplete="current-password"
                 value={withdrawPassword}
                 onChange={(e) => setWithdrawPassword(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-lg border border-input bg-white text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                className="w-full min-h-[44px] px-3 py-2.5 rounded-lg border border-input bg-white text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 placeholder={t('settings.withdrawPwPh')}
               />
             </div>
@@ -341,7 +379,7 @@ export default function Settings() {
                   setWithdrawPassword('');
                   setWithdrawReason('');
                 }}
-                className="px-4 py-2.5 text-sm font-medium rounded-lg border border-border lg:hover:bg-muted/50"
+                className="min-h-[44px] px-4 py-2.5 text-sm font-medium rounded-lg border border-border lg:hover:bg-muted/50"
               >
                 {t('loginPrompt.cancel')}
               </Button>
@@ -349,7 +387,7 @@ export default function Settings() {
                 type="button"
                 disabled={withdrawBusy}
                 onClick={confirmWithdraw}
-                className="px-4 py-2.5 text-sm font-medium rounded-lg bg-destructive text-white lg:hover:opacity-90 disabled:opacity-50"
+                className="min-h-[44px] px-4 py-2.5 text-sm font-medium rounded-lg bg-destructive text-white lg:hover:opacity-90 disabled:opacity-50"
               >
                 {withdrawBusy ? t('settings.withdrawBusy') : t('settings.withdrawSubmit')}
               </Button>

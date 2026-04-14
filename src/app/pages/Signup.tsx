@@ -210,10 +210,18 @@ export default function Signup() {
 
         <div className="mb-8">
           <h1 className="text-xl sm:text-2xl font-bold text-foreground text-center">{t('signup.title')}</h1>
-          <div className="flex justify-center flex-wrap gap-2 mt-4 max-w-[200px] mx-auto">
-            <div className={`h-1.5 w-8 rounded-full ${step >= 1 ? 'bg-primary' : 'bg-muted'}`} />
-            <div className={`h-1.5 w-8 rounded-full ${step >= 2 ? 'bg-primary' : 'bg-muted'}`} />
-            <div className={`h-1.5 w-8 rounded-full ${step >= 3 ? 'bg-primary' : 'bg-muted'}`} />
+          <div
+            className="mx-auto mt-4 flex max-w-[240px] items-center justify-center gap-2"
+            role="progressbar"
+            aria-valuenow={step}
+            aria-valuemin={1}
+            aria-valuemax={3}
+            aria-label={`${t('signup.title')} · ${step}/3`}
+          >
+            <div className={`h-2 w-10 rounded-full transition-colors ${step >= 1 ? 'bg-primary' : 'bg-muted'}`} />
+            <div className={`h-2 w-10 rounded-full transition-colors ${step >= 2 ? 'bg-primary' : 'bg-muted'}`} />
+            <div className={`h-2 w-10 rounded-full transition-colors ${step >= 3 ? 'bg-primary' : 'bg-muted'}`} />
+            <span className="ml-2 text-[13px] font-medium text-muted-foreground tabular-nums">{step}/3</span>
           </div>
         </div>
 
@@ -272,7 +280,7 @@ export default function Signup() {
                   if (step1Ok) setStep(2);
                 }}
                 disabled={!step1Ok}
-                className="w-full min-h-[44px] mt-4 rounded-lg bg-primary text-white text-[13px] sm:text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-40"
+                className="w-full min-h-[44px] mt-4 rounded-lg bg-primary text-white text-[13px] sm:text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50"
               >
                 {t('upload.nextStep')}
               </Button>
@@ -365,7 +373,7 @@ export default function Signup() {
                     if (step2Ok) setStep(3);
                   }}
                   disabled={!step2Ok}
-                  className="flex-1 min-h-[44px] rounded-lg bg-primary text-white text-[13px] sm:text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-40"
+                  className="flex-1 min-h-[44px] rounded-lg bg-primary text-white text-[13px] sm:text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50"
                 >
                   {t('upload.nextStep')}
                 </Button>
@@ -379,7 +387,7 @@ export default function Signup() {
                 <p className="text-[13px] sm:text-sm font-semibold text-foreground mb-3">
                   {t('signup.agreeSection')}
                 </p>
-                <div className="space-y-2.5 rounded-lg border border-border/40 p-4 bg-muted/50/50">
+                <div className="space-y-2.5 rounded-lg border border-border/40 p-4 bg-muted/50">
                   <div className="mb-1 flex items-start gap-3 border-b border-border/40 pb-2">
                     <Checkbox
                       id="signup-agree-all"
@@ -455,7 +463,7 @@ export default function Signup() {
                 <Button
                   type="submit"
                   disabled={!canSubmit}
-                  className="flex-1 min-h-[44px] rounded-lg bg-primary text-white text-[13px] sm:text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed"
+                  className="flex-1 min-h-[44px] rounded-lg bg-primary text-white text-[13px] sm:text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {t('signup.submit')}
                 </Button>

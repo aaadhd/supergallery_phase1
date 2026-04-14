@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, useSearchParams, useBlocker } from 'react-router-dom';
-import { Image as ImageIcon, Plus, X, Search, GripVertical, ArrowLeft, ChevronLeft, ChevronRight, Trash2, Replace, ArrowUpDown, Monitor, Users, CalendarCheck, Star, Check } from 'lucide-react';
+import { Image as ImageIcon, Plus, X, Search, GripVertical, ArrowLeft, ChevronLeft, ChevronRight, Trash2, Replace, ArrowUpDown, Monitor, Users, CalendarCheck, Star, Check, HelpCircle } from 'lucide-react';
 import { artists } from '../data';
 import { workStore, draftStore } from '../store';
 import type { Work } from '../data';
@@ -21,7 +21,9 @@ import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
 import { sendInviteToNonMember } from '../utils/inviteMessaging';
 import { openConfirm } from '../components/ConfirmDialog';
+import { RequiredMark } from '../components/RequiredMark';
 import { containsProfanity } from '../utils/profanityFilter';
+import { normalizeStoredPieceTitle } from '../utils/workDisplay';
 import { WorkDetailModal } from '../components/WorkDetailModal';
 
 /* ─── 상수 ─── */
@@ -556,6 +558,7 @@ export default function Upload() {
 
     setIsPublishing(true);
     const targetId = editingWorkId || newWork.id;
+    const wasEditingExistingWork = Boolean(editingWorkId);
     if (editingWorkId) {
       workStore.updateWork(editingWorkId, newWork);
     } else {
@@ -599,7 +602,7 @@ export default function Upload() {
     setTimeout(() => {
       setIsPublishing(false);
       publishedRef.current = true;
-      navigate(`/exhibitions/${targetId}`);
+      navigate(wasEditingExistingWork ? '/me?tab=exhibition' : `/exhibitions/${targetId}`);
     }, 600);
   };
 
@@ -786,7 +789,7 @@ export default function Upload() {
   if (reorderMode) {
     return (
       <div className="min-h-screen bg-white">
-        <Toaster position="top-center" richColors />
+        <Toaster position="top-center" richColors toastOptions={{ duration: 5000 }} />
         <div className="sticky top-0 z-20 flex items-center justify-between px-4 py-3 bg-white border-b border-border/40">
           <span className="text-sm font-semibold text-foreground">{t('upload.reorderMode')}</span>
           <Button onClick={() => { setReorderMode(false); toast.success(t('upload.toastOrderSaved')); }} className="px-5 py-2 bg-foreground text-white text-sm rounded-lg lg:hover:bg-black transition-colors">
@@ -814,7 +817,7 @@ export default function Upload() {
                 <div className="absolute top-2 right-2 bg-black/40 text-white p-1 rounded-md backdrop-blur-sm"><GripVertical className="h-4 w-4" /></div>
               </div>
               <span className="text-sm text-foreground truncate w-full text-center font-medium mt-1">
-                {c.title || tn('upload.imageFallback', { n: String(i + 1) })}
+                {normalizeStoredPieceTitle(c.title) || tn('upload.imageFallback', { n: String(i + 1) })}
               </span>
             </div>
           ))}
@@ -826,7 +829,7 @@ export default function Upload() {
   // ===== 메인 렌더 =====
   return (
     <div className="min-h-screen bg-white pb-20 md:pb-0">
-      <Toaster position="top-center" richColors />
+      <Toaster position="top-center" richColors toastOptions={{ duration: 5000 }} />
 
       {/* ── Step 0: 유형 선택 ── */}
       {uploadType === null ? (
@@ -978,7 +981,7 @@ export default function Upload() {
                       <label className="flex items-start gap-3 cursor-pointer group">
                         <input type="checkbox" checked={isOriginalWork} onChange={(e) => setIsOriginalWork(e.target.checked)} className="mt-1 flex-shrink-0 h-5 w-5 rounded border-primary/30 text-primary focus:ring-primary transition-all group-hover:border-primary/50 cursor-pointer" />
                         <span className="text-sm font-medium text-foreground leading-snug cursor-pointer select-none">
-                          {confirmLabel} <span className="text-primary">*</span>
+                          {confirmLabel}<RequiredMark />
                         </span>
                       </label>
                     </div>
@@ -1060,7 +1063,7 @@ export default function Upload() {
                     <div className="w-full mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-4">
                       <div className="relative">
                         <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 md:text-left text-center">
-                          {t('upload.exhibitionTitlePlaceholder')} <span className="text-red-500">*</span>
+                          {t('upload.exhibitionTitlePlaceholder')}<RequiredMark />
                         </label>
                         <input
                           type="text"
@@ -1128,6 +1131,20 @@ export default function Upload() {
 
                   {!contents.length ? (
                     <div className="w-full space-y-6">
+                      {guideSeen && (
+                        <div className="flex justify-end">
+                          <button
+                            type="button"
+                            onClick={() => { setGuideSeen(false); localStorage.removeItem('artier_upload_guide_seen'); }}
+                            aria-label={t('upload.guideReopenLabel')}
+                            title={t('upload.guideReopenLabel')}
+                            className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-border px-3 text-[13px] text-muted-foreground lg:hover:border-foreground/40 lg:hover:text-foreground transition-colors"
+                          >
+                            <HelpCircle className="h-4 w-4" aria-hidden />
+                            {t('upload.guideReopen')}
+                          </button>
+                        </div>
+                      )}
                       {/* 가이드 */}
                       {!guideSeen && (
                         <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 sm:p-5 animate-in fade-in slide-in-from-top-2 duration-400">
@@ -1222,7 +1239,7 @@ export default function Upload() {
                                 <div className="relative w-full max-w-[1000px] flex justify-center text-center shadow-[0_15px_50px_rgba(0,0,0,0.2)] bg-black/5">
                                   <ImageWithFallback 
                                     src={content.url} 
-                                    alt={content.title || tn('upload.imageFallback', { n: String(index + 1) })} 
+                                    alt={normalizeStoredPieceTitle(content.title) || tn('upload.imageFallback', { n: String(index + 1) })} 
                                     className="mx-auto block max-w-full w-auto h-auto object-contain max-h-[85vh]"
                                   />
                                 </div>
@@ -1392,7 +1409,7 @@ export default function Upload() {
                                               setContents(contents.map(c => c.id === selectedContentId ? { ...c, artist: { id: artist.id, name: artist.name, avatar: artist.avatar }, artistType: 'member' } : c));
                                               setArtistSearch('');
                                             }}
-                                            className="w-full text-left px-5 py-3 flex items-center gap-4 hover:bg-muted/50 transition-colors"
+                                            className="w-full min-h-[56px] text-left px-5 py-3 flex items-center gap-4 lg:hover:bg-primary/10 focus-visible:bg-primary/10 focus-visible:outline-none border-b border-border/30 last:border-b-0 transition-colors"
                                           >
                                             <img src={artist.avatar} alt="" className="h-10 w-10 rounded-full object-cover border border-border/50" />
                                             <div>
@@ -1408,7 +1425,7 @@ export default function Upload() {
                             ) : (
                               <div className="space-y-4 p-5 bg-amber-50/60 border border-amber-200/60 rounded-2xl mt-4">
                                 <div>
-                                  <label className="block text-[11px] font-bold text-amber-800 mb-1.5 px-1">{t('upload.nonMemberNameLabel2')} *</label>
+                                  <label className="block text-[11px] font-bold text-amber-800 mb-1.5 px-1">{t('upload.nonMemberNameLabel2')}<RequiredMark /></label>
                                   <input
                                     type="text" value={sc.nonMemberArtist?.displayName || ''}
                                     onChange={(e) => setContents(contents.map(c => c.id === selectedContentId ? { ...c, artistType: 'non-member', nonMemberArtist: { ...c.nonMemberArtist, displayName: e.target.value, phoneNumber: c.nonMemberArtist?.phoneNumber || '' } } : c))}

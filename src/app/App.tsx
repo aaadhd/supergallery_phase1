@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { RouterProvider } from 'react-router-dom';
 import { Toaster } from 'sonner';
 import { router } from './routes';
@@ -6,15 +7,20 @@ import { PointsBootstrap } from './components/PointsBootstrap';
 import { WorksStorageSync } from './components/WorksStorageSync';
 import { ConfirmDialogRoot } from './components/ConfirmDialog';
 import { OfflineBanner } from './components/OfflineBanner';
+import { applyFontScale } from './utils/fontScale';
 
 export default function App() {
+  useEffect(() => {
+    applyFontScale();
+  }, []);
+
   return (
     <I18nProvider>
       <PointsBootstrap />
       <WorksStorageSync />
       <OfflineBanner />
       <RouterProvider router={router} />
-      <Toaster position="top-center" richColors />
+      <Toaster position="top-center" richColors toastOptions={{ duration: 5000 }} />
       <ConfirmDialogRoot />
     </I18nProvider>
   );

@@ -493,8 +493,19 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
               <div className="max-w-[900px] w-full mx-auto px-5 sm:px-6">
               {(() => {
                 const groupMemberArtists: Artist[] = [];
+                const instructorIds = new Set<string>();
                 if (isGroupWork) {
                   const seen = new Set<string>();
+
+                  if (work.isInstructorUpload && work.artistId) {
+                    const instructor = allArtists.find(a => a.id === work.artistId);
+                    if (instructor) {
+                      seen.add(instructor.id);
+                      groupMemberArtists.push(instructor);
+                      instructorIds.add(instructor.id);
+                    }
+                  }
+
                   if (work.imageArtists?.length) {
                     work.imageArtists.forEach(ia => {
                       if (ia.type === 'member' && ia.memberId && !seen.has(ia.memberId)) {
@@ -529,7 +540,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                   </div>
                   <div className="space-y-4">
                     {groupMemberArtists.map((member) => (
-                      <ArtistRow key={member.id} artist={member} onArtistClick={handleArtistClick} />
+                      <ArtistRow key={member.id} artist={member} onArtistClick={handleArtistClick} isInstructor={instructorIds.has(member.id)} />
                     ))}
                   </div>
                 </div>
@@ -936,7 +947,7 @@ function CoOwnerSection({ work }: { work: Work }) {
 /* ------------------------------------------------------------------ */
 /*  Reusable artist row for group works                               */
 /* ------------------------------------------------------------------ */
-function ArtistRow({ artist, onArtistClick }: { artist: Artist; onArtistClick?: (id: string) => void }) {
+function ArtistRow({ artist, onArtistClick, isInstructor = false }: { artist: Artist; onArtistClick?: (id: string) => void; isInstructor?: boolean }) {
   const { t } = useI18n();
   const follows = useFollowStore();
   const isFollowing = follows.isFollowing(artist.id);
@@ -960,12 +971,19 @@ function ArtistRow({ artist, onArtistClick }: { artist: Artist; onArtistClick?: 
         </Avatar>
       </button>
       <div className="flex-1 min-w-0">
-        <h4
-          className="text-[15px] font-bold text-zinc-900 mb-0.5 truncate cursor-pointer lg:hover:text-primary transition-colors"
-          onClick={() => onArtistClick?.(artist.id)}
-        >
-          {artist.name}
-        </h4>
+        <div className="flex items-center gap-2 mb-0.5">
+          <h4
+            className="text-[15px] font-bold text-zinc-900 truncate cursor-pointer lg:hover:text-primary transition-colors"
+            onClick={() => onArtistClick?.(artist.id)}
+          >
+            {artist.name}
+          </h4>
+          {isInstructor && (
+            <span className="inline-flex items-center shrink-0 px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 text-[11px] font-bold border border-amber-500/20">
+              {t('profile.instructorBadge')}
+            </span>
+          )}
+        </div>
         {artist.bio && <p className="text-[13px] text-zinc-500 truncate">{artist.bio}</p>}
       </div>
       {!isMe && (

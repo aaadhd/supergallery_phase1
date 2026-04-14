@@ -183,7 +183,7 @@ export default function FlowDemoTools() {
                   toast.success(t('demo.toastAdminUnlocked'));
                 }}
                 disabled={adminBrowserUnlocked}
-                className="px-4 py-2.5 rounded-xl border border-border text-sm font-medium lg:hover:bg-muted/50 text-left disabled:opacity-40 disabled:pointer-events-none"
+                className="px-4 py-2.5 rounded-xl border border-border text-sm font-medium lg:hover:bg-muted/50 text-left disabled:opacity-50 disabled:pointer-events-none"
               >
                 {t('demo.btnAdminUnlock')}
               </Button>

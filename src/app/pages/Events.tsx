@@ -1,5 +1,5 @@
 import { useState, useMemo } from 'react';
-import { Calendar, ArrowRight, X, Bell } from 'lucide-react';
+import { Calendar, ArrowRight, X, Bell, Check } from 'lucide-react';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store';
@@ -240,7 +240,9 @@ export default function Events() {
 
             {notifySubmitted ? (
               <div className="text-center py-6">
-                <div className="text-4xl mb-4">&#10003;</div>
+                <div className="mx-auto mb-4 inline-flex h-12 w-12 items-center justify-center rounded-full bg-emerald-100 text-emerald-600">
+                  <Check className="h-6 w-6" aria-hidden />
+                </div>
                 <h3 className="text-lg font-bold text-foreground mb-2">{t('events.notifyDoneTitle')}</h3>
                 <p className="text-sm text-muted-foreground">{t('events.notifyDoneLead')}</p>
               </div>
