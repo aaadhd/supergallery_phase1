@@ -183,11 +183,10 @@ export default function Browse() {
     return () => window.removeEventListener('popstate', handlePopState);
   }, []);
 
-  const [feedEpoch, setFeedEpoch] = useState(0);
+  const [feedEpoch, setFeedEpoch] = useState(() => Date.now());
 
   const openWork = useCallback((workId: string) => {
     rememberSeenWork(workId);
-    setFeedEpoch((e) => e + 1);
     scrollPosRef.current = window.scrollY;
     // 모달 열기 직전 피드 스크롤 위치를 sessionStorage에도 저장 (페이지 이탈 대비)
     saveScrollTop('browse', 'browse-scroll-root');
@@ -399,10 +398,6 @@ export default function Browse() {
             </Button>
           ))}
 
-          <span className="ml-auto self-center pb-2 text-[10px] sm:text-[11px] text-muted-foreground tabular-nums">
-            {filteredWorks.length}
-            {t('browse.itemsCountSuffix')}
-          </span>
         </div>
       </div>
 
@@ -524,7 +519,6 @@ export default function Browse() {
             onClose={closeWork}
             onNavigate={(newWorkId) => {
               rememberSeenWork(newWorkId);
-              setFeedEpoch((e) => e + 1);
               setSelectedWork(newWorkId);
               window.history.replaceState({ workId: newWorkId }, '', `/exhibitions/${newWorkId}`);
             }}
