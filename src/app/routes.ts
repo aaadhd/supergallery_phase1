@@ -10,7 +10,6 @@ import Privacy from './pages/Privacy';
 import NotFound from './pages/NotFound';
 import Onboarding from './pages/Onboarding';
 import Login from './pages/Login';
-import InvitationLanding from './pages/InvitationLanding';
 import Signup from './pages/Signup';
 import PasswordReset from './pages/PasswordReset';
 import Search from './pages/Search';
@@ -30,6 +29,7 @@ import EventParticipants from './admin/EventParticipants';
 import ContentReview from './admin/ContentReview';
 import WorkManagement from './admin/WorkManagement';
 import PickManagement from './admin/PickManagement';
+import CurationManagement from './admin/CurationManagement';
 import BannerManagement from './admin/BannerManagement';
 import EventManagement from './admin/EventManagement';
 import ReportManagement from './admin/ReportManagement';
@@ -40,6 +40,7 @@ import Maintenance from './pages/Maintenance';
 import ExhibitionRoute from './pages/ExhibitionRoute';
 import FlowDemoTools from './pages/FlowDemoTools';
 import DemoReferenceToolkit from './pages/DemoReferenceToolkit';
+
 function redirectWorksToExhibitions({ params }: LoaderFunctionArgs) {
   const id = params.id;
   if (!id) return redirect('/');
@@ -83,7 +84,6 @@ export const router = createBrowserRouter([
   // 온보딩·초대·로그인 (Layout 밖 — Header/Footer 없음)
   { path: '/onboarding', Component: Onboarding },
   { path: '/login', Component: Login },
-  { path: '/invite/:code', Component: InvitationLanding },
   { path: '/maintenance', Component: Maintenance },
   { path: '/signup', Component: Signup },
   { path: '/reset-password', Component: PasswordReset },
@@ -100,6 +100,7 @@ export const router = createBrowserRouter([
       { path: 'content-review', Component: ContentReview },
       { path: 'works', Component: WorkManagement },
       { path: 'picks', Component: PickManagement },
+      { path: 'curation', Component: CurationManagement },
       { path: 'banners', Component: BannerManagement },
       { path: 'managed-events', Component: EventManagement },
       { path: 'reports', Component: ReportManagement },

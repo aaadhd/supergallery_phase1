@@ -123,20 +123,20 @@ export default function ReportManagement() {
   if (loading) {
     return (
       <div>
-        <h1 className="text-xl font-bold mb-6 text-gray-900">신고 관리</h1>
-        <div className="rounded-lg border border-[#E4E4E7] py-16 text-center text-sm text-gray-500">불러오는 중…</div>
+        <h1 className="text-xl font-bold mb-6 text-foreground">신고 관리</h1>
+        <div className="rounded-lg border border-border py-16 text-center text-sm text-muted-foreground">불러오는 중…</div>
       </div>
     );
   }
 
   return (
     <div className="min-h-full">
-      <h1 className="text-xl font-bold text-gray-900">신고 관리</h1>
-      <p className="text-sm text-gray-500 mt-1 mb-2">
+      <h1 className="text-xl font-bold text-foreground">신고 관리</h1>
+      <p className="text-sm text-muted-foreground mt-1 mb-2">
         Artier에서 접수한 신고는 이 브라우저의 <code className="text-xs bg-slate-100 px-1 rounded">localStorage (artier_reports)</code>와
         공유됩니다. 신고 직후 이 탭을 열어 두면 목록이 곧바로 갱신됩니다.
       </p>
-      <p className="text-sm text-gray-500 mb-6">
+      <p className="text-sm text-muted-foreground mb-6">
         「비공개」는 <strong>작품 신고</strong>일 때 해당 작품에 비공개 플래그를 저장해 둘러보기·검색에서 숨깁니다. 운영 콘솔 진입: 주소창에{' '}
         <code className="text-xs bg-slate-100 px-1 rounded">/admin/reports</code>
       </p>
@@ -145,7 +145,7 @@ export default function ReportManagement() {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="border border-[#E4E4E7] rounded-lg px-3 py-2 text-sm bg-white min-w-[150px]"
+          className="border border-border rounded-lg px-3 py-2 text-sm bg-white min-w-[150px]"
         >
           <option value="전체">상태: 전체</option>
           <option value="대기">대기</option>
@@ -154,7 +154,7 @@ export default function ReportManagement() {
         <select
           value={typeFilter}
           onChange={(e) => setTypeFilter(e.target.value)}
-          className="border border-[#E4E4E7] rounded-lg px-3 py-2 text-sm bg-white min-w-[150px]"
+          className="border border-border rounded-lg px-3 py-2 text-sm bg-white min-w-[150px]"
         >
           <option value="전체">유형: 전체</option>
           <option value="작품">작품</option>
@@ -164,14 +164,14 @@ export default function ReportManagement() {
       </div>
 
       {filtered.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-[#E4E4E7] py-16 text-center text-sm text-gray-500">
+        <div className="rounded-lg border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
           접수된 신고가 없습니다. Artier에서 로그인한 뒤 작품 ⋯ 메뉴에서 신고해 보세요.
         </div>
       ) : (
-        <div className="border border-[#E4E4E7] rounded-lg overflow-hidden overflow-x-auto">
+        <div className="border border-border rounded-lg overflow-hidden overflow-x-auto">
           <table className="w-full text-sm min-w-[720px]">
             <thead>
-              <tr className="bg-[#F4F4F5] text-left text-gray-700">
+              <tr className="bg-muted text-left text-foreground">
                 <th className="px-4 py-3 font-medium">신고대상</th>
                 <th className="px-4 py-3 font-medium">신고유형</th>
                 <th className="px-4 py-3 font-medium">신고사유</th>
@@ -182,15 +182,15 @@ export default function ReportManagement() {
             </thead>
             <tbody>
               {filtered.map((r) => (
-                <tr key={r.id} className="border-b border-[#F0F0F0] lg:hover:bg-[#FAFAFA] transition-colors">
-                  <td className="px-4 py-3 text-gray-900 max-w-[200px]">{r.target}</td>
+                <tr key={r.id} className="border-b border-border/40 lg:hover:bg-muted/50 transition-colors">
+                  <td className="px-4 py-3 text-foreground max-w-[200px]">{r.target}</td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${kindBadge(r.kind)}`}>
                       {r.kind}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-gray-600">{r.reason}</td>
-                  <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{r.reportedAt}</td>
+                  <td className="px-4 py-3 text-muted-foreground">{r.reason}</td>
+                  <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{r.reportedAt}</td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${stateBadge(r.status)}`}>
                       {r.status}
@@ -209,17 +209,19 @@ export default function ReportManagement() {
                       </Button>
                       <Button
                         type="button"
+                        variant="outline"
                         disabled={r.status === '처리완료'}
                         onClick={() => makePrivate(r.id)}
-                        className="text-sm px-3 py-1.5 rounded-lg border border-[#E4E4E7] text-gray-700 lg:hover:bg-gray-50"
+                        className="text-sm px-3 py-1.5 rounded-lg"
                       >
                         <EyeOff className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
                         비공개
                       </Button>
                       <Button
                         type="button"
+                        variant="ghost"
                         onClick={() => ignore(r.id)}
-                        className="text-sm px-3 py-1.5 rounded-lg text-gray-500 lg:hover:bg-gray-100"
+                        className="text-sm px-3 py-1.5 rounded-lg text-muted-foreground"
                       >
                         <Ban className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
                         무시

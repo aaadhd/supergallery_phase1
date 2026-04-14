@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect } from 'react';
-import { Play, Pause, RotateCcw, Maximize2 } from 'lucide-react';
+import { Play, Pause, RotateCcw } from 'lucide-react';
 import { Button } from '../ui/button';
+import { useI18n } from '../../i18n/I18nProvider';
 
 interface TimelapsePlayerProps {
   /** 타임랩스 영상 URL (미구현 시 빈 문자열) */
@@ -14,10 +15,12 @@ interface TimelapsePlayerProps {
 
 export function TimelapsePlayer({
   src = '',
-  title = '작업 과정',
+  title,
   artistName,
   className = '',
 }: TimelapsePlayerProps) {
+  const { t } = useI18n();
+  const resolvedTitle = title || t('timelapse.defaultTitle');
   const [isPlaying, setIsPlaying] = useState(false);
   const [progress, setProgress] = useState(0);
   const [speed, setSpeed] = useState(1);
@@ -68,13 +71,13 @@ export function TimelapsePlayer({
       {/* 헤더 */}
       <div className="flex items-center justify-between px-4 py-3 border-b border-white/10">
         <div>
-          <h4 className="text-white text-sm font-semibold">{title}</h4>
+          <h4 className="text-white text-sm font-semibold">{resolvedTitle}</h4>
           {artistName && (
             <p className="text-white/60 text-xs">{artistName}</p>
           )}
         </div>
-        <span className="px-2 py-0.5 rounded text-xs font-medium bg-cyan-500/20 text-cyan-300">
-          SGF 연동
+        <span className="px-2 py-0.5 rounded text-xs font-medium bg-primary/20 text-primary-foreground">
+          {t('timelapse.sgfBadge')}
         </span>
       </div>
 
@@ -96,8 +99,8 @@ export function TimelapsePlayer({
             <div className="w-14 h-14 rounded-full border-2 border-dashed border-white/30 flex items-center justify-center">
               <Play className="h-7 w-7 ml-0.5" />
             </div>
-            <p className="text-xs">SGF 드로잉 툴에서 제작한 작품은</p>
-            <p className="text-xs">작업 과정 타임랩스를 감상할 수 있습니다</p>
+            <p className="text-xs">{t('timelapse.emptyLine1')}</p>
+            <p className="text-xs">{t('timelapse.emptyLine2')}</p>
           </div>
         )}
 
@@ -109,7 +112,7 @@ export function TimelapsePlayer({
             max={100}
             value={progress}
             onChange={handleSeek}
-            className="w-full h-1.5 accent-cyan-500 cursor-pointer"
+            className="w-full h-1.5 accent-primary cursor-pointer"
           />
           <div className="flex items-center justify-between mt-2">
             <div className="flex items-center gap-2">
@@ -132,7 +135,7 @@ export function TimelapsePlayer({
               <select
                 value={speed}
                 onChange={(e) => setSpeed(Number(e.target.value))}
-                className="h-7 px-2 rounded bg-white/10 text-white text-xs border-none focus:ring-1 focus:ring-cyan-500"
+                className="h-7 px-2 rounded bg-white/10 text-white text-xs border-none focus:ring-1 focus:ring-ring"
               >
                 <option value={0.5}>0.5x</option>
                 <option value={1}>1x</option>

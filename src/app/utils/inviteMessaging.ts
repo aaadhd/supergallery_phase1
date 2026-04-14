@@ -1,0 +1,201 @@
+/**
+ * 비가입자 작가 초대 발송 (모의 구현)
+ * - 명세: 작가 설정 및 비가입자 초대 기능 스펙
+ * - 실제 발송 없음. localStorage에 로그만 기록하여 PM이 확인 가능
+ * - 중복 발송 방지: 동일 (phoneNumber + workId) 조합
+ * - 채널: 한국 번호(+82 또는 010~019로 시작) → 카카오 알림톡 우선, 그 외 → SMS
+ * - 5% 확률로 실패 시뮬레이션 (게시는 정상 처리됨을 확인하기 위함)
+ * - Phase 2에서 실 외부 서비스 연동 예정
+ */
+
+const LOG_KEY = 'artier_invite_messaging_log';
+const MAX_LOG = 300;
+
+export type InviteChannel = 'kakao_alimtalk' | 'sms';
+
+export type InviteLogEntry = {
+  id: string;
+  at: string;
+  workId: string;
+  phoneNumber: string;
+  displayName: string;
+  channel: InviteChannel;
+  locale: 'ko' | 'en';
+  message: string;
+  success: boolean;
+  failReason?: string;
+};
+
+function isKoreanNumber(raw: string): boolean {
+  const digits = raw.replace(/[^\d+]/g, '');
+  if (digits.startsWith('+82')) return true;
+  if (digits.startsWith('82') && digits.length >= 11) return true;
+  return /^01[0-9]/.test(digits);
+}
+
+function pickChannel(phoneNumber: string): InviteChannel {
+  return isKoreanNumber(phoneNumber) ? 'kakao_alimtalk' : 'sms';
+}
+
+function buildMessage(
+  displayName: string,
+  exhibitionUrl: string,
+  locale: 'ko' | 'en',
+): string {
+  if (locale === 'en') {
+    return `Hi ${displayName}, your artwork is now on display at Artier! Check it out 👉 ${exhibitionUrl}`;
+  }
+  return `[${displayName}]님의 그림이 Artier에 전시되었어요! 지금 확인해보세요 👉 ${exhibitionUrl}`;
+}
+
+function readLog(): InviteLogEntry[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(LOG_KEY);
+    const list = raw ? JSON.parse(raw) : [];
+    return Array.isArray(list) ? list : [];
+  } catch {
+    return [];
+  }
+}
+
+function appendLog(entry: InviteLogEntry) {
+  if (typeof window === 'undefined') return;
+  const list = readLog();
+  list.unshift(entry);
+  localStorage.setItem(LOG_KEY, JSON.stringify(list.slice(0, MAX_LOG)));
+}
+
+export function hasAlreadySent(phoneNumber: string, workId: string): boolean {
+  const normalized = phoneNumber.replace(/\s+/g, '');
+  return readLog().some(
+    (e) => e.workId === workId && e.phoneNumber.replace(/\s+/g, '') === normalized && e.success,
+  );
+}
+
+export type SendInviteInput = {
+  phoneNumber: string;
+  displayName: string;
+  workId: string;
+  exhibitionUrl: string;
+  locale: 'ko' | 'en';
+};
+
+export type SendInviteResult = {
+  success: boolean;
+  channel: InviteChannel;
+  failReason?: string;
+  deduplicated?: boolean;
+};
+
+/** 모의 발송. 실패 시에도 게시는 계속 진행된다(호출 측에서 보장). */
+export function sendInviteToNonMember(input: SendInviteInput): SendInviteResult {
+  const { phoneNumber, displayName, workId, exhibitionUrl, locale } = input;
+  const channel = pickChannel(phoneNumber);
+
+  if (hasAlreadySent(phoneNumber, workId)) {
+    return { success: true, channel, deduplicated: true };
+  }
+
+  // 5% 실패 시뮬 — 게시 흐름이 영향받지 않는지 확인 용도
+  const failed = Math.random() < 0.05;
+  const message = buildMessage(displayName, exhibitionUrl, locale);
+
+  const entry: InviteLogEntry = {
+    id: `inv-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    at: new Date().toISOString(),
+    workId,
+    phoneNumber,
+    displayName,
+    channel,
+    locale,
+    message,
+    success: !failed,
+    failReason: failed ? 'simulated_delivery_failure' : undefined,
+  };
+  appendLog(entry);
+
+  return failed
+    ? { success: false, channel, failReason: 'simulated_delivery_failure' }
+    : { success: true, channel };
+}
+
+export function readInviteLog(): InviteLogEntry[] {
+  return readLog();
+}
+
+/**
+ * 회원가입 시 SMS 초대 매칭
+ * 전화번호 일치 + 실명 일치 → 작품 자동 연결 (workStore에서 imageArtists 업데이트)
+ * 전화번호 일치 + 실명 불일치 → 연결 차단 (강사에게 확인 알림)
+ */
+export function matchSmsInviteOnSignup(phone: string, realName: string): {
+  matched: number;
+  blocked: number;
+} {
+  const normalized = phone.replace(/[\s-]/g, '');
+  const log = readLog().filter((e) => e.success);
+  let matched = 0;
+  let blocked = 0;
+
+  for (const entry of log) {
+    const entryPhone = entry.phoneNumber.replace(/[\s-]/g, '');
+    if (entryPhone !== normalized) continue;
+
+    if (entry.displayName.trim() === realName.trim()) {
+      matched++;
+      appendMatchResult({
+        inviteId: entry.id,
+        workId: entry.workId,
+        phone: normalized,
+        invitedName: entry.displayName,
+        signupName: realName,
+        status: 'matched',
+        at: new Date().toISOString(),
+      });
+    } else {
+      blocked++;
+      appendMatchResult({
+        inviteId: entry.id,
+        workId: entry.workId,
+        phone: normalized,
+        invitedName: entry.displayName,
+        signupName: realName,
+        status: 'blocked_name_mismatch',
+        at: new Date().toISOString(),
+      });
+    }
+  }
+
+  return { matched, blocked };
+}
+
+export type MatchResult = {
+  inviteId: string;
+  workId: string;
+  phone: string;
+  invitedName: string;
+  signupName: string;
+  status: 'matched' | 'blocked_name_mismatch';
+  at: string;
+};
+
+const MATCH_LOG_KEY = 'artier_invite_match_log';
+
+function appendMatchResult(entry: MatchResult) {
+  if (typeof window === 'undefined') return;
+  try {
+    const raw = localStorage.getItem(MATCH_LOG_KEY);
+    const list: MatchResult[] = raw ? JSON.parse(raw) : [];
+    list.unshift(entry);
+    localStorage.setItem(MATCH_LOG_KEY, JSON.stringify(list.slice(0, 200)));
+  } catch { /* ignore */ }
+}
+
+export function readMatchLog(): MatchResult[] {
+  if (typeof window === 'undefined') return [];
+  try {
+    const raw = localStorage.getItem(MATCH_LOG_KEY);
+    return raw ? JSON.parse(raw) : [];
+  } catch { return []; }
+}

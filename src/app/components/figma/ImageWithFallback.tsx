@@ -10,11 +10,14 @@ export function ImageWithFallback(props: React.ImgHTMLAttributes<HTMLImageElemen
     setDidError(true)
   }
 
-  const { src, alt, style, className, ...rest } = props
+  const { src, alt, style, className, loading, decoding, ...rest } = props
+  // 기본 lazy-load. 히어로·above-the-fold는 호출부에서 loading="eager"로 덮어쓰기 가능.
+  const imgLoading = loading ?? 'lazy'
+  const imgDecoding = decoding ?? 'async'
 
   return didError ? (
     <div
-      className={`inline-block bg-[#F4F4F5] text-center align-middle ${className ?? ''}`}
+      className={`inline-block bg-muted text-center align-middle ${className ?? ''}`}
       style={style}
     >
       <div className="flex items-center justify-center w-full h-full">
@@ -22,6 +25,15 @@ export function ImageWithFallback(props: React.ImgHTMLAttributes<HTMLImageElemen
       </div>
     </div>
   ) : (
-    <img src={src} alt={alt} className={className} style={style} {...rest} onError={handleError} />
+    <img
+      src={src}
+      alt={alt}
+      className={className}
+      style={style}
+      loading={imgLoading}
+      decoding={imgDecoding}
+      {...rest}
+      onError={handleError}
+    />
   )
 }

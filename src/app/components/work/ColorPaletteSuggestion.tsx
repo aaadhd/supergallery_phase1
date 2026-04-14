@@ -2,17 +2,16 @@ import { useState, useEffect } from 'react';
 import { Palette } from 'lucide-react';
 import { extractColorPalette, ColorPaletteResult } from '../../utils/colorPalette';
 import { Button } from '../ui/button';
+import { useI18n } from '../../i18n/I18nProvider';
 
 interface ColorPaletteSuggestionProps {
   imageUrl: string;
-  workTitle: string;
   onSelectBackground?: (bgValue: string) => void;
   className?: string;
 }
 
 export function ColorPaletteSuggestion({
   imageUrl,
-  workTitle,
   onSelectBackground,
   className = '',
 }: ColorPaletteSuggestionProps) {
@@ -40,6 +39,8 @@ export function ColorPaletteSuggestion({
     };
   }, [imageUrl]);
 
+  const { t } = useI18n();
+
   if (loading || !result) return null;
 
   return (
@@ -49,18 +50,18 @@ export function ColorPaletteSuggestion({
         className="w-full flex items-center justify-between px-4 py-3 text-left lg:hover:bg-white/5 transition-colors"
       >
         <span className="flex items-center gap-2 text-white text-sm font-medium">
-          <Palette className="h-4 w-4 text-cyan-400" />
-          작품 색상 팔레트
+          <Palette className="h-4 w-4 text-primary" />
+          {t('colorPalette.title')}
         </span>
         <span className="text-white/60 text-xs">
-          {expanded ? '접기' : '펼치기'}
+          {expanded ? t('colorPalette.collapse') : t('colorPalette.expand')}
         </span>
       </Button>
       {expanded && (
         <div className="px-4 pb-4 space-y-4">
           {/* 추출된 색상 */}
           <div>
-            <p className="text-white/70 text-xs mb-2">작품에서 추출한 색상</p>
+            <p className="text-white/70 text-xs mb-2">{t('colorPalette.extracted')}</p>
             <div className="flex flex-wrap gap-2">
               {result.colors.map((color, i) => (
                 <div
@@ -74,13 +75,13 @@ export function ColorPaletteSuggestion({
           </div>
           {/* 배경 제안 */}
           <div>
-            <p className="text-white/70 text-xs mb-2">추천 전시 배경</p>
+            <p className="text-white/70 text-xs mb-2">{t('colorPalette.suggestedBg')}</p>
             <div className="grid grid-cols-4 gap-2">
               {result.suggestedBackgrounds.map((bg) => (
                 <Button
                   key={bg.id}
                   onClick={() => onSelectBackground?.(bg.bgValue)}
-                  className="group flex flex-col items-center gap-1.5 p-2 rounded-lg border border-white/10 lg:hover:border-cyan-500/50 lg:hover:bg-white/5 transition-all"
+                  className="group flex flex-col items-center gap-1.5 p-2 rounded-lg border border-white/10 lg:hover:border-primary/50 lg:hover:bg-white/5 transition-all"
                 >
                   <div
                     className="w-full aspect-square rounded-md border border-white/20"

@@ -36,7 +36,7 @@ export default function Points() {
 
   useEffect(() => {
     if (!auth.isLoggedIn()) {
-      navigate('/login?redirect=/', { replace: true });
+      navigate('/login?redirect=/points', { replace: true });
     }
   }, [auth, navigate]);
 
@@ -71,42 +71,45 @@ export default function Points() {
   }
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] pb-24 md:pb-10">
+    <div className="min-h-screen bg-muted/50 pb-24 md:pb-10">
       <div className="mx-auto max-w-lg px-4 sm:px-6 py-6 sm:py-10">
         <div className="flex items-center gap-3 mb-8">
           <Button
             type="button"
             onClick={() => navigate(-1)}
-            className="flex h-10 w-10 items-center justify-center rounded-full border border-[#E4E4E7] bg-white lg:hover:bg-[#F4F4F5]"
+            className="flex h-10 w-10 items-center justify-center rounded-full border border-border bg-white lg:hover:bg-muted"
             aria-label={t('points.back')}
           >
-            <ChevronLeft className="h-5 w-5 text-[#52525B]" />
+            <ChevronLeft className="h-5 w-5 text-muted-foreground" />
           </Button>
-          <h1 className="text-xl sm:text-2xl font-bold text-[#18181B]">{t('points.title')}</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('points.title')}</h1>
         </div>
 
-        <p className="text-xs text-[#71717A] leading-relaxed mb-4">{t('points.demoNote')}</p>
-
-        <div className="mb-6 rounded-xl border border-dashed border-border bg-muted/50 p-3 text-xs text-muted-foreground space-y-2">
-          <p className="font-medium text-foreground">{t('points.demoToolbarTitle')}</p>
-          <Button
-            type="button"
-            onClick={() => addDemoPp(50)}
-            className="w-full sm:w-auto px-3 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-medium lg:hover:opacity-90"
-          >
-            {t('points.demoPpButton')}
-          </Button>
-        </div>
+        {import.meta.env.DEV && (
+          <>
+            <p className="text-xs text-muted-foreground leading-relaxed mb-4">{t('points.demoNote')}</p>
+            <div className="mb-6 rounded-xl border border-dashed border-border bg-muted/50 p-3 text-xs text-muted-foreground space-y-2">
+              <p className="font-medium text-foreground">{t('points.demoToolbarTitle')}</p>
+              <Button
+                type="button"
+                onClick={() => addDemoPp(50)}
+                className="w-full sm:w-auto px-3 py-2 rounded-lg bg-primary text-primary-foreground text-xs font-medium lg:hover:opacity-90"
+              >
+                {t('points.demoPpButton')}
+              </Button>
+            </div>
+          </>
+        )}
 
         <div className="grid grid-cols-2 gap-3 mb-8">
-          <div className="rounded-2xl border border-[#E5E7EB] bg-white p-4 shadow-sm">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-[#A1A1AA]">{t('points.apLabel')}</p>
-            <p className="mt-1 text-2xl font-bold text-[#18181B] tabular-nums">{ap.toLocaleString()}</p>
+          <div className="rounded-2xl border border-border bg-white p-4 shadow-sm">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{t('points.apLabel')}</p>
+            <p className="mt-1 text-2xl font-bold text-foreground tabular-nums">{ap.toLocaleString()}</p>
           </div>
-          <div className="rounded-2xl border border-[#E5E7EB] bg-white p-4 shadow-sm">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-[#A1A1AA]">{t('points.ppLabel')}</p>
-            <p className="mt-1 text-2xl font-bold text-[#18181B] tabular-nums">{pp.toLocaleString()}</p>
-            <p className="mt-1 text-[10px] text-[#A1A1AA] leading-snug">{t('points.ppHint')}</p>
+          <div className="rounded-2xl border border-border bg-white p-4 shadow-sm">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{t('points.ppLabel')}</p>
+            <p className="mt-1 text-2xl font-bold text-foreground tabular-nums">{pp.toLocaleString()}</p>
+            <p className="mt-1 text-[10px] text-muted-foreground leading-snug">{t('points.ppHint')}</p>
           </div>
         </div>
 
@@ -116,8 +119,8 @@ export default function Points() {
               key={k}
               type="button"
               onClick={() => setFilter(k)}
-              className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${
-                filter === k ? 'bg-[#18181B] text-white' : 'bg-white border border-[#E5E7EB] text-[#52525B] lg:hover:bg-[#FAFAFA]'
+              className={`px-3.5 py-2 min-h-[44px] rounded-full text-xs font-medium transition-colors ${
+                filter === k ? 'bg-foreground text-white' : 'bg-white border border-border text-muted-foreground lg:hover:bg-muted/50'
               }`}
             >
               {k === 'all' ? t('points.filterAll') : k === 'earn' ? t('points.filterEarn') : t('points.filterUse')}
@@ -125,21 +128,21 @@ export default function Points() {
           ))}
         </div>
 
-        <div className="rounded-2xl border border-[#E5E7EB] bg-white overflow-hidden">
+        <div className="rounded-2xl border border-border bg-white overflow-hidden">
           {rows.length === 0 ? (
-            <p className="p-8 text-center text-sm text-[#71717A]">{t('points.empty')}</p>
+            <p className="p-8 text-center text-sm text-muted-foreground">{t('points.empty')}</p>
           ) : (
             <ul className="divide-y divide-[#F0F0F0]">
               {rows.map((e) => (
                 <li key={e.id} className="px-4 py-3.5 flex gap-3 justify-between items-start">
                   <div className="min-w-0 flex-1">
-                    <p className="text-sm font-medium text-[#18181B]">{e.kind}</p>
-                    {e.note ? <p className="text-xs text-[#71717A] mt-0.5 break-words">{e.note}</p> : null}
-                    <p className="text-[11px] text-[#A1A1AA] mt-1">{formatAt(e.at)}</p>
+                    <p className="text-sm font-medium text-foreground">{e.kind}</p>
+                    {e.note ? <p className="text-xs text-muted-foreground mt-0.5 break-words">{e.note}</p> : null}
+                    <p className="text-[11px] text-muted-foreground mt-1">{formatAt(e.at)}</p>
                   </div>
                   <span
                     className={`text-sm font-semibold tabular-nums shrink-0 ${
-                      e.ap > 0 ? 'text-emerald-600' : e.ap < 0 ? 'text-red-600' : 'text-[#71717A]'
+                      e.ap > 0 ? 'text-emerald-600' : e.ap < 0 ? 'text-destructive' : 'text-muted-foreground'
                     }`}
                   >
                     {e.ap > 0 ? '+' : ''}

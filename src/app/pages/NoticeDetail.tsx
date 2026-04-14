@@ -7,8 +7,8 @@ import { Button } from '../components/ui/button';
 const CATEGORY_COLORS: Record<string, string> = {
   서비스: 'bg-muted text-muted-foreground',
   이벤트: 'bg-amber-50 text-amber-600',
-  정책: 'bg-red-50 text-red-600',
-  기타: 'bg-[#F4F4F5] text-gray-600',
+  정책: 'bg-red-50 text-destructive',
+  기타: 'bg-muted text-muted-foreground',
 };
 
 function categoryLabel(cat: string, t: (k: MessageKey) => string): string {
@@ -33,7 +33,7 @@ export default function NoticeDetail() {
   if (!notice) {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-16">
-        <p className="text-[#71717A] mb-6">{t('noticeDetail.notFound')}</p>
+        <p className="text-muted-foreground mb-6">{t('noticeDetail.notFound')}</p>
         <Link to="/notices" className="text-primary font-medium lg:hover:underline">
           {t('noticeDetail.backList')}
         </Link>
@@ -43,12 +43,13 @@ export default function NoticeDetail() {
 
   return (
     <div className="min-h-screen bg-white pb-20 md:pb-0">
-      <div className="bg-white border-b border-[#E5E7EB]">
+      <div className="bg-white border-b border-border">
         <div className="mx-auto max-w-[800px] px-6 py-8">
           <Button
+            variant="ghost"
             type="button"
             onClick={() => navigate('/notices')}
-            className="text-sm text-gray-500 lg:hover:text-[#3F3F46] transition-colors mb-4"
+            className="text-sm text-muted-foreground lg:hover:text-foreground transition-colors mb-4"
           >
             {t('noticeDetail.back')}
           </Button>
@@ -58,7 +59,7 @@ export default function NoticeDetail() {
             >
               {categoryLabel(notice.category, t)}
             </span>
-            <span className="text-xs text-gray-400">
+            <span className="text-xs text-muted-foreground">
               {new Date(notice.createdAt).toLocaleDateString(dateLocale, {
                 year: 'numeric',
                 month: 'long',
@@ -66,18 +67,18 @@ export default function NoticeDetail() {
               })}
             </span>
           </div>
-          <h1 className="text-xl sm:text-2xl font-bold text-[#18181B]">{getNoticeTitle(notice, locale)}</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">{getNoticeTitle(notice, locale)}</h1>
         </div>
       </div>
       <div className="mx-auto max-w-[800px] px-6 py-8">
-        <div className="bg-white rounded-xl border border-[#E5E7EB] p-8 mb-8">
-          <p className="text-sm text-gray-700 leading-relaxed whitespace-pre-wrap">
+        <div className="bg-white rounded-xl border border-border p-8 mb-8">
+          <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
             {getNoticeContent(notice, locale)}
           </p>
         </div>
 
         <nav
-          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-2 border-t border-[#F0F0F0]"
+          className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 pt-2 border-t border-border/40"
           aria-label={t('noticeDetail.navA11y')}
         >
           <div className="flex flex-col sm:flex-row gap-3 text-sm">
@@ -89,7 +90,7 @@ export default function NoticeDetail() {
                 {t('noticeDetail.prev').replace('{title}', getNoticeTitle(prev, locale))}
               </Link>
             ) : (
-              <span className="text-gray-400">{t('noticeDetail.prevNone')}</span>
+              <span className="text-muted-foreground">{t('noticeDetail.prevNone')}</span>
             )}
             {next ? (
               <Link
@@ -99,12 +100,12 @@ export default function NoticeDetail() {
                 {t('noticeDetail.next').replace('{title}', getNoticeTitle(next, locale))}
               </Link>
             ) : (
-              <span className="text-gray-400 sm:text-right sm:ml-auto">{t('noticeDetail.nextNone')}</span>
+              <span className="text-muted-foreground sm:text-right sm:ml-auto">{t('noticeDetail.nextNone')}</span>
             )}
           </div>
           <Link
             to="/notices"
-            className="inline-flex justify-center sm:justify-end text-sm font-medium text-[#18181B] border border-[#E5E7EB] rounded-lg px-4 py-2 lg:hover:bg-[#FAFAFA] transition-colors"
+            className="inline-flex justify-center sm:justify-end text-sm font-medium text-foreground border border-border rounded-lg px-4 py-2.5 min-h-[44px] lg:hover:bg-muted/50 transition-colors"
           >
             {t('noticeDetail.toList')}
           </Link>

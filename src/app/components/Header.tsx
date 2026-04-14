@@ -1,15 +1,14 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Plus, Globe, Check, LogOut, Search, Bell, Home, CalendarDays, User } from 'lucide-react';
+import { Plus, Globe, Check, Search, Bell, Home, CalendarDays, User, Settings } from 'lucide-react';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
+import { LoginPromptModal } from './LoginPromptModal';
 import { artists } from '../data';
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '../store';
@@ -17,23 +16,33 @@ import { persistMockSession } from '../services/sessionTokens';
 import { useI18n } from '../i18n/I18nProvider';
 import type { Locale } from '../i18n/uiStrings';
 
+function readUnreadCount(): number {
+  try {
+    const stored = localStorage.getItem('artier_notifications');
+    if (stored) {
+      const notifs = JSON.parse(stored) as Array<{ read: boolean }>;
+      return notifs.filter((n) => !n.read).length;
+    }
+  } catch { /* ignore */ }
+  return 0;
+}
+
 function useUnreadNotificationCount() {
-  const [count, setCount] = useState(0);
+  const [count, setCount] = useState(readUnreadCount);
   useEffect(() => {
-    const update = () => {
-      try {
-        const stored = localStorage.getItem('artier_notifications');
-        if (stored) {
-          const notifs = JSON.parse(stored) as Array<{ read: boolean }>;
-          setCount(notifs.filter((n) => !n.read).length);
-        }
-      } catch {
-        /* ignore */
-      }
+    const update = () => setCount(readUnreadCount());
+    // 다른 탭에서 localStorage 변경 시
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === 'artier_notifications') update();
     };
-    update();
-    const interval = setInterval(update, 3000);
-    return () => clearInterval(interval);
+    // 같은 탭에서 알림 변경 시 (커스텀 이벤트)
+    const onCustom = () => update();
+    window.addEventListener('storage', onStorage);
+    window.addEventListener('artier-notifications-changed', onCustom);
+    return () => {
+      window.removeEventListener('storage', onStorage);
+      window.removeEventListener('artier-notifications-changed', onCustom);
+    };
   }, []);
   return count;
 }
@@ -47,14 +56,9 @@ export function Header() {
   const loggedIn = auth.isLoggedIn();
   const unreadCount = useUnreadNotificationCount();
 
-  const handleLogout = () => {
-    if (confirm(t('settings.confirmLogout'))) {
-      auth.logout();
-      navigate('/');
-    }
-  };
-
   const pickLocale = (loc: Locale) => setLocale(loc);
+
+  const [loginPromptOpen, setLoginPromptOpen] = useState(false);
 
   const handleLogin = () => {
     auth.login();
@@ -67,16 +71,18 @@ export function Header() {
 
   return (
     <>
-      <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-background/80 backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-background/72">
+      <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-white/80 backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-white/72">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-3 sm:py-3.5">
           <div className="flex items-center justify-between gap-3 sm:gap-8">
             <Link
               to="/"
               className="flex items-center gap-2.5 shrink-0 rounded-xl pr-2 -ml-1 pl-1 lg:hover:bg-muted/60 transition-colors"
             >
-              <div className="flex h-9 w-9 sm:h-10 sm:w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground shadow-sm ring-1 ring-primary/25">
-                <span className="text-base sm:text-lg font-bold tracking-tight">A</span>
-              </div>
+              <img
+                src="/logo.png"
+                alt="Artier Logo"
+                className="h-9 w-9 sm:h-10 sm:w-10 object-contain rounded-xl shadow-sm ring-1 ring-border/10"
+              />
               <span className="text-base sm:text-lg font-semibold tracking-tight text-foreground">{t('brand.name')}</span>
             </Link>
 
@@ -102,17 +108,49 @@ export function Header() {
             </nav>
 
             <div className="flex items-center gap-1 sm:gap-3 ml-auto">
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-9 w-9 sm:h-10 sm:w-10 rounded-full text-muted-foreground lg:hover:text-foreground"
-                onClick={() => navigate('/search')}
-              >
-                <Search className="h-5 w-5" />
-              </Button>
-
               {loggedIn ? (
                 <>
+                  {/* 업로드 CTA — 데스크톱만 */}
+                  <Button
+                    size="default"
+                    className="hidden md:flex gap-2 text-sm px-5 py-2.5 rounded-full shadow-sm"
+                    onClick={() => {
+                      if (location.pathname === '/upload') {
+                        navigate('/upload?new=' + Date.now());
+                      } else {
+                        navigate('/upload');
+                      }
+                    }}
+                  >
+                    <Plus className="h-5 w-5" />
+                    {t('nav.upload')}
+                  </Button>
+
+                  {/* 프로필 아바타 — 데스크톱 */}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="hidden md:flex rounded-full h-10 w-10"
+                    onClick={() => navigate('/me')}
+                    aria-label={t('nav.profile')}
+                  >
+                    <Avatar className="h-9 w-9">
+                      <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
+                      <AvatarFallback>{currentUser.name[0]}</AvatarFallback>
+                    </Avatar>
+                  </Button>
+
+                  {/* 검색 — 데스크톱만 */}
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="hidden md:flex h-10 w-10 rounded-full text-muted-foreground lg:hover:text-foreground"
+                    onClick={() => navigate('/search')}
+                  >
+                    <Search className="h-5 w-5" />
+                  </Button>
+
+                  {/* 알림 */}
                   <Button
                     variant="ghost"
                     size="icon"
@@ -127,60 +165,34 @@ export function Header() {
                     )}
                   </Button>
 
+                  {/* 설정 */}
                   <Button
-                    size="default"
-                    className="hidden sm:flex gap-2 text-sm px-5 py-2.5 rounded-full shadow-sm"
-                    onClick={() => navigate('/upload')}
+                    variant="ghost"
+                    size="icon"
+                    className="h-9 w-9 sm:h-10 sm:w-10 rounded-full text-muted-foreground lg:hover:text-foreground"
+                    onClick={() => navigate('/settings')}
                   >
-                    <Plus className="h-5 w-5" />
-                    {t('nav.upload')}
+                    <Settings className="h-5 w-5" />
                   </Button>
-                  <Button size="icon" className="flex sm:hidden h-9 w-9 rounded-full" onClick={() => navigate('/upload')}>
-                    <Plus className="h-5 w-5" />
-                  </Button>
-
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="rounded-full h-9 w-9 sm:h-10 sm:w-10">
-                        <Avatar className="h-8 w-8 sm:h-9 sm:w-9">
-                          <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
-                          <AvatarFallback>{currentUser.name[0]}</AvatarFallback>
-                        </Avatar>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-56">
-                      <DropdownMenuLabel>
-                        <div className="flex flex-col space-y-1">
-                          <p className="text-sm font-medium">{currentUser.name}</p>
-                          <p className="text-xs text-muted-foreground">{currentUser.bio}</p>
-                        </div>
-                      </DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem onClick={() => navigate('/me')} className="text-sm py-2">
-                        {t('nav.profile')}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => navigate('/settings')} className="text-sm py-2">
-                        {t('nav.settings')}
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={handleLogout}
-                        className="flex items-center gap-2 text-red-600 focus:text-red-600 py-2"
-                      >
-                        <LogOut className="h-4 w-4" />
-                        {t('nav.logout')}
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
                 </>
               ) : (
-                <Button
-                  size="default"
-                  className="gap-2 text-[13px] sm:text-sm px-4 sm:px-6 py-2 sm:py-2.5"
-                  onClick={handleLogin}
-                >
-                  {t('nav.login')}
-                </Button>
+                <>
+                  <Button
+                    size="default"
+                    className="hidden md:flex gap-2 text-sm px-6 py-2.5"
+                    onClick={handleLogin}
+                  >
+                    {t('nav.login')}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="hidden md:flex h-10 w-10 rounded-full text-muted-foreground lg:hover:text-foreground"
+                    onClick={() => navigate('/search')}
+                  >
+                    <Search className="h-5 w-5" />
+                  </Button>
+                </>
               )}
 
               <DropdownMenu>
@@ -209,13 +221,13 @@ export function Header() {
         </div>
       </header>
 
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/92 backdrop-blur-lg border-t border-border/80 safe-area-bottom shadow-[0_-4px_24px_rgba(0,0,0,0.06)]">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/92 backdrop-blur-lg border-t border-border/80 safe-area-bottom shadow-[0_-4px_24px_rgba(0,0,0,0.06)]">
         <div className="flex items-center justify-around h-14">
           <Button
             variant="ghost"
             type="button"
             onClick={() => navigate('/')}
-            className={`h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 ${location.pathname === '/' ? 'text-primary' : 'text-gray-400'}`}
+            className={`h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 ${location.pathname === '/' ? 'text-primary' : 'text-muted-foreground'}`}
           >
             <Home className="h-5 w-5" />
             <span className="text-[11px] font-medium">{t('nav.browse')}</span>
@@ -224,24 +236,22 @@ export function Header() {
             variant="ghost"
             type="button"
             onClick={() => navigate('/events')}
-            className={`h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 ${location.pathname.startsWith('/events') ? 'text-primary' : 'text-gray-400'}`}
+            className={`h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 ${location.pathname.startsWith('/events') ? 'text-primary' : 'text-muted-foreground'}`}
           >
             <CalendarDays className="h-5 w-5" />
             <span className="text-[11px] font-medium">{t('nav.events')}</span>
           </Button>
-          {loggedIn && (
-            <Button variant="ghost" type="button" onClick={() => navigate('/upload')} className="h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 text-gray-400">
-              <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary -mt-3 shadow-lg">
-                <Plus className="h-5 w-5 text-white" />
-              </div>
-              <span className="text-[11px] font-medium text-primary -mt-0.5">{t('nav.uploadShort')}</span>
-            </Button>
-          )}
+          <Button variant="ghost" type="button" onClick={() => { if (loggedIn) { if (location.pathname === '/upload') { navigate('/upload?new=' + Date.now()); } else { navigate('/upload'); } } else { setLoginPromptOpen(true); } }} className="h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 text-muted-foreground">
+            <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary -mt-3 shadow-lg">
+              <Plus className="h-5 w-5 text-white" />
+            </div>
+            <span className="text-[11px] font-medium text-primary -mt-0.5">{t('nav.uploadShort')}</span>
+          </Button>
           <Button
             variant="ghost"
             type="button"
             onClick={() => navigate('/search')}
-            className={`h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 ${location.pathname === '/search' ? 'text-primary' : 'text-gray-400'}`}
+            className={`h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 ${location.pathname === '/search' ? 'text-primary' : 'text-muted-foreground'}`}
           >
             <Search className="h-5 w-5" />
             <span className="text-[11px] font-medium">{t('nav.search')}</span>
@@ -249,9 +259,9 @@ export function Header() {
           <Button
             variant="ghost"
             type="button"
-            onClick={() => navigate(loggedIn ? '/me' : '/')}
+            onClick={() => { if (loggedIn) { navigate('/me'); } else { setLoginPromptOpen(true); } }}
             className={`h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 ${
-              location.pathname.startsWith('/profile') || location.pathname.startsWith('/me') ? 'text-primary' : 'text-gray-400'
+              location.pathname.startsWith('/profile') || location.pathname.startsWith('/me') ? 'text-primary' : 'text-muted-foreground'
             }`}
           >
             <User className="h-5 w-5" />
@@ -259,6 +269,8 @@ export function Header() {
           </Button>
         </div>
       </nav>
+
+      <LoginPromptModal open={loginPromptOpen} onClose={() => setLoginPromptOpen(false)} />
     </>
   );
 }

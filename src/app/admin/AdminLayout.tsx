@@ -10,6 +10,7 @@ import {
   FileSearch,
   ImageIcon,
   Star,
+  Sparkles,
   PanelTop,
   CalendarRange,
   Flag,
@@ -18,23 +19,28 @@ import {
 import { LABELS } from './constants';
 import { authStore } from '../store';
 import { canAccessAdminRoutes } from '../utils/adminGate';
+import { useI18n } from '../i18n/I18nProvider';
+import type { MessageKey } from '../i18n/messages';
 
-const navItems = [
-  { to: '/admin', icon: LayoutDashboard, label: '대시보드', end: true },
-  { to: '/admin/issues', icon: AlertCircle, label: '미결 이슈' },
-  { to: '/admin/checklist', icon: CheckSquare, label: '런칭 체크리스트' },
-  { to: '/admin/partners', icon: Users, label: '파트너 작가' },
-  { to: '/admin/events', icon: CalendarDays, label: '이벤트 참여자' },
-  { to: '/admin/content-review', icon: FileSearch, label: '콘텐츠 검토' },
-  { to: '/admin/works', icon: ImageIcon, label: '작품 관리' },
-  { to: '/admin/picks', icon: Star, label: "Artier's Pick" },
-  { to: '/admin/banners', icon: PanelTop, label: '배너 관리' },
-  { to: '/admin/managed-events', icon: CalendarRange, label: '이벤트 관리' },
-  { to: '/admin/reports', icon: Flag, label: '신고 관리' },
-  { to: '/admin/members', icon: UserCog, label: '회원 관리' },
+const navItems: { to: string; icon: typeof LayoutDashboard; labelKey: MessageKey; end?: boolean }[] = [
+  { to: '/admin', icon: LayoutDashboard, labelKey: 'admin.nav.dashboard', end: true },
+  { to: '/admin/issues', icon: AlertCircle, labelKey: 'admin.nav.issues' },
+  { to: '/admin/checklist', icon: CheckSquare, labelKey: 'admin.nav.checklist' },
+  { to: '/admin/partners', icon: Users, labelKey: 'admin.nav.partners' },
+  { to: '/admin/events', icon: CalendarDays, labelKey: 'admin.nav.eventParticipants' },
+  { to: '/admin/content-review', icon: FileSearch, labelKey: 'admin.nav.contentReview' },
+  { to: '/admin/works', icon: ImageIcon, labelKey: 'admin.nav.works' },
+  { to: '/admin/picks', icon: Star, labelKey: 'admin.nav.picks' },
+  { to: '/admin/curation', icon: Sparkles, labelKey: 'admin.nav.curation' },
+  { to: '/admin/banners', icon: PanelTop, labelKey: 'admin.nav.banners' },
+  { to: '/admin/managed-events', icon: CalendarRange, labelKey: 'admin.nav.managedEvents' },
+  { to: '/admin/reports', icon: Flag, labelKey: 'admin.nav.reports' },
+  { to: '/admin/members', icon: UserCog, labelKey: 'admin.nav.members' },
 ];
 
 export default function AdminLayout() {
+  const { t } = useI18n();
+
   if (!canAccessAdminRoutes(authStore.isLoggedIn())) {
     return <Navigate to="/" replace />;
   }
@@ -48,16 +54,20 @@ export default function AdminLayout() {
             className="flex items-center gap-2 text-sm text-slate-400 lg:hover:text-white mb-3"
           >
             <ArrowLeft className="w-4 h-4" />
-            {LABELS.SERVICE_NAME} 사용자 앱으로
+            {LABELS.SERVICE_NAME} {t('admin.backToApp')}
           </Link>
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-amber-400/90">운영 콘솔</p>
+          <p className="text-[10px] font-semibold uppercase tracking-wider text-amber-400/90">{t('admin.consoleLabel')}</p>
           <h1 className="text-lg font-bold text-white mt-0.5">{LABELS.NAV_ADMIN}</h1>
-          <p className="text-xs text-slate-400 mt-1 leading-snug">
-            URL 직접 접속: <span className="text-slate-300">/admin</span> · 로컬 storage와 동기화
+          <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-emerald-400/15 border border-emerald-400/40 px-2 py-0.5 text-[10px] font-medium text-emerald-300">
+            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
+            {t('admin.roleBadge')}
+          </div>
+          <p className="text-xs text-slate-400 mt-2 leading-snug">
+            {t('admin.sidebarNote')}
           </p>
         </div>
         <nav className="flex-1 p-3 space-y-1">
-          {navItems.map(({ to, icon: Icon, label, end }) => (
+          {navItems.map(({ to, icon: Icon, labelKey, end }) => (
             <NavLink
               key={to}
               to={to}
@@ -71,12 +81,12 @@ export default function AdminLayout() {
               }
             >
               <Icon className="w-4 h-4" />
-              {label}
+              {t(labelKey)}
             </NavLink>
           ))}
         </nav>
         <div className="p-4 border-t border-slate-800">
-          <p className="text-xs text-slate-500">{LABELS.PROJECT_NAME} Phase 1 · 사용자 메뉴에 링크 없음</p>
+          <p className="text-xs text-slate-500">{LABELS.PROJECT_NAME} {t('admin.footerNote')}</p>
         </div>
       </aside>
 

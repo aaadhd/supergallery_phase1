@@ -7,3 +7,15 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+# 기본 보안 헤더 (전 경로)
+# CSP는 데모 단계라 외부 이미지(Unsplash 등) 허용. 프로덕션 전환 시 도메인 단일화 후 타이트닝 권장.
+[[headers]]
+  for = "/*"
+  [headers.values]
+    Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+    X-Frame-Options = "DENY"
+    X-Content-Type-Options = "nosniff"
+    Referrer-Policy = "strict-origin-when-cross-origin"
+    Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
+    Content-Security-Policy = "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"

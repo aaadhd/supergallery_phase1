@@ -7,7 +7,7 @@ import {
 } from '../components/ui/select';
 import { Button } from '../components/ui/button';
 import { useChecklistStore } from './adminStore';
-import { CHECKLIST_CATEGORY, CHECKLIST_STATUS, STATUS_COLORS } from './constants';
+import { CHECKLIST_CATEGORY, CHECKLIST_STATUS } from './constants';
 
 export default function LaunchChecklist() {
   const store = useChecklistStore();
@@ -53,12 +53,12 @@ export default function LaunchChecklist() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">런칭 체크리스트</h1>
-          <p className="text-sm text-gray-500 mt-1">QA + 오픈 준비 통합 체크리스트</p>
+          <h1 className="text-2xl font-bold text-foreground">런칭 체크리스트</h1>
+          <p className="text-sm text-muted-foreground mt-1">QA + 오픈 준비 통합 체크리스트</p>
         </div>
         <div className="text-right">
-          <p className="text-3xl font-bold text-gray-900">{overallRate}%</p>
-          <p className="text-xs text-gray-500">{totalDone}/{totalItems} 완료</p>
+          <p className="text-3xl font-bold text-foreground">{overallRate}%</p>
+          <p className="text-xs text-muted-foreground">{totalDone}/{totalItems} 완료</p>
         </div>
       </div>
 
@@ -87,10 +87,10 @@ export default function LaunchChecklist() {
 
           return (
             <div key={category} className="bg-white rounded-lg border">
-              <div className="px-4 py-3 border-b bg-gray-50 rounded-t-lg flex items-center justify-between">
+              <div className="px-4 py-3 border-b bg-muted/30 rounded-t-lg flex items-center justify-between">
                 <div className="flex items-center gap-3">
                   <Badge variant="outline" className="font-medium">{category}</Badge>
-                  <span className="text-sm text-gray-500">{catDone}/{categoryItems.length} 완료</span>
+                  <span className="text-sm text-muted-foreground">{catDone}/{categoryItems.length} 완료</span>
                 </div>
                 <div className="w-24">
                   <Progress value={catRate} />
@@ -102,28 +102,29 @@ export default function LaunchChecklist() {
                   return (
                     <div
                       key={item.id}
-                      className={`flex items-start gap-3 px-4 py-3 lg:hover:bg-gray-50 transition-colors ${
+                      className={`flex items-start gap-3 px-4 py-3 lg:hover:bg-muted/30 transition-colors ${
                         item.status === '완료' ? 'opacity-60' : ''
                       } ${isOverdue ? 'bg-red-50' : ''}`}
                     >
                       <Button
+                        variant="ghost"
                         onClick={() => handleToggle(item.id)}
-                        className="mt-0.5 text-gray-400 lg:hover:text-gray-700"
+                        className="mt-0.5 text-muted-foreground lg:hover:text-foreground"
                       >
                         {item.status === '완료' ? (
-                          <CheckSquare className="w-5 h-5 text-green-600" />
+                          <CheckSquare className="w-5 h-5 text-primary" />
                         ) : (
                           <Square className="w-5 h-5" />
                         )}
                       </Button>
                       <div className="flex-1 min-w-0">
-                        <p className={`text-sm font-medium ${item.status === '완료' ? 'line-through text-gray-500' : 'text-gray-900'}`}>
+                        <p className={`text-sm font-medium ${item.status === '완료' ? 'line-through text-muted-foreground' : 'text-foreground'}`}>
                           {item.title}
                         </p>
-                        <p className="text-xs text-gray-500 mt-0.5">{item.description}</p>
+                        <p className="text-xs text-muted-foreground mt-0.5">{item.description}</p>
                         <div className="flex items-center gap-3 mt-2">
-                          <span className="text-xs text-gray-500">담당: {item.owner}</span>
-                          <span className={`text-xs ${isOverdue ? 'text-red-600 font-medium' : 'text-gray-500'}`}>
+                          <span className="text-xs text-muted-foreground">담당: {item.owner}</span>
+                          <span className={`text-xs ${isOverdue ? 'text-destructive font-medium' : 'text-muted-foreground'}`}>
                             기한: {item.dueDate} {isOverdue && '⚠ 초과'}
                           </span>
                         </div>

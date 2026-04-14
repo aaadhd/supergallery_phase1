@@ -20,11 +20,28 @@ const catalogMock: PickItem[] = [
 ];
 
 const MAX_PICKS = 10;
+const PICKS_KEY = 'artier_admin_picks_v1';
+
+function loadPicks(): PickItem[] {
+  try {
+    const raw = localStorage.getItem(PICKS_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch { /* ignore */ }
+  return initialPicks;
+}
+
+function savePicks(items: PickItem[]) {
+  localStorage.setItem(PICKS_KEY, JSON.stringify(items));
+}
 
 export default function PickManagement() {
   const [loading, setLoading] = useState(true);
-  const [picks, setPicks] = useState<PickItem[]>(initialPicks);
+  const [picks, setPicks] = useState<PickItem[]>(loadPicks);
   const [search, setSearch] = useState('');
+
+  useEffect(() => {
+    savePicks(picks);
+  }, [picks]);
 
   useEffect(() => {
     const t = window.setTimeout(() => setLoading(false), 320);
@@ -60,43 +77,43 @@ export default function PickManagement() {
   if (loading) {
     return (
       <div>
-        <h1 className="text-xl font-bold mb-6 text-gray-900">Artier&apos;s Pick 관리</h1>
-        <div className="rounded-lg border border-[#E4E4E7] py-16 text-center text-sm text-gray-500">불러오는 중…</div>
+        <h1 className="text-xl font-bold mb-6 text-foreground">Artier&apos;s Pick 관리</h1>
+        <div className="rounded-lg border border-border py-16 text-center text-sm text-muted-foreground">불러오는 중…</div>
       </div>
     );
   }
 
   return (
     <div className="min-h-full">
-      <h1 className="text-xl font-bold mb-6 text-gray-900">Artier&apos;s Pick 관리</h1>
-      <p className="text-sm text-gray-500 mb-6">
+      <h1 className="text-xl font-bold mb-6 text-foreground">Artier&apos;s Pick 관리</h1>
+      <p className="text-sm text-muted-foreground mb-6">
         현재 {picks.length} / {MAX_PICKS} · 드래그로 순서 변경은 추후 연동 예정(번호만 표시)
       </p>
 
       <div className="flex flex-wrap gap-3 mb-6">
         <div className="relative flex-1 min-w-[240px] max-w-lg">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
           <input
             type="search"
             placeholder="작품명 또는 작가로 검색하여 추가"
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="w-full border border-[#E4E4E7] rounded-lg pl-9 pr-3 py-2 text-sm"
+            className="w-full border border-border rounded-lg pl-9 pr-3 py-2 text-sm"
           />
         </div>
       </div>
 
       {search && searchResults.length > 0 && (
-        <div className="mb-6 border border-[#E4E4E7] rounded-lg divide-y divide-[#F0F0F0]">
+        <div className="mb-6 border border-border rounded-lg divide-y divide-[#F0F0F0]">
           {searchResults.map((c) => (
-            <div key={c.id} className="flex items-center justify-between px-4 py-3 lg:hover:bg-[#FAFAFA]">
+            <div key={c.id} className="flex items-center justify-between px-4 py-3 lg:hover:bg-muted/50">
               <div className="flex items-center gap-3">
                 <div className="w-10 h-10 rounded bg-primary/10 text-primary text-xs font-bold flex items-center justify-center border border-border">
                   {c.thumb}
                 </div>
                 <div>
-                  <p className="text-sm font-medium text-gray-900">{c.title}</p>
-                  <p className="text-xs text-gray-500">{c.artist}</p>
+                  <p className="text-sm font-medium text-foreground">{c.title}</p>
+                  <p className="text-xs text-muted-foreground">{c.artist}</p>
                 </div>
               </div>
               <Button
@@ -113,25 +130,25 @@ export default function PickManagement() {
       )}
 
       {picks.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-[#E4E4E7] py-16 text-center text-sm text-gray-500">
+        <div className="rounded-lg border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
           등록된 Pick이 없습니다. 검색으로 추가해 보세요.
         </div>
       ) : (
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-10">
-          {picks.map((p, i) => (
+          {picks.map((p) => (
             <div
               key={p.id}
-              className="border border-[#E4E4E7] rounded-lg p-3 lg:hover:bg-[#FAFAFA] transition-colors relative group"
+              className="border border-border rounded-lg p-3 lg:hover:bg-muted/50 transition-colors relative group"
             >
-              <div className="aspect-square rounded-md bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center text-sm font-semibold text-primary border border-[#F0F0F0] mb-2">
+              <div className="aspect-square rounded-md bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center text-sm font-semibold text-primary border border-border/40 mb-2">
                 {p.thumb}
               </div>
-              <p className="text-xs font-medium text-gray-900 truncate">{p.title}</p>
-              <p className="text-xs text-gray-500 truncate">{p.artist}</p>
+              <p className="text-xs font-medium text-foreground truncate">{p.title}</p>
+              <p className="text-xs text-muted-foreground truncate">{p.artist}</p>
               <Button
                 type="button"
                 onClick={() => removePick(p.id)}
-                className="absolute top-2 right-2 p-1 rounded-md bg-white border border-[#E4E4E7] text-gray-500 lg:hover:text-red-600 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity"
+                className="absolute top-2 right-2 p-1 rounded-md bg-white border border-border text-muted-foreground lg:hover:text-destructive opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity"
                 aria-label="제거"
               >
                 <X className="w-3.5 h-3.5" />
@@ -141,20 +158,20 @@ export default function PickManagement() {
         </div>
       )}
 
-      <h2 className="text-sm font-semibold text-gray-700 mb-3">순서 (드래그 자리 표시)</h2>
-      <ol className="border border-[#E4E4E7] rounded-lg divide-y divide-[#F0F0F0]">
+      <h2 className="text-sm font-semibold text-foreground mb-3">순서 (드래그 자리 표시)</h2>
+      <ol className="border border-border rounded-lg divide-y divide-[#F0F0F0]">
         {picks.map((p, idx) => (
-          <li key={p.id} className="flex items-center gap-3 px-4 py-3 lg:hover:bg-[#FAFAFA]">
-            <span className="text-xs text-gray-400 w-6 tabular-nums">{idx + 1}.</span>
-            <GripVertical className="w-4 h-4 text-gray-300 shrink-0" aria-hidden />
+          <li key={p.id} className="flex items-center gap-3 px-4 py-3 lg:hover:bg-muted/50">
+            <span className="text-xs text-muted-foreground w-6 tabular-nums">{idx + 1}.</span>
+            <GripVertical className="w-4 h-4 text-muted-foreground/60 shrink-0" aria-hidden />
             <div className="flex-1 min-w-0">
-              <span className="text-sm font-medium text-gray-900">{p.title}</span>
-              <span className="text-sm text-gray-500"> · {p.artist}</span>
+              <span className="text-sm font-medium text-foreground">{p.title}</span>
+              <span className="text-sm text-muted-foreground"> · {p.artist}</span>
             </div>
             <Button
               type="button"
               onClick={() => removePick(p.id)}
-              className="text-sm px-3 py-1.5 rounded-lg border border-[#E4E4E7] text-gray-600 lg:hover:bg-white"
+              className="text-sm px-3 py-1.5 rounded-lg border border-border text-muted-foreground lg:hover:bg-white"
             >
               제거
             </Button>

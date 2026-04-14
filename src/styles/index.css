@@ -104,21 +104,53 @@ button, [role="button"], a, .card, [data-card] {
   transition: box-shadow 0.2s ease, transform 0.2s ease, background-color 0.2s ease;
 }
 
+/* 모바일 터치 피드백 — lg:hover 없는 환경에서 active로 시각 피드백 */
+@media (pointer: coarse) {
+  button:active, [role="button"]:active, a:active {
+    opacity: 0.8;
+    transform: scale(0.98);
+  }
+}
+
 /* 스크롤바 시인성 개선 (시니어 UX) */
 ::-webkit-scrollbar {
-  width: 10px;
+  width: 8px;
 }
 ::-webkit-scrollbar-track {
-  background: #F0F0F0;
+  background: transparent;
 }
 ::-webkit-scrollbar-thumb {
-  background: #BFBFBF;
-  border-radius: 5px;
+  background: oklch(0.78 0 0);
+  border-radius: 99px;
+  border: 2px solid transparent;
+  background-clip: content-box;
 }
 @media (hover: hover) and (pointer: fine) and (min-width: 1024px) {
   ::-webkit-scrollbar-thumb:hover {
-    background: #999;
+    background: oklch(0.60 0 0);
+    border: 2px solid transparent;
+    background-clip: content-box;
   }
+}
+
+/* 다크 모달 전용 슬림 스크롤바 */
+.dark-scrollbar::-webkit-scrollbar {
+  width: 6px;
+}
+.dark-scrollbar::-webkit-scrollbar-track {
+  background: transparent;
+}
+.dark-scrollbar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 99px;
+}
+.dark-scrollbar::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+/* Firefox */
+.dark-scrollbar {
+  scrollbar-width: thin;
+  scrollbar-color: rgba(255, 255, 255, 0.15) transparent;
 }
 
 @keyframes fade-in-up {

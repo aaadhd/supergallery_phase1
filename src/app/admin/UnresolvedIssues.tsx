@@ -35,8 +35,8 @@ export default function UnresolvedIssues() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">미결 이슈 대시보드</h1>
-        <p className="text-sm text-gray-500 mt-1">개발/디자인 착수 전 결정해야 할 항목 관리</p>
+        <h1 className="text-2xl font-bold text-foreground">미결 이슈 대시보드</h1>
+        <p className="text-sm text-muted-foreground mt-1">개발/디자인 착수 전 결정해야 할 항목 관리</p>
       </div>
 
       {/* Filters */}
@@ -89,7 +89,7 @@ export default function UnresolvedIssues() {
           </SelectContent>
         </Select>
 
-        <span className="self-center text-sm text-gray-500">
+        <span className="self-center text-sm text-muted-foreground">
           {filtered.length}건 / 전체 {issues.length}건
         </span>
       </div>
@@ -113,7 +113,7 @@ export default function UnresolvedIssues() {
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={9} className="text-center py-8 text-gray-500">
+                <TableCell colSpan={9} className="text-center py-8 text-muted-foreground">
                   조건에 맞는 이슈가 없습니다.
                 </TableCell>
               </TableRow>
@@ -122,8 +122,8 @@ export default function UnresolvedIssues() {
                 const isOverdue = issue.dueDate < new Date().toISOString().split('T')[0] && issue.status !== '해결됨';
                 return (
                   <TableRow key={issue.id} className={isOverdue ? 'bg-red-50' : ''}>
-                    <TableCell className="text-xs text-gray-500 font-mono">{issue.id}</TableCell>
-                    <TableCell className="font-medium text-gray-900 max-w-[240px]">
+                    <TableCell className="text-xs text-muted-foreground font-mono">{issue.id}</TableCell>
+                    <TableCell className="font-medium text-foreground max-w-[240px]">
                       <span className="truncate block">{issue.title}</span>
                     </TableCell>
                     <TableCell>
@@ -147,14 +147,14 @@ export default function UnresolvedIssues() {
                         </SelectContent>
                       </Select>
                     </TableCell>
-                    <TableCell className="text-xs text-red-600 max-w-[160px]">
+                    <TableCell className="text-xs text-destructive max-w-[160px]">
                       <span className="truncate block">{issue.blocker || '-'}</span>
                     </TableCell>
-                    <TableCell className={`text-sm ${isOverdue ? 'text-red-600 font-medium' : 'text-gray-600'}`}>
+                    <TableCell className={`text-sm ${isOverdue ? 'text-destructive font-medium' : 'text-muted-foreground'}`}>
                       {issue.dueDate}
                       {isOverdue && <span className="text-xs ml-1">⚠</span>}
                     </TableCell>
-                    <TableCell className="text-xs text-gray-500 max-w-[200px]">
+                    <TableCell className="text-xs text-muted-foreground max-w-[200px]">
                       <span className="truncate block">{issue.note}</span>
                     </TableCell>
                   </TableRow>

@@ -15,7 +15,8 @@ export interface MockJwtSession {
 
 function b64url(obj: Record<string, unknown>): string {
   const s = JSON.stringify(obj);
-  return btoa(s).replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/u, '');
+  const encoded = btoa(unescape(encodeURIComponent(s)));
+  return encoded.replace(/\+/g, '-').replace(/\//g, '_').replace(/=+$/u, '');
 }
 
 /** RFC 7519 형태를 닮은 데모 문자열 (서명은 검증하지 않음) */

@@ -201,7 +201,13 @@ export function pointsRecallIfQuickDelete(workId: string) {
   }
   const t = times[workId];
   if (!t) return;
-  const elapsed = Date.now() - new Date(t).getTime();
+  const parsedTime = new Date(t).getTime();
+  if (Number.isNaN(parsedTime)) {
+    delete times[workId];
+    localStorage.setItem(PUBLISH_TIMES_KEY, JSON.stringify(times));
+    return;
+  }
+  const elapsed = Date.now() - parsedTime;
   if (elapsed > 86400000) {
     delete times[workId];
     localStorage.setItem(PUBLISH_TIMES_KEY, JSON.stringify(times));

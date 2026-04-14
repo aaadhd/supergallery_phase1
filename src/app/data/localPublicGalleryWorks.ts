@@ -1,9 +1,9 @@
 import type { Artist, Work } from '../data';
+import { groups, type WorkOwner } from '../groupData';
 import { toPublicImageSrc } from '../utils/toPublicImageSrc';
 
 type Bucket = 'ahn' | 'fileview' | 'web' | 'se' | 'ig' | 'imageye' | 'misc';
 
-/** 패턴별 기본 작가 (data.ts의 id와 일치) */
 const BUCKET_ARTIST: Record<Bucket, string> = {
   ahn: 'local-ahn',
   fileview: 'local-fileview-general',
@@ -14,108 +14,173 @@ const BUCKET_ARTIST: Record<Bucket, string> = {
   misc: 'local-studio',
 };
 
-/** 알려진 경로만 작품명·작가 보정 (샘플 이미지 확인 + WebP는 PNG 변환 후 감상) */
-const TITLES_BY_PATH: Record<string, { title: string; artistId?: string; groupName?: string }> = {
-  '/images/web0.jpg': { title: '글로리오사' },
-  '/images/web1.jpg': { title: '맨드라미 들판' },
-  '/images/서울전시회_안창홍.jpg': { title: '코트 위의 흐름' },
-  '/images/369702721_777125777748569_3573259619719392013_n.jpg': { title: '팝 아트 수박', artistId: 'local-pop' },
-  '/images/imageye___-_.jpg': { title: '푸른 명상' },
-  '/images/SE-24a755f9-7d06-4291-9bf1-1e4663250636.jpg': { title: '노란 좌위와 물감' },
-  // fileView (n).webp — macOS sips로 변환 후 내용 기반 제목·작가
-  '/images/fileView (1).webp': { title: '신발과 손주 운동화', artistId: 'local-cozy-illus' },
-  '/images/fileView (2).webp': { title: '말차 딸기 파르페', artistId: 'local-rilin' },
-  '/images/fileView (3).webp': { title: '바삭한 달래 모양 튀김', artistId: 'local-rilin' },
-  '/images/fileView (4).webp': { title: '하늘빛 들꽃', artistId: 'local-rilin' },
-  '/images/fileView (5).webp': { title: '데이지와 금빛 테두리', artistId: 'local-cozy-illus' },
-  '/images/fileView (6).webp': { title: '활을 당기는 소년', artistId: 'local-webtoon-clean' },
-  '/images/fileView (7).webp': { title: '해피 퍼피 데이', artistId: 'local-haeb' },
-  '/images/fileView (8).webp': { title: '함께 걷는 첫눈', artistId: 'local-webtoon-clean' },
-  '/images/fileView (9).webp': { title: '작은 재봉소', artistId: 'local-cozy-illus' },
-  '/images/fileView (10).webp': { title: '네 시, 책상 위의 오후', artistId: 'local-sunnysun' },
-  '/images/fileView (11).webp': { title: '파스텔 헤어핀 여덟', artistId: 'local-rilin' },
-  '/images/fileView (12).webp': { title: '숙성된 바나나', artistId: 'local-minimal-graphic' },
-  '/images/fileView (13).webp': { title: '집 안 냥이의 달리기', artistId: 'local-minimal-graphic' },
-  '/images/fileView (14).webp': { title: '손으로 받는 물줄기', artistId: 'local-cozy-illus' },
-  '/images/fileView (15).webp': { title: '별 밤과 물결', artistId: 'local-cozy-illus' },
-  '/images/fileView (17).webp': { title: '붉은 카네이션 드로잉', artistId: 'local-minimal-graphic' },
-  '/images/fileView (18).webp': { title: '눈 쌓인 길의 발자국', artistId: 'local-cozy-illus' },
-  '/images/fileView (20).webp': { title: '모래빛 나뭇잎', artistId: 'local-minimal-graphic' },
-  '/images/fileView (21).webp': { title: '조약돌과 풀잎', artistId: 'local-minimal-graphic' },
-  '/images/fileView (23).webp': { title: '바람에 날리는 곡선', artistId: 'local-minimal-graphic' },
-  '/images/fileView (25).webp': { title: '두 개의 겨울 가지', artistId: 'local-minimal-graphic' },
-  '/images/fileView (26).webp': { title: '둥근 잎사귀', artistId: 'local-minimal-graphic' },
-  '/images/fileView (29).webp': { title: '솔방울 스케치', artistId: 'local-minimal-graphic' },
-  '/images/fileView (30).webp': { title: '부채꼴 잎의 나열', artistId: 'local-minimal-graphic' },
-  '/images/fileView (31).webp': { title: '어린 침엽수 가지', artistId: 'local-minimal-graphic' },
-  '/images/fileView (32).webp': { title: '어둠 속의 파편', artistId: 'local-abstract' },
-  '/images/fileView (34).webp': { title: '심연을 건너는 배', artistId: 'local-webtoon-clean' },
-  '/images/fileView (35).webp': { title: '푸른 배경의 단발머리 소녀', artistId: 'local-sunnysun' },
-  '/images/fileView (36).webp': { title: '돌담과 노란 꽃밭', artistId: 'local-sunnysun' },
-  '/images/fileView (37).webp': { title: '겨울밤 불빛 아래의 연인', artistId: 'local-webtoon-clean' },
-  '/images/fileView (38).webp': { title: '초록 들판 위의 리프트', artistId: 'local-cozy-illus' },
-  '/images/fileView (39).webp': { title: '가을 포항 여행 일기', artistId: 'local-sketch' },
-  '/images/fileView (40).webp': { title: '왕과 사는 남자', artistId: 'local-webtoon-clean' },
-  '/images/fileView (41).webp': { title: '햇살 가득한 오후의 명상', artistId: 'local-cozy-illus' },
-  '/images/fileView (42).webp': { title: '흩날리는 벚꽃 길 산책', artistId: 'local-haeb' },
-  '/images/fileView (43).webp': { title: '별구름 바다와 돌고래', artistId: 'local-sunnysun' },
-  '/images/fileView (44).webp': { title: '세 사람의 일상', artistId: 'local-cozy-illus' },
-  '/images/fileView (45).webp': { title: '빨간 목도리와 코트', artistId: 'local-sunnysun' },
-  '/images/fileView (46).webp': { title: '더플코트와 스카프', artistId: 'local-sunnysun' },
-  '/images/fileView (47).webp': { title: '봄동 비빔밥', artistId: 'local-rilin' },
-  '/images/fileView (48).webp': { title: '보라빛 꽃밭의 오후', artistId: 'local-cozy-illus' },
-  '/images/fileView (49).webp': { title: '삼일절 기념 일러스트', artistId: 'local-sketch' },
-  '/images/fileView (50).webp': { title: '레이디 두마의 인물들', artistId: 'local-webtoon-clean' },
-  '/images/fileView (51).webp': { title: '2026 해피 뉴 이어', artistId: 'local-pop' },
-  '/images/fileView (52).webp': { title: '입춘대길', artistId: '4', groupName: '봄을 여는 시선전' },
-  '/images/fileView (53).webp': { title: '싱그러운 야채 씻기', artistId: '5' },
-  '/images/fileView (54).webp': { title: '별빛을 담은 손', artistId: '10' },
-  '/images/fileView (55).webp': { title: '퇴근역의 노을', artistId: '16', groupName: '일상의 온기전' },
-  '/images/fileView (56).webp': { title: '거대한 꽃들 사이에서', artistId: '13', groupName: '봄을 여는 시선전' },
-  '/images/fileView (57).webp': { title: '푸른 꽃을 든 단발소녀', artistId: '7' },
-  '/images/fileView (58).webp': { title: '온전한 내가 되기', artistId: '21', groupName: '자아 발견 그룹전' },
-  '/images/fileView (59).webp': { title: 'Lovely Time!', artistId: '1' },
-  '/images/fileView (60).webp': { title: '눈 내리는 오두막', artistId: '6' },
-  '/images/fileView (61).webp': { title: '구름 아래 꽃길', artistId: '24', groupName: '봄을 여는 시선전' },
-  '/images/fileView (62).webp': { title: '초록 아치와 비밀의 화원', artistId: '24', groupName: '봄날의 자연전' },
-  '/images/fileView (63).webp': { title: '비상하는 흰 비둘기', artistId: '19', groupName: '봄날의 자연전' },
-  '/images/fileView (64).webp': { title: '버드나무 아래의 휴식', artistId: '21', groupName: '여행의 기억전' },
-  '/images/fileView (65).webp': { title: '다리가 보이는 카페 창가', artistId: '16', groupName: '여행의 기억전' },
-  '/images/fileView (66).webp': { title: '억새꽃 흩날리는 하늘', artistId: '22' },
-  '/images/fileView (67).webp': { title: '보라빛 둥근 꽃과 들판', artistId: '24', groupName: '봄날의 자연전' },
-  '/images/fileView (68).webp': { title: '숲 위로 보이는 도시 풍경', artistId: '19' },
-  '/images/fileView (69).webp': { title: '행복했던 바다 여행', artistId: '21', groupName: '여행의 기억전' },
-  '/images/fileView (70).webp': { title: '노을 지는 바닷가', artistId: '17' },
-  '/images/fileView (71).webp': { title: '토끼와 함께하는 봄날', artistId: '13', groupName: '동화 속 세상전' },
-  '/images/fileView (72).webp': { title: '햇살 아래 미소', artistId: '10', groupName: '일러스트 인물전' },
-  '/images/fileView (73).webp': { title: '푸른 드레스와 산양', artistId: '14', groupName: '일러스트 인물전' },
-  '/images/fileView (74).webp': { title: '거울공주 유니콘', artistId: '20', groupName: '마인드 일러스트전' },
-  '/images/fileView (75).webp': { title: '바텐더 유니콘', artistId: '20', groupName: '마인드 일러스트전' },
-  '/images/fileView (76).webp': { title: '요리사 유니콘과 계란', artistId: '20' },
-  '/images/fileView (77).webp': { title: '김밥 먹방 유니콘', artistId: '20' },
-  '/images/fileView (78).webp': { title: '새들에게 파묻힌 유니콘', artistId: '20', groupName: '마인드 일러스트전' },
-  '/images/fileView (79).webp': { title: '유니콘의 편지', artistId: '20' },
-  '/images/fileView (80).webp': { title: '지렁이와 뱀 소동', artistId: '20' },
-  '/images/fileView (81).webp': { title: '유니콘 초상화 갤러리', artistId: '20', groupName: '마인드 일러스트전' },
-  '/images/fileView (82).webp': { title: '찜기 속 유니콘과 만두', artistId: '20', groupName: '마인드 일러스트전' },
-  '/images/fileView (83).webp': { title: '알록달록 종이 조명', artistId: '4' },
-  '/images/fileView (84).webp': { title: '바다 위 강렬한 노을', artistId: '19' },
-  '/images/fileView (85).webp': { title: '두바이 초콜릿 다이어리', artistId: '16', groupName: '다이어리 기록전' },
-  '/images/fileView (86).webp': { title: '노란 꽃과 초록 원피스', artistId: '13', groupName: '여인상 시리즈' },
-  '/images/fileView (87).webp': { title: '하트와 목도리 소녀', artistId: '13', groupName: '여인상 시리즈' },
-  '/images/fileView (88).webp': { title: '만년설을 담는 사진가', artistId: '21', groupName: '풍경과 사람들' },
-  '/images/fileView (89).webp': { title: '빗방울과 맨발의 소녀', artistId: '13', groupName: '여인상 시리즈' },
-  '/images/fileView (91).webp': { title: '아련한 시선의 여인', artistId: '10', groupName: '일러스트 인물전' },
-  '/images/fileView (92).webp': { title: '크리스마스 트리 앞 친구들', artistId: '17', groupName: '동화 속 세상전' },
-  '/images/fileView (93).webp': { title: '흑백요리사 팬아트', artistId: '16' },
-  '/images/fileView (94).webp': { title: '여름 햇살 속 산책', artistId: '17', groupName: '여름날의 산책전' },
-  '/images/fileView (95).webp': { title: '독서와 강아지', artistId: '21', groupName: '일상의 온기전' },
-  '/images/fileView (96).webp': { title: '도심 속 빛나는 별', artistId: '8', groupName: '도시풍경전' },
-  '/images/fileView (97).webp': { title: '눈사람 창가 풍경', artistId: '17', groupName: '동화 속 세상전' },
-  '/images/fileView (98).webp': { title: '겨울 숲속 눈길 편지', artistId: '17', groupName: '동화 속 세상전' },
+/** 버킷 단위 그룹전(작품 성격에 맞는 전시 제목) */
+const BUCKET_GROUP_EXHIBITION: Record<Exclude<Bucket, 'fileview' | 'misc'>, string> = {
+  ahn: '유령 패션과 디지털 펜 — 안창홍 초대전',
+  web: '숨 쉬는 꽃 — 화훼 디지털 연작전',
+  se: '형태의 잔향 — 단색·공간 조형전',
+  ig: '일상의 한 컷 — 디지털 스케치 모음전',
+  imageye: '잔상과 붓터치 — 추상 매체전',
 };
 
-/** Instagram export 스타일 파일명 */
+/** fileView 내보내기 묶음별 전시명 (시간 버킷으로 같은 배치 → 같은 전시) */
+const FILEVIEW_EXHIBITIONS = [
+  '밤의 유원지 — 겨울 일러스트레이션 전',
+  '스크린 너머 — 디지털 드로잉 살롱',
+  '파스텔과 모니터 — 일러스트 콜렉티브',
+  '겨울빛 캔버스 — 시즌 디지털 전',
+  '회전목마와 별 — 판타지 스케치 전',
+  '부드러운 선 — 캐릭터·풍경 드로잉',
+  '창가의 스케치북 — 일상 일러스트 모음',
+  '달빛 스튜디오 — 야간 작업 아카이브',
+  '수채 느낌 디지털 — 컬러 연습 전',
+  '도시의 틈 — 소품·풍경 일러스트',
+  '작은 동물원 — 크리처 일러스트 살롱',
+  '봄을 기다리며 — 계절 스케치 전',
+  '한 장의 편지 — 감성 일러스트 모음',
+  '종이 위의 여행 — 판타지 풍경전',
+  '무지개 톤 스터디 — 컬러 팔레트 전',
+  '고요한 오후 — 실내·정물 일러스트',
+  '바람에 실린 선 — 라이트 스케치 전',
+  '새벽 작업실 — 나이트 드로잉 아카이브',
+  '미니어처 월드 — 소형 풍경 일러스트',
+  '펜터치 기록 — 드로잉 저널 전',
+] as const;
+
+/** 기타 파일(misc) 전시 제목 풀 */
+const MISC_GROUP_EXHIBITIONS = [
+  '로컬 아카이브 — 혼합 매체전',
+  '스튜디오 로컬 — 실험 작품 모음',
+  '이름 없는 드로잉 — 미분류 스케치전',
+  '갤러리 박스 — 단발 작품 큐레이션',
+] as const;
+
+/** 직접 본 이미지·파일명 힌트 */
+const OVERRIDES: Record<string, { title: string; artistId?: string; exhibitionName?: string; groupName?: string }> = {
+  '/images/서울전시회_안창홍.jpg': {
+    title: '코트 위의 흐름',
+    exhibitionName: '호리아트 스페이스 초대전 — 패션 드로잉',
+    groupName: '안창홍 스튜디오',
+  },
+  '/images/_서울_전시회_안창홍_유령패션_갤럭시_노트_디지털펜화_호리아트스페이스_(17).jpg': {
+    title: '유령 패션 스케치 17',
+    exhibitionName: '호리아트 스페이스 초대전 — 패션 드로잉',
+    groupName: '안창홍 스튜디오',
+  },
+  '/images/369702721_777125777748569_3573259619719392013_n.jpg': {
+    title: '팝 아트 수박',
+    artistId: 'local-pop',
+  },
+  '/images/fileView - 2026-04-03T144611.475.jpg': {
+    title: '한밤의 회전목마',
+    artistId: 'local-cozy-illus',
+    exhibitionName: '겨울 빛 디지털 살롱 — 판타지 일러스트',
+  },
+};
+
+/** 장르별 제목 풀 — 버킷/화풍에 맞게 선택 */
+const TITLE_POOLS = {
+  daily: [
+    '창가의 고요한 오후', '오후 네 시의 커피', '실내의 화분들', '거울 앞의 하루',
+    '한 잔의 따뜻함', '책장 너머의 빛', '조용한 방의 시계', '스케치북 한 장',
+    '옷걸이와 햇빛', '손끝의 온도', '두 사람의 거리', '일상의 자투리',
+    '햇볕 아래의 낮잠', '오래된 책상', '창문 옆의 작은 소원', '하루의 끝자락',
+  ],
+  landscape: [
+    '이른 봄의 산책로', '벚꽃이 지는 길', '파도 소리와 모래', '강가의 휴식',
+    '골목 끝 풍경', '찬 공기 속 산책', '가을 골목의 발자국', '첫눈의 발자국',
+    '바다 향기', '산 입구의 안내판', '강변의 벤치', '그림 같은 풍경',
+    '들판 위의 바람', '언덕에서 본 풍경', '호수의 반영', '길 위의 하루',
+  ],
+  night: [
+    '한 겨울 밤의 불빛', '별이 내리는 마을', '달빛 아래 독서', '밤하늘의 연등',
+    '여름밤의 바람', '노을진 창고의 문', '야경 속 작은 빛', '별무리 아래서',
+    '달과 구름의 밤', '도시의 불빛 사이', '새벽의 창', '조용한 골목의 가로등',
+  ],
+  botanical: [
+    '작은 정원의 비밀', '풀잎에 맺힌 이슬', '비 오는 날의 우산', '봄을 담은 꽃잎',
+    '정원의 첫 새싹', '햇살과 꽃잎', '화분 곁의 오후', '꽃잎의 결',
+    '초록 위의 아침 이슬', '작은 들꽃들', '한 송이의 여름', '뿌리가 자라는 소리',
+  ],
+  abstract: [
+    '물결 사이의 대화', '빛바랜 사진 한 장', '물감이 번진 순간', '그리움의 실루엣',
+    '사각형 아래의 꿈', '종이 위의 선', '비어 있는 캔버스', '붓터치 잔향',
+    '색의 경계에서', '흐려진 기억', '무채의 여운', '형태의 분해',
+  ],
+  animal: [
+    '창밖을 보는 고양이', '쉬는 강아지의 오후', '작은 새의 노래', '고양이의 낮잠',
+    '토끼의 한적한 오후', '공원의 비둘기', '창가의 햇살과 고양이', '하늘을 나는 새',
+  ],
+  fantasy: [
+    '안개 낀 숲의 입구', '모퉁이를 돌면', '다시 만날 약속', '작별의 인사',
+    '바람에 흔들리는 커튼', '잃어버린 지도', '동화 속의 길', '마법사의 작업실',
+    '별을 담은 상자', '꿈속의 정원',
+  ],
+  food: [
+    '갓 구운 빵의 냄새', '따뜻한 국수 한 그릇', '오후의 디저트', '커피와 책',
+    '아침 식탁', '여름 과일 접시', '티타임의 풍경', '시장에서 온 채소',
+  ],
+  portrait: [
+    '조용한 시선', '서 있는 자화상', '빛을 바라보는 사람', '누군가의 옆모습',
+    '익숙한 얼굴', '먼 곳을 보는 이', '창가에 기댄 사람',
+  ],
+} as const;
+
+type Genre = keyof typeof TITLE_POOLS;
+
+/** 버킷·파일 패턴으로 장르 추정 */
+function genreForBucket(bucket: Bucket): Genre {
+  switch (bucket) {
+    case 'ahn': return 'portrait';
+    case 'web': return 'botanical';
+    case 'se': return 'abstract';
+    case 'ig': return 'daily';
+    case 'imageye': return 'abstract';
+    case 'fileview': return 'daily'; // 시간 버킷에 따라 런타임에 재조정
+    case 'misc': return 'landscape';
+  }
+}
+
+/** 시간 버킷 기반 장르 순환 — fileview 시간대별로 다른 장르 선택 → 같은 시간 배치는 같은 장르 */
+const FILEVIEW_GENRE_ROTATION: Genre[] = ['daily', 'landscape', 'night', 'fantasy', 'botanical', 'abstract', 'food', 'animal'];
+
+const ARTIST_ROTATION: string[] = [
+  'local-rilin',
+  'local-haeb',
+  'local-sunnysun',
+  'local-webtoon-clean',
+  'local-cozy-illus',
+  'local-minimal-graphic',
+  'local-sketch',
+  'local-pop',
+  'local-abstract',
+  'local-botanical',
+  'local-surreal',
+  'local-ahn',
+  'local-fileview-general',
+  'local-warm-palette',
+  'local-night-scene',
+  'local-daily-diary',
+  'local-fantasy',
+  'local-character',
+  '13', '16', '17', '19', '21', '7', '10',
+];
+
+function hashStr(s: string): number {
+  let h = 2166136261;
+  for (let i = 0; i < s.length; i++) {
+    h ^= s.charCodeAt(i);
+    h = Math.imul(h, 16777619);
+  }
+  return Math.abs(h >>> 0);
+}
+
+function fileViewTimeBucket(norm: string): number {
+  const m = norm.match(/fileView - \d{4}-\d{2}-\d{2}T(\d{2})(\d{2})(\d{2})\./i);
+  if (m) return parseInt(m[1] + m[2] + m[3], 10);
+  return 0;
+}
+
 function isIgStyleName(file: string): boolean {
   return /_\d+_n\.(jpe?g)$/i.test(file) || /^\d+_\d+_\d+_n\.(jpe?g)$/i.test(file.trim());
 }
@@ -123,7 +188,7 @@ function isIgStyleName(file: string): boolean {
 function classifyBucket(file: string): Bucket {
   const t = file.trim();
   const lower = t.toLowerCase();
-  if (t.includes('안창홍') || t.includes('서울전시')) return 'ahn';
+  if (t.includes('안창홍') || t.includes('서울전시') || t.includes('_서울_')) return 'ahn';
   if (lower.includes('fileview')) return 'fileview';
   if (/^web\d+\.(jpe?g|png|webp)$/i.test(t)) return 'web';
   if (/^se-/i.test(t)) return 'se';
@@ -132,90 +197,183 @@ function classifyBucket(file: string): Bucket {
   return 'misc';
 }
 
-function titleForBucket(bucket: Bucket, serial: number, file: string): string {
-  switch (bucket) {
-    case 'ahn':
-      return `디지털 펜 드로잉 ${serial}`;
-    case 'fileview':
-      return `컬러 일러스트 ${serial}`;
-    case 'web':
-      return `화훼 연작 ${serial}`;
-    case 'se':
-      return `형태의 잔향 ${serial}`;
-    case 'ig':
-      return `스케치 노트 ${serial}`;
-    case 'imageye':
-      return `추상 초상 ${serial}`;
-    case 'misc': {
-      const base = file.replace(/\.[^.]+$/i, '').trim();
-      if (base.length >= 2 && base.length <= 40 && !/^\d+$/.test(base)) return base;
-      return `갤러리 작품 ${serial}`;
-    }
-  }
+function exhibitionForFileview(norm: string, h: number): string {
+  const tb = fileViewTimeBucket(norm);
+  const idx =
+    tb > 0
+      ? (tb * 17 + (h & 0xff)) % FILEVIEW_EXHIBITIONS.length
+      : (h >> 9) % FILEVIEW_EXHIBITIONS.length;
+  return FILEVIEW_EXHIBITIONS[idx] ?? FILEVIEW_EXHIBITIONS[0];
+}
+
+function exhibitionForMisc(h: number): string {
+  const idx = (h >> 11) % MISC_GROUP_EXHIBITIONS.length;
+  return MISC_GROUP_EXHIBITIONS[idx] ?? MISC_GROUP_EXHIBITIONS[0];
+}
+
+function hashedTitle(h: number, genre: Genre): string {
+  const pool = TITLE_POOLS[genre];
+  const base = pool[h % pool.length];
+  // 같은 제목 반복 방지: 해시 하위 비트로 일부에 번호 접미 (연작 느낌)
+  const variant = (h >> 12) % 97;
+  return variant < 15 ? `${base} · ${variant + 1}` : base;
 }
 
 function getArtistById(artistsList: Artist[], id: string): Artist {
   return artistsList.find((a) => a.id === id) ?? artistsList[0];
 }
 
-const HUMAN_ARTIST_IDS = ['1', '2', '3', '4', '5', '6', '7', '8', '9', '10', '11', '12', '13', '14', '15', '16', '17', '18', '19', '20', '21', '22', '23', '24'];
-const RANDOM_GROUPS = ['빛과 아크릴전', '시선의 흔적들', '도심 속 휴식전', '일상의 조각들', '초록의 향연전', '새로운 봄날전'];
-const ADJ = ['따뜻한', '고요한', '흩날리는', '반짝이는', '아련한', '포근한', '신비로운', '생동감 넘치는', '오후의', '깊은 밤의', '푸른', '빛나는', '설레는', '조용한', '꿈꾸는'];
-const NOUNS = ['풍경', '정물', '초상화', '기억', '바다', '하늘', '정원', '고양이', '온도', '꽃잎', '풍경화', '소녀', '마을', '숲길', '파도', '산책로'];
-
-function generateProceduralMeta(serial: number) {
-  const artistId = HUMAN_ARTIST_IDS[serial % HUMAN_ARTIST_IDS.length];
-  // 30% chance to have a group name
-  const hasGroup = serial % 3 === 0; 
-  const groupName = hasGroup ? RANDOM_GROUPS[serial % RANDOM_GROUPS.length] : undefined;
-  const adj = ADJ[(serial * 7) % ADJ.length];
-  const noun = NOUNS[(serial * 13) % NOUNS.length];
-  const title = `${adj} ${noun} ${serial}`;
-  return { title, artistId, groupName };
+/** 항상 의미 있는 제목 보장. 과거엔 랜덤 50%를 빈 문자열로 두었으나 UI 무제 카드가 너무 많아 제거 (2026-04) */
+function maybePieceTitle(raw: string): string {
+  return raw;
 }
+
+/** 작가별 개인전 풀 — solo 버킷 작가에게 부여 */
+const SOLO_EXHIBITIONS: Record<string, string[]> = {
+  'local-ahn': ['유령 패션 드로잉', '디지털 펜 연작'],
+  'local-botanical': ['꽃을 닮은 날들', '숨 쉬는 정원'],
+  'local-surreal': ['형태의 잔향', '조형과 침묵'],
+  'local-pop': ['색의 계절', '여름 팝'],
+  'local-sketch': ['일상의 한 컷', '드로잉 저널'],
+  'local-abstract': ['붓터치 초상전', '잔상의 풍경'],
+  'local-warm-palette': ['따뜻한 시선', '빛이 머문 자리'],
+  'local-night-scene': ['도시의 밤', '달빛의 기록'],
+  'local-daily-diary': ['오늘의 페이지', '하루 드로잉'],
+  'local-fantasy': ['동화의 문', '꿈을 여는 방'],
+  'local-character': ['캐릭터 아틀리에', '살아있는 인물들'],
+  'local-cozy-illus': ['포근한 오후', '수채 일기'],
+  'local-webtoon-clean': ['라인의 흐름', '깔끔한 장면들'],
+};
+
+function soloExhibitionFor(artistId: string, h: number): string {
+  const list = SOLO_EXHIBITIONS[artistId];
+  if (!list?.length) return '로컬 작가 개인전';
+  return list[h % list.length];
+}
+
+/** 그룹 전시에 가끔 섞이는 비회원 참여 작가 이름 풀 — 프로필 없음, 팔로우 불가, bio 없음 */
+const NON_MEMBER_GUEST_NAMES = [
+  '박승우', '이다영', '김태현', '최은지', '한지훈',
+  '송혜린', '권도윤', '조민서', '배수민', '유진아',
+  '장우진', '문가람', '백지원', '오현서', '임채원',
+];
 
 export function buildLocalPublicWorks(paths: string[], artistsList: Artist[]): Work[] {
   const counters: Record<Bucket, number> = {
-    ahn: 1,
-    fileview: 1,
-    web: 1,
-    se: 1,
-    ig: 1,
-    imageye: 1,
-    misc: 1,
+    ahn: 1, fileview: 1, web: 1, se: 1, ig: 1, imageye: 1, misc: 1,
   };
 
   return paths.map((rawPath, i) => {
     const path = toPublicImageSrc(rawPath);
     const norm = rawPath.trim();
     const file = norm.replace(/^\/images\//, '');
-
-    const ovr = TITLES_BY_PATH[norm];
+    const h = hashStr(norm);
     const bucket = classifyBucket(file);
+    const ovr = OVERRIDES[norm];
+
+    // fileview는 시간 배치별 장르 고정 → 동일 전시 안에서 장르 일관
+    const tb = bucket === 'fileview' ? fileViewTimeBucket(norm) : 0;
+    const genre: Genre =
+      bucket === 'fileview' && tb > 0
+        ? FILEVIEW_GENRE_ROTATION[tb % FILEVIEW_GENRE_ROTATION.length]
+        : genreForBucket(bucket);
+
     let title: string;
     let artistId: string;
-    let groupName: string | undefined;
 
     if (ovr) {
       counters[bucket] += 1;
       title = ovr.title;
       artistId = ovr.artistId ?? BUCKET_ARTIST[bucket];
-      groupName = ovr.groupName;
-    } else {
+    } else if (bucket === 'fileview') {
+      counters[bucket] += 1;
+      // fileview는 그룹전시 — 여러 작가 로테이션
+      artistId = ARTIST_ROTATION[h % ARTIST_ROTATION.length];
+      title = hashedTitle(h, genre);
+    } else if (bucket === 'ig') {
       const n = counters[bucket]++;
-      if (bucket === 'fileview' || bucket === 'misc') {
-        const generated = generateProceduralMeta(n);
-        title = generated.title;
-        artistId = generated.artistId;
-        groupName = generated.groupName;
-      } else {
-        artistId = BUCKET_ARTIST[bucket];
-        title = titleForBucket(bucket, n, file);
-      }
+      artistId = ARTIST_ROTATION[(h + n) % ARTIST_ROTATION.length];
+      title = hashedTitle(h ^ (n * 31), genre);
+    } else if (bucket === 'misc') {
+      const n = counters[bucket]++;
+      // misc는 일부만 개인작가(랜덤 풀), 일부는 그룹 스튜디오
+      artistId = (h % 100 < 35)
+        ? ARTIST_ROTATION[(h >> 5) % ARTIST_ROTATION.length]
+        : BUCKET_ARTIST[bucket];
+      // 파일명(타임스탬프 등)은 제목으로 쓰지 않음 — 항상 장르 풀에서 선택
+      title = hashedTitle(h ^ (n * 17), genre);
+    } else {
+      // 개인 작가 버킷 (ahn, web, se, imageye) — 본인 작품 시리즈
+      const n = counters[bucket]++;
+      artistId = BUCKET_ARTIST[bucket];
+      title = hashedTitle(h ^ (n * 11), genre);
     }
 
-    const titleFinal = title.length > 48 ? `${title.slice(0, 45)}…` : title;
-    const artist = getArtistById(artistsList, artistId);
+    title = maybePieceTitle(title);
+
+    // 개인/그룹 전시 분류:
+    //  - fileview, ig: 기본 group
+    //  - ahn/web/se/imageye/misc: 기본 solo (작가별 개인전)
+    //  - 단, 해시 일부(약 15%)는 반대로 전환 → 데이터 다양성
+    const coinFlip = h % 100;
+    const defaultGroup = bucket === 'fileview' || bucket === 'ig';
+    const isGroup = defaultGroup ? coinFlip >= 12 : coinFlip < 15;
+    const primaryExhibitionType: Work['primaryExhibitionType'] = isGroup ? 'group' : 'solo';
+
+    let artist: Artist;
+    let groupName: string | undefined;
+    let coOwners: Artist[] | undefined;
+    let owner: WorkOwner | undefined;
+
+    if (isGroup) {
+      // 그룹전시: 실제 groups[] 중 해시로 하나 선택 → groupName 부여
+      // 단일 이미지 작품이므로 1장 = 1작가 원칙 적용: 대표 작가 1명만, coOwners 없음
+      const group = groups[h % groups.length];
+      const memberIds = group.memberIds ?? [];
+      const resolvedMembers = memberIds
+        .map((mid) => artistsList.find((a) => a.id === mid))
+        .filter((a): a is Artist => Boolean(a));
+      if (resolvedMembers.length > 0) {
+        const leadIdx = h % resolvedMembers.length;
+        artist = resolvedMembers[leadIdx];
+        artistId = artist.id;
+      } else {
+        artist = getArtistById(artistsList, artistId);
+      }
+      groupName = group.name;
+      owner = { type: 'group', data: group };
+    } else {
+      // 개인전시: 기존 경로 그대로 (artistId → Artist)
+      artist = getArtistById(artistsList, artistId);
+      // 원본 override에 groupName이 지정되어 있으면 유지(호환)
+      groupName = ovr?.groupName;
+    }
+
+    // 전시명 결정
+    let exhibitionName: string;
+    if (ovr?.exhibitionName) {
+      exhibitionName = ovr.exhibitionName;
+    } else if (isGroup) {
+      exhibitionName =
+        bucket === 'fileview' ? exhibitionForFileview(norm, h)
+          : bucket === 'misc' ? exhibitionForMisc(h)
+            : BUCKET_GROUP_EXHIBITION[bucket as keyof typeof BUCKET_GROUP_EXHIBITION]
+            ?? exhibitionForMisc(h);
+    } else {
+      exhibitionName = soloExhibitionFor(artistId, h);
+    }
+
+    const titleFinal = title && title.length > 48 ? `${title.slice(0, 45)}…` : title;
+    const tagList = [exhibitionName, artist.name, '로컬 갤러리'];
+    if (groupName) tagList.splice(1, 0, groupName);
+
+    // 단일 이미지 → 작가 1명만. imageArtists에 대표 작가만 기록.
+    const imageArtists: Work['imageArtists'] | undefined = isGroup ? [{
+      type: 'member' as const,
+      memberId: artist.id,
+      memberName: artist.name,
+      memberAvatar: artist.avatar,
+    }] : undefined;
 
     return {
       id: `local-img-${i}`,
@@ -223,15 +381,21 @@ export function buildLocalPublicWorks(paths: string[], artistsList: Artist[]): W
       image: path,
       artistId: artist.id,
       artist,
+      coOwners,
+      owner,
+      imageArtists,
       likes: (i * 17 + 11) % 2400 + 3,
       saves: (i * 11 + 7) % 600 + 1,
       comments: (i * 5) % 80,
       category: 'art',
-      description: `${artist.name} · public/images 로컬 갤러리입니다.`,
-      tags: [artist.name, '로컬 갤러리'],
+      description: groupName
+        ? `전시 「${exhibitionName}」·그룹 「${groupName}」에 속한 작품입니다. 대표 작가 ${artist.name}. public/images 로컬 갤러리.`
+        : `전시 「${exhibitionName}」에 속한 작품입니다. 대표 작가 ${artist.name}. public/images 로컬 갤러리.`,
+      tags: tagList,
       feedReviewStatus: 'approved',
-      groupName: groupName,
-      primaryExhibitionType: groupName ? 'group' : 'solo',
+      exhibitionName,
+      groupName,
+      primaryExhibitionType,
     } satisfies Work;
   });
 }

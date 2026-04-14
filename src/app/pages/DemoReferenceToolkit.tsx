@@ -50,13 +50,13 @@ function EmailFrame({
   children: React.ReactNode;
 }) {
   return (
-    <div className="rounded-lg border border-[#E5E7EB] bg-[#F4F4F5] p-3">
-      <div className="rounded-md border border-[#E5E7EB] bg-white shadow-sm overflow-hidden">
-        <div className="border-b border-[#F0F0F0] px-4 py-2.5 bg-[#FAFAFA]">
-          <p className="text-[11px] font-medium text-[#71717A] uppercase tracking-wide">Subject</p>
-          <p className="text-sm font-semibold text-[#18181B] mt-0.5">{subject}</p>
+    <div className="rounded-lg border border-border bg-muted p-3">
+      <div className="rounded-md border border-border bg-white shadow-sm overflow-hidden">
+        <div className="border-b border-border/40 px-4 py-2.5 bg-muted/50">
+          <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Subject</p>
+          <p className="text-sm font-semibold text-foreground mt-0.5">{subject}</p>
         </div>
-        <div className="px-4 py-4 text-sm text-[#3F3F46] leading-relaxed whitespace-pre-line font-sans">
+        <div className="px-4 py-4 text-sm text-foreground leading-relaxed whitespace-pre-line font-sans">
           {children}
         </div>
       </div>
@@ -99,7 +99,7 @@ export default function DemoReferenceToolkit() {
   const emailRows = parseEmailMasterRows(t('refStub.emailMasterBlock'));
 
   return (
-    <div className="min-h-screen bg-[#FAFAFA] pb-24 md:pb-12">
+    <div className="min-h-screen bg-muted/50 pb-24 md:pb-12">
       <div className="mx-auto max-w-3xl px-4 sm:px-6 py-10 sm:py-12">
         <Link
           to="/demo"
@@ -109,38 +109,38 @@ export default function DemoReferenceToolkit() {
           {t('refStub.backDemo')}
         </Link>
 
-        <h1 className="text-xl sm:text-2xl font-bold text-[#18181B] mb-2">{t('refStub.title')}</h1>
-        <p className="text-sm text-[#71717A] leading-relaxed mb-10">{t('refStub.lead')}</p>
+        <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-2">{t('refStub.title')}</h1>
+        <p className="text-sm text-muted-foreground leading-relaxed mb-10">{t('refStub.lead')}</p>
 
         {/* JWT */}
-        <section className="rounded-2xl border border-[#E5E7EB] bg-white p-5 sm:p-6 shadow-sm mb-8">
+        <section className="rounded-2xl border border-border bg-white p-5 sm:p-6 shadow-sm mb-8">
           <div className="flex items-center gap-2 mb-2">
-            <KeyRound className="h-5 w-5 text-[#18181B]" />
-            <h2 className="text-base font-bold text-[#18181B]">{t('refStub.jwtTitle')}</h2>
+            <KeyRound className="h-5 w-5 text-foreground" />
+            <h2 className="text-base font-bold text-foreground">{t('refStub.jwtTitle')}</h2>
           </div>
-          <p className="text-xs text-[#71717A] mb-4 leading-relaxed">{t('refStub.jwtLead')}</p>
+          <p className="text-xs text-muted-foreground mb-4 leading-relaxed">{t('refStub.jwtLead')}</p>
           {!session ? (
-            <p className="text-sm text-[#71717A]">{t('refStub.jwtEmpty')}</p>
+            <p className="text-sm text-muted-foreground">{t('refStub.jwtEmpty')}</p>
           ) : (
             <div className="space-y-3 font-mono text-[11px] sm:text-xs break-all">
               <p>
-                <span className="text-[#71717A]">{t('refStub.jwtSub')} </span>
-                <span className="text-[#18181B]">{session.sub}</span>
+                <span className="text-muted-foreground">{t('refStub.jwtSub')} </span>
+                <span className="text-foreground">{session.sub}</span>
               </p>
               <p>
-                <span className="text-[#71717A]">{t('refStub.jwtAccessLabel')} </span>
-                <span className="text-[#18181B]">{truncateToken(session.accessToken)}</span>
+                <span className="text-muted-foreground">{t('refStub.jwtAccessLabel')} </span>
+                <span className="text-foreground">{truncateToken(session.accessToken)}</span>
               </p>
               <p>
-                <span className="text-[#71717A]">{t('refStub.jwtRefreshLabel')} </span>
-                <span className="text-[#18181B]">{truncateToken(session.refreshToken)}</span>
+                <span className="text-muted-foreground">{t('refStub.jwtRefreshLabel')} </span>
+                <span className="text-foreground">{truncateToken(session.refreshToken)}</span>
               </p>
-              <p className="text-[#52525B]">
+              <p className="text-muted-foreground">
                 {t('refStub.jwtAccessExpires')}{' '}
                 {new Date(session.accessExpiresAt).toLocaleString(locale === 'en' ? 'en-US' : 'ko-KR')}
                 {accessDead ? ` (${t('refStub.jwtExpired')})` : ''}
               </p>
-              <p className="text-[#52525B]">
+              <p className="text-muted-foreground">
                 {t('refStub.jwtRefreshExpires')}{' '}
                 {new Date(session.refreshExpiresAt).toLocaleString(locale === 'en' ? 'en-US' : 'ko-KR')}
               </p>
@@ -149,16 +149,16 @@ export default function DemoReferenceToolkit() {
               </Button>
             </div>
           )}
-          <p className="text-[11px] text-[#A1A1AA] mt-4 leading-snug">{t('refStub.jwtHint')}</p>
+          <p className="text-[11px] text-muted-foreground mt-4 leading-snug">{t('refStub.jwtHint')}</p>
         </section>
 
         {/* GeoIP */}
-        <section className="rounded-2xl border border-[#E5E7EB] bg-white p-5 sm:p-6 shadow-sm mb-8">
+        <section className="rounded-2xl border border-border bg-white p-5 sm:p-6 shadow-sm mb-8">
           <div className="flex items-center gap-2 mb-2">
-            <Globe className="h-5 w-5 text-[#18181B]" />
-            <h2 className="text-base font-bold text-[#18181B]">{t('refStub.geoTitle')}</h2>
+            <Globe className="h-5 w-5 text-foreground" />
+            <h2 className="text-base font-bold text-foreground">{t('refStub.geoTitle')}</h2>
           </div>
-          <p className="text-xs text-[#71717A] mb-4 leading-relaxed">{t('refStub.geoLead')}</p>
+          <p className="text-xs text-muted-foreground mb-4 leading-relaxed">{t('refStub.geoLead')}</p>
           <div className="flex flex-wrap gap-2 mb-4">
             <Button type="button" size="sm" variant="default" disabled={geoLoading} onClick={() => runGeo(false)}>
               {geoLoading ? t('refStub.geoLoading') : t('refStub.geoCta')}
@@ -168,23 +168,23 @@ export default function DemoReferenceToolkit() {
             </Button>
           </div>
           {geo ? (
-            <ul className="text-sm space-y-1.5 text-[#3F3F46]">
+            <ul className="text-sm space-y-1.5 text-foreground">
               <li>
-                <span className="text-[#71717A]">{t('refStub.geoCode')} </span>
+                <span className="text-muted-foreground">{t('refStub.geoCode')} </span>
                 <strong>{geo.countryCode}</strong>
               </li>
               <li>
-                <span className="text-[#71717A]">{t('refStub.geoName')} </span>
+                <span className="text-muted-foreground">{t('refStub.geoName')} </span>
                 {geo.countryName}
               </li>
               {geo.region ? (
                 <li>
-                  <span className="text-[#71717A]">{t('refStub.geoRegion')} </span>
+                  <span className="text-muted-foreground">{t('refStub.geoRegion')} </span>
                   {geo.region}
                 </li>
               ) : null}
               <li>
-                <span className="text-[#71717A]">{t('refStub.geoSource')} </span>
+                <span className="text-muted-foreground">{t('refStub.geoSource')} </span>
                 {geo.source === 'ipapi' ? t('refStub.geoSourceIpapi') : t('refStub.geoSourceFallback')}
               </li>
             </ul>
@@ -192,12 +192,12 @@ export default function DemoReferenceToolkit() {
         </section>
 
         {/* Email templates */}
-        <section className="rounded-2xl border border-[#E5E7EB] bg-white p-5 sm:p-6 shadow-sm mb-8">
+        <section className="rounded-2xl border border-border bg-white p-5 sm:p-6 shadow-sm mb-8">
           <div className="flex items-center gap-2 mb-2">
-            <Mail className="h-5 w-5 text-[#18181B]" />
-            <h2 className="text-base font-bold text-[#18181B]">{t('refStub.tplTitle')}</h2>
+            <Mail className="h-5 w-5 text-foreground" />
+            <h2 className="text-base font-bold text-foreground">{t('refStub.tplTitle')}</h2>
           </div>
-          <p className="text-xs text-[#71717A] mb-5 leading-relaxed">{t('refStub.tplLead')}</p>
+          <p className="text-xs text-muted-foreground mb-5 leading-relaxed">{t('refStub.tplLead')}</p>
           <div className="space-y-6">
             {EMAIL_PREVIEW_KEYS.map(({ subject, body }) => (
               <EmailFrame key={subject} subject={t(subject)}>
@@ -208,12 +208,12 @@ export default function DemoReferenceToolkit() {
         </section>
 
         {/* Email master table (기능 모음) */}
-        <section className="rounded-2xl border border-[#E5E7EB] bg-white p-5 sm:p-6 shadow-sm">
+        <section className="rounded-2xl border border-border bg-white p-5 sm:p-6 shadow-sm">
           <div className="flex items-center gap-2 mb-2">
-            <ListChecks className="h-5 w-5 text-[#18181B]" />
-            <h2 className="text-base font-bold text-[#18181B]">{t('refStub.rulesTitle')}</h2>
+            <ListChecks className="h-5 w-5 text-foreground" />
+            <h2 className="text-base font-bold text-foreground">{t('refStub.rulesTitle')}</h2>
           </div>
-          <p className="text-xs text-[#71717A] mb-4 leading-relaxed">{t('refStub.rulesLead')}</p>
+          <p className="text-xs text-muted-foreground mb-4 leading-relaxed">{t('refStub.rulesLead')}</p>
           <Table>
             <TableHeader>
               <TableRow>
@@ -226,10 +226,10 @@ export default function DemoReferenceToolkit() {
             <TableBody>
               {emailRows.map((row) => (
                 <TableRow key={row.no}>
-                  <TableCell className="align-top text-sm font-medium text-[#18181B]">{row.no}</TableCell>
+                  <TableCell className="align-top text-sm font-medium text-foreground">{row.no}</TableCell>
                   <TableCell className="align-top text-sm">{row.name}</TableCell>
-                  <TableCell className="align-top text-sm text-[#52525B]">{row.trigger}</TableCell>
-                  <TableCell className="align-top text-sm text-[#52525B]">{row.req}</TableCell>
+                  <TableCell className="align-top text-sm text-muted-foreground">{row.trigger}</TableCell>
+                  <TableCell className="align-top text-sm text-muted-foreground">{row.req}</TableCell>
                 </TableRow>
               ))}
             </TableBody>

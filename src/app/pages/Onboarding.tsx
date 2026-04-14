@@ -4,35 +4,11 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Camera } from 'lucide-react';
 import { profileStore } from '../store';
 import { pointsOnOnboardingStep1Complete } from '../utils/pointsBackground';
+import { matchSmsInviteOnSignup } from '../utils/inviteMessaging';
 import { useI18n } from '../i18n/I18nProvider';
-import type { MessageKey } from '../i18n/messages';
 import { Button } from '../components/ui/button';
 
-const INTEREST_TAG_IDS = [
-  'painting',
-  'drawing',
-  'digitalArt',
-  'watercolor',
-  'oil',
-  'acrylic',
-  'printmaking',
-  'sculpture',
-  'photo',
-  'illustration',
-  'calligraphy',
-  'ceramics',
-  'craft',
-  'textile',
-  'other',
-] as const;
-
-type InterestTagId = (typeof INTEREST_TAG_IDS)[number];
-
-function tagLabelKey(id: InterestTagId): MessageKey {
-  return `onboarding.tag.${id}` as MessageKey;
-}
-
-const TOTAL_STEPS = 5;
+const TOTAL_STEPS = 3;
 const ACCENT = '#171717';
 
 export default function Onboarding() {
@@ -41,7 +17,9 @@ export default function Onboarding() {
   const [currentStep, setCurrentStep] = useState(0);
   const [nickname, setNickname] = useState('');
   const [nicknameError, setNicknameError] = useState('');
-  const [selectedInterests, setSelectedInterests] = useState<string[]>([]);
+  const [realName, setRealName] = useState('');
+  const [realNameError, setRealNameError] = useState('');
+  const [phone, setPhone] = useState('');
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -52,12 +30,6 @@ export default function Onboarding() {
   const goBack = useCallback(() => {
     setCurrentStep(s => Math.max(s - 1, 0));
   }, []);
-
-  const toggleInterest = (tagId: string) => {
-    setSelectedInterests(prev =>
-      prev.includes(tagId) ? prev.filter(x => x !== tagId) : [...prev, tagId],
-    );
-  };
 
   const validateNickname = (): boolean => {
     const trimmed = nickname.trim();
@@ -73,14 +45,21 @@ export default function Onboarding() {
     return true;
   };
 
-  const handleNicknameNext = () => {
-    if (!validateNickname()) return;
-    pointsOnOnboardingStep1Complete();
-    goNext();
+  const validateRealName = (): boolean => {
+    const trimmed = realName.trim();
+    if (trimmed.length < 2) {
+      setRealNameError(t('onboarding.errRealNameShort'));
+      return false;
+    }
+    setRealNameError('');
+    return true;
   };
 
-  const handleInterestsNext = () => {
-    if (selectedInterests.length < 1) return;
+  const handleNicknameNext = () => {
+    const nickOk = validateNickname();
+    const realOk = validateRealName();
+    if (!nickOk || !realOk) return;
+    pointsOnOnboardingStep1Complete();
     goNext();
   };
 
@@ -97,12 +76,17 @@ export default function Onboarding() {
 
   const finishOnboarding = () => {
     const name = nickname.trim();
+    const real = realName.trim();
     profileStore.updateProfile({
       name,
       nickname: name,
-      interests: selectedInterests,
+      realName: real,
+      ...(phone.trim() ? { phone: phone.trim() } : {}),
       ...(profileImage ? { avatarUrl: profileImage } : {}),
     });
+    if (phone.trim() && real) {
+      matchSmsInviteOnSignup(phone.trim(), real);
+    }
     localStorage.setItem('artier_onboarding_done', 'true');
     navigate('/');
   };
@@ -118,7 +102,7 @@ export default function Onboarding() {
       >
         <div className="mx-auto max-w-lg">
           <div
-            className="h-1.5 w-full rounded-full bg-zinc-100 overflow-hidden"
+            className="h-1.5 w-full rounded-full bg-muted/50 overflow-hidden"
             role="progressbar"
             aria-valuenow={currentStep + 1}
             aria-valuemin={1}
@@ -132,7 +116,7 @@ export default function Onboarding() {
               transition={{ type: 'spring', stiffness: 140, damping: 22 }}
             />
           </div>
-          <p className="mt-2 text-center text-xs text-zinc-400">
+          <p className="mt-2 text-center text-xs text-muted-foreground">
             {currentStep + 1} / {TOTAL_STEPS}
           </p>
         </div>
@@ -149,18 +133,17 @@ export default function Onboarding() {
               exit={{ opacity: 0, x: -14 }}
               transition={{ duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
-            <div className="rounded-2xl border border-zinc-200/80 bg-white p-6 sm:p-8 shadow-sm">
+            <div className="rounded-2xl border border-border bg-white p-6 sm:p-8 shadow-sm">
               {currentStep === 0 && (
                 <>
                   <div className="text-center">
-                    <div
-                      className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl text-2xl font-bold text-white shadow-md"
-                      style={{ backgroundColor: ACCENT }}
-                    >
-                      A
-                    </div>
-                    <h1 className="text-xl sm:text-2xl font-bold text-zinc-900 mb-2">{welcomeTitle}</h1>
-                    <p className="text-sm text-zinc-500 mb-8">{t('onboarding.welcomeLead')}</p>
+                    <img
+                      src="/logo.png"
+                      alt="Artier Logo"
+                      className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl shadow-md object-contain"
+                    />
+                    <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-2">{welcomeTitle}</h1>
+                    <p className="text-sm text-muted-foreground mb-8">{t('onboarding.welcomeLead')}</p>
                     <Button
                       type="button"
                       onClick={goNext}
@@ -170,12 +153,13 @@ export default function Onboarding() {
                       {t('onboarding.start')}
                     </Button>
                     <Button
+                      variant="ghost"
                       type="button"
                       onClick={() => {
                         localStorage.setItem('artier_onboarding_done', 'true');
                         navigate('/');
                       }}
-                      className="mt-4 w-full text-center text-sm text-zinc-400 lg:hover:text-zinc-600 transition-colors"
+                      className="mt-4 w-full text-center text-sm text-muted-foreground lg:hover:text-muted-foreground transition-colors"
                     >
                       {t('onboarding.later')}
                     </Button>
@@ -183,179 +167,101 @@ export default function Onboarding() {
                 </>
               )}
 
+              {/* Step 1: 프로필 설정 (닉네임 + 이미지 + 소개) */}
               {currentStep === 1 && (
                 <>
-                  <h2 className="text-lg font-bold text-zinc-900 mb-1">{t('onboarding.nicknameTitle')}</h2>
-                  <p className="text-sm text-zinc-500 mb-6">{t('onboarding.nicknameLead')}</p>
-                  <label className="block text-sm font-medium text-zinc-800 mb-2">
-                    {t('onboarding.nicknameLabel')}
-                  </label>
-                  <input
-                    type="text"
-                    value={nickname}
-                    onChange={e => {
-                      const v = e.target.value;
-                      if (v.length <= 20) {
-                        setNickname(v);
-                        setNicknameError('');
-                      }
-                    }}
-                    placeholder={t('onboarding.nicknamePlaceholder')}
-                    className="w-full rounded-xl border border-zinc-200 px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
-                    maxLength={20}
-                    autoFocus
-                  />
-                  <p className="mt-1 text-xs text-zinc-400">{nickname.trim().length}/20</p>
-                  {nicknameError ? (
-                    <p className="mt-2 text-sm text-red-500">{nicknameError}</p>
-                  ) : null}
-                  <div className="mt-8 flex gap-3">
-                    <Button
-                      type="button"
-                      onClick={goBack}
-                      className="flex-1 rounded-xl border border-zinc-200 py-3.5 text-sm font-semibold text-zinc-700 lg:hover:bg-zinc-50"
-                    >
-                      {t('onboarding.back')}
-                    </Button>
-                    <Button
-                      type="button"
-                      onClick={handleNicknameNext}
-                      className="flex-1 rounded-xl py-3.5 text-sm font-semibold text-white transition lg:hover:opacity-90"
-                      style={{ backgroundColor: ACCENT }}
-                    >
-                      {t('onboarding.next')}
-                    </Button>
-                  </div>
-                </>
-              )}
+                  <h2 className="text-lg font-bold text-foreground mb-1">{t('onboarding.nicknameTitle')}</h2>
+                  <p className="text-sm text-muted-foreground mb-6">{t('onboarding.nicknameLead')}</p>
 
-              {currentStep === 2 && (
-                <>
-                  <h2 className="text-lg font-bold text-zinc-900 mb-1">{t('onboarding.interestsTitle')}</h2>
-                  <p className="text-sm text-zinc-500 mb-6">{t('onboarding.interestsLead')}</p>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[min(52vh,420px)] overflow-y-auto pr-1">
-                    {INTEREST_TAG_IDS.map(id => {
-                      const on = selectedInterests.includes(id);
-                      return (
-                        <Button
-                          key={id}
-                          type="button"
-                          onClick={() => toggleInterest(id)}
-                          className={`rounded-xl border px-3 py-2.5 text-sm font-medium transition-all ${
-                            on
-                              ? 'border-primary text-primary bg-primary/8'
-                              : 'border-zinc-200 text-zinc-600 lg:hover:border-zinc-300 bg-white'
-                          }`}
-                        >
-                          {t(tagLabelKey(id))}
-                        </Button>
-                      );
-                    })}
-                  </div>
-                  <div className="mt-8 flex gap-3">
-                    <Button
-                      type="button"
-                      onClick={goBack}
-                      className="flex-1 rounded-xl border border-zinc-200 py-3.5 text-sm font-semibold text-zinc-700 lg:hover:bg-zinc-50"
-                    >
-                      {t('onboarding.back')}
-                    </Button>
-                    <Button
-                      type="button"
-                      onClick={handleInterestsNext}
-                      disabled={selectedInterests.length < 1}
-                      className={`flex-1 rounded-xl py-3.5 text-sm font-semibold transition ${
-                        selectedInterests.length >= 1
-                          ? 'text-white lg:hover:opacity-90'
-                          : 'bg-zinc-100 text-zinc-400 cursor-not-allowed'
-                      }`}
-                      style={selectedInterests.length >= 1 ? { backgroundColor: ACCENT } : undefined}
-                    >
-                      {t('onboarding.next')}
-                    </Button>
-                  </div>
-                </>
-              )}
-
-              {currentStep === 3 && (
-                <>
-                  <h2 className="text-lg font-bold text-zinc-900 mb-1">{t('onboarding.photoTitle')}</h2>
-                  <p className="text-sm text-zinc-500 mb-8">{t('onboarding.photoLead')}</p>
-                  <input
-                    ref={fileInputRef}
-                    type="file"
-                    accept="image/*"
-                    className="sr-only"
-                    onChange={handleFileChange}
-                  />
-                  <div className="flex flex-col items-center gap-6">
-                    <Button
-                      type="button"
-                      onClick={() => fileInputRef.current?.click()}
-                      className="group relative cursor-pointer rounded-full border-0 bg-transparent p-0"
-                    >
-                      <div
-                        className="flex h-40 w-40 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-zinc-200 bg-zinc-50 transition lg:group-hover:border-primary/50"
-                      >
+                  {/* 프로필 이미지 */}
+                  <input ref={fileInputRef} type="file" accept="image/*" className="sr-only" onChange={handleFileChange} />
+                  <div className="flex items-center gap-4 mb-6">
+                    <button type="button" onClick={() => fileInputRef.current?.click()} className="group shrink-0">
+                      <div className="flex h-16 w-16 items-center justify-center overflow-hidden rounded-full border-2 border-dashed border-border bg-muted/30 transition lg:group-hover:border-primary/50">
                         {profileImage ? (
                           <img src={profileImage} alt="" className="h-full w-full object-cover" />
                         ) : (
-                          <Camera className="h-10 w-10 text-zinc-300" strokeWidth={1.25} />
+                          <Camera className="h-6 w-6 text-muted-foreground/40" strokeWidth={1.25} />
                         )}
                       </div>
-                    </Button>
-                    <div className="flex w-full flex-col gap-2 sm:flex-row sm:justify-center">
-                      <Button
-                        type="button"
-                        onClick={() => fileInputRef.current?.click()}
-                        className="text-center text-sm font-medium text-primary lg:hover:underline"
-                      >
-                        {t('onboarding.uploadPhoto')}
-                      </Button>
-                      <Button
-                        type="button"
-                        onClick={() => setProfileImage(null)}
-                        className="text-sm text-zinc-400 lg:hover:text-zinc-600"
-                      >
-                        {t('onboarding.skip')}
-                      </Button>
-                    </div>
+                    </button>
+                    <button type="button" onClick={() => fileInputRef.current?.click()} className="text-sm text-primary lg:hover:underline">
+                      {t('onboarding.uploadPhoto')}
+                    </button>
                   </div>
+
+                  {/* 실명 */}
+                  <label className="block text-sm font-medium text-foreground mb-2">{t('onboarding.realNameLabel')}</label>
+                  <input
+                    type="text"
+                    value={realName}
+                    onChange={e => { if (e.target.value.length <= 20) { setRealName(e.target.value); setRealNameError(''); } }}
+                    placeholder={t('onboarding.realNamePlaceholder')}
+                    className="w-full rounded-xl border border-border px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                    maxLength={20}
+                    autoFocus
+                  />
+                  {realNameError ? <p className="mt-1 text-sm text-destructive">{realNameError}</p> : null}
+
+                  {/* 닉네임 */}
+                  <label className="block text-sm font-medium text-foreground mb-2 mt-5">{t('onboarding.nicknameLabel')}</label>
+                  <input
+                    type="text"
+                    value={nickname}
+                    onChange={e => { if (e.target.value.length <= 20) { setNickname(e.target.value); setNicknameError(''); } }}
+                    placeholder={t('onboarding.nicknamePlaceholder')}
+                    className="w-full rounded-xl border border-border px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                    maxLength={20}
+                  />
+                  <p className="mt-1 text-xs text-muted-foreground">{nickname.trim().length}/20</p>
+                  {nicknameError ? <p className="mt-1 text-sm text-destructive">{nicknameError}</p> : null}
+
+                  {/* 전화번호 */}
+                  <label className="block text-sm font-medium text-foreground mb-2 mt-5">{t('onboarding.phoneLabel')}</label>
+                  <input
+                    type="tel"
+                    value={phone}
+                    onChange={e => setPhone(e.target.value)}
+                    placeholder="010-0000-0000"
+                    className="w-full rounded-xl border border-border px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                  />
+                  <p className="mt-1 text-xs text-muted-foreground">{t('onboarding.phoneHint')}</p>
+
                   <div className="mt-8 flex gap-3">
-                    <Button
-                      type="button"
-                      onClick={goBack}
-                      className="flex-1 rounded-xl border border-zinc-200 py-3.5 text-sm font-semibold text-zinc-700 lg:hover:bg-zinc-50"
-                    >
+                    <Button variant="ghost" type="button" onClick={goBack} className="flex-1 rounded-xl border border-border py-3.5 text-sm font-semibold text-foreground lg:hover:bg-muted/50">
                       {t('onboarding.back')}
                     </Button>
-                    <Button
-                      type="button"
-                      onClick={goNext}
-                      className="flex-1 rounded-xl py-3.5 text-sm font-semibold text-white transition lg:hover:opacity-90"
-                      style={{ backgroundColor: ACCENT }}
-                    >
+                    <Button type="button" onClick={handleNicknameNext} className="flex-1 rounded-xl py-3.5 text-sm font-semibold text-white transition lg:hover:opacity-90" style={{ backgroundColor: ACCENT }}>
                       {t('onboarding.next')}
                     </Button>
                   </div>
                 </>
               )}
 
-              {currentStep === 4 && (
+              {/* Step 2: 첫 작품 업로드 유도 + 완료 */}
+              {currentStep === 2 && (
                 <>
                   <div className="text-center">
                     <div className="relative mx-auto mb-6 h-28 w-28">
                       <ConfettiBurst />
                     </div>
-                    <h2 className="text-xl font-bold text-zinc-900 mb-2">{t('onboarding.doneTitle')}</h2>
-                    <p className="text-base text-zinc-600 mb-8">
+                    <h2 className="text-xl font-bold text-foreground mb-2">{t('onboarding.doneTitle')}</h2>
+                    <p className="text-sm text-muted-foreground mb-8">
                       {t('onboarding.doneWelcome').replace('{name}', nickname.trim())}
                     </p>
                     <Button
                       type="button"
-                      onClick={finishOnboarding}
+                      onClick={() => { finishOnboarding(); navigate('/upload'); }}
                       className="w-full rounded-xl py-3.5 text-sm font-semibold text-white transition lg:hover:opacity-90"
                       style={{ backgroundColor: ACCENT }}
+                    >
+                      {t('onboarding.uploadFirst')}
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      type="button"
+                      onClick={finishOnboarding}
+                      className="mt-3 w-full text-sm text-muted-foreground lg:hover:text-foreground"
                     >
                       {t('onboarding.browseStart')}
                     </Button>

@@ -66,13 +66,13 @@ export default function Faq() {
 
   return (
     <div className="min-h-screen bg-white pb-20 md:pb-0">
-      <div className="bg-white border-b border-[#E5E7EB]">
+      <div className="bg-white border-b border-border">
         <div className="mx-auto max-w-[800px] px-4 sm:px-6 py-6 sm:py-10">
           <div className="flex items-center gap-2 sm:gap-3 mb-2">
             <HelpCircle className="h-6 w-6 sm:h-7 sm:h-7 text-primary shrink-0" />
-            <h1 className="text-xl sm:text-2xl font-bold text-[#18181B]">{t('faq.title')}</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('faq.title')}</h1>
           </div>
-          <p className="text-[13px] sm:text-sm text-gray-500">
+          <p className="text-[13px] sm:text-sm text-muted-foreground">
             {t('faq.contactLead')}{' '}
             <Link to="/contact" className="text-primary lg:hover:underline font-medium">
               {t('faq.contactLink')}
@@ -84,11 +84,12 @@ export default function Faq() {
               <Button
                 key={id}
                 type="button"
+                variant="ghost"
                 onClick={() => setActiveCategory(id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                className={`px-4 py-2.5 min-h-[44px] rounded-full text-sm font-medium transition-colors ${
                   activeCategory === id
-                    ? 'bg-[#18181B] text-white'
-                    : 'bg-[#F4F4F5] text-gray-600 lg:hover:bg-gray-200'
+                    ? 'bg-foreground text-white lg:hover:bg-foreground/90 lg:hover:text-white'
+                    : 'bg-muted text-muted-foreground lg:hover:bg-muted/80 lg:hover:text-foreground'
                 }`}
               >
                 {t(labelKey)}
@@ -105,26 +106,27 @@ export default function Faq() {
             return (
               <div
                 key={item.index}
-                className="bg-white rounded-xl border border-[#E5E7EB] overflow-hidden"
+                className="bg-white rounded-xl border border-border overflow-hidden"
               >
                 <Button
                   type="button"
+                  variant="ghost"
                   onClick={() => setOpenId(isOpen ? null : item.index)}
-                  className="flex items-center justify-between w-full p-4 sm:p-5 text-left lg:hover:bg-[#FAFAFA] transition-colors"
+                  className="flex items-center justify-between w-full h-auto p-4 sm:p-5 text-left rounded-none lg:hover:bg-muted/50 transition-colors"
                 >
                   <div className="flex flex-col sm:flex-row sm:items-center gap-2 sm:gap-3 flex-1 min-w-0">
-                    <span className="shrink-0 self-start px-2.5 py-1 bg-[#F4F4F5] text-gray-500 text-xs rounded-full font-medium">
+                    <span className="shrink-0 self-start px-2.5 py-1 bg-muted text-muted-foreground text-xs rounded-full font-medium">
                       {item.categoryLabel}
                     </span>
-                    <span className="text-[13px] sm:text-sm font-medium text-[#18181B]">{item.q}</span>
+                    <span className="text-[13px] sm:text-sm font-medium text-foreground">{item.q}</span>
                   </div>
                   <ChevronDown
-                    className={`h-5 w-5 text-gray-400 shrink-0 ml-2 sm:ml-3 transition-transform ${isOpen ? 'rotate-180' : ''}`}
+                    className={`h-5 w-5 text-muted-foreground shrink-0 ml-2 sm:ml-3 transition-transform ${isOpen ? 'rotate-180' : ''}`}
                   />
                 </Button>
                 {isOpen ? (
                   <div className="px-4 sm:px-5 pb-4 sm:pb-5">
-                    <div className="pl-0 sm:pl-[72px] text-xs sm:text-[13px] text-gray-600 leading-relaxed">
+                    <div className="pl-0 sm:pl-[72px] text-xs sm:text-[13px] text-muted-foreground leading-relaxed">
                       {item.a}
                     </div>
                   </div>

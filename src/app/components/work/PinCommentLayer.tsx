@@ -4,6 +4,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '../ui/avatar';
 import { pinCommentStore, PinComment } from '../../store/pinCommentStore';
 import { artists } from '../../data';
 import { Button } from '../ui/button';
+import { useI18n } from '../../i18n/I18nProvider';
 
 interface PinCommentLayerProps {
   workId: string;
@@ -34,6 +35,7 @@ export function PinCommentLayer({
   const [pins, setPins] = useState<PinComment[]>(() =>
     pinCommentStore.getPins(workId, imageIndex)
   );
+  const { t } = useI18n();
   const [editingPin, setEditingPin] = useState<{ x: number; y: number } | null>(null);
   const [newComment, setNewComment] = useState('');
   const inputRef = useRef<HTMLInputElement>(null);
@@ -105,8 +107,8 @@ export function PinCommentLayer({
         >
           <div className="flex flex-col items-center gap-2">
             <div className="relative">
-              <MapPin className="h-8 w-8 text-cyan-400 fill-cyan-400 drop-shadow-lg" />
-              <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-cyan-400" />
+              <MapPin className="h-8 w-8 text-primary fill-cyan-400 drop-shadow-lg" />
+              <div className="absolute -bottom-1 left-1/2 -translate-x-1/2 w-2 h-2 rounded-full bg-primary" />
             </div>
             <div className="flex items-center gap-2 bg-black/90 rounded-lg px-3 py-2 border border-white/20 min-w-[200px]">
               <input
@@ -121,7 +123,7 @@ export function PinCommentLayer({
                     setNewComment('');
                   }
                 }}
-                placeholder="이 부분에 대한 피드백..."
+                placeholder={t('pinComment.placeholder')}
                 className="flex-1 bg-transparent text-white text-xs outline-none placeholder:text-white/50"
               />
               <Button
@@ -134,9 +136,9 @@ export function PinCommentLayer({
             <Button
               onClick={handleSubmitPin}
               disabled={!newComment.trim()}
-              className="px-4 py-1.5 bg-cyan-500 text-white text-xs font-medium rounded-full lg:hover:bg-cyan-600 disabled:opacity-50 disabled:cursor-not-allowed"
+              className="px-4 py-1.5 bg-primary text-white text-xs font-medium rounded-full lg:hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
             >
-              저장
+              {t('pinComment.save')}
             </Button>
           </div>
         </div>
@@ -161,7 +163,7 @@ function PinMarker({
       onMouseEnter={() => setHovered(true)}
       onMouseLeave={() => setHovered(false)}
     >
-      <MapPin className="h-6 w-6 text-cyan-400 fill-cyan-400/80 drop-shadow cursor-pointer lg:hover:scale-110 transition-transform" />
+      <MapPin className="h-6 w-6 text-primary fill-cyan-400/80 drop-shadow cursor-pointer lg:hover:scale-110 transition-transform" />
       {hovered && (
         <div className="absolute left-1/2 -translate-x-1/2 top-full mt-1 w-56 bg-black/95 rounded-lg border border-white/20 p-3 shadow-xl">
           <div className="flex items-start gap-2">

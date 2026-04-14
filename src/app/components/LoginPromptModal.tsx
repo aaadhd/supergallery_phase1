@@ -56,10 +56,10 @@ export function LoginPromptModal({ open, onClose, action = 'general' }: LoginPro
           </DialogDescription>
         </DialogHeader>
         <DialogFooter className="flex flex-col gap-2 sm:flex-col mt-2">
-          <Button onClick={handleLogin} className="w-full text-base py-3">
+          <Button onClick={handleLogin} className="w-full text-sm py-3">
             {t('loginPrompt.login')}
           </Button>
-          <Button variant="ghost" onClick={onClose} className="w-full text-base">
+          <Button variant="ghost" onClick={onClose} className="w-full text-sm">
             {t('loginPrompt.cancel')}
           </Button>
         </DialogFooter>

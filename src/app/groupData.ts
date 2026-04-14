@@ -1,6 +1,6 @@
 // 그룹/스튜디오 타입 및 데이터
 
-import { Artist } from './data';
+import type { Artist } from './data';
 import { localPick } from './data/localImagePick';
 
 let _gwImgSeq = 200;
@@ -13,12 +13,16 @@ export interface Group {
   type: 'studio' | 'agency' | 'team' | 'collective'; // 그룹 유형
   bio?: string;
   memberCount?: number; // 멤버 수
+  /** 그룹을 구성하는 작가 id 배열 (data.ts artists). peek 멤버 리스트 노출용.
+   *  그룹 자체는 프로필이 없고, 멤버 개개인이 팔로우/프로필의 대상. */
+  memberIds?: string[];
   followers?: number;
   location?: string;
   website?: string;
 }
 
 // 그룹 더미 데이터
+// memberIds: data.ts의 artists 배열 id (기본 작가 '1'~'25' + 로컬 작가 'local-*')
 export const groups: Group[] = [
   {
     id: 'g1',
@@ -26,7 +30,8 @@ export const groups: Group[] = [
     avatar: 'https://images.unsplash.com/photo-1742440710136-1976b1cad864?w=100&h=100&fit=crop',
     type: 'studio',
     bio: '디지털 페인팅과 컨셉아트 전문 스튜디오',
-    memberCount: 8,
+    memberCount: 5,
+    memberIds: ['local-character', 'local-webtoon-clean', 'local-fantasy', 'local-night-scene', '7', '1'],
     followers: 12400,
     location: '서울 강남구',
     website: 'https://studio.example.com'
@@ -37,7 +42,8 @@ export const groups: Group[] = [
     avatar: 'https://images.unsplash.com/photo-1761398703570-cb57abb14b6c?w=100&h=100&fit=crop',
     type: 'collective',
     bio: '디지털 일러스트 작가들의 창작 공동체',
-    memberCount: 15,
+    memberCount: 6,
+    memberIds: ['local-rilin', 'local-haeb', 'local-sunnysun', 'local-cozy-illus', 'local-daily-diary', '1'],
     followers: 8900,
     location: '서울 종로구',
   },
@@ -47,7 +53,8 @@ export const groups: Group[] = [
     avatar: 'https://images.unsplash.com/photo-1666698809123-44e998e93f23?w=100&h=100&fit=crop',
     type: 'agency',
     bio: '디지털 아트 작가 전문 매니지먼트',
-    memberCount: 12,
+    memberCount: 5,
+    memberIds: ['local-sketch', 'local-abstract', 'local-pop', 'local-minimal-graphic', '3', '1'],
     followers: 15600,
     location: '서울 성동구',
     website: 'https://artflow.example.com'
@@ -58,7 +65,8 @@ export const groups: Group[] = [
     avatar: 'https://images.unsplash.com/photo-1542744094-3a31f272c490?w=100&h=100&fit=crop',
     type: 'team',
     bio: '감성 디지털 드로잉 전문팀',
-    memberCount: 5,
+    memberCount: 4,
+    memberIds: ['local-cozy-illus', 'local-rilin', 'local-warm-palette', 'local-daily-diary', '1'],
     followers: 6700,
     location: '부산 해운대구',
   },
@@ -68,7 +76,8 @@ export const groups: Group[] = [
     avatar: 'https://images.unsplash.com/photo-1497366216548-37526070297c?w=100&h=100&fit=crop',
     type: 'collective',
     bio: '전통 회화를 디지털로 재해석하는 그룹',
-    memberCount: 10,
+    memberCount: 5,
+    memberIds: ['2', '11', '3', 'local-botanical', 'local-surreal'],
     followers: 10200,
     location: '전주 완산구',
   },
@@ -78,7 +87,8 @@ export const groups: Group[] = [
     avatar: 'https://images.unsplash.com/photo-1542744173-8e7e53415bb0?w=100&h=100&fit=crop',
     type: 'studio',
     bio: '독창적인 캐릭터 디지털 일러스트 전문',
-    memberCount: 6,
+    memberCount: 4,
+    memberIds: ['local-character', 'local-webtoon-clean', 'local-fantasy', '17'],
     followers: 9800,
     location: '서울 마포구',
     website: 'https://characterlab.example.com'
@@ -90,6 +100,7 @@ export const groups: Group[] = [
     type: 'team',
     bio: '상업 일러스트레이션 전문팀',
     memberCount: 4,
+    memberIds: ['local-pop', 'local-sunnysun', 'local-sketch', '10', '1'],
     followers: 7300,
     location: '서울 용산구',
   },
@@ -99,7 +110,8 @@ export const groups: Group[] = [
     avatar: 'https://images.unsplash.com/photo-1507679799987-c73779587ccf?w=100&h=100&fit=crop',
     type: 'studio',
     bio: '디지털 일러스트 및 컨셉아트 전문',
-    memberCount: 7,
+    memberCount: 5,
+    memberIds: ['local-night-scene', 'local-abstract', 'local-fantasy', 'local-character', '5'],
     followers: 11500,
     location: '성남 분당구',
     website: 'https://producton.example.com'
@@ -110,7 +122,8 @@ export const groups: Group[] = [
     avatar: 'https://images.unsplash.com/photo-1522071820081-009f0129c71c?w=100&h=100&fit=crop',
     type: 'collective',
     bio: '디지털 레터링과 타이포 아트 그룹',
-    memberCount: 9,
+    memberCount: 5,
+    memberIds: ['local-minimal-graphic', 'local-sketch', 'local-daily-diary', '13', '16'],
     followers: 8600,
     location: '서울 중구',
   },
@@ -120,7 +133,8 @@ export const groups: Group[] = [
     avatar: 'https://images.unsplash.com/photo-1573496359142-b8d87734a5a2?w=100&h=100&fit=crop',
     type: 'agency',
     bio: '패션 일러스트레이션 전문 에이전시',
-    memberCount: 11,
+    memberCount: 5,
+    memberIds: ['10', '4', 'local-ahn', 'local-pop', '21'],
     followers: 13200,
     location: '서울 강남구',
     website: 'https://fashionimage.example.com'
@@ -131,7 +145,8 @@ export const groups: Group[] = [
     avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop',
     type: 'collective',
     bio: '자연과 풍경 디지털 페인팅 모임',
-    memberCount: 13,
+    memberCount: 6,
+    memberIds: ['local-botanical', 'local-warm-palette', 'local-night-scene', '2', '11', '24'],
     followers: 14800,
     location: '제주 서귀포시',
   },
@@ -141,7 +156,8 @@ export const groups: Group[] = [
     avatar: 'https://images.unsplash.com/photo-1544005313-94ddf0286df2?w=100&h=100&fit=crop',
     type: 'studio',
     bio: '공간과 인테리어 디지털 드로잉 전문',
-    memberCount: 5,
+    memberCount: 4,
+    memberIds: ['local-minimal-graphic', 'local-surreal', 'local-webtoon-clean', '3'],
     followers: 9100,
     location: '서울 서초구',
   }
@@ -181,10 +197,12 @@ export function getOwnerTypeLabel(owner: WorkOwner): string {
 }
 
 // 그룹 작품 데이터 - 기존 works 배열에 추가될 그룹 소유 작품들
-export const groupWorks = [
+const _rawGroupWorks = [
   {
     id: 'gw1',
     title: '디지털 한국화 시리즈',
+    exhibitionName: '디지털 한국화 재해석 — 스튜디오 초대전',
+    primaryExhibitionType: 'group' as const,
     image: gwImgs(3),
     owner: { type: 'group' as const, data: groups[0] },
     artistId: groups[0].id,
@@ -210,6 +228,8 @@ export const groupWorks = [
   {
     id: 'gw2',
     title: '서울 야경 컬렉션',
+    exhibitionName: '도시의 빛 2026 — 야경 일러스트 전',
+    primaryExhibitionType: 'group' as const,
     image: gwImgs(4),
     owner: { type: 'group' as const, data: groups[1] },
     artistId: groups[1].id,
@@ -234,6 +254,8 @@ export const groupWorks = [
   {
     id: 'gw3',
     title: '사이버 감성 프로젝트',
+    exhibitionName: '사이버 감성 — 에이전시 아카이브',
+    primaryExhibitionType: 'group' as const,
     image: gwImgs(2),
     owner: { type: 'group' as const, data: groups[2] },
     artistId: groups[2].id,
@@ -257,6 +279,8 @@ export const groupWorks = [
   {
     id: 'gw4',
     title: '봄날의 추억',
+    exhibitionName: '봄날의 기록 — 감성 드로잉 살롱',
+    primaryExhibitionType: 'group' as const,
     image: gwImgs(6),
     owner: { type: 'group' as const, data: groups[3] },
     artistId: groups[3].id,
@@ -282,6 +306,8 @@ export const groupWorks = [
   {
     id: 'gw5',
     title: '전통 매듭 현대화',
+    exhibitionName: '전통의 선 — 매듭·공예 실험전',
+    primaryExhibitionType: 'group' as const,
     image: gwImgs(8),
     owner: { type: 'group' as const, data: groups[4] },
     artistId: groups[4].id,
@@ -305,6 +331,8 @@ export const groupWorks = [
   {
     id: 'gw6',
     title: '한옥의 재발견',
+    exhibitionName: '한옥, 빛과 결 — 건축 드로잉 전',
+    primaryExhibitionType: 'group' as const,
     image: gwImgs(5),
     owner: { type: 'group' as const, data: groups[4] },
     artistId: groups[4].id,
@@ -328,6 +356,8 @@ export const groupWorks = [
   {
     id: 'gw7',
     title: '캐릭터 IP 개발 시리즈',
+    exhibitionName: '캐릭터 IP 1기 — 쇼케이스',
+    primaryExhibitionType: 'group' as const,
     image: gwImgs(3),
     owner: { type: 'group' as const, data: groups[5] },
     artistId: groups[5].id,
@@ -353,6 +383,8 @@ export const groupWorks = [
   {
     id: 'gw8',
     title: '미식 비주얼 프로젝트',
+    exhibitionName: '테이블 위 미학 — 푸드 비주얼 전',
+    primaryExhibitionType: 'group' as const,
     image: gwImgs(4),
     owner: { type: 'group' as const, data: groups[6] },
     artistId: groups[6].id,
@@ -376,6 +408,8 @@ export const groupWorks = [
   {
     id: 'gw9',
     title: '제품 렌더링 컬렉션',
+    exhibitionName: '프리미엄 라인 — 제품 비주얼 전',
+    primaryExhibitionType: 'group' as const,
     image: gwImgs(5),
     owner: { type: 'group' as const, data: groups[7] },
     artistId: groups[7].id,
@@ -401,6 +435,8 @@ export const groupWorks = [
   {
     id: 'gw10',
     title: '한글 타이포 실험',
+    exhibitionName: '레터링 랩 — 한글 타이포 전',
+    primaryExhibitionType: 'group' as const,
     image: gwImgs(3),
     owner: { type: 'group' as const, data: groups[8] },
     artistId: groups[8].id,
@@ -424,6 +460,8 @@ export const groupWorks = [
   {
     id: 'gw11',
     title: '패션 에디토리얼',
+    exhibitionName: 'S/S 에디토리얼 — 패션 드로잉 전',
+    primaryExhibitionType: 'group' as const,
     image: gwImgs(6),
     owner: { type: 'group' as const, data: groups[9] },
     artistId: groups[9].id,
@@ -449,6 +487,8 @@ export const groupWorks = [
   {
     id: 'gw12',
     title: '자연의 순간',
+    exhibitionName: '제주 사계 — 풍경 디지털 페인팅',
+    primaryExhibitionType: 'group' as const,
     image: gwImgs(9),
     owner: { type: 'group' as const, data: groups[10] },
     artistId: groups[10].id,
@@ -474,6 +514,8 @@ export const groupWorks = [
   {
     id: 'gw13',
     title: '공간의 재구성',
+    exhibitionName: '인테리어 비전 — 공간 스튜디오 전',
+    primaryExhibitionType: 'group' as const,
     image: gwImgs(5),
     owner: { type: 'group' as const, data: groups[11] },
     artistId: groups[11].id,
@@ -493,5 +535,179 @@ export const groupWorks = [
       download: { price: 92000 },
       print: { sizes: [{ size: 'A3', price: 172000 }, { size: 'A2', price: 252000 }] }
     }
-  }
+  },
+  // ── 카테(id:'1') 참여 그룹 전시 5종 ──
+  {
+    id: 'gw-kate-1',
+    title: '빛과 감성의 대화',
+    exhibitionName: '빛과 감성 — 디지털캔버스 정기전',
+    primaryExhibitionType: 'group' as const,
+    image: gwImgs(5),
+    owner: { type: 'group' as const, data: groups[1] },
+    artistId: groups[1].id,
+    artist: { id: groups[1].id, name: groups[1].name, avatar: groups[1].avatar, bio: groups[1].bio, followers: groups[1].followers },
+    likes: 1823, saves: 645, comments: 87,
+    feedReviewStatus: 'approved' as const,
+    _forceImageArtists: [
+      { type: 'member' as const, memberId: '1' },
+      { type: 'member' as const, memberId: 'local-rilin' },
+      { type: 'member' as const, memberId: 'local-haeb' },
+      { type: 'member' as const, memberId: '1' },
+      { type: 'member' as const, memberId: 'local-sunnysun' },
+    ],
+  },
+  {
+    id: 'gw-kate-2',
+    title: '일상 속 특별함',
+    exhibitionName: '우리의 하루 — 드로잉웍스 합동전',
+    primaryExhibitionType: 'group' as const,
+    image: gwImgs(4),
+    owner: { type: 'group' as const, data: groups[2] },
+    artistId: groups[2].id,
+    artist: { id: groups[2].id, name: groups[2].name, avatar: groups[2].avatar, bio: groups[2].bio, followers: groups[2].followers },
+    likes: 956, saves: 312, comments: 45,
+    feedReviewStatus: 'approved' as const,
+    _forceImageArtists: [
+      { type: 'member' as const, memberId: 'local-sketch' },
+      { type: 'member' as const, memberId: '1' },
+      { type: 'member' as const, memberId: 'local-abstract' },
+      { type: 'member' as const, memberId: '1' },
+    ],
+  },
+  {
+    id: 'gw-kate-3',
+    title: '계절의 색채',
+    exhibitionName: '계절이 남긴 것들 — 블룸팀 시즌전',
+    primaryExhibitionType: 'group' as const,
+    image: gwImgs(6),
+    owner: { type: 'group' as const, data: groups[3] },
+    artistId: groups[3].id,
+    artist: { id: groups[3].id, name: groups[3].name, avatar: groups[3].avatar, bio: groups[3].bio, followers: groups[3].followers },
+    likes: 2341, saves: 1023, comments: 156,
+    editorsPick: true,
+    feedReviewStatus: 'approved' as const,
+    _forceImageArtists: [
+      { type: 'member' as const, memberId: 'local-cozy-illus' },
+      { type: 'member' as const, memberId: '1' },
+      { type: 'member' as const, memberId: 'local-warm-palette' },
+      { type: 'member' as const, memberId: 'local-daily-diary' },
+      { type: 'member' as const, memberId: '1' },
+      { type: 'member' as const, memberId: 'local-cozy-illus' },
+    ],
+  },
+  {
+    id: 'gw-kate-4',
+    title: '도시 풍경 릴레이',
+    exhibitionName: '도시의 표정 — 컬러스케치팀 릴레이전',
+    primaryExhibitionType: 'group' as const,
+    image: gwImgs(3),
+    owner: { type: 'group' as const, data: groups[6] },
+    artistId: groups[6].id,
+    artist: { id: groups[6].id, name: groups[6].name, avatar: groups[6].avatar, bio: groups[6].bio, followers: groups[6].followers },
+    likes: 678, saves: 201, comments: 28,
+    feedReviewStatus: 'approved' as const,
+    _forceImageArtists: [
+      { type: 'member' as const, memberId: '1' },
+      { type: 'member' as const, memberId: 'local-pop' },
+      { type: 'member' as const, memberId: 'local-sunnysun' },
+    ],
+  },
+  {
+    id: 'gw-kate-5',
+    title: '밤의 일러스트레이션',
+    exhibitionName: '야간 비행 — 픽셀아트랩 신작전',
+    primaryExhibitionType: 'group' as const,
+    image: gwImgs(4),
+    owner: { type: 'group' as const, data: groups[0] },
+    artistId: groups[0].id,
+    artist: { id: groups[0].id, name: groups[0].name, avatar: groups[0].avatar, bio: groups[0].bio, followers: groups[0].followers },
+    likes: 1456, saves: 534, comments: 72,
+    feedReviewStatus: 'approved' as const,
+    _forceImageArtists: [
+      { type: 'member' as const, memberId: 'local-night-scene' },
+      { type: 'member' as const, memberId: '1' },
+      { type: 'member' as const, memberId: 'local-character' },
+      { type: 'member' as const, memberId: '7' },
+    ],
+  },
 ];
+
+const _NON_MEMBER_GUESTS = [
+  '박승우', '이다영', '김태현', '최은지', '한지훈',
+  '송혜린', '권도윤', '조민서', '배수민', '유진아',
+];
+
+const _PIECE_TITLE_POOL = [
+  '고요한 새벽', '빛의 경계', '달빛 아래', '바람이 지나간 자리',
+  '첫눈의 기억', '파란 오후', '노을빛 정원', '나무 사이로',
+  '물결의 흐름', '안개 낀 산길', '열린 창가', '기다림의 시간',
+  '그늘 아래 쉼', '작은 소리', '풀밭 위의 낮잠', '강 건너의 풍경',
+  '차가운 아침', '봄비 내리는 날', '따뜻한 손', '빛바랜 사진',
+  '숲의 숨결', '하늘과 땅', '수평선 너머', '고요의 시간',
+  '그림자 놀이', '바다의 기억', '창밖의 풍경', '구름 위의 산책',
+  '꽃길을 걷다', '밤하늘의 별', '아침 이슬', '석양의 노래',
+  '실바람', '초록빛 꿈', '흐르는 시간', '먼 곳의 불빛',
+];
+
+/**
+ * groupWorks를 실제 artists 데이터로 hydrate.
+ * data.ts → groupData.ts 순환 참조를 피하기 위해 호출 시점에 artists를 주입.
+ */
+export function hydrateGroupWorks(allArtists: Artist[]) {
+  return _rawGroupWorks.map((gw, idx) => {
+    const group = gw.owner.data;
+    const memberIds = group.memberIds ?? [];
+    const images = Array.isArray(gw.image) ? gw.image : [gw.image];
+    const forced = (gw as any)._forceImageArtists as { type: 'member' | 'non-member'; memberId?: string; displayName?: string }[] | undefined;
+
+    const imageArtists = forced
+      ? forced.map((fa) => {
+          if (fa.type === 'member' && fa.memberId) {
+            const found = allArtists.find(a => a.id === fa.memberId);
+            if (found) return { type: 'member' as const, memberId: found.id, memberName: found.name, memberAvatar: found.avatar };
+          }
+          return { type: 'non-member' as const, displayName: fa.displayName || '미지정' };
+        })
+      : images.map((_, imgIdx) => {
+          const addNonMember = idx % 3 === 0;
+          if (addNonMember && imgIdx === images.length - 1) {
+            return {
+              type: 'non-member' as const,
+              displayName: _NON_MEMBER_GUESTS[(idx * 5 + imgIdx * 3) % _NON_MEMBER_GUESTS.length],
+            };
+          }
+          const memberIdx = (idx * 7 + imgIdx) % memberIds.length;
+          const memberId = memberIds[memberIdx];
+          const found = allArtists.find((a) => a.id === memberId);
+          if (found) {
+            return {
+              type: 'member' as const,
+              memberId: found.id,
+              memberName: found.name,
+              memberAvatar: found.avatar,
+            };
+          }
+          return {
+            type: 'non-member' as const,
+            displayName: _NON_MEMBER_GUESTS[(idx * 5 + imgIdx * 3) % _NON_MEMBER_GUESTS.length],
+          };
+        });
+
+    const imagePieceTitles = images.map((_, imgIdx) =>
+      _PIECE_TITLE_POOL[(idx * 13 + imgIdx * 7) % _PIECE_TITLE_POOL.length]
+    );
+
+    const firstMember = imageArtists.find(ia => ia.type === 'member' && ia.memberId);
+    const leadArtist = firstMember?.type === 'member' && firstMember.memberId
+      ? allArtists.find(a => a.id === firstMember.memberId) : undefined;
+
+    return {
+      ...gw,
+      artistId: leadArtist?.id ?? gw.artistId,
+      artist: leadArtist ?? gw.artist,
+      imageArtists,
+      imagePieceTitles,
+      groupName: group.name,
+    };
+  });
+}

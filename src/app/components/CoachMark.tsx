@@ -76,16 +76,16 @@ export function CoachMark({ id }: CoachMarkProps) {
   if (!visible) return null;
 
   return (
-    <div className="fixed bottom-20 md:bottom-6 left-1/2 -translate-x-1/2 z-[90] animate-in slide-in-from-bottom-4 fade-in duration-500">
-      <div className="flex items-start gap-3 bg-[#18181B] text-white rounded-2xl shadow-2xl px-4 py-3.5 max-w-[400px]">
-        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary">
+    <div className="fixed bottom-32 md:bottom-6 left-1/2 -translate-x-1/2 z-[90] animate-in slide-in-from-bottom-4 fade-in duration-500">
+      <div className="flex items-start gap-3 bg-foreground text-white rounded-2xl shadow-2xl px-4 py-3.5 max-w-[400px]">
+        <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-primary text-primary-foreground">
           <Icon className="h-5 w-5" />
         </div>
         <div className="flex-1 min-w-0">
           <h3 className="text-sm font-semibold mb-1">{title}</h3>
           <p className="text-xs text-white/70 leading-relaxed">{description}</p>
         </div>
-        <Button
+        <Button variant="ghost"
           type="button"
           onClick={dismiss}
           className="shrink-0 h-7 w-7 flex items-center justify-center rounded-full lg:hover:bg-white/10 transition-colors"

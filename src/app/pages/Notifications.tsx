@@ -8,6 +8,7 @@ import type { Locale } from '../i18n/uiStrings';
 import type { MessageKey } from '../i18n/messages';
 import { useI18n } from '../i18n/I18nProvider';
 import { loadNotificationSettings, type NotificationSettingsState } from './Settings';
+import { openConfirm } from '../components/ConfirmDialog';
 
 const STORAGE_KEY = 'artier_notifications';
 const MAX_NOTIFICATIONS = 200;
@@ -33,7 +34,7 @@ function generateSeedNotifications(): Notification[] {
       type: 'like',
       message: '님이 회원님의 작품 "빛의 여정"을 좋아합니다',
       fromUser: { name: artists[1].name, avatar: artists[1].avatar, id: artists[1].id },
-      workId: 'w1',
+      workId: 'local-img-0',
       read: false,
       createdAt: new Date(now - 1000 * 60 * 30).toISOString(),
     },
@@ -50,7 +51,7 @@ function generateSeedNotifications(): Notification[] {
       type: 'like',
       message: '님이 회원님의 작품 "고요한 아침"을 좋아합니다',
       fromUser: { name: artists[3].name, avatar: artists[3].avatar, id: artists[3].id },
-      workId: 'w2',
+      workId: 'local-img-1',
       read: true,
       createdAt: new Date(now - 1000 * 60 * 60 * 24).toISOString(),
     },
@@ -110,6 +111,7 @@ function loadNotifications(): Notification[] {
         if (seed) {
           const merged = normalizeNotifications([seed, ...parsed]);
           localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+          window.dispatchEvent(new Event('artier-notifications-changed'));
           return merged;
         }
       }
@@ -118,6 +120,7 @@ function loadNotifications(): Notification[] {
   } catch {}
   const seed = normalizeNotifications(generateSeedNotifications());
   localStorage.setItem(STORAGE_KEY, JSON.stringify(seed));
+  window.dispatchEvent(new Event('artier-notifications-changed'));
   return seed;
 }
 
@@ -146,11 +149,11 @@ const typeIcons = {
 } as const;
 
 const typeColors = {
-  like: 'bg-red-50 text-red-500',
-  follow: 'bg-muted text-primary',
-  pick: 'bg-amber-50 text-amber-500',
-  system: 'bg-[#FAFAFA] text-gray-500',
-  event: 'bg-emerald-50 text-emerald-600',
+  like: 'bg-red-50 text-red-400',
+  follow: 'bg-blue-50 text-blue-400',
+  pick: 'bg-amber-50 text-amber-400',
+  system: 'bg-muted/50 text-muted-foreground',
+  event: 'bg-emerald-50 text-emerald-500',
 } as const;
 
 function passesPrefs(n: Notification, p: NotificationSettingsState): boolean {
@@ -184,6 +187,7 @@ export default function Notifications() {
   useEffect(() => {
     const next = normalizeNotifications(notifications);
     localStorage.setItem(STORAGE_KEY, JSON.stringify(next));
+    window.dispatchEvent(new Event('artier-notifications-changed'));
     if (next.length !== notifications.length) setNotifications(next);
   }, [notifications]);
 
@@ -213,7 +217,8 @@ export default function Notifications() {
     setNotifications((prev) => prev.map((n) => (n.id === id ? { ...n, read: true } : n)));
   };
 
-  const markAllRead = () => {
+  const markAllRead = async () => {
+    if (!(await openConfirm({ title: t('notifications.confirmMarkAll') }))) return;
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
   };
 
@@ -238,10 +243,10 @@ export default function Notifications() {
 
   return (
     <div className="min-h-screen bg-white pb-20 md:pb-0">
-      <div className="bg-white border-b border-[#E5E7EB]">
+      <div className="bg-white border-b border-border">
         <div className="mx-auto max-w-[700px] px-4 sm:px-6 py-5 sm:py-8">
           <div className="flex items-center justify-between gap-3">
-            <h1 className="text-xl sm:text-2xl font-bold text-[#18181B]">{t('notifications.title')}</h1>
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('notifications.title')}</h1>
             <div className="flex items-center gap-2 shrink-0">
               <Link
                 to="/settings#notifications"
@@ -250,7 +255,7 @@ export default function Notifications() {
                 {t('notifications.settingsLink')}
               </Link>
               {unreadCount > 0 && (
-                <Button variant="ghost" size="sm" onClick={markAllRead} className="text-sm text-gray-500">
+                <Button variant="ghost" size="sm" onClick={markAllRead} className="text-sm text-muted-foreground">
                   <Check className="h-4 w-4 mr-1" />
                   {t('notifications.markAll')}
                 </Button>
@@ -263,7 +268,7 @@ export default function Notifications() {
               type="button"
               onClick={() => setReadFilter('all')}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                readFilter === 'all' ? 'bg-[#18181B] text-white' : 'bg-[#F4F4F5] text-gray-600 lg:hover:bg-gray-200'
+                readFilter === 'all' ? 'bg-foreground text-white' : 'bg-muted text-muted-foreground lg:hover:bg-muted'
               }`}
             >
               {t('notifications.filterAll')}
@@ -272,7 +277,7 @@ export default function Notifications() {
               type="button"
               onClick={() => setReadFilter('unread')}
               className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                readFilter === 'unread' ? 'bg-[#18181B] text-white' : 'bg-[#F4F4F5] text-gray-600 lg:hover:bg-gray-200'
+                readFilter === 'unread' ? 'bg-foreground text-white' : 'bg-muted text-muted-foreground lg:hover:bg-muted'
               }`}
             >
               {t('notifications.filterUnread')} {unreadCount > 0 && `(${unreadCount})`}
@@ -284,11 +289,12 @@ export default function Notifications() {
               <Button
                 key={c.id}
                 type="button"
+                variant="ghost"
                 onClick={() => setCategoryTab(c.id)}
-                className={`shrink-0 px-3 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium border transition-colors ${
                   categoryTab === c.id
-                    ? 'border-primary bg-muted text-primary'
-                    : 'border-[#E5E7EB] text-[#71717A] lg:hover:border-[#D4D4D8]'
+                    ? 'border-foreground/80 bg-foreground/5 text-foreground'
+                    : 'border-border text-muted-foreground lg:hover:border-foreground/30 lg:hover:text-foreground'
                 }`}
               >
                 {c.label}
@@ -301,28 +307,28 @@ export default function Notifications() {
       <div className="mx-auto max-w-[700px] px-4 sm:px-6 py-4 sm:py-6">
         {filtered.length === 0 ? (
           <div className="text-center py-12 sm:py-20">
-            <Bell className="h-12 w-12 text-gray-200 mx-auto mb-3" />
-            <h3 className="text-sm sm:text-base font-semibold text-gray-600 mb-2">
+            <Bell className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
+            <h3 className="text-sm sm:text-base font-semibold text-muted-foreground mb-2">
               {readFilter === 'unread' ? t('notifications.emptyUnread') : t('notifications.empty')}
             </h3>
-            <p className="text-[13px] text-gray-400">{t('notifications.emptyHint')}</p>
+            <p className="text-[13px] text-muted-foreground">{t('notifications.emptyHint')}</p>
           </div>
         ) : (
-          <div className="space-y-2">
+          <div className="divide-y divide-border/60">
             {filtered.map((notif) => {
               const Icon = typeIcons[notif.type];
               const colorClass = typeColors[notif.type];
               return (
-                <Button
+                <button
                   key={notif.id}
                   type="button"
                   onClick={() => handleClick(notif)}
-                  className={`flex items-start gap-3 sm:gap-4 w-full p-4 sm:p-5 rounded-xl text-left transition-colors ${
-                    notif.read ? 'bg-white lg:hover:bg-[#FAFAFA]' : 'bg-muted/50 lg:hover:bg-muted'
+                  className={`flex items-start gap-3 sm:gap-4 w-full px-4 py-4 sm:px-5 sm:py-5 text-left transition-colors ${
+                    notif.read ? 'bg-white lg:hover:bg-muted/30' : 'bg-primary/[0.04] lg:hover:bg-primary/[0.07]'
                   }`}
                 >
                   {notif.fromUser ? (
-                    <Avatar className="h-10 w-10 shrink-0">
+                    <Avatar className="h-10 w-10 shrink-0 ring-1 ring-border/50">
                       <AvatarImage src={notif.fromUser.avatar} alt={notif.fromUser.name} />
                       <AvatarFallback>{notif.fromUser.name[0]}</AvatarFallback>
                     </Avatar>
@@ -332,21 +338,18 @@ export default function Notifications() {
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className="text-[13px] sm:text-sm text-[#3F3F46] leading-relaxed">
+                    <p className={`text-[13px] sm:text-sm leading-relaxed ${notif.read ? 'text-muted-foreground' : 'text-foreground'}`}>
                       {notif.fromUser && <span className="font-semibold">{notif.fromUser.name}</span>}
                       {notif.message}
                     </p>
-                    <div className="flex items-center gap-3 mt-1.5">
-                      <span className="text-xs text-gray-400">
+                    <div className="flex items-center gap-2 mt-1.5">
+                      <span className="text-xs text-muted-foreground/70">
                         {formatRelativeTime(notif.createdAt, t, locale)}
                       </span>
-                      {!notif.read && <span className="h-2 w-2 rounded-full bg-primary" />}
+                      {!notif.read && <span className="h-1.5 w-1.5 rounded-full bg-primary" />}
                     </div>
                   </div>
-                  <div className={`h-9 w-9 shrink-0 rounded-full flex items-center justify-center ${colorClass}`}>
-                    <Icon className="h-4 w-4" />
-                  </div>
-                </Button>
+                </button>
               );
             })}
           </div>

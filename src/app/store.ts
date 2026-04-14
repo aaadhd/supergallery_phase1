@@ -1,23 +1,72 @@
 // 전역 상태 관리 (간단한 구현)
 import { useState, useEffect } from 'react';
-import { Work, works as initialWorks } from './data';
+import { Work, works as initialWorks, artists } from './data';
 import { pointsRecallIfQuickDelete } from './utils/pointsBackground';
 import { adjustArtistFollowerDelta, clearFollowerDeltas } from './utils/artistFollowDelta';
 import { clearMockSession } from './services/sessionTokens';
 
-/** localStorage에 예전 Unsplash 시드만 있으면 갱신되지 않아 피드가 비거나 옛 데이터만 보일 수 있음 → 버전 불일치 시 시드로 리셋 */
-const WORKS_STORAGE_VERSION = 'local-gallery-v2';
+function cleanupOrphanedWorkId(workId: string) {
+  if (typeof window === 'undefined') return;
+  try {
+    const pinRaw = localStorage.getItem('artier_pin_comments');
+    if (pinRaw) {
+      const pins = JSON.parse(pinRaw);
+      if (Array.isArray(pins)) {
+        const filtered = pins.filter((p: { workId?: string }) => p.workId !== workId);
+        if (filtered.length !== pins.length) localStorage.setItem('artier_pin_comments', JSON.stringify(filtered));
+      }
+    }
+  } catch { /* ignore */ }
+  try {
+    const curRaw = localStorage.getItem('artier_curation_v1');
+    if (curRaw) {
+      const themes = JSON.parse(curRaw);
+      if (Array.isArray(themes)) {
+        let changed = false;
+        for (const theme of themes) {
+          if (Array.isArray(theme.workIds) && theme.workIds.includes(workId)) {
+            theme.workIds = theme.workIds.filter((id: string) => id !== workId);
+            changed = true;
+          }
+        }
+        if (changed) localStorage.setItem('artier_curation_v1', JSON.stringify(themes));
+      }
+    }
+  } catch { /* ignore */ }
+}
+
+/**
+ * public/images·manifest가 바뀌면 저장된 work.image 경로가 디스크와 어긋나 썸네일 404가 남.
+ * 버전을 올리면 시드(현재 manifest 기반)로 다시 채운 뒤 저장된다.
+ */
+const WORKS_STORAGE_VERSION = 'local-gallery-v10';
 
 // 초안 타입 정의
 export interface Draft {
   id: string;
+  /** 프로필 초안 카드 표시용(전시명·첫 작품명 등) */
   title: string;
+  /** 세부 정보 모달의 전시명 */
+  exhibitionName?: string;
+  /** 업로드 유형 (혼자/함께) */
+  uploadType?: 'solo' | 'group';
+  /** 함께 올리기의 그룹명 */
+  groupName?: string;
+  /** 강사 업로드 여부 */
+  isInstructor?: boolean;
+  /** 그룹전시이지만 개인전시 탭에도 노출 */
+  showInSoloTab?: boolean;
+  /** 대표 이미지 인덱스 */
+  coverImageIndex?: number;
   contents: Array<{
     id: string;
     type: 'image';
     url?: string;
     title?: string;
-    artist?: { id: string; name: string; avatar: string }
+    artist?: { id: string; name: string; avatar: string };
+    nonMemberArtist?: { displayName: string; phoneNumber: string };
+    artistType?: 'member' | 'non-member' | 'self';
+    fullWidth?: boolean;
   }>;
   tags: string[];
   categories: string[];
@@ -32,6 +81,7 @@ const loadWorksFromStorage = (): Work[] => {
 
   const version = localStorage.getItem('artier_works_version');
   if (version !== WORKS_STORAGE_VERSION) {
+    saveWorksToStorage(initialWorks);
     return initialWorks;
   }
 
@@ -40,6 +90,7 @@ const loadWorksFromStorage = (): Work[] => {
     try {
       return JSON.parse(stored);
     } catch {
+      saveWorksToStorage(initialWorks);
       return initialWorks;
     }
   }
@@ -83,11 +134,12 @@ export const workStore = {
     if (typeof window !== 'undefined') window.dispatchEvent(new Event('artier-works-changed'));
   },
 
-  // 작품 삭제
   removeWork: (id: string) => {
     pointsRecallIfQuickDelete(id);
     currentWorks = currentWorks.filter(w => w.id !== id);
     saveWorksToStorage(currentWorks);
+    userInteractionStore.removeWorkId(id);
+    cleanupOrphanedWorkId(id);
     listeners.forEach(listener => listener());
     if (typeof window !== 'undefined') window.dispatchEvent(new Event('artier-works-changed'));
   },
@@ -209,13 +261,17 @@ export const useDraftStore = () => {
 export interface UserProfile {
   name: string;
   nickname: string;
+  /** 실명 (SMS 비회원 작가 매칭용) */
+  realName?: string;
+  /** 전화번호 (SMS 본인인증 후 저장) */
+  phone?: string;
   headline: string;
   bio: string;
   location: string;
   interests?: string[];
   avatarUrl?: string;
-  /** Phase 1: 프로필에서 자율 토글 — 강사 배지·수강생 작품 탭 */
-  isInstructor?: boolean;
+  /** 외부 링크 (SNS, 수업 페이지 등) */
+  externalLinks?: { label: string; url: string }[];
 }
 
 const defaultProfile: UserProfile = {
@@ -238,11 +294,51 @@ const loadProfileFromStorage = (): UserProfile => {
 let currentProfile = loadProfileFromStorage();
 const profileListeners: (() => void)[] = [];
 
+// 앱 부팅 시 저장된 프로필을 artists[0] + 내 작품 스냅샷에 동기화
+{
+  const me = artists[0];
+  if (me && currentProfile.name) {
+    me.name = currentProfile.name;
+    if (currentProfile.headline) me.bio = currentProfile.headline;
+    if (currentProfile.avatarUrl) me.avatar = currentProfile.avatarUrl;
+
+    let worksUpdated = false;
+    for (const w of currentWorks) {
+      if (w.artistId === me.id && w.artist) {
+        if (w.artist.name !== me.name || w.artist.avatar !== me.avatar || w.artist.bio !== me.bio) {
+          w.artist = { ...w.artist, name: me.name, avatar: me.avatar, bio: me.bio };
+          worksUpdated = true;
+        }
+      }
+    }
+    if (worksUpdated) saveWorksToStorage(currentWorks);
+  }
+}
+
 export const profileStore = {
   getProfile: () => currentProfile,
   updateProfile: (updates: Partial<UserProfile>) => {
     currentProfile = { ...currentProfile, ...updates };
     localStorage.setItem('artier_profile', JSON.stringify(currentProfile));
+    const me = artists[0];
+    if (me) {
+      if (updates.name !== undefined) me.name = updates.name;
+      if (updates.headline !== undefined) me.bio = updates.headline;
+      if (updates.avatarUrl !== undefined) me.avatar = updates.avatarUrl;
+      if (updates.name !== undefined || updates.avatarUrl !== undefined || updates.headline !== undefined) {
+        let changed = false;
+        for (const w of currentWorks) {
+          if (w.artistId === me.id && w.artist) {
+            w.artist = { ...w.artist, name: me.name, avatar: me.avatar, bio: me.bio };
+            changed = true;
+          }
+        }
+        if (changed) {
+          saveWorksToStorage(currentWorks);
+          listeners.forEach(l => l());
+        }
+      }
+    }
     profileListeners.forEach(l => l());
   },
   subscribe: (listener: () => void) => {
@@ -298,6 +394,11 @@ export const userInteractionStore = {
     } else {
       currentInteractions.saved = [...currentInteractions.saved, id];
     }
+    saveInteractions();
+  },
+  removeWorkId: (id: string) => {
+    currentInteractions.liked = currentInteractions.liked.filter(i => i !== id);
+    currentInteractions.saved = currentInteractions.saved.filter(i => i !== id);
     saveInteractions();
   },
   subscribe: (listener: () => void) => {
@@ -386,6 +487,18 @@ export const followStore = {
     } else {
       currentFollows = [...currentFollows, id];
       adjustArtistFollowerDelta(id, 1);
+      // 팔로우 알림 자동 발송
+      try {
+        const p = profileStore.getProfile();
+        const name = p.nickname || p.name || 'Member';
+        import('./utils/pushDemoNotification').then(({ pushDemoNotification }) => {
+          pushDemoNotification({
+            type: 'follow' as const,
+            message: '님이 회원님을 팔로우합니다',
+            fromUser: { name, avatar: '', id: 'me' },
+          });
+        }).catch(() => {});
+      } catch { /* ignore */ }
     }
     saveFollows();
   },

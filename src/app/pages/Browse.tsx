@@ -1,26 +1,29 @@
 import { useState, useMemo, useEffect, useCallback, useRef, type ReactElement, type ReactNode } from 'react';
 import { Heart, Bookmark, ChevronRight, ChevronLeft, Image as ImageIcon, Users, MoreHorizontal, Flag } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { toast } from 'sonner';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
-import { artists, Work, Artist } from '../data';
+import { Work, Artist, artists as allArtists } from '../data';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '../components/ui/hover-card';
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import { usePointerCoarse } from '../hooks/usePointerCoarse';
-import { UserPlus } from 'lucide-react';
-import { workStore, userInteractionStore, useInteractionStore, authStore, useAuthStore, followStore, useFollowStore, useProfileStore } from '../store';
-import { groupWorks, type WorkOwner } from '../groupData';
+import { User as UserIcon } from 'lucide-react';
+import { workStore, userInteractionStore, useInteractionStore, useAuthStore, followStore, useFollowStore, useProfileStore } from '../store';
+import { hydrateGroupWorks, type WorkOwner } from '../groupData';
 import { imageUrls } from '../imageUrls';
 import { WorkDetailModal } from '../components/WorkDetailModal';
 import { ReportModal } from '../components/ReportModal';
 import { LoginPromptModal } from '../components/LoginPromptModal';
 import { CoachMark } from '../components/CoachMark';
-import { getFirstImage, getImageCount } from '../utils/imageHelper';
+import { getCoverImage, getImageCount } from '../utils/imageHelper';
 import { isWorkVisibleOnPublicFeed } from '../utils/feedVisibility';
 import { pointsOnBrowseDailyVisit } from '../utils/pointsBackground';
 import { useI18n } from '../i18n/I18nProvider';
+import type { MessageKey } from '../i18n/messages';
 import { AnimatePresence } from 'framer-motion';
 import { orderWorksForBrowseFeed } from '../utils/feedOrdering';
 import { loadSeenWorkIds, rememberSeenWork } from '../utils/seenFeedWorks';
+import { restoreScrollTop, saveScrollTop } from '../utils/scrollRestore';
 import { Button } from '../components/ui/button';
 import {
   DropdownMenu,
@@ -29,6 +32,10 @@ import {
   DropdownMenuTrigger,
 } from '../components/ui/dropdown-menu';
 import { getHiddenWorkIdsForReporter, migrateLegacyReportHiddenOnce } from '../utils/reportStorage';
+import { displayExhibitionTitle } from '../utils/workDisplay';
+import useEmblaCarousel from 'embla-carousel-react';
+import { useVisibleAdminBanners } from '../utils/bannerStore';
+import { useManagedEvents, deriveStatus } from '../utils/eventStore';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -63,50 +70,34 @@ export default function Browse() {
     pointsOnBrowseDailyVisit();
   }, []);
 
+  const adminBanners = useVisibleAdminBanners();
+  const managedEvents = useManagedEvents();
   const promotionBanners = useMemo(
-    () => [
-      {
-        id: 1,
-        image:
-          'https://images.unsplash.com/photo-1758923530822-3e58cf11011e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBhcnQlMjBleGhpYml0aW9uJTIwYmFubmVyfGVufDF8fHx8MTc3Mjc3MzI4OXww&ixlib=rb-4.1.0&q=80&w=1080',
-        title: t('browse.banner1Title'),
-        subtitle: t('browse.banner1Subtitle'),
-        tag: t('browse.bannerTagNew'),
-      },
-      {
-        id: 2,
-        image:
-          'https://images.unsplash.com/photo-1597306957833-433de12c3af6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkaWdpdGFsJTIwYXJ0JTIwc2FsZSUyMHByb21vdGlvbnxlbnwxfHx8fDE3NzI3NzMyODl8MA&ixlib=rb-4.1.0&q=80&w=1080',
-        title: t('browse.banner2Title'),
-        subtitle: t('browse.banner2Subtitle'),
-        tag: t('browse.bannerTagHot'),
-      },
-      {
-        id: 3,
-        image:
-          'https://images.unsplash.com/photo-1767706508363-b2a729df06fb?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxjcmVhdGl2ZSUyMGRlc2lnbiUyMGV2ZW50JTIwcG9zdGVyfGVufDF8fHx8MTc3Mjc3MzI5MHww&ixlib=rb-4.1.0&q=80&w=1080',
-        title: t('browse.banner3Title'),
-        subtitle: t('browse.banner3Subtitle'),
-        tag: t('browse.bannerTagEvent'),
-      },
-      {
-        id: 4,
-        image:
-          'https://images.unsplash.com/photo-1549887534-1541e9326642?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-        title: t('browse.banner4Title'),
-        subtitle: t('browse.banner4Subtitle'),
-        tag: t('browse.bannerTagPick'),
-      },
-      {
-        id: 5,
-        image:
-          'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-        title: t('browse.banner5Title'),
-        subtitle: t('browse.banner5Subtitle'),
-        tag: t('browse.bannerTagNew'),
-      },
-    ],
-    [t],
+    () => {
+      if (adminBanners.length > 0) {
+        return adminBanners.map((b) => ({
+          id: b.id,
+          image: b.imageUrl,
+          title: b.title,
+          subtitle: b.subtitle || '',
+          tag: b.badge || '',
+          linkUrl: b.linkUrl,
+        }));
+      }
+      return managedEvents.map((ev) => ({
+        id: `event-${ev.id}`,
+        image: ev.bannerImageUrl,
+        title: ev.title,
+        subtitle: ev.subtitle || '',
+        tag: deriveStatus(ev) === 'active'
+          ? t('eventDetail.statusActive')
+          : deriveStatus(ev) === 'scheduled'
+            ? t('eventDetail.statusScheduled')
+            : t('eventDetail.statusEnded'),
+        linkUrl: `/events/${ev.id}`,
+      }));
+    },
+    [t, adminBanners, managedEvents],
   );
 
   // -- Stores ---------------------------------------------------------------
@@ -132,17 +123,46 @@ export default function Browse() {
 
   // -- UI state -------------------------------------------------------------
   const [activeCategory, setActiveCategory] = useState<string>('all');
-  const [currentBanner, setCurrentBanner] = useState(0);
   const [selectedWork, setSelectedWork] = useState<string | null>(null);
+
+  // -- Embla banner carousel (터치 스와이프 + 자동 회전) ----------------------
+  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, duration: 30 });
+  const [currentBanner, setCurrentBanner] = useState(0);
+
+  useEffect(() => {
+    if (!emblaApi) return;
+    const onSelect = () => setCurrentBanner(emblaApi.selectedScrollSnap());
+    emblaApi.on('select', onSelect);
+    onSelect();
+    return () => { emblaApi.off('select', onSelect); };
+  }, [emblaApi]);
 
   // -- Scroll position tracking for modal open/close -----------------------
   const scrollPosRef = useRef<number>(0);
 
-  // -- Open modal from URL on mount (PRD: /exhibitions/:id 딥링크) ------------
+  // -- Open modal from URL (PRD: /exhibitions/:id 딥링크) ----------------------
   useEffect(() => {
-    if (params.id && !selectedWork) {
+    if (params.id && params.id !== selectedWork) {
       setSelectedWork(params.id);
+    } else if (!params.id && selectedWork) {
+      setSelectedWork(null);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [params.id]);
+
+  // -- 피드 스크롤 복원: 다른 페이지 다녀온 뒤 / 새 탭에서 돌아왔을 때 최근 위치 유지 -----
+  useEffect(() => {
+    // 모달로 딥링크 진입 중이면 스크롤 복원 생략
+    if (params.id) return;
+    restoreScrollTop('browse', 'browse-scroll-root');
+    const saveCurrent = () => saveScrollTop('browse', 'browse-scroll-root');
+    window.addEventListener('beforeunload', saveCurrent);
+    window.addEventListener('pagehide', saveCurrent);
+    return () => {
+      saveCurrent();
+      window.removeEventListener('beforeunload', saveCurrent);
+      window.removeEventListener('pagehide', saveCurrent);
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
@@ -169,6 +189,8 @@ export default function Browse() {
     rememberSeenWork(workId);
     setFeedEpoch((e) => e + 1);
     scrollPosRef.current = window.scrollY;
+    // 모달 열기 직전 피드 스크롤 위치를 sessionStorage에도 저장 (페이지 이탈 대비)
+    saveScrollTop('browse', 'browse-scroll-root');
     setSelectedWork(workId);
     window.history.pushState({ workId }, '', `/exhibitions/${workId}`);
   }, []);
@@ -183,35 +205,31 @@ export default function Browse() {
     });
   }, []);
 
-  // -- Banner controls ------------------------------------------------------
-  const nextBanner = useCallback(
-    () => setCurrentBanner((p) => (p + 1) % promotionBanners.length),
-    [promotionBanners.length],
-  );
-  const prevBanner = useCallback(
-    () => setCurrentBanner((p) => (p - 1 + promotionBanners.length) % promotionBanners.length),
-    [promotionBanners.length],
-  );
+  // -- Banner controls (Embla) -----------------------------------------------
+  const prevBanner = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
+  const nextBanner = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
   // Auto-rotate banner every 5 seconds
   useEffect(() => {
-    const timer = setInterval(nextBanner, 5000);
-    return () => clearInterval(timer);
-  }, [nextBanner]);
+    if (!emblaApi) return;
+    let timer = setInterval(() => emblaApi.scrollNext(), 5000);
+    // 사용자가 터치/드래그 시 타이머 리셋, 조작 완료 후 재시작
+    const pause = () => { clearInterval(timer); };
+    const resume = () => { clearInterval(timer); timer = setInterval(() => emblaApi.scrollNext(), 5000); };
+    emblaApi.on('pointerDown', pause);
+    emblaApi.on('pointerUp', resume);
+    emblaApi.on('settle', resume);
+    return () => { clearInterval(timer); emblaApi.off('pointerDown', pause); emblaApi.off('pointerUp', resume); emblaApi.off('settle', resume); };
+  }, [emblaApi]);
 
   // -- Combine + PRD 근사 피드 순서(Pick → 신규 → 가중) + 시청 이력 반영 -------
   const allWorks = useMemo(() => {
-    const enhancedGroupWorks = groupWorks.map((work) => {
-      if (work.owner && work.owner.type === 'group') {
-        const groupData = work.owner.data;
-        return { ...work, groupName: groupData.name };
-      }
-      return work;
-    });
-    const combined = [...works, ...enhancedGroupWorks] as Work[];
+    const hydrated = hydrateGroupWorks(allArtists);
+    const combined = [...works, ...hydrated] as Work[];
     const seen = loadSeenWorkIds();
-    return orderWorksForBrowseFeed(combined, seen);
-  }, [works, feedEpoch]);
+    const followingArtistIds = new Set(follows.getFollows());
+    return orderWorksForBrowseFeed(combined, seen, { followingArtistIds });
+  }, [works, feedEpoch, follows]);
 
   // -- Category filtering (신고자 본인에게만 작품 숨김) ------------------------
   const hiddenWorkIds = useMemo(
@@ -251,7 +269,11 @@ export default function Browse() {
   const [feedVisibleCount, setFeedVisibleCount] = useState(FEED_PAGE_SIZE);
   useEffect(() => {
     setFeedVisibleCount(FEED_PAGE_SIZE);
-  }, [activeCategory, filteredWorks.length]);
+    // 탭 전환 시 스크롤 최상단으로 초기화
+    const scrollRoot = document.getElementById('browse-scroll-root');
+    if (scrollRoot) scrollRoot.scrollTo({ top: 0, behavior: 'instant' });
+    else window.scrollTo({ top: 0, behavior: 'instant' });
+  }, [activeCategory]);
 
   const displayedWorks = useMemo(
     () => filteredWorks.slice(0, feedVisibleCount),
@@ -277,41 +299,42 @@ export default function Browse() {
   // RENDER
   // =========================================================================
   return (
-    <div className="min-h-full bg-background">
+    <div className="min-h-full bg-white">
       {/* ----------------------------------------------------------------- */}
       {/* HERO — 에디토리얼 갤러리 톤                                              */}
       {/* ----------------------------------------------------------------- */}
-      <div className="bg-background">
+      <div className="bg-white">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 pt-4 sm:pt-6 pb-2 sm:pb-3">
           <p className="text-[11px] sm:text-xs text-muted-foreground tracking-[0.14em] uppercase mb-2">
             {t('browse.heroKicker')}
           </p>
           <div className="relative group">
-            <div className="overflow-hidden sm:rounded-sm ring-1 ring-foreground/[0.08] shadow-[0_28px_80px_-32px_rgba(35,32,40,0.45)]">
-              <div
-                className="flex transition-transform duration-700 ease-[cubic-bezier(0.33,1,0.68,1)]"
-                style={{ transform: `translateX(-${currentBanner * 100}%)` }}
-              >
+            <div className="overflow-hidden sm:rounded-sm ring-1 ring-foreground/[0.08] shadow-[0_28px_80px_-32px_rgba(35,32,40,0.45)]" ref={emblaRef}>
+              <div className="flex">
                 {promotionBanners.map((banner) => (
-                  <div key={banner.id} className="w-full shrink-0 relative cursor-pointer">
+                  <div
+                    key={banner.id}
+                    className={`min-w-0 flex-[0_0_100%] relative ${banner.linkUrl ? 'cursor-pointer' : ''}`}
+                    onClick={() => banner.linkUrl && navigate(banner.linkUrl)}
+                  >
                     <div className="relative h-[170px] sm:h-[220px] lg:h-[280px] overflow-hidden">
                       <ImageWithFallback
                         src={banner.image}
                         alt={banner.title}
                         className="w-full h-full object-cover"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-r from-black/65 via-black/35 to-black/10" />
-                      <div className="absolute inset-0 flex flex-col justify-center px-6 sm:px-10 lg:px-16">
-                        <div className="max-w-[640px]">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
+                      <div className="absolute inset-x-0 bottom-0 px-8 sm:px-12 lg:px-20 pb-6 sm:pb-8 lg:pb-10">
+                        <div className="max-w-[720px]">
                           {banner.tag && (
                             <span className="inline-block px-2.5 py-1 text-[10px] sm:text-[11px] font-semibold tracking-[0.14em] uppercase text-white border border-white/35 bg-white/5 backdrop-blur-[2px] mb-3">
                               {banner.tag}
                             </span>
                           )}
-                          <h2 className="text-lg sm:text-2xl lg:text-3xl font-semibold text-white mb-1.5 sm:mb-2 leading-snug tracking-tight">
+                          <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold text-white mb-2 sm:mb-2.5 leading-tight tracking-tight">
                             {banner.title}
                           </h2>
-                          <p className="text-xs sm:text-sm text-white/80 font-normal max-w-xl leading-relaxed hidden sm:block">
+                          <p className="text-sm sm:text-base text-white/90 font-medium max-w-xl leading-relaxed hidden sm:block">
                             {banner.subtitle}
                           </p>
                         </div>
@@ -325,16 +348,16 @@ export default function Browse() {
             <Button
               variant="ghost"
               onClick={prevBanner}
-              className="absolute left-3 sm:left-4 top-1/2 -translate-y-1/2 h-9 w-9 sm:h-10 sm:w-10 flex items-center justify-center bg-white/92 lg:hover:bg-white rounded-full shadow-md border border-black/5 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity"
+              className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 h-10 w-10 sm:h-12 sm:w-12 hidden sm:flex items-center justify-center bg-white text-foreground rounded-full shadow-lg border border-black/5 transition-all hover:scale-110 active:scale-95 z-20"
             >
-              <ChevronLeft className="h-4 w-4 sm:h-5 sm:w-5 text-foreground/80" />
+              <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
             </Button>
             <Button
               variant="ghost"
               onClick={nextBanner}
-              className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 h-9 w-9 sm:h-10 sm:w-10 flex items-center justify-center bg-white/92 lg:hover:bg-white rounded-full shadow-md border border-black/5 opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity"
+              className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 h-10 w-10 sm:h-12 sm:w-12 hidden sm:flex items-center justify-center bg-white text-foreground rounded-full shadow-lg border border-black/5 transition-all hover:scale-110 active:scale-95 z-20"
             >
-              <ChevronRight className="h-4 w-4 sm:h-5 sm:w-5 text-foreground/80" />
+              <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
             </Button>
 
             <div className="absolute bottom-3 sm:bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
@@ -342,7 +365,8 @@ export default function Browse() {
                 <Button
                   variant="ghost"
                   key={i}
-                  onClick={() => setCurrentBanner(i)}
+                  onClick={() => emblaApi?.scrollTo(i)}
+                  aria-label={`${t('nav.browse')} ${i + 1}`}
                   className={`h-1 sm:h-1.5 rounded-full transition-all p-0 min-h-0 min-w-0 ${
                     currentBanner === i
                       ? 'w-8 sm:w-10 bg-white'
@@ -358,7 +382,7 @@ export default function Browse() {
       {/* ----------------------------------------------------------------- */}
       {/* CATEGORY — 언더라인 탭                                                  */}
       {/* ----------------------------------------------------------------- */}
-      <div className="sticky top-0 z-40 border-b border-border/60 bg-background/90 backdrop-blur-lg backdrop-saturate-150">
+      <div className="sticky top-0 z-40 border-b border-border/60 bg-white/90 backdrop-blur-lg backdrop-saturate-150">
         <div className="mx-auto flex min-h-11 sm:min-h-12 max-w-[1440px] items-end gap-5 sm:gap-7 px-4 sm:px-8 lg:px-12">
           {categories.map((cat) => (
             <Button
@@ -398,7 +422,7 @@ export default function Browse() {
         )}
         {filteredWorks.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-24 text-center rounded-2xl border border-dashed border-border bg-muted/20">
-            <p className="text-base text-muted-foreground mb-2">{t('browse.emptyTitle')}</p>
+            <p className="text-sm text-muted-foreground mb-2">{t('browse.emptyTitle')}</p>
             <p className="text-[13px] text-muted-foreground/80">{t('browse.emptyHint')}</p>
           </div>
         ) : (
@@ -414,15 +438,35 @@ export default function Browse() {
                 isSaved={interactions.isSaved(work.id)}
                 onToggleLike={(id) => {
                   if (!auth.isLoggedIn()) { setLoginPromptOpen(true); return; }
+                  const wasLiked = userInteractionStore.isLiked(id);
                   userInteractionStore.toggleLike(id);
                   const delta = userInteractionStore.isLiked(id) ? 1 : -1;
                   workStore.updateWork(id, { likes: (workStore.getWork(id)?.likes ?? 0) + delta });
+                  if (wasLiked) {
+                    toast(t('browse.unliked'), {
+                      action: { label: t('browse.undo'), onClick: () => {
+                        userInteractionStore.toggleLike(id);
+                        workStore.updateWork(id, { likes: (workStore.getWork(id)?.likes ?? 0) + 1 });
+                      }},
+                      duration: 3000,
+                    });
+                  }
                 }}
                 onToggleSave={(id) => {
                   if (!auth.isLoggedIn()) { setLoginPromptOpen(true); return; }
+                  const wasSaved = userInteractionStore.isSaved(id);
                   userInteractionStore.toggleSave(id);
                   const delta = userInteractionStore.isSaved(id) ? 1 : -1;
                   workStore.updateWork(id, { saves: (workStore.getWork(id)?.saves ?? 0) + delta });
+                  if (wasSaved) {
+                    toast(t('browse.unsaved'), {
+                      action: { label: t('browse.undo'), onClick: () => {
+                        userInteractionStore.toggleSave(id);
+                        workStore.updateWork(id, { saves: (workStore.getWork(id)?.saves ?? 0) + 1 });
+                      }},
+                      duration: 3000,
+                    });
+                  }
                 }}
                 isFollowing={(artistId) => follows.isFollowing(artistId)}
                 onToggleFollow={(artistId) => {
@@ -438,13 +482,33 @@ export default function Browse() {
                 }}
               />
             ))}
-            {displayedWorks.length < filteredWorks.length && (
-              <div
-                ref={feedSentinelRef}
-                className="col-span-full w-full min-h-[120px] flex items-center justify-center py-6"
-                aria-hidden
-              />
-            )}
+            {displayedWorks.length < filteredWorks.length ? (
+              <>
+                <div
+                  ref={feedSentinelRef}
+                  className="col-span-full"
+                  aria-hidden
+                />
+                {/* Skeleton loading cards */}
+                {Array.from({ length: 3 }).map((_, i) => (
+                  <div key={`skeleton-${i}`} className="animate-pulse">
+                    <div className="aspect-square w-full rounded-sm bg-muted/60" />
+                    <div className="px-1 pt-3 space-y-2.5">
+                      <div className="h-4 w-3/4 rounded bg-muted/60" />
+                      <div className="flex items-center gap-2">
+                        <div className="h-7 w-7 rounded-full bg-muted/60" />
+                        <div className="h-3.5 w-20 rounded bg-muted/60" />
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </>
+            ) : displayedWorks.length > 0 ? (
+              <div className="col-span-full flex flex-col items-center py-12 text-center">
+                <p className="text-sm text-muted-foreground">{t('browse.feedEnd')}</p>
+                <p className="text-xs text-muted-foreground/60 mt-1">{t('browse.feedEndHint')}</p>
+              </div>
+            ) : null}
           </div>
         )}
       </div>
@@ -520,11 +584,36 @@ function BrowseArtistPeek({
   return (
     <HoverCard openDelay={200} closeDelay={100}>
       <HoverCardTrigger asChild>{trigger}</HoverCardTrigger>
-      <HoverCardContent className="w-72 p-3 z-[60]" onClick={(e) => e.stopPropagation()}>
+      <HoverCardContent align="start" sideOffset={6} className="w-[min(22rem,calc(100vw-2rem))] p-3 z-[60]" onClick={(e) => e.stopPropagation()}>
         {children}
       </HoverCardContent>
     </HoverCard>
   );
+}
+
+// ===========================================================================
+// 표시 이름 자름 — 10자 초과 시 … 처리 (CSS truncate는 너비 기준이므로 글자 수 룰은 JS로)
+// ===========================================================================
+function truncateArtistName(name: string, max: number = 10): string {
+  const n = (name ?? '').trim();
+  return n.length > max ? `${n.slice(0, max)}…` : n;
+}
+
+// ===========================================================================
+// 상대 시간 헬퍼 (알림 페이지와 동일 키 재활용)
+// ===========================================================================
+function formatRelativeShort(dateStr: string | undefined, t: (k: MessageKey) => string): string {
+  if (!dateStr) return '';
+  const diff = Date.now() - new Date(dateStr).getTime();
+  if (diff < 0) return '';
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return t('notifications.timeJustNow' as MessageKey);
+  if (mins < 60) return t('notifications.timeMinutes' as MessageKey).replace('{n}', String(mins));
+  const hours = Math.floor(mins / 60);
+  if (hours < 24) return t('notifications.timeHours' as MessageKey).replace('{n}', String(hours));
+  const days = Math.floor(hours / 24);
+  if (days <= 30) return t('notifications.timeDays' as MessageKey).replace('{n}', String(days));
+  return '';
 }
 
 // ===========================================================================
@@ -549,13 +638,56 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
   const { t } = useI18n();
   const coarsePointer = usePointerCoarse();
   const artist = work.artist;
-  const likes = work.likes ?? 0;
-  const saves = work.saves ?? 0;
   const groupName = work.groupName;
   const coOwners = work.coOwners;
   const hasCoOwnersNoGroup = !groupName && coOwners && coOwners.length > 0;
-  const imageSrc = resolveImage(getFirstImage(work.image));
+  const exhibitionLabel = displayExhibitionTitle(work, t('work.untitled'));
+  const isPick = work.editorsPick === true || work.pick === true;
+  const useGroupStyleRow =
+    Boolean(groupName?.trim()) &&
+    (work.primaryExhibitionType === 'group' ||
+      Boolean(work.isInstructorUpload) ||
+      Boolean(coOwners?.length) ||
+      work.owner?.type === 'group');
+  const imageSrc = resolveImage(getCoverImage(work.image, work.coverImageIndex));
   const imageCount = getImageCount(work.image);
+
+  // 비회원 참여 작가 (imageArtists type='non-member') — peek 리스트에 이름만 노출
+  const nonMemberArtists = Array.from(
+    new Map(
+      (work.imageArtists ?? [])
+        .filter((a) => a.type === 'non-member' && !!a.displayName)
+        .map((a) => [a.displayName as string, a]),
+    ).values(),
+  );
+
+  // peek에 표시할 멤버 리스트 구성.
+  //  그룹 멤버 표시: 이미지 수를 초과하지 않도록 제한 (1장 = 1작가 원칙)
+  const groupOwnerData: { id: string; memberIds?: string[] } | undefined =
+    work.owner?.type === 'group' ? work.owner.data : undefined;
+  const peekMembers: Artist[] = (() => {
+    // imageArtists가 있으면 우선 사용 (실제 업로드 시 이미지별 작가 지정)
+    if (work.imageArtists && work.imageArtists.length > 0) {
+      const memberArtists = work.imageArtists
+        .filter((ia) => ia.type === 'member' && ia.memberId)
+        .map((ia) => allArtists.find((a: Artist) => a.id === ia.memberId))
+        .filter((a): a is Artist => Boolean(a));
+      const seen = new Set<string>();
+      return memberArtists.filter((a) => { if (seen.has(a.id)) return false; seen.add(a.id); return true; });
+    }
+    // fallback: owner memberIds에서 이미지 수만큼만
+    const memberIds = groupOwnerData?.memberIds;
+    if (memberIds && memberIds.length > 0) {
+      const list = memberIds
+        .map((mid: string) => allArtists.find((a: Artist) => a.id === mid))
+        .filter((a: Artist | undefined): a is Artist => Boolean(a));
+      if (list.length > 0) return list.slice(0, imageCount);
+    }
+    const raw: Artist[] = [artist, ...(coOwners ?? [])];
+    const groupId = groupOwnerData?.id;
+    const filtered = groupId ? raw.filter((a) => a.id !== groupId) : raw;
+    return filtered.slice(0, imageCount);
+  })();
 
   return (
     <article
@@ -568,7 +700,7 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
         <div className="relative flex h-full w-full items-center justify-center overflow-hidden">
           <ImageWithFallback
             src={imageSrc}
-            alt={work.title}
+            alt={exhibitionLabel}
             className="h-full w-full min-h-0 min-w-0 object-contain object-center"
           />
 
@@ -582,96 +714,58 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
           </div>
         )}
 
-        {/* Like & Save buttons — touch: always visible / hover device: show on hover */}
-        <div className="absolute inset-0 hover-overlay-bg z-10 pointer-events-none">
-          <div className="absolute top-2 right-2 flex gap-1.5 hover-action pointer-events-auto">
-            <Button
-              variant="ghost"
-              type="button"
-              className={`h-8 w-8 pointer-coarse:h-11 pointer-coarse:w-11 pointer-coarse:min-h-11 pointer-coarse:min-w-11 rounded-full flex items-center justify-center transition-transform active:scale-95 touch-manipulation shrink-0 lg:hover:!bg-inherit ${
-                isLiked
-                  ? 'bg-red-500 text-white active:bg-red-600 lg:hover:!bg-red-500'
-                  : 'bg-white/90 text-[#18181B] shadow-sm active:bg-white lg:hover:!bg-white'
-              }`}
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggleLike(work.id);
-              }}
-            >
-              <Heart className={`h-4 w-4 pointer-coarse:h-5 pointer-coarse:w-5 ${isLiked ? 'fill-current' : ''}`} />
-            </Button>
-            <Button
-              variant="ghost"
-              type="button"
-              className={`h-8 w-8 pointer-coarse:h-11 pointer-coarse:w-11 pointer-coarse:min-h-11 pointer-coarse:min-w-11 rounded-full flex items-center justify-center transition-transform active:scale-95 touch-manipulation shrink-0 lg:hover:!bg-inherit ${
-                isSaved
-                  ? 'bg-primary text-primary-foreground active:bg-primary/90 lg:hover:!bg-primary'
-                  : 'bg-white/90 text-[#18181B] shadow-sm active:bg-white lg:hover:!bg-white'
-              }`}
-              onClick={(e) => {
-                e.stopPropagation();
-                onToggleSave(work.id);
-              }}
-            >
-              <Bookmark className={`h-4 w-4 pointer-coarse:h-5 pointer-coarse:w-5 ${isSaved ? 'fill-current' : ''}`} />
-            </Button>
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  type="button"
-                  className="h-8 w-8 pointer-coarse:h-11 pointer-coarse:w-11 pointer-coarse:min-h-11 pointer-coarse:min-w-11 rounded-full flex items-center justify-center bg-white/90 text-[#18181B] shadow-sm active:bg-white lg:hover:!bg-white transition-transform active:scale-95 touch-manipulation shrink-0"
-                  onClick={(e) => e.stopPropagation()}
-                  aria-label={t('browse.workCardMore')}
-                >
-                  <MoreHorizontal className="h-4 w-4 pointer-coarse:h-5 pointer-coarse:w-5" />
-                </Button>
-              </DropdownMenuTrigger>
-              <DropdownMenuContent align="end" className="z-[60]" onClick={(e) => e.stopPropagation()}>
-                <DropdownMenuItem
-                  className="cursor-pointer gap-2"
-                  onSelect={() => {
-                    onReport(work);
-                  }}
-                >
-                  <Flag className="h-4 w-4 text-red-500 shrink-0" />
-                  {t('workDetail.report')}
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
+        {/* Artier's Pick badge */}
+        {isPick && (
+          <div className="absolute left-3 bottom-3 z-10">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500 text-white text-[10px] font-bold shadow-md backdrop-blur-sm">
+              ★ Artier&apos;s Pick
+            </span>
           </div>
-        </div>
+        )}
+
         </div>
       </div>
 
       {/* Info */}
       <div className="px-3 pt-3 pb-4 sm:px-3.5 sm:pb-5 bg-card">
-        <h3 className="text-[13px] font-medium text-foreground leading-snug mb-1 line-clamp-2">
-          {work.title}
-        </h3>
+        <div className="flex items-baseline justify-between gap-2 mb-1">
+          <h3 className="text-[13px] font-medium text-foreground leading-snug line-clamp-2 min-w-0">
+            {exhibitionLabel}
+          </h3>
+          {work.uploadedAt && (() => { const rel = formatRelativeShort(work.uploadedAt, t); return rel ? <span className="text-[11px] text-muted-foreground/60 shrink-0">{rel}</span> : null; })()}
+        </div>
 
         {/* Artist row */}
         <div className="flex items-center justify-between">
           <div className="flex items-center gap-2 min-w-0">
-            {groupName ? (
+            {useGroupStyleRow ? (
               <BrowseArtistPeek
                 coarse={coarsePointer}
                 trigger={
                   <Button
                     variant="ghost"
                     type="button"
-                    className="flex items-center gap-2 min-h-10 min-w-0 max-w-full text-[13px] text-muted-foreground lg:hover:text-foreground active:text-foreground transition-colors truncate touch-manipulation rounded-md px-1 -mx-1"
+                    className="flex items-center gap-2 min-h-10 min-w-0 text-[13px] text-muted-foreground transition-none touch-manipulation rounded-md px-1 -mx-1 lg:hover:bg-transparent lg:hover:text-muted-foreground active:bg-transparent cursor-default"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <Users className="h-4 w-4 shrink-0" />
-                    <span className="truncate">{groupName}</span>
+                    <span>{truncateArtistName((groupName?.trim() || exhibitionLabel || '') as string)}</span>
                   </Button>
                 }
               >
-                <p className="text-xs text-muted-foreground px-1 mb-2">{t('browse.artistLabel')}</p>
-                <MemberRow artist={artist} isFollowing={isFollowing(artist.id)} onToggleFollow={() => onToggleFollow(artist.id)} onNavigate={(id) => navigate(`/profile/${id}`)} />
-                {coOwners?.map((co) => (
-                  <MemberRow key={co.id} artist={co} isFollowing={isFollowing(co.id)} onToggleFollow={() => onToggleFollow(co.id)} onNavigate={(id) => navigate(`/profile/${id}`)} />
+                <p className="text-sm font-semibold text-foreground px-1 mb-3">{t('browse.groupMembersLabel')}</p>
+                {peekMembers.map((m) => (
+                  <MemberRow key={m.id} artist={m} isFollowing={isFollowing(m.id)} onToggleFollow={() => onToggleFollow(m.id)} onNavigate={(id) => navigate(`/profile/${id}`)} />
+                ))}
+                {nonMemberArtists.map((nm) => (
+                  <MemberRow
+                    key={`nm-${nm.displayName}`}
+                    artist={{ id: `nm-${nm.displayName}`, name: nm.displayName as string, avatar: '', bio: '' }}
+                    isRegistered={false}
+                    isFollowing={false}
+                    onToggleFollow={() => {}}
+                    onNavigate={() => {}}
+                  />
                 ))}
               </BrowseArtistPeek>
             ) : hasCoOwnersNoGroup ? (
@@ -681,25 +775,34 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
                   <Button
                     variant="ghost"
                     type="button"
-                    className="flex items-center gap-2 min-h-10 min-w-0 max-w-full text-[13px] text-muted-foreground lg:hover:text-foreground active:text-foreground transition-colors truncate touch-manipulation rounded-md px-1 -mx-1"
+                    className="flex items-center gap-2 min-h-10 min-w-0 text-[13px] text-muted-foreground transition-none touch-manipulation rounded-md px-1 -mx-1 lg:hover:bg-transparent lg:hover:text-muted-foreground active:bg-transparent cursor-default"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <Users className="h-4 w-4 shrink-0" />
-                    <span className="truncate">{t('browse.groupArtistsLabel')}</span>
+                    <span>{truncateArtistName(t('browse.groupArtistsLabel'))}</span>
                   </Button>
                 }
               >
-                <p className="text-xs text-muted-foreground px-1 mb-2">{t('browse.artistLabel')}</p>
-                <MemberRow artist={artist} isFollowing={isFollowing(artist.id)} onToggleFollow={() => onToggleFollow(artist.id)} onNavigate={(id) => navigate(`/profile/${id}`)} />
-                {coOwners.map((co) => (
-                  <MemberRow key={co.id} artist={co} isFollowing={isFollowing(co.id)} onToggleFollow={() => onToggleFollow(co.id)} onNavigate={(id) => navigate(`/profile/${id}`)} />
+                <p className="text-sm font-semibold text-foreground px-1 mb-3">{t('browse.groupMembersLabel')}</p>
+                {peekMembers.map((m) => (
+                  <MemberRow key={m.id} artist={m} isFollowing={isFollowing(m.id)} onToggleFollow={() => onToggleFollow(m.id)} onNavigate={(id) => navigate(`/profile/${id}`)} />
+                ))}
+                {nonMemberArtists.map((nm) => (
+                  <MemberRow
+                    key={`nm-${nm.displayName}`}
+                    artist={{ id: `nm-${nm.displayName}`, name: nm.displayName as string, avatar: '', bio: '' }}
+                    isRegistered={false}
+                    isFollowing={false}
+                    onToggleFollow={() => {}}
+                    onNavigate={() => {}}
+                  />
                 ))}
               </BrowseArtistPeek>
             ) : (
               <Button
                 variant="ghost"
                 type="button"
-                className="flex items-center gap-2 min-h-10 min-w-0 max-w-full text-[13px] text-muted-foreground lg:hover:text-foreground active:text-foreground transition-colors truncate touch-manipulation rounded-md px-1 -mx-1"
+                className="flex items-center gap-2 min-h-10 min-w-0 text-[13px] text-muted-foreground lg:hover:text-foreground active:text-foreground transition-colors touch-manipulation rounded-md px-1 -mx-1"
                 onClick={(e) => {
                   e.stopPropagation();
                   onArtistClick(artist.id);
@@ -712,30 +815,28 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
                     className="h-7 w-7 rounded-full object-cover shrink-0"
                   />
                 )}
-                <span className="truncate">{artist.name}</span>
+                <span>{truncateArtistName(artist.name)}</span>
               </Button>
             )}
           </div>
 
-          {/* Like & save counts */}
+          {/* Like & save status icons (숫자 비노출 — CLAUDE.md WorkCard 표시 규칙) */}
           <div className="flex items-center gap-3 shrink-0 ml-2">
             <Button
               variant="ghost"
               type="button"
-              className={`min-h-10 min-w-10 sm:min-h-0 sm:min-w-0 flex items-center justify-center gap-1 px-2 -mr-1 text-[13px] transition-colors touch-manipulation active:opacity-70 rounded-md ${isLiked ? 'text-red-500' : 'text-muted-foreground lg:hover:text-red-400'}`}
+              className={`min-h-10 min-w-10 sm:min-h-0 sm:min-w-0 flex items-center justify-center px-2 -mr-1 transition-colors touch-manipulation active:opacity-70 rounded-md ${isLiked ? 'text-red-500' : 'text-muted-foreground lg:hover:text-red-400'}`}
               onClick={(e) => { e.stopPropagation(); onToggleLike(work.id); }}
             >
               <Heart className={`h-3.5 w-3.5 ${isLiked ? 'fill-current' : ''}`} />
-              <span>{likes >= 1000 ? `${(likes / 1000).toFixed(1)}k` : likes}</span>
             </Button>
             <Button
               variant="ghost"
               type="button"
-              className={`min-h-10 min-w-10 sm:min-h-0 sm:min-w-0 flex items-center justify-center gap-1 px-2 -mr-1 text-[13px] transition-colors touch-manipulation active:opacity-70 rounded-md ${isSaved ? 'text-primary' : 'text-muted-foreground lg:hover:text-foreground'}`}
+              className={`min-h-10 min-w-10 sm:min-h-0 sm:min-w-0 flex items-center justify-center px-2 -mr-1 transition-colors touch-manipulation active:opacity-70 rounded-md ${isSaved ? 'text-primary' : 'text-muted-foreground lg:hover:text-foreground'}`}
               onClick={(e) => { e.stopPropagation(); onToggleSave(work.id); }}
             >
               <Bookmark className={`h-3.5 w-3.5 ${isSaved ? 'fill-current' : ''}`} />
-              <span>{saves >= 1000 ? `${(saves / 1000).toFixed(1)}k` : saves}</span>
             </Button>
           </div>
         </div>
@@ -747,30 +848,68 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
 // ===========================================================================
 // MemberRow -- popover member row for group/co-owner works
 // ===========================================================================
-function MemberRow({ artist, onNavigate, isFollowing, onToggleFollow }: { artist: Artist; onNavigate: (id: string) => void; isFollowing: boolean; onToggleFollow: () => void }) {
+function MemberRow({
+  artist,
+  isRegistered = true,
+  onNavigate,
+  isFollowing,
+  onToggleFollow,
+}: {
+  artist: Artist;
+  isRegistered?: boolean;
+  onNavigate: (id: string) => void;
+  isFollowing: boolean;
+  onToggleFollow: () => void;
+}) {
   const { t } = useI18n();
+
+  if (!isRegistered) {
+    return (
+      <div className="flex items-center gap-3 p-2 rounded-lg">
+        <div className="flex h-10 w-10 items-center justify-center rounded-full bg-muted text-muted-foreground shrink-0">
+          <UserIcon className="h-5 w-5" />
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-sm font-semibold text-foreground">
+            {truncateArtistName(artist.name)}
+          </p>
+        </div>
+      </div>
+    );
+  }
+
+  const go = (e: React.MouseEvent | React.KeyboardEvent) => {
+    e.stopPropagation();
+    onNavigate(artist.id);
+  };
   return (
-    <div className="flex items-center gap-3 p-2 rounded-lg lg:hover:bg-[#FAFAFA] active:bg-[#F4F4F5] transition-colors touch-manipulation">
-      <img src={artist.avatar} alt={artist.name} className="h-9 w-9 rounded-full object-cover shrink-0" />
-      <Button
-        variant="ghost"
-        type="button"
-        onClick={(e) => { e.stopPropagation(); onNavigate(artist.id); }}
-        className="flex-1 min-h-10 text-sm font-medium text-[#18181B] truncate text-left lg:hover:underline active:opacity-80"
-      >
-        {artist.name}
-      </Button>
-      <Button
-        type="button"
-        variant={isFollowing ? 'secondary' : 'outline'}
-        onClick={(e) => { e.stopPropagation(); onToggleFollow(); }}
-        className={`min-h-9 flex items-center gap-1 text-xs px-3 py-2 sm:py-1.5 rounded-lg transition-colors touch-manipulation active:scale-[0.98] ${
-          isFollowing ? 'border-0 bg-zinc-200/90 text-zinc-800 lg:hover:bg-zinc-300/90' : ''
-        }`}
-      >
-        <UserPlus className="h-3 w-3" />
-        {isFollowing ? t('social.following') : t('social.follow')}
-      </Button>
+    <div
+      role="button"
+      tabIndex={0}
+      onClick={go}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(e); } }}
+      className="flex items-center gap-3 p-2 rounded-lg cursor-pointer lg:hover:bg-muted/50 active:bg-muted transition-colors touch-manipulation"
+    >
+      <img src={artist.avatar} alt={artist.name} className="h-10 w-10 rounded-full object-cover shrink-0" />
+      <div className="flex-1 min-w-0">
+        <p className="text-sm font-semibold text-foreground">
+          {truncateArtistName(artist.name)}
+        </p>
+        {artist.bio && (
+          <p className="text-xs text-muted-foreground truncate mt-0.5">{artist.bio}</p>
+        )}
+      </div>
+      {artist.id !== allArtists[0].id && (
+        <Button
+          type="button"
+          variant={isFollowing ? 'secondary' : 'default'}
+          size="sm"
+          onClick={(e) => { e.stopPropagation(); onToggleFollow(); }}
+          className="shrink-0 min-h-9 text-xs px-4 rounded-lg"
+        >
+          {isFollowing ? t('social.following') : t('social.follow')}
+        </Button>
+      )}
     </div>
   );
 }

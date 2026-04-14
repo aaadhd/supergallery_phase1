@@ -68,17 +68,17 @@ export default function ProfileImageModal({
         className="relative w-full max-w-md rounded-2xl bg-white p-6 shadow-xl sm:p-8"
         onClick={e => e.stopPropagation()}
       >
-        <h2 id="profile-image-modal-title" className="text-lg font-bold text-zinc-900">
+        <h2 id="profile-image-modal-title" className="text-lg font-bold text-foreground">
           {t('profilePhoto.title')}
         </h2>
-        <p className="mt-1 text-sm text-zinc-500">{t('profilePhoto.lead')}</p>
+        <p className="mt-1 text-sm text-muted-foreground">{t('profilePhoto.lead')}</p>
 
         <div className="mt-8 flex justify-center">
-          <div className="flex h-40 w-40 items-center justify-center overflow-hidden rounded-full border border-zinc-200 bg-zinc-50">
+          <div className="flex h-40 w-40 items-center justify-center overflow-hidden rounded-full border border-border bg-muted/30">
             {displayUrl ? (
               <img src={displayUrl} alt="" className="h-full w-full object-cover" />
             ) : (
-              <User className="h-16 w-16 text-zinc-300" strokeWidth={1.25} />
+              <User className="h-16 w-16 text-muted-foreground/40" strokeWidth={1.25} />
             )}
           </div>
         </div>
@@ -93,25 +93,27 @@ export default function ProfileImageModal({
 
         <Button
           type="button"
+          variant="outline"
           onClick={() => inputRef.current?.click()}
-          className="mt-6 w-full rounded-xl border border-zinc-200 py-3 text-sm font-semibold text-zinc-800 transition lg:hover:bg-zinc-50"
+          className="mt-6 w-full rounded-xl py-3 text-sm font-semibold"
         >
           {t('profilePhoto.change')}
         </Button>
 
         <Button
           type="button"
+          variant="link"
           onClick={() => setPreview('__default')}
-          className="mt-3 w-full text-center text-sm font-medium text-primary lg:hover:underline"
+          className="mt-3 w-full text-center text-sm font-medium"
         >
           {t('profilePhoto.reset')}
         </Button>
 
         <div className="mt-8 flex gap-3">
-          <Button
+          <Button variant="ghost"
             type="button"
             onClick={handleCancel}
-            className="flex-1 rounded-xl border border-zinc-200 py-3.5 text-sm font-semibold text-zinc-700 lg:hover:bg-zinc-50"
+            className="flex-1 rounded-xl border border-border py-3.5 text-sm font-semibold text-foreground lg:hover:bg-muted/50"
           >
             {t('loginPrompt.cancel')}
           </Button>

@@ -32,4 +32,5 @@ export function pushDemoNotification(payload: DemoNotif) {
     demo: payload.demo !== false,
   };
   localStorage.setItem(STORAGE_KEY, JSON.stringify([row, ...list].slice(0, MAX)));
+  window.dispatchEvent(new Event('artier-notifications-changed'));
 }

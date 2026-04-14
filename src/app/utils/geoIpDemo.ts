@@ -43,7 +43,6 @@ function fallbackFromEnvironment(): GeoDemoResult {
   if (tz.includes('Seoul') || tz.includes('Asia/Seoul')) countryCode = 'KR';
   else if (tz.startsWith('America/')) countryCode = 'US';
   else if (tz.startsWith('Europe/London')) countryCode = 'GB';
-  const lang = typeof navigator !== 'undefined' ? navigator.language || '' : '';
   return {
     countryCode,
     countryName: countryCode === 'KR' ? 'Korea (fallback)' : 'Unknown (fallback)',

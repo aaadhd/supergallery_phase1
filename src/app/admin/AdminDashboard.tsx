@@ -52,8 +52,8 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-gray-900">운영 대시보드</h1>
-        <p className="text-sm text-gray-500 mt-1">SuperGallery Phase 1 런칭 준비 현황</p>
+        <h1 className="text-2xl font-bold text-foreground">운영 대시보드</h1>
+        <p className="text-sm text-muted-foreground mt-1">SuperGallery Phase 1 런칭 준비 현황</p>
       </div>
 
       {/* Summary Cards */}
@@ -70,7 +70,7 @@ export default function AdminDashboard() {
             <CardContent>
               <div className="flex gap-2 flex-wrap">
                 {Object.entries(issuesByStatus).map(([status, count]) => (
-                  <Badge key={status} className={STATUS_COLORS[status] || 'bg-gray-100 text-gray-600'} variant="outline">
+                  <Badge key={status} className={STATUS_COLORS[status] || 'bg-muted/50 text-muted-foreground'} variant="outline">
                     {status} {count}
                   </Badge>
                 ))}
@@ -90,7 +90,7 @@ export default function AdminDashboard() {
             </CardHeader>
             <CardContent>
               <Progress value={checklistRate} className="mb-2" />
-              <p className="text-xs text-gray-500">{checklistDone}/{checklistTotal} 항목 완료</p>
+              <p className="text-xs text-muted-foreground">{checklistDone}/{checklistTotal} 항목 완료</p>
             </CardContent>
           </Card>
         </Link>
@@ -107,7 +107,7 @@ export default function AdminDashboard() {
             <CardContent>
               <div className="flex gap-2 flex-wrap">
                 {Object.entries(partnersByStage).map(([stage, count]) => (
-                  <Badge key={stage} className={STATUS_COLORS[stage] || 'bg-gray-100 text-gray-600'} variant="outline">
+                  <Badge key={stage} className={STATUS_COLORS[stage] || 'bg-muted/50 text-muted-foreground'} variant="outline">
                     {stage} {count}
                   </Badge>
                 ))}
@@ -125,7 +125,7 @@ export default function AdminDashboard() {
             <CardTitle className="text-3xl">{totalWorks}점</CardTitle>
           </CardHeader>
           <CardContent>
-            <p className="text-xs text-gray-500">목표: 800~1,000점</p>
+            <p className="text-xs text-muted-foreground">목표: 800~1,000점</p>
             <Progress value={Math.min((totalWorks / 800) * 100, 100)} className="mt-2" />
           </CardContent>
         </Card>
@@ -148,9 +148,9 @@ export default function AdminDashboard() {
                     {issue.priority}
                   </Badge>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-gray-900">{issue.title}</p>
-                    <p className="text-xs text-red-600 mt-1">차단: {issue.blocker}</p>
-                    <p className="text-xs text-gray-500 mt-0.5">담당: {issue.owner} · 기한: {issue.dueDate}</p>
+                    <p className="text-sm font-medium text-foreground">{issue.title}</p>
+                    <p className="text-xs text-destructive mt-1">차단: {issue.blocker}</p>
+                    <p className="text-xs text-muted-foreground mt-0.5">담당: {issue.owner} · 기한: {issue.dueDate}</p>
                   </div>
                 </div>
               ))}
@@ -173,7 +173,7 @@ export default function AdminDashboard() {
                   <div key={category}>
                     <div className="flex justify-between text-sm mb-1">
                       <span className="font-medium">{category}</span>
-                      <span className="text-gray-500">{done}/{total}</span>
+                      <span className="text-muted-foreground">{done}/{total}</span>
                     </div>
                     <Progress value={rate} />
                   </div>
@@ -196,8 +196,8 @@ export default function AdminDashboard() {
                     {issue.status}
                   </Badge>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm text-gray-900 truncate">{issue.title}</p>
-                    <p className="text-xs text-gray-500">{issue.updatedAt} · {issue.owner}</p>
+                    <p className="text-sm text-foreground truncate">{issue.title}</p>
+                    <p className="text-xs text-muted-foreground">{issue.updatedAt} · {issue.owner}</p>
                   </div>
                 </div>
               ))}

@@ -30,10 +30,28 @@ function statusBadge(s: MemberStatus) {
   return 'bg-red-50 text-red-700 border border-red-200';
 }
 
+const MEMBERS_KEY = 'artier_admin_members_v1';
+
+function loadMembers(): MemberRow[] {
+  try {
+    const raw = localStorage.getItem(MEMBERS_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch { /* ignore */ }
+  return initialMembers;
+}
+
+function saveMembers(items: MemberRow[]) {
+  localStorage.setItem(MEMBERS_KEY, JSON.stringify(items));
+}
+
 export default function MemberManagement() {
   const [loading, setLoading] = useState(true);
-  const [members, setMembers] = useState<MemberRow[]>(initialMembers);
+  const [members, setMembers] = useState<MemberRow[]>(loadMembers);
   const [q, setQ] = useState('');
+
+  useEffect(() => {
+    saveMembers(members);
+  }, [members]);
 
   useEffect(() => {
     const t = window.setTimeout(() => setLoading(false), 320);
@@ -59,15 +77,15 @@ export default function MemberManagement() {
   if (loading) {
     return (
       <div>
-        <h1 className="text-xl font-bold mb-6 text-gray-900">회원 관리</h1>
-        <div className="rounded-lg border border-[#E4E4E7] py-16 text-center text-sm text-gray-500">불러오는 중…</div>
+        <h1 className="text-xl font-bold mb-6 text-foreground">회원 관리</h1>
+        <div className="rounded-lg border border-border py-16 text-center text-sm text-muted-foreground">불러오는 중…</div>
       </div>
     );
   }
 
   return (
     <div className="min-h-full">
-      <h1 className="text-xl font-bold mb-6 text-gray-900">회원 관리</h1>
+      <h1 className="text-xl font-bold mb-6 text-foreground">회원 관리</h1>
 
       <div className="flex flex-wrap gap-3 mb-6">
         <input
@@ -75,19 +93,19 @@ export default function MemberManagement() {
           placeholder="이름 또는 이메일 검색"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          className="border border-[#E4E4E7] rounded-lg px-3 py-2 text-sm flex-1 min-w-[240px] max-w-md"
+          className="border border-border rounded-lg px-3 py-2 text-sm flex-1 min-w-[240px] max-w-md"
         />
       </div>
 
       {filtered.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-[#E4E4E7] py-16 text-center text-sm text-gray-500">
+        <div className="rounded-lg border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
           검색 결과가 없습니다.
         </div>
       ) : (
-        <div className="border border-[#E4E4E7] rounded-lg overflow-hidden overflow-x-auto">
+        <div className="border border-border rounded-lg overflow-hidden overflow-x-auto">
           <table className="w-full text-sm min-w-[640px]">
             <thead>
-              <tr className="bg-[#F4F4F5] text-left text-gray-700">
+              <tr className="bg-muted text-left text-foreground">
                 <th className="px-4 py-3 font-medium w-24">프로필</th>
                 <th className="px-4 py-3 font-medium">이름</th>
                 <th className="px-4 py-3 font-medium">이메일</th>
@@ -98,15 +116,15 @@ export default function MemberManagement() {
             </thead>
             <tbody>
               {filtered.map((m) => (
-                <tr key={m.id} className="border-b border-[#F0F0F0] lg:hover:bg-[#FAFAFA] transition-colors">
+                <tr key={m.id} className="border-b border-border/40 lg:hover:bg-muted/50 transition-colors">
                   <td className="px-4 py-3">
                     <div className="w-10 h-10 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center border border-border">
                       {m.avatar}
                     </div>
                   </td>
-                  <td className="px-4 py-3 font-medium text-gray-900">{m.name}</td>
-                  <td className="px-4 py-3 text-gray-600 break-all">{m.email}</td>
-                  <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{m.joinedAt}</td>
+                  <td className="px-4 py-3 font-medium text-foreground">{m.name}</td>
+                  <td className="px-4 py-3 text-muted-foreground break-all">{m.email}</td>
+                  <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{m.joinedAt}</td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${statusBadge(m.status)}`}>
                       {m.status}

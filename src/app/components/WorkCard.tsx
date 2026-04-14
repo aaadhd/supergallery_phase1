@@ -1,28 +1,36 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Heart, Bookmark, MessageCircle, ShoppingBag, Image as ImageIcon } from 'lucide-react';
+import { Heart, Bookmark, ShoppingBag, Image as ImageIcon } from 'lucide-react';
 import { Work } from '../data';
 import { imageUrls } from '../imageUrls';
 import { CopyrightProtectedImage } from './work/CopyrightProtectedImage';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
-import { getFirstImage, getImageCount } from '../utils/imageHelper';
-import { userInteractionStore, useInteractionStore, authStore, useAuthStore, workStore } from '../store';
+import { getCoverImage, getImageCount } from '../utils/imageHelper';
+import { userInteractionStore, useInteractionStore, useAuthStore, workStore } from '../store';
 import { LoginPromptModal } from './LoginPromptModal';
 import { useI18n } from '../i18n/I18nProvider';
+import { displayProminentHeadline, displayExhibitionTitle } from '../utils/workDisplay';
+import { toast } from 'sonner';
 
 interface WorkCardProps {
   work: Work;
   showSaleBadge?: boolean;
+  /** 본인 프로필에서 검수 상태 라벨(검수 중/게시 불가) 노출 */
+  showReviewBadge?: boolean;
+  /** 반려 작품 클릭 시 사유 모달로 인터셉트 (본인 프로필 용) */
+  onRejectedClick?: (work: Work) => void;
 }
 
-export function WorkCard({ work, showSaleBadge }: WorkCardProps) {
+export function WorkCard({ work, showSaleBadge, showReviewBadge, onRejectedClick }: WorkCardProps) {
   const { t } = useI18n();
-  const firstImage = getFirstImage(work.image);
+  const firstImage = getCoverImage(work.image, work.coverImageIndex);
   const imageCount = getImageCount(work.image);
   const interactions = useInteractionStore();
   const auth = useAuthStore();
   const [loginPromptOpen, setLoginPromptOpen] = useState(false);
+  const pieceLabel = displayProminentHeadline(work, t('work.untitled'));
+  const exhibitionTitle = displayExhibitionTitle(work, '');
 
   const isLiked = interactions.isLiked(work.id);
   const isSaved = interactions.isSaved(work.id);
@@ -31,33 +39,73 @@ export function WorkCard({ work, showSaleBadge }: WorkCardProps) {
     e.preventDefault();
     e.stopPropagation();
     if (!auth.isLoggedIn()) { setLoginPromptOpen(true); return; }
+    const wasLiked = userInteractionStore.isLiked(work.id);
     userInteractionStore.toggleLike(work.id);
     const delta = userInteractionStore.isLiked(work.id) ? 1 : -1;
     workStore.updateWork(work.id, { likes: (workStore.getWork(work.id)?.likes ?? 0) + delta });
+    if (wasLiked) {
+      toast(t('browse.unliked'), {
+        action: { label: t('browse.undo'), onClick: () => {
+          userInteractionStore.toggleLike(work.id);
+          workStore.updateWork(work.id, { likes: (workStore.getWork(work.id)?.likes ?? 0) + 1 });
+        }},
+        duration: 3000,
+      });
+    }
   };
 
   const handleSave = (e: React.MouseEvent) => {
     e.preventDefault();
     e.stopPropagation();
     if (!auth.isLoggedIn()) { setLoginPromptOpen(true); return; }
+    const wasSaved = userInteractionStore.isSaved(work.id);
     userInteractionStore.toggleSave(work.id);
     const delta = userInteractionStore.isSaved(work.id) ? 1 : -1;
     workStore.updateWork(work.id, { saves: (workStore.getWork(work.id)?.saves ?? 0) + delta });
+    if (wasSaved) {
+      toast(t('browse.unsaved'), {
+        action: { label: t('browse.undo'), onClick: () => {
+          userInteractionStore.toggleSave(work.id);
+          workStore.updateWork(work.id, { saves: (workStore.getWork(work.id)?.saves ?? 0) + 1 });
+        }},
+        duration: 3000,
+      });
+    }
   };
   
+  const reviewBadge =
+    showReviewBadge && work.feedReviewStatus === 'pending'
+      ? { text: t('review.badgePending'), cls: 'bg-muted text-muted-foreground border border-border' }
+      : showReviewBadge && work.feedReviewStatus === 'rejected'
+      ? { text: t('review.badgeRejected'), cls: 'bg-red-50 text-red-700 border border-red-200' }
+      : null;
+
+  const handleLinkClick = (e: React.MouseEvent) => {
+    if (onRejectedClick && work.feedReviewStatus === 'rejected') {
+      e.preventDefault();
+      onRejectedClick(work);
+    }
+  };
+
   return (
     <>
-      <Link to={`/exhibitions/${work.id}`} className="group block">
+      <Link to={`/exhibitions/${work.id}`} onClick={handleLinkClick} className="group block">
         <div className="relative overflow-hidden rounded-xl bg-card ring-1 ring-black/[0.06] shadow-sm transition-[box-shadow,transform] duration-300 lg:group-hover:shadow-md lg:group-hover:ring-primary/15">
           <div className="aspect-square overflow-hidden bg-muted/30 flex items-center justify-center">
             <CopyrightProtectedImage
               src={imageUrls[firstImage] || firstImage}
-              alt={work.title}
+              alt={pieceLabel}
               className="w-full h-full min-w-0 min-h-0 object-contain object-center hover-scale"
-              showWatermark={false}
-              watermarkText={work.artist?.name ? `© ${work.artist.name}` : undefined}
             />
           </div>
+
+          {reviewBadge && (
+            <div className="absolute left-3 bottom-3 z-10">
+              <span className={`inline-flex rounded-full px-2.5 py-0.5 text-[11px] font-medium ${reviewBadge.cls}`}>
+                {reviewBadge.text}
+              </span>
+            </div>
+          )}
 
           {imageCount > 1 && (
             <div className="absolute left-3 top-3">
@@ -69,7 +117,7 @@ export function WorkCard({ work, showSaleBadge }: WorkCardProps) {
           )}
 
           {showSaleBadge && work.isForSale && (
-            <div className="absolute right-3 top-3">
+            <div className="absolute right-3 bottom-3">
               <div className="flex items-center gap-1 rounded-full bg-white/95 px-3 py-1 text-xs font-medium backdrop-blur">
                 <ShoppingBag className="h-3 w-3" />
                 {t('workCard.collectible')}
@@ -84,6 +132,7 @@ export function WorkCard({ work, showSaleBadge }: WorkCardProps) {
               variant="ghost"
               className={`h-8 w-8 rounded-full shadow-sm pointer-coarse:h-11 pointer-coarse:w-11 pointer-coarse:min-h-11 pointer-coarse:min-w-11 active:scale-95 touch-manipulation lg:hover:!bg-inherit ${isLiked ? 'bg-red-500 text-white active:bg-red-600 lg:hover:!bg-red-500' : 'bg-white/90 active:bg-white lg:hover:!bg-white'}`}
               onClick={handleLike}
+              aria-label={t('workDetail.like')}
             >
               <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
             </Button>
@@ -92,6 +141,7 @@ export function WorkCard({ work, showSaleBadge }: WorkCardProps) {
               variant="ghost"
               className={`h-8 w-8 rounded-full shadow-sm pointer-coarse:h-11 pointer-coarse:w-11 pointer-coarse:min-h-11 pointer-coarse:min-w-11 active:scale-95 touch-manipulation lg:hover:!bg-inherit ${isSaved ? 'bg-primary text-primary-foreground active:bg-primary/90 lg:hover:!bg-primary' : 'bg-white/90 active:bg-white lg:hover:!bg-white'}`}
               onClick={handleSave}
+              aria-label={t('workDetail.save')}
             >
               <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-current' : ''}`} />
             </Button>
@@ -100,8 +150,12 @@ export function WorkCard({ work, showSaleBadge }: WorkCardProps) {
 
         <div className="mt-3.5 space-y-2">
           <h3 className="font-semibold text-foreground text-[15px] leading-snug tracking-tight transition-colors lg:group-hover:text-primary pointer-coarse:active:text-primary">
-            {work.title}
+            {pieceLabel}
           </h3>
+
+          {exhibitionTitle && exhibitionTitle !== pieceLabel && (
+            <p className="text-xs text-muted-foreground truncate">{exhibitionTitle}</p>
+          )}
 
           <div className="flex items-center gap-2">
             <Avatar className="h-6 w-6">
@@ -111,15 +165,10 @@ export function WorkCard({ work, showSaleBadge }: WorkCardProps) {
             <span className="text-sm text-muted-foreground">{work.artist.name}</span>
           </div>
 
-          <div className="flex items-center gap-4 text-xs text-muted-foreground">
-            <span className={`flex items-center gap-1 ${isLiked ? 'text-red-500' : ''}`}>
-              <Heart className={`h-3 w-3 ${isLiked ? 'fill-current' : ''}`} />
-              {work.likes}
-            </span>
-            <span className="flex items-center gap-1">
-              <MessageCircle className="h-3 w-3" />
-              {work.comments}
-            </span>
+          {/* 좋아요·저장 상태 아이콘 (숫자는 미노출) — 댓글은 PRD 2.2 Out of Scope */}
+          <div className="flex items-center gap-3 text-muted-foreground">
+            <Heart className={`h-3.5 w-3.5 ${isLiked ? 'text-red-500 fill-current' : ''}`} />
+            <Bookmark className={`h-3.5 w-3.5 ${isSaved ? 'text-primary fill-current' : ''}`} />
           </div>
         </div>
       </Link>

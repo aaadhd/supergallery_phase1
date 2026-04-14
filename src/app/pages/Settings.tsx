@@ -10,7 +10,8 @@ import {
   useAuthStore,
 } from '../store';
 import { Button } from '../components/ui/button';
-import { type Locale } from '../i18n/uiStrings';
+import { openConfirm } from '../components/ConfirmDialog';
+import { PasswordInput } from '../components/ui/password-input';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
 
@@ -80,10 +81,10 @@ function ToggleRow({
   hint?: string;
 }) {
   return (
-    <div className="flex justify-between items-center py-4 border-b border-[#F0F0F0] gap-3">
+    <div className="flex justify-between items-center py-4 border-b border-border/40 gap-3">
       <div className="min-w-0">
-        <span className="text-[15px] text-[#18181B]">{label}</span>
-        {hint && <p className="text-xs text-[#A1A1AA] mt-0.5">{hint}</p>}
+        <span className="text-[15px] text-foreground">{label}</span>
+        {hint && <p className="text-xs text-muted-foreground mt-0.5">{hint}</p>}
       </div>
       <Button
         type="button"
@@ -92,7 +93,7 @@ function ToggleRow({
         disabled={disabled}
         onClick={() => !disabled && onChange(!checked)}
         className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
-          disabled ? 'opacity-50 cursor-not-allowed bg-[#E4E4E7]' : checked ? 'bg-primary' : 'bg-[#D4D4D8]'
+          disabled ? 'opacity-50 cursor-not-allowed bg-muted' : checked ? 'bg-primary' : 'bg-muted'
         }`}
       >
         <span
@@ -108,7 +109,7 @@ function ToggleRow({
 export default function Settings() {
   const navigate = useNavigate();
   const auth = useAuthStore();
-  const { t, locale, setLocale: setAppLocale } = useI18n();
+  const { t } = useI18n();
   const [notifications, setNotifications] = useState<NotificationSettingsState>(loadNotificationSettings);
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [withdrawPassword, setWithdrawPassword] = useState('');
@@ -139,16 +140,11 @@ export default function Settings() {
     persistNotifications(next);
   };
 
-  const handleLogout = () => {
-    if (!window.confirm(t('settings.confirmLogout'))) return;
+  const handleLogout = async () => {
+    if (!(await openConfirm({ title: t('settings.confirmLogout'), confirmLabel: t('nav.logout') }))) return;
     authStore.logout();
     toast.success(t('settings.toastLogout'));
     navigate('/');
-  };
-
-  const handleLocale = (next: Locale) => {
-    setAppLocale(next);
-    toast.message(next === 'ko' ? t('settings.toastLocaleKo') : t('settings.toastLocaleEn'));
   };
 
   const confirmWithdraw = () => {
@@ -177,82 +173,30 @@ export default function Settings() {
   }
 
   return (
-    <div className="min-h-screen bg-white pb-16">
+    <div className="min-h-screen bg-white pb-20 md:pb-0">
       <Toaster position="top-center" richColors />
       <div className="mx-auto max-w-lg px-5 sm:px-6 py-10 sm:py-12">
-        <h1 className="text-2xl font-semibold text-[#18181B] tracking-tight mb-10">{t('settings.title')}</h1>
+        <h1 className="text-2xl font-semibold text-foreground tracking-tight mb-10">{t('settings.title')}</h1>
 
         <section className="mb-10">
-          <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#71717A] mb-1">
+          <h2 className="text-[13px] font-medium uppercase tracking-wide text-muted-foreground mb-1">
             {t('settings.sectionAccount')}
           </h2>
-          <div className="rounded-lg border border-[#F0F0F0] overflow-hidden bg-white px-4 py-4">
-            <p className="text-xs text-[#71717A] mb-1">{t('settings.emailLabel')}</p>
-            <p className="text-[15px] text-[#18181B]">{demoEmail}</p>
+          <div className="rounded-lg border border-border/40 overflow-hidden bg-white px-4 py-4">
+            <p className="text-xs text-muted-foreground mb-1">{t('settings.emailLabel')}</p>
+            <p className="text-[15px] text-foreground">{demoEmail}</p>
           </div>
         </section>
 
-        <section className="mb-10">
-          <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#71717A] mb-1">
-            {t('settings.sectionProfile')}
-          </h2>
-          <div className="rounded-lg border border-[#F0F0F0] overflow-hidden bg-white">
-            <Link
-              to="/me"
-              className="flex justify-between items-center py-4 px-4 border-b border-[#F0F0F0] last:border-b-0 lg:hover:bg-[#FAFAFA] transition-colors"
-            >
-              <span className="text-[15px] text-[#18181B]">{t('settings.goProfileEdit')}</span>
-              <ChevronRight className="w-5 h-5 text-[#A1A1AA]" aria-hidden />
-            </Link>
-          </div>
-        </section>
-
-        <section className="mb-10">
-          <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#71717A] mb-1">
-            {t('settings.sectionSocial')}
-          </h2>
-          <div className="rounded-lg border border-[#F0F0F0] px-4 py-3 bg-[#FAFAFA] text-sm text-[#71717A]">
-            {t('settings.socialDemoNote')}
-          </div>
-        </section>
-
-        <section className="mb-10">
-          <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#71717A] mb-1">
-            {t('settings.sectionLang')}
-          </h2>
-          <div className="rounded-lg border border-[#F0F0F0] overflow-hidden bg-white flex">
-            <Button
-              type="button"
-              onClick={() => handleLocale('ko')}
-              className={`flex-1 py-3 text-sm font-medium transition-colors ${
-                locale === 'ko' ? 'bg-primary text-white' : 'text-[#18181B] lg:hover:bg-[#FAFAFA]'
-              }`}
-            >
-              {t('settings.langKo')}
-            </Button>
-            <Button
-              type="button"
-              onClick={() => handleLocale('en')}
-              className={`flex-1 py-3 text-sm font-medium transition-colors border-l border-[#F0F0F0] ${
-                locale === 'en' ? 'bg-primary text-white' : 'text-[#18181B] lg:hover:bg-[#FAFAFA]'
-              }`}
-            >
-              {t('nav.langEn')}
-            </Button>
-          </div>
-          <p className="text-xs text-[#A1A1AA] mt-2">{t('settings.localeNote')}</p>
-        </section>
-
-        <div className="h-px bg-[#F0F0F0] my-10" aria-hidden />
 
         <section className="mb-10" id="notifications">
-          <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#71717A] mb-3">
+          <h2 className="text-[13px] font-medium uppercase tracking-wide text-muted-foreground mb-3">
             {t('settings.sectionNotif')}
           </h2>
-          <p className="text-xs text-[#A1A1AA] mb-3">{t('settings.notifIntro')}</p>
+          <p className="text-xs text-muted-foreground mb-3">{t('settings.notifIntro')}</p>
 
-          <div className="rounded-lg border border-[#F0F0F0] px-4 bg-white mb-4">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-[#A1A1AA] pt-4 pb-1">
+          <div className="rounded-lg border border-border/40 px-4 bg-white mb-4">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground pt-4 pb-1">
               {t('settings.notifOptionalGroup')}
             </p>
             <ToggleRow
@@ -288,8 +232,8 @@ export default function Settings() {
             />
           </div>
 
-          <div className="rounded-lg border border-[#F0F0F0] px-4 bg-white">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-[#A1A1AA] pt-4 pb-1">
+          <div className="rounded-lg border border-border/40 px-4 bg-white">
+            <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground pt-4 pb-1">
               {t('settings.notifRequiredGroup')}
             </p>
             <ToggleRow
@@ -302,23 +246,23 @@ export default function Settings() {
           </div>
         </section>
 
-        <div className="h-px bg-[#F0F0F0] my-10" aria-hidden />
+        <div className="h-px bg-border my-10" aria-hidden />
 
         <section>
-          <h2 className="text-[13px] font-medium uppercase tracking-wide text-[#71717A] mb-3">
+          <h2 className="text-[13px] font-medium uppercase tracking-wide text-muted-foreground mb-3">
             {t('settings.sectionAccountActions')}
           </h2>
-          <div className="rounded-lg border border-[#F0F0F0] overflow-hidden bg-white">
+          <div className="rounded-lg border border-border/40 overflow-hidden bg-white">
             <Link
               to="/reset-password"
-              className="flex justify-between items-center py-4 px-4 border-b border-[#F0F0F0] lg:hover:bg-[#FAFAFA] transition-colors"
+              className="flex justify-between items-center py-4 px-4 border-b border-border/40 lg:hover:bg-muted/50 transition-colors"
             >
-              <span className="text-[15px] text-[#18181B]">{t('settings.changePassword')}</span>
-              <ChevronRight className="w-5 h-5 text-[#A1A1AA]" aria-hidden />
+              <span className="text-[15px] text-foreground">{t('settings.changePassword')}</span>
+              <ChevronRight className="w-5 h-5 text-muted-foreground" aria-hidden />
             </Link>
-            <div className="flex justify-between items-center py-4 px-4 border-b border-[#F0F0F0]">
-              <span className="text-[15px] text-[#18181B]">{t('settings.logoutRow')}</span>
-              <Button
+            <div className="flex justify-between items-center py-4 px-4 border-b border-border/40">
+              <span className="text-[15px] text-foreground">{t('settings.logoutRow')}</span>
+              <Button variant="ghost"
                 type="button"
                 onClick={handleLogout}
                 className="text-[15px] font-medium text-primary lg:hover:opacity-90"
@@ -330,9 +274,10 @@ export default function Settings() {
 
           <div className="mt-8 text-center">
             <Button
+              variant="ghost"
               type="button"
               onClick={() => setWithdrawOpen(true)}
-              className="text-xs text-[#A1A1AA] lg:hover:text-[#71717A] underline underline-offset-2"
+              className="text-xs text-muted-foreground lg:hover:text-muted-foreground underline underline-offset-2"
             >
               {t('settings.withdraw')}
             </Button>
@@ -348,12 +293,12 @@ export default function Settings() {
           aria-labelledby="withdraw-title"
         >
           <div className="bg-white rounded-xl max-w-md w-full shadow-xl p-6 space-y-4">
-            <h2 id="withdraw-title" className="text-lg font-semibold text-[#18181B]">
+            <h2 id="withdraw-title" className="text-lg font-semibold text-foreground">
               {t('settings.withdrawTitle')}
             </h2>
-            <p className="text-sm text-[#52525B] leading-relaxed">{t('settings.withdrawBody')}</p>
+            <p className="text-sm text-muted-foreground leading-relaxed">{t('settings.withdrawBody')}</p>
             <div className="space-y-2">
-              <p className="text-xs font-medium text-[#71717A]">{t('settings.withdrawReasonSection')}</p>
+              <p className="text-xs font-medium text-muted-foreground">{t('settings.withdrawReasonSection')}</p>
               <div className="space-y-2 max-h-[200px] overflow-y-auto pr-1">
                 {WITHDRAW_REASON_IDS.map((id) => (
                   <label
@@ -370,22 +315,21 @@ export default function Settings() {
                       onChange={() => setWithdrawReason(id)}
                       className="mt-0.5 h-4 w-4 text-primary accent-primary"
                     />
-                    <span className="text-[#3F3F46]">{t(WITHDRAW_REASON_KEYS[id])}</span>
+                    <span className="text-foreground">{t(WITHDRAW_REASON_KEYS[id])}</span>
                   </label>
                 ))}
               </div>
             </div>
             <div>
-              <label htmlFor="withdraw-pw" className="text-xs text-[#71717A] block mb-1.5">
+              <label htmlFor="withdraw-pw" className="text-xs text-muted-foreground block mb-1.5">
                 {t('settings.withdrawPwLabel')}
               </label>
-              <input
+              <PasswordInput
                 id="withdraw-pw"
-                type="password"
                 autoComplete="current-password"
                 value={withdrawPassword}
                 onChange={(e) => setWithdrawPassword(e.target.value)}
-                className="w-full px-3 py-2.5 rounded-lg border border-input bg-background text-sm focus:outline-none focus:ring-2 focus:ring-ring"
+                className="w-full px-3 py-2.5 rounded-lg border border-input bg-white text-sm focus:outline-none focus:ring-2 focus:ring-ring"
                 placeholder={t('settings.withdrawPwPh')}
               />
             </div>
@@ -397,15 +341,15 @@ export default function Settings() {
                   setWithdrawPassword('');
                   setWithdrawReason('');
                 }}
-                className="px-4 py-2.5 text-sm font-medium rounded-lg border border-[#E4E4E7] lg:hover:bg-[#FAFAFA]"
+                className="px-4 py-2.5 text-sm font-medium rounded-lg border border-border lg:hover:bg-muted/50"
               >
                 {t('loginPrompt.cancel')}
               </Button>
-              <Button
+              <Button variant="destructive"
                 type="button"
                 disabled={withdrawBusy}
                 onClick={confirmWithdraw}
-                className="px-4 py-2.5 text-sm font-medium rounded-lg bg-[#DC2626] text-white lg:hover:opacity-90 disabled:opacity-50"
+                className="px-4 py-2.5 text-sm font-medium rounded-lg bg-destructive text-white lg:hover:opacity-90 disabled:opacity-50"
               >
                 {withdrawBusy ? t('settings.withdrawBusy') : t('settings.withdrawSubmit')}
               </Button>
@@ -413,6 +357,7 @@ export default function Settings() {
           </div>
         </div>
       )}
+
     </div>
   );
 }

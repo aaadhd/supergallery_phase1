@@ -31,7 +31,7 @@ const REPORT_REASON_KEYS = [
 interface ReportModalProps {
   open: boolean;
   onClose: () => void;
-  targetType: 'work' | 'artist';
+  targetType: 'work';
   targetName: string;
   targetId?: string;
   onReported?: () => void;
@@ -111,10 +111,7 @@ export function ReportModal({
     }, 2000);
   };
 
-  const lead =
-    targetType === 'work'
-      ? t('report.leadWork').replace('{name}', targetName)
-      : t('report.leadArtist').replace('{name}', targetName);
+  const lead = t('report.leadWork').replace('{name}', targetName);
 
   return (
     <Dialog open={open} onOpenChange={(v) => { if (!v) handleClose(); }}>
@@ -123,8 +120,8 @@ export function ReportModal({
           <div className="flex h-11 w-11 items-center justify-center rounded-full bg-red-50 mb-2">
             <Flag className="h-7 w-7 text-red-500" />
           </div>
-          <DialogTitle className="text-center text-xl">
-            {targetType === 'work' ? t('report.titleWork') : t('report.titleArtist')}
+          <DialogTitle className="text-center text-lg">
+            {t('report.titleWork')}
           </DialogTitle>
           <DialogDescription className="text-center space-y-1">
             <span className="font-medium text-foreground">{lead}</span>
@@ -139,7 +136,7 @@ export function ReportModal({
             <Button
               type="button"
               onClick={handleClose}
-              className="w-full text-base py-3 bg-red-500 lg:hover:bg-red-600 text-white"
+              className="w-full text-sm py-3 bg-red-500 lg:hover:bg-red-600 text-white"
             >
               {t('report.okClose')}
             </Button>
@@ -154,7 +151,7 @@ export function ReportModal({
                     className={`flex items-center gap-3 p-3.5 rounded-lg border cursor-pointer transition-colors ${
                       selectedReasonKey === key
                         ? 'border-red-400 bg-red-50'
-                        : 'border-[#E5E7EB] lg:hover:bg-[#FAFAFA]'
+                        : 'border-border lg:hover:bg-muted/50'
                     }`}
                   >
                     <input
@@ -165,7 +162,7 @@ export function ReportModal({
                       onChange={() => setSelectedReasonKey(key)}
                       className="h-4 w-4 text-red-500 accent-red-500"
                     />
-                    <span className="text-sm text-[#3F3F46]">{t(key)}</span>
+                    <span className="text-sm text-foreground">{t(key)}</span>
                   </label>
                 ))}
               </div>
@@ -175,21 +172,21 @@ export function ReportModal({
                 onChange={(e) => { if (e.target.value.length <= 200) setDetail(e.target.value); }}
                 placeholder={t('report.detailPlaceholder')}
                 rows={3}
-                className="w-full px-4 py-3 border border-[#E5E7EB] rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-300 focus:border-transparent resize-none"
+                className="w-full px-4 py-3 border border-border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-300 focus:border-transparent resize-none"
               />
-              <div className="text-right text-xs text-gray-400">{detail.length}/200</div>
+              <div className="text-right text-xs text-muted-foreground">{detail.length}/200</div>
             </div>
 
             <DialogFooter className="flex flex-col gap-2 sm:flex-col mt-2">
               <Button
                 type="button"
                 onClick={handleSubmit}
-                className="w-full text-base py-3 bg-red-500 lg:hover:bg-red-600 text-white"
+                className="w-full text-sm py-3 bg-red-500 lg:hover:bg-red-600 text-white"
                 disabled={!selectedReasonKey}
               >
                 {t('report.submit')}
               </Button>
-              <Button type="button" variant="ghost" onClick={handleClose} className="w-full text-base">
+              <Button type="button" variant="ghost" onClick={handleClose} className="w-full text-sm">
                 {t('loginPrompt.cancel')}
               </Button>
             </DialogFooter>

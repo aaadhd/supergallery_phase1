@@ -13,6 +13,9 @@ export function CookieConsent() {
   useEffect(() => {
     const consent = localStorage.getItem(STORAGE_KEY);
     if (!consent) setVisible(true);
+    const onReset = () => setVisible(true);
+    window.addEventListener('artier-cookie-reset', onReset);
+    return () => window.removeEventListener('artier-cookie-reset', onReset);
   }, []);
 
   if (!visible) return null;
@@ -24,14 +27,14 @@ export function CookieConsent() {
 
   return (
     <div className="fixed bottom-14 md:bottom-0 inset-x-0 z-50 p-3 sm:p-4 md:p-6">
-      <div className="mx-auto max-w-3xl rounded-xl sm:rounded-2xl bg-white border border-[#E5E7EB] shadow-2xl p-3 sm:p-4 md:p-5">
+      <div className="mx-auto max-w-3xl rounded-xl sm:rounded-2xl bg-white border border-border shadow-2xl p-3 sm:p-4 md:p-5">
         <div className="flex items-start gap-4">
           <div className="flex h-9 w-9 shrink-0 items-center justify-center rounded-full bg-amber-50">
             <Cookie className="h-5 w-5 text-amber-600" />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-[15px] font-semibold text-[#18181B] mb-1">{t('cookie.title')}</h3>
-            <p className="text-[13px] text-gray-600 leading-relaxed">
+            <h3 className="text-[15px] font-semibold text-foreground mb-1">{t('cookie.title')}</h3>
+            <p className="text-[13px] text-muted-foreground leading-relaxed">
               {t('cookie.body')}
               <Link to="/privacy" className="text-primary lg:hover:underline">
                 {t('cookie.privacyLink')}
@@ -41,7 +44,7 @@ export function CookieConsent() {
             <div className="flex flex-wrap gap-3 mt-4">
               <Button
                 onClick={() => accept('all')}
-                className="bg-[#18181B] lg:hover:bg-[#3F3F46] text-[13px] px-6"
+                className="bg-foreground lg:hover:bg-foreground/80 text-[13px] px-6"
               >
                 {t('cookie.acceptAll')}
               </Button>
@@ -55,11 +58,13 @@ export function CookieConsent() {
             </div>
           </div>
           <Button
+            variant="ghost"
+            size="icon"
             onClick={() => accept('essential')}
-            className="shrink-0 flex h-8 w-8 items-center justify-center rounded-full lg:hover:bg-[#F4F4F5] transition-colors"
+            className="shrink-0 h-8 w-8 rounded-full lg:hover:bg-muted transition-colors"
             aria-label={t('cookie.close')}
           >
-            <X className="h-4 w-4 text-gray-400" />
+            <X className="h-4 w-4 text-muted-foreground" />
           </Button>
         </div>
       </div>

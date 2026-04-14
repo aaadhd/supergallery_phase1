@@ -3,10 +3,13 @@ import { toast } from 'sonner';
 import { Check, X } from 'lucide-react';
 import { workStore } from '../store';
 import type { Work } from '../data';
-import { getFirstImage } from '../utils/imageHelper';
+import { getCoverImage } from '../utils/imageHelper';
 import { imageUrls } from '../imageUrls';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { Button } from '../components/ui/button';
+import { REJECTION_REASONS, REJECTION_REASON_LABEL_KEY, type RejectionReason } from '../utils/reviewLabels';
+import { useI18n } from '../i18n/I18nProvider';
+import { pushDemoNotification } from '../utils/pushDemoNotification';
 
 type ReviewStatusUi = '대기중' | '승인' | '반려';
 
@@ -25,11 +28,14 @@ function statusBadgeClass(s: ReviewStatusUi) {
 }
 
 export default function ContentReview() {
+  const { t } = useI18n();
   const [loading, setLoading] = useState(true);
   const [works, setWorks] = useState<Work[]>(() => workStore.getWorks());
   const [statusFilter, setStatusFilter] = useState<string>('전체');
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
+  const [rejectTarget, setRejectTarget] = useState<Work | null>(null);
+  const [pickedReason, setPickedReason] = useState<RejectionReason>('low_quality');
 
   useEffect(() => {
     const t = window.setTimeout(() => setLoading(false), 240);
@@ -55,39 +61,58 @@ export default function ContentReview() {
     });
   }, [rows, statusFilter, from, to]);
 
-  const approve = (id: string) => {
-    workStore.updateWork(id, { feedReviewStatus: 'approved' });
+  const approve = (w: Work) => {
+    workStore.updateWork(w.id, { feedReviewStatus: 'approved', rejectionReason: undefined });
     toast.success('승인되었습니다. 둘러보기 피드에 노출됩니다.');
+    pushDemoNotification({
+      type: 'system',
+      message: t('review.notifApproved'),
+      workId: w.id,
+    });
   };
 
-  const reject = (id: string) => {
-    workStore.updateWork(id, { feedReviewStatus: 'rejected' });
+  const openReject = (w: Work) => {
+    setRejectTarget(w);
+    setPickedReason('low_quality');
+  };
+
+  const confirmReject = () => {
+    if (!rejectTarget) return;
+    const w = rejectTarget;
+    workStore.updateWork(w.id, { feedReviewStatus: 'rejected', rejectionReason: pickedReason });
     toast.error('반려 처리되었습니다. 피드에는 노출되지 않습니다.');
+    const reasonLabel = t(REJECTION_REASON_LABEL_KEY[pickedReason]);
+    pushDemoNotification({
+      type: 'system',
+      message: t('review.notifRejected').replace('{reason}', reasonLabel),
+      workId: w.id,
+    });
+    setRejectTarget(null);
   };
 
   if (loading) {
     return (
       <div>
-        <h1 className="text-xl font-bold mb-6 text-gray-900">콘텐츠 검토</h1>
-        <div className="rounded-lg border border-[#E4E4E7] bg-white py-16 text-center text-sm text-gray-500">불러오는 중…</div>
+        <h1 className="text-xl font-bold mb-6 text-foreground">콘텐츠 검토</h1>
+        <div className="rounded-lg border border-border bg-white py-16 text-center text-sm text-muted-foreground">불러오는 중…</div>
       </div>
     );
   }
 
   return (
     <div className="min-h-full">
-      <h1 className="text-xl font-bold mb-1 text-gray-900">콘텐츠 검토</h1>
-      <p className="text-sm text-gray-500 mb-6">
+      <h1 className="text-xl font-bold mb-1 text-foreground">콘텐츠 검토</h1>
+      <p className="text-sm text-muted-foreground mb-6">
         업로드된 전시는 검수 전까지 둘러보기 피드에 나오지 않습니다. 본인 프로필에는 즉시 노출됩니다. 로컬 개발에서 관리자 화면은{' '}
-        <code className="text-xs bg-gray-100 px-1 rounded">/admin/content-review</code> · 먼저 일반 로그인이 필요합니다(
-        <code className="text-xs bg-gray-100 px-1 rounded">npm run dev</code> 기준).
+        <code className="text-xs bg-muted/50 px-1 rounded">/admin/content-review</code> · 먼저 일반 로그인이 필요합니다(
+        <code className="text-xs bg-muted/50 px-1 rounded">npm run dev</code> 기준).
       </p>
 
       <div className="flex flex-wrap gap-3 mb-6">
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="border border-[#E4E4E7] rounded-lg px-3 py-2 text-sm bg-white text-gray-800 min-w-[140px]"
+          className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground min-w-[140px]"
         >
           <option value="전체">상태: 전체</option>
           <option value="대기중">대기중</option>
@@ -98,28 +123,28 @@ export default function ContentReview() {
           type="date"
           value={from}
           onChange={(e) => setFrom(e.target.value)}
-          className="border border-[#E4E4E7] rounded-lg px-3 py-2 text-sm"
+          className="border border-border rounded-lg px-3 py-2 text-sm"
           aria-label="기간 시작"
         />
-        <span className="self-center text-sm text-gray-400">~</span>
+        <span className="self-center text-sm text-muted-foreground">~</span>
         <input
           type="date"
           value={to}
           onChange={(e) => setTo(e.target.value)}
-          className="border border-[#E4E4E7] rounded-lg px-3 py-2 text-sm"
+          className="border border-border rounded-lg px-3 py-2 text-sm"
           aria-label="기간 종료"
         />
       </div>
 
       {filtered.length === 0 ? (
-        <div className="rounded-lg border border-dashed border-[#E4E4E7] py-16 text-center text-sm text-gray-500">
+        <div className="rounded-lg border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
           조건에 맞는 항목이 없습니다. 신규 작품을 업로드하면 대기 목록에 표시됩니다.
         </div>
       ) : (
-        <div className="border border-[#E4E4E7] rounded-lg overflow-hidden overflow-x-auto">
+        <div className="border border-border rounded-lg overflow-hidden overflow-x-auto">
           <table className="w-full text-sm min-w-[720px]">
             <thead>
-              <tr className="bg-[#F4F4F5] text-left text-gray-700">
+              <tr className="bg-muted text-left text-foreground">
                 <th className="px-4 py-3 font-medium w-20">썸네일</th>
                 <th className="px-4 py-3 font-medium">작품명</th>
                 <th className="px-4 py-3 font-medium">작가</th>
@@ -130,28 +155,33 @@ export default function ContentReview() {
             </thead>
             <tbody>
               {filtered.map(({ work: w, ui, date }) => {
-                const key = getFirstImage(w.image);
+                const key = getCoverImage(w.image, w.coverImageIndex);
                 const src = imageUrls[key] || key;
                 return (
-                  <tr key={w.id} className="border-b border-[#F0F0F0] lg:hover:bg-[#FAFAFA] transition-colors">
+                  <tr key={w.id} className="border-b border-border/40 lg:hover:bg-muted/50 transition-colors">
                     <td className="px-4 py-3">
-                      <div className="w-12 h-12 rounded-md overflow-hidden border border-[#E4E4E7] bg-[#F4F4F5]">
+                      <div className="w-12 h-12 rounded-md overflow-hidden border border-border bg-muted">
                         <ImageWithFallback src={src} alt="" className="w-full h-full object-cover" />
                       </div>
                     </td>
-                    <td className="px-4 py-3 font-medium text-gray-900">{w.title}</td>
-                    <td className="px-4 py-3 text-gray-600">{w.artist.name}</td>
-                    <td className="px-4 py-3 text-gray-600 whitespace-nowrap">{date || '—'}</td>
+                    <td className="px-4 py-3 font-medium text-foreground">{w.title}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{w.artist.name}</td>
+                    <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{date || '—'}</td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${statusBadgeClass(ui)}`}>
                         {ui}
+                        {ui === '반려' && w.rejectionReason && (
+                          <span className="ml-1 text-[10px] opacity-80">
+                            · {t(REJECTION_REASON_LABEL_KEY[w.rejectionReason])}
+                          </span>
+                        )}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-right space-x-2 whitespace-nowrap">
                       <Button
                         type="button"
                         disabled={ui !== '대기중'}
-                        onClick={() => approve(w.id)}
+                        onClick={() => approve(w)}
                         className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90 disabled:opacity-40 disabled:pointer-events-none"
                       >
                         <Check className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
@@ -159,9 +189,10 @@ export default function ContentReview() {
                       </Button>
                       <Button
                         type="button"
+                        variant="outline"
                         disabled={ui !== '대기중'}
-                        onClick={() => reject(w.id)}
-                        className="text-sm px-3 py-1.5 rounded-lg border border-[#E4E4E7] text-gray-700 lg:hover:bg-gray-50 disabled:opacity-40 disabled:pointer-events-none"
+                        onClick={() => openReject(w)}
+                        className="text-sm px-3 py-1.5 rounded-lg disabled:opacity-40 disabled:pointer-events-none"
                       >
                         <X className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
                         반려
@@ -172,6 +203,61 @@ export default function ContentReview() {
               })}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {rejectTarget && (
+        <div
+          className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
+          onClick={() => setRejectTarget(null)}
+        >
+          <div
+            className="bg-white rounded-xl shadow-lg max-w-md w-full p-5"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <h2 className="text-base font-bold text-foreground mb-1">
+              {t('review.rejectPickTitle')}
+            </h2>
+            <p className="text-sm text-muted-foreground mb-4">
+              {t('review.rejectPickDesc')}
+            </p>
+            <div className="space-y-2 mb-5">
+              {REJECTION_REASONS.map((r) => (
+                <label
+                  key={r}
+                  className={`flex items-center gap-2 p-2.5 border rounded-lg cursor-pointer text-sm ${
+                    pickedReason === r ? 'border-primary bg-primary/5' : 'border-border'
+                  }`}
+                >
+                  <input
+                    type="radio"
+                    name="rejectReason"
+                    value={r}
+                    checked={pickedReason === r}
+                    onChange={() => setPickedReason(r)}
+                  />
+                  {t(REJECTION_REASON_LABEL_KEY[r])}
+                </label>
+              ))}
+            </div>
+            <div className="flex gap-2 justify-end">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setRejectTarget(null)}
+                className="text-sm px-3 py-1.5 rounded-lg"
+              >
+                {t('review.rejectCancel')}
+              </Button>
+              <Button
+                type="button"
+                onClick={confirmReject}
+                className="text-sm px-3 py-1.5 rounded-lg bg-red-600 text-white lg:hover:bg-red-700"
+              >
+                {t('review.rejectConfirm')}
+              </Button>
+            </div>
+          </div>
         </div>
       )}
     </div>

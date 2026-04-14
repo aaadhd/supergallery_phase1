@@ -37,7 +37,7 @@ export default function About() {
   return (
     <div className="min-h-screen bg-white pb-20 md:pb-0">
       {/* Hero */}
-      <div className="relative bg-[#18181B] text-white overflow-hidden">
+      <div className="relative bg-foreground text-white overflow-hidden">
         <div className="absolute inset-0 bg-gradient-to-br from-primary/15 via-transparent to-primary/20" />
         <div className="relative mx-auto max-w-[900px] px-4 sm:px-6 py-12 sm:py-20 lg:py-24 text-center">
           <h1 className="text-xl sm:text-2xl font-bold leading-tight mb-4 sm:mb-6 whitespace-pre-line">
@@ -54,7 +54,7 @@ export default function About() {
               </Button>
             </Link>
             <Link to="/upload" className="w-full sm:w-auto">
-              <Button size="lg" variant="outline" className="w-full sm:w-auto border-white/30 text-white lg:hover:bg-white/10 text-sm px-6 sm:px-8 py-3 sm:py-3.5 h-auto">
+              <Button size="lg" variant="outline" className="w-full sm:w-auto bg-transparent border-white/40 text-white lg:hover:bg-white/10 lg:hover:text-white text-sm px-6 sm:px-8 py-3 sm:py-3.5 h-auto">
                 {t('about.ctaUpload')}
               </Button>
             </Link>
@@ -69,13 +69,13 @@ export default function About() {
           {features.map((f) => (
             <div
               key={f.titleKey}
-              className="p-4 sm:p-5 lg:p-6 rounded-2xl border border-[#E5E7EB] lg:hover:border-primary/30 lg:hover:shadow-[0_6px_24px_rgba(0,0,0,0.1)] transition-all"
+              className="p-4 sm:p-5 lg:p-6 rounded-2xl border border-border lg:hover:border-primary/30 lg:hover:shadow-[0_6px_24px_rgba(0,0,0,0.1)] transition-all"
             >
               <div className="flex h-10 w-10 sm:h-11 sm:w-11 items-center justify-center rounded-xl bg-primary/10 mb-3 sm:mb-4">
                 <f.icon className="h-6 w-6 sm:h-7 sm:w-7 text-primary" />
               </div>
-              <h3 className="text-base font-semibold mb-2 sm:mb-3">{t(f.titleKey)}</h3>
-              <p className="text-[13px] sm:text-sm text-gray-600 leading-relaxed">{t(f.descKey)}</p>
+              <h3 className="text-sm font-semibold mb-2 sm:mb-3">{t(f.titleKey)}</h3>
+              <p className="text-[13px] sm:text-sm text-muted-foreground leading-relaxed">{t(f.descKey)}</p>
             </div>
           ))}
         </div>
@@ -85,7 +85,7 @@ export default function About() {
       <div className="bg-white">
         <div className="mx-auto max-w-[800px] px-4 sm:px-6 py-10 sm:py-16 lg:py-20 text-center">
           <h2 className="text-lg font-bold mb-4 sm:mb-6">{t('about.missionTitle')}</h2>
-          <p className="text-[13px] sm:text-sm lg:text-[15px] text-gray-600 leading-relaxed whitespace-pre-line">
+          <p className="text-[13px] sm:text-sm lg:text-[15px] text-muted-foreground leading-relaxed whitespace-pre-line">
             {t('about.missionBody')}
           </p>
         </div>
@@ -94,7 +94,7 @@ export default function About() {
       {/* CTA */}
       <div className="mx-auto max-w-[800px] px-4 sm:px-6 py-10 sm:py-16 lg:py-20 text-center">
         <h2 className="text-lg lg:text-xl font-bold mb-3 sm:mb-4">{t('about.bottomTitle')}</h2>
-        <p className="text-[13px] sm:text-sm text-gray-500 mb-6 sm:mb-8">{t('about.bottomLead')}</p>
+        <p className="text-[13px] sm:text-sm text-muted-foreground mb-6 sm:mb-8">{t('about.bottomLead')}</p>
         <Link to="/upload">
           <Button size="lg" className="bg-primary lg:hover:bg-primary/90 text-sm px-8 sm:px-10 py-3 sm:py-3.5 h-auto">
             {t('about.bottomCta')}

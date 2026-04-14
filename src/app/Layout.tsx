@@ -4,6 +4,7 @@ import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { CookieConsent } from './components/CookieConsent';
 import { getStoredLocale } from './i18n/uiStrings';
+import { useI18n } from './i18n/I18nProvider';
 
 const TITLE_BY_PATH: { prefix: string; ko: string; en: string }[] = [
   { prefix: '/search', ko: '검색 · Artier', en: 'Search · Artier' },
@@ -19,7 +20,9 @@ const TITLE_BY_PATH: { prefix: string; ko: string; en: string }[] = [
 export default function Layout() {
   const { pathname } = useLocation();
   /** 홈 둘러보기: 스크롤은 main만, 푸터는 항상 화면 하단에 보임 */
+  const { t } = useI18n();
   const browseDocked = pathname === '/';
+  const hideFooter = pathname.startsWith('/upload');
   const [localeTick, setLocaleTick] = useState(0);
 
   useEffect(() => {
@@ -37,23 +40,36 @@ export default function Layout() {
   if (browseDocked) {
     return (
       <div className="flex h-dvh min-h-0 flex-col bg-background max-md:pb-[calc(3.5rem+env(safe-area-inset-bottom,0px))]">
+        <a
+          href="#browse-scroll-root"
+          className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-foreground focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-background focus:shadow-lg"
+        >
+          {t('skipToContent')}
+        </a>
         <Header />
-        <main id="browse-scroll-root" className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain">
+        <main id="browse-scroll-root" tabIndex={-1} className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain">
           <Outlet />
         </main>
-        <Footer docked />
+        <Footer />
         <CookieConsent />
       </div>
     );
   }
 
+  // 일반 페이지: 홈과 동일 구조 — 화면 고정 높이 + main 내부 스크롤 + Footer 화면 하단 고정
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className="flex h-dvh min-h-0 flex-col bg-background max-md:pb-[calc(3.5rem+env(safe-area-inset-bottom,0px))]">
+      <a
+        href="#main-content"
+        className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-foreground focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-background focus:shadow-lg"
+      >
+        {t('skipToContent')}
+      </a>
       <Header />
-      <main className="flex-1">
+      <main id="main-content" tabIndex={-1} className="min-h-0 flex-1 overflow-y-auto overflow-x-hidden overscroll-y-contain">
         <Outlet />
       </main>
-      <Footer />
+      {!hideFooter && <Footer />}
       <CookieConsent />
     </div>
   );

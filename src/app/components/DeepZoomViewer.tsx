@@ -185,7 +185,7 @@ export default function DeepZoomViewer({ src, alt, open, onClose }: DeepZoomView
         >
           <Plus className="h-5 w-5" />
         </Button>
-        <Button
+        <Button variant="ghost"
           type="button"
           onClick={resetView}
           className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition lg:hover:bg-white/20"
@@ -193,7 +193,7 @@ export default function DeepZoomViewer({ src, alt, open, onClose }: DeepZoomView
         >
           <RotateCcw className="h-5 w-5" />
         </Button>
-        <Button
+        <Button variant="ghost"
           type="button"
           onClick={onClose}
           className="flex h-11 w-11 items-center justify-center rounded-full bg-white/10 text-white transition lg:hover:bg-white/20"

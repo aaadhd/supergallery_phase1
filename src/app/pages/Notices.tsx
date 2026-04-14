@@ -7,8 +7,8 @@ import type { MessageKey } from '../i18n/messages';
 const CATEGORY_COLORS: Record<string, string> = {
   서비스: 'bg-muted text-muted-foreground',
   이벤트: 'bg-amber-50 text-amber-600',
-  정책: 'bg-red-50 text-red-600',
-  기타: 'bg-[#F4F4F5] text-gray-600',
+  정책: 'bg-red-50 text-destructive',
+  기타: 'bg-muted text-muted-foreground',
 };
 
 function categoryLabel(cat: string, t: (k: MessageKey) => string): string {
@@ -29,10 +29,10 @@ export default function Notices() {
 
   return (
     <div className="min-h-screen bg-white pb-20 md:pb-0">
-      <div className="bg-white border-b border-[#E5E7EB]">
+      <div className="bg-white border-b border-border">
         <div className="mx-auto max-w-[800px] px-6 py-8">
-          <h1 className="text-xl sm:text-2xl font-bold text-[#18181B]">{t('notices.title')}</h1>
-          <p className="text-sm text-gray-500 mt-2">
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('notices.title')}</h1>
+          <p className="text-sm text-muted-foreground mt-2">
             {t('notices.subtitle').replace('{brand}', t('brand.name'))}
           </p>
         </div>
@@ -41,8 +41,8 @@ export default function Notices() {
       <div className="mx-auto max-w-[800px] px-6 py-6">
         {notices.length === 0 ? (
           <div className="text-center py-20">
-            <Megaphone className="h-12 w-12 text-gray-200 mx-auto mb-3" />
-            <h3 className="text-lg font-semibold text-gray-600 mb-2">{t('notices.empty')}</h3>
+            <Megaphone className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
+            <h3 className="text-lg font-semibold text-muted-foreground mb-2">{t('notices.empty')}</h3>
           </div>
         ) : (
           <div className="space-y-2">
@@ -50,8 +50,8 @@ export default function Notices() {
               <Link
                 key={notice.id}
                 to={`/notices/${notice.id}`}
-                className={`flex items-center gap-4 w-full p-5 rounded-xl text-left transition-colors bg-white lg:hover:bg-[#FAFAFA] ${
-                  notice.isPinned ? 'border-2 border-border' : 'border border-[#E5E7EB]'
+                className={`flex items-center gap-4 w-full p-5 rounded-xl text-left transition-colors bg-white lg:hover:bg-muted/50 ${
+                  notice.isPinned ? 'border-2 border-border' : 'border border-border'
                 }`}
               >
                 <div className="flex-1 min-w-0">
@@ -67,10 +67,10 @@ export default function Notices() {
                       {categoryLabel(notice.category, t)}
                     </span>
                   </div>
-                  <h3 className="text-sm sm:text-base font-semibold text-[#18181B] truncate">
+                  <h3 className="text-sm sm:text-base font-semibold text-foreground truncate">
                     {getNoticeTitle(notice, locale)}
                   </h3>
-                  <span className="text-xs text-gray-400 mt-1 block">
+                  <span className="text-xs text-muted-foreground mt-1 block">
                     {new Date(notice.createdAt).toLocaleDateString(dateLocale, {
                       year: 'numeric',
                       month: 'long',
@@ -78,7 +78,7 @@ export default function Notices() {
                     })}
                   </span>
                 </div>
-                <ChevronRight className="h-5 w-5 text-gray-300 shrink-0" aria-hidden />
+                <ChevronRight className="h-5 w-5 text-muted-foreground/40 shrink-0" aria-hidden />
               </Link>
             ))}
           </div>
