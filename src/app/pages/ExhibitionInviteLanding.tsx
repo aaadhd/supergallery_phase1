@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useParams, useNavigate, Link } from 'react-router-dom';
+import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { Share2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useWorkStore, useAuthStore } from '../store';
@@ -13,10 +13,20 @@ import { isWorkVisibleOnPublicFeed } from '../utils/feedVisibility';
 import type { Work } from '../data';
 
 /**
- * 전시 초대장 오픈 화면 (명세: 화면 모음 > 전시 초대장 오픈 화면).
- * 진입: 공유된 URL(/exhibitions/:id?from=invite)을 받은 사람이 열었을 때.
- * 구성: 전시 헤더 + 작품 갤러리 그리드 + (비로그인) 가입 유도 + 재공유.
+ * 전시 단위 링크 오픈 화면 (`?from=invite` | `?from=credited`).
+ * - `invite`: 한 전시(동일 전시명·그룹) 맥락의 작품 그리드 — 링크 하나에 여러 전시를 묶지 않음.
+ * - `credited`: 비회원 작가 알림.
+ * 작품 한 점만 공유할 때는 `?from=work` → ExhibitionWorkShareLanding.
  */
+function firstNonMemberDisplayName(seed: Work): string | null {
+  const list = seed.imageArtists;
+  if (!list?.length) return null;
+  for (const a of list) {
+    if (a.type === 'non-member' && a.displayName?.trim()) return a.displayName.trim();
+  }
+  return null;
+}
+
 function collectExhibitionWorks(seed: Work, all: Work[]): Work[] {
   const ex = seed.exhibitionName?.trim();
   const gn = seed.groupName?.trim();
@@ -40,6 +50,8 @@ function collectExhibitionWorks(seed: Work, all: Work[]): Work[] {
 
 export default function ExhibitionInviteLanding() {
   const { id } = useParams<{ id: string }>();
+  const [searchParams] = useSearchParams();
+  const variant = searchParams.get('from') === 'credited' ? 'credited' : 'share';
   const navigate = useNavigate();
   const { t } = useI18n();
   const auth = useAuthStore();
@@ -63,6 +75,7 @@ export default function ExhibitionInviteLanding() {
   const coverKey = getCoverImage(seed.image, seed.coverImageIndex);
   const coverSrc = imageUrls[coverKey] || coverKey;
   const creatorName = seed.artist.name;
+  const creditedName = firstNonMemberDisplayName(seed);
 
   const share = async () => {
     const url = window.location.href;
@@ -89,15 +102,36 @@ export default function ExhibitionInviteLanding() {
         <ImageWithFallback src={coverSrc} alt="" className="h-full w-full object-cover" loading="eager" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
         <div className="absolute inset-0 flex flex-col justify-end px-6 sm:px-10 lg:px-16 pb-8 sm:pb-10">
-          <p className="text-xs font-medium uppercase tracking-[0.14em] text-white/80 mb-2">
-            {t('invite.exhibitionLabel')}
-          </p>
-          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight max-w-3xl">
-            {exhibitionTitle}
-          </h1>
-          <p className="mt-2 text-sm sm:text-base text-white/80">
-            {t('invite.inviteByline').replace('{name}', creatorName)}
-          </p>
+          {variant === 'share' ? (
+            <>
+              <p className="text-xs font-medium uppercase tracking-[0.14em] text-white/80 mb-2">
+                {t('invite.exhibitionLabel')}
+              </p>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight max-w-3xl">
+                {exhibitionTitle}
+              </h1>
+              <p className="mt-2 text-sm sm:text-base text-white/80">
+                {t('invite.inviteByline').replace('{name}', creatorName)}
+              </p>
+            </>
+          ) : (
+            <>
+              <p className="text-xs font-medium uppercase tracking-[0.14em] text-white/80 mb-2">
+                {t('invite.creditedKicker')}
+              </p>
+              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight max-w-3xl">
+                {creditedName
+                  ? t('invite.creditedHeadlineNamed').replace('{name}', creditedName)
+                  : t('invite.creditedHeadline')}
+              </h1>
+              <p className="mt-3 text-lg sm:text-xl font-semibold text-white/95 max-w-3xl">
+                {t('invite.creditedExhibitionLine').replace('{title}', exhibitionTitle)}
+              </p>
+              <p className="mt-2 text-sm sm:text-base text-white/80">
+                {t('invite.creditedByline').replace('{uploader}', creatorName)}
+              </p>
+            </>
+          )}
           {seed.feedReviewStatus === 'pending' && (
             <div className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-full bg-amber-400/20 border border-amber-300/50 px-3 py-1 text-[11px] font-medium text-amber-100">
               <span className="h-1.5 w-1.5 rounded-full bg-amber-300" />
@@ -153,10 +187,12 @@ export default function ExhibitionInviteLanding() {
         <section className="max-w-[900px] mx-auto px-4 sm:px-6 pb-10">
           <div className="rounded-2xl border border-border bg-gradient-to-br from-primary/10 via-muted/30 to-muted/10 p-6 sm:p-8 text-center">
             <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">
-              {t('workDetail.inspireCtaTitle')}
+              {variant === 'credited' ? t('invite.creditedCtaTitle') : t('workDetail.inspireCtaTitle')}
             </p>
             <p className="text-base sm:text-lg text-foreground leading-relaxed mb-6 max-w-xl mx-auto">
-              {t('workDetail.inspireCtaBody').replace('{artist}', creatorName)}
+              {variant === 'credited'
+                ? t('invite.creditedCtaBody')
+                : t('workDetail.inspireCtaBody').replace('{artist}', creatorName)}
             </p>
             <div className="flex flex-wrap gap-2 justify-center">
               <Link
@@ -185,7 +221,7 @@ export default function ExhibitionInviteLanding() {
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium"
         >
           <Share2 className="h-4 w-4" />
-          {t('invite.share')}
+          {variant === 'credited' ? t('invite.creditedShare') : t('invite.share')}
         </Button>
       </div>
     </div>

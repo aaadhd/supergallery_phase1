@@ -349,11 +349,11 @@ export default function ExhibitionDetail() {
                 onClick={() => setDetailWorkId(work.id)}
                 className="text-left group"
               >
-                <div className="aspect-[4/5] overflow-hidden rounded-lg border border-border/40 bg-muted/50 mb-3">
+                <div className="flex aspect-[4/5] items-center justify-center overflow-hidden rounded-lg border border-border/40 bg-muted/30 mb-3">
                   <ImageWithFallback
                     src={resolveWorkImageSrc(work)}
                     alt=""
-                    className="w-full h-full object-cover transition-transform duration-300 lg:group-hover:scale-[1.02]"
+                    className="w-full h-full object-contain object-center transition-transform duration-300 lg:group-hover:scale-[1.02]"
                   />
                 </div>
                 <p className="text-sm font-medium text-foreground lg:group-hover:text-primary transition-colors line-clamp-2">
@@ -378,8 +378,8 @@ export default function ExhibitionDetail() {
                       to={`/exhibitions/${ex.rid}`}
                       className="flex gap-4 p-4 rounded-xl border border-border/40 lg:hover:border-border transition-colors bg-white"
                     >
-                      <div className="w-24 h-24 shrink-0 overflow-hidden rounded-lg border border-border/40">
-                        <ImageWithFallback src={thumb} alt="" className="w-full h-full object-cover" />
+                      <div className="flex w-24 h-24 shrink-0 items-center justify-center overflow-hidden rounded-lg border border-border/40 bg-muted/30">
+                        <ImageWithFallback src={thumb} alt="" className="w-full h-full object-contain object-center" />
                       </div>
                       <div className="min-w-0 py-0.5">
                         <p className="text-[13px] text-primary mb-1">{relType}</p>

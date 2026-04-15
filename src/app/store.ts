@@ -8,16 +8,6 @@ import { clearMockSession } from './services/sessionTokens';
 function cleanupOrphanedWorkId(workId: string) {
   if (typeof window === 'undefined') return;
   try {
-    const pinRaw = localStorage.getItem('artier_pin_comments');
-    if (pinRaw) {
-      const pins = JSON.parse(pinRaw);
-      if (Array.isArray(pins)) {
-        const filtered = pins.filter((p: { workId?: string }) => p.workId !== workId);
-        if (filtered.length !== pins.length) localStorage.setItem('artier_pin_comments', JSON.stringify(filtered));
-      }
-    }
-  } catch { /* ignore */ }
-  try {
     const curRaw = localStorage.getItem('artier_curation_v1');
     if (curRaw) {
       const themes = JSON.parse(curRaw);

@@ -47,7 +47,7 @@ function parseFlowBlock(raw: string): { title: string; items: { path: string; de
 function FlowMapBlock({ text }: { text: string }) {
   const { title, items } = parseFlowBlock(text);
   return (
-    <div className="rounded-xl border border-border bg-muted/50/80 p-4">
+    <div className="rounded-xl border border-border bg-muted/50 p-4">
       <h3 className="text-sm font-semibold text-foreground mb-3">{title}</h3>
       <ul className="space-y-2.5 text-sm">
         {items.map((it, idx) => (

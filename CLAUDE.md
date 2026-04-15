@@ -4,13 +4,12 @@
 시니어/중장년 순수미술 작가를 위한 웹 기반 디지털 갤러리 플랫폼.
 개인 작품 업로드 및 그룹 전시(동호회·클래스·친구) 기능 제공.
 
-> 구현 완성도: reference 명세 기준 약 97~100% (Phase 1 범위).
-> 상세 현황은 `IMPLEMENTATION_DELTA.md` 참조.
+> Phase 1 클라이언트 구현·명세 동기화는 **`IMPLEMENTATION_DELTA.md`와 현재 `src/app/` 코드**를 기준으로 한다. 완성도를 퍼센트로 표기하지 않는다.
 
 ## 스펙 문서
-- 작품 올리기 전체 스펙: `docs/upload-spec.md`
-- 작품 주조색 자동 배경: `docs/dominant-color-spec.md` (구현 완료)
-- 구현 델타 보고서: `IMPLEMENTATION_DELTA.md`
+- 작품 올리기 전체 스펙: `docs/upload_spec.md`
+- 작품 톤 배경 묻어나는 효과: **원본 이미지를 blur + scale + opacity로 깔아** 순수 CSS로 구현 ([WorkDetailModal.tsx:407](src/app/components/WorkDetailModal.tsx#L407), [Upload.tsx:12,1140](src/app/pages/Upload.tsx#L12)). dominant-color 추출 알고리즘 불필요 — 관련 모듈·spec 문서는 2026-04-15 삭제됨
+- 구현 델타·레퍼런스 수정 지침: `IMPLEMENTATION_DELTA.md`, `REFERENCE_DELTA.md`
 
 ## 주요 파일
 
@@ -20,7 +19,7 @@
 - `src/app/pages/ExhibitionRoute.tsx` — `?from=invite` 분기 처리
 - `src/app/pages/ExhibitionInviteLanding.tsx` — 전시 초대장 오픈 화면 (2026-04-13 신설)
 - `src/app/pages/Profile.tsx` — 강사 표시 자동 파생 (`instructorVisible`)
-- `src/app/pages/Search.tsx` — 검색 (계정별/게스트 키 분리, 마이그레이션 TODO)
+- `src/app/pages/Search.tsx` — 검색 (계정별/게스트 키; 로그인 시 guest 히스토리 병합 — IMPLEMENTATION_DELTA §11.3)
 - `src/app/pages/FlowDemoTools.tsx` — `/demo` PM 데모 맵
 - `src/app/pages/DemoReferenceToolkit.tsx` — `/demo/reference` 검수 툴킷
 
@@ -30,19 +29,17 @@
 - `src/app/components/WorkDetailModal.tsx` — 공유 URL에 `?from=invite` 자동 부여
 - `src/app/components/PointsBootstrap.tsx` — 부트스트랩 포인트 동기화
 - `src/app/components/WorksStorageSync.tsx` — works 스토리지 버전 동기화
-- `src/app/components/work/PinCommentLayer.tsx` — Phase 2 선행 구현
-- `src/app/components/work/TimelapsePlayer.tsx` — Phase 2 선행 구현 (UI만)
-- `src/app/components/work/ColorPaletteSuggestion.tsx` — 주조색 추출 + 배경 적용
+- `src/app/components/work/CopyrightProtectedImage.tsx` — 우클릭/드래그 차단 이미지 컴포넌트
+- `src/app/components/SocialSignupModal.tsx` — 소셜 첫 가입 시 약관 동의 + 닉네임 입력 (SCR-AUTH-03)
 
 ### 유틸 / Store
-- `src/app/store.ts` — `WORKS_STORAGE_VERSION` 스토리지 버전 관리 (현재 v6)
+- `src/app/store.ts` — `WORKS_STORAGE_VERSION` 스토리지 버전 관리 (현재 값 `local-gallery-v10`, 키 `artier_works_version`)
 - `src/app/store/workStore.ts`, `draftStore.ts` — 작품/초안 상태
-- `src/app/store/pinCommentStore.ts` — Pin 코멘트 (localStorage `artier_pin_comments`)
-- `src/app/utils/colorPalette.ts` — 주조색 추출 알고리즘
-- `src/app/utils/inviteMessaging.ts` — 초대 발송 (5% 랜덤 실패 시뮬, `artier_invite_messaging_log`)
+- `src/app/utils/inviteMessaging.ts` — 초대 발송 (5% 랜덤 실패 시뮬, `artier_invite_messaging_log`) + `matchSmsInviteOnSignup` 가입 시 작품 자동 연결
+- `src/app/utils/sanctionStore.ts` — 경고·허위신고 카운터 + 정지 단계 (`SuspensionLevel`, `addWarning`, `addFalseReport`, `suspendDemoUser`)
 - `src/app/utils/adminGate.ts` — 운영팀 역할 토글
 - `src/app/utils/feedOrdering.ts` — 둘러보기 피드 랭킹
-- `src/app/utils/bannerStore.ts` — 배너 관리 (드래그 순서 변경 미구현)
+- `src/app/utils/bannerStore.ts` — 배너 관리 (DnD 적용됨)
 - `src/app/utils/pushDemoNotification.ts` — 알림 데모 푸시
 - `src/app/utils/reviewLabels.ts` — 검수 사유 4분류
 - `src/app/utils/analytics.ts` — GA4 스캐폴딩
@@ -56,7 +53,7 @@
 - **다국어**: `useI18n()`의 `t()` 사용. 문자열 하드코딩 금지.
   - **locale 반응성**: `getStoredLocale()` 스냅샷 함수를 렌더 시점에 직접 호출하지 말 것.
     반드시 `useI18n()`의 `locale`·`t`를 사용해 런타임 언어 전환 시 리렌더가 트리거되게 할 것
-    (구 `ContentReview.tsx` 패턴은 안티패턴 — IMPLEMENTATION_DELTA §11.5 참조).
+    (구 `ContentReview.tsx` 패턴은 안티패턴 — §11.5에서 `useI18n()`으로 정리 완료).
 - **상태관리**: `workStore`, `draftStore` 사용
 - **스타일**: Tailwind CSS + shadcn/ui
 - **시니어 친화**: 모든 인터랙티브 요소 `min-h-[44px]` 유지
@@ -73,18 +70,20 @@
 - 강사 여부를 위한 별도 프로필 토글 UI 추가
 - `localStorage` 키 `artier_instructor_public_ids` 재기록 (deprecated)
 
-### Phase 2 선행 구현 (주의)
-다음 3개 항목은 PRD §2.2 Out of Scope이지만 **선제 구현되어 코드에 존재** (IMPLEMENTATION_DELTA §2.1).
-신규 진입 시 활성화 여부 확인 필요:
-- Pin 코멘트 (`PinCommentLayer`)
-- 타임랩스 (`TimelapsePlayer` — 영상 소스 미연결)
-- 색상 팔레트 추출 (`ColorPaletteSuggestion` — Phase 1 활성)
+### Phase 2 선행 구현 (정리됨)
+이전엔 PRD §2.2 Out of Scope임에도 코드만 존재하던 3개 컴포넌트가 있었음.
+어디에서도 import되지 않는 dead code였기에 모두 삭제됨:
+- ~~Pin 코멘트 (`PinCommentLayer`, `pinCommentStore.ts`, `artier_pin_comments` 키)~~
+- ~~타임랩스 (`TimelapsePlayer`)~~
+- ~~색상 팔레트 추출 (`ColorPaletteSuggestion`, `utils/colorPalette.ts`)~~
+
+→ Phase 2에서 구현할 때 신규로 작성. 위 이름들을 재도입할 때는 PRD §2.2 범위 내인지
+확인하고 실제 사용 화면도 같이 연결할 것 (export만 두는 dead code는 금지).
 
 ### PRD §2.2 적용으로 UI 제거됨, 데이터 필드만 잔존
 다음 항목은 위와 다른 범주 — **한때 구현되었다가 PRD Out of Scope에 맞춰 UI를 제거**한 흔적.
 관련 필드/계산 로직이 아직 코드에 남아 있으니 건드릴 때 주의:
-- 댓글 — `WorkCard` 하단 숫자 노출 제거 (IMPLEMENTATION_DELTA §10.2),
-  `feedOrdering.ts` 가중치 계산식에 `comments` 항이 남아있으나 데이터 필드가 항상 0 (§8.6)
+- 댓글 — `WorkCard` 하단 숫자 미노출 (IMPLEMENTATION_DELTA §10.2). `Work.comments` 필드는 데이터에 남아 있으나 **`feedOrdering.ts`의 `scoreWork()`는 좋아요·저장·팔로우만 반영**하고 댓글 가중치는 사용하지 않음
 
 ### WorkCard 표시 규칙
 - 카드 하단에 **좋아요·저장 상태 아이콘만** 노출 (숫자 비노출)
@@ -95,7 +94,7 @@
 > IMPLEMENTATION_DELTA §3.3 / §10.4 참조
 
 - 강사 여부는 **업로드 이력에서 자동 파생**되는 단일 소스 정책
-- `instructorVisible = works.some(w => w.artistId === me.id && w.isInstructorUpload === true)`
+- `Profile.tsx`: `workStore`에서 구독한 `storeWorks`로 `instructorVisible = storeWorks.some((w) => w.artistId === profileArtist.id && w.isInstructorUpload === true)` (`useMemo`, 의존성 `[storeWorks, profileArtist.id]`)
 - **단일 진입점**: 함께 올리기 → 세부정보 모달 → "저는 강사예요" 체크박스
 - 한 작품이라도 `isInstructorUpload === true`로 발행되면 → 프로필에 "수강생 작품" 탭 자동 노출
 - 모든 해당 작품 삭제 시 → 자동 비노출
@@ -108,28 +107,60 @@
 
 ## 환경 변수
 
+업로드 **즉시 승인은 운영 원칙이 아니다** (기본은 `pending` → 검수). 다만 Phase 1은 클라·목업 중심이라, 아래 플래그로만 데모/개발 시 검수를 생략할 수 있다. **실서비스 빌드에서는 `VITE_UPLOAD_AUTO_APPROVE`를 켜지 않는 것이 전제**다.
+
 | 변수 | 동작 | 용도 |
 |---|---|---|
-| `VITE_UPLOAD_AUTO_APPROVE=true` | 업로드 즉시 `approved` 상태 (검수 24h 우회) | 개발/데모 편의 |
+| `VITE_UPLOAD_AUTO_APPROVE=true` | 업로드 즉시 `approved` (검수 대기 우회) | 로컬·PM 데모 편의 — **프로덕션 비권장** |
 | `VITE_ADMIN_OPEN=true` | 어드민 게이트 우회 | CI / 프리뷰 환경 |
+
+## 신고·정지 정책 (2026-04-15 보강)
+
+### 신고 처리 액션 (어드민 콘솔 `admin/ReportManagement.tsx`)
+운영팀이 접수된 신고를 처리할 때 4가지 액션 + 1가지 리스트 정리 옵션:
+
+| 액션 | 효과 | 비고 |
+|---|---|---|
+| **삭제** | 작품 신고 한정. `workStore.removeWork`로 영구 삭제 후 `adminStatus: 'deleted'` | `openConfirm`으로 confirm 필요 |
+| **경고** | 신고 대상 작가에게 경고 카운트 +1 (`sanctionStore.addWarning`). 3회 누적 시 7일 정지로 자동 승격 | `adminStatus: 'warned'` |
+| **기각** | 신고를 부당으로 판정. 신고자 허위 신고 카운트 +1 (`sanctionStore.addFalseReport`). 3회 누적 시 신고자 7일 차단 | `adminStatus: 'dismissed'` |
+| **비공개** | 작품에 `isHidden: true` 적용 (둘러보기·검색에서 제외, 작가 본인 프로필엔 보임) | `adminStatus: 'hidden'` |
+| (목록에서 제거) | 액션 없이 큐에서만 제거 (레거시 호환) | `removeUserReport` |
+
+### 정지 단계 (어드민 콘솔 `admin/MemberManagement.tsx`)
+4단계 라디오 모달로 선택:
+- **주의** (warning): 정지 없이 경고 표시만. 누적 시 정지로 승격
+- **7일 정지**: 시한부
+- **30일 정지**: 시한부
+- **영구 정지**: 무기한
+
+데모 사용자(`artists[0]` = 카테)에 한해 글로벌 `accountSuspensionStore` + `authStore.logout()` 즉시 적용 → 다음 로그인 시 차단. 기타 목업 회원은 표시만 변경.
+
+### 자동 승격 로직 (`utils/sanctionStore.ts`)
+- 경고 누적 3회 → 자동 7일 정지
+- 허위 신고 누적 3회 → 자동 7일 차단
+- 카운트는 `artier_warning_counter_v1` / `artier_false_report_counter_v1` 키로 저장
+- 백엔드 연동 시 사용자 sanction history 테이블로 이관, 이 store는 폐기 예정
 
 ## 데이터·영속화
 
 ### localStorage 키
-- 활성: `artier_works_*`, `artier_notifications`, `artier_pin_comments`,
-  `artier_invite_messaging_log`, `artier_admin_banners_v1`, `artier_works_version`,
-  `artier_recent_searches__<slug>`, `artier_recent_searches__guest`
-- **Deprecated (마이그레이션 대상)**: `artier_instructor_public_ids`
-  - 강사 토글 단일화(§10.4) 이후 아무 코드도 읽지 않음
-  - 이전에 강사 토글을 켰던 브라우저에 잔류 → `PointsBootstrap` / `WorksStorageSync` 부트스트랩 시점에
-    `localStorage.removeItem('artier_instructor_public_ids')` 1회 실행 권장
+
+작품 JSON은 **`artier_works` 단일 키**이며, `artier_works_*` 와일드카드 표기는 사용하지 않는다.
+
+- **핵심 앱 상태 (`store.ts`)**: `artier_works_version`, `artier_works`, `artier_drafts`, `artier_profile`, `artier_interactions`, `artier_auth`, `artier_follows`, `artier_account_suspension`, `artier_withdrawn_artists`, `artier_demo_last_withdraw_reason`
+- **작품·피드·알림**: `artier_curation_v1`, `artier_feed_seen_work_ids`, `artier_notifications`, `artier_notification_settings`
+- **배너·이벤트·어드민**: `artier_admin_banners_v1`, `artier_managed_events_v1`, `artier_event_subscriptions`, `artier_admin_issues`, `artier_admin_checklist`, `artier_admin_partners`, `artier_admin_members_v1`, `artier_admin_picks_v1`
+- **초대·포인트·신고·기타**: `artier_invite_messaging_log`, `artier_invite_match_log`, `artier_points_ledger`, `artier_points_state`, `artier_work_publish_times`, `artier_pp_balance`, `artier_artist_follower_delta`, `artier_reports`, `artier_report_hidden_v2`, `artier_report_signatures_v1`, `artier_reported_works`, `artier_reported_artists` (레거시 신고 키), `artier_warning_counter_v1`, `artier_false_report_counter_v1`, `artier_social_signed_up__<provider>` (kakao/google/apple), `artier_group_canonical_map`, `artier_last_group_name`, `artier_my_group_names`, `artier_inquiries`
+- **UX·데모**: `artier_locale`, `artier_font_scale`, `artier_cookie_consent`, `artier_onboarding_done`, `artier_splash_seen`, `artier_mock_jwt_session`, `artier_geo_demo_cache`, `artier_admin_session_v1` (`adminGate`), `artier_recent_searches__guest`, `artier_recent_searches__<slug>` (`Search.tsx`)
+- **sessionStorage** (별도): 접두 `artier_scroll_` + 논리 키 — 스크롤 복원 (`src/app/utils/scrollRestore.ts`)
+- **Deprecated (부팅 시 제거)**: `artier_instructor_public_ids` — `PointsBootstrap` 마운트 시 `LEGACY_STORAGE_KEYS`로 제거 (IMPLEMENTATION_DELTA §11.1)
 
 ### 기타
 - **버전 관리**: `WORKS_STORAGE_VERSION` 변경 시 works 데이터 자동 재시드
-- **이벤트 데이터**: 현재 3곳 분산 (`Events.tsx`, `EventDetail.tsx`, `admin/EventManagement.tsx`).
-  단일 `eventStore`로 통합 + localStorage 영속화 작업 예정 (TOP 우선순위, IMPLEMENTATION_DELTA §8.5·§9.7 참조).
+- **이벤트 데이터**: `eventStore.ts` 단일 소스 + `artier_managed_events_v1` 영속화 (IMPLEMENTATION_DELTA §8.5·§9.7)
 - **포인트 회수**: 업로드 후 24시간 이내 삭제 시 AP -20 (`pointsBackground.ts:pointsRecallIfQuickDelete`)
-- **강사 표시**: 별도 저장소 없음. 매번 `works`에서 파생 계산 (단일 소스)
+- **강사 표시**: 별도 저장소 없음. `workStore` 작품 목록에서 파생 (`Profile.tsx`의 `instructorVisible`, 단일 소스)
 
 ## 알려진 잔여 이슈 (Technical Polish)
 
@@ -137,30 +168,21 @@
 
 | # | 항목 | 위치 | 영향도 | 작업량 |
 |---|---|---|---|---|
-| 11.1 | Orphan localStorage 정리 (`artier_instructor_public_ids`) | `PointsBootstrap` / `WorksStorageSync` | Low | 5분 |
-| 11.2 | 어드민 작품 삭제 목업 → 실 store 연결 | `admin/WorkManagement.tsx:60` | Medium | — |
-| 11.3 | 검색 히스토리 guest → 로그인 마이그레이션 | `Search.tsx` | Low UX | 15~30분 |
-| 11.4 | ExhibitionInviteLanding seed 필터 (pending/rejected 빈 그리드) | `ExhibitionInviteLanding.tsx` `collectExhibitionWorks` | Low | 15~30분 |
-| 11.5 | ContentReview 모달 locale 비반응성 | `admin/ContentReview.tsx` | Very Low | 5분 |
-| 11.6 | 배너 드래그앤드롭 순서 변경 | `bannerStore.ts`, `admin/BannerManagement.tsx` | Medium | — |
+| 11.1 | Orphan localStorage (`artier_instructor_public_ids`) | `PointsBootstrap` | — | ✅ §11.1 완료 |
+| 11.2 | 어드민 작품·이벤트 store | `WorkManagement`, `EventManagement` | — | ✅ 실 store 연동됨 |
+| 11.3 | 검색 히스토리 guest → 로그인 | `Search.tsx` | — | ✅ §11.3 완료 |
+| 11.4 | ExhibitionInviteLanding seed | `ExhibitionInviteLanding.tsx` | — | ✅ §11.4 완료 |
+| 11.5 | ContentReview locale | `ContentReview.tsx` | — | ✅ §11.5 완료 |
+| 11.6 | 배너 드래그앤드롭 순서 변경 | `bannerStore.ts`, `admin/BannerManagement.tsx` | Medium | 미구현 |
 
-### 빠른 정리 권장 (5분 내)
-- **11.1**: bootstrap 컴포넌트에 1줄 추가 (orphan 키 제거)
-- **11.5**: `useI18n()` 기반으로 ContentReview 모달 재작성
-
-### 중간 작업 (15~30분)
-- **11.3**: `recentSearchStorageKey()` 변경 effect에서 guest 키 → 계정 키 머지 후 guest 키 삭제
-- **11.4**: `collectExhibitionWorks`에서 seed는 `isWorkVisibleOnPublicFeed` 필터 무시하고 항상 포함, 또는 "검수 중 — 공개 전" 상태 배지 노출
+### 남은 권장 작업
+- **11.6**: 배너 순서 UX (`order` 필드 + DnD)
 
 ## 외부 연동 미완 (Phase 2 예정)
 소셜 OAuth(카카오/구글/애플), 이메일 발송, SMS/카카오 알림톡, Supabase 실서버, OG 이미지 동적 생성.
 모두 모의(localStorage 로그) 수준이며 PM 데모 목적상 의도적 유보.
 
 ## 우선 보완 항목 (배포 전)
-1. 이벤트 메뉴 단일 store 통합 + CRUD 실동작 + 영속화
-2. 만 14세 미만 가입 차단 (생년월일 입력·검증)
-3. 비속어 필터 (닉네임·그룹명·전시명·태그)
-4. 피드 큐레이션 레이어 (이번 주 테마전 + 작가 추천)
-5. 팔로우 신호 가중치 (`feedOrdering.ts`)
+아래 Phase 1 클라 항목은 **완료**됨: 이벤트 단일 store, 만 14세 차단, 비속어 필터, 피드 큐레이션·팔로우 가중치 등 — `IMPLEMENTATION_DELTA.md` §9 TOP 8·§10 참조.
 
-상세는 `IMPLEMENTATION_DELTA.md` §9, §10, §11 참조.
+**남은 대표 과제 (런칭·인프라)**: 실 OAuth·이메일/SMS 발송·프로덕션 BaaS, 약관 법무 확정, 파비콘/manifest(§9.4), 배너 순서(§11.6) 등 — §7·§12 참조.

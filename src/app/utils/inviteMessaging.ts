@@ -1,3 +1,5 @@
+import { workStore } from '../store';
+
 /**
  * 비가입자 작가 초대 발송 (모의 구현)
  * - 명세: 작가 설정 및 비가입자 초대 기능 스펙
@@ -124,19 +126,33 @@ export function readInviteLog(): InviteLogEntry[] {
   return readLog();
 }
 
+export type SignupMatchUser = {
+  id: string;
+  name: string;
+  avatar?: string;
+};
+
 /**
  * 회원가입 시 SMS 초대 매칭
- * 전화번호 일치 + 실명 일치 → 작품 자동 연결 (workStore에서 imageArtists 업데이트)
- * 전화번호 일치 + 실명 불일치 → 연결 차단 (강사에게 확인 알림)
+ * 전화번호 일치 + 실명 일치 → 작품 자동 연결:
+ *   - 매칭 로그에 기록 + workStore의 해당 작품 imageArtists에서
+ *     비회원 슬롯(같은 displayName)을 회원 슬롯(currentUser)으로 승격
+ * 전화번호 일치 + 실명 불일치 → 매칭 차단(로그만 기록)
  */
-export function matchSmsInviteOnSignup(phone: string, realName: string): {
+export function matchSmsInviteOnSignup(
+  phone: string,
+  realName: string,
+  currentUser: SignupMatchUser,
+): {
   matched: number;
   blocked: number;
+  promotedWorkIds: string[];
 } {
   const normalized = phone.replace(/[\s-]/g, '');
   const log = readLog().filter((e) => e.success);
   let matched = 0;
   let blocked = 0;
+  const promotedWorkIds: string[] = [];
 
   for (const entry of log) {
     const entryPhone = entry.phoneNumber.replace(/[\s-]/g, '');
@@ -153,6 +169,9 @@ export function matchSmsInviteOnSignup(phone: string, realName: string): {
         status: 'matched',
         at: new Date().toISOString(),
       });
+      if (promoteNonMemberSlot(entry.workId, entry.displayName, currentUser)) {
+        promotedWorkIds.push(entry.workId);
+      }
     } else {
       blocked++;
       appendMatchResult({
@@ -167,7 +186,40 @@ export function matchSmsInviteOnSignup(phone: string, realName: string): {
     }
   }
 
-  return { matched, blocked };
+  return { matched, blocked, promotedWorkIds };
+}
+
+/**
+ * 작품의 imageArtists 중 displayName이 일치하는 비회원 슬롯을
+ * 회원 슬롯(memberId/Name/Avatar)으로 승격한다. 변경이 있으면 true.
+ */
+function promoteNonMemberSlot(
+  workId: string,
+  invitedDisplayName: string,
+  currentUser: SignupMatchUser,
+): boolean {
+  if (typeof window === 'undefined') return false;
+  const work = workStore.getWork(workId);
+  if (!work || !Array.isArray(work.imageArtists)) return false;
+
+  const target = invitedDisplayName.trim();
+  let changed = false;
+  const next = work.imageArtists.map((ia) => {
+    if (ia.type === 'non-member' && (ia.displayName ?? '').trim() === target) {
+      changed = true;
+      return {
+        type: 'member' as const,
+        memberId: currentUser.id,
+        memberName: currentUser.name,
+        memberAvatar: currentUser.avatar,
+      };
+    }
+    return ia;
+  });
+
+  if (!changed) return false;
+  workStore.updateWork(workId, { imageArtists: next });
+  return true;
 }
 
 export type MatchResult = {

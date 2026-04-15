@@ -14,7 +14,6 @@ import { imageUrls } from '../imageUrls';
 import { WorkDetailModal } from '../components/WorkDetailModal';
 import { ReportModal } from '../components/ReportModal';
 import { LoginPromptModal } from '../components/LoginPromptModal';
-import { CoachMark } from '../components/CoachMark';
 import { getCoverImage, getImageCount } from '../utils/imageHelper';
 import { isWorkVisibleOnPublicFeed } from '../utils/feedVisibility';
 import { pointsOnBrowseDailyVisit } from '../utils/pointsBackground';
@@ -559,7 +558,6 @@ export default function Browse() {
       ) : null}
 
       <LoginPromptModal open={loginPromptOpen} onClose={() => setLoginPromptOpen(false)} />
-      <CoachMark id="browse" />
     </div>
   );
 }

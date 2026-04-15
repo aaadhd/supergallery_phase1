@@ -9,13 +9,25 @@ export type StoredUserReport = {
   targetType: 'work' | 'artist';
   targetId?: string;
   targetName: string;
+  /** 신고 대상의 작가 ID — 경고 카운트 누적 시 사용 */
+  targetArtistId?: string;
+  /** 신고자 ID — 허위 신고 카운트 누적 시 사용 */
+  reporterId?: string;
   reason?: string;
   reasonKey?: string;
   reasonLabel?: string;
   detail: string;
   createdAt: string;
-  /** 어드민 처리 여부 (미저장·과거 데이터는 대기로 간주) */
-  adminStatus?: 'pending' | 'resolved';
+  /**
+   * 어드민 처리 결과 (미저장·과거 데이터는 대기로 간주):
+   * - pending  : 처리 대기
+   * - resolved : 단순 확인 완료(액션 없음, 레거시 호환)
+   * - hidden   : 대상 비공개 처리
+   * - deleted  : 대상 삭제 처리
+   * - warned   : 신고 대상자에게 경고 (warningStore 카운트 +1)
+   * - dismissed: 기각 — 신고자에게 허위 신고 카운트 +1
+   */
+  adminStatus?: 'pending' | 'resolved' | 'hidden' | 'deleted' | 'warned' | 'dismissed';
 };
 
 export function loadUserReports(): StoredUserReport[] {

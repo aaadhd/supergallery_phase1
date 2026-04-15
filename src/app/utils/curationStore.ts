@@ -5,7 +5,7 @@
  * Phase 1 데모 scope:
  * - 테마전: 어드민이 주간 단위로 교체하는 "이번 주 테마" (제목 + 포함 작품 ID 리스트)
  * - 추천 작가: 피드 상단 부스트 대상 작가 ID 집합
- * - 관리 UI는 후속 과제 — 현재는 localStorage 직접 편집 또는 seed로 확인
+ * - 관리 UI: [/admin/curation](src/app/admin/CurationManagement.tsx) — localStorage `artier_curation_v1` 영속화
  */
 
 import { useSyncExternalStore } from 'react';

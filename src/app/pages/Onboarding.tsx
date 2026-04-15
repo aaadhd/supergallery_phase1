@@ -3,8 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Camera } from 'lucide-react';
 import { profileStore } from '../store';
+import { artists } from '../data';
 import { pointsOnOnboardingStep1Complete } from '../utils/pointsBackground';
 import { matchSmsInviteOnSignup } from '../utils/inviteMessaging';
+import { toast } from 'sonner';
 import { useI18n } from '../i18n/I18nProvider';
 import { Button } from '../components/ui/button';
 
@@ -85,7 +87,15 @@ export default function Onboarding() {
       ...(profileImage ? { avatarUrl: profileImage } : {}),
     });
     if (phone.trim() && real) {
-      matchSmsInviteOnSignup(phone.trim(), real);
+      const me = artists[0];
+      const result = matchSmsInviteOnSignup(phone.trim(), real, {
+        id: me.id,
+        name: name || me.name,
+        avatar: profileImage || me.avatar,
+      });
+      if (result.matched > 0) {
+        toast.success(`초대받은 작품 ${result.matched}개가 내 계정과 연결되었어요.`);
+      }
     }
     localStorage.setItem('artier_onboarding_done', 'true');
     navigate('/');

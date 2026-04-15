@@ -145,8 +145,8 @@ export default function WorkManagement() {
                 return (
                   <tr key={w.id} className="border-b border-border/40 lg:hover:bg-muted/50 transition-colors">
                     <td className="px-4 py-3">
-                      <div className="w-12 h-12 rounded-md overflow-hidden border border-border bg-muted">
-                        <ImageWithFallback src={src} alt="" className="w-full h-full object-cover" />
+                      <div className="flex w-12 h-12 items-center justify-center rounded-md overflow-hidden border border-border bg-muted/30">
+                        <ImageWithFallback src={src} alt="" className="w-full h-full object-contain object-center" />
                       </div>
                     </td>
                     <td className="px-4 py-3 font-medium text-foreground">{displayExhibitionTitle(w, t('work.untitled'))}</td>

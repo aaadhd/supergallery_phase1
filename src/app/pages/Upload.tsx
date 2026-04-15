@@ -1,8 +1,19 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, useSearchParams, useBlocker } from 'react-router-dom';
-import { Image as ImageIcon, Plus, X, Search, GripVertical, ArrowLeft, ChevronLeft, ChevronRight, Trash2, Replace, ArrowUpDown, Monitor, Users, CalendarCheck, Star, Check, HelpCircle } from 'lucide-react';
+import { Image as ImageIcon, Plus, X, Search, GripVertical, ArrowLeft, ChevronLeft, ChevronRight, Trash2, Replace, ArrowUpDown, Monitor, Users, CalendarCheck, Star, Check } from 'lucide-react';
 import { artists } from '../data';
-import { workStore, draftStore } from '../store';
+import { workStore, draftStore, useAuthStore } from '../store';
+
+/** 작품 이미지를 통째로 blur해 톤이 자연스럽게 묻어나는 letterbox 배경. */
+function BlurDominantBg({ src }: { src?: string }) {
+  if (!src) return null;
+  return (
+    <div className="absolute inset-0 z-0 pointer-events-none overflow-hidden bg-[#f4f4f4]" aria-hidden>
+      <img src={src} className="w-full h-full object-cover blur-[40px] opacity-[0.95] scale-[1.3]" alt="" />
+      <div className="absolute inset-0 bg-black/5 mix-blend-overlay" />
+    </div>
+  );
+}
 import type { Work } from '../data';
 import type { Draft } from '../store';
 import { toast, Toaster } from 'sonner';
@@ -65,6 +76,14 @@ export default function Upload() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const { t, locale } = useI18n();
+  const auth = useAuthStore();
+
+  // 비로그인 시 로그인 화면으로 (URL 직접 진입 차단)
+  useEffect(() => {
+    if (!auth.isLoggedIn()) {
+      navigate('/login?redirect=/upload', { replace: true });
+    }
+  }, [auth, navigate]);
 
   const tn = (key: MessageKey, replacements: Record<string, string>) => {
     let s = t(key);
@@ -92,28 +111,12 @@ export default function Upload() {
   /* ── 유형 선택 (Step 0) ── */
   const [uploadType, setUploadType] = useState<'solo' | 'group' | null>(null);
 
-  /* ── 대표(커버) 이미지 ── */
+  /* ── 대표(커버) 이미지 — 업로드한 작품 중에서만 선택 ── */
   const [coverImageIndex, setCoverImageIndex] = useState<number>(0);
-  const [customCoverUrl, setCustomCoverUrl] = useState<string | null>(null);
-  const coverFileInputRef = useRef<HTMLInputElement>(null);
-
-  const handleCoverFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    if (!file.type.startsWith('image/')) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      setCustomCoverUrl(reader.result as string);
-      setCoverImageIndex(-1);
-    };
-    reader.readAsDataURL(file);
-    e.target.value = '';
-  };
 
   /* ── 세부 정보 ── */
   const [showDetailsModal, setShowDetailsModal] = useState(false);
   const [exhibitionName, setExhibitionName] = useState('');
-  const [exhibitionSuggestOpen, setExhibitionSuggestOpen] = useState(false);
   const [groupName, setGroupName] = useState('');
   const [groupSuggestOpen, setGroupSuggestOpen] = useState(false);
   const [workTick, setWorkTick] = useState(0);
@@ -132,7 +135,6 @@ export default function Upload() {
   /* ── 이미지 선택 ── */
   const [selectedContentId, setSelectedContentId] = useState<string | null>(null);
   const [artistSearch, setArtistSearch] = useState('');
-  const [guideSeen, setGuideSeen] = useState(() => !!localStorage.getItem('artier_upload_guide_seen'));
   const [smsSentPhones, setSmsSentPhones] = useState<Set<string>>(new Set());
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -182,7 +184,6 @@ export default function Upload() {
     setShowInSoloTab(true);
     setSelectedContentId(null);
     setCoverImageIndex(0);
-    setCustomCoverUrl(null);
     setPreviewMode(false);
     setReorderMode(false);
     setShowDetailsModal(false);
@@ -195,12 +196,11 @@ export default function Upload() {
   }, []);
 
   useEffect(() => {
-    if (uploadType === 'group' && isInstructor) {
-      if (groupName.trim()) return;
-      const last = getLastUsedGroupName();
-      if (last) setGroupName(last);
-    }
-  }, [uploadType, isInstructor]);
+    if (uploadType !== 'group') return;
+    if (groupName.trim()) return;
+    const last = getLastUsedGroupName();
+    if (last) setGroupName(last);
+  }, [uploadType]);
 
   // 함께 올리기 시 첫 이미지 자동 선택
   useEffect(() => {
@@ -224,17 +224,6 @@ export default function Upload() {
     );
     return collectGroupNameSuggestions(groupName, names);
   }, [groupName, workTick]);
-
-  const exhibitionSuggestions = useMemo(() => {
-    const q = exhibitionName.trim().toLowerCase();
-    const set = new Set<string>();
-    for (const w of workStore.getWorks()) {
-      if (w.exhibitionName?.trim()) set.add(w.exhibitionName.trim());
-    }
-    const list = [...set].sort((a, b) => a.localeCompare(b, 'ko'));
-    if (!q) return list.slice(0, 24);
-    return list.filter((n) => n.toLowerCase().includes(q)).slice(0, 24);
-  }, [exhibitionName, workTick]);
 
   const uploadedImageCount = useMemo(
     () => contents.filter((c) => c.type === 'image' && c.url).length,
@@ -264,7 +253,7 @@ export default function Upload() {
     if (draft.groupName) setGroupName(draft.groupName);
     if (draft.isInstructor) setIsInstructor(true);
     if (typeof draft.showInSoloTab === 'boolean') setShowInSoloTab(draft.showInSoloTab);
-    if (typeof draft.coverImageIndex === 'number') setCoverImageIndex(draft.coverImageIndex);
+    if (typeof draft.coverImageIndex === 'number') setCoverImageIndex(Math.max(0, draft.coverImageIndex));
     let restored = draft.contents.map((c) => ({
       id: c.id,
       type: 'image' as const,
@@ -315,7 +304,7 @@ export default function Upload() {
     }));
     if (work.groupName) setGroupName(work.groupName);
     if (work.isInstructorUpload) setIsInstructor(true);
-    if (typeof work.coverImageIndex === 'number') setCoverImageIndex(work.coverImageIndex);
+    if (typeof work.coverImageIndex === 'number') setCoverImageIndex(Math.max(0, work.coverImageIndex));
     if (typeof work.showInSoloTab === 'boolean') setShowInSoloTab(work.showInSoloTab);
     toast.success(t('upload.toastEditLoaded'));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -416,16 +405,6 @@ export default function Upload() {
 
   /* ━━━━━━ 발행 ━━━━━━ */
 
-  const commitExhibitionValue = useCallback(
-    (raw: string, opts?: { fromSuggestion?: boolean }) => {
-      const v = raw.slice(0, 50);
-      setExhibitionName(v);
-      if (opts?.fromSuggestion) setExhibitionSuggestOpen(false);
-      else setExhibitionSuggestOpen(true);
-    },
-    [],
-  );
-
   const handleOpenDetails = () => {
     if (!exhibitionName.trim()) {
       toast.error(t('upload.errExhibitionNameRequired'));
@@ -452,6 +431,11 @@ export default function Upload() {
     const profanityTarget = [exhibitionName, groupName].find((s) => s && containsProfanity(s));
     if (profanityTarget) {
       toast.error(t('upload.errProfanity'));
+      return;
+    }
+
+    if (uploadType === 'group' && !groupName.trim()) {
+      toast.error(t('upload.errGroupNameRequired'));
       return;
     }
 
@@ -489,10 +473,8 @@ export default function Upload() {
     }
 
     const currentUser = artists[0];
-    const rawUrls = imageContents.map((c) => c.url!);
-    const hasCustomCover = customCoverUrl && coverImageIndex === -1;
-    const urls = hasCustomCover ? [customCoverUrl, ...rawUrls] : rawUrls;
-    const exFinal = exhibitionName.trim().slice(0, 50);
+    const urls = imageContents.map((c) => c.url!);
+    const exFinal = exhibitionName.trim().slice(0, 20);
 
     // v1.7: 작품명 자동생성
     const imagePieceTitles = imageContents.map((c, i) => {
@@ -507,11 +489,9 @@ export default function Upload() {
       return t('work.untitled');
     });
 
-    if (hasCustomCover) imagePieceTitles.unshift(exFinal || t('work.untitled'));
     const resolvedPieceTitle = imagePieceTitles[0] ?? '';
-    const resolvedGroup = groupName.trim()
-      ? resolveCanonicalGroupName(groupName.trim())
-      : uploadType === 'group' ? t('upload.groupNameDefault') : undefined;
+    const resolvedGroup =
+      uploadType === 'group' ? resolveCanonicalGroupName(groupName.trim()) : undefined;
 
     // v1.7: 그룹전시 자동 분류
     const uniqueArtists = new Set(
@@ -528,8 +508,6 @@ export default function Upload() {
       }
       return { type: 'member' as const, memberId: currentUser.id, memberName: currentUser.name, memberAvatar: currentUser.avatar };
     });
-    if (hasCustomCover) imageArtists.unshift({ type: 'member' as const, memberId: currentUser.id, memberName: currentUser.name, memberAvatar: currentUser.avatar });
-
     const uploadedAt = new Date().toISOString().slice(0, 10);
     const newWork: Work = {
       id: `user-${Date.now()}`,
@@ -553,7 +531,7 @@ export default function Upload() {
       feedReviewStatus: import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true' ? 'approved' : 'pending',
       uploadedAt,
       linkedEventId: linkedEventId || undefined,
-      coverImageIndex: hasCustomCover ? 0 : (urls.length > 1 ? Math.min(coverImageIndex, urls.length - 1) : 0),
+      coverImageIndex: urls.length > 1 ? Math.min(coverImageIndex, urls.length - 1) : 0,
     };
 
     setIsPublishing(true);
@@ -575,7 +553,7 @@ export default function Upload() {
     let inviteSent = 0;
     let inviteFailed = 0;
     if (nonMemberRecipients.length > 0) {
-      const exhibitionUrl = `${window.location.origin}/exhibitions/${targetId}`;
+      const exhibitionUrl = `${window.location.origin}/exhibitions/${targetId}?from=credited`;
       const inviteLocale = locale === 'en' ? 'en' : 'ko';
       for (const r of nonMemberRecipients) {
         const result = sendInviteToNonMember({ phoneNumber: r.phoneNumber, displayName: r.displayName, workId: targetId, exhibitionUrl, locale: inviteLocale });
@@ -724,10 +702,18 @@ export default function Upload() {
   /* ━━━━━━ 발행 조건 체크리스트 (전체 항목 고정, done 플래그) ━━━━━━ */
   const publishChecklist = useMemo(() => {
     const hasImages = contents.length > 0;
+    // 행동 순서: 전시 제목 → (그룹 전시) 그룹명 → 이미지 → (그룹 전시) 작가 지정
     const items: { key: string; label: string; done: boolean; disabled?: boolean }[] = [
-      { key: 'image', label: t('upload.blockerImage'), done: hasImages },
       { key: 'title', label: t('upload.blockerExhibitionTitle'), done: !!exhibitionName.trim() },
     ];
+    if (uploadType === 'group') {
+      items.push({
+        key: 'groupName',
+        label: t('upload.blockerGroupName'),
+        done: !!groupName.trim(),
+      });
+    }
+    items.push({ key: 'image', label: t('upload.blockerImage'), done: hasImages });
     if (uploadType === 'group') {
       const allAssigned = hasImages && contents.filter((c) => c.url).every(
         (c) => c.artist || (c.nonMemberArtist?.displayName && c.nonMemberArtist?.phoneNumber),
@@ -735,7 +721,7 @@ export default function Upload() {
       items.push({ key: 'artist', label: t('upload.blockerArtist'), done: allAssigned, disabled: !hasImages });
     }
     return items;
-  }, [contents, exhibitionName, uploadType, t]);
+  }, [contents, exhibitionName, uploadType, groupName, t]);
   const publishBlockers = publishChecklist.filter((i) => !i.done);
 
   // ===== 미리보기 모드 =====
@@ -809,8 +795,9 @@ export default function Upload() {
                 dragIndex === i ? 'border-primary bg-muted shadow-sm scale-105 z-10' : 'border-border/40 bg-white hover:border-border/80'
               }`}
             >
-              <div className="relative aspect-square w-full rounded-lg overflow-hidden bg-muted/50">
-                {c.url && <ImageWithFallback src={c.url} alt={c.title || ''} className="h-full w-full object-cover" />}
+              <div className="relative flex aspect-square w-full items-center justify-center rounded-lg overflow-hidden">
+                <BlurDominantBg src={c.url} />
+                {c.url && <ImageWithFallback src={c.url} alt={c.title || ''} className="relative z-10 h-full w-full object-contain object-center" />}
                 <div className="absolute top-2 left-2 flex items-center gap-1.5">
                   <div className="bg-black/60 text-white text-xs font-bold px-2 py-1 rounded-md backdrop-blur-sm">{i + 1}</div>
                 </div>
@@ -913,41 +900,15 @@ export default function Upload() {
                         <p className="text-sm text-muted-foreground mt-0.5">{t('upload.coverSectionDesc')}</p>
                       </div>
                       <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                        {/* 커스텀 커버 (업로드된 경우) */}
-                        {customCoverUrl && (
-                          <div className="relative shrink-0">
-                            <button
-                              type="button"
-                              onClick={() => setCoverImageIndex(-1)}
-                              className={`relative shrink-0 w-16 h-16 rounded-lg overflow-hidden transition-all ${coverImageIndex === -1 ? 'ring-2 ring-primary ring-offset-2 shadow-md' : 'border-2 border-border/50 opacity-70 hover:opacity-100'}`}
-                            >
-                              <img src={customCoverUrl} alt="" className="w-full h-full object-cover" />
-                              {coverImageIndex === -1 && (
-                                <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
-                                  <div className="bg-primary text-white rounded-full p-0.5">
-                                    <Star className="h-2.5 w-2.5 fill-white" />
-                                  </div>
-                                </div>
-                              )}
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => { setCustomCoverUrl(null); if (coverImageIndex === -1) setCoverImageIndex(0); }}
-                              className="absolute -top-1.5 -right-1.5 z-10 h-5 w-5 rounded-full bg-red-500 text-white flex items-center justify-center shadow"
-                            >
-                              <X className="h-3 w-3" />
-                            </button>
-                          </div>
-                        )}
-                        {/* 기존 작품 이미지 */}
+                        {/* 업로드한 작품 중에서만 대표 이미지 선택 */}
                         {contents.filter(c => c.type === 'image' && c.url).map((c, i) => (
                           <button
                             key={c.id}
                             type="button"
                             onClick={() => { setCoverImageIndex(i); }}
-                            className={`relative shrink-0 w-16 h-16 rounded-lg overflow-hidden transition-all ${coverImageIndex === i ? 'ring-2 ring-primary ring-offset-2 shadow-md' : 'border-2 border-border/50 opacity-70 hover:opacity-100'}`}
+                            className={`relative shrink-0 flex w-16 h-16 items-center justify-center rounded-lg overflow-hidden bg-muted/30 transition-all ${coverImageIndex === i ? 'ring-2 ring-primary ring-offset-2 shadow-md' : 'border-2 border-border/50 opacity-70 hover:opacity-100'}`}
                           >
-                            <ImageWithFallback src={c.url} alt="" className="w-full h-full object-cover" />
+                            <ImageWithFallback src={c.url} alt="" className="w-full h-full object-contain object-center" />
                             {coverImageIndex === i && (
                               <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
                                 <div className="bg-primary text-white rounded-full p-0.5">
@@ -957,22 +918,6 @@ export default function Upload() {
                             )}
                           </button>
                         ))}
-                        {/* 로컬 파일 업로드 버튼 */}
-                        <button
-                          type="button"
-                          onClick={() => coverFileInputRef.current?.click()}
-                          className="shrink-0 w-16 h-16 rounded-lg border-2 border-dashed border-border/60 flex flex-col items-center justify-center gap-0.5 text-muted-foreground hover:border-primary hover:text-primary transition-colors"
-                        >
-                          <Plus className="h-4 w-4" />
-                          <span className="text-[9px] font-medium leading-tight">{t('upload.coverUpload')}</span>
-                        </button>
-                        <input
-                          ref={coverFileInputRef}
-                          type="file"
-                          accept="image/*"
-                          className="hidden"
-                          onChange={handleCoverFileChange}
-                        />
                       </div>
                     </div>
 
@@ -1068,11 +1013,10 @@ export default function Upload() {
                         <input
                           type="text"
                           value={exhibitionName}
-                          onChange={(e) => commitExhibitionValue(e.target.value)}
-                          onFocus={() => setExhibitionSuggestOpen(true)}
-                          onBlur={() => window.setTimeout(() => setExhibitionSuggestOpen(false), 200)}
-                          placeholder={t('upload.exhibitionTitlePlaceholder')}
-                          maxLength={50}
+                          onChange={(e) => setExhibitionName(e.target.value.slice(0, 20))}
+                          autoComplete="off"
+                          placeholder={t('upload.exhibitionTitleExample')}
+                          maxLength={20}
                           className={`w-full bg-white text-xl sm:text-2xl md:text-3xl font-bold text-foreground placeholder:text-muted-foreground/30 border-2 rounded-2xl px-5 py-4 transition-all leading-tight text-center md:text-left relative z-20 focus:outline-none focus:ring-0 ${
                             !exhibitionName.trim() && contents.length > 0
                               ? 'border-red-300 focus:border-red-400'
@@ -1083,26 +1027,14 @@ export default function Upload() {
                           <span className={`text-[11px] font-medium ${!exhibitionName.trim() && contents.length > 0 ? 'text-red-500' : 'text-transparent'}`}>
                             {t('upload.blockerExhibitionTitle')}
                           </span>
-                          <span className="text-[11px] text-muted-foreground">{exhibitionName.length}/50</span>
+                          <span className="text-[11px] text-muted-foreground">{exhibitionName.length}/20</span>
                         </div>
-                        {exhibitionSuggestOpen && exhibitionSuggestions.length > 0 && (
-                          <ul className="absolute z-30 top-full mt-1 w-full max-h-48 overflow-auto rounded-xl border border-border bg-white shadow-[0_10px_40px_-15px_rgba(0,0,0,0.15)] py-2 text-sm">
-                            {exhibitionSuggestions.map((name) => (
-                              <li key={name}>
-                                <Button variant="ghost" type="button" className="w-full text-left px-5 py-3 lg:hover:bg-muted text-foreground font-medium rounded-none"
-                                  onMouseDown={(e) => e.preventDefault()}
-                                  onClick={() => { commitExhibitionValue(name, { fromSuggestion: true }); setExhibitionSuggestOpen(false); }}
-                                >{name}</Button>
-                              </li>
-                            ))}
-                          </ul>
-                        )}
                       </div>
 
                       {uploadType === 'group' && (
                         <div className="relative">
                           <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider mb-2 md:text-left text-center">
-                            {t('upload.groupNamePlaceholder2')}
+                            {t('upload.groupNamePlaceholder2')}<RequiredMark />
                           </label>
                           <input
                             type="text"
@@ -1110,9 +1042,18 @@ export default function Upload() {
                             onChange={(e) => { setGroupName(e.target.value); setGroupSuggestOpen(true); }}
                             onFocus={() => setGroupSuggestOpen(true)}
                             onBlur={() => window.setTimeout(() => setGroupSuggestOpen(false), 200)}
-                            placeholder={t('upload.groupNamePlaceholder2')}
-                            className="w-full bg-white text-base md:text-lg text-foreground placeholder:text-muted-foreground/30 border-2 border-border/60 rounded-2xl px-5 py-3.5 transition-all text-center md:text-left relative z-10 focus:outline-none focus:ring-0 focus:border-primary"
+                            placeholder={t('upload.groupNameExample')}
+                            className={`w-full bg-white text-base md:text-lg text-foreground placeholder:text-muted-foreground/30 border-2 rounded-2xl px-5 py-3.5 transition-all text-center md:text-left relative z-10 focus:outline-none focus:ring-0 ${
+                              !groupName.trim() && contents.length > 0
+                                ? 'border-red-300 focus:border-red-400'
+                                : 'border-border/60 focus:border-primary'
+                            }`}
                           />
+                          <div className="flex justify-between mt-1.5 px-1">
+                            <span className={`text-[11px] font-medium ${!groupName.trim() && contents.length > 0 ? 'text-red-500' : 'text-transparent'}`}>
+                              {t('upload.blockerGroupName')}
+                            </span>
+                          </div>
                           {groupSuggestOpen && groupSuggestions.length > 0 && (
                             <ul className="absolute z-20 top-full mt-1 w-full max-h-48 overflow-auto rounded-xl border border-border bg-white shadow-[0_10px_40px_-15px_rgba(0,0,0,0.15)] py-2 text-sm">
                               {groupSuggestions.map((name) => (
@@ -1131,40 +1072,6 @@ export default function Upload() {
 
                   {!contents.length ? (
                     <div className="w-full space-y-6">
-                      {guideSeen && (
-                        <div className="flex justify-end">
-                          <button
-                            type="button"
-                            onClick={() => { setGuideSeen(false); localStorage.removeItem('artier_upload_guide_seen'); }}
-                            aria-label={t('upload.guideReopenLabel')}
-                            title={t('upload.guideReopenLabel')}
-                            className="inline-flex min-h-[36px] items-center gap-1.5 rounded-full border border-border px-3 text-[13px] text-muted-foreground lg:hover:border-foreground/40 lg:hover:text-foreground transition-colors"
-                          >
-                            <HelpCircle className="h-4 w-4" aria-hidden />
-                            {t('upload.guideReopen')}
-                          </button>
-                        </div>
-                      )}
-                      {/* 가이드 */}
-                      {!guideSeen && (
-                        <div className="bg-primary/5 border border-primary/20 rounded-xl p-4 sm:p-5 animate-in fade-in slide-in-from-top-2 duration-400">
-                          <div className="flex items-start gap-3">
-                            <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary text-white text-sm font-bold">1</div>
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-semibold text-foreground mb-1">{t('upload.guideStep1')}</p>
-                              <p className="text-xs text-muted-foreground">{t('upload.guideStep1Hint')}</p>
-                            </div>
-                            <button
-                              type="button"
-                              onClick={() => { setGuideSeen(true); localStorage.setItem('artier_upload_guide_seen', '1'); }}
-                              aria-label={t('upload.guideCloseBtn')}
-                              className="min-h-[44px] min-w-[44px] h-11 w-11 flex items-center justify-center rounded-full text-muted-foreground hover:text-foreground hover:bg-white/60 transition-colors shrink-0"
-                            >
-                              <X className="h-4 w-4" />
-                            </button>
-                          </div>
-                        </div>
-                      )}
                       <div onDragOver={handleDragOver} onDrop={handleDrop} onClick={() => fileInputRef.current?.click()} className="w-full cursor-pointer rounded-2xl border-2 border-dashed border-input bg-white p-10 sm:p-12 text-center transition-all lg:hover:border-primary lg:hover:bg-primary/5">
                         <div className="mx-auto mb-3 h-14 w-14 rounded-full bg-primary/10 flex items-center justify-center">
                           <ImageIcon className="h-6 w-6 text-primary" />
@@ -1310,9 +1217,10 @@ export default function Upload() {
                                 key={c.id}
                                 type="button"
                                 onClick={() => setSelectedContentId(c.id)}
-                                className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all ${c.id === selectedContentId ? 'border-primary ring-2 ring-primary/20' : 'border-transparent hover:border-border'}`}
+                                className={`relative flex aspect-square items-center justify-center rounded-xl overflow-hidden border-2 transition-all ${c.id === selectedContentId ? 'border-primary ring-2 ring-primary/20' : 'border-transparent hover:border-border'}`}
                               >
-                                <ImageWithFallback src={c.url} alt="" className="w-full h-full object-cover" />
+                                <BlurDominantBg src={c.url} />
+                                <ImageWithFallback src={c.url} alt="" className="relative z-10 w-full h-full object-contain object-center" />
                                 {showStatus && assignedName && (
                                   <span className="absolute bottom-1 left-1 flex items-center gap-1 bg-black/60 backdrop-blur-sm text-white text-[10px] font-medium pl-0.5 pr-1.5 py-0.5 rounded-full max-w-[calc(100%-2rem)]">
                                     {assignedAvatar
@@ -1339,28 +1247,59 @@ export default function Upload() {
                           )}
                         </div>
 
-                        {/* 개별 작품명 */}
-                        <div className="space-y-3">
-                          <label className="block text-xs font-bold text-muted-foreground uppercase tracking-wider">
-                            {t('upload.pieceTitleLabel')} <span className="font-normal lowercase normal-case">{t('upload.labelOptional')}</span>
-                          </label>
+                        {/* ── 카드 1: 개별 작품명 (선택) ── */}
+                        <section
+                          aria-labelledby={`card-title-${sc.id}`}
+                          className="rounded-2xl border border-border/60 bg-white p-4 sm:p-5"
+                        >
+                          <header className="mb-3 flex items-center justify-between gap-2">
+                            <label
+                              htmlFor={`card-title-input-${sc.id}`}
+                              id={`card-title-${sc.id}`}
+                              className="text-[13px] font-semibold text-foreground truncate"
+                            >
+                              {t('upload.pieceTitleLabel')}
+                              <span className="ml-1 text-xs font-normal text-muted-foreground">{t('upload.labelOptional')}</span>
+                            </label>
+                            {sc.title?.trim() && (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 shrink-0">
+                                <Check className="h-3.5 w-3.5" aria-hidden />
+                                {t('upload.cardDone')}
+                              </span>
+                            )}
+                          </header>
                           <input
+                            id={`card-title-input-${sc.id}`}
                             type="text" value={sc.title || ''} maxLength={120}
                             onChange={(e) => {
                               const v = e.target.value.slice(0, 120);
                               setContents(contents.map((c) => c.id === selectedContentId ? { ...c, title: v } : c));
                             }}
                             placeholder={t('upload.pieceTitlePlaceholder')}
-                            className="w-full px-4 py-3 bg-muted/20 border border-border/60 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all"
+                            className="w-full min-h-[44px] px-4 py-3 bg-muted/20 border border-border/60 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all"
                           />
-                        </div>
+                        </section>
 
-                        {/* ── 작가 지정 (함께 올리기 전용) ── */}
-                        {uploadType === 'group' && (
-                          <div className="space-y-3 pt-4 border-t border-border/40">
-                            <label className="block text-xs font-bold text-primary uppercase tracking-wider">
-                              {t('upload.artistAssignRequired')} *
-                            </label>
+                        {/* ── 카드 2: 작가 지정 (함께 올리기 전용, 필수) ── */}
+                        {uploadType === 'group' && (() => {
+                          const artistDone = (sc.artistType === 'member' && !!sc.artist)
+                            || (sc.artistType === 'non-member' && !!sc.nonMemberArtist?.displayName?.trim());
+                          return (
+                          <section
+                            aria-labelledby={`card-artist-${sc.id}`}
+                            className={`rounded-2xl border p-4 sm:p-5 ${artistDone ? 'border-emerald-200 bg-emerald-50/30' : 'border-primary/30 bg-primary/[0.02]'}`}
+                          >
+                          <header className="mb-3 flex items-center justify-between gap-2">
+                            <span id={`card-artist-${sc.id}`} className="text-[13px] font-semibold text-foreground truncate">
+                              {t('upload.artistAssignRequired')}<RequiredMark />
+                            </span>
+                            {artistDone && (
+                              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 shrink-0">
+                                <Check className="h-3.5 w-3.5" aria-hidden />
+                                {t('upload.cardDone')}
+                              </span>
+                            )}
+                          </header>
 
                             {/* 탭 헤더 */}
                             <div className="flex bg-muted/40 p-1 rounded-xl">
@@ -1439,7 +1378,7 @@ export default function Upload() {
                                     <input
                                       type="tel" value={sc.nonMemberArtist?.phoneNumber || ''}
                                       onChange={(e) => setContents(contents.map(c => c.id === selectedContentId ? { ...c, artistType: 'non-member', nonMemberArtist: { ...c.nonMemberArtist, displayName: c.nonMemberArtist?.displayName || '', phoneNumber: e.target.value } } : c))}
-                                      placeholder="010-0000-0000"
+                                      placeholder={t('onboarding.phonePlaceholder')}
                                       className="w-full px-4 py-3 border border-amber-200 rounded-xl text-sm bg-white focus:ring-1 focus:ring-amber-500 outline-none transition-all shadow-sm"
                                     />
                                     <Button
@@ -1465,8 +1404,9 @@ export default function Upload() {
                                 </div>
                               </div>
                             )}
-                          </div>
-                        )}
+                          </section>
+                          );
+                        })()}
                       </div>
                     );
                   })() : (

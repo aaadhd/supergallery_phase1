@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
 import { MapPin, Plus, Eye, EyeOff, X, ThumbsUp, Users, Folder, MoreHorizontal, Trash2, Tag, UserPlus, Camera, Share2, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Image as ImageIcon } from 'lucide-react';
+import { Image as ImageIcon, User as UserIcon } from 'lucide-react';
 import ProfileImageModal from '../components/ProfileImageModal';
 import { artists, type Work } from '../data';
 import { workStore, draftStore, profileStore, userInteractionStore, followStore, useFollowStore, useAuthStore, withdrawnArtistStore } from '../store';
@@ -28,6 +28,7 @@ import { imageUrls } from '../imageUrls';
 import { toast } from 'sonner';
 import { getCoverImage, getImageCount } from '../utils/imageHelper';
 import { LoginPromptModal } from '../components/LoginPromptModal';
+import { ExternalLinksEditor, resolveExternalLinkUrl, getExternalLinkPlatformDisplay } from '../components/ExternalLinksEditor';
 import { getDisplayFollowerCount } from '../utils/artistFollowDelta';
 import type { MessageKey } from '../i18n/messages';
 import { useI18n } from '../i18n/I18nProvider';
@@ -95,6 +96,7 @@ export default function Profile() {
   const follows = useFollowStore();
   const auth = useAuthStore();
   const [exhibitionFilter, setExhibitionFilter] = useState<'all' | 'solo' | 'group'>('all');
+  const [onlyMyUploads, setOnlyMyUploads] = useState(false);
   const [showFollowersModal, setShowFollowersModal] = useState(false);
   const [followModalTab, setFollowModalTab] = useState<'followers' | 'following'>('followers');
   const [loginPromptOpen, setLoginPromptOpen] = useState(false);
@@ -207,6 +209,7 @@ export default function Profile() {
   };
 
   const filteredWorks = artistWorks.filter(work => {
+    if (onlyMyUploads && isOwnProfile && work.artistId !== profileArtist.id) return false;
     if (exhibitionFilter === 'all') return true;
     if (exhibitionFilter === 'solo') return !isGroupExhibition(work) || work.showInSoloTab;
     if (exhibitionFilter === 'group') return isGroupExhibition(work);
@@ -521,43 +524,15 @@ export default function Profile() {
                   </div>
                 </div>
 
-                {/* 외부 링크 (SNS, 수업 페이지 등) */}
+                {/* 외부 링크 (SNS·라우드소싱 연동) — 플랫폼 고정 행 방식 */}
                 <div>
-                  <label className="block text-[15px] font-semibold text-foreground mb-2">
+                  <label className="block text-[15px] font-semibold text-foreground mb-1">
                     {t('profile.formLinks')}
                   </label>
-                  <div className="space-y-2">
-                    {profileLinks.map((link, i) => (
-                      <div key={i} className="flex gap-2">
-                        <input
-                          type="text"
-                          value={link.label}
-                          onChange={(e) => { const next = [...profileLinks]; next[i] = { ...next[i], label: e.target.value }; setProfileLinks(next); }}
-                          placeholder={t('profile.linkLabelPh')}
-                          className="w-24 px-3 py-2.5 border border-input rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                        />
-                        <input
-                          type="url"
-                          value={link.url}
-                          onChange={(e) => { const next = [...profileLinks]; next[i] = { ...next[i], url: e.target.value }; setProfileLinks(next); }}
-                          placeholder="https://"
-                          className="flex-1 px-3 py-2.5 border border-input rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                        />
-                        <button type="button" onClick={() => setProfileLinks(profileLinks.filter((_, j) => j !== i))} className="text-muted-foreground lg:hover:text-destructive px-2">
-                          <X className="h-4 w-4" />
-                        </button>
-                      </div>
-                    ))}
-                    {profileLinks.length < 5 && (
-                      <button
-                        type="button"
-                        onClick={() => setProfileLinks([...profileLinks, { label: '', url: '' }])}
-                        className="text-sm text-primary lg:hover:underline"
-                      >
-                        + {t('profile.addLink')}
-                      </button>
-                    )}
-                  </div>
+                  <p className="text-xs text-muted-foreground mb-3">
+                    {t('profile.formLinksHint')}
+                  </p>
+                  <ExternalLinksEditor links={profileLinks} onChange={setProfileLinks} />
                 </div>
               </div>
             </div>
@@ -656,23 +631,30 @@ export default function Profile() {
                 </p>
               )}
 
-              {/* 외부 링크 */}
+              {/* 외부 링크 — 플랫폼 아이콘 버튼 */}
               {viewProfile.externalLinks && viewProfile.externalLinks.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {viewProfile.externalLinks.filter(l => {
-                    const u = l.url.trim().toLowerCase();
-                    return u && !u.startsWith('javascript:') && !u.startsWith('data:');
-                  }).map((link, i) => (
-                    <a
-                      key={i}
-                      href={link.url.startsWith('http') ? link.url : `https://${link.url}`}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="inline-flex items-center gap-1.5 px-3 py-1.5 text-xs font-medium text-primary border border-primary/20 rounded-full lg:hover:bg-primary/5 transition-colors"
-                    >
-                      {link.label || link.url.replace(/^https?:\/\//, '').split('/')[0]}
-                    </a>
-                  ))}
+                <div className="mt-3 flex flex-wrap items-center gap-2">
+                  {viewProfile.externalLinks.map((link) => {
+                    const href = resolveExternalLinkUrl(link);
+                    if (!href) return null;
+                    const u = href.toLowerCase();
+                    if (u.startsWith('javascript:') || u.startsWith('data:')) return null;
+                    const display = getExternalLinkPlatformDisplay(link.label);
+                    if (!display) return null;
+                    return (
+                      <a
+                        key={link.label}
+                        href={href}
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        title={display.name}
+                        aria-label={`${display.name} 프로필 열기`}
+                        className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-white lg:hover:border-foreground/40 lg:hover:bg-muted/50 transition-colors"
+                      >
+                        {display.icon}
+                      </a>
+                    );
+                  })}
                 </div>
               )}
 
@@ -789,7 +771,7 @@ export default function Profile() {
 
                 {/* ===== 전시 탭 ===== */}
                 <TabsContent value="exhibition" className="mt-6">
-                  <div className="flex items-center gap-2 mb-5">
+                  <div className="flex flex-wrap items-center gap-2 mb-5">
                     {(['all', 'solo', 'group'] as const).map((f) => {
                       const label =
                         f === 'all' ? t('profile.filterAll') : f === 'solo' ? t('profile.filterSolo') : t('profile.filterGroup');
@@ -809,17 +791,30 @@ export default function Profile() {
                         </button>
                       );
                     })}
+                    {isOwnProfile && (
+                      <label className="ml-auto flex min-h-[36px] items-center gap-2 rounded-full border border-border/60 px-3.5 py-1.5 text-[13px] text-foreground cursor-pointer select-none lg:hover:border-foreground/50">
+                        <input
+                          type="checkbox"
+                          checked={onlyMyUploads}
+                          onChange={(e) => setOnlyMyUploads(e.target.checked)}
+                          className="h-4 w-4 accent-primary"
+                        />
+                        {t('profile.filterOnlyMine')}
+                      </label>
+                    )}
                   </div>
 
                   {/* 작품 그리드 */}
                   {filteredWorks.length > 0 ? (
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-[1.625rem] sm:gap-[2.275rem] lg:gap-[2.6rem]">
-                      {filteredWorks.map((work) => (
+                      {filteredWorks.map((work) => {
+                        const isMyUpload = isOwnProfile && work.artistId === profileArtist.id;
+                        return (
                         <div
                           key={work.id}
                           className="cursor-pointer relative"
                           onClick={() => {
-                            if (isOwnProfile && work.feedReviewStatus === 'rejected') {
+                            if (isMyUpload && work.feedReviewStatus === 'rejected') {
                               setRejectedModalWork(work);
                               return;
                             }
@@ -833,8 +828,8 @@ export default function Profile() {
                               className="w-full h-full object-contain object-center"
                             />
 
-                            {/* 옵션 메뉴 (본인 프로필) */}
-                            {isOwnProfile && (
+                            {/* 옵션 메뉴 (본인이 업로드한 작품만 수정/삭제 가능) */}
+                            {isMyUpload && (
                               <div className="absolute right-2 top-2 z-20" onClick={(e) => e.stopPropagation()}>
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
@@ -904,7 +899,7 @@ export default function Profile() {
                             )}
 
                             {/* 하단 배지 (비공개 · 검수 상태) */}
-                            {(work.isHidden || (isOwnProfile && (work.feedReviewStatus === 'pending' || work.feedReviewStatus === 'rejected'))) && (
+                            {(work.isHidden || (isMyUpload && (work.feedReviewStatus === 'pending' || work.feedReviewStatus === 'rejected'))) && (
                               <div className="absolute left-2 bottom-2 z-10 flex flex-col gap-1">
                                 {work.isHidden && (
                                   <div className="flex items-center gap-1 rounded-full bg-orange-500/90 px-2 py-0.5 text-[11px] font-medium text-white backdrop-blur-sm w-fit">
@@ -912,7 +907,7 @@ export default function Profile() {
                                     {t('profile.workPrivateBadge')}
                                   </div>
                                 )}
-                                {isOwnProfile && work.feedReviewStatus === 'pending' && (
+                                {isMyUpload && work.feedReviewStatus === 'pending' && (
                                   <span
                                     className="inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium bg-muted/95 text-foreground border border-border backdrop-blur-sm w-fit"
                                     title={t('review.badgePendingHint')}
@@ -921,7 +916,7 @@ export default function Profile() {
                                     {t('review.badgePending')}
                                   </span>
                                 )}
-                                {isOwnProfile && work.feedReviewStatus === 'rejected' && (
+                                {isMyUpload && work.feedReviewStatus === 'rejected' && (
                                   <span
                                     className="inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium bg-red-500/95 text-white backdrop-blur-sm w-fit"
                                     title={t('review.badgeRejectedHint')}
@@ -943,9 +938,21 @@ export default function Profile() {
                                 {work.groupName}
                               </p>
                             )}
+                            {isOwnProfile && !isMyUpload && (() => {
+                              const uploader = artists.find((a) => a.id === work.artistId);
+                              return (
+                                <p className="mt-0.5 flex items-center gap-1 text-[12px] text-muted-foreground truncate">
+                                  <UserIcon className="h-3 w-3 shrink-0" aria-hidden />
+                                  <span className="truncate">
+                                    {t('profile.uploaderLabel')} · {uploader?.name ?? t('work.unknownUploader')}
+                                  </span>
+                                </p>
+                              );
+                            })()}
                           </div>
                         </div>
-                      ))}
+                        );
+                      })}
                     </div>
                   ) : (
                     <div className="py-16 text-center">
@@ -1278,9 +1285,9 @@ export default function Profile() {
                             className="group cursor-pointer relative"
                             onClick={() => navigate(`/upload?draft=${draft.id}`)}
                           >
-                            <div className="relative aspect-square rounded-sm overflow-hidden bg-muted">
+                            <div className="relative flex aspect-square items-center justify-center rounded-sm overflow-hidden bg-muted/30">
                               {thumbUrl ? (
-                                <img src={thumbUrl} alt={draft.title} className="w-full h-full object-cover" />
+                                <img src={thumbUrl} alt={draft.title} className="w-full h-full object-contain object-center" />
                               ) : (
                                 <div className="w-full h-full flex items-center justify-center">
                                   <Folder className="h-8 w-8 text-muted-foreground/30" />
@@ -1481,7 +1488,7 @@ export default function Profile() {
                   className="flex items-center justify-center h-10 w-10 rounded-full bg-white/10 text-white lg:hover:bg-white/20"
                   onClick={(e) => {
                     e.stopPropagation();
-                    const url = `${window.location.origin}/exhibitions/${fi.work.id}`;
+                    const url = `${window.location.origin}/exhibitions/${fi.work.id}?from=work`;
                     navigator.clipboard.writeText(url).then(() => toast(t('workDetail.toastLinkCopied')));
                   }}
                 >

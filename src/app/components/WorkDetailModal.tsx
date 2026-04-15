@@ -131,6 +131,8 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
       return allWorks.filter(w => w.artistId === work.artistId && w.id !== work.id).slice(0, 8);
     }
     // 그룹 전시: 참여 작가별 최소 1개씩, 나머지는 채움
+    // 참여자는 imageArtists / coOwners / 업로더(artistId)로만 판정.
+    // (그룹 멤버 전체는 참여자 ≠ 그룹원이므로 fallback에 쓰지 않음)
     const participantIds = new Set<string>();
     if (work.imageArtists?.length) {
       work.imageArtists.forEach(ia => { if (ia.type === 'member' && ia.memberId) participantIds.add(ia.memberId); });
@@ -139,11 +141,6 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
       work.coOwners.forEach(co => participantIds.add(co.id));
     }
     participantIds.add(work.artistId);
-    const ownerData = work.owner?.type === 'group' ? work.owner.data as { memberIds?: string[] } : undefined;
-    if (ownerData?.memberIds) {
-      const imgCount = Array.isArray(work.image) ? work.image.length : 1;
-      ownerData.memberIds.slice(0, imgCount).forEach((mid: string) => participantIds.add(mid));
-    }
 
     const picked = new Map<string, typeof allWorks[number]>();
     const usedIds = new Set<string>([work.id]);
@@ -223,7 +220,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
     }
   };
 
-  // 공유 URL은 초대장 오픈 화면으로 유도 (명세: 전시 초대장 공유 → 초대장 오픈 화면)
+  // 전시 단위 공유 → ExhibitionInviteLanding (같은 전시 작품 그리드). 작품만 공유는 프로필 작품 관리 `?from=work`.
   const workShareUrl = `${typeof window !== 'undefined' ? window.location.origin : ''}/exhibitions/${workId}?from=invite`;
 
   const buildInvitationCardText = () => {
@@ -613,7 +610,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                         <ImageWithFallback
                           src={imageUrls[getCoverImage(rw.image, rw.coverImageIndex)] || getCoverImage(rw.image, rw.coverImageIndex)}
                           alt={displayProminentHeadline(rw, t('work.untitled'))}
-                          className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300"
+                          className="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-300"
                         />
                       </div>
                       <div className="text-[14px] font-bold text-zinc-900 group-hover:text-primary transition-colors mb-0.5 sm:mb-1 truncate px-0.5">

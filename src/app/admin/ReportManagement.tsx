@@ -1,7 +1,8 @@
 import { useMemo, useState, useEffect, useCallback } from 'react';
 import { toast } from 'sonner';
-import { CheckCircle2, EyeOff, Ban } from 'lucide-react';
+import { CheckCircle2, EyeOff, Trash2, AlertTriangle, XCircle } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import { openConfirm } from '../components/ConfirmDialog';
 import { workStore } from '../store';
 import {
   loadUserReports,
@@ -11,8 +12,9 @@ import {
   REPORTS_STORAGE_KEY,
   type StoredUserReport,
 } from '../utils/reportsStore';
+import { addWarning, addFalseReport } from '../utils/sanctionStore';
 
-type ReportState = '대기' | '처리완료';
+type ReportState = '대기' | '비공개' | '삭제' | '경고' | '기각' | '처리완료';
 type ReportKind = '작품' | '댓글' | '프로필';
 
 type ReportRow = {
@@ -32,7 +34,15 @@ function mapUserReportToRow(r: StoredUserReport): ReportRow {
       ? `${r.targetName} — ${detail.slice(0, 100)}${detail.length > 100 ? '…' : ''}`
       : r.targetName;
   const reportedAt = r.createdAt ? r.createdAt.slice(0, 10) : '';
-  const status: ReportState = r.adminStatus === 'resolved' ? '처리완료' : '대기';
+  const statusMap: Record<NonNullable<StoredUserReport['adminStatus']>, ReportState> = {
+    pending: '대기',
+    resolved: '처리완료',
+    hidden: '비공개',
+    deleted: '삭제',
+    warned: '경고',
+    dismissed: '기각',
+  };
+  const status: ReportState = statusMap[r.adminStatus ?? 'pending'];
   return {
     id: r.id,
     target,
@@ -48,8 +58,14 @@ function mergeReportRows(): ReportRow[] {
 }
 
 function stateBadge(s: ReportState) {
-  if (s === '처리완료') return 'bg-emerald-50 text-emerald-700 border border-emerald-200';
-  return 'bg-amber-50 text-amber-900 border border-amber-200';
+  switch (s) {
+    case '삭제': return 'bg-red-50 text-red-700 border border-red-200';
+    case '비공개': return 'bg-orange-50 text-orange-700 border border-orange-200';
+    case '경고': return 'bg-amber-50 text-amber-700 border border-amber-200';
+    case '기각': return 'bg-slate-100 text-slate-600 border border-slate-200';
+    case '처리완료': return 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+    default: return 'bg-amber-50 text-amber-900 border border-amber-200';
+  }
 }
 
 function kindBadge(k: ReportKind) {
@@ -95,26 +111,77 @@ export default function ReportManagement() {
     });
   }, [rows, statusFilter, typeFilter]);
 
-  const markDone = (id: string) => {
-    if (!loadUserReports().some((r) => r.id === id)) return;
-    updateUserReport(id, { adminStatus: 'resolved' });
-    toast.success('처리 완료로 저장했습니다.');
-  };
-
   const makePrivate = (id: string) => {
     const raw = loadUserReports().find((r) => r.id === id);
     if (!raw) return;
     if (raw.targetType === 'work' && raw.targetId) {
       workStore.updateWork(raw.targetId, { isHidden: true });
-      updateUserReport(id, { adminStatus: 'resolved' });
+      updateUserReport(id, { adminStatus: 'hidden' });
       toast.success('작품을 비공개로 저장했습니다. Artier 둘러보기·검색에서 제외됩니다.');
       return;
     }
-    updateUserReport(id, { adminStatus: 'resolved' });
-    toast.message('작품 신고만 피드에서 숨깁니다. 이 신고는 완료 처리만 반영했습니다.');
+    updateUserReport(id, { adminStatus: 'hidden' });
+    toast.message('이 신고는 비공개 처리로 마감했습니다.');
   };
 
-  const ignore = (id: string) => {
+  /** 삭제: 작품을 영구 삭제 + 신고 처리 (작품 신고에만 적용) */
+  const deleteTarget = async (id: string) => {
+    const raw = loadUserReports().find((r) => r.id === id);
+    if (!raw || raw.targetType !== 'work' || !raw.targetId) {
+      toast.error('작품 신고에 한해 삭제할 수 있습니다.');
+      return;
+    }
+    const ok = await openConfirm({
+      title: '신고 대상 작품을 삭제할까요?',
+      description: '복구할 수 없습니다. 좋아요·저장 등 부속 데이터도 함께 정리됩니다.',
+      destructive: true,
+      confirmLabel: '삭제',
+    });
+    if (!ok) return;
+    workStore.removeWork(raw.targetId);
+    updateUserReport(id, { adminStatus: 'deleted' });
+    toast.success('작품이 삭제되었습니다.');
+  };
+
+  /** 경고: 신고 대상자에게 경고 누적 (3회 시 자동 7일 정지) */
+  const warnTarget = (id: string) => {
+    const raw = loadUserReports().find((r) => r.id === id);
+    if (!raw) return;
+    const targetArtistId = raw.targetArtistId ?? '';
+    if (!targetArtistId) {
+      toast.error('대상 작가 ID가 없어 경고를 적용할 수 없습니다.');
+      return;
+    }
+    const { count, triggeredSuspension } = addWarning(targetArtistId);
+    updateUserReport(id, { adminStatus: 'warned' });
+    if (triggeredSuspension) {
+      toast.error(`경고 ${count}회 누적 — 7일 정지가 자동 적용되었습니다.`);
+    } else {
+      toast.success(`경고가 적용되었습니다. (누적 ${count}/3회)`);
+    }
+  };
+
+  /** 기각: 신고를 부당하다고 판단 — 신고자에게 허위 신고 카운트 +1 */
+  const dismissReport = (id: string) => {
+    const raw = loadUserReports().find((r) => r.id === id);
+    if (!raw) return;
+    const reporterId = raw.reporterId ?? '';
+    if (reporterId) {
+      const { count, triggeredBlock } = addFalseReport(reporterId);
+      updateUserReport(id, { adminStatus: 'dismissed' });
+      if (triggeredBlock) {
+        toast.error(`허위 신고 ${count}회 누적 — 신고자가 7일 차단되었습니다.`);
+      } else {
+        toast.message(`신고를 기각했습니다. 신고자 허위 신고 누적 ${count}/3회.`);
+      }
+    } else {
+      updateUserReport(id, { adminStatus: 'dismissed' });
+      toast.message('신고를 기각했습니다.');
+    }
+  };
+
+  /** 목록에서만 제거 (레거시 무시 액션) */
+  const removeFromList = (id: string) => {
     if (!loadUserReports().some((r) => r.id === id)) return;
     removeUserReport(id);
     toast.message('목록에서 제거했습니다.');
@@ -149,7 +216,11 @@ export default function ReportManagement() {
         >
           <option value="전체">상태: 전체</option>
           <option value="대기">대기</option>
-          <option value="처리완료">처리완료</option>
+          <option value="삭제">삭제</option>
+          <option value="비공개">비공개</option>
+          <option value="경고">경고</option>
+          <option value="기각">기각</option>
+          <option value="처리완료">처리완료(레거시)</option>
         </select>
         <select
           value={typeFilter}
@@ -200,19 +271,40 @@ export default function ReportManagement() {
                     <div className="flex flex-wrap justify-end gap-2">
                       <Button
                         type="button"
-                        disabled={r.status === '처리완료'}
-                        onClick={() => markDone(r.id)}
-                        className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90 disabled:opacity-50 disabled:pointer-events-none"
+                        disabled={r.status !== '대기'}
+                        onClick={() => deleteTarget(r.id)}
+                        className="text-sm px-3 py-1.5 rounded-lg bg-red-600 text-white lg:hover:bg-red-700 disabled:opacity-50 disabled:pointer-events-none"
                       >
-                        <CheckCircle2 className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
-                        확인 완료
+                        <Trash2 className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
+                        삭제
                       </Button>
                       <Button
                         type="button"
                         variant="outline"
-                        disabled={r.status === '처리완료'}
-                        onClick={() => makePrivate(r.id)}
+                        disabled={r.status !== '대기'}
+                        onClick={() => warnTarget(r.id)}
+                        className="text-sm px-3 py-1.5 rounded-lg border-amber-300 text-amber-700 lg:hover:bg-amber-50"
+                      >
+                        <AlertTriangle className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
+                        경고
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="outline"
+                        disabled={r.status !== '대기'}
+                        onClick={() => dismissReport(r.id)}
                         className="text-sm px-3 py-1.5 rounded-lg"
+                      >
+                        <XCircle className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
+                        기각
+                      </Button>
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        disabled={r.status !== '대기'}
+                        onClick={() => makePrivate(r.id)}
+                        className="text-sm px-3 py-1.5 rounded-lg text-muted-foreground"
+                        title="작품만 비공개로 전환 (대상 게시는 삭제하지 않음)"
                       >
                         <EyeOff className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
                         비공개
@@ -220,11 +312,12 @@ export default function ReportManagement() {
                       <Button
                         type="button"
                         variant="ghost"
-                        onClick={() => ignore(r.id)}
+                        onClick={() => removeFromList(r.id)}
                         className="text-sm px-3 py-1.5 rounded-lg text-muted-foreground"
+                        title="목록에서만 제거 (삭제·경고·기각 액션은 적용 안 함)"
                       >
-                        <Ban className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
-                        무시
+                        <CheckCircle2 className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
+                        목록에서 제거
                       </Button>
                     </div>
                   </td>

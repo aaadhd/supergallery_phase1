@@ -9,6 +9,7 @@ import {
   performAccountWithdrawal,
   useAuthStore,
 } from '../store';
+import { loadMockSession } from '../services/sessionTokens';
 import { Button } from '../components/ui/button';
 import { openConfirm } from '../components/ConfirmDialog';
 import { PasswordInput } from '../components/ui/password-input';
@@ -118,7 +119,8 @@ export default function Settings() {
   const [withdrawReason, setWithdrawReason] = useState<WithdrawReasonId | ''>('');
   const [withdrawBusy, setWithdrawBusy] = useState(false);
 
-  const demoEmail = 'artist@artier.kr';
+  const sessionSub = loadMockSession()?.sub;
+  const isEmailShape = Boolean(sessionSub?.includes('@'));
   const currentArtistId = artists[0].id;
 
   useEffect(() => {
@@ -190,8 +192,18 @@ export default function Settings() {
             {t('settings.sectionAccount')}
           </h2>
           <div className="rounded-lg border border-border/40 overflow-hidden bg-white px-4 py-4">
-            <p className="text-xs text-muted-foreground mb-1">{t('settings.emailLabel')}</p>
-            <p className="text-[15px] text-foreground">{demoEmail}</p>
+            <p className="text-xs text-muted-foreground mb-1">
+              {isEmailShape ? t('settings.emailLabel') : t('settings.accountDemoIdLabel')}
+            </p>
+            {sessionSub ? (
+              <p
+                className={`text-[15px] text-foreground break-all ${isEmailShape ? '' : 'font-mono'}`}
+              >
+                {sessionSub}
+              </p>
+            ) : (
+              <p className="text-[15px] text-muted-foreground">{t('settings.accountEmailUnavailable')}</p>
+            )}
           </div>
         </section>
 

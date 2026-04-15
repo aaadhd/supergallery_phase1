@@ -1,6 +1,7 @@
-# 작품 올리기 스펙 v1.7
+# 작품 올리기 스펙 v1.8
 > Upload.tsx 개편 기준 문서
 > Notion 기획문서 + 코드 구현 현황 통합본
+> v1.7 → v1.8 (2026-04-15): 코드·`IMPLEMENTATION_DELTA` 대조 — 전시명 길이, 비속어·이벤트 store, 색상 팔레트 모듈 제거(blur 트릭으로 대체), 자동승인 위치 정정
 > v1.6 → v1.7: v1.2 워드 기획서(2026-04-12, Kate 작성) 흡수 — 콘텐츠 편집기 툴바, 파일 정책 상세, 비회원 알림 플로우, 미결 사항, EN 오류 메시지 추가
 >
 > **폐기 항목 (v1.2 → v1.7 병합 시 제외)**:
@@ -8,7 +9,7 @@
 > - 카테고리·태그 (Phase 2)
 > - 수강생 이메일 태그 섹션
 
-### 구현 현황 (2026-04-14 갱신)
+### 구현 현황 (2026-04-15 갱신)
 
 | 항목 | 상태 | 비고 |
 |---|---|---|
@@ -26,12 +27,12 @@
 | Step 2 세부 정보 모달 | ✅ 완료 | 강사 체크, 개인전시 탭, 원작 확인 |
 | 강사 체크박스 단일화 | ✅ 완료 | 토글 스타일 bg-primary 적용 |
 | 비속어 필터 | ✅ 완료 | 전시명·그룹명 발행 시 검증 |
-| 변환 프로그레스 바 | ❌ 제거 | 사용자 요청으로 제거됨 |
+| 변환 프로그레스 바 | ❌ 없음 | 별도 진행 바 UI 없음(업로드 처리는 기존 로직) |
 | 재정렬 모드 그리드 뷰 | ✅ 완료 | 2~4열 그리드, 드래그 앤 드롭 |
 | 자동 저장 (30초) | ✅ 완료 | BeforeUnload 경고 포함 |
 | 콘텐츠 편집기 툴바 | ✅ 완료 | 패딩 토글, 이미지 변경, 재정렬, 삭제 |
 | 이미지 그리드 블록 | ❌ Phase 2 | PD Figma 미결 (#8) |
-| 배경색상 변경 UI | ❌ Phase 2 | 현재 #FFFFFF 고정 |
+| 배경색상 변경 UI | ❌ Phase 2 | 편집기 **전역** 배경 톤 슬라이더 없음. 작품 상세/업로드 배경의 "톤 묻어남"은 원본 이미지 `blur + scale + opacity` 트릭으로 대체 ([WorkDetailModal.tsx:407](src/app/components/WorkDetailModal.tsx#L407)). dominant-color 추출 모듈은 2026-04-15 삭제 |
 
 ---
 
@@ -105,14 +106,14 @@ Upload.tsx 진입 시 가장 먼저 표시. 이미지 업로드 전.
 
 **함께 올리기:**
 ```
-[ 전시 제목을 입력하세요. * ]   [ 그룹명 (선택) ]
+[ 전시 제목을 입력하세요. * ]   [ 그룹명 * (그룹 전시일 때) ]
 ```
 
-- 전시명: 필수 / maxLength=50 / 기존 `exhibitionName` state 유지
-- 그룹명: 함께 올리기에서만 노출 / 선택 / 미입력 시 "여러 작업자"로 표시
-- 기존 자동완성(exhibitionSuggestions, groupSuggestions) 그대로 활용
+- 전시명: 필수 / **maxLength=20** (`Upload.tsx` 입력·발행 `slice(0, 20)`과 일치) / `autoComplete="off"` — **전시명 자동완성 드롭다운 없음**(그룹명만 과거 전시 기반 제안)
+- 그룹명: 함께 올리기(그룹 전시)에서 **필수**. publishChecklist의 `groupName` 항목에 `done: !!groupName.trim()` 검증 (`Upload.tsx`). PRD §5.2 / 유저플로우 2 — 강사 업로드뿐 아니라 모든 그룹 전시에 적용.
+- 그룹명 자동완성: `collectGroupNameSuggestions` — 전시명용 동일 패턴 없음 (IMPLEMENTATION_DELTA §8.7-1)
 - 이미지 보면서 동시에 입력 가능
-- **비속어 필터**: 전시명·그룹명 입력 시 비속어 필터 검증 필요 (현재 미구현 — TOP 보완 항목, IMPLEMENTATION_DELTA §9.2 참조)
+- **비속어 필터**: 발행 시 `containsProfanity(exhibitionName)`, `containsProfanity(groupName)` 검사 — 통과 못 하면 토스트 후 중단 (IMPLEMENTATION_DELTA §9.2). 비회원 작가 **직접 입력 이름**은 발행 핸들러에서 별도 비속어 검사 **미적용**(필요 시 후속)
 
 ### 이미지 업로드 캔버스
 
@@ -123,13 +124,12 @@ Upload.tsx 진입 시 가장 먼저 표시. 이미지 업로드 전.
   - **카메라 사진 차단** — `shouldBlockCameraPhoto()` 유지 (EXIF 분석)
   - WEBP 자동변환 유지
 
-### 색상 팔레트 자동 추출 (구현 완료)
+### 작품 톤 배경 "묻어나는" 효과 — blur 트릭
 
-- 첫 이미지 업로드 시 `colorPalette.ts`의 `extractDominantColor()` 호출
-- 캔버스 배경에 부드럽게 적용 (`transition: 0.5s`)
-- `ColorPaletteSuggestion` 컴포넌트가 추천 색상 표시
-- 상세 스펙: `dominant-color-spec.md` 참조 (✅ 구현 완료)
-- Work 타입에 `dominantColor?: string` 필드 존재
+- 원본 이미지를 배경 레이어로 깔고 `blur-[120px] opacity-[0.95] scale-[1.3]` 적용 ([WorkDetailModal.tsx:407](src/app/components/WorkDetailModal.tsx#L407), [Upload.tsx:12,1140](src/app/pages/Upload.tsx#L12))
+- 픽셀 기반 dominant-color 추출 없이 순수 CSS로 작품 톤이 주변에 번져 보이는 효과 달성
+- dominant-color 추출 모듈(`colorPalette.ts`, `ColorPaletteSuggestion`)과 `docs/dominant-color-spec.md`는 **2026-04-15 삭제** (blur 트릭으로 대체)
+- `Work.dominantColor` 필드는 레거시 — 저장은 되지만 현재 사용 경로 없음 (Phase 2에서 정리 또는 재활용 결정)
 
 ---
 
@@ -151,7 +151,7 @@ Upload.tsx 진입 시 가장 먼저 표시. 이미지 업로드 전.
 ```
 ┌──────────────────────────┐
 │ [이미지 썸네일]           │
-│ 3 / 20                   │  ← 장 진행 표시
+│ 3 / 10                   │  ← 장 진행 표시 (전시당 최대 10장)
 ├──────────────────────────┤
 │ 작품명 (선택)             │
 │ [                      ] │
@@ -180,7 +180,7 @@ Upload.tsx 진입 시 가장 먼저 표시. 이미지 업로드 전.
 - 검색 결과 없을 때만 직접 입력 폼 노출
 - 기존 `nonMemberArtist: { displayName, phoneNumber }` 구조 유지
 - 연락처 미입력 시 발행 불가
-- **비속어 필터**: 비회원 직접 입력 이름에도 검증 필요 (TOP 보완 항목)
+- **비속어 필터**: 전시명·그룹명은 발행 시 검증됨. 비회원 직접 입력 **작가 표시명**은 Upload 발행 경로에서 별도 검사 없음 — 필요 시 `profanityFilter` 확장
 
 **이전/다음 버튼:**
 ```javascript
@@ -320,9 +320,7 @@ const [showInSoloTab, setShowInSoloTab] = useState(true);
 - `linkedEventId`, `linkedEventTitle` 기존 로직 전부 유지
 - 이벤트 업로드 시 자동 연결 상태 표시
 - 쿼리 파라미터 진입(`/upload?event=:id&eventTitle=…`) 정상 동작 ✅
-- **주의**: 이벤트 데이터는 현재 `Events.tsx` / `EventDetail.tsx` / `admin/EventManagement.tsx` 3곳에 분산되어 있음.
-  단일 `eventStore` 통합 후엔 `linkedEventId`만으로 제목·기간 등 메타를 store에서 조회하도록 변경 예정
-  (IMPLEMENTATION_DELTA §8.5·§9.7 참조).
+- **이벤트 메타**: `eventStore.ts` 단일 소스 + `artier_managed_events_v1` 영속화. 사용자 화면·어드민이 동일 store 구독 (IMPLEMENTATION_DELTA §8.5·§9.7). `linkedEventId`로 제목 등 표시 시 store 조회 패턴 사용.
 
 ---
 
@@ -383,7 +381,7 @@ const [showInSoloTab, setShowInSoloTab] = useState(true);
 
 | 설정 | Phase 1 | 기본값 | 실측값 |
 |---|---|---|---|
-| 배경색상 | ❌ #FFFFFF 고정 | #FFFFFF | #FFFFFF |
+| 배경색상 | ❌ 전역 톤 슬라이더 없음 | #FFFFFF | #FFFFFF — "톤 묻어남" 효과는 blur 트릭으로 해결 (별도 dominant-color 모듈 없음) |
 | 콘텐츠 간격 | ❌ 10px 고정 | 10px | 0~100px / 기본 10px (실측) |
 | 콘텐츠 재정렬 | ✅ | — | 블록 순서 드래그 |
 
@@ -433,9 +431,13 @@ if (missingArtist) → toast("모든 작품에 작가를 입력해주세요.")
 
 ### 자동 승인 모드 (개발 편의)
 
+**운영 원칙**: 발행 직후 `feedReviewStatus: 'pending'`으로 두고 운영팀 검수(명세상 24시간 내 등)를 거친 뒤 피드 반영이 맞다. **업로드 즉시 승인은 제품 정책의 기본값이 아니다.**
+
+**현재 코드베이스(Phase 1 클라 데모·목업)**: 실 검수 큐·백엔드 없이 PM 시연·로컬 개발 속도를 위해, 환경 변수로만 검수 단계를 건너뛸 수 있게 해 둔 것이다. 프로덕션에서는 이 플래그를 켜지 않는 것이 전제다.
+
 환경 변수 `VITE_UPLOAD_AUTO_APPROVE=true` 설정 시:
-- 발행 즉시 작품 상태가 `approved`로 저장 (운영팀 검토 24시간 우회)
-- 위치: `Upload.tsx` 발행 핸들러 (line 418 부근)
+- 발행 즉시 `feedReviewStatus: 'approved'`로 저장 (운영팀 검수 대기 우회)
+- 위치: `Upload.tsx` 발행 핸들러 — `newWork`의 `feedReviewStatus` **510행**, 발행 후 토스트 분기(자동승인 여부 메시지) **553~555행**
 - **프로덕션 배포 시 반드시 OFF**
 - 데모/PM 시연 환경에서만 사용
 - IMPLEMENTATION_DELTA §3.5 참조
@@ -510,23 +512,19 @@ const newWork: Work = {
   ...
   isInstructorUpload: uploadType === 'group' ? isInstructor : false,
   showInSoloTab: uploadType === 'group' ? showInSoloTab : true,
-  dominantColor: dominantColor || '#FFFFFF',
 };
 ```
 
 - `isInstructorUpload`: **Work 객체에 직접 저장**되는 영구 필드. 프로필의 강사 표시 파생 계산의 단일 소스.
 - 저장 후 `Profile.tsx`가 매번 `works`를 스캔하여 `instructorVisible` 자동 계산.
 - **별도 후처리 함수 호출 없음** (`instructorPublic.ts` 삭제됨).
+- `Work.dominantColor` 필드는 레거시 — 저장은 타입상 허용되지만 현재 Upload는 설정하지 않고, 사용 경로도 없음 (blur 트릭으로 대체되어 불필요)
 
 ### 포인트 적립
 
 - 업로드 완료 시 AP +20 자동 적립 (`pointsBackground.ts`)
 - **포인트 회수 정책**: 업로드 후 24시간 이내 삭제 시 AP -20 회수
   (`pointsRecallIfQuickDelete` — 어뷰징 방지)
-
-### dominantColor 저장
-
-주조색은 위 Work 객체 저장 블록에 포함됨. 상세 사양은 `dominant-color-spec.md` 참조.
 
 ### 임시저장
 
@@ -558,7 +556,6 @@ uploadType: 'solo' | 'group' | null  // 유형 선택 (초기값 null)
 artistDirectInput: boolean           // false: 검색창 / true: 직접 입력 폼 (장별 로컬 state)
 isInstructor: boolean                // 강사 체크박스 (기본값 false, 함께 올리기에서만 노출)
                                      // → 발행 시 Work.isInstructorUpload로 영속화
-dominantColor: string                // 주조색 (기본 #FFFFFF)
 ```
 
 ### 기본값 변경
@@ -690,41 +687,37 @@ const ok = await openConfirm({
 
 ---
 
-## Phase 2 선행 구현 (참고 — Upload 영향)
+## Phase 2 선행 구현 (정리됨 — 2026-04-15)
 
-다음 기능은 PRD §2.2 Out of Scope이지만 코드에 존재 (IMPLEMENTATION_DELTA §2.1):
+이전엔 PRD §2.2 Out of Scope임에도 코드에 존재하던 3개 컴포넌트는 dead code였기에 모두 삭제됨 (IMPLEMENTATION_DELTA §2.1 참조):
 
-| 항목 | 파일 | 상태 |
-|---|---|---|
-| Pin 코멘트 | `PinCommentLayer.tsx`, `pinCommentStore.ts` | 활성 (localStorage) |
-| 타임랩스 | `TimelapsePlayer.tsx` | UI만 (영상 src 미연결) |
-| 색상 팔레트 추출 | `colorPalette.ts`, `ColorPaletteSuggestion.tsx` | **Phase 1 활성** |
+- ~~Pin 코멘트 (`PinCommentLayer.tsx`, `pinCommentStore.ts`)~~ 🗑
+- ~~타임랩스 (`TimelapsePlayer.tsx`)~~ 🗑
+- ~~색상 팔레트 추출 (`colorPalette.ts`, `ColorPaletteSuggestion.tsx`)~~ 🗑 — "톤 묻어남" UX는 blur 트릭으로 대체
 
-업로드 플로우 변경 시 위 컴포넌트가 데이터 의존성을 가질 수 있으니 호출부 확인 필수.
+→ 업로드 플로우 변경 시 위 컴포넌트 호출부는 이미 없으므로 신경 쓸 필요 없음.
 
 ---
 
 ## 알려진 잔여 이슈 (Upload 관련, IMPLEMENTATION_DELTA §11)
 
-| # | 항목 | 위치 | 영향도 |
-|---|---|---|---|
-| 11.1 | Orphan localStorage `artier_instructor_public_ids` 제거 | bootstrap | Low (5분 작업) |
-| 11.2 | 어드민 작품 삭제 목업 → 실 store 연결 | `admin/WorkManagement.tsx:60` | Medium |
-| 11.4 | 발행 직후 `pending` seed로 공유 시 빈 그리드 | `ExhibitionInviteLanding.tsx` | Low (UX 혼란) |
+| # | 항목 | 상태 |
+|---|---|---|
+| 11.1 | Orphan `artier_instructor_public_ids` | ✅ `PointsBootstrap` 정리 |
+| 11.2 | 어드민 작품 관리 | ✅ 실 `workStore` 연동 |
+| 11.4 | 초대 랜딩 빈 그리드 | ✅ seed 항상 포함 + 배지 (§11.4) |
 
 ---
 
 ## 우선 보완 항목 (Upload 관련)
 
-IMPLEMENTATION_DELTA §9 / §10 / §11 에서 도출된 항목 중 업로드와 직접 연관된 것:
+최근 반영됨: **비속어**(전시명·그룹명), **이벤트 store**, **이미지 lazy load**, **검색 히스토리 병합**, **InviteLanding** 등 — IMPLEMENTATION_DELTA §9·§10·§11.
 
-1. **비속어 필터** (전시명·그룹명·작가명 직접 입력) — TOP 우선순위, 미구현
-2. **이벤트 데이터 단일 store 통합** — `linkedEventId` 메타 조회 안정화 필요
-3. **대용량 업로드 progress bar** — 다중 이미지 업로드 시 진행 표시 (현재 없음)
-4. **이미지 lazy loading** — 발행 후 피드 그리드에 `loading="lazy"` 부착
-5. **스토리지 버전 관리** — `dominantColor`, `isInstructorUpload` 등 신규 필드 추가/변경 시 `WORKS_STORAGE_VERSION` 증가 필수
-6. **Orphan localStorage 제거** — bootstrap에 `artier_instructor_public_ids` 정리 코드 1줄 추가 (§11.1)
-7. **공유 시 seed 가시성** — 발행 직후 공유했을 때 빈 전시 문제 해결 (§11.4)
+남은 것 예시:
+
+1. **비회원 작가 표시명** 비속어 검사 — Upload 발행 시 선택 적용
+2. **대용량 업로드 progress** — 별도 진행 UI 없음(제품 정책에 따라)
+3. **스토리지 버전** — `Work` 스키마 변경 시 `WORKS_STORAGE_VERSION`(`local-gallery-v10` 등) 증가 유지
 
 ---
 

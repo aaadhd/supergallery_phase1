@@ -86,9 +86,15 @@ export default function PickManagement() {
   return (
     <div className="min-h-full">
       <h1 className="text-xl font-bold mb-6 text-foreground">Artier&apos;s Pick 관리</h1>
-      <p className="text-sm text-muted-foreground mb-6">
-        현재 {picks.length} / {MAX_PICKS} · 드래그로 순서 변경은 추후 연동 예정(번호만 표시)
-      </p>
+      <div className="mb-6 space-y-1.5">
+        <p className="text-sm text-muted-foreground">
+          현재 {picks.length} / {MAX_PICKS} · 드래그로 순서 변경은 추후 연동 예정(번호만 표시)
+        </p>
+        <p className="inline-flex items-center gap-1.5 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-2.5 py-1">
+          <span aria-hidden>↻</span>
+          매주 월요일 자정(KST)에 자동 초기화됩니다.
+        </p>
+      </div>
 
       <div className="flex flex-wrap gap-3 mb-6">
         <div className="relative flex-1 min-w-[240px] max-w-lg">
