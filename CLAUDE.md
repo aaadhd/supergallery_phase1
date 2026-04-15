@@ -7,7 +7,7 @@
 > Phase 1 클라이언트 구현·명세 동기화는 **`IMPLEMENTATION_DELTA.md`와 현재 `src/app/` 코드**를 기준으로 한다. 완성도를 퍼센트로 표기하지 않는다.
 
 ## 스펙 문서
-- 개발자 인수인계 문서 (reference 대비 변경·목업·확정 수치): `docs/product-policies.md`
+- 개발자 인수인계 문서 (reference 대비 변경·목업·확정 수치): `product-policies.md`
 - 작품 올리기 전체 스펙: `docs/upload_spec.md`
 - 작품 톤 배경 묻어나는 효과: **원본 이미지를 blur + scale + opacity로 깔아** 순수 CSS로 구현 ([WorkDetailModal.tsx:407](src/app/components/WorkDetailModal.tsx#L407), [Upload.tsx:12,1140](src/app/pages/Upload.tsx#L12)). dominant-color 추출 알고리즘 불필요 — 관련 모듈·spec 문서는 2026-04-15 삭제됨
 - 구현 델타·레퍼런스 수정 지침: `IMPLEMENTATION_DELTA.md`, `REFERENCE_DELTA.md`
