@@ -196,7 +196,10 @@ export default function ExhibitionInviteLanding() {
             </p>
             <div className="flex flex-wrap gap-2 justify-center">
               <Link
-                to="/signup"
+                to="/signup?invited=1"
+                onClick={() => {
+                  try { localStorage.setItem('artier_pending_sms_invite', '1'); } catch { /* ignore */ }
+                }}
                 className="inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold lg:hover:bg-primary/90"
               >
                 {t('workDetail.inspireCtaButton')}

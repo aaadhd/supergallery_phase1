@@ -130,6 +130,16 @@ export function QaScreenShortcuts() {
             {t('footer.qaGroupAuthUrl')}
           </DropdownMenuLabel>
           <DropdownMenuItem asChild>
+            <Link to="/login" className={linkCls}>
+              {t('footer.qaLogin')}
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link to="/signup" className={linkCls}>
+              {t('footer.qaSignup')}
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
             <Link to="/onboarding" className={linkCls}>
               {t('footer.qaOnboarding')}
             </Link>

@@ -76,11 +76,28 @@ export default function Login() {
     }, 400);
   };
 
-  const completeSocialLogin = (provider: SocialProvider) => {
+  /**
+   * 소셜 재로그인(기존 가입자) — 바로 redirectTo로 이동.
+   */
+  const completeReturningSocialLogin = (provider: SocialProvider) => {
+    authStore.login();
+    persistMockSession(`oauth-${provider}-demo`);
+    navigate(redirectTo, { replace: true });
+  };
+
+  /**
+   * 소셜 첫 가입 — 약관 동의 + 닉네임 + provider 이메일까지 받은 뒤 호출.
+   * 실명·전화는 Onboarding에서 추가로 받아야 하므로 /onboarding으로 유도.
+   * (닉네임·이메일은 localStorage에 임시 저장 → Onboarding에서 prefill 후 정리)
+   */
+  const completeFirstSocialSignup = (provider: SocialProvider, nickname: string, email: string) => {
     authStore.login();
     persistMockSession(`oauth-${provider}-demo`);
     localStorage.setItem(`artier_social_signed_up__${provider}`, '1');
-    navigate(redirectTo, { replace: true });
+    localStorage.setItem('artier_pending_signup_nickname', nickname);
+    localStorage.setItem('artier_pending_social_signup', provider);
+    if (email) localStorage.setItem('artier_pending_signup_email', email);
+    navigate('/onboarding', { replace: true });
   };
 
   const handleSocialLogin = (provider: SocialProvider) => {
@@ -89,18 +106,18 @@ export default function Login() {
     const alreadySignedUp = localStorage.getItem(`artier_social_signed_up__${provider}`) === '1';
     if (alreadySignedUp) {
       setLoading(true);
-      setTimeout(() => completeSocialLogin(provider), 400);
+      setTimeout(() => completeReturningSocialLogin(provider), 400);
     } else {
       setPendingSocial(provider);
     }
   };
 
-  const handleSocialSignupComplete = () => {
+  const handleSocialSignupComplete = (nickname: string, email: string) => {
     const provider = pendingSocial;
     if (!provider) return;
     setPendingSocial(null);
     setLoading(true);
-    setTimeout(() => completeSocialLogin(provider), 400);
+    setTimeout(() => completeFirstSocialSignup(provider, nickname, email), 400);
   };
 
   return (

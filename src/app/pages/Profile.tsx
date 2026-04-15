@@ -26,7 +26,7 @@ import {
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { imageUrls } from '../imageUrls';
 import { toast } from 'sonner';
-import { getCoverImage, getImageCount } from '../utils/imageHelper';
+import { getCoverImage, getImageCount, getThumbCover } from '../utils/imageHelper';
 import { LoginPromptModal } from '../components/LoginPromptModal';
 import { ExternalLinksEditor, resolveExternalLinkUrl, getExternalLinkPlatformDisplay } from '../components/ExternalLinksEditor';
 import { getDisplayFollowerCount } from '../utils/artistFollowDelta';
@@ -339,6 +339,13 @@ export default function Profile() {
       setProfileTab(q as ProfileTabValue);
     }
   }, [searchParams, allowedProfileTabs]);
+
+  // 발행 직후 도착 시 검수 공개 안내 배너 (dismissible)
+  const [publishedBannerDismissed, setPublishedBannerDismissed] = useState(false);
+  const publishedFlag = searchParams.get('published');
+  const publishedWorkId = searchParams.get('workId');
+  const showPublishedBanner =
+    isOwnProfile && !publishedBannerDismissed && publishedFlag === 'pending' && !!publishedWorkId;
 
   useEffect(() => {
     setProfileTab((prev) => (allowedProfileTabs.includes(prev) ? prev : 'exhibition'));
@@ -771,6 +778,27 @@ export default function Profile() {
 
                 {/* ===== 전시 탭 ===== */}
                 <TabsContent value="exhibition" className="mt-6">
+                  {showPublishedBanner && (
+                    <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 flex items-start gap-3">
+                      <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-500 text-white text-[12px] font-bold" aria-hidden>✓</span>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold text-amber-900">
+                          {t('profile.publishedBannerTitle')}
+                        </p>
+                        <p className="text-[13px] text-amber-800 mt-1 leading-relaxed">
+                          {t('profile.publishedBannerDesc')}
+                        </p>
+                      </div>
+                      <button
+                        type="button"
+                        onClick={() => setPublishedBannerDismissed(true)}
+                        aria-label={t('profile.publishedBannerDismiss')}
+                        className="shrink-0 p-1 -m-1 rounded text-amber-700 lg:hover:text-amber-900 lg:hover:bg-amber-100 transition-colors"
+                      >
+                        <X className="h-4 w-4" />
+                      </button>
+                    </div>
+                  )}
                   <div className="flex flex-wrap items-center gap-2 mb-5">
                     {(['all', 'solo', 'group'] as const).map((f) => {
                       const label =
@@ -823,7 +851,7 @@ export default function Profile() {
                         >
                           <div className="relative aspect-square rounded-sm overflow-hidden bg-white">
                             <ImageWithFallback
-                              src={imageUrls[getCoverImage(work.image, work.coverImageIndex)] || getCoverImage(work.image, work.coverImageIndex)}
+                              src={imageUrls[getThumbCover(work)] || getThumbCover(work)}
                               alt={displayExhibitionTitle(work, t('work.untitled'))}
                               className="w-full h-full object-contain object-center"
                             />
@@ -917,13 +945,16 @@ export default function Profile() {
                                   </span>
                                 )}
                                 {isMyUpload && work.feedReviewStatus === 'rejected' && (
-                                  <span
-                                    className="inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium bg-red-500/95 text-white backdrop-blur-sm w-fit"
+                                  <button
+                                    type="button"
+                                    onClick={(e) => { e.stopPropagation(); setRejectedModalWork(work); }}
+                                    className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium bg-red-500/95 text-white backdrop-blur-sm w-fit lg:hover:bg-red-600 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none transition-colors"
                                     title={t('review.badgeRejectedHint')}
-                                    aria-label={`${t('review.badgeRejected')} · ${t('review.badgeRejectedHint')}`}
+                                    aria-label={`${t('review.badgeRejected')} — ${t('review.badgeRejectedClickHint')}`}
                                   >
                                     {t('review.badgeRejected')}
-                                  </span>
+                                    <span aria-hidden className="text-white/80">›</span>
+                                  </button>
                                 )}
                               </div>
                             )}
@@ -1004,7 +1035,7 @@ export default function Profile() {
                           >
                             <div className="relative aspect-square bg-white w-full">
                               <ImageWithFallback
-                                src={imageUrls[getCoverImage(work.image, work.coverImageIndex)] || getCoverImage(work.image, work.coverImageIndex)}
+                                src={imageUrls[getThumbCover(work)] || getThumbCover(work)}
                                 alt={displayProminentHeadline(work, t('work.untitled'))}
                                 className="w-full h-full object-contain object-center"
                               />
@@ -1209,7 +1240,7 @@ export default function Profile() {
                         >
                           <div className="relative aspect-square rounded-sm overflow-hidden bg-white">
                             <ImageWithFallback
-                              src={imageUrls[getCoverImage(work.image, work.coverImageIndex)] || getCoverImage(work.image, work.coverImageIndex)}
+                              src={imageUrls[getThumbCover(work)] || getThumbCover(work)}
                               alt={displayProminentHeadline(work, t('work.untitled'))}
                               className="w-full h-full object-contain object-center"
                             />
@@ -1247,7 +1278,7 @@ export default function Profile() {
                         >
                           <div className="relative aspect-square rounded-sm overflow-hidden bg-white">
                             <ImageWithFallback
-                              src={imageUrls[getCoverImage(work.image, work.coverImageIndex)] || getCoverImage(work.image, work.coverImageIndex)}
+                              src={imageUrls[getThumbCover(work)] || getThumbCover(work)}
                               alt={displayProminentHeadline(work, t('work.untitled'))}
                               className="w-full h-full object-contain object-center"
                             />

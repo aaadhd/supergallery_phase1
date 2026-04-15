@@ -29,7 +29,7 @@ function cleanupOrphanedWorkId(workId: string) {
  * public/images·manifest가 바뀌면 저장된 work.image 경로가 디스크와 어긋나 썸네일 404가 남.
  * 버전을 올리면 시드(현재 manifest 기반)로 다시 채운 뒤 저장된다.
  */
-const WORKS_STORAGE_VERSION = 'local-gallery-v10';
+const WORKS_STORAGE_VERSION = 'local-gallery-v11';
 
 // 초안 타입 정의
 export interface Draft {
@@ -46,8 +46,10 @@ export interface Draft {
   isInstructor?: boolean;
   /** 그룹전시이지만 개인전시 탭에도 노출 */
   showInSoloTab?: boolean;
-  /** 대표 이미지 인덱스 */
+  /** 대표 이미지 인덱스. -1이면 `customCoverUrl` 사용 */
   coverImageIndex?: number;
+  /** 로컬 파일로 별도 지정한 커버 (data URL). 저장 시 work.customCoverUrl로 이관 */
+  customCoverUrl?: string;
   contents: Array<{
     id: string;
     type: 'image';
@@ -255,6 +257,8 @@ export interface UserProfile {
   realName?: string;
   /** 전화번호 (SMS 본인인증 후 저장) */
   phone?: string;
+  /** 이메일 (소셜 가입 시 제공 확인, 이메일 가입 시 가입 이메일) */
+  email?: string;
   headline: string;
   bio: string;
   location: string;

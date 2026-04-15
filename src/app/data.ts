@@ -65,6 +65,12 @@ export interface Work {
   linkedEventId?: string | number;
   /** 둘러보기 피드/그리드에서 대표(썸네일)로 쓸 이미지 인덱스. 미지정 시 0(첫 이미지) */
   coverImageIndex?: number;
+  /**
+   * 업로드 시 사용자가 로컬 파일로 별도 지정한 커스텀 커버 (data URL).
+   * 설정 시 **썸네일·공유 OG에만 사용**되고 전시 이미지 배열(image)에는 포함되지 않는다.
+   * (구버전에선 image 배열 맨 앞에 끼어 있었음 — 2026-04-16 분리 저장으로 변경)
+   */
+  customCoverUrl?: string;
 }
 
 // 아티스트 더미 데이터

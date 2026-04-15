@@ -6,7 +6,7 @@ import { artists } from '../data';
 import { imageUrls } from '../imageUrls';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
-import { getCoverImage } from '../utils/imageHelper';
+import { getCoverImage, getThumbCover } from '../utils/imageHelper';
 import { isWorkVisibleOnPublicFeed } from '../utils/feedVisibility';
 import { getHiddenArtistIdsForReporter, getHiddenWorkIdsForReporter, migrateLegacyReportHiddenOnce } from '../utils/reportStorage';
 import type { Work } from '../data';
@@ -350,7 +350,7 @@ export default function Search() {
                     >
                       <div className="aspect-square bg-white rounded-xl overflow-hidden border border-border mb-3">
                         <ImageWithFallback
-                          src={imageUrls[getCoverImage(work.image, work.coverImageIndex)] || getCoverImage(work.image, work.coverImageIndex)}
+                          src={imageUrls[getThumbCover(work)] || getThumbCover(work)}
                           alt={displayProminentHeadline(work, t('work.untitled'))}
                           className="w-full h-full object-contain hover-scale"
                         />

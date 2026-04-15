@@ -1,7 +1,14 @@
 # SuperGallery Phase 1 — 명세 대비 구현 델타 보고서
 
 > **작성일**: 2026-04-12
-> **최종 수정**: 2026-04-15 (심야) — reference 217개 명세 정밀 점검 → 누락 6건 보강:
+> **최종 수정**: 2026-04-16 (새벽) — 사용자 체감 UX 3건 보강:
+> - **#5** 프로필 반려 배지를 클릭 가능한 버튼으로 — 클릭 시 이전부터 있던 반려 사유/재업로드 모달 오픈 (시각 신호 `›` 추가).
+> - **#2** 신규 발행 직후 프로필 전시 탭에 "검수 후 공개" 안내 배너 노출 — `/me?tab=exhibition&published=pending&workId={id}` 플래그. dismissible. 자동 승인 모드에선 생략.
+> - **#3** 온보딩 실명·전화를 기본 **선택**으로 완화 + 초대 플로우(SMS 비회원 초대 경로)에선 **필수** 강제. 플래그: `artier_pending_sms_invite`. `ExhibitionInviteLanding`의 "가입하기"가 `?invited=1` + localStorage 플래그 세팅. Onboarding에서 감지해 라벨/검증 분기. 종료 시 플래그 자동 정리.
+> - `common.required` / `common.requiredSr` i18n 키 신설(RequiredMark 하드코딩 제거, EN 자동 전환).
+> - LoginPromptModal: 둘러보기 맥락(좋아요/저장/팔로우) 로그인 후 온보딩 강제 이동 해제 — 상호작용 흐름 유지.
+>
+> **이전 수정**: 2026-04-15 (심야) — reference 217개 명세 정밀 점검 → 누락 6건 보강:
 > - **#1** 그룹 전시 시 그룹명 필수 검증 (Upload.tsx publishChecklist `groupName` 항목 추가, 강사뿐 아니라 모든 그룹 전시).
 > - **#3** Pick 관리 "매주 월요일 자정 자동 초기화" 안내 텍스트 추가 (PickManagement.tsx).
 > - **#4** 소셜 로그인 첫 가입 시 약관 동의 모달 신설 (`SocialSignupModal.tsx`, SCR-AUTH-03 명세). `artier_social_signed_up__<provider>` 키로 재방문 시 즉시 로그인.
@@ -886,6 +893,10 @@ TOP 1 우선순위 과제 완료. 3곳 분산 하드코딩(Events 배너 2 + 예
 | C3 | `reference/화면 모음 - PM, PD, Dev v2/소셜 로그인 화면.md` (SCR-AUTH-03) | 첫 가입 시 모달로 약관 동의(필수 3개 + 선택 1개) + 닉네임 입력. 재방문 시 즉시 로그인. |
 | C4 | `reference/화면 모음 - PM, PD, Dev v2/신고 관리.md` 액션 옵션 | 4가지 액션으로 확장: **삭제 / 경고 / 기각 / 비공개** + 자동 정지 승격 (경고 3회 → 7일, 허위 신고 3회 → 7일 차단) |
 | C5 | `reference/화면 모음 - PM, PD, Dev v2/회원 관리.md` 정지 옵션 | 4단계 라디오 모달: **주의 / 7일 / 30일 / 영구** |
+| C6 | `reference/화면 모음 - PM, PD, Dev v2/온보딩 단계 화면.md` 실명·전화 필수 여부 | 실명·전화는 **기본 선택**. SMS 비회원 초대로 가입한 사용자만 **필수** (매칭 위해). 초대 플래그: `artier_pending_sms_invite`. 안내 배너로 이유 설명. |
+| C7 | `reference/화면 모음 - PM, PD, Dev v2/내 프로필 — 작품 관리 탭.md` 반려 배지 상호작용 | 반려 배지를 버튼으로 노출, 클릭 시 반려 사유 + "수정해서 다시 올리기" 모달 |
+| C8 | `reference/화면 모음 - PM, PD, Dev v2/내 프로필 — 전시 탭.md` 신규 발행 직후 안내 | 발행 후 프로필 도착 시 상단에 "검수 후 공개됩니다 (보통 24시간)" 배너 (dismissible, 자동 승인 모드에선 생략) |
+| C9 | `reference/화면 모음 - PM, PD, Dev v2/로그인 유도 모달.md` 온보딩 강제 완화 | 둘러보기 맥락(좋아요/저장/팔로우) 로그인 후 온보딩으로 튕기지 않고 모달만 닫음. 업로드/신고/일반은 기존대로 온보딩 유도 |
 
 ### 신규 정책 문서 작성 권장
 

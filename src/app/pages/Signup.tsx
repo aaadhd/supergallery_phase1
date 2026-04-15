@@ -7,6 +7,7 @@ import { pointsOnSignupComplete } from '../utils/pointsBackground';
 import { passwordMatchesPhase1Policy } from '../utils/passwordPolicy';
 import { registerEmailAccount, isApiConfigured } from '../services/apiClient';
 import { persistMockSession } from '../services/sessionTokens';
+import { isEmailRegistered } from '../utils/registeredAccounts';
 import { useI18n } from '../i18n/I18nProvider';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
@@ -58,7 +59,13 @@ export default function Signup() {
 
   const touched = (field: string) => submitted || touchedFields.has(field);
   const markTouched = (field: string) => setTouchedFields((prev) => new Set(prev).add(field));
-  const emailError = touched('email') && !emailValid(email) ? t('signup.errEmail') : '';
+  const emailError = touched('email')
+    ? !emailValid(email)
+      ? t('signup.errEmail')
+      : isEmailRegistered(email)
+        ? t('signup.errEmailRegistered')
+        : ''
+    : '';
   const passwordError =
     touched('password') && !passwordMatchesPhase1Policy(password) ? t('signup.passwordPolicyError') : '';
   const nicknameTrim = nickname.trim();
@@ -90,7 +97,7 @@ export default function Signup() {
   const dayOptions = useMemo(() => Array.from({ length: 31 }, (_, i) => i + 1), []);
 
   const requiredOk = agreeTerms && agreePrivacy && birthMeetsAge;
-  const step1Ok = emailValid(email) && passwordMatchesPhase1Policy(password);
+  const step1Ok = emailValid(email) && !isEmailRegistered(email) && passwordMatchesPhase1Policy(password);
   const step2Ok = nicknameLengthOk && nicknameClean && birthMeetsAge;
   const canSubmit = requiredOk && step1Ok && step2Ok;
 
@@ -98,6 +105,12 @@ export default function Signup() {
     e.preventDefault();
     setSubmitted(true);
     if (!canSubmit) return;
+    const stashPendingProfile = () => {
+      try {
+        localStorage.setItem('artier_pending_signup_email', email.trim());
+        localStorage.setItem('artier_pending_signup_nickname', nicknameTrim);
+      } catch { /* ignore */ }
+    };
     if (isApiConfigured()) {
       registerEmailAccount({
         email: email.trim(),
@@ -108,6 +121,7 @@ export default function Signup() {
           auth.login();
           persistMockSession(email.trim());
           pointsOnSignupComplete();
+          stashPendingProfile();
           navigate('/onboarding');
         })
         .catch(() => {
@@ -118,6 +132,7 @@ export default function Signup() {
     auth.login();
     persistMockSession(email.trim());
     pointsOnSignupComplete();
+    stashPendingProfile();
     navigate('/onboarding');
   };
 

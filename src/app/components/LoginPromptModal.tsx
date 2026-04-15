@@ -24,6 +24,12 @@ const ACTION_KEYS: Record<LoginPromptAction, MessageKey> = {
   general: 'loginPrompt.general',
 };
 
+/**
+ * 둘러보기 맥락의 가벼운 상호작용은 로그인만 시키고 모달만 닫음.
+ * 작품 올리기/신고처럼 신원이 필요한 동작은 온보딩을 강제.
+ */
+const BROWSE_CONTEXT_ACTIONS: ReadonlySet<LoginPromptAction> = new Set(['like', 'save', 'follow']);
+
 interface LoginPromptModalProps {
   open: boolean;
   onClose: () => void;
@@ -37,7 +43,9 @@ export function LoginPromptModal({ open, onClose, action = 'general' }: LoginPro
   const handleLogin = () => {
     authStore.login();
     const onboardingDone = localStorage.getItem('artier_onboarding_done');
-    if (!onboardingDone) {
+    const isBrowseContext = BROWSE_CONTEXT_ACTIONS.has(action);
+    // 둘러보기 중 좋아요/저장/팔로우에선 온보딩으로 튕기지 않고 흐름 유지
+    if (!onboardingDone && !isBrowseContext) {
       navigate('/onboarding');
     }
     onClose();

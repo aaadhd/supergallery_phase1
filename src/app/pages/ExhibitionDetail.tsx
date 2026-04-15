@@ -6,7 +6,7 @@ import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { artists, type Artist, type Work } from '../data';
 import { workStore, userInteractionStore } from '../store';
 import { imageUrls } from '../imageUrls';
-import { getCoverImage } from '../utils/imageHelper';
+import { getCoverImage, getThumbCover } from '../utils/imageHelper';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
 import { Button } from '../components/ui/button';
@@ -77,7 +77,7 @@ type ResolvedExhibition = MockExhibitionConfig & {
 };
 
 function resolveWorkImageSrc(work: Work): string {
-  const key = getCoverImage(work.image, work.coverImageIndex);
+  const key = getThumbCover(work);
   return imageUrls[key] || key;
 }
 

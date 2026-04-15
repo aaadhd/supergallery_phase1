@@ -25,6 +25,7 @@ import {
   getLastUsedGroupName,
   resolveCanonicalGroupName,
   setLastUsedGroupName,
+  lookupCanonicalGroupName,
 } from '../utils/groupNameRegistry';
 import { Button } from '../components/ui/button';
 import { pointsOnWorkPublished } from '../utils/pointsBackground';
@@ -111,8 +112,39 @@ export default function Upload() {
   /* ── 유형 선택 (Step 0) ── */
   const [uploadType, setUploadType] = useState<'solo' | 'group' | null>(null);
 
-  /* ── 대표(커버) 이미지 — 업로드한 작품 중에서만 선택 ── */
+  /* ── 대표(커버) 이미지 ──
+   * - coverImageIndex 0+ : 업로드한 작품 중 인덱스. 이 경우 customCoverUrl 무시
+   * - customCoverUrl 세팅 + coverImageIndex = -1 : 로컬 파일로 올린 별도 커버 (작품 배열엔 포함 안 됨)
+   */
   const [coverImageIndex, setCoverImageIndex] = useState<number>(0);
+  const [customCoverUrl, setCustomCoverUrl] = useState<string | null>(null);
+  const coverFileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleCoverFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    e.target.value = ''; // 같은 파일 재선택 허용
+    if (!file) return;
+    if (!file.type.startsWith('image/')) {
+      toast.error(tn('upload.errFileType', { name: file.name }));
+      return;
+    }
+    if (file.size > 10 * 1024 * 1024) {
+      toast.error(tn('upload.errFileTooBig', { name: file.name }));
+      return;
+    }
+    const reader = new FileReader();
+    reader.onload = () => {
+      if (typeof reader.result !== 'string') return;
+      setCustomCoverUrl(reader.result);
+      setCoverImageIndex(-1);
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const clearCustomCover = () => {
+    setCustomCoverUrl(null);
+    if (coverImageIndex === -1) setCoverImageIndex(0);
+  };
 
   /* ── 세부 정보 ── */
   const [showDetailsModal, setShowDetailsModal] = useState(false);
@@ -184,6 +216,7 @@ export default function Upload() {
     setShowInSoloTab(true);
     setSelectedContentId(null);
     setCoverImageIndex(0);
+    setCustomCoverUrl(null);
     setPreviewMode(false);
     setReorderMode(false);
     setShowDetailsModal(false);
@@ -225,6 +258,19 @@ export default function Upload() {
     return collectGroupNameSuggestions(groupName, names);
   }, [groupName, workTick]);
 
+  /**
+   * 입력 중 실시간 프리뷰 — 기존 canonical과 같은 key면 해당 이름을 표시.
+   * "수요살롱" 입력 → 기존 "수요 살롱"과 같은 그룹 안내.
+   */
+  const canonicalPreview = useMemo<{ kind: 'merge'; canonical: string } | { kind: 'new' } | null>(() => {
+    const trimmed = groupName.trim();
+    if (!trimmed) return null;
+    const existing = lookupCanonicalGroupName(trimmed);
+    if (!existing) return { kind: 'new' };
+    if (existing === trimmed) return null; // 똑같은 입력이면 안내 불필요
+    return { kind: 'merge', canonical: existing };
+  }, [groupName, workTick]);
+
   const uploadedImageCount = useMemo(
     () => contents.filter((c) => c.type === 'image' && c.url).length,
     [contents],
@@ -253,7 +299,8 @@ export default function Upload() {
     if (draft.groupName) setGroupName(draft.groupName);
     if (draft.isInstructor) setIsInstructor(true);
     if (typeof draft.showInSoloTab === 'boolean') setShowInSoloTab(draft.showInSoloTab);
-    if (typeof draft.coverImageIndex === 'number') setCoverImageIndex(Math.max(0, draft.coverImageIndex));
+    if (typeof draft.coverImageIndex === 'number') setCoverImageIndex(draft.coverImageIndex);
+    if (draft.customCoverUrl) setCustomCoverUrl(draft.customCoverUrl);
     let restored = draft.contents.map((c) => ({
       id: c.id,
       type: 'image' as const,
@@ -304,7 +351,8 @@ export default function Upload() {
     }));
     if (work.groupName) setGroupName(work.groupName);
     if (work.isInstructorUpload) setIsInstructor(true);
-    if (typeof work.coverImageIndex === 'number') setCoverImageIndex(Math.max(0, work.coverImageIndex));
+    if (typeof work.coverImageIndex === 'number') setCoverImageIndex(work.coverImageIndex);
+    if (work.customCoverUrl) setCustomCoverUrl(work.customCoverUrl);
     if (typeof work.showInSoloTab === 'boolean') setShowInSoloTab(work.showInSoloTab);
     toast.success(t('upload.toastEditLoaded'));
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -531,7 +579,13 @@ export default function Upload() {
       feedReviewStatus: import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true' ? 'approved' : 'pending',
       uploadedAt,
       linkedEventId: linkedEventId || undefined,
-      coverImageIndex: urls.length > 1 ? Math.min(coverImageIndex, urls.length - 1) : 0,
+      coverImageIndex:
+        customCoverUrl && coverImageIndex === -1
+          ? -1
+          : urls.length > 1
+            ? Math.min(Math.max(0, coverImageIndex), urls.length - 1)
+            : 0,
+      customCoverUrl: customCoverUrl && coverImageIndex === -1 ? customCoverUrl : undefined,
     };
 
     setIsPublishing(true);
@@ -580,7 +634,15 @@ export default function Upload() {
     setTimeout(() => {
       setIsPublishing(false);
       publishedRef.current = true;
-      navigate(wasEditingExistingWork ? '/me?tab=exhibition' : `/exhibitions/${targetId}`);
+      const autoApproved = import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true';
+      // 신규 발행 시 프로필 전시 탭으로 유도 + 검수 상태 플래그 전달 (배너 노출용)
+      if (wasEditingExistingWork) {
+        navigate('/me?tab=exhibition');
+      } else if (autoApproved) {
+        navigate(`/exhibitions/${targetId}`);
+      } else {
+        navigate(`/me?tab=exhibition&published=pending&workId=${targetId}`);
+      }
     }, 600);
   };
 
@@ -651,7 +713,7 @@ export default function Upload() {
       setLastAutoSavedAt(Date.now());
     }, 30000);
     return () => clearInterval(interval);
-  }, [hasContent, contents, exhibitionName, uploadType, groupName, isInstructor, showInSoloTab, coverImageIndex]);
+  }, [hasContent, contents, exhibitionName, uploadType, groupName, isInstructor, showInSoloTab, coverImageIndex, customCoverUrl]);
 
   useEffect(() => {
     if (!hasContent) return;
@@ -755,8 +817,10 @@ export default function Upload() {
       imageArtists,
       imagePieceTitles: pieceTitles,
       feedReviewStatus: 'approved',
+      customCoverUrl: customCoverUrl && coverImageIndex === -1 ? customCoverUrl : undefined,
+      coverImageIndex: customCoverUrl && coverImageIndex === -1 ? -1 : Math.max(0, coverImageIndex),
     } satisfies Work;
-  }, [previewMode, contents, exhibitionName, groupName, uploadType, t]);
+  }, [previewMode, contents, exhibitionName, groupName, uploadType, customCoverUrl, coverImageIndex, t]);
 
   if (previewMode && previewWork) {
     return (
@@ -798,10 +862,10 @@ export default function Upload() {
               <div className="relative flex aspect-square w-full items-center justify-center rounded-lg overflow-hidden">
                 <BlurDominantBg src={c.url} />
                 {c.url && <ImageWithFallback src={c.url} alt={c.title || ''} className="relative z-10 h-full w-full object-contain object-center" />}
-                <div className="absolute top-2 left-2 flex items-center gap-1.5">
+                <div className="absolute top-2 left-2 z-20 flex items-center gap-1.5">
                   <div className="bg-black/60 text-white text-xs font-bold px-2 py-1 rounded-md backdrop-blur-sm">{i + 1}</div>
                 </div>
-                <div className="absolute top-2 right-2 bg-black/40 text-white p-1 rounded-md backdrop-blur-sm"><GripVertical className="h-4 w-4" /></div>
+                <div className="absolute top-2 right-2 z-20 bg-black/40 text-white p-1 rounded-md backdrop-blur-sm"><GripVertical className="h-4 w-4" /></div>
               </div>
               <span className="text-sm text-foreground truncate w-full text-center font-medium mt-1">
                 {normalizeStoredPieceTitle(c.title) || tn('upload.imageFallback', { n: String(i + 1) })}
@@ -900,7 +964,35 @@ export default function Upload() {
                         <p className="text-sm text-muted-foreground mt-0.5">{t('upload.coverSectionDesc')}</p>
                       </div>
                       <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
-                        {/* 업로드한 작품 중에서만 대표 이미지 선택 */}
+                        {/* 커스텀 커버 (로컬 파일, 선택 시 전시 이미지 배열엔 포함되지 않음) */}
+                        {customCoverUrl && (
+                          <div className="relative shrink-0">
+                            <button
+                              type="button"
+                              onClick={() => setCoverImageIndex(-1)}
+                              className={`relative shrink-0 flex w-16 h-16 items-center justify-center rounded-lg overflow-hidden bg-muted/30 transition-all ${coverImageIndex === -1 ? 'ring-2 ring-primary ring-offset-2 shadow-md' : 'border-2 border-border/50 opacity-70 hover:opacity-100'}`}
+                              aria-label={t('upload.customCoverLabel')}
+                            >
+                              <img src={customCoverUrl} alt="" className="w-full h-full object-cover" />
+                              {coverImageIndex === -1 && (
+                                <div className="absolute inset-0 bg-primary/10 flex items-center justify-center">
+                                  <div className="bg-primary text-white rounded-full p-0.5">
+                                    <Star className="h-2.5 w-2.5 fill-white" />
+                                  </div>
+                                </div>
+                              )}
+                            </button>
+                            <button
+                              type="button"
+                              onClick={clearCustomCover}
+                              aria-label={t('upload.customCoverRemove')}
+                              className="absolute -top-1.5 -right-1.5 z-10 h-5 w-5 rounded-full bg-red-500 text-white flex items-center justify-center shadow"
+                            >
+                              <X className="h-3 w-3" />
+                            </button>
+                          </div>
+                        )}
+                        {/* 업로드한 작품 중에서 대표 이미지 선택 */}
                         {contents.filter(c => c.type === 'image' && c.url).map((c, i) => (
                           <button
                             key={c.id}
@@ -918,7 +1010,25 @@ export default function Upload() {
                             )}
                           </button>
                         ))}
+                        {/* 로컬 파일 업로드 버튼 */}
+                        <button
+                          type="button"
+                          onClick={() => coverFileInputRef.current?.click()}
+                          className="shrink-0 w-16 h-16 rounded-lg border-2 border-dashed border-border/60 flex flex-col items-center justify-center gap-0.5 text-muted-foreground hover:border-primary hover:text-primary transition-colors"
+                          aria-label={t('upload.coverUpload')}
+                        >
+                          <Plus className="h-4 w-4" />
+                          <span className="text-[9px] font-medium leading-tight">{t('upload.coverUpload')}</span>
+                        </button>
+                        <input
+                          ref={coverFileInputRef}
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={handleCoverFileChange}
+                        />
                       </div>
+                      <p className="text-xs text-muted-foreground">{t('upload.customCoverHint')}</p>
                     </div>
 
                     {/* 원작 확인 */}
@@ -1054,6 +1164,16 @@ export default function Upload() {
                               {t('upload.blockerGroupName')}
                             </span>
                           </div>
+                          {canonicalPreview?.kind === 'merge' && (
+                            <p className="mt-1 px-1 text-[12px] text-emerald-700">
+                              {t('upload.groupMergePreview').replace('{canonical}', canonicalPreview.canonical)}
+                            </p>
+                          )}
+                          {canonicalPreview?.kind === 'new' && (
+                            <p className="mt-1 px-1 text-[12px] text-muted-foreground">
+                              {t('upload.groupNewPreview')}
+                            </p>
+                          )}
                           {groupSuggestOpen && groupSuggestions.length > 0 && (
                             <ul className="absolute z-20 top-full mt-1 w-full max-h-48 overflow-auto rounded-xl border border-border bg-white shadow-[0_10px_40px_-15px_rgba(0,0,0,0.15)] py-2 text-sm">
                               {groupSuggestions.map((name) => (

@@ -6,6 +6,7 @@ import { profileStore } from '../store';
 import { artists } from '../data';
 import { pointsOnOnboardingStep1Complete } from '../utils/pointsBackground';
 import { matchSmsInviteOnSignup } from '../utils/inviteMessaging';
+import { isEmailRegistered, isPhoneRegistered, registerAccount } from '../utils/registeredAccounts';
 import { toast } from 'sonner';
 import { useI18n } from '../i18n/I18nProvider';
 import { Button } from '../components/ui/button';
@@ -17,13 +18,44 @@ export default function Onboarding() {
   const navigate = useNavigate();
   const { t } = useI18n();
   const [currentStep, setCurrentStep] = useState(0);
-  const [nickname, setNickname] = useState('');
+  /** 소셜 가입 직후 prefill된 닉네임 (Login에서 `artier_pending_signup_nickname`로 전달) */
+  const prefilledNickname = (() => {
+    if (typeof window === 'undefined') return '';
+    try { return localStorage.getItem('artier_pending_signup_nickname') || ''; } catch { return ''; }
+  })();
+  const [nickname, setNickname] = useState(prefilledNickname);
   const [nicknameError, setNicknameError] = useState('');
   const [realName, setRealName] = useState('');
   const [realNameError, setRealNameError] = useState('');
   const [phone, setPhone] = useState('');
+  const [phoneError, setPhoneError] = useState('');
+  /** 이메일 가입(Signup) 또는 소셜 가입(Login) 직후 provider에서 받은 이메일 */
+  const prefilledEmail = (() => {
+    if (typeof window === 'undefined') return '';
+    try { return localStorage.getItem('artier_pending_signup_email') || ''; } catch { return ''; }
+  })();
+  const [email, setEmail] = useState(prefilledEmail);
+  const [emailError, setEmailError] = useState('');
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  /**
+   * SMS 비회원 초대로 들어온 사용자. 배너 문구와 매칭 성공 안내에 사용.
+   * - 플래그 설정: `ExhibitionInviteLanding`의 "가입하기" 클릭 시
+   */
+  const isInviteFlow = (() => {
+    if (typeof window === 'undefined') return false;
+    try { return localStorage.getItem('artier_pending_sms_invite') === '1'; } catch { return false; }
+  })();
+
+  /**
+   * 소셜 첫 가입자. 배너 문구 + 이메일 필수 여부에 사용.
+   * - 플래그 설정: `Login`의 `completeFirstSocialSignup`
+   */
+  const isSocialSignup = (() => {
+    if (typeof window === 'undefined') return false;
+    try { return !!localStorage.getItem('artier_pending_social_signup'); } catch { return false; }
+  })();
 
   const goNext = useCallback(() => {
     setCurrentStep(s => Math.min(s + 1, TOTAL_STEPS - 1));
@@ -49,6 +81,14 @@ export default function Onboarding() {
 
   const validateRealName = (): boolean => {
     const trimmed = realName.trim();
+    if (trimmed.length === 0) {
+      setRealNameError(
+        isInviteFlow
+          ? t('onboarding.errRealNameRequiredInvite')
+          : t('onboarding.errRealNameRequiredSocial'),
+      );
+      return false;
+    }
     if (trimmed.length < 2) {
       setRealNameError(t('onboarding.errRealNameShort'));
       return false;
@@ -57,10 +97,53 @@ export default function Onboarding() {
     return true;
   };
 
+  const validatePhone = (): boolean => {
+    const trimmed = phone.trim();
+    if (trimmed.length === 0) {
+      setPhoneError(
+        isInviteFlow
+          ? t('onboarding.errPhoneRequiredInvite')
+          : t('onboarding.errPhoneRequiredSocial'),
+      );
+      return false;
+    }
+    const digits = trimmed.replace(/[^0-9]/g, '');
+    if (digits.length < 10) {
+      setPhoneError(t('onboarding.errPhoneInvalid'));
+      return false;
+    }
+    if (isPhoneRegistered(trimmed)) {
+      setPhoneError(t('onboarding.errPhoneRegistered'));
+      return false;
+    }
+    setPhoneError('');
+    return true;
+  };
+
+  const validateEmail = (): boolean => {
+    const trimmed = email.trim();
+    if (trimmed.length === 0) {
+      setEmailError(t('onboarding.errEmailRequired'));
+      return false;
+    }
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
+      setEmailError(t('onboarding.errEmailInvalid'));
+      return false;
+    }
+    if (isEmailRegistered(trimmed) && trimmed.toLowerCase() !== prefilledEmail.trim().toLowerCase()) {
+      setEmailError(t('onboarding.errEmailRegistered'));
+      return false;
+    }
+    setEmailError('');
+    return true;
+  };
+
   const handleNicknameNext = () => {
     const nickOk = validateNickname();
     const realOk = validateRealName();
-    if (!nickOk || !realOk) return;
+    const phoneOk = validatePhone();
+    const emailOk = validateEmail();
+    if (!nickOk || !realOk || !phoneOk || !emailOk) return;
     pointsOnOnboardingStep1Complete();
     goNext();
   };
@@ -82,8 +165,9 @@ export default function Onboarding() {
     profileStore.updateProfile({
       name,
       nickname: name,
-      realName: real,
+      ...(real ? { realName: real } : {}),
       ...(phone.trim() ? { phone: phone.trim() } : {}),
+      ...(email.trim() ? { email: email.trim() } : {}),
       ...(profileImage ? { avatarUrl: profileImage } : {}),
     });
     if (phone.trim() && real) {
@@ -97,7 +181,14 @@ export default function Onboarding() {
         toast.success(`초대받은 작품 ${result.matched}개가 내 계정과 연결되었어요.`);
       }
     }
+    registerAccount(email.trim(), phone.trim());
     localStorage.setItem('artier_onboarding_done', 'true');
+    try {
+      localStorage.removeItem('artier_pending_sms_invite');
+      localStorage.removeItem('artier_pending_signup_nickname');
+      localStorage.removeItem('artier_pending_social_signup');
+      localStorage.removeItem('artier_pending_signup_email');
+    } catch { /* ignore */ }
     navigate('/');
   };
 
@@ -181,7 +272,12 @@ export default function Onboarding() {
               {currentStep === 1 && (
                 <>
                   <h2 className="text-lg font-bold text-foreground mb-1">{t('onboarding.nicknameTitle')}</h2>
-                  <p className="text-sm text-muted-foreground mb-6">{t('onboarding.nicknameLead')}</p>
+                  <p className="text-sm text-muted-foreground mb-4">{t('onboarding.nicknameLead')}</p>
+                  {(isInviteFlow || isSocialSignup) && (
+                    <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-3 text-[13px] text-amber-900">
+                      {isSocialSignup ? t('onboarding.socialNotice') : t('onboarding.inviteNotice')}
+                    </div>
+                  )}
 
                   {/* 프로필 이미지 */}
                   <input ref={fileInputRef} type="file" accept="image/*" className="sr-only" onChange={handleFileChange} />
@@ -201,7 +297,10 @@ export default function Onboarding() {
                   </div>
 
                   {/* 실명 */}
-                  <label className="block text-sm font-medium text-foreground mb-2">{t('onboarding.realNameLabel')}</label>
+                  <label className="block text-sm font-medium text-foreground mb-2">
+                    {t('onboarding.realNameLabel')}
+                    <span className="ml-1 text-[11px] font-medium text-red-500">{t('common.required')}</span>
+                  </label>
                   <input
                     type="text"
                     value={realName}
@@ -227,15 +326,34 @@ export default function Onboarding() {
                   {nicknameError ? <p className="mt-1 text-sm text-destructive">{nicknameError}</p> : null}
 
                   {/* 전화번호 */}
-                  <label className="block text-sm font-medium text-foreground mb-2 mt-5">{t('onboarding.phoneLabel')}</label>
+                  <label className="block text-sm font-medium text-foreground mb-2 mt-5">
+                    {t('onboarding.phoneLabel')}
+                    <span className="ml-1 text-[11px] font-medium text-red-500">{t('common.required')}</span>
+                  </label>
                   <input
                     type="tel"
                     value={phone}
-                    onChange={e => setPhone(e.target.value)}
+                    onChange={e => { setPhone(e.target.value); setPhoneError(''); }}
                     placeholder={t('onboarding.phonePlaceholder')}
                     className="w-full rounded-xl border border-border px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
                   />
+                  {phoneError ? <p className="mt-1 text-sm text-destructive">{phoneError}</p> : null}
                   <p className="mt-1 text-xs text-muted-foreground">{t('onboarding.phoneHint')}</p>
+
+                  {/* 이메일 */}
+                  <label className="block text-sm font-medium text-foreground mb-2 mt-5">
+                    {t('onboarding.emailLabel')}
+                    <span className="ml-1 text-[11px] font-medium text-red-500">{t('common.required')}</span>
+                  </label>
+                  <input
+                    type="email"
+                    value={email}
+                    onChange={e => { setEmail(e.target.value); setEmailError(''); }}
+                    placeholder={t('onboarding.emailPlaceholder')}
+                    className="w-full rounded-xl border border-border px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                  />
+                  {emailError ? <p className="mt-1 text-sm text-destructive">{emailError}</p> : null}
+                  <p className="mt-1 text-xs text-muted-foreground">{t('onboarding.emailHint')}</p>
 
                   <div className="mt-8 flex gap-3">
                     <Button variant="ghost" type="button" onClick={goBack} className="flex-1 rounded-xl border border-border py-3.5 text-sm font-semibold text-foreground lg:hover:bg-muted/50">

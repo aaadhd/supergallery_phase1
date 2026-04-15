@@ -14,7 +14,7 @@ import { imageUrls } from '../imageUrls';
 import { WorkDetailModal } from '../components/WorkDetailModal';
 import { ReportModal } from '../components/ReportModal';
 import { LoginPromptModal } from '../components/LoginPromptModal';
-import { getCoverImage, getImageCount } from '../utils/imageHelper';
+import { getCoverImage, getImageCount, getThumbCover } from '../utils/imageHelper';
 import { isWorkVisibleOnPublicFeed } from '../utils/feedVisibility';
 import { pointsOnBrowseDailyVisit } from '../utils/pointsBackground';
 import { useI18n } from '../i18n/I18nProvider';
@@ -659,7 +659,7 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
       Boolean(work.isInstructorUpload) ||
       Boolean(coOwners?.length) ||
       work.owner?.type === 'group');
-  const imageSrc = resolveImage(getCoverImage(work.image, work.coverImageIndex));
+  const imageSrc = resolveImage(getThumbCover(work));
   const imageCount = getImageCount(work.image);
 
   // 비회원 참여 작가 (imageArtists type='non-member') — peek 리스트에 이름만 노출

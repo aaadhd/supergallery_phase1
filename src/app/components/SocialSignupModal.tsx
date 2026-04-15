@@ -18,7 +18,7 @@ interface Props {
   open: boolean;
   provider: SocialProvider | null;
   onClose: () => void;
-  onComplete: (nickname: string) => void;
+  onComplete: (nickname: string, email: string) => void;
 }
 
 /**
@@ -151,7 +151,7 @@ export function SocialSignupModal({ open, provider, onClose, onComplete }: Props
           <Button
             type="button"
             disabled={!canSubmit}
-            onClick={() => onComplete(nickname.trim())}
+            onClick={() => onComplete(nickname.trim(), profile.email)}
             className="h-12 min-h-12 w-full text-base font-medium"
           >
             {t('socialSignup.submit')}

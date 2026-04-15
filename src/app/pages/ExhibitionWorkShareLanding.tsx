@@ -6,7 +6,7 @@ import { useWorkStore, useAuthStore } from '../store';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { imageUrls } from '../imageUrls';
 import { Button } from '../components/ui/button';
-import { getCoverImage, getImageCount } from '../utils/imageHelper';
+import { getCoverImage, getImageCount, getThumbCover } from '../utils/imageHelper';
 import { displayExhibitionTitle, displayProminentHeadline } from '../utils/workDisplay';
 import { useI18n } from '../i18n/I18nProvider';
 
@@ -37,7 +37,7 @@ export default function ExhibitionWorkShareLanding() {
 
   const pieceTitle = displayProminentHeadline(work, t('work.untitled'));
   const exhibitionTitle = displayExhibitionTitle(work, t('work.exhibitionFallback'));
-  const coverKey = getCoverImage(work.image, work.coverImageIndex);
+  const coverKey = getThumbCover(work);
   const coverSrc = imageUrls[coverKey] || coverKey;
   const imgCount = getImageCount(work.image);
   const creatorName = work.artist.name;

@@ -29,6 +29,18 @@ function saveCanonicalMap(map: Record<string, string>) {
   localStorage.setItem(CANONICAL_MAP_KEY, JSON.stringify(map));
 }
 
+/**
+ * 부수효과 없이 기존 canonical만 조회 — 입력 중 실시간 프리뷰용.
+ * 반환: 같은 key의 기존 canonical 이름(있으면) / null(신규로 등록될 예정)
+ */
+export function lookupCanonicalGroupName(trimmedInput: string): string | null {
+  if (!trimmedInput) return null;
+  const key = normalizeGroupKey(trimmedInput);
+  if (!key) return null;
+  const map = loadCanonicalMap();
+  return map[key] ?? null;
+}
+
 /** 입력을 정규화 키로 매칭해 표시용 캐논 이름 반환 (최초 등록 시 입력값이 캐논) */
 export function resolveCanonicalGroupName(trimmedInput: string): string {
   if (!trimmedInput) return '';

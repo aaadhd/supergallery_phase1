@@ -6,7 +6,7 @@ import { imageUrls } from '../imageUrls';
 import { CopyrightProtectedImage } from './work/CopyrightProtectedImage';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { Button } from './ui/button';
-import { getCoverImage, getImageCount } from '../utils/imageHelper';
+import { getCoverImage, getImageCount, getThumbCover } from '../utils/imageHelper';
 import { userInteractionStore, useInteractionStore, useAuthStore, workStore } from '../store';
 import { LoginPromptModal } from './LoginPromptModal';
 import { useI18n } from '../i18n/I18nProvider';
@@ -24,7 +24,7 @@ interface WorkCardProps {
 
 export function WorkCard({ work, showSaleBadge, showReviewBadge, onRejectedClick }: WorkCardProps) {
   const { t } = useI18n();
-  const firstImage = getCoverImage(work.image, work.coverImageIndex);
+  const firstImage = getThumbCover(work);
   const imageCount = getImageCount(work.image);
   const interactions = useInteractionStore();
   const auth = useAuthStore();
