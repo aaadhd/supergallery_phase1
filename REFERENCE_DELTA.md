@@ -1171,7 +1171,7 @@
 - **태그**: ✅
 - **수정 지침**:
   - 기능 모음 ↔ `src/app` 대응. 동일 기능이 화면 모음에도 있으면 **한쪽만 정본**으로 두고 나머지는 링크(§8.7 절차 제안).
-  - **영속**: localStorage `artier_admin_banners_v1` — §8.4. 드래그 순서만 미구현(§11.6).
+  - **영속**: localStorage `artier_admin_banners_v1` — §8.4. 드래그 순서 구현됨(@dnd-kit, §11.6).
 
 ### 4.87 `[#87]` `reference/기능 모음 - PM, Dev/배지 시스템 32b2df21a9a781579de4e88054ba07fd.md`
 
@@ -1350,7 +1350,7 @@
 - **태그**: ✅
 - **수정 지침**:
   - 기능 모음 ↔ `src/app` 대응. 동일 기능이 화면 모음에도 있으면 **한쪽만 정본**으로 두고 나머지는 링크(§8.7 절차 제안).
-  - **영속**: localStorage `artier_admin_banners_v1` — §8.4. 드래그 순서만 미구현(§11.6).
+  - **영속**: localStorage `artier_admin_banners_v1` — §8.4. 드래그 순서 구현됨(@dnd-kit, §11.6).
 
 ### 4.111 `[#111]` `reference/기능 모음 - PM, Dev/튜토리얼 코치마크 32b2df21a9a781deb40fe8c4fd77dbb0.md`
 

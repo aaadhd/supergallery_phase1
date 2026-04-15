@@ -717,7 +717,7 @@ const ok = await openConfirm({
 
 1. **비회원 작가 표시명** 비속어 검사 — Upload 발행 시 선택 적용
 2. **대용량 업로드 progress** — 별도 진행 UI 없음(제품 정책에 따라)
-3. **스토리지 버전** — `Work` 스키마 변경 시 `WORKS_STORAGE_VERSION`(`local-gallery-v10` 등) 증가 유지
+3. **스토리지 버전** — `Work` 스키마 변경 시 `WORKS_STORAGE_VERSION`(`local-gallery-v11` 등) 증가 유지
 
 ---
 

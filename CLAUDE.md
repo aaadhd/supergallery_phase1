@@ -7,7 +7,7 @@
 > Phase 1 클라이언트 구현·명세 동기화는 **`IMPLEMENTATION_DELTA.md`와 현재 `src/app/` 코드**를 기준으로 한다. 완성도를 퍼센트로 표기하지 않는다.
 
 ## 스펙 문서
-- 제품·운영 정책(코드 반영) + **PM→개발자 전달 가이드 §16**: `docs/product-policies.md`
+- 개발자 인수인계 문서 (reference 대비 변경·목업·확정 수치): `docs/product-policies.md`
 - 작품 올리기 전체 스펙: `docs/upload_spec.md`
 - 작품 톤 배경 묻어나는 효과: **원본 이미지를 blur + scale + opacity로 깔아** 순수 CSS로 구현 ([WorkDetailModal.tsx:407](src/app/components/WorkDetailModal.tsx#L407), [Upload.tsx:12,1140](src/app/pages/Upload.tsx#L12)). dominant-color 추출 알고리즘 불필요 — 관련 모듈·spec 문서는 2026-04-15 삭제됨
 - 구현 델타·레퍼런스 수정 지침: `IMPLEMENTATION_DELTA.md`, `REFERENCE_DELTA.md`
@@ -19,6 +19,7 @@
 - `src/app/pages/ExhibitionDetail.tsx` — 전시 상세
 - `src/app/pages/ExhibitionRoute.tsx` — `?from=invite` 분기 처리
 - `src/app/pages/ExhibitionInviteLanding.tsx` — 전시 초대장 오픈 화면 (2026-04-13 신설)
+- `src/app/pages/ExhibitionWorkShareLanding.tsx` — `?from=work` 작품 공유 랜딩
 - `src/app/pages/Profile.tsx` — 강사 표시 자동 파생 (`instructorVisible`)
 - `src/app/pages/Search.tsx` — 검색 (계정별/게스트 키; 로그인 시 guest 히스토리 병합 — IMPLEMENTATION_DELTA §11.3)
 - `src/app/pages/FlowDemoTools.tsx` — `/demo` PM 데모 맵
@@ -32,18 +33,25 @@
 - `src/app/components/WorksStorageSync.tsx` — works 스토리지 버전 동기화
 - `src/app/components/work/CopyrightProtectedImage.tsx` — 우클릭/드래그 차단 이미지 컴포넌트
 - `src/app/components/SocialSignupModal.tsx` — 소셜 첫 가입 시 약관 동의 + 닉네임 입력 (SCR-AUTH-03)
+- `src/app/components/QaScreenShortcuts.tsx` — QA/검수용 바로가기 플로팅 버튼 (DEV 또는 `VITE_FOOTER_QA_LINKS` 활성 시)
+- `src/app/components/RequiredMark.tsx` — 필수 입력 표시 (빨간 별 + sr-only 라벨)
 
 ### 유틸 / Store
-- `src/app/store.ts` — `WORKS_STORAGE_VERSION` 스토리지 버전 관리 (현재 값 `local-gallery-v10`, 키 `artier_works_version`)
+- `src/app/store.ts` — `WORKS_STORAGE_VERSION` 스토리지 버전 관리 (현재 값 `local-gallery-v11`, 키 `artier_works_version`)
 - `src/app/store/workStore.ts`, `draftStore.ts` — 작품/초안 상태
 - `src/app/utils/inviteMessaging.ts` — 초대 발송 (5% 랜덤 실패 시뮬, `artier_invite_messaging_log`) + `matchSmsInviteOnSignup` 가입 시 작품 자동 연결
 - `src/app/utils/sanctionStore.ts` — 경고·허위신고 카운터 + 정지 단계 (`SuspensionLevel`, `addWarning`, `addFalseReport`, `suspendDemoUser`)
 - `src/app/utils/adminGate.ts` — 운영팀 역할 토글
 - `src/app/utils/feedOrdering.ts` — 둘러보기 피드 랭킹
+- `src/app/utils/feedVisibility.ts` — 피드 공개 여부 필터
 - `src/app/utils/bannerStore.ts` — 배너 관리 (DnD 적용됨)
 - `src/app/utils/pushDemoNotification.ts` — 알림 데모 푸시
 - `src/app/utils/reviewLabels.ts` — 검수 사유 4분류
 - `src/app/utils/analytics.ts` — GA4 스캐폴딩
+- `src/app/utils/registeredAccounts.ts` — 가입 이메일·전화 중복 검사 레지스트리
+- `src/app/utils/groupNameRegistry.ts` — 그룹명 자동완성·정규화·캐논 맵
+- `src/app/utils/imageHelper.ts` — 이미지 리사이즈·유틸
+- `src/app/utils/searchRank.ts` — 검색 결과 랭킹
 - `src/app/utils/pointsBackground.ts` — 포인트 적립/회수 (`pointsRecallIfQuickDelete`, `addDemoPp`)
 
 > ⚠️ **삭제됨**: `src/app/utils/instructorPublic.ts` (2026-04-13). 강사 여부는 더 이상 별도 플래그가 아니라 업로드 이력에서 자동 파생 — 아래 "강사 표시 정책" 참조.
@@ -158,7 +166,7 @@
 - **Deprecated (부팅 시 제거)**: `artier_instructor_public_ids` — `PointsBootstrap` 마운트 시 `LEGACY_STORAGE_KEYS`로 제거 (IMPLEMENTATION_DELTA §11.1)
 
 ### 기타
-- **버전 관리**: `WORKS_STORAGE_VERSION` 변경 시 works 데이터 자동 재시드
+- **버전 관리**: `WORKS_STORAGE_VERSION` (`local-gallery-v11`) 변경 시 works 데이터 자동 재시드
 - **이벤트 데이터**: `eventStore.ts` 단일 소스 + `artier_managed_events_v1` 영속화 (IMPLEMENTATION_DELTA §8.5·§9.7)
 - **포인트 회수**: 업로드 후 24시간 이내 삭제 시 AP -20 (`pointsBackground.ts:pointsRecallIfQuickDelete`)
 - **강사 표시**: 별도 저장소 없음. `workStore` 작품 목록에서 파생 (`Profile.tsx`의 `instructorVisible`, 단일 소스)
@@ -174,10 +182,10 @@
 | 11.3 | 검색 히스토리 guest → 로그인 | `Search.tsx` | — | ✅ §11.3 완료 |
 | 11.4 | ExhibitionInviteLanding seed | `ExhibitionInviteLanding.tsx` | — | ✅ §11.4 완료 |
 | 11.5 | ContentReview locale | `ContentReview.tsx` | — | ✅ §11.5 완료 |
-| 11.6 | 배너 드래그앤드롭 순서 변경 | `bannerStore.ts`, `admin/BannerManagement.tsx` | Medium | 미구현 |
+| 11.6 | 배너 드래그앤드롭 순서 변경 | `bannerStore.ts`, `admin/BannerManagement.tsx` | — | ✅ `@dnd-kit/sortable` 적용 완료 |
 
 ### 남은 권장 작업
-- **11.6**: 배너 순서 UX (`order` 필드 + DnD)
+- 모든 §11 항목 완료됨.
 
 ## 외부 연동 미완 (Phase 2 예정)
 소셜 OAuth(카카오/구글/애플), 이메일 발송, SMS/카카오 알림톡, Supabase 실서버, OG 이미지 동적 생성.
