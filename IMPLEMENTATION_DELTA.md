@@ -1,10 +1,20 @@
 # SuperGallery Phase 1 — 명세 대비 구현 델타 보고서
 
 > **작성일**: 2026-04-12
-> **최종 수정**: 2026-04-16 (새벽) — 사용자 체감 UX 3건 보강:
+> **최종 수정**: 2026-04-16 (오전) — SMS 초대 매칭 신뢰도 보강:
+> - **A. 발송 직전 확인 모달** (`Upload.tsx handlePublish`): 비회원 초대가 포함된 발행에서 수신자 목록 + 실명 정확성 경고("⚠️ 입력하신 이름이 그분의 실명과 정확히 같아야 작품이 자동 연결됩니다. 호칭·별명은 연결되지 않아요") 확인 모달. 취소 시 발행 전체 중단.
+> - **B. 가입 후 본인 확인 게이트** (`PendingInviteClaimGate.tsx`): `matchSmsInviteOnSignup`이 전화 일치·이름 불일치로 차단한 초대를 `blockedList`로 반환 → Onboarding에서 `sessionStorage['artier_pending_invite_claims']`에 저장 → App 루트 게이트가 모달로 본인 확인. **수락** 시 `claimBlockedInvite`로 비회원 슬롯 승격. **거부** 시 `sanctionStore.addWarning`로 발신자에게 경고 +1 (3회 누적 시 7일 자동 정지). "나중에" 옵션으로 보류 가능.
+> - 부수 변경: `AlertDialogDescription`에 `whitespace-pre-line` 추가(여러 줄 description 지원), 새 i18n 키 `upload.confirmInvite*`/`claim.*` 한·영.
+>
+> **이전 수정**: 2026-04-16 (새벽) — 사용자 체감 UX 3건 보강:
 > - **#5** 프로필 반려 배지를 클릭 가능한 버튼으로 — 클릭 시 이전부터 있던 반려 사유/재업로드 모달 오픈 (시각 신호 `›` 추가).
 > - **#2** 신규 발행 직후 프로필 전시 탭에 "검수 후 공개" 안내 배너 노출 — `/me?tab=exhibition&published=pending&workId={id}` 플래그. dismissible. 자동 승인 모드에선 생략.
-> - **#3** 온보딩 실명·전화를 기본 **선택**으로 완화 + 초대 플로우(SMS 비회원 초대 경로)에선 **필수** 강제. 플래그: `artier_pending_sms_invite`. `ExhibitionInviteLanding`의 "가입하기"가 `?invited=1` + localStorage 플래그 세팅. Onboarding에서 감지해 라벨/검증 분기. 종료 시 플래그 자동 정리.
+> - **#3** 온보딩 실명·전화는 **모든 경로에서 필수**로 통일 (이전엔 초대 플로우만 필수). 이메일은 **소셜 첫 가입자만 필수** (이메일 가입자는 가입 폼에서 이미 수집). 가입 경로에서 가져올 수 있는 정보는 모두 prefill해 재입력 혼란 제거:
+>   - **이메일 가입**: 이메일 → `artier_pending_signup_email`
+>   - **소셜 첫 가입**: 닉네임 + provider 이메일 → `artier_pending_signup_nickname`, `artier_pending_signup_email`
+>   - **SMS 초대**: 초대받은 전화번호·표시명 → URL `?invited_phone=&invited_name=` → `artier_pending_signup_phone`, `artier_pending_signup_realname`
+>
+>   각 플래그는 Onboarding에서 prefill 후 종료 시 일괄 정리. 초대 플래그(`artier_pending_sms_invite`) / 소셜 플래그(`artier_pending_social_signup`)는 라벨·배너 분기에만 사용.
 > - `common.required` / `common.requiredSr` i18n 키 신설(RequiredMark 하드코딩 제거, EN 자동 전환).
 > - LoginPromptModal: 둘러보기 맥락(좋아요/저장/팔로우) 로그인 후 온보딩 강제 이동 해제 — 상호작용 흐름 유지.
 >
@@ -892,7 +902,7 @@ TOP 1 우선순위 과제 완료. 3곳 분산 하드코딩(Events 배너 2 + 예
 | C3 | `reference/화면 모음 - PM, PD, Dev v2/소셜 로그인 화면.md` (SCR-AUTH-03) | 첫 가입 시 모달로 약관 동의(필수 3개 + 선택 1개) + 닉네임 입력. 재방문 시 즉시 로그인. |
 | C4 | `reference/화면 모음 - PM, PD, Dev v2/신고 관리.md` 액션 옵션 | 4가지 액션으로 확장: **삭제 / 경고 / 기각 / 비공개** + 자동 정지 승격 (경고 3회 → 7일, 허위 신고 3회 → 7일 차단) |
 | C5 | `reference/화면 모음 - PM, PD, Dev v2/회원 관리.md` 정지 옵션 | 4단계 라디오 모달: **주의 / 7일 / 30일 / 영구** |
-| C6 | `reference/화면 모음 - PM, PD, Dev v2/온보딩 단계 화면.md` 실명·전화 필수 여부 | 실명·전화는 **기본 선택**. SMS 비회원 초대로 가입한 사용자만 **필수** (매칭 위해). 초대 플래그: `artier_pending_sms_invite`. 안내 배너로 이유 설명. |
+| C6 | `reference/화면 모음 - PM, PD, Dev v2/온보딩 단계 화면.md` 실명·전화 필수 여부 | 실명·전화는 **모든 가입 경로에서 필수**. 이메일은 **소셜 첫 가입자만 필수** (이메일 가입자는 가입 폼에서 수집). 초대 플래그(`artier_pending_sms_invite`) / 소셜 플래그(`artier_pending_social_signup`)는 라벨·배너·에러 문구 분기에만 사용. 소셜 첫 가입은 `artier_pending_signup_nickname` prefill. |
 | C7 | `reference/화면 모음 - PM, PD, Dev v2/내 프로필 — 작품 관리 탭.md` 반려 배지 상호작용 | 반려 배지를 버튼으로 노출, 클릭 시 반려 사유 + "수정해서 다시 올리기" 모달 |
 | C8 | `reference/화면 모음 - PM, PD, Dev v2/내 프로필 — 전시 탭.md` 신규 발행 직후 안내 | 발행 후 프로필 도착 시 상단에 "검수 후 공개됩니다 (보통 24시간)" 배너 (dismissible, 자동 승인 모드에선 생략) |
 | C9 | `reference/화면 모음 - PM, PD, Dev v2/로그인 유도 모달.md` 온보딩 강제 완화 | 둘러보기 맥락(좋아요/저장/팔로우) 로그인 후 온보딩으로 튕기지 않고 모달만 닫음. 업로드/신고/일반은 기존대로 온보딩 유도 |

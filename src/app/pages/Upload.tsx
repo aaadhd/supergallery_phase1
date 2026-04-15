@@ -556,6 +556,25 @@ export default function Upload() {
       }
       return { type: 'member' as const, memberId: currentUser.id, memberName: currentUser.name, memberAvatar: currentUser.avatar };
     });
+
+    /**
+     * 비회원 초대 발송 직전 확인 모달 (실명 정확성 고지).
+     * - 라벨로만 안내하면 "민수쌤" 같은 호칭 입력이 걸러지지 않아 가입 후 매칭 실패.
+     * - 발송 시점에 한 번 더 실명임을 상기 + 수락/취소 선택지 제공.
+     */
+    const invitePreview = imageArtists
+      .map((a) => (a.type === 'non-member' && a.displayName && a.phoneNumber ? a.displayName : null))
+      .filter((v): v is string => !!v);
+    if (invitePreview.length > 0) {
+      const list = invitePreview.map((n) => `• ${n}`).join('\n');
+      const ok = await openConfirm({
+        title: t('upload.confirmInviteTitle'),
+        description: `${t('upload.confirmInviteListIntro')}\n${list}\n\n${t('upload.confirmInviteHelper')}`,
+        confirmLabel: t('upload.confirmInviteSend'),
+      });
+      if (!ok) return;
+    }
+
     const uploadedAt = new Date().toISOString().slice(0, 10);
     const newWork: Work = {
       id: `user-${Date.now()}`,
@@ -607,9 +626,10 @@ export default function Upload() {
     let inviteSent = 0;
     let inviteFailed = 0;
     if (nonMemberRecipients.length > 0) {
-      const exhibitionUrl = `${window.location.origin}/exhibitions/${targetId}?from=credited`;
       const inviteLocale = locale === 'en' ? 'en' : 'ko';
       for (const r of nonMemberRecipients) {
+        // 초대받은 전화번호를 URL에 실어 보내 → 랜딩 → 가입 시 prefill (재입력 방지 + 매칭 성공률 ↑)
+        const exhibitionUrl = `${window.location.origin}/exhibitions/${targetId}?from=credited&invited_phone=${encodeURIComponent(r.phoneNumber)}&invited_name=${encodeURIComponent(r.displayName)}`;
         const result = sendInviteToNonMember({ phoneNumber: r.phoneNumber, displayName: r.displayName, workId: targetId, exhibitionUrl, locale: inviteLocale });
         if (result.success) inviteSent++;
         else inviteFailed++;
@@ -1329,28 +1349,52 @@ export default function Upload() {
                           {contents.map((c, idx) => {
                             const assignedName = c.artist?.name || c.nonMemberArtist?.displayName || '';
                             const assignedAvatar = c.artist?.avatar || '';
-                            const showStatus = uploadType === 'group';
                             return (
-                              <button
+                              <div
                                 key={c.id}
-                                type="button"
-                                onClick={() => setSelectedContentId(c.id)}
-                                className={`relative flex aspect-square items-center justify-center rounded-xl overflow-hidden border-2 transition-all ${c.id === selectedContentId ? 'border-primary ring-2 ring-primary/20' : 'border-transparent hover:border-border'}`}
+                                className={`relative aspect-square rounded-xl overflow-hidden border-2 transition-all ${c.id === selectedContentId ? 'border-primary ring-2 ring-primary/20' : 'border-transparent hover:border-border'}`}
                               >
-                                <BlurDominantBg src={c.url} />
-                                <ImageWithFallback src={c.url} alt="" className="relative z-10 w-full h-full object-contain object-center" />
-                                {showStatus && assignedName && (
-                                  <span className="absolute bottom-1 left-1 flex items-center gap-1 bg-black/60 backdrop-blur-sm text-white text-[10px] font-medium pl-0.5 pr-1.5 py-0.5 rounded-full max-w-[calc(100%-2rem)]">
+                                <button
+                                  type="button"
+                                  onClick={() => setSelectedContentId(c.id)}
+                                  className="absolute inset-0 flex items-center justify-center w-full h-full"
+                                  aria-label={tn('upload.imageFallback', { n: String(idx + 1) })}
+                                >
+                                  <BlurDominantBg src={c.url} />
+                                  <ImageWithFallback src={c.url} alt="" className="relative z-10 w-full h-full object-contain object-center" />
+                                </button>
+                                {assignedName && (
+                                  <span className="pointer-events-none absolute bottom-1 left-1 z-20 flex items-center gap-1 bg-black/60 backdrop-blur-sm text-white text-[10px] font-medium pl-0.5 pr-1.5 py-0.5 rounded-full max-w-[calc(100%-2rem)]">
                                     {assignedAvatar
                                       ? <img src={assignedAvatar} alt="" className="w-4 h-4 rounded-full object-cover shrink-0" />
                                       : <span className="w-4 h-4 rounded-full bg-white/30 shrink-0" />}
                                     <span className="truncate">{assignedName}</span>
                                   </span>
                                 )}
-                                <span className={`absolute bottom-1 right-1 text-[10px] font-bold px-1.5 py-0.5 rounded-md ${c.id === selectedContentId ? 'bg-primary text-white' : 'bg-black/50 text-white/80'}`}>
+                                <span className={`pointer-events-none absolute bottom-1 right-1 z-20 text-[10px] font-bold px-1.5 py-0.5 rounded-md ${c.id === selectedContentId ? 'bg-primary text-white' : 'bg-black/50 text-white/80'}`}>
                                   {idx + 1}
                                 </span>
-                              </button>
+                                <button
+                                  type="button"
+                                  aria-label={t('upload.toolbarDelete')}
+                                  onClick={async (e) => {
+                                    e.stopPropagation();
+                                    if (!(await openConfirm({ title: t('upload.confirmDeleteImage'), destructive: true, confirmLabel: t('profile.delete') }))) return;
+                                    const removeIdx = contents.findIndex((x) => x.id === c.id);
+                                    setContents(contents.filter((x) => x.id !== c.id));
+                                    if (selectedContentId === c.id) setSelectedContentId(null);
+                                    setCoverImageIndex((prev) => {
+                                      if (removeIdx < 0) return prev;
+                                      if (prev === removeIdx) return 0;
+                                      if (prev > removeIdx) return Math.max(0, prev - 1);
+                                      return prev;
+                                    });
+                                  }}
+                                  className="absolute top-1 right-1 z-20 flex items-center justify-center w-6 h-6 rounded-full bg-black/60 text-white hover:bg-red-600 transition-colors"
+                                >
+                                  <X className="h-3.5 w-3.5" />
+                                </button>
+                              </div>
                             );
                           })}
                           {contents.length < 10 && (

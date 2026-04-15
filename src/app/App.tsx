@@ -7,6 +7,7 @@ import { PointsBootstrap } from './components/PointsBootstrap';
 import { WorksStorageSync } from './components/WorksStorageSync';
 import { ConfirmDialogRoot } from './components/ConfirmDialog';
 import { OfflineBanner } from './components/OfflineBanner';
+import { PendingInviteClaimGate } from './components/PendingInviteClaimGate';
 import { applyFontScale } from './utils/fontScale';
 
 export default function App() {
@@ -22,6 +23,7 @@ export default function App() {
       <RouterProvider router={router} />
       <Toaster position="top-center" richColors toastOptions={{ duration: 5000 }} />
       <ConfirmDialogRoot />
+      <PendingInviteClaimGate />
     </I18nProvider>
   );
 }

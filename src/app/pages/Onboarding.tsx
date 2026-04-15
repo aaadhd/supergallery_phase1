@@ -25,9 +25,19 @@ export default function Onboarding() {
   })();
   const [nickname, setNickname] = useState(prefilledNickname);
   const [nicknameError, setNicknameError] = useState('');
-  const [realName, setRealName] = useState('');
+  /** SMS 초대로 들어온 경우 초대 시 표시명(ExhibitionInviteLanding에서 전달) */
+  const prefilledRealName = (() => {
+    if (typeof window === 'undefined') return '';
+    try { return localStorage.getItem('artier_pending_signup_realname') || ''; } catch { return ''; }
+  })();
+  const [realName, setRealName] = useState(prefilledRealName);
   const [realNameError, setRealNameError] = useState('');
-  const [phone, setPhone] = useState('');
+  /** SMS 초대로 들어온 경우 초대받은 전화번호(ExhibitionInviteLanding에서 전달) */
+  const prefilledPhone = (() => {
+    if (typeof window === 'undefined') return '';
+    try { return localStorage.getItem('artier_pending_signup_phone') || ''; } catch { return ''; }
+  })();
+  const [phone, setPhone] = useState(prefilledPhone);
   const [phoneError, setPhoneError] = useState('');
   /** 이메일 가입(Signup) 또는 소셜 가입(Login) 직후 provider에서 받은 이메일 */
   const prefilledEmail = (() => {
@@ -180,6 +190,19 @@ export default function Onboarding() {
       if (result.matched > 0) {
         toast.success(`초대받은 작품 ${result.matched}개가 내 계정과 연결되었어요.`);
       }
+      /**
+       * 전화는 일치했으나 이름이 달라 매칭이 거부된 초대가 있으면,
+       * 본인 확인 모달을 띄우기 위해 sessionStorage에 저장한다.
+       * (가입 직후 홈 도착 시 `PendingInviteClaimGate`가 읽어 모달 오픈)
+       */
+      if (result.blockedList.length > 0) {
+        try {
+          sessionStorage.setItem(
+            'artier_pending_invite_claims',
+            JSON.stringify(result.blockedList),
+          );
+        } catch { /* ignore */ }
+      }
     }
     registerAccount(email.trim(), phone.trim());
     localStorage.setItem('artier_onboarding_done', 'true');
@@ -188,6 +211,8 @@ export default function Onboarding() {
       localStorage.removeItem('artier_pending_signup_nickname');
       localStorage.removeItem('artier_pending_social_signup');
       localStorage.removeItem('artier_pending_signup_email');
+      localStorage.removeItem('artier_pending_signup_phone');
+      localStorage.removeItem('artier_pending_signup_realname');
     } catch { /* ignore */ }
     navigate('/');
   };

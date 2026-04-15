@@ -137,8 +137,15 @@ export type SignupMatchUser = {
  * 전화번호 일치 + 실명 일치 → 작품 자동 연결:
  *   - 매칭 로그에 기록 + workStore의 해당 작품 imageArtists에서
  *     비회원 슬롯(같은 displayName)을 회원 슬롯(currentUser)으로 승격
- * 전화번호 일치 + 실명 불일치 → 매칭 차단(로그만 기록)
+ * 전화번호 일치 + 실명 불일치 → 매칭 차단(로그에 기록 + blocked 목록 반환 →
+ *   가입 직후 "회원님의 번호로 받은 초대" 모달에서 본인 확인 후 수동 claim 가능)
  */
+export type BlockedInvite = {
+  inviteId: string;
+  workId: string;
+  invitedName: string;
+};
+
 export function matchSmsInviteOnSignup(
   phone: string,
   realName: string,
@@ -147,12 +154,14 @@ export function matchSmsInviteOnSignup(
   matched: number;
   blocked: number;
   promotedWorkIds: string[];
+  blockedList: BlockedInvite[];
 } {
   const normalized = phone.replace(/[\s-]/g, '');
   const log = readLog().filter((e) => e.success);
   let matched = 0;
   let blocked = 0;
   const promotedWorkIds: string[] = [];
+  const blockedList: BlockedInvite[] = [];
 
   for (const entry of log) {
     const entryPhone = entry.phoneNumber.replace(/[\s-]/g, '');
@@ -174,6 +183,7 @@ export function matchSmsInviteOnSignup(
       }
     } else {
       blocked++;
+      blockedList.push({ inviteId: entry.id, workId: entry.workId, invitedName: entry.displayName });
       appendMatchResult({
         inviteId: entry.id,
         workId: entry.workId,
@@ -186,7 +196,21 @@ export function matchSmsInviteOnSignup(
     }
   }
 
-  return { matched, blocked, promotedWorkIds };
+  return { matched, blocked, promotedWorkIds, blockedList };
+}
+
+/**
+ * 본인 확인을 거친 뒤 수동 매칭. `matchSmsInviteOnSignup`이 이름 불일치로
+ * block한 초대를 회원이 "본인 맞다" 확인한 경우 호출.
+ * 작품의 비회원 슬롯을 회원 슬롯으로 승격한다.
+ */
+export function claimBlockedInvite(
+  inviteId: string,
+  currentUser: SignupMatchUser,
+): boolean {
+  const entry = readLog().find((e) => e.id === inviteId && e.success);
+  if (!entry) return false;
+  return promoteNonMemberSlot(entry.workId, entry.displayName, currentUser);
 }
 
 /**

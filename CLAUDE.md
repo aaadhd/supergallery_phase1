@@ -35,11 +35,12 @@
 - `src/app/components/SocialSignupModal.tsx` — 소셜 첫 가입 시 약관 동의 + 닉네임 입력 (SCR-AUTH-03)
 - `src/app/components/QaScreenShortcuts.tsx` — QA/검수용 바로가기 플로팅 버튼 (DEV 또는 `VITE_FOOTER_QA_LINKS` 활성 시)
 - `src/app/components/RequiredMark.tsx` — 필수 입력 표시 (빨간 별 + sr-only 라벨)
+- `src/app/components/PendingInviteClaimGate.tsx` — 가입 직후 이름 불일치로 자동 매칭 실패한 초대에 대해 본인 확인 모달 (수락/거부/나중에). 수락 시 수동 승격, 거부 시 발신 작가에게 경고 +1
 
 ### 유틸 / Store
 - `src/app/store.ts` — `WORKS_STORAGE_VERSION` 스토리지 버전 관리 (현재 값 `local-gallery-v11`, 키 `artier_works_version`)
 - `src/app/store/workStore.ts`, `draftStore.ts` — 작품/초안 상태
-- `src/app/utils/inviteMessaging.ts` — 초대 발송 (5% 랜덤 실패 시뮬, `artier_invite_messaging_log`) + `matchSmsInviteOnSignup` 가입 시 작품 자동 연결
+- `src/app/utils/inviteMessaging.ts` — 초대 발송 (5% 랜덤 실패 시뮬, `artier_invite_messaging_log`) + `matchSmsInviteOnSignup` 가입 시 전화+실명 일치 작품 자동 연결 (이름 불일치는 `blockedList`로 반환 → 본인 확인 후 `claimBlockedInvite`로 수동 승격)
 - `src/app/utils/sanctionStore.ts` — 경고·허위신고 카운터 + 정지 단계 (`SuspensionLevel`, `addWarning`, `addFalseReport`, `suspendDemoUser`)
 - `src/app/utils/adminGate.ts` — 운영팀 역할 토글
 - `src/app/utils/feedOrdering.ts` — 둘러보기 피드 랭킹
@@ -160,9 +161,9 @@
 - **핵심 앱 상태 (`store.ts`)**: `artier_works_version`, `artier_works`, `artier_drafts`, `artier_profile`, `artier_interactions`, `artier_auth`, `artier_follows`, `artier_account_suspension`, `artier_withdrawn_artists`, `artier_demo_last_withdraw_reason`
 - **작품·피드·알림**: `artier_curation_v1`, `artier_feed_seen_work_ids`, `artier_notifications`, `artier_notification_settings`
 - **배너·이벤트·어드민**: `artier_admin_banners_v1`, `artier_managed_events_v1`, `artier_event_subscriptions`, `artier_admin_issues`, `artier_admin_checklist`, `artier_admin_partners`, `artier_admin_members_v1`, `artier_admin_picks_v1`
-- **초대·포인트·신고·기타**: `artier_invite_messaging_log`, `artier_invite_match_log`, `artier_points_ledger`, `artier_points_state`, `artier_work_publish_times`, `artier_pp_balance`, `artier_artist_follower_delta`, `artier_reports`, `artier_report_hidden_v2`, `artier_report_signatures_v1`, `artier_reported_works`, `artier_reported_artists` (레거시 신고 키), `artier_warning_counter_v1`, `artier_false_report_counter_v1`, `artier_social_signed_up__<provider>` (kakao/google/apple), `artier_pending_sms_invite` (초대 링크 → 가입 중 플래그, 온보딩 종료 시 정리), `artier_pending_signup_nickname`·`artier_pending_signup_email`·`artier_pending_social_signup` (Signup/소셜 가입 → Onboarding 프리필 핸드오프, 온보딩 종료 시 정리), `artier_registered_emails_v1`·`artier_registered_phones_v1` (가입 완료된 이메일·전화 레지스트리 — 중복 가입 차단, `utils/registeredAccounts.ts`), `artier_group_canonical_map`, `artier_last_group_name`, `artier_my_group_names`, `artier_inquiries`
+- **초대·포인트·신고·기타**: `artier_invite_messaging_log`, `artier_invite_match_log`, `artier_points_ledger`, `artier_points_state`, `artier_work_publish_times`, `artier_pp_balance`, `artier_artist_follower_delta`, `artier_reports`, `artier_report_hidden_v2`, `artier_report_signatures_v1`, `artier_reported_works`, `artier_reported_artists` (레거시 신고 키), `artier_warning_counter_v1`, `artier_false_report_counter_v1`, `artier_social_signed_up__<provider>` (kakao/google/apple), `artier_pending_sms_invite` (초대 링크 → 가입 중 플래그, 온보딩 종료 시 정리), `artier_pending_signup_nickname`·`artier_pending_signup_email`·`artier_pending_signup_phone`·`artier_pending_signup_realname`·`artier_pending_social_signup` (Signup/소셜 가입/SMS 초대 → Onboarding 프리필 핸드오프, 온보딩 종료 시 정리), `artier_registered_emails_v1`·`artier_registered_phones_v1` (가입 완료된 이메일·전화 레지스트리 — 중복 가입 차단, `utils/registeredAccounts.ts`), `artier_group_canonical_map`, `artier_last_group_name`, `artier_my_group_names`, `artier_inquiries`
 - **UX·데모**: `artier_locale`, `artier_font_scale`, `artier_cookie_consent`, `artier_onboarding_done`, `artier_splash_seen`, `artier_mock_jwt_session`, `artier_geo_demo_cache`, `artier_admin_session_v1` (`adminGate`), `artier_recent_searches__guest`, `artier_recent_searches__<slug>` (`Search.tsx`)
-- **sessionStorage** (별도): 접두 `artier_scroll_` + 논리 키 — 스크롤 복원 (`src/app/utils/scrollRestore.ts`)
+- **sessionStorage** (별도): 접두 `artier_scroll_` + 논리 키 — 스크롤 복원 (`src/app/utils/scrollRestore.ts`); `artier_pending_invite_claims` — 가입 시 이름 불일치로 자동 매칭 실패한 초대 목록, `PendingInviteClaimGate` 모달에서 소비
 - **Deprecated (부팅 시 제거)**: `artier_instructor_public_ids` — `PointsBootstrap` 마운트 시 `LEGACY_STORAGE_KEYS`로 제거 (IMPLEMENTATION_DELTA §11.1)
 
 ### 기타
