@@ -253,17 +253,6 @@ export default function Onboarding() {
                     >
                       {t('onboarding.start')}
                     </Button>
-                    <Button
-                      variant="ghost"
-                      type="button"
-                      onClick={() => {
-                        localStorage.setItem('artier_onboarding_done', 'true');
-                        navigate('/');
-                      }}
-                      className="mt-4 w-full text-center text-sm text-muted-foreground lg:hover:text-muted-foreground transition-colors"
-                    >
-                      {t('onboarding.later')}
-                    </Button>
                   </div>
                 </>
               )}

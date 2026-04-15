@@ -106,6 +106,35 @@ export default function Browse() {
   const profile = useProfileStore();
   const profileSig = `${profile.getProfile().nickname}|${profile.getProfile().name}`;
   const [loginPromptOpen, setLoginPromptOpen] = useState(false);
+  /**
+   * 비로그인 사용자가 첫 interactive action을 시도하면 모달을 띄우되,
+   * 모달을 dismiss한 이후엔 같은 세션에서 토스트로만 짧게 리마인드한다
+   * (시니어 UX — 같은 모달 반복 차단).
+   */
+  const requestLogin = () => {
+    if (auth.isLoggedIn()) return true;
+    const dismissed = (() => {
+      try { return sessionStorage.getItem('artier_login_prompt_dismissed') === '1'; } catch { return false; }
+    })();
+    if (dismissed) {
+      toast(t('loginPrompt.toastReminder'), {
+        duration: 4000,
+        action: {
+          label: t('loginPrompt.login'),
+          onClick: () => navigate('/login'),
+        },
+      });
+    } else {
+      setLoginPromptOpen(true);
+    }
+    return false;
+  };
+  const handleLoginPromptClose = () => {
+    if (!auth.isLoggedIn()) {
+      try { sessionStorage.setItem('artier_login_prompt_dismissed', '1'); } catch { /* ignore */ }
+    }
+    setLoginPromptOpen(false);
+  };
   const [hideRevision, setHideRevision] = useState(0);
   const [reportWorkId, setReportWorkId] = useState<string | null>(null);
 
@@ -449,7 +478,7 @@ export default function Browse() {
                 isLiked={interactions.isLiked(work.id)}
                 isSaved={interactions.isSaved(work.id)}
                 onToggleLike={(id) => {
-                  if (!auth.isLoggedIn()) { setLoginPromptOpen(true); return; }
+                  if (!requestLogin()) return;
                   const wasLiked = userInteractionStore.isLiked(id);
                   userInteractionStore.toggleLike(id);
                   const delta = userInteractionStore.isLiked(id) ? 1 : -1;
@@ -465,7 +494,7 @@ export default function Browse() {
                   }
                 }}
                 onToggleSave={(id) => {
-                  if (!auth.isLoggedIn()) { setLoginPromptOpen(true); return; }
+                  if (!requestLogin()) return;
                   const wasSaved = userInteractionStore.isSaved(id);
                   userInteractionStore.toggleSave(id);
                   const delta = userInteractionStore.isSaved(id) ? 1 : -1;
@@ -482,14 +511,11 @@ export default function Browse() {
                 }}
                 isFollowing={(artistId) => follows.isFollowing(artistId)}
                 onToggleFollow={(artistId) => {
-                  if (!auth.isLoggedIn()) { setLoginPromptOpen(true); return; }
+                  if (!requestLogin()) return;
                   followStore.toggle(artistId);
                 }}
                 onReport={(w) => {
-                  if (!auth.isLoggedIn()) {
-                    setLoginPromptOpen(true);
-                    return;
-                  }
+                  if (!requestLogin()) return;
                   setReportWorkId(w.id);
                 }}
               />
@@ -557,7 +583,7 @@ export default function Browse() {
         />
       ) : null}
 
-      <LoginPromptModal open={loginPromptOpen} onClose={() => setLoginPromptOpen(false)} />
+      <LoginPromptModal open={loginPromptOpen} onClose={handleLoginPromptClose} />
     </div>
   );
 }

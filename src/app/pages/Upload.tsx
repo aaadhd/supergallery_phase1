@@ -635,11 +635,9 @@ export default function Upload() {
       setIsPublishing(false);
       publishedRef.current = true;
       const autoApproved = import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true';
-      // 신규 발행 시 프로필 전시 탭으로 유도 + 검수 상태 플래그 전달 (배너 노출용)
-      if (wasEditingExistingWork) {
+      // 발행 후엔 항상 프로필 전시 탭으로 유도. 검수 대기면 배너 노출용 쿼리 전달.
+      if (wasEditingExistingWork || autoApproved) {
         navigate('/me?tab=exhibition');
-      } else if (autoApproved) {
-        navigate(`/exhibitions/${targetId}`);
       } else {
         navigate(`/me?tab=exhibition&published=pending&workId=${targetId}`);
       }
