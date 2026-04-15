@@ -7,6 +7,8 @@ import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '../components/ui/select';
 import { useManagedEvents, type ManagedEvent } from '../utils/eventStore';
+import { workStore } from '../store';
+import { useSyncExternalStore } from 'react';
 
 interface EventParticipant {
   id: string;
@@ -38,18 +40,55 @@ function formatEventPeriod(ev: ManagedEvent): string {
 
 const participantStatuses = ['참여 완료', '대기 중', '취소'];
 
+/**
+ * 실제 업로드된 작품 중 `linkedEventId`가 있는 것을 참여자로 변환.
+ * EventDetail "참여" 버튼 → /upload?event=... → 작품 저장 경로로 들어온 실 데이터.
+ * 시드 데이터와 합쳐서 어드민이 데모+실제 데이터를 한 표에서 조회 가능.
+ */
+function useParticipantsFromWorks(): EventParticipant[] {
+  const works = useSyncExternalStore(
+    (cb) => workStore.subscribe(cb),
+    () => workStore.getWorks(),
+    () => workStore.getWorks(),
+  );
+  return useMemo(() => {
+    return works
+      .filter((w) => w.linkedEventId != null)
+      .map<EventParticipant>((w) => ({
+        id: `work-${w.id}`,
+        eventId: String(w.linkedEventId),
+        name: w.artist?.name || '-',
+        email: '(로그인 계정)',
+        status:
+          w.feedReviewStatus === 'approved'
+            ? '참여 완료'
+            : w.feedReviewStatus === 'rejected'
+              ? '취소'
+              : '대기 중',
+        participatedAt: (w.uploadedAt || '').slice(0, 10),
+      }));
+  }, [works]);
+}
+
 export default function EventParticipants() {
   const [filterEvent, setFilterEvent] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
   const events = useManagedEvents();
 
-  // 참여자가 하나라도 있거나 active/scheduled 상태인 이벤트만 관리 대상으로 노출
-  const relevantEvents = useMemo(() => {
-    const withParticipants = new Set(seedParticipants.map((p) => p.eventId));
-    return events.filter((e) => withParticipants.has(e.id));
-  }, [events]);
+  const realParticipants = useParticipantsFromWorks();
+  // 시드 + 실 업로드 병합. id 충돌 없음 (시드: EP-*, 실: work-*)
+  const allParticipants = useMemo(
+    () => [...realParticipants, ...seedParticipants],
+    [realParticipants],
+  );
 
-  const filtered = seedParticipants.filter(p => {
+  // 참여자가 하나라도 있는 이벤트만 관리 대상으로 노출
+  const relevantEvents = useMemo(() => {
+    const withParticipants = new Set(allParticipants.map((p) => p.eventId));
+    return events.filter((e) => withParticipants.has(e.id));
+  }, [events, allParticipants]);
+
+  const filtered = allParticipants.filter(p => {
     if (filterEvent !== 'all' && p.eventId !== filterEvent) return false;
     if (filterStatus !== 'all' && p.status !== filterStatus) return false;
     return true;
@@ -76,7 +115,7 @@ export default function EventParticipants() {
           </div>
         ) : (
           relevantEvents.map(event => {
-            const participants = seedParticipants.filter(p => p.eventId === event.id);
+            const participants = allParticipants.filter(p => p.eventId === event.id);
             const completed = participants.filter(p => p.status === '참여 완료').length;
             return (
               <div key={event.id} className="bg-white rounded-lg border p-4">

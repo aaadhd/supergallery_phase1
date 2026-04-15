@@ -1,7 +1,6 @@
 import { Wrench } from 'lucide-react';
 import { useI18n } from '../i18n/I18nProvider';
-
-const CONTACT_EMAIL = 'support@artier.com';
+import { SUPPORT_EMAIL } from '../config';
 
 export default function Maintenance() {
   const { t } = useI18n();
@@ -23,10 +22,10 @@ export default function Maintenance() {
       <p className="text-sm text-muted-foreground">
         {t('maintenance.contact')}{' '}
         <a
-          href={`mailto:${CONTACT_EMAIL}`}
+          href={`mailto:${SUPPORT_EMAIL}`}
           className="text-primary font-medium lg:hover:underline"
         >
-          {CONTACT_EMAIL}
+          {SUPPORT_EMAIL}
         </a>
       </p>
     </div>

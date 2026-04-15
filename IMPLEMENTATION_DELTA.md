@@ -1,7 +1,13 @@
 # SuperGallery Phase 1 — 명세 대비 구현 델타 보고서
 
 > **작성일**: 2026-04-12
-> **최종 수정**: 2026-04-16 (오전) — SMS 초대 매칭 신뢰도 보강:
+> **최종 수정**: 2026-04-16 (낮) — 화면 기획서 작성 중 발견된 이슈 4건 정리:
+> - **Settings 비밀번호 변경 UX**: `<Link to="/reset-password">`(로그인 상태에서 이상한 UX) → Dialog로 변경. 이메일 가입자는 `sessionSub` prefill로 "재설정 링크를 이 이메일로 보내드립니다" 토스트. 소셜 가입자는 "각 서비스에서 관리" 안내. i18n 키 `settings.changePasswordDialog*` 5종 추가.
+> - **EventParticipants 데이터 단절 해소**: seedParticipants만 사용하던 어드민 화면을 `workStore`의 `linkedEventId` 작품과 병합. `useParticipantsFromWorks` 훅 신설. 실 업로드 작품은 `feedReviewStatus` → 한국어 status로 매핑.
+> - **NotificationSettings 라우트 정리**: 단순 redirect 컴포넌트(`/settings/notifications` → `/settings#notifications`) 삭제. 라우트는 react-router loader redirect로 유지(외부 링크 호환).
+> - **support email 상수화**: `src/app/config.ts` 신설 (`SUPPORT_EMAIL`, `CONTACT_EMAIL`, `BRAND`). Maintenance.tsx의 로컬 하드코딩 제거.
+>
+> **이전 수정**: 2026-04-16 (오전) — SMS 초대 매칭 신뢰도 보강:
 > - **A. 발송 직전 확인 모달** (`Upload.tsx handlePublish`): 비회원 초대가 포함된 발행에서 수신자 목록 + 실명 정확성 경고("⚠️ 입력하신 이름이 그분의 실명과 정확히 같아야 작품이 자동 연결됩니다. 호칭·별명은 연결되지 않아요") 확인 모달. 취소 시 발행 전체 중단.
 > - **B. 가입 후 본인 확인 게이트** (`PendingInviteClaimGate.tsx`): `matchSmsInviteOnSignup`이 전화 일치·이름 불일치로 차단한 초대를 `blockedList`로 반환 → Onboarding에서 `sessionStorage['artier_pending_invite_claims']`에 저장 → App 루트 게이트가 모달로 본인 확인. **수락** 시 `claimBlockedInvite`로 비회원 슬롯 승격. **거부** 시 `sanctionStore.addWarning`로 발신자에게 경고 +1 (3회 누적 시 7일 자동 정지). "나중에" 옵션으로 보류 가능.
 > - 부수 변경: `AlertDialogDescription`에 `whitespace-pre-line` 추가(여러 줄 description 지원), 새 i18n 키 `upload.confirmInvite*`/`claim.*` 한·영.

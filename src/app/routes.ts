@@ -36,7 +36,6 @@ import EventManagement from './admin/EventManagement';
 import ReportManagement from './admin/ReportManagement';
 import MemberManagement from './admin/MemberManagement';
 import Settings from './pages/Settings';
-import NotificationSettings from './pages/NotificationSettings';
 import Maintenance from './pages/Maintenance';
 import ExhibitionRoute from './pages/ExhibitionRoute';
 import FlowDemoTools from './pages/FlowDemoTools';
@@ -69,7 +68,7 @@ export const router = createBrowserRouter([
           { path: 'search', Component: Search },
           { path: 'notifications', Component: Notifications },
           { path: 'settings', Component: Settings },
-          { path: 'settings/notifications', Component: NotificationSettings },
+          { path: 'settings/notifications', loader: () => redirect('/settings#notifications') },
           { path: 'exhibitions/:id', Component: ExhibitionRoute },
           { path: 'demo', Component: FlowDemoTools },
           { path: 'demo/reference', Component: DemoReferenceToolkit },

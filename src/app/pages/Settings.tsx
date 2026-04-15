@@ -13,6 +13,14 @@ import { loadMockSession } from '../services/sessionTokens';
 import { Button } from '../components/ui/button';
 import { openConfirm } from '../components/ConfirmDialog';
 import { PasswordInput } from '../components/ui/password-input';
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from '../components/ui/dialog';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
 import { getFontScale, setFontScale, type FontScale } from '../utils/fontScale';
@@ -118,6 +126,7 @@ export default function Settings() {
   const [withdrawPassword, setWithdrawPassword] = useState('');
   const [withdrawReason, setWithdrawReason] = useState<WithdrawReasonId | ''>('');
   const [withdrawBusy, setWithdrawBusy] = useState(false);
+  const [pwResetOpen, setPwResetOpen] = useState(false);
 
   const sessionSub = loadMockSession()?.sub;
   const isEmailShape = Boolean(sessionSub?.includes('@'));
@@ -303,13 +312,20 @@ export default function Settings() {
             {t('settings.sectionAccountActions')}
           </h2>
           <div className="rounded-lg border border-border/40 overflow-hidden bg-white">
-            <Link
-              to="/reset-password"
-              className="flex justify-between items-center py-4 px-4 border-b border-border/40 lg:hover:bg-muted/50 transition-colors"
+            <button
+              type="button"
+              onClick={() => {
+                if (!isEmailShape) {
+                  toast.info(t('settings.changePasswordSocialHint'));
+                  return;
+                }
+                setPwResetOpen(true);
+              }}
+              className="flex w-full justify-between items-center py-4 px-4 border-b border-border/40 min-h-[44px] lg:hover:bg-muted/50 transition-colors text-left"
             >
               <span className="text-[15px] text-foreground">{t('settings.changePassword')}</span>
               <ChevronRight className="w-5 h-5 text-muted-foreground" aria-hidden />
-            </Link>
+            </button>
             <div className="flex justify-between items-center py-4 px-4 border-b border-border/40">
               <span className="text-[15px] text-foreground">{t('settings.logoutRow')}</span>
               <Button variant="ghost"
@@ -334,6 +350,31 @@ export default function Settings() {
           </div>
         </section>
       </div>
+
+      <Dialog open={pwResetOpen} onOpenChange={setPwResetOpen}>
+        <DialogContent className="max-w-md">
+          <DialogHeader>
+            <DialogTitle>{t('settings.changePasswordDialogTitle')}</DialogTitle>
+            <DialogDescription>
+              {t('settings.changePasswordDialogBody').replace('{email}', sessionSub || '')}
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <Button
+              type="button"
+              className="min-h-[44px]"
+              onClick={() => {
+                setPwResetOpen(false);
+                toast.success(
+                  t('settings.changePasswordToast').replace('{email}', sessionSub || ''),
+                );
+              }}
+            >
+              {t('settings.changePasswordSend')}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
 
       {withdrawOpen && (
         <div
