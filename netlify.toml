@@ -1,6 +1,12 @@
 [build]
-  command = "pnpm run build"
+  # Netlify는 저장소에 pnpm-lock.yaml이 있으면 설치 단계에서 pnpm을 쓴다(빌드 명령과 무관).
+  # pnpm-lock + package-lock 혼재 시 설치가 자주 실패하므로 package-lock.json만 둔다.
+  # 설치는 Netlify 기본(npm install), 여기서는 Vite 빌드만 실행한다.
+  command = "npm run build"
   publish = "dist"
+
+[build.environment]
+  NODE_VERSION = "20"
 
 # SPA: 모든 경로를 index.html로 (React Router)
 [[redirects]]
