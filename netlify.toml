@@ -7,6 +7,8 @@
 
 [build.environment]
   NODE_VERSION = "20"
+  # QaScreenShortcuts(검수 바로가기) — Vite에 주입되어 프로덕션 번들에 포함된다.
+  VITE_FOOTER_QA_LINKS = "true"
 
 # SPA: 모든 경로를 index.html로 (React Router)
 [[redirects]]
