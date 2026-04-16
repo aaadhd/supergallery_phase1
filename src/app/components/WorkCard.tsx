@@ -87,10 +87,22 @@ export function WorkCard({ work, showSaleBadge, showReviewBadge, onRejectedClick
     }
   };
 
+  const goToDetail = () => {
+    if (onRejectedClick && work.feedReviewStatus === 'rejected') {
+      onRejectedClick(work);
+    } else {
+      navigate(`/exhibitions/${work.id}`);
+    }
+  };
+
   return (
     <>
-      <Link to={`/exhibitions/${work.id}`} onClick={handleLinkClick} className="group block">
-        <div className="relative overflow-hidden rounded-xl bg-card ring-1 ring-black/[0.06] shadow-sm transition-[box-shadow,transform] duration-300 lg:group-hover:shadow-md lg:group-hover:ring-primary/15">
+      <div className="group flex flex-col items-stretch">
+        {/* Clickable Image Area */}
+        <div 
+          onClick={goToDetail}
+          className="relative cursor-pointer overflow-hidden rounded-xl bg-card ring-1 ring-black/[0.06] shadow-sm transition-[box-shadow,transform] duration-300 lg:group-hover:shadow-md lg:group-hover:ring-primary/15"
+        >
           <div className="aspect-square overflow-hidden bg-muted/30 flex items-center justify-center">
             <CopyrightProtectedImage
               src={imageUrls[firstImage] || firstImage}
@@ -125,31 +137,32 @@ export function WorkCard({ work, showSaleBadge, showReviewBadge, onRejectedClick
             </div>
           )}
 
-          {/* Like & Save — touch: always visible top-right / hover device: overlay on hover */}
-          <div className="absolute top-2 right-2 flex gap-1.5 hover-action z-10">
+          {/* Top-right overlay buttons — Still clickable independently */}
+          <div className="absolute top-2 right-2 flex gap-1.5 z-20">
             <Button
               size="icon"
               variant="ghost"
-              className={`h-8 w-8 rounded-full shadow-sm pointer-coarse:h-11 pointer-coarse:w-11 pointer-coarse:min-h-11 pointer-coarse:min-w-11 active:scale-95 touch-manipulation lg:hover:!bg-inherit ${isLiked ? 'bg-red-500 text-white active:bg-red-600 lg:hover:!bg-red-500' : 'bg-white/90 active:bg-white lg:hover:!bg-white'}`}
-              onClick={handleLike}
-              aria-label={t('workDetail.like')}
+              className={`h-8 w-8 rounded-full shadow-sm lg:hover:!bg-inherit ${isLiked ? 'bg-red-500 text-white' : 'bg-white/90'}`}
+              onClick={(e) => { e.stopPropagation(); handleLike(e); }}
+              aria-label="좋아요"
             >
               <Heart className={`h-4 w-4 ${isLiked ? 'fill-current' : ''}`} />
             </Button>
             <Button
               size="icon"
               variant="ghost"
-              className={`h-8 w-8 rounded-full shadow-sm pointer-coarse:h-11 pointer-coarse:w-11 pointer-coarse:min-h-11 pointer-coarse:min-w-11 active:scale-95 touch-manipulation lg:hover:!bg-inherit ${isSaved ? 'bg-primary text-primary-foreground active:bg-primary/90 lg:hover:!bg-primary' : 'bg-white/90 active:bg-white lg:hover:!bg-white'}`}
-              onClick={handleSave}
-              aria-label={t('workDetail.save')}
+              className={`h-8 w-8 rounded-full shadow-sm lg:hover:!bg-inherit ${isSaved ? 'bg-primary text-primary-foreground' : 'bg-white/90'}`}
+              onClick={(e) => { e.stopPropagation(); handleSave(e); }}
+              aria-label="저장"
             >
               <Bookmark className={`h-4 w-4 ${isSaved ? 'fill-current' : ''}`} />
             </Button>
           </div>
         </div>
 
-        <div className="mt-3.5 space-y-2">
-          <h3 className="font-semibold text-foreground text-[15px] leading-snug tracking-tight transition-colors lg:group-hover:text-primary pointer-coarse:active:text-primary">
+        {/* Clickable Info Area */}
+        <div onClick={goToDetail} className="mt-3.5 space-y-2 cursor-pointer">
+          <h3 className="font-semibold text-foreground text-[15px] leading-snug tracking-tight transition-colors lg:group-hover:text-primary">
             {pieceLabel}
           </h3>
 
@@ -164,20 +177,34 @@ export function WorkCard({ work, showSaleBadge, showReviewBadge, onRejectedClick
             </Avatar>
             <span className="text-sm text-muted-foreground">{work.artist.name}</span>
           </div>
-
-          {/* 좋아요·저장 상태 아이콘 (텍스트 라벨 추가로 시니어 접근성 강화) */}
-          <div className="flex items-center gap-4 text-muted-foreground mt-0.5">
-            <div className="flex items-center gap-1.5 grayscale-0">
-              <Heart className={`h-4 w-4 ${isLiked ? 'text-red-500 fill-current' : ''}`} />
-              <span className={`text-[11px] font-bold ${isLiked ? 'text-red-500' : ''}`}>{t('workDetail.like')}</span>
-            </div>
-            <div className="flex items-center gap-1.5">
-              <Bookmark className={`h-4 w-4 ${isSaved ? 'text-primary fill-current' : ''}`} />
-              <span className={`text-[11px] font-bold ${isSaved ? 'text-primary' : ''}`}>{t('workDetail.save')}</span>
-            </div>
-          </div>
         </div>
-      </Link>
+
+        {/* Static Interaction Footer — Independent Buttons */}
+        <div className="mt-3 flex items-center gap-5 text-muted-foreground">
+          <button
+            type="button"
+            onClick={handleLike}
+            className="flex items-center gap-2 group cursor-pointer lg:hover:opacity-80 transition-opacity"
+          >
+            <Heart className={`h-4 w-4 transition-colors ${isLiked ? 'text-red-500 fill-current' : ''}`} />
+            <div className="flex flex-col items-start leading-none min-w-[32px]">
+              <span className={`text-[10px] font-bold ${isLiked ? 'text-red-500' : ''}`}>좋아요</span>
+              <span className="text-[9px] font-medium opacity-70">{(work.likes || 0).toLocaleString()}</span>
+            </div>
+          </button>
+          <button
+            type="button"
+            onClick={handleSave}
+            className="flex items-center gap-2 group cursor-pointer lg:hover:opacity-80 transition-opacity"
+          >
+            <Bookmark className={`h-4 w-4 transition-colors ${isSaved ? 'text-primary fill-current' : ''}`} />
+            <div className="flex flex-col items-start leading-none min-w-[32px]">
+              <span className={`text-[10px] font-bold ${isSaved ? 'text-primary' : ''}`}>저장</span>
+              <span className="text-[9px] font-medium opacity-70">{(work.saves || 0).toLocaleString()}</span>
+            </div>
+          </button>
+        </div>
+      </div>
       <LoginPromptModal open={loginPromptOpen} onClose={() => setLoginPromptOpen(false)} />
     </>
   );

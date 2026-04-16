@@ -8,7 +8,6 @@
  * 악센트: 차분한 모호/플럼(oklch 328°) — 온라인 갤러리 톤. 로고 A 칩 등 국소 틸은 컴포넌트에서 유지 가능.
  */
 :root {
-  --font-size: 16px;
   --font-family:
     'Pretendard', Pretendard, -apple-system, BlinkMacSystemFont, system-ui, Roboto, 'Helvetica Neue', 'Segoe UI',
     'Apple SD Gothic Neo', 'Malgun Gothic', sans-serif;
@@ -144,7 +143,6 @@
   }
 
   html {
-    font-size: var(--font-size);
     font-family: var(--font-family);
   }
 

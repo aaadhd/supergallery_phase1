@@ -696,9 +696,14 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
               }`}>
                 <Heart className={`h-[22px] w-[22px] transition-colors ${isLiked ? 'text-white fill-white' : 'text-white'}`} />
               </div>
-              <span className="text-[11px] font-bold text-white/80 group-hover:text-white transition-colors uppercase drop-shadow-md">
-                {t('workDetail.like')} {(work.likes || 0).toLocaleString()}
-              </span>
+              <div className="flex flex-col items-center leading-tight">
+                <span className="text-[11px] font-bold text-white/90 group-hover:text-white transition-colors uppercase drop-shadow-md">
+                  {t('workDetail.like')}
+                </span>
+                <span className="text-[10px] font-medium text-white/60 group-hover:text-white/80 transition-colors">
+                  {(workStore.getWork(workId)?.likes ?? work.likes ?? 0).toLocaleString()}
+                </span>
+              </div>
             </button>
 
             {/* Save */}
@@ -713,7 +718,14 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
               }`}>
                 <Bookmark className={`h-[22px] w-[22px] transition-colors gap-1 text-white ${isSaved ? 'fill-white' : ''}`} />
               </div>
-              <span className="text-[11px] font-bold text-white/80 group-hover:text-white transition-colors uppercase drop-shadow-md">{t('workDetail.save')}</span>
+              <div className="flex flex-col items-center leading-tight">
+                <span className="text-[11px] font-bold text-white/90 group-hover:text-white transition-colors uppercase drop-shadow-md">
+                  {t('workDetail.save')}
+                </span>
+                <span className="text-[10px] font-medium text-white/60 group-hover:text-white/80 transition-colors">
+                  {(workStore.getWork(workId)?.saves ?? work.saves ?? 0).toLocaleString()}
+                </span>
+              </div>
             </button>
 
             {/* Share */}

@@ -250,13 +250,17 @@ export default function Browse() {
   }, [emblaApi]);
 
   // -- Combine + PRD 근사 피드 순서(Pick → 신규 → 가중) + 시청 이력 반영 -------
+  // 시니어 UX: 좋아요/저장 인터랙션 시 피드가 뒤섞이는 현상(Shifting)을 방지하기 위해 
+  // 순서 계산 로직은 '작품 개수'가 변하거나 '새로고침(epoch)'할 때만 실행되도록 제한합니다.
   const allWorks = useMemo(() => {
     const hydrated = hydrateGroupWorks(allArtists);
-    const combined = [...works, ...hydrated] as Work[];
+    const combined = [...workStore.getWorks(), ...hydrated] as Work[];
     const seen = loadSeenWorkIds();
     const followingArtistIds = new Set(follows.getFollows());
     return orderWorksForBrowseFeed(combined, seen, { followingArtistIds });
-  }, [works, feedEpoch, follows]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [works.length, feedEpoch, follows.getCount()]); 
+  // interaction(likes) 변화에는 반응하지 않고, 개수 변화나 수동 갱신 시에만 순서 재계산
 
   // -- Category filtering (신고자 본인에게만 작품 숨김) ------------------------
   const hiddenWorkIds = useMemo(

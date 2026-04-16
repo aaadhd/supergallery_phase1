@@ -5,9 +5,9 @@ export const FONT_SCALE_STORAGE_KEY = 'artier_font_scale';
 const BASE_PX = 16;
 
 const SCALE_FACTOR: Record<FontScale, number> = {
-  small: 0.9375,
+  small: 0.875,
   medium: 1,
-  large: 1.125,
+  large: 1.25,
 };
 
 export function getFontScale(): FontScale {

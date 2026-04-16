@@ -5,8 +5,9 @@
 /* === 50대 UX 최적화 === */
 
 /* theme.css --font-size(16px) 기준 */
+/* theme.css --font-size(16px) 기준 */
 html {
-  font-size: 16px;
+  font-size: 100%;
   /* iOS 더블탭 줌 지연 완화, 가로 스와이브 의도와 충돌 줄임 */
   touch-action: manipulation;
 }
@@ -18,7 +19,7 @@ html {
 
 /* 입력 필드도 충분한 크기 */
 input, textarea, select {
-  font-size: 16px !important; /* iOS zoom 방지 */
+  font-size: 1rem; /* iOS zoom 방지 (최소 16px 기준 rem) */
 }
 
 /* 카드 간격 */
