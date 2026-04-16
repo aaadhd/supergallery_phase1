@@ -4,6 +4,35 @@ import { Image as ImageIcon, Plus, X, Search, GripVertical, ArrowLeft, ChevronLe
 import { artists } from '../data';
 import { workStore, draftStore, useAuthStore } from '../store';
 
+/* ─── @dnd-kit 리오더 아이템 ─── */
+function SortableReorderItem({ item, index, isDragOverlay }: { item: ContentItem; index: number; isDragOverlay?: boolean }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
+  const style: React.CSSProperties = {
+    transform: CSS.Transform.toString(transform),
+    transition,
+    opacity: isDragging ? 0.4 : 1,
+  };
+  return (
+    <div ref={setNodeRef} style={style} {...attributes} {...listeners}
+      className={`flex flex-col gap-2 p-3 border rounded-xl transition-all cursor-grab active:cursor-grabbing touch-none ${
+        isDragging ? 'border-primary bg-muted shadow-sm scale-105 z-10' : 'border-border/40 bg-white hover:border-border/80'
+      }`}
+    >
+      <div className="relative flex aspect-square w-full items-center justify-center rounded-lg overflow-hidden">
+        <BlurDominantBg src={item.url} />
+        {item.url && <ImageWithFallback src={item.url} alt={item.title || ''} className="relative z-10 h-full w-full object-contain object-center" />}
+        <div className="absolute top-2 left-2 z-20 flex items-center gap-1.5">
+          <div className="bg-black/60 text-white text-xs font-bold px-2 py-1 rounded-md backdrop-blur-sm">{index + 1}</div>
+        </div>
+        <div className="absolute top-2 right-2 z-20 bg-black/40 text-white p-1 rounded-md backdrop-blur-sm"><GripVertical className="h-4 w-4" /></div>
+      </div>
+      <span className="text-sm text-foreground truncate w-full text-center font-medium mt-1">
+        {normalizeStoredPieceTitle(item.title) || `${index + 1}`}
+      </span>
+    </div>
+  );
+}
+
 /** 작품 이미지를 통째로 blur해 톤이 자연스럽게 묻어나는 letterbox 배경. */
 function BlurDominantBg({ src }: { src?: string }) {
   if (!src) return null;
@@ -38,6 +67,24 @@ import { RequiredMark } from '../components/RequiredMark';
 import { containsProfanity } from '../utils/profanityFilter';
 import { normalizeStoredPieceTitle } from '../utils/workDisplay';
 import { WorkDetailModal } from '../components/WorkDetailModal';
+import {
+  DndContext,
+  closestCenter,
+  KeyboardSensor,
+  PointerSensor,
+  TouchSensor,
+  useSensor,
+  useSensors,
+  type DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove,
+  SortableContext,
+  sortableKeyboardCoordinates,
+  useSortable,
+  rectSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 /* ─── 상수 ─── */
 const CONTENT_SPACING = 10; // px — Phase 1 고정값
@@ -97,8 +144,8 @@ export default function Upload() {
   const [reorderMode, setReorderMode] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
-  const [dragIndex, setDragIndex] = useState<number | null>(null);
-  const [hoveredBlockId, setHoveredBlockId] = useState<string | null>(null);
+  /* dragIndex 삭제됨 — @dnd-kit이 드래그 상태를 자체 관리 */
+  /* hoveredBlockId 삭제됨 — 툴바를 항상 노출하므로 호버 추적 불필요 */
 
   /* ── 업로드 진행률 (WebP 변환 + 검증 시간 피드백) ── */
   const [uploadProgress, setUploadProgress] = useState<{ current: number; total: number } | null>(null);
@@ -741,27 +788,28 @@ export default function Upload() {
     return () => window.removeEventListener('beforeunload', handler);
   }, [hasContent]);
 
-  /* ━━━━━━ 재정렬 핸들러 ━━━━━━ */
+  /* ━━━━━━ 재정렬 핸들러 (@dnd-kit 터치 호환) ━━━━━━ */
 
-  const handleDragStart = useCallback((index: number) => { setDragIndex(index); }, []);
-  const handleDragEnter = useCallback((index: number) => {
-    if (dragIndex === null || dragIndex === index) return;
-    setContents((prev) => {
-      const updated = [...prev];
-      const [moved] = updated.splice(dragIndex, 1);
-      updated.splice(index, 0, moved);
-      return updated;
-    });
-    // 커버 인덱스도 순서 이동에 맞춰 재계산
+  const dndSensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 8 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  const handleDndDragEnd = useCallback((event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
+    const oldIndex = contents.findIndex((c) => c.id === active.id);
+    const newIndex = contents.findIndex((c) => c.id === over.id);
+    if (oldIndex < 0 || newIndex < 0) return;
+    setContents((prev) => arrayMove(prev, oldIndex, newIndex));
     setCoverImageIndex((prev) => {
-      if (prev === dragIndex) return index;
-      if (dragIndex < prev && index >= prev) return prev - 1;
-      if (dragIndex > prev && index <= prev) return prev + 1;
+      if (prev === oldIndex) return newIndex;
+      if (oldIndex < prev && newIndex >= prev) return prev - 1;
+      if (oldIndex > prev && newIndex <= prev) return prev + 1;
       return prev;
     });
-    setDragIndex(index);
-  }, [dragIndex]);
-  const handleDragEnd = useCallback(() => { setDragIndex(null); }, []);
+  }, [contents]);
 
   /* ━━━━━━ 패널 이전/다음 (v1.7) ━━━━━━ */
 
@@ -865,33 +913,15 @@ export default function Upload() {
             {t('upload.reorderDone')}
           </Button>
         </div>
-        <div className="max-w-4xl mx-auto p-4 sm:p-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-          {contents.map((c, i) => (
-            <div
-              key={c.id}
-              draggable
-              onDragStart={() => handleDragStart(i)}
-              onDragEnter={() => handleDragEnter(i)}
-              onDragEnd={handleDragEnd}
-              onDragOver={(e) => e.preventDefault()}
-              className={`flex flex-col gap-2 p-3 border rounded-xl transition-all cursor-grab active:cursor-grabbing ${
-                dragIndex === i ? 'border-primary bg-muted shadow-sm scale-105 z-10' : 'border-border/40 bg-white hover:border-border/80'
-              }`}
-            >
-              <div className="relative flex aspect-square w-full items-center justify-center rounded-lg overflow-hidden">
-                <BlurDominantBg src={c.url} />
-                {c.url && <ImageWithFallback src={c.url} alt={c.title || ''} className="relative z-10 h-full w-full object-contain object-center" />}
-                <div className="absolute top-2 left-2 z-20 flex items-center gap-1.5">
-                  <div className="bg-black/60 text-white text-xs font-bold px-2 py-1 rounded-md backdrop-blur-sm">{i + 1}</div>
-                </div>
-                <div className="absolute top-2 right-2 z-20 bg-black/40 text-white p-1 rounded-md backdrop-blur-sm"><GripVertical className="h-4 w-4" /></div>
-              </div>
-              <span className="text-sm text-foreground truncate w-full text-center font-medium mt-1">
-                {normalizeStoredPieceTitle(c.title) || tn('upload.imageFallback', { n: String(i + 1) })}
-              </span>
+        <DndContext sensors={dndSensors} collisionDetection={closestCenter} onDragEnd={handleDndDragEnd}>
+          <SortableContext items={contents.map((c) => c.id)} strategy={rectSortingStrategy}>
+            <div className="max-w-4xl mx-auto p-4 sm:p-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+              {contents.map((c, i) => (
+                <SortableReorderItem key={c.id} item={c} index={i} />
+              ))}
             </div>
-          ))}
-        </div>
+          </SortableContext>
+        </DndContext>
       </div>
     );
   }
@@ -1037,7 +1067,7 @@ export default function Upload() {
                           aria-label={t('upload.coverUpload')}
                         >
                           <Plus className="h-4 w-4" />
-                          <span className="text-[9px] font-medium leading-tight">{t('upload.coverUpload')}</span>
+                          <span className="text-xs font-medium leading-tight">{t('upload.coverUpload')}</span>
                         </button>
                         <input
                           ref={coverFileInputRef}
@@ -1137,10 +1167,10 @@ export default function Upload() {
                           }`}
                         />
                         <div className="flex justify-between mt-1.5 px-1">
-                          <span className={`text-[11px] font-medium ${!exhibitionName.trim() && contents.length > 0 ? 'text-red-500' : 'text-transparent'}`}>
+                          <span className={`text-xs font-medium ${!exhibitionName.trim() && contents.length > 0 ? 'text-red-500' : 'text-transparent'}`}>
                             {t('upload.blockerExhibitionTitle')}
                           </span>
-                          <span className="text-[11px] text-muted-foreground">{exhibitionName.length}/{TITLE_FIELD_MAX_LEN}</span>
+                          <span className="text-xs text-muted-foreground">{exhibitionName.length}/{TITLE_FIELD_MAX_LEN}</span>
                         </div>
                       </div>
 
@@ -1167,18 +1197,18 @@ export default function Upload() {
                             }`}
                           />
                           <div className="flex justify-between mt-1.5 px-1">
-                            <span className={`text-[11px] font-medium ${!groupName.trim() && contents.length > 0 ? 'text-red-500' : 'text-transparent'}`}>
+                            <span className={`text-xs font-medium ${!groupName.trim() && contents.length > 0 ? 'text-red-500' : 'text-transparent'}`}>
                               {t('upload.blockerGroupName')}
                             </span>
-                            <span className="text-[11px] text-muted-foreground">{groupName.length}/{TITLE_FIELD_MAX_LEN}</span>
+                            <span className="text-xs text-muted-foreground">{groupName.length}/{TITLE_FIELD_MAX_LEN}</span>
                           </div>
                           {canonicalPreview?.kind === 'merge' && (
-                            <p className="mt-1 px-1 text-[12px] text-emerald-700">
+                            <p className="mt-1 px-1 text-xs text-emerald-700">
                               {t('upload.groupMergePreview').replace('{canonical}', canonicalPreview.canonical)}
                             </p>
                           )}
                           {canonicalPreview?.kind === 'new' && (
-                            <p className="mt-1 px-1 text-[12px] text-muted-foreground">
+                            <p className="mt-1 px-1 text-xs text-muted-foreground">
                               {t('upload.groupNewPreview')}
                             </p>
                           )}
@@ -1214,18 +1244,11 @@ export default function Upload() {
                         {contents.map((content, index) => (
                           <div
                             key={content.id}
-                            className={`relative transition-all group/block ${dragIndex === index ? 'opacity-50 scale-95' : ''}`}
-                            draggable
-                            onDragStart={() => handleDragStart(index)}
-                            onDragEnter={() => handleDragEnter(index)}
-                            onDragEnd={handleDragEnd}
-                            onDragOver={(e) => e.preventDefault()}
-                            onMouseEnter={() => setHoveredBlockId(content.id)}
-                            onMouseLeave={() => setHoveredBlockId(null)}
+                            className="relative transition-all group/block"
                           >
-                            {/* ── 콘텐츠 편집기 툴바 (호버 또는 선택 시 표시 — 터치 환경 지원) ── */}
-                            {(hoveredBlockId === content.id || selectedContentId === content.id) && (
-                              <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-0.5 bg-foreground/90 backdrop-blur-sm rounded-2xl px-2 py-1.5 shadow-lg animate-in fade-in zoom-in-95 duration-150">
+                            {/* ── 콘텐츠 편집기 툴바 (항상 노출 — 터치 기기 호환) ── */}
+                            {(
+                              <div className="absolute -top-6 left-1/2 -translate-x-1/2 z-20 flex items-center gap-0.5 bg-foreground/90 backdrop-blur-sm rounded-2xl px-2 py-1.5 shadow-lg">
                                 <button
                                   type="button"
                                   aria-label={t('upload.toolbarReplace')}
@@ -1233,7 +1256,7 @@ export default function Upload() {
                                   className="min-h-[44px] flex flex-col items-center justify-center gap-0.5 rounded-xl px-3 py-1.5 text-white/80 hover:text-white hover:bg-white/20 active:bg-white/30 transition-colors"
                                 >
                                   <Replace className="h-4.5 w-4.5" />
-                                  <span className="text-[10px] font-medium leading-tight">{t('upload.toolbarReplace')}</span>
+                                  <span className="text-xs font-medium leading-tight">{t('upload.toolbarReplace')}</span>
                                 </button>
                                 <button
                                   type="button"
@@ -1254,7 +1277,7 @@ export default function Upload() {
                                   className="min-h-[44px] flex flex-col items-center justify-center gap-0.5 rounded-xl px-3 py-1.5 text-red-300 hover:text-red-400 hover:bg-white/20 active:bg-white/30 transition-colors"
                                 >
                                   <Trash2 className="h-4.5 w-4.5" />
-                                  <span className="text-[10px] font-medium leading-tight">{t('upload.toolbarDelete')}</span>
+                                  <span className="text-xs font-medium leading-tight">{t('upload.toolbarDelete')}</span>
                                 </button>
                               </div>
                             )}
@@ -1354,14 +1377,14 @@ export default function Upload() {
                                   <ImageWithFallback src={c.url} alt="" className="relative z-10 w-full h-full object-contain object-center" />
                                 </button>
                                 {assignedName && (
-                                  <span className="pointer-events-none absolute bottom-1 left-1 z-20 flex items-center gap-1 bg-black/60 backdrop-blur-sm text-white text-[10px] font-medium pl-0.5 pr-1.5 py-0.5 rounded-full max-w-[calc(100%-2rem)]">
+                                  <span className="pointer-events-none absolute bottom-1 left-1 z-20 flex items-center gap-1 bg-black/60 backdrop-blur-sm text-white text-xs font-medium pl-0.5 pr-1.5 py-0.5 rounded-full max-w-[calc(100%-2rem)]">
                                     {assignedAvatar
                                       ? <img src={assignedAvatar} alt="" className="w-4 h-4 rounded-full object-cover shrink-0" />
                                       : <span className="w-4 h-4 rounded-full bg-white/30 shrink-0" />}
                                     <span className="truncate">{assignedName}</span>
                                   </span>
                                 )}
-                                <span className={`pointer-events-none absolute bottom-1 right-1 z-20 text-[10px] font-bold px-1.5 py-0.5 rounded-md ${c.id === selectedContentId ? 'bg-primary text-white' : 'bg-black/50 text-white/80'}`}>
+                                <span className={`pointer-events-none absolute bottom-1 right-1 z-20 text-xs font-bold px-1.5 py-0.5 rounded-md ${c.id === selectedContentId ? 'bg-primary text-white' : 'bg-black/50 text-white/80'}`}>
                                   {idx + 1}
                                 </span>
                                 <button
@@ -1394,7 +1417,7 @@ export default function Upload() {
                               className="aspect-square rounded-xl border-2 border-dashed border-border/60 hover:border-primary hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-1"
                             >
                               <Plus className="h-5 w-5 text-muted-foreground" />
-                              <span className="text-[10px] text-muted-foreground font-medium">{contents.length}/10</span>
+                              <span className="text-xs text-muted-foreground font-medium">{contents.length}/10</span>
                             </button>
                           )}
                         </div>
@@ -1408,13 +1431,13 @@ export default function Upload() {
                             <label
                               htmlFor={`card-title-input-${sc.id}`}
                               id={`card-title-${sc.id}`}
-                              className="text-[13px] font-semibold text-foreground truncate"
+                              className="text-sm font-semibold text-foreground truncate"
                             >
                               {t('upload.pieceTitleLabel')}
                               <span className="ml-1 text-xs font-normal text-muted-foreground">{t('upload.labelOptional')}</span>
                             </label>
                             {sc.title?.trim() && (
-                              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 shrink-0">
+                              <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600 shrink-0">
                                 <Check className="h-3.5 w-3.5" aria-hidden />
                                 {t('upload.cardDone')}
                               </span>
@@ -1442,11 +1465,11 @@ export default function Upload() {
                             className={`rounded-2xl border p-4 sm:p-5 ${artistDone ? 'border-emerald-200 bg-emerald-50/30' : 'border-primary/30 bg-primary/[0.02]'}`}
                           >
                           <header className="mb-3 flex items-center justify-between gap-2">
-                            <span id={`card-artist-${sc.id}`} className="text-[13px] font-semibold text-foreground truncate">
+                            <span id={`card-artist-${sc.id}`} className="text-sm font-semibold text-foreground truncate">
                               {t('upload.artistAssignRequired')}<RequiredMark />
                             </span>
                             {artistDone && (
-                              <span className="inline-flex items-center gap-1 text-[11px] font-medium text-emerald-600 shrink-0">
+                              <span className="inline-flex items-center gap-1 text-xs font-medium text-emerald-600 shrink-0">
                                 <Check className="h-3.5 w-3.5" aria-hidden />
                                 {t('upload.cardDone')}
                               </span>
@@ -1516,7 +1539,7 @@ export default function Upload() {
                             ) : (
                               <div className="space-y-4 p-5 bg-amber-50/60 border border-amber-200/60 rounded-2xl mt-4">
                                 <div>
-                                  <label className="block text-[11px] font-bold text-amber-800 mb-1.5 px-1">{t('upload.nonMemberNameLabel2')}<RequiredMark /></label>
+                                  <label className="block text-xs font-bold text-amber-800 mb-1.5 px-1">{t('upload.nonMemberNameLabel2')}<RequiredMark /></label>
                                   <input
                                     type="text" value={sc.nonMemberArtist?.displayName || ''}
                                     onChange={(e) => setContents(contents.map(c => c.id === selectedContentId ? { ...c, artistType: 'non-member', nonMemberArtist: { ...c.nonMemberArtist, displayName: e.target.value, phoneNumber: c.nonMemberArtist?.phoneNumber || '' } } : c))}
@@ -1525,7 +1548,7 @@ export default function Upload() {
                                   />
                                 </div>
                                 <div>
-                                  <label className="block text-[11px] font-bold text-amber-800 mb-1.5 px-1">{t('upload.nonMemberPhoneLabel2')}</label>
+                                  <label className="block text-xs font-bold text-amber-800 mb-1.5 px-1">{t('upload.nonMemberPhoneLabel2')}</label>
                                   <div className="flex flex-col gap-2">
                                     <input
                                       type="tel" value={sc.nonMemberArtist?.phoneNumber || ''}
@@ -1578,7 +1601,7 @@ export default function Upload() {
                   <div className="p-6 md:p-8 border-t border-border/40 bg-white space-y-5 mt-auto">
                     <div className="space-y-3">
                       <div className={`rounded-xl p-3.5 border ${publishBlockers.length > 0 ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'}`} role="status" aria-live="polite">
-                        <p className={`text-[11px] font-bold uppercase tracking-wider mb-2 ${publishBlockers.length > 0 ? 'text-red-700' : 'text-green-700'}`}>{t('upload.blockersTitle')}</p>
+                        <p className={`text-xs font-bold uppercase tracking-wider mb-2 ${publishBlockers.length > 0 ? 'text-red-700' : 'text-green-700'}`}>{t('upload.blockersTitle')}</p>
                         <ul className="space-y-1.5">
                           {publishChecklist.map((item) => (
                             <li key={item.key} className={`flex items-center gap-2 text-xs ${item.disabled ? 'text-muted-foreground/50' : item.done ? 'text-green-600' : 'text-red-700'}`}>
@@ -1606,7 +1629,7 @@ export default function Upload() {
                       <Button
                         variant="outline"
                         onClick={handleSaveDraft}
-                        className="w-full py-6 rounded-2xl text-[15px] font-semibold text-zinc-600 border-zinc-200 hover:bg-zinc-50 hover:text-zinc-900 transition-colors"
+                        className="w-full py-6 rounded-2xl text-base font-semibold text-zinc-600 border-zinc-200 hover:bg-zinc-50 hover:text-zinc-900 transition-colors"
                       >
                         {t('upload.saveDraft')}
                       </Button>
@@ -1615,7 +1638,7 @@ export default function Upload() {
                         <Button
                           variant="ghost"
                           onClick={() => setReorderMode(true)}
-                          className="w-full py-5 rounded-2xl text-[13px] font-medium text-muted-foreground hover:text-foreground hover:bg-zinc-50 transition-colors gap-2"
+                          className="w-full py-5 rounded-2xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-zinc-50 transition-colors gap-2"
                         >
                           <ArrowUpDown className="w-4 h-4" />
                           {t('upload.reorderGridBtn')}
@@ -1625,7 +1648,7 @@ export default function Upload() {
                         variant="ghost"
                         disabled={contents.length === 0}
                         onClick={() => setPreviewMode(true)}
-                        className="w-full py-5 rounded-2xl text-[13px] font-medium text-muted-foreground hover:text-foreground hover:bg-zinc-50 transition-colors disabled:opacity-40 gap-2"
+                        className="w-full py-5 rounded-2xl text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-zinc-50 transition-colors disabled:opacity-40 gap-2"
                       >
                         <Monitor className="w-4 h-4" />
                         {t('upload.screenPreview')}
