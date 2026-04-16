@@ -157,9 +157,8 @@ export default function Upload() {
   const [artistInputTab, setArtistInputTab] = useState<'member' | 'non-member'>('member');
   /* ── 변환 프로그레스 ── */
 
-  /* ── 강사 / 개인전시 탭 ── */
+  /* ── 강사 ── */
   const [isInstructor, setIsInstructor] = useState(false);
-  const [showInSoloTab, setShowInSoloTab] = useState(true);
 
   /* ── 이벤트 연결 ── */
   const linkedEventId = searchParams.get('event');
@@ -214,7 +213,6 @@ export default function Upload() {
     setGroupName('');
     setIsOriginalWork(false);
     setIsInstructor(false);
-    setShowInSoloTab(true);
     setSelectedContentId(null);
     setCoverImageIndex(0);
     setCustomCoverUrl(null);
@@ -299,7 +297,6 @@ export default function Upload() {
     setExhibitionName((draft.exhibitionName ?? draft.title ?? '').trim());
     if (draft.groupName) setGroupName(draft.groupName);
     if (draft.isInstructor) setIsInstructor(true);
-    if (typeof draft.showInSoloTab === 'boolean') setShowInSoloTab(draft.showInSoloTab);
     if (typeof draft.coverImageIndex === 'number') setCoverImageIndex(draft.coverImageIndex);
     if (draft.customCoverUrl) setCustomCoverUrl(draft.customCoverUrl);
     let restored = draft.contents.map((c) => ({
@@ -354,7 +351,6 @@ export default function Upload() {
     if (work.isInstructorUpload) setIsInstructor(true);
     if (typeof work.coverImageIndex === 'number') setCoverImageIndex(work.coverImageIndex);
     if (work.customCoverUrl) setCustomCoverUrl(work.customCoverUrl);
-    if (typeof work.showInSoloTab === 'boolean') setShowInSoloTab(work.showInSoloTab);
     toast.success(t('upload.toastEditLoaded'));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
@@ -599,7 +595,6 @@ export default function Upload() {
       imagePieceTitles,
       isInstructorUpload: uploadType === 'group' ? isInstructor : undefined,
       primaryExhibitionType,
-      showInSoloTab: primaryExhibitionType === 'group' ? showInSoloTab : undefined,
       imageArtists,
       feedReviewStatus: import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true' ? 'approved' : 'pending',
       uploadedAt,
@@ -661,8 +656,10 @@ export default function Upload() {
       setIsPublishing(false);
       publishedRef.current = true;
       const autoApproved = import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true';
-      // 발행 후엔 항상 프로필 전시 탭으로 유도. 검수 대기면 배너 노출용 쿼리 전달.
-      if (wasEditingExistingWork || autoApproved) {
+      // 이벤트 응모면 이벤트 상세로 복귀
+      if (linkedEventId) {
+        navigate(`/events/${linkedEventId}`);
+      } else if (wasEditingExistingWork || autoApproved) {
         navigate('/me?tab=exhibition');
       } else {
         navigate(`/me?tab=exhibition&published=pending&workId=${targetId}`);
@@ -682,7 +679,6 @@ export default function Upload() {
       uploadType: uploadType ?? undefined,
       groupName: groupName.trim() || undefined,
       isInstructor: uploadType === 'group' ? isInstructor : undefined,
-      showInSoloTab: uploadType === 'group' ? showInSoloTab : undefined,
       coverImageIndex,
       contents: contents.map((c) => ({
         id: c.id,
@@ -717,7 +713,6 @@ export default function Upload() {
         uploadType: uploadType ?? undefined,
         groupName: groupName.trim() || undefined,
         isInstructor: uploadType === 'group' ? isInstructor : undefined,
-        showInSoloTab: uploadType === 'group' ? showInSoloTab : undefined,
         coverImageIndex,
         contents: contents.map((c) => ({
           id: c.id,
@@ -737,7 +732,7 @@ export default function Upload() {
       setLastAutoSavedAt(Date.now());
     }, 30000);
     return () => clearInterval(interval);
-  }, [hasContent, contents, exhibitionName, uploadType, groupName, isInstructor, showInSoloTab, coverImageIndex, customCoverUrl]);
+  }, [hasContent, contents, exhibitionName, uploadType, groupName, isInstructor, coverImageIndex, customCoverUrl]);
 
   useEffect(() => {
     if (!hasContent) return;
@@ -1095,22 +1090,6 @@ export default function Upload() {
                       </div>
                     )}
 
-                    {/* 개인전시 탭 노출 (함께 올리기 전용) */}
-                    {uploadType === 'group' && (
-                      <div className="flex items-center justify-between p-4 bg-muted border border-border rounded-xl">
-                        <div className="flex-1 mr-4">
-                          <p className="text-sm font-medium text-foreground">{t('upload.soloTabTitle')}</p>
-                          <p className="text-sm text-muted-foreground mt-0.5">{t('upload.soloTabDesc')}</p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => setShowInSoloTab(!showInSoloTab)}
-                          className={`relative shrink-0 w-12 h-7 rounded-full transition-colors ${showInSoloTab ? 'bg-primary' : 'bg-muted-foreground/30'}`}
-                        >
-                          <span className={`absolute top-0.5 left-0.5 w-6 h-6 bg-white rounded-full shadow transition-transform ${showInSoloTab ? 'translate-x-5' : 'translate-x-0'}`} />
-                        </button>
-                      </div>
-                    )}
                   </div>
 
                   {/* 푸터 */}

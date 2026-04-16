@@ -117,6 +117,10 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
     Boolean(work.isInstructorUpload && work.groupName?.trim()) ||
     work.owner?.type === 'group';
   const displayArtistName = work.artist.name;
+  const uploaderArtist = allArtists.find(a => a.id === work.artistId);
+  const uploaderName = uploaderArtist?.name ?? displayArtistName;
+  // 그룹 전시는 헤더에 그룹명만 나오므로 올린이를 별도 표시
+  const showUploaderLine = isGroupWork && !!uploaderArtist;
 
   const images = Array.isArray(work.image) ? work.image : [work.image];
   const totalImages = images.length;
@@ -358,16 +362,25 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                     {displayArtistName}
                   </span>
                 )}
-                {isPick && (
-                  <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 text-[11px] font-bold whitespace-nowrap w-fit">
-                    <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
-                      <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.957c.3.921-.755 1.688-1.54 1.118l-3.37-2.448a1 1 0 00-1.176 0l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.287-3.957a1 1 0 00-.364-1.118L2.063 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.957z" />
-                    </svg>
-                    {t('about.feat3Title')}
+                {showUploaderLine && (
+                  <span
+                    className="text-zinc-500 text-[12px] cursor-pointer lg:hover:text-zinc-700 lg:hover:underline transition-colors"
+                    onClick={() => handleArtistClick(uploaderArtist.id)}
+                  >
+                    {t('profile.uploaderLabel')}: {uploaderName}
                   </span>
                 )}
               </div>
             </div>
+            <div className="flex items-center gap-2 shrink-0">
+              {isPick && (
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[11px] font-bold whitespace-nowrap">
+                  <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
+                    <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.957c.3.921-.755 1.688-1.54 1.118l-3.37-2.448a1 1 0 00-1.176 0l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.287-3.957a1 1 0 00-.364-1.118L2.063 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.957z" />
+                  </svg>
+                  {t('about.feat3Title')}
+                </span>
+              )}
             {/* 그룹 작품은 "그룹 팔로우" 개념이 없음 — 버튼 숨김, 내 작품도 숨김 */}
             {!isGroupWork && work.artist.id !== allArtists[0]?.id && (
               <button
@@ -383,6 +396,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                 {follows.isFollowing(work.artist.id) ? t('social.following') : t('social.follow')}
               </button>
             )}
+            </div>
           </div>
 
           {/* Scrollable image + info area */}
@@ -528,12 +542,6 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                     <h3 className="text-lg font-bold text-zinc-900 mb-2">
                       {displayExhibitionTitle(work, t('work.exhibitionFallback'))}
                     </h3>
-                    <p className="text-[13px] text-zinc-500">
-                      {t('workDetail.participantCount').replace(
-                        '{n}',
-                        String(groupMemberArtists.length),
-                      )}
-                    </p>
                   </div>
                   <div className="space-y-4">
                     {groupMemberArtists.map((member) => (
@@ -886,7 +894,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
       </div>
 
       {/* Login prompt modal */}
-      <LoginPromptModal open={showLoginPrompt} onClose={() => setShowLoginPrompt(false)} />
+      <LoginPromptModal open={showLoginPrompt} onClose={() => setShowLoginPrompt(false)} action="like" />
       <ReportModal
         open={showReport}
         onClose={() => setShowReport(false)}
@@ -907,29 +915,16 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
 function CoOwnerSection({ work }: { work: Work }) {
   const { t } = useI18n();
   const hasCoOwners = work.coOwners && work.coOwners.length > 0;
-  const isInstructor = work.isInstructorUpload === true;
   const taggedEmails = work.taggedEmails;
-  const showInstructorGroupChip = isInstructor && work.groupName?.trim();
 
-  if (!showInstructorGroupChip && !hasCoOwners && !isInstructor && !taggedEmails?.length) return null;
+  if (!hasCoOwners && !taggedEmails?.length) return null;
 
   return (
     <div className="flex flex-wrap items-center gap-3 mb-6">
-      {showInstructorGroupChip ? (
-        <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-primary/10 text-primary text-[13px] font-medium">
-          <Users className="h-4 w-4" />
-          {t('workDetail.groupLine')} · {work.groupName}
-        </span>
-      ) : null}
       {hasCoOwners && (
         <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-zinc-100 text-zinc-700 text-[13px] border border-zinc-200">
           <Users className="h-4 w-4" />
           {t('workDetail.coWork')} · {work.coOwners!.map(c => c.name).join(', ')}
-        </span>
-      )}
-      {isInstructor && (
-        <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-amber-500/10 text-amber-600 text-[13px] font-semibold border border-amber-500/20">
-          {t('workDetail.instructorUpload')}
         </span>
       )}
       {taggedEmails && taggedEmails.length > 0 && (

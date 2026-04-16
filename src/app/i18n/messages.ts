@@ -168,7 +168,7 @@ const koMessages = {
 /exhibitions/1|전시 상세·작업물 모달 딥링크 예시(PRD URL)`,
   'flowMap.section04': `4. 그룹전시(업로드에서 자동 분류)
 /exhibitions/group-nature|그룹 전시 상세 예시`,
-  'flowMap.section05': `5. 내 프로필 · 작품 관리 · 설정
+  'flowMap.section05': `5. 내 프로필 · 작품 보기 · 설정
 /me|내 프로필 (PRD IA)
 /profile|내 프로필 (동일 화면, 예전 경로)
 /profile/2|타인 프로필 예시
@@ -437,8 +437,6 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.detailsModalTitle': '세부 정보 설정',
   'upload.labelOptional': '(선택)',
   'upload.eventWorkTitle': '이벤트 참여작',
-  'upload.soloTabTitle': '개인전시 탭에도 노출',
-  'upload.soloTabDesc': '그룹전시이지만 개인전시 탭에서도 작품이 보입니다',
   'upload.disclaimerStudent':
     '수강생의 동의 없이 작품을 업로드할 경우 책임은 업로더에게 있습니다.',
   'upload.disclaimerOriginal':
@@ -526,7 +524,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.groupNewPreview': '새 그룹으로 등록돼요',
   'upload.customCoverLabel': '커스텀 커버 이미지',
   'upload.customCoverRemove': '커스텀 커버 제거',
-  'upload.customCoverHint': '로컬 파일로 올린 커버는 썸네일·공유 카드에만 사용되고 전시 이미지엔 포함되지 않아요.',
+  'upload.customCoverHint': '직접 추가한 커버 이미지는 전시 이미지엔 포함되지 않아요.',
   'upload.smsInviteSent': '초대 완료',
   'upload.goHome': '처음으로',
   'upload.autosavedJustNow': '자동 저장됨',
@@ -860,9 +858,19 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'profile.errProfanity': '닉네임·한 줄 소개·자기소개에 부적절한 단어가 포함되어 있어요.',
   'profile.bioPlaceholderEmpty': '아직 소개가 없습니다.',
   'profile.tabWorkManage': '작품 관리',
+  'profile.exhibitionNameBadge': '전시명',
+  'profile.workNameBadge': '작품명',
+  'profile.artistNameBadge': '작가명',
+  'profile.groupNameBadge': '그룹명',
   'profile.tabLikes': '좋아요',
   'profile.tabSaves': '저장',
   'profile.tabDrafts': '초안',
+  'profile.tabGuideExhibition': '전시 탭은 전시 단위로 보여요. 내가 올리지 않은 전시도 참여 작가로 연결되면 함께 보여요. 수정은 내가 올린 전시만 우상단 버튼으로 할 수 있어요. 내가 올리지 않은 전시에서 수정이 필요하면 업로더를 통해 수정해 주세요.',
+  'profile.tabGuideWorks': '작품 관리는 전시에 포함된 내 그림을 모아보는 탭이에요. 작품명을 탭하면 바로 수정할 수 있어요.',
+  'profile.tabGuideStudentWorks': '수강생 작품 탭에는 내가 강사로 업로드한 그룹 전시 작품만 모아 보여줍니다.',
+  'profile.tabGuideLikes': '좋아요 탭에는 내가 좋아요를 누른 작품이 모여요.',
+  'profile.tabGuideSaves': '저장 탭에는 나중에 보려고 저장한 작품이 모여요.',
+  'profile.tabGuideDrafts': '초안 탭에는 전시 전에 임시 저장한 초안이 모여요.',
   'profile.filterAll': '전체',
   'profile.filterSolo': '개인',
   'profile.filterGroup': '그룹',
@@ -870,21 +878,15 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'profile.publishedBannerTitle': '작품이 등록되었어요! 지금은 나만 볼 수 있어요',
   'profile.publishedBannerDesc': '운영팀이 24시간 이내에 검토한 뒤 둘러보기에 공개돼요. 검수 중에는 배지로 상태를 확인할 수 있고, 공개되면 알림으로 알려드려요.',
   'profile.publishedBannerDismiss': '닫기',
-  'profile.uploaderLabel': '업로더',
+  'profile.uploaderLabel': '게시자',
   'profile.deleteWorkConfirm': '"{title}" 작품을 삭제할까요?',
   'profile.deleteDraftConfirm': '이 초안을 삭제하시겠습니까?',
   'profile.delete': '삭제',
   'profile.tagged': '태그됨',
   'profile.workMenuA11y': '작품 메뉴',
+  'profile.renameWork': '작품명 수정',
+  'profile.workTitleSaved': '작품명이 저장되었어요',
   'profile.share': '공유',
-  'profile.worksManageRenamePiece': '작품명 변경',
-  'profile.worksManageMenuAria': '이 작품 옵션',
-  'profile.worksManagePieceTitleDialogTitle': '작품명 바꾸기',
-  'profile.worksManagePieceTitleDialogDesc': '비워 두면 화면에는 무제로 표시돼요.',
-  'profile.worksManagePieceTitleSave': '저장',
-  'profile.worksManagePieceTitleCancel': '취소',
-  'profile.worksManagePieceTitleToast': '작품명을 저장했어요.',
-  'profile.worksManagePieceTitleProfanity': '작품명에 사용할 수 없는 표현이 포함되어 있어요.',
   'profile.continueEditDraft': '이어서 편집',
   'profile.draftBadge': '초안',
   'profile.draftNoTitle': '제목 없음',
@@ -1268,7 +1270,7 @@ const enMessages: Record<MessageKey, string> = {
 /exhibitions/1|Exhibition / work modal deep link (PRD URL)`,
   'flowMap.section04': `4. Group exhibition (from upload tags)
 /exhibitions/group-nature|Sample group exhibition`,
-  'flowMap.section05': `5. Profile · work management · settings
+  'flowMap.section05': `5. Profile · works · settings
 /me|My profile (PRD IA)
 /profile|My profile (same screen, legacy path)
 /profile/2|Another user’s profile (sample)
@@ -1537,8 +1539,6 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points are Phase
   'upload.detailsModalTitle': 'Details',
   'upload.labelOptional': '(optional)',
   'upload.eventWorkTitle': 'Event entry',
-  'upload.soloTabTitle': 'Also show in solo tab',
-  'upload.soloTabDesc': 'Group works can appear in the solo exhibition tab too',
   'upload.disclaimerStudent':
     'You are responsible if you upload without the student’s consent.',
   'upload.disclaimerOriginal':
@@ -1959,10 +1959,23 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points are Phase
   'profile.toastProfileSaved': 'Profile saved.',
   'profile.errProfanity': 'Nickname, headline, or bio contains inappropriate language.',
   'profile.bioPlaceholderEmpty': 'No bio yet.',
-  'profile.tabWorkManage': 'Work management',
+  'profile.tabWorkManage': 'Manage Works',
+  'profile.exhibitionNameBadge': 'Exhibition',
+  'profile.workNameBadge': 'Work',
+  'profile.artistNameBadge': 'Artist',
+  'profile.groupNameBadge': 'Group',
   'profile.tabLikes': 'Likes',
   'profile.tabSaves': 'Saved',
   'profile.tabDrafts': 'Drafts',
+  'profile.tabGuideExhibition':
+    'The Exhibition tab is shown by exhibition. Exhibitions you did not upload can also appear when you are linked as a participant. Only exhibitions you uploaded can be edited via the top-right menu button.',
+  'profile.tabGuideWorks':
+    'Manage Works shows all your images across exhibitions. Tap the title to rename a work.',
+  'profile.tabGuideStudentWorks':
+    'The Student works tab shows only group exhibitions you uploaded as an instructor.',
+  'profile.tabGuideLikes': 'The Likes tab collects works you liked.',
+  'profile.tabGuideSaves': 'The Saved tab collects works you saved for later.',
+  'profile.tabGuideDrafts': 'The Drafts tab collects your saved drafts before publishing.',
   'profile.filterAll': 'All',
   'profile.filterSolo': 'Solo',
   'profile.filterGroup': 'Group',
@@ -1970,21 +1983,15 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points are Phase
   'profile.publishedBannerTitle': 'Your work is published — visible only to you for now',
   'profile.publishedBannerDesc': 'Our team reviews within 24 hours before it appears on Browse. Watch the status badge; you\u2019ll get a notification when it goes public.',
   'profile.publishedBannerDismiss': 'Dismiss',
-  'profile.uploaderLabel': 'Uploader',
+  'profile.uploaderLabel': 'Publisher',
   'profile.deleteWorkConfirm': 'Delete “{title}”?',
   'profile.deleteDraftConfirm': 'Delete this draft?',
   'profile.delete': 'Delete',
   'profile.tagged': 'Tagged',
   'profile.workMenuA11y': 'Work menu',
+  'profile.renameWork': 'Rename work',
+  'profile.workTitleSaved': 'Title saved',
   'profile.share': 'Share',
-  'profile.worksManageRenamePiece': 'Rename work',
-  'profile.worksManageMenuAria': 'Options for this work',
-  'profile.worksManagePieceTitleDialogTitle': 'Rename work',
-  'profile.worksManagePieceTitleDialogDesc': 'If you leave it blank, it will show as Untitled.',
-  'profile.worksManagePieceTitleSave': 'Save',
-  'profile.worksManagePieceTitleCancel': 'Cancel',
-  'profile.worksManagePieceTitleToast': 'Title saved.',
-  'profile.worksManagePieceTitleProfanity': 'This title contains words that cannot be used.',
   'profile.continueEditDraft': 'Continue editing',
   'profile.draftBadge': 'Draft',
   'profile.draftNoTitle': 'Untitled',

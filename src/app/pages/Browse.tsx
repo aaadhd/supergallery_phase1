@@ -285,9 +285,7 @@ export default function Browse() {
     };
 
     if (activeCategory === 'individual') {
-      return visibleWorks.filter(
-        (w) => !isGroupWork(w) || w.showInSoloTab === true,
-      );
+      return visibleWorks.filter((w) => !isGroupWork(w));
     }
     // group
     return visibleWorks.filter((w) => isGroupWork(w));
@@ -583,7 +581,7 @@ export default function Browse() {
         />
       ) : null}
 
-      <LoginPromptModal open={loginPromptOpen} onClose={handleLoginPromptClose} />
+      <LoginPromptModal open={loginPromptOpen} onClose={handleLoginPromptClose} action="like" />
     </div>
   );
 }
@@ -687,6 +685,11 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
       work.owner?.type === 'group');
   const imageSrc = resolveImage(getThumbCover(work));
   const imageCount = getImageCount(work.image);
+  const showImageCountBadge =
+    imageCount > 1 &&
+    (work.primaryExhibitionType === 'group' ||
+      work.primaryExhibitionType === 'solo' ||
+      Array.isArray(work.image));
 
   // 비회원 참여 작가 (imageArtists type='non-member') — peek 리스트에 이름만 노출
   const nonMemberArtists = Array.from(
@@ -701,6 +704,21 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
   //  그룹 멤버 표시: 이미지 수를 초과하지 않도록 제한 (1장 = 1작가 원칙)
   const groupOwnerData: { id: string; memberIds?: string[] } | undefined =
     work.owner?.type === 'group' ? work.owner.data : undefined;
+  const instructorArtistId =
+    work.isInstructorUpload && work.primaryExhibitionType === 'group' ? work.artistId : null;
+  const orderMembersWithInstructorFirst = (members: Artist[]): Artist[] => {
+    if (!instructorArtistId) return members;
+    const seen = new Set<string>();
+    const deduped = members.filter((m) => {
+      if (seen.has(m.id)) return false;
+      seen.add(m.id);
+      return true;
+    });
+    const instructor = allArtists.find((a) => a.id === instructorArtistId);
+    if (!instructor) return deduped;
+    const rest = deduped.filter((m) => m.id !== instructorArtistId);
+    return [instructor, ...rest];
+  };
   const peekMembers: Artist[] = (() => {
     // imageArtists가 있으면 우선 사용 (실제 업로드 시 이미지별 작가 지정)
     if (work.imageArtists && work.imageArtists.length > 0) {
@@ -708,8 +726,7 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
         .filter((ia) => ia.type === 'member' && ia.memberId)
         .map((ia) => allArtists.find((a: Artist) => a.id === ia.memberId))
         .filter((a): a is Artist => Boolean(a));
-      const seen = new Set<string>();
-      return memberArtists.filter((a) => { if (seen.has(a.id)) return false; seen.add(a.id); return true; });
+      return orderMembersWithInstructorFirst(memberArtists);
     }
     // fallback: owner memberIds에서 이미지 수만큼만
     const memberIds = groupOwnerData?.memberIds;
@@ -717,12 +734,12 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
       const list = memberIds
         .map((mid: string) => allArtists.find((a: Artist) => a.id === mid))
         .filter((a: Artist | undefined): a is Artist => Boolean(a));
-      if (list.length > 0) return list.slice(0, imageCount);
+      if (list.length > 0) return orderMembersWithInstructorFirst(list);
     }
     const raw: Artist[] = [artist, ...(coOwners ?? [])];
     const groupId = groupOwnerData?.id;
     const filtered = groupId ? raw.filter((a) => a.id !== groupId) : raw;
-    return filtered.slice(0, imageCount);
+    return orderMembersWithInstructorFirst(filtered);
   })();
 
   return (
@@ -741,7 +758,7 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
           />
 
         {/* Image count badge */}
-        {imageCount > 1 && (
+        {showImageCountBadge && (
           <div className="absolute left-3 top-3 z-10">
             <div className="flex items-center gap-1.5 rounded-full bg-black/60 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-sm">
               <ImageIcon className="h-3.5 w-3.5" />
@@ -791,7 +808,14 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
               >
                 <p className="text-sm font-semibold text-foreground px-1 mb-3">{t('browse.groupMembersLabel')}</p>
                 {peekMembers.map((m) => (
-                  <MemberRow key={m.id} artist={m} isFollowing={isFollowing(m.id)} onToggleFollow={() => onToggleFollow(m.id)} onNavigate={(id) => navigate(`/profile/${id}`)} />
+                  <MemberRow
+                    key={m.id}
+                    artist={m}
+                    isInstructor={m.id === instructorArtistId}
+                    isFollowing={isFollowing(m.id)}
+                    onToggleFollow={() => onToggleFollow(m.id)}
+                    onNavigate={(id) => navigate(`/profile/${id}`)}
+                  />
                 ))}
                 {nonMemberArtists.map((nm) => (
                   <MemberRow
@@ -821,7 +845,14 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
               >
                 <p className="text-sm font-semibold text-foreground px-1 mb-3">{t('browse.groupMembersLabel')}</p>
                 {peekMembers.map((m) => (
-                  <MemberRow key={m.id} artist={m} isFollowing={isFollowing(m.id)} onToggleFollow={() => onToggleFollow(m.id)} onNavigate={(id) => navigate(`/profile/${id}`)} />
+                  <MemberRow
+                    key={m.id}
+                    artist={m}
+                    isInstructor={m.id === instructorArtistId}
+                    isFollowing={isFollowing(m.id)}
+                    onToggleFollow={() => onToggleFollow(m.id)}
+                    onNavigate={(id) => navigate(`/profile/${id}`)}
+                  />
                 ))}
                 {nonMemberArtists.map((nm) => (
                   <MemberRow
@@ -887,12 +918,14 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
 function MemberRow({
   artist,
   isRegistered = true,
+  isInstructor = false,
   onNavigate,
   isFollowing,
   onToggleFollow,
 }: {
   artist: Artist;
   isRegistered?: boolean;
+  isInstructor?: boolean;
   onNavigate: (id: string) => void;
   isFollowing: boolean;
   onToggleFollow: () => void;
@@ -928,9 +961,16 @@ function MemberRow({
     >
       <img src={artist.avatar} alt={artist.name} className="h-10 w-10 rounded-full object-cover shrink-0" />
       <div className="flex-1 min-w-0">
-        <p className="text-sm font-semibold text-foreground">
-          {truncateArtistName(artist.name)}
-        </p>
+        <div className="flex items-center gap-1.5">
+          <p className="text-sm font-semibold text-foreground">
+            {truncateArtistName(artist.name)}
+          </p>
+          {isInstructor && (
+            <span className="inline-flex rounded-full border border-primary/25 bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+              {t('profile.instructorBadge')}
+            </span>
+          )}
+        </div>
         {artist.bio && (
           <p className="text-xs text-muted-foreground truncate mt-0.5">{artist.bio}</p>
         )}

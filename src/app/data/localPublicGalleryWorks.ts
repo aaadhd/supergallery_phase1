@@ -263,7 +263,7 @@ export function buildLocalPublicWorks(paths: string[], artistsList: Artist[]): W
     ahn: 1, fileview: 1, web: 1, se: 1, ig: 1, imageye: 1, misc: 1,
   };
 
-  return paths.map((rawPath, i) => {
+  const baseWorks = paths.map((rawPath, i) => {
     const path = toPublicImageSrc(rawPath);
     const norm = rawPath.trim();
     const file = norm.replace(/^\/images\//, '');
@@ -398,4 +398,237 @@ export function buildLocalPublicWorks(paths: string[], artistsList: Artist[]): W
       primaryExhibitionType,
     } satisfies Work;
   });
+
+  // 그룹전시 목업: "대부분이 다장"으로 보이도록 단장 그룹 작품을 전시 단위로 묶는다.
+  const groupBuckets = new Map<string, Work[]>();
+  const groupSingles = baseWorks.filter(
+    (w) =>
+      w.primaryExhibitionType === 'group' &&
+      !Array.isArray(w.image),
+  );
+  for (const w of groupSingles) {
+    const key = `${w.groupName ?? w.artistId}::${w.exhibitionName ?? ''}`;
+    const list = groupBuckets.get(key);
+    if (list) list.push(w);
+    else groupBuckets.set(key, [w]);
+  }
+
+  const groupMultiMocks: Work[] = [];
+  const removeGroupSingleIds = new Set<string>();
+  const sortedGroupBuckets = Array.from(groupBuckets.values()).sort((a, b) => b.length - a.length);
+  const targetGroupedCoverage = Math.round(groupSingles.length * 0.72);
+  let groupedCoverage = 0;
+  let groupMockIdx = 0;
+  for (const list of sortedGroupBuckets) {
+    if (groupedCoverage >= targetGroupedCoverage) break;
+    if (list.length < 2) continue;
+
+    const picked = list.slice(0, Math.min(6, list.length));
+    const imageList = picked
+      .map((w) => (Array.isArray(w.image) ? w.image[0] : w.image))
+      .filter((src): src is string => Boolean(src));
+    if (imageList.length < 2) continue;
+
+    const lead = picked[0];
+    const pieceTitles = picked.map((w, idx) => w.title?.trim() || `작품 ${idx + 1}`);
+    const imageArtists: Work['imageArtists'] = picked.map((w) => ({
+      type: 'member' as const,
+      memberId: w.artist.id,
+      memberName: w.artist.name,
+      memberAvatar: w.artist.avatar,
+    }));
+
+    groupMultiMocks.push({
+      ...lead,
+      id: `local-group-multi-${groupMockIdx++}`,
+      image: imageList,
+      imagePieceTitles: pieceTitles,
+      imageArtists,
+      title: pieceTitles[0],
+      likes: lead.likes + imageList.length * 7,
+      saves: lead.saves + imageList.length * 3,
+      comments: lead.comments + imageList.length * 2,
+      primaryExhibitionType: 'group',
+    });
+
+    for (const w of picked) {
+      removeGroupSingleIds.add(w.id);
+    }
+    groupedCoverage += picked.length;
+  }
+
+  const baseWorksAfterGroupMerge = baseWorks.filter((w) => !removeGroupSingleIds.has(w.id));
+
+  // 둘러보기 목업 다양성: 개인전시(solo)의 약 30%를 다장 업로드 케이스로 합성한다.
+  const soloBuckets = new Map<string, Work[]>();
+  const soloSingles: Work[] = [];
+  for (const w of baseWorksAfterGroupMerge) {
+    if (w.primaryExhibitionType !== 'solo') continue;
+    if (w.groupName) continue;
+    if (Array.isArray(w.image)) continue;
+    soloSingles.push(w);
+    const key = `${w.artistId}::${w.exhibitionName ?? ''}`;
+    const list = soloBuckets.get(key);
+    if (list) list.push(w);
+    else soloBuckets.set(key, [w]);
+  }
+
+  const toSoloMultiMock = (list: Work[], mockId: string): Work | null => {
+    const picked = list.slice(0, Math.min(4, list.length));
+    const imageList = picked
+      .map((w) => (Array.isArray(w.image) ? w.image[0] : w.image))
+      .filter((src): src is string => Boolean(src));
+    if (imageList.length < 2) return null;
+
+    const pieceTitles = picked.map((w, idx) => w.title?.trim() || `작품 ${idx + 1}`);
+    const lead = picked[0];
+    return {
+      ...lead,
+      id: mockId,
+      image: imageList,
+      imagePieceTitles: pieceTitles,
+      title: pieceTitles[0],
+      // 원본 단일 작품보다 살짝 높은 노출 수치로 목업 카드가 섞여 보이게 조정
+      likes: lead.likes + imageList.length * 9,
+      saves: lead.saves + imageList.length * 4,
+      comments: lead.comments + imageList.length * 2,
+      primaryExhibitionType: 'solo',
+    } satisfies Work;
+  };
+
+  const candidateGroups = Array.from(soloBuckets.values())
+    .filter((list) => list.length >= 3)
+    .sort((a, b) => b.length - a.length);
+
+  const soloMultiMocks: Work[] = [];
+  let mockIdx = 0;
+  const targetSoloMultiCount = Math.max(1, Math.round(soloSingles.length * 0.3));
+  const pickedGroupKeys = new Set<string>();
+  for (const list of candidateGroups) {
+    if (soloMultiMocks.length >= targetSoloMultiCount) break;
+    const key = `${list[0]?.artistId ?? 'unknown'}::${list[0]?.exhibitionName ?? ''}`;
+    if (pickedGroupKeys.has(key)) continue;
+    const mock = toSoloMultiMock(list, `local-solo-multi-${mockIdx++}`);
+    if (mock) {
+      soloMultiMocks.push(mock);
+      pickedGroupKeys.add(key);
+    }
+  }
+
+  // 카테(id: 1)도 개인전시 중 약 30%가 다장으로 보이도록 별도 보정한다.
+  const kateSingles = soloSingles.filter((w) => w.artistId === '1');
+  const kateTargetSoloMultiCount =
+    kateSingles.length > 0 ? Math.max(1, Math.round(kateSingles.length * 0.3)) : 0;
+  let kateCurrentSoloMultiCount = soloMultiMocks.filter((w) => w.artistId === '1').length;
+
+  if (kateCurrentSoloMultiCount < kateTargetSoloMultiCount) {
+    const kateGroups = candidateGroups.filter((list) => list[0]?.artistId === '1');
+    for (const list of kateGroups) {
+      if (kateCurrentSoloMultiCount >= kateTargetSoloMultiCount) break;
+      const key = `${list[0]?.artistId ?? 'unknown'}::${list[0]?.exhibitionName ?? ''}`;
+      if (pickedGroupKeys.has(key)) continue;
+      const kateMock = toSoloMultiMock(list, `local-solo-multi-kate-${mockIdx++}`);
+      if (!kateMock) continue;
+      soloMultiMocks.unshift(kateMock);
+      pickedGroupKeys.add(key);
+      kateCurrentSoloMultiCount += 1;
+    }
+
+    // 같은 전시 그룹이 부족하면 카테 단일 작품을 3장씩 묶어 추가 생성해 비율을 맞춘다.
+    while (kateCurrentSoloMultiCount < kateTargetSoloMultiCount && kateSingles.length >= 3) {
+      const start = (kateCurrentSoloMultiCount * 2) % (kateSingles.length - 2);
+      const windowed = kateSingles.slice(start, start + 3);
+      const kateMock = toSoloMultiMock(windowed, `local-solo-multi-kate-${mockIdx++}`);
+      if (!kateMock) break;
+      soloMultiMocks.unshift(kateMock);
+      kateCurrentSoloMultiCount += 1;
+    }
+  }
+
+  const mergedWorks: Work[] = [...baseWorksAfterGroupMerge, ...groupMultiMocks, ...soloMultiMocks];
+
+  // 둘러보기 확인용 목업:
+  // 그룹전시의 약 30%를 "복지관/문화센터" 톤의 강사 업로드로 표시한다.
+  const instructorGroupNamePool = [
+    '강남복지관',
+    '송파문화센터',
+    '마포복지관',
+    '종로문화센터',
+    '노원복지관',
+    '광진문화센터',
+    '수원복지관',
+    '분당문화센터',
+    '부산진복지관',
+    '해운대문화센터',
+    '대구수성복지관',
+    '광주북구문화센터',
+    '전주완산복지관',
+    '창원성산문화센터',
+    '청주상당복지관',
+  ] as const;
+  const groupWorks = mergedWorks.filter((w) => w.primaryExhibitionType === 'group');
+  const instructorTarget = Math.round(groupWorks.length * 0.3);
+  const instructorCandidates = [...groupWorks].sort((a, b) => {
+    const ah = hashStr(`${a.id}:${a.groupName ?? ''}:${a.exhibitionName ?? ''}`);
+    const bh = hashStr(`${b.id}:${b.groupName ?? ''}:${b.exhibitionName ?? ''}`);
+    return ah - bh;
+  });
+  for (let i = 0; i < instructorCandidates.length; i++) {
+    const w = instructorCandidates[i]!;
+    const makeInstructor = i < instructorTarget;
+    if (!makeInstructor) {
+      w.isInstructorUpload = false;
+      continue;
+    }
+    w.isInstructorUpload = true;
+    const nameIdx = hashStr(`${w.id}:inst-group`) % instructorGroupNamePool.length;
+    w.groupName = instructorGroupNamePool[nameIdx];
+  }
+
+  // Artier's Pick 목업:
+  // - 운영 5주 가정: 누적 Pick 이력 50개
+  // - 이력 구성: 개인 25 + 그룹 25
+  // - 현재 주간 활성 Pick 10개: 개인 5 + 그룹 5
+  const pickCandidates = mergedWorks.filter((w) => w.feedReviewStatus === 'approved' && !w.isHidden);
+  const ordered = [...pickCandidates].sort((a, b) => {
+    const ah = hashStr(`${a.id}:${a.artistId}:${a.exhibitionName ?? ''}`);
+    const bh = hashStr(`${b.id}:${b.artistId}:${b.exhibitionName ?? ''}`);
+    return ah - bh;
+  });
+
+  const soloOrdered = ordered.filter((w) => w.primaryExhibitionType === 'solo');
+  const groupOrdered = ordered.filter((w) => w.primaryExhibitionType === 'group');
+  const soloHistoryTarget = Math.min(25, soloOrdered.length);
+  const groupHistoryTarget = Math.min(25, groupOrdered.length);
+  const historyPicks = [
+    ...soloOrdered.slice(0, soloHistoryTarget),
+    ...groupOrdered.slice(0, groupHistoryTarget),
+  ];
+
+  // 한쪽이 부족하면 남는 슬롯을 다른 쪽에서 채워 총 50에 최대한 맞춘다.
+  if (historyPicks.length < 50) {
+    const pickedIds = new Set(historyPicks.map((w) => w.id));
+    for (const w of ordered) {
+      if (historyPicks.length >= 50) break;
+      if (pickedIds.has(w.id)) continue;
+      historyPicks.push(w);
+      pickedIds.add(w.id);
+    }
+  }
+
+  const historyIds = new Set(historyPicks.map((w) => w.id));
+  const soloHistory = historyPicks.filter((w) => w.primaryExhibitionType === 'solo');
+  const groupHistory = historyPicks.filter((w) => w.primaryExhibitionType === 'group');
+  const activePicks = [
+    ...soloHistory.slice(Math.max(0, soloHistory.length - Math.min(5, soloHistory.length))),
+    ...groupHistory.slice(Math.max(0, groupHistory.length - Math.min(5, groupHistory.length))),
+  ];
+  const activeIds = new Set(activePicks.map((w) => w.id));
+
+  for (const w of ordered) {
+    w.editorsPick = historyIds.has(w.id);
+    w.pick = activeIds.has(w.id);
+  }
+
+  return mergedWorks;
 }

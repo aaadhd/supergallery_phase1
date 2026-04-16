@@ -444,7 +444,7 @@
 | `flowMap.section02` | 2. 작품 업로드 → 전시<br>/upload\|업로드 에디터(로그인 필요) | 2. Upload → exhibition<br>/upload\|Upload editor (login required) |
 | `flowMap.section03` | 3. 둘러보기 → 작업물 상세 → 반응<br>/\|둘러보기 피드<br>/exhibitions/1\|전시 상세·작업물 모달 딥링크 예시(PRD URL) | 3. Browse → work detail → reactions<br>/\|Browse feed<br>/exhibitions/1\|Exhibition / work modal deep link (PRD URL) |
 | `flowMap.section04` | 4. 그룹전시(업로드에서 자동 분류)<br>/exhibitions/group-nature\|그룹 전시 상세 예시 | 4. Group exhibition (from upload tags)<br>/exhibitions/group-nature\|Sample group exhibition |
-| `flowMap.section05` | 5. 내 프로필 · 작품 관리 · 설정<br>/me\|내 프로필 (PRD IA)<br>/profile\|내 프로필 (동일 화면, 예전 경로)<br>/profile/2\|타인 프로필 예시<br>/me/edit\|프로필 편집 → 설정으로 연결(PRD)<br>/settings\|계정 설정 · 탈퇴(사유·비밀번호 확인)<br>/settings/notifications\|푸시·알림 종류 설정 | 5. Profile · work management · settings<br>/me\|My profile (PRD IA)<br>/profile\|My profile (same screen, legacy path)<br>/profile/2\|Another user’s profile (sample)<br>/me/edit\|Profile edit → redirects to Settings (PRD)<br>/settings\|Account settings · withdrawal<br>/settings/notifications\|Notification preferences |
+| `flowMap.section05` | 5. 내 프로필 · 작품 보기 · 설정<br>/me\|내 프로필 (PRD IA)<br>/profile\|내 프로필 (동일 화면, 예전 경로)<br>/profile/2\|타인 프로필 예시<br>/me/edit\|프로필 편집 → 설정으로 연결(PRD)<br>/settings\|계정 설정 · 탈퇴(사유·비밀번호 확인)<br>/settings/notifications\|푸시·알림 종류 설정 | 5. Profile · works · settings<br>/me\|My profile (PRD IA)<br>/profile\|My profile (same screen, legacy path)<br>/profile/2\|Another user’s profile (sample)<br>/me/edit\|Profile edit → redirects to Settings (PRD)<br>/settings\|Account settings · withdrawal<br>/settings/notifications\|Notification preferences |
 | `flowMap.section06` | 6. 검색<br>/search\|통합 검색(작품명·작가명·전시명·그룹명, PRD P1) | 6. Search<br>/search\|Unified search (work, artist, exhibition, group — PRD P1) |
 | `flowMap.section07` | 7. 알림<br>/notifications\|알림 목록<br>위 섹션의 시연 버튼으로 샘플 알림 추가 가능 | 7. Notifications<br>/notifications\|Inbox<br>Use the buttons above to push demo notifications |
 | `flowMap.section08` | 8. 공지사항<br>/notices\|목록<br>/notices/notice-1\|공지 상세 예시 | 8. Notices<br>/notices\|List<br>/notices/notice-1\|Sample notice detail |
@@ -902,7 +902,7 @@
 | `profile.tabDrafts` | 초안 | Drafts |
 | `profile.tabLikes` | 좋아요 | Likes |
 | `profile.tabSaves` | 저장 | Saved |
-| `profile.tabWorkManage` | 작품 관리 | Work management |
+| `profile.tabWorkManage` | 작품 보기 | Works |
 | `profile.tagged` | 태그됨 | Tagged |
 | `profile.toastProfileSaved` | 프로필이 저장되었습니다. | Profile saved. |
 | `profile.toastWorkPrivate` | 작품이 비공개 처리되었습니다. | The work is now private. |
@@ -1356,8 +1356,6 @@
 | `upload.soloSuggestionDesc` | 현재 등록된 작가가 1명뿐이에요. 강사로 수강생 작품을 올리는 게 아니라면 개인 전시가 더 적합해요. | Only one artist is assigned. Unless you are an instructor uploading student work, a solo exhibition may be a better fit. |
 | `upload.soloSuggestionSwitched` | 개인 전시로 전환되었습니다. | Switched to solo exhibition. |
 | `upload.soloSuggestionTitle` | 개인 전시로 전환할까요? | Switch to solo exhibition? |
-| `upload.soloTabDesc` | 그룹전시이지만 개인전시 탭에서도 작품이 보입니다 | Group works can appear in the solo exhibition tab too |
-| `upload.soloTabTitle` | 개인전시 탭에도 노출 | Also show in solo tab |
 | `upload.tabDirectInput` | 직접 입력 | Enter manually |
 | `upload.tabMemberSearch` | 멤버 검색 | Search members |
 | `upload.toastDraftLoaded` | 초안을 불러왔습니다. | Draft loaded. |

@@ -48,7 +48,6 @@ export interface Work {
   editorsPick?: boolean;
   // Phase 1 신규 필드
   primaryExhibitionType?: 'solo' | 'group'; // 전시 유형 (강사+그룹명 → group, 그 외 → solo)
-  showInSoloTab?: boolean; // 그룹전시이지만 개인전시 탭에도 노출
   imageArtists?: ImageArtistAssignment[]; // 이미지별 작가 지정 (인덱스 = 이미지 인덱스)
   /** image 배열과 동일 순서·길이. 장별 작품명(비어 있으면 표시는 무제). 업로드 시 빈 칸은 전시명으로 채울 수 있음 */
   imagePieceTitles?: string[];

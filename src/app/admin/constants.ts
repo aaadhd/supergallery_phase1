@@ -40,8 +40,6 @@ export const LABELS = {
   LOGIN: '로그인',
   LOGOUT: '로그아웃',
 
-  // 전시 분류
-  SHOW_IN_SOLO_TAB: '개인전시 탭에도 노출',
 } as const;
 
 // ===== 전시 유형 =====
