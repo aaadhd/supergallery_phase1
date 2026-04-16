@@ -33,6 +33,7 @@ import { getDisplayFollowerCount } from '../utils/artistFollowDelta';
 import type { MessageKey } from '../i18n/messages';
 import { useI18n } from '../i18n/I18nProvider';
 import {
+  TITLE_FIELD_MAX_LEN,
   displayProminentHeadline,
   displayExhibitionTitle,
   displayPieceTitle,
@@ -285,7 +286,7 @@ export default function Profile() {
       setPieceTitleEdit(null);
       return;
     }
-    const trimmed = pieceTitleDraft.trim().slice(0, 120);
+    const trimmed = pieceTitleDraft.trim().slice(0, TITLE_FIELD_MAX_LEN);
     if (containsProfanity(trimmed)) {
       toast.error(t('profile.worksManagePieceTitleProfanity'));
       return;
@@ -1599,8 +1600,8 @@ export default function Profile() {
             <Input
               id="profile-piece-title-input"
               value={pieceTitleDraft}
-              onChange={(e) => setPieceTitleDraft(e.target.value.slice(0, 120))}
-              maxLength={120}
+              onChange={(e) => setPieceTitleDraft(e.target.value.slice(0, TITLE_FIELD_MAX_LEN))}
+              maxLength={TITLE_FIELD_MAX_LEN}
               placeholder={t('work.untitled')}
               className="min-h-[44px] text-[15px]"
               autoComplete="off"

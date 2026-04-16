@@ -27,6 +27,7 @@ import {
   setLastUsedGroupName,
   lookupCanonicalGroupName,
 } from '../utils/groupNameRegistry';
+import { TITLE_FIELD_MAX_LEN } from '../utils/workDisplay';
 import { Button } from '../components/ui/button';
 import { pointsOnWorkPublished } from '../utils/pointsBackground';
 import { useI18n } from '../i18n/I18nProvider';
@@ -314,7 +315,7 @@ export default function Upload() {
     const withUrl = restored.filter((c) => c.url);
     const ex = (draft.exhibitionName ?? draft.title ?? '').trim();
     if (withUrl.length === 1 && ex && !withUrl[0]?.title?.trim()) {
-      restored = restored.map((c) => (c.id === withUrl[0]!.id ? { ...c, title: ex.slice(0, 120) } : c));
+      restored = restored.map((c) => (c.id === withUrl[0]!.id ? { ...c, title: ex.slice(0, TITLE_FIELD_MAX_LEN) } : c));
     }
     setContents(restored);
     toast.success(t('upload.toastDraftLoaded'));
@@ -522,24 +523,29 @@ export default function Upload() {
 
     const currentUser = artists[0];
     const urls = imageContents.map((c) => c.url!);
-    const exFinal = exhibitionName.trim().slice(0, 20);
+    const exFinal = exhibitionName.trim().slice(0, TITLE_FIELD_MAX_LEN);
 
-    // v1.7: 작품명 자동생성
+    // v1.7: 작품명 자동생성 (저장값은 항상 TITLE_FIELD_MAX_LEN 이하)
     const imagePieceTitles = imageContents.map((c, i) => {
-      if (c.title?.trim()) return c.title.trim().slice(0, 120);
-      if (uploadType === 'group') {
-        const artistName = c.artist?.name || c.nonMemberArtist?.displayName || '';
-        return artistName
-          ? tn('work.autoTitleArtist', { name: artistName, n: String(i + 1) })
-          : tn('work.autoTitleNumbered', { n: String(i + 1) });
-      }
-      if (imageContents.length === 1) return exFinal || t('work.untitled');
-      return t('work.untitled');
+      const raw = (() => {
+        if (c.title?.trim()) return c.title.trim();
+        if (uploadType === 'group') {
+          const artistName = c.artist?.name || c.nonMemberArtist?.displayName || '';
+          return artistName
+            ? tn('work.autoTitleArtist', { name: artistName, n: String(i + 1) })
+            : tn('work.autoTitleNumbered', { n: String(i + 1) });
+        }
+        if (imageContents.length === 1) return exFinal || t('work.untitled');
+        return t('work.untitled');
+      })();
+      return raw.slice(0, TITLE_FIELD_MAX_LEN);
     });
 
     const resolvedPieceTitle = imagePieceTitles[0] ?? '';
     const resolvedGroup =
-      uploadType === 'group' ? resolveCanonicalGroupName(groupName.trim()) : undefined;
+      uploadType === 'group'
+        ? resolveCanonicalGroupName(groupName.trim().slice(0, TITLE_FIELD_MAX_LEN))
+        : undefined;
 
     // v1.7: 그룹전시 자동 분류
     const uniqueArtists = new Set(
@@ -1141,10 +1147,10 @@ export default function Upload() {
                         <input
                           type="text"
                           value={exhibitionName}
-                          onChange={(e) => setExhibitionName(e.target.value.slice(0, 20))}
+                          onChange={(e) => setExhibitionName(e.target.value.slice(0, TITLE_FIELD_MAX_LEN))}
                           autoComplete="off"
                           placeholder={t('upload.exhibitionTitleExample')}
-                          maxLength={20}
+                          maxLength={TITLE_FIELD_MAX_LEN}
                           className={`w-full bg-white text-xl sm:text-2xl md:text-3xl font-bold text-foreground placeholder:text-muted-foreground/30 border-2 rounded-2xl px-5 py-4 transition-all leading-tight text-center md:text-left relative z-20 focus:outline-none focus:ring-0 ${
                             !exhibitionName.trim() && contents.length > 0
                               ? 'border-red-300 focus:border-red-400'
@@ -1155,7 +1161,7 @@ export default function Upload() {
                           <span className={`text-[11px] font-medium ${!exhibitionName.trim() && contents.length > 0 ? 'text-red-500' : 'text-transparent'}`}>
                             {t('upload.blockerExhibitionTitle')}
                           </span>
-                          <span className="text-[11px] text-muted-foreground">{exhibitionName.length}/20</span>
+                          <span className="text-[11px] text-muted-foreground">{exhibitionName.length}/{TITLE_FIELD_MAX_LEN}</span>
                         </div>
                       </div>
 
@@ -1167,7 +1173,11 @@ export default function Upload() {
                           <input
                             type="text"
                             value={groupName}
-                            onChange={(e) => { setGroupName(e.target.value); setGroupSuggestOpen(true); }}
+                            maxLength={TITLE_FIELD_MAX_LEN}
+                            onChange={(e) => {
+                              setGroupName(e.target.value.slice(0, TITLE_FIELD_MAX_LEN));
+                              setGroupSuggestOpen(true);
+                            }}
                             onFocus={() => setGroupSuggestOpen(true)}
                             onBlur={() => window.setTimeout(() => setGroupSuggestOpen(false), 200)}
                             placeholder={t('upload.groupNameExample')}
@@ -1181,6 +1191,7 @@ export default function Upload() {
                             <span className={`text-[11px] font-medium ${!groupName.trim() && contents.length > 0 ? 'text-red-500' : 'text-transparent'}`}>
                               {t('upload.blockerGroupName')}
                             </span>
+                            <span className="text-[11px] text-muted-foreground">{groupName.length}/{TITLE_FIELD_MAX_LEN}</span>
                           </div>
                           {canonicalPreview?.kind === 'merge' && (
                             <p className="mt-1 px-1 text-[12px] text-emerald-700">
@@ -1432,9 +1443,9 @@ export default function Upload() {
                           </header>
                           <input
                             id={`card-title-input-${sc.id}`}
-                            type="text" value={sc.title || ''} maxLength={120}
+                            type="text" value={sc.title || ''} maxLength={TITLE_FIELD_MAX_LEN}
                             onChange={(e) => {
-                              const v = e.target.value.slice(0, 120);
+                              const v = e.target.value.slice(0, TITLE_FIELD_MAX_LEN);
                               setContents(contents.map((c) => c.id === selectedContentId ? { ...c, title: v } : c));
                             }}
                             placeholder={t('upload.pieceTitlePlaceholder')}

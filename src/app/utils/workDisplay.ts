@@ -1,6 +1,9 @@
 import type { Work } from '../data';
 
-const PIECE_TITLE_MAX_LEN = 120;
+/** 작품명·전시명·그룹명 등 동일 입력 상한(자). 스펙·UI·저장 로직이 함께 맞춰야 함. */
+export const TITLE_FIELD_MAX_LEN = 20;
+
+const PIECE_TITLE_MAX_LEN = TITLE_FIELD_MAX_LEN;
 
 /**
  * 로컬 JSON·레거시 데이터에서 title / imagePieceTitles 셀에
