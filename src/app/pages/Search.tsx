@@ -301,6 +301,64 @@ export default function Search() {
                 .replace('{n}', String(results.works.length + results.artists.length))}
             </p>
 
+            {/* Top Matches (Unified) — 시니어 사용자를 위한 결과 단일화 및 최적 매칭 우선 노출 */}
+            {hasResults && (
+              <div className="mb-0">
+                <h2 className="text-sm font-bold text-primary mb-5 uppercase tracking-wider flex items-center gap-2">
+                  <span className="w-1.5 h-1.5 rounded-full bg-primary" />
+                  {t('search.autocompleteHeading')}
+                </h2>
+                <div className="flex flex-col gap-3">
+                  {/* Top Artist match */}
+                  {results.artists[0] && (
+                    <button
+                      type="button"
+                      onClick={() => navigate(`/profile/${results.artists[0].id}`)}
+                      className="flex items-center gap-4 w-full p-4 rounded-2xl bg-primary/[0.03] border border-primary/10 lg:hover:bg-primary/[0.06] transition-colors text-left"
+                    >
+                      <Avatar className="h-12 w-12 border-2 border-primary/20">
+                        <AvatarImage src={results.artists[0].avatar} alt={results.artists[0].name} />
+                        <AvatarFallback>{results.artists[0].name[0]}</AvatarFallback>
+                      </Avatar>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-base font-bold text-foreground">{results.artists[0].name}</h3>
+                          <span className="text-[10px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded">{t('browse.artistLabel')}</span>
+                        </div>
+                        {results.artists[0].bio && (
+                          <p className="text-[13px] text-muted-foreground truncate italic">"{results.artists[0].bio}"</p>
+                        )}
+                      </div>
+                    </button>
+                  )}
+                  {/* Top 2 Work matches */}
+                  {results.works.slice(0, 2).map((work) => (
+                    <button
+                      type="button"
+                      key={work.id}
+                      onClick={() => navigate(`/exhibitions/${work.id}`)}
+                      className="flex items-center gap-4 w-full p-3 rounded-2xl bg-zinc-50 border border-zinc-200 lg:hover:bg-zinc-100 transition-colors text-left"
+                    >
+                      <div className="w-14 h-14 bg-white rounded-lg overflow-hidden border border-zinc-200 shrink-0">
+                        <ImageWithFallback
+                          src={imageUrls[getThumbCover(work)] || getThumbCover(work)}
+                          alt=""
+                          className="w-full h-full object-contain"
+                        />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <div className="flex items-center gap-2">
+                          <h3 className="text-sm font-bold text-foreground truncate">{displayProminentHeadline(work, t('work.untitled'))}</h3>
+                          <span className="text-[10px] font-bold text-zinc-500 bg-zinc-200 px-1.5 py-0.5 rounded">작품</span>
+                        </div>
+                        <p className="text-xs text-muted-foreground">{work.artist.name}</p>
+                      </div>
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {/* Artist results */}
             {results.artists.length > 0 && (
               <div>

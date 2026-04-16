@@ -165,10 +165,16 @@ export function WorkCard({ work, showSaleBadge, showReviewBadge, onRejectedClick
             <span className="text-sm text-muted-foreground">{work.artist.name}</span>
           </div>
 
-          {/* 좋아요·저장 상태 아이콘 (숫자는 미노출) — 댓글은 PRD 2.2 Out of Scope */}
-          <div className="flex items-center gap-3 text-muted-foreground">
-            <Heart className={`h-3.5 w-3.5 ${isLiked ? 'text-red-500 fill-current' : ''}`} />
-            <Bookmark className={`h-3.5 w-3.5 ${isSaved ? 'text-primary fill-current' : ''}`} />
+          {/* 좋아요·저장 상태 아이콘 (텍스트 라벨 추가로 시니어 접근성 강화) */}
+          <div className="flex items-center gap-4 text-muted-foreground mt-0.5">
+            <div className="flex items-center gap-1.5 grayscale-0">
+              <Heart className={`h-4 w-4 ${isLiked ? 'text-red-500 fill-current' : ''}`} />
+              <span className={`text-[11px] font-bold ${isLiked ? 'text-red-500' : ''}`}>{t('workDetail.like')}</span>
+            </div>
+            <div className="flex items-center gap-1.5">
+              <Bookmark className={`h-4 w-4 ${isSaved ? 'text-primary fill-current' : ''}`} />
+              <span className={`text-[11px] font-bold ${isSaved ? 'text-primary' : ''}`}>{t('workDetail.save')}</span>
+            </div>
           </div>
         </div>
       </Link>

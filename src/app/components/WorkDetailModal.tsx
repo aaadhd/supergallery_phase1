@@ -696,7 +696,9 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
               }`}>
                 <Heart className={`h-[22px] w-[22px] transition-colors ${isLiked ? 'text-white fill-white' : 'text-white'}`} />
               </div>
-              <span className="text-[12px] font-bold text-white/80 group-hover:text-white transition-colors drop-shadow-md">{(work.likes || 0).toLocaleString()}</span>
+              <span className="text-[11px] font-bold text-white/80 group-hover:text-white transition-colors uppercase drop-shadow-md">
+                {t('workDetail.like')} {(work.likes || 0).toLocaleString()}
+              </span>
             </button>
 
             {/* Save */}
