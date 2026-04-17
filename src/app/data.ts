@@ -70,6 +70,8 @@ export interface Work {
    * (구버전에선 image 배열 맨 앞에 끼어 있었음 — 2026-04-16 분리 저장으로 변경)
    */
   customCoverUrl?: string;
+  /** 업로더 ID (강사가 대리 업로드 시 artistId와 다를 수 있음) */
+  authorId?: string;
 }
 
 // 아티스트 더미 데이터

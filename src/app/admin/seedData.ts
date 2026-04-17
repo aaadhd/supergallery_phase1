@@ -109,7 +109,7 @@ export const seedIssues: UnresolvedIssue[] = [
 
 export const seedChecklist: ChecklistItem[] = [
   // QA
-  { id: 'CL-001', title: '작품 업로드 E2E 테스트', description: '이미지 1~10장 업로드, 메타데이터 입력, 발행 전체 플로우', category: 'QA', owner: 'QA팀', status: '시작 전', dueDate: '2026-04-18', checked: false },
+  { id: 'CL-001', title: '작품 업로드 E2E 테스트', description: '이미지 1~10장 업로드, 메타데이터 입력, 전시 등록 전체 플로우', category: 'QA', owner: 'QA팀', status: '시작 전', dueDate: '2026-04-18', checked: false },
   { id: 'CL-002', title: '프로필 편집 기능 테스트', description: '이름, 소개, 위치 변경 후 저장/표시 확인', category: 'QA', owner: 'QA팀', status: '시작 전', dueDate: '2026-04-18', checked: false },
   { id: 'CL-003', title: '좋아요/저장 기능 테스트', description: '로그인/비로그인 상태에서 좋아요, 저장 토글 확인', category: 'QA', owner: 'QA팀', status: '시작 전', dueDate: '2026-04-18', checked: false },
   { id: 'CL-004', title: '반응형 레이아웃 검증', description: 'PC, 태블릿, 모바일 3종 해상도 테스트', category: 'QA', owner: 'QA팀', status: '시작 전', dueDate: '2026-04-20', checked: false },

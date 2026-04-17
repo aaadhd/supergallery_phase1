@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, useSearchParams, useBlocker } from 'react-router-dom';
-import { Image as ImageIcon, Plus, X, Search, GripVertical, ArrowLeft, ChevronLeft, ChevronRight, Trash2, Replace, ArrowUpDown, Monitor, Users, CalendarCheck, Star, Check } from 'lucide-react';
+import { Image as ImageIcon, Plus, X, Search, GripVertical, ArrowLeft, ChevronLeft, ChevronRight, Trash2, Replace, ArrowUpDown, Monitor, Users, CalendarCheck, Star, Check, CircleHelp } from 'lucide-react';
 import { artists } from '../data';
 import { workStore, draftStore, useAuthStore } from '../store';
 
@@ -58,6 +58,8 @@ import {
 } from '../utils/groupNameRegistry';
 import { TITLE_FIELD_MAX_LEN } from '../utils/workDisplay';
 import { Button } from '../components/ui/button';
+import { Checkbox } from '../components/ui/checkbox';
+import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import { pointsOnWorkPublished } from '../utils/pointsBackground';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
@@ -118,6 +120,90 @@ function checkMinResolution(dataUrl: string): Promise<boolean> {
     img.onerror = () => resolve(true); // 로드 실패 시 통과 (업로드 자체에서 걸림)
     img.src = dataUrl;
   });
+}
+
+/** 그룹 전시 — 강사 여부. `embedded`: 체크리스트 카드 내부(구분선 아래) */
+function GroupInstructorSection({
+  checkboxId,
+  isInstructor,
+  onInstructorChange,
+  roleInfoOpen,
+  onRoleInfoOpenChange,
+  embedded = false,
+}: {
+  checkboxId: string;
+  isInstructor: boolean;
+  onInstructorChange: (v: boolean) => void;
+  roleInfoOpen: boolean;
+  onRoleInfoOpenChange: (open: boolean) => void;
+  embedded?: boolean;
+}) {
+  const { t } = useI18n();
+  return (
+    <div
+      className={
+        embedded
+          ? 'relative'
+          : 'relative rounded-xl border border-border/50 bg-muted/20 px-3 py-2.5'
+      }
+    >
+      <div className="flex items-center justify-between gap-2">
+        <span className="text-xs font-semibold text-muted-foreground">
+          {t('upload.groupRolePrompt')}
+        </span>
+        <Popover open={roleInfoOpen} onOpenChange={onRoleInfoOpenChange}>
+          <PopoverTrigger asChild>
+            <button
+              type="button"
+              className="inline-flex shrink-0 rounded-full p-1 text-muted-foreground/80 hover:bg-muted hover:text-foreground"
+              aria-label={t('upload.roleInfoAria')}
+            >
+              <CircleHelp className={embedded ? 'h-3.5 w-3.5' : 'h-4 w-4'} />
+            </button>
+          </PopoverTrigger>
+          <PopoverContent
+            className="w-[min(calc(100vw-2rem),20rem)] p-4 z-[60]"
+            align="end"
+            side="bottom"
+            sideOffset={6}
+          >
+            <p className="text-sm font-semibold text-foreground mb-3">{t('upload.roleInfoTitle')}</p>
+            <div className="space-y-3 text-xs text-muted-foreground leading-relaxed">
+              <div>
+                <p className="font-medium text-foreground mb-1">{t('upload.roleParticipant')}</p>
+                <p>{t('upload.roleParticipantHelp')}</p>
+              </div>
+              <div>
+                <p className="font-medium text-foreground mb-1">{t('upload.roleInstructor')}</p>
+                <p>{t('upload.roleInstructorHelp')}</p>
+              </div>
+            </div>
+          </PopoverContent>
+        </Popover>
+      </div>
+      <div className={`flex items-start gap-2.5 ${embedded ? 'mt-2' : 'mt-2.5'}`}>
+        <Checkbox
+          id={checkboxId}
+          checked={isInstructor}
+          onCheckedChange={(v) => onInstructorChange(v === true)}
+          className="mt-0.5 shrink-0"
+        />
+        <div className="min-w-0 flex-1">
+          <label
+            htmlFor={checkboxId}
+            className={`text-foreground cursor-pointer select-none text-left block text-sm leading-snug`}
+          >
+            {t('upload.instructorCheckboxLabel')}
+          </label>
+          <p
+            className="text-muted-foreground/90 mt-1 text-xs leading-snug"
+          >
+            {t('upload.instructorRestrictionHint')}
+          </p>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -206,6 +292,7 @@ export default function Upload() {
 
   /* ── 강사 ── */
   const [isInstructor, setIsInstructor] = useState(false);
+  const [roleInfoOpen, setRoleInfoOpen] = useState(false);
 
   /* ── 이벤트 연결 ── */
   const linkedEventId = searchParams.get('event');
@@ -214,7 +301,6 @@ export default function Upload() {
   /* ── 이미지 선택 ── */
   const [selectedContentId, setSelectedContentId] = useState<string | null>(null);
   const [artistSearch, setArtistSearch] = useState('');
-  const [smsSentPhones, setSmsSentPhones] = useState<Set<string>>(new Set());
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   /* ── 이탈 방지 ── */
@@ -267,7 +353,6 @@ export default function Upload() {
     setReorderMode(false);
     setShowDetailsModal(false);
     setArtistSearch('');
-    setSmsSentPhones(new Set());
   }, [newKey]);
 
   useEffect(() => {
@@ -287,6 +372,23 @@ export default function Upload() {
       setSelectedContentId(contents[0].id);
     }
   }, [uploadType, contents.length, selectedContentId]);
+
+  // 강사 모드 전환 시 본인(=artists[0]) 귀속 슬롯 초기화 — 강사 모드는 100% 수강생 귀속이어야 함
+  useEffect(() => {
+    if (!isInstructor) return;
+    const selfId = artists[0]?.id;
+    if (!selfId) return;
+    const hasSelfSlot = contents.some((c) => c.artistType === 'member' && c.artist?.id === selfId);
+    if (!hasSelfSlot) return;
+    setContents((prev) =>
+      prev.map((c) =>
+        c.artistType === 'member' && c.artist?.id === selfId
+          ? { ...c, artist: undefined, artistType: undefined }
+          : c,
+      ),
+    );
+    toast.info(t('upload.roleInstructorSelfCleared'));
+  }, [isInstructor]);
 
   // 선택된 이미지의 작가 타입에 맞춰 탭 자동 전환
   useEffect(() => {
@@ -495,7 +597,7 @@ export default function Upload() {
 
 
 
-  /* ━━━━━━ 발행 ━━━━━━ */
+  /* ━━━━━━ 전시 생성 ━━━━━━ */
 
   const handleOpenDetails = () => {
     if (!exhibitionName.trim()) {
@@ -531,10 +633,10 @@ export default function Upload() {
       return;
     }
 
-    // 그룹 업로드 시 작가 검증
+    // 그룹 업로드 시 작가 검증 (이름만 있으면 통과, 번호는 선택)
     if (uploadType === 'group') {
       const missingArtist = imageContents.some(
-        (c) => !c.artist && (!c.nonMemberArtist?.displayName || !c.nonMemberArtist?.phoneNumber),
+        (c) => !c.artist && !c.nonMemberArtist?.displayName,
       );
       if (missingArtist) {
         toast.error(t('upload.errMissingArtist'));
@@ -828,7 +930,7 @@ export default function Upload() {
     [uploadType, t],
   );
 
-  /* ━━━━━━ 발행 조건 체크리스트 (전체 항목 고정, done 플래그) ━━━━━━ */
+  /* ━━━━━━ 전시 생성 조건 체크리스트 (전체 항목 고정, done 플래그) ━━━━━━ */
   const publishChecklist = useMemo(() => {
     const hasImages = contents.length > 0;
     // 행동 순서: 전시 제목 → (그룹 전시) 그룹명 → 이미지 → (그룹 전시) 작가 지정
@@ -845,7 +947,7 @@ export default function Upload() {
     items.push({ key: 'image', label: t('upload.blockerImage'), done: hasImages });
     if (uploadType === 'group') {
       const allAssigned = hasImages && contents.filter((c) => c.url).every(
-        (c) => c.artist || (c.nonMemberArtist?.displayName && c.nonMemberArtist?.phoneNumber),
+        (c) => c.artist || !!c.nonMemberArtist?.displayName,
       );
       items.push({ key: 'artist', label: t('upload.blockerArtist'), done: allAssigned, disabled: !hasImages });
     }
@@ -1103,23 +1205,6 @@ export default function Upload() {
                       </div>
                     )}
 
-                    {/* 강사 체크박스 (함께 올리기 전용) */}
-                    {uploadType === 'group' && (
-                      <div className="flex items-center justify-between p-4 bg-muted border border-border rounded-xl">
-                        <div className="flex-1 mr-4">
-                          <p className="text-sm font-medium text-foreground">{t('upload.instructorLabel')}</p>
-                          <p className="text-sm text-muted-foreground mt-0.5">{t('upload.instructorDesc')}</p>
-                        </div>
-                        <button
-                          type="button"
-                          onClick={() => setIsInstructor(!isInstructor)}
-                          className={`relative shrink-0 w-12 h-7 rounded-full transition-colors ${isInstructor ? 'bg-primary' : 'bg-muted-foreground/30'}`}
-                        >
-                          <span className={`absolute top-0.5 left-0.5 w-6 h-6 bg-white rounded-full shadow transition-transform ${isInstructor ? 'translate-x-5' : 'translate-x-0'}`} />
-                        </button>
-                      </div>
-                    )}
-
                   </div>
 
                   {/* 푸터 */}
@@ -1207,11 +1292,6 @@ export default function Upload() {
                               {t('upload.groupMergePreview').replace('{canonical}', canonicalPreview.canonical)}
                             </p>
                           )}
-                          {canonicalPreview?.kind === 'new' && (
-                            <p className="mt-1 px-1 text-xs text-muted-foreground">
-                              {t('upload.groupNewPreview')}
-                            </p>
-                          )}
                           {groupSuggestOpen && groupSuggestions.length > 0 && (
                             <ul className="absolute z-20 top-full mt-1 w-full max-h-48 overflow-auto rounded-xl border border-border bg-white shadow-[0_10px_40px_-15px_rgba(0,0,0,0.15)] py-2 text-sm">
                               {groupSuggestions.map((name) => (
@@ -1224,6 +1304,18 @@ export default function Upload() {
                               ))}
                             </ul>
                           )}
+                        </div>
+                      )}
+
+                      {uploadType === 'group' && contents.length === 0 && (
+                        <div className="md:hidden pt-1">
+                          <GroupInstructorSection
+                            checkboxId="upload-role-instructor-mobile"
+                            isInstructor={isInstructor}
+                            onInstructorChange={setIsInstructor}
+                            roleInfoOpen={roleInfoOpen}
+                            onRoleInfoOpenChange={setRoleInfoOpen}
+                          />
                         </div>
                       )}
                     </div>
@@ -1516,7 +1608,7 @@ export default function Upload() {
                                     />
                                     {artistSearch && (
                                       <div className="absolute z-10 w-full mt-2 bg-white border border-border rounded-xl shadow-xl overflow-hidden max-h-56 overflow-y-auto">
-                                        {artists.filter(a => a.name.toLowerCase().includes(artistSearch.toLowerCase())).slice(0, 10).map(artist => (
+                                        {artists.filter(a => (!isInstructor || a.id !== artists[0].id) && a.name.toLowerCase().includes(artistSearch.toLowerCase())).slice(0, 10).map(artist => (
                                           <button key={artist.id}
                                             type="button"
                                             onClick={() => {
@@ -1549,33 +1641,15 @@ export default function Upload() {
                                 </div>
                                 <div>
                                   <label className="block text-xs font-bold text-amber-800 mb-1.5 px-1">{t('upload.nonMemberPhoneLabel2')}</label>
-                                  <div className="flex flex-col gap-2">
-                                    <input
-                                      type="tel" value={sc.nonMemberArtist?.phoneNumber || ''}
-                                      onChange={(e) => setContents(contents.map(c => c.id === selectedContentId ? { ...c, artistType: 'non-member', nonMemberArtist: { ...c.nonMemberArtist, displayName: c.nonMemberArtist?.displayName || '', phoneNumber: e.target.value } } : c))}
-                                      placeholder={t('onboarding.phonePlaceholder')}
-                                      className="w-full px-4 py-3 border border-amber-200 rounded-xl text-sm bg-white focus:ring-1 focus:ring-amber-500 outline-none transition-all shadow-sm"
-                                    />
-                                    <Button
-                                      type="button"
-                                      disabled={
-                                        !sc.nonMemberArtist?.phoneNumber ||
-                                        sc.nonMemberArtist.phoneNumber.replace(/[^0-9]/g, '').length < 10 ||
-                                        smsSentPhones.has(sc.nonMemberArtist.phoneNumber.trim())
-                                      }
-                                      onClick={() => {
-                                        const phone = sc.nonMemberArtist?.phoneNumber?.trim() || '';
-                                        if (!phone || smsSentPhones.has(phone)) return;
-                                        setSmsSentPhones((prev) => new Set(prev).add(phone));
-                                        toast.success(tn('upload.toastSmsInviteSent', { phone }));
-                                      }}
-                                      className="w-full bg-amber-600 text-white py-3 rounded-xl text-xs font-bold hover:bg-amber-700 transition-all shadow-md shadow-amber-600/20 disabled:opacity-50"
-                                    >
-                                      {smsSentPhones.has(sc.nonMemberArtist?.phoneNumber?.trim() || '')
-                                        ? `✓ ${t('upload.smsInviteSent')}`
-                                        : t('upload.smsInviteBtn')}
-                                    </Button>
-                                  </div>
+                                  <input
+                                    type="tel" value={sc.nonMemberArtist?.phoneNumber || ''}
+                                    onChange={(e) => setContents(contents.map(c => c.id === selectedContentId ? { ...c, artistType: 'non-member', nonMemberArtist: { ...c.nonMemberArtist, displayName: c.nonMemberArtist?.displayName || '', phoneNumber: e.target.value } } : c))}
+                                    placeholder={t('onboarding.phonePlaceholder')}
+                                    className="w-full px-4 py-3 border border-amber-200 rounded-xl text-sm bg-white focus:ring-1 focus:ring-amber-500 outline-none transition-all shadow-sm"
+                                  />
+                                  <p className="mt-2 text-xs text-amber-700/90 leading-relaxed px-1">
+                                    {t('upload.nonMemberPhoneHelper')}
+                                  </p>
                                 </div>
                               </div>
                             )}
@@ -1598,11 +1672,11 @@ export default function Upload() {
                   )}
 
                   {/* 하단 최종 제출 박스 (통합 스크롤 영역에 포함) */}
-                  <div className="p-6 md:p-8 border-t border-border/40 bg-white space-y-5 mt-auto">
-                    <div className="space-y-3">
-                      <div className={`rounded-xl p-3.5 border ${publishBlockers.length > 0 ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'}`} role="status" aria-live="polite">
+                  <div className="p-5 md:p-7 border-t border-border/40 bg-white space-y-4 mt-auto">
+                    <div className="space-y-2.5">
+                      <div className={`rounded-xl p-3 border ${publishBlockers.length > 0 ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'}`} role="status" aria-live="polite">
                         <p className={`text-xs font-bold uppercase tracking-wider mb-2 ${publishBlockers.length > 0 ? 'text-red-700' : 'text-green-700'}`}>{t('upload.blockersTitle')}</p>
-                        <ul className="space-y-1.5">
+                        <ul className="space-y-1">
                           {publishChecklist.map((item) => (
                             <li key={item.key} className={`flex items-center gap-2 text-xs ${item.disabled ? 'text-muted-foreground/50' : item.done ? 'text-green-600' : 'text-red-700'}`}>
                               <span className={`font-bold text-base leading-none ${item.disabled ? 'text-muted-foreground/40' : item.done ? 'text-green-500' : 'text-red-500'}`}>{item.disabled ? '—' : item.done ? '✓' : '✕'}</span>
@@ -1610,6 +1684,18 @@ export default function Upload() {
                             </li>
                           ))}
                         </ul>
+                        {uploadType === 'group' && (
+                          <div className="mt-3 pt-3 border-t border-dashed border-border/60">
+                            <GroupInstructorSection
+                              embedded
+                              checkboxId="upload-role-instructor-sidebar"
+                              isInstructor={isInstructor}
+                              onInstructorChange={setIsInstructor}
+                              roleInfoOpen={roleInfoOpen}
+                              onRoleInfoOpenChange={setRoleInfoOpen}
+                            />
+                          </div>
+                        )}
                       </div>
                       <Button
                         disabled={isPublishing || publishBlockers.length > 0}

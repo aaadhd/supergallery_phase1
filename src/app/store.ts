@@ -4,6 +4,12 @@ import { Work, works as initialWorks, artists } from './data';
 import { pointsRecallIfQuickDelete } from './utils/pointsBackground';
 import { adjustArtistFollowerDelta, clearFollowerDeltas } from './utils/artistFollowDelta';
 import { clearMockSession } from './services/sessionTokens';
+import {
+  offloadHeavyMediaInWorks,
+  hydrateWorksMedia,
+  deleteWorkMediaFromIdb,
+  workContainsMediaRefs,
+} from './utils/workMediaIdb';
 
 function cleanupOrphanedWorkId(workId: string) {
   if (typeof window === 'undefined') return;
@@ -29,7 +35,7 @@ function cleanupOrphanedWorkId(workId: string) {
  * public/images·manifest가 바뀌면 저장된 work.image 경로가 디스크와 어긋나 썸네일 404가 남.
  * 버전을 올리면 시드(현재 manifest 기반)로 다시 채운 뒤 저장된다.
  */
-const WORKS_STORAGE_VERSION = 'local-gallery-v12';
+const WORKS_STORAGE_VERSION = 'local-gallery-v13';
 
 // 초안 타입 정의
 export interface Draft {
@@ -65,13 +71,24 @@ export interface Draft {
 
 // ===== 작품 데이터 관리 =====
 
+/** 시드·버전 마이그레이션용(용량 작음). 실패는 무시한다. */
+function saveWorksToStoragePlain(works: Work[]) {
+  if (typeof window === 'undefined') return;
+  try {
+    localStorage.setItem('artier_works_version', WORKS_STORAGE_VERSION);
+    localStorage.setItem('artier_works', JSON.stringify(works));
+  } catch {
+    /* ignore */
+  }
+}
+
 // 로컬 스토리지에서 작품 데이터 불러오기
 const loadWorksFromStorage = (): Work[] => {
   if (typeof window === 'undefined') return initialWorks;
 
   const version = localStorage.getItem('artier_works_version');
   if (version !== WORKS_STORAGE_VERSION) {
-    saveWorksToStorage(initialWorks);
+    saveWorksToStoragePlain(initialWorks);
     return initialWorks;
   }
 
@@ -80,19 +97,55 @@ const loadWorksFromStorage = (): Work[] => {
     try {
       return JSON.parse(stored);
     } catch {
-      saveWorksToStorage(initialWorks);
+      saveWorksToStoragePlain(initialWorks);
       return initialWorks;
     }
   }
   return initialWorks;
 };
 
-// 로컬 스토리지에 작품 데이터 저장
-const saveWorksToStorage = (works: Work[]) => {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem('artier_works_version', WORKS_STORAGE_VERSION);
-  localStorage.setItem('artier_works', JSON.stringify(works));
-};
+function isQuotaExceeded(e: unknown): boolean {
+  if (e instanceof DOMException && e.name === 'QuotaExceededError') return true;
+  return (
+    typeof e === 'object' &&
+    e !== null &&
+    'code' in e &&
+    (e as { code?: number }).code === 22
+  );
+}
+
+function emitWorksChanged() {
+  listeners.forEach((listener) => listener());
+  if (typeof window !== 'undefined') window.dispatchEvent(new Event('artier-works-changed'));
+}
+
+/** 직렬화된 작품 목록을 localStorage에 쓴다. 용량 초과 시 무거운 data URL만 IDB로 옮긴 복제본으로 재시도한다. */
+let persistChain: Promise<void> = Promise.resolve();
+
+function schedulePersist(): Promise<void> {
+  const run = persistChain.then(async () => {
+    if (typeof window === 'undefined') return;
+    try {
+      try {
+        localStorage.setItem('artier_works_version', WORKS_STORAGE_VERSION);
+        localStorage.setItem('artier_works', JSON.stringify(currentWorks));
+      } catch (e) {
+        if (!isQuotaExceeded(e)) throw e;
+        const snapshot = JSON.parse(JSON.stringify(currentWorks)) as Work[];
+        const forDisk = await offloadHeavyMediaInWorks(snapshot);
+        localStorage.setItem('artier_works_version', WORKS_STORAGE_VERSION);
+        localStorage.setItem('artier_works', JSON.stringify(forDisk));
+      }
+    } catch (err) {
+      console.error('[workStore] persist failed', err);
+      throw err;
+    }
+  });
+  persistChain = run.catch(() => {
+    /* 다음 저장이 이어지도록 큐는 유지 */
+  });
+  return run;
+}
 
 // 작품 데이터 관리
 let currentWorks = loadWorksFromStorage();
@@ -105,40 +158,46 @@ export const workStore = {
   // 특정 작품 가져오기
   getWork: (id: string) => currentWorks.find(w => w.id === id),
 
+  /** 로드된 작품에 `__artier_media__` 포인터가 있으면 IDB에서 실제 이미지 문자열로 채운다 */
+  hydrateMediaIfNeeded: async (): Promise<void> => {
+    if (typeof window === 'undefined') return;
+    if (!currentWorks.some(workContainsMediaRefs)) return;
+    currentWorks = await hydrateWorksMedia(currentWorks);
+    emitWorksChanged();
+  },
+
   // 새 작품 추가
-  addWork: (work: Work) => {
+  addWork: (work: Work): Promise<void> => {
     currentWorks = [work, ...currentWorks];
-    saveWorksToStorage(currentWorks);
-    listeners.forEach(listener => listener());
-    if (typeof window !== 'undefined') window.dispatchEvent(new Event('artier-works-changed'));
-    return work.id;
+    emitWorksChanged();
+    return schedulePersist();
   },
 
   // 작품 업데이트
-  updateWork: (id: string, updates: Partial<Work>) => {
+  updateWork: (id: string, updates: Partial<Work>): Promise<void> => {
     currentWorks = currentWorks.map(w =>
       w.id === id ? { ...w, ...updates } : w
     );
-    saveWorksToStorage(currentWorks);
-    listeners.forEach(listener => listener());
-    if (typeof window !== 'undefined') window.dispatchEvent(new Event('artier-works-changed'));
+    emitWorksChanged();
+    return schedulePersist();
   },
 
-  removeWork: (id: string) => {
+  removeWork: (id: string): Promise<void> => {
     pointsRecallIfQuickDelete(id);
+    void deleteWorkMediaFromIdb(id);
     currentWorks = currentWorks.filter(w => w.id !== id);
-    saveWorksToStorage(currentWorks);
     userInteractionStore.removeWorkId(id);
     cleanupOrphanedWorkId(id);
-    listeners.forEach(listener => listener());
-    if (typeof window !== 'undefined') window.dispatchEvent(new Event('artier-works-changed'));
+    emitWorksChanged();
+    return schedulePersist();
   },
 
   /** 다른 탭·창에서 `artier_works`가 바뀐 뒤 메모리와 화면을 맞출 때 */
   syncFromLocalStorage: () => {
     if (typeof window === 'undefined') return;
     currentWorks = loadWorksFromStorage();
-    listeners.forEach((listener) => listener());
+    emitWorksChanged();
+    void workStore.hydrateMediaIfNeeded();
   },
 
   // 변경사항 구독
@@ -303,7 +362,7 @@ const profileListeners: (() => void)[] = [];
         }
       }
     }
-    if (worksUpdated) saveWorksToStorage(currentWorks);
+    if (worksUpdated) void schedulePersist();
   }
 }
 
@@ -326,7 +385,7 @@ export const profileStore = {
           }
         }
         if (changed) {
-          saveWorksToStorage(currentWorks);
+          void schedulePersist();
           listeners.forEach(l => l());
         }
       }

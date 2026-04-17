@@ -711,13 +711,13 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
   const instructorArtistId =
     work.isInstructorUpload && work.primaryExhibitionType === 'group' ? work.artistId : null;
   const orderMembersWithInstructorFirst = (members: Artist[]): Artist[] => {
-    if (!instructorArtistId) return members;
     const seen = new Set<string>();
     const deduped = members.filter((m) => {
       if (seen.has(m.id)) return false;
       seen.add(m.id);
       return true;
     });
+    if (!instructorArtistId) return deduped;
     const instructor = allArtists.find((a) => a.id === instructorArtistId);
     if (!instructor) return deduped;
     const rest = deduped.filter((m) => m.id !== instructorArtistId);

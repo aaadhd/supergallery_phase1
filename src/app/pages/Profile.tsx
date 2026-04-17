@@ -54,14 +54,37 @@ function workHasStudentCredits(w: Work, instructorId: string): boolean {
   });
 }
 
-function firstStudentLabel(w: Work, instructorId: string): string {
+/**
+ * 수강생 작품 카드용: 이미지별 `imageArtists`에 연결된 작가를 순서대로 모으고, 동일 인물은 한 번만 표시.
+ * 강사는 **어떤 이미지에든 본인을 작가(memberId)로 지정한 경우에만** 포함한다.
+ * (업로더는 work.artist이지만 슬롯마다 수강생만 지정한 대리 업로드는 목록에 넣지 않음)
+ */
+function allLinkedImageArtistLabels(w: Work, instructorId: string): string[] {
   const ia = w.imageArtists;
-  if (!ia?.length) return '';
+  if (!ia?.length) return [];
+  const seen = new Set<string>();
+  const out: string[] = [];
   for (const a of ia) {
-    if (a.type === 'non-member' && a.displayName) return a.displayName;
-    if (a.type === 'member' && a.memberId && a.memberId !== instructorId && a.memberName) return a.memberName;
+    if (a.type === 'non-member') {
+      const label = (a.displayName?.trim() || a.phoneNumber?.trim() || '');
+      if (!label) continue;
+      const key = `n:${label}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(label);
+    } else if (a.type === 'member' && a.memberId) {
+      let label = a.memberName?.trim() || '';
+      if (!label && a.memberId === instructorId && w.artistId === instructorId && w.artist?.name) {
+        label = w.artist.name.trim();
+      }
+      if (!label) continue;
+      const key = `m:${a.memberId}`;
+      if (seen.has(key)) continue;
+      seen.add(key);
+      out.push(label);
+    }
   }
-  return '';
+  return out;
 }
 
 const LOCATION_VALUE_TO_KEY: Record<string, MessageKey> = {
@@ -116,9 +139,12 @@ export default function Profile() {
   const [renamingFlatImage, setRenamingFlatImage] = useState<{ work: Work; imgIndex: number; pieceTitle: string } | null>(null);
   const [renameValue, setRenameValue] = useState('');
 
+  // 프로필 id가 바뀔 때마다 최상단으로 — 프로필간 네비게이션 시 스크롤이 중간에서 시작하지 않도록
   useEffect(() => {
     window.scrollTo(0, 0);
+  }, [id]);
 
+  useEffect(() => {
     const unsubWork = workStore.subscribe(() => setStoreWorks(workStore.getWorks()));
     const unsubDraft = draftStore.subscribe(() => setDrafts(draftStore.getDrafts()));
     const unsubInteraction = userInteractionStore.subscribe(() => {
@@ -315,7 +341,7 @@ export default function Profile() {
     }
   }, [searchParams, allowedProfileTabs]);
 
-  // 발행 직후 도착 시 검수 공개 안내 배너 (dismissible)
+  // 전시 생성 직후 도착 시 검수 공개 안내 배너 (dismissible)
   const [publishedBannerDismissed, setPublishedBannerDismissed] = useState(false);
   const publishedFlag = searchParams.get('published');
   const publishedWorkId = searchParams.get('workId');
@@ -815,7 +841,7 @@ export default function Profile() {
                   {filteredWorks.length > 0 ? (
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-[1.625rem] sm:gap-[2.275rem] lg:gap-[2.6rem]">
                       {filteredWorks.map((work) => {
-                        const isMyUpload = isOwnProfile && work.artistId === profileArtist.id;
+                        const isMyUpload = isOwnProfile && (work.artistId === profileArtist.id || work.authorId === profileArtist.id);
                         return (
                         <div
                           key={work.id}
@@ -980,7 +1006,7 @@ export default function Profile() {
                   ) : (
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-[1.625rem] sm:gap-[2.275rem] lg:gap-[2.6rem]">
                       {studentWorksList.map((work) => {
-                        const credit = firstStudentLabel(work, profileArtist.id);
+                        const linkedArtistLabels = allLinkedImageArtistLabels(work, profileArtist.id);
                         return (
                           <div
                             key={work.id}
@@ -1047,6 +1073,27 @@ export default function Profile() {
                                 </div>
                               )}
 
+                              {/* 하단 배지 (검수 상태 - 대리 업로드 작품용) */}
+                              {isOwnProfile && (work.feedReviewStatus === 'pending' || work.feedReviewStatus === 'rejected') && (
+                                <div className="absolute left-2 bottom-2 z-10 flex flex-col gap-1">
+                                  {work.feedReviewStatus === 'pending' && (
+                                    <span className="inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium bg-muted/95 text-foreground border border-border backdrop-blur-sm w-fit">
+                                      {t('review.badgePending')}
+                                    </span>
+                                  )}
+                                  {work.feedReviewStatus === 'rejected' && (
+                                    <button
+                                      type="button"
+                                      onClick={(e) => { e.stopPropagation(); setRejectedModalWork(work); }}
+                                      className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium bg-red-500/95 text-white backdrop-blur-sm w-fit lg:hover:bg-red-600 transition-colors"
+                                    >
+                                      {t('review.badgeRejected')}
+                                      <span aria-hidden>›</span>
+                                    </button>
+                                  )}
+                                </div>
+                              )}
+
                             </div>
 
                             <div className="pt-2">
@@ -1066,12 +1113,12 @@ export default function Profile() {
                                   {work.groupName}
                                 </p>
                               )}
-                              {credit && (
-                                <p className="text-[12px] text-muted-foreground mt-0.5 flex items-center gap-1.5">
+                              {linkedArtistLabels.length > 0 && (
+                                <p className="text-[12px] text-muted-foreground mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-1">
                                   <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
-                                    {t('profile.studentCredit')}
+                                    {t('profile.artistNameBadge')}
                                   </span>
-                                  {credit}
+                                  <span className="min-w-0 break-words">{linkedArtistLabels.join(', ')}</span>
                                 </p>
                               )}
                             </div>
@@ -1127,6 +1174,19 @@ export default function Profile() {
                                 </DropdownMenuContent>
                               </DropdownMenu>
                             </div>
+
+                            {/* 개별 이미지 상태 뱃지 (작품 관리용) */}
+                            {fi.work.feedReviewStatus && fi.work.feedReviewStatus !== 'approved' && (
+                              <div className="absolute left-2 bottom-2 z-10">
+                                <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium backdrop-blur-sm ${
+                                  fi.work.feedReviewStatus === 'pending' 
+                                    ? 'bg-muted/90 text-foreground border border-border' 
+                                    : 'bg-red-500/90 text-white'
+                                }`}>
+                                  {fi.work.feedReviewStatus === 'pending' ? t('review.badgePending') : t('review.badgeRejected')}
+                                </span>
+                              </div>
+                            )}
                           </div>
                           <button
                             type="button"
@@ -1178,13 +1238,34 @@ export default function Profile() {
                           <div className="relative aspect-square rounded-sm overflow-hidden bg-white border border-border/40">
                             <ImageWithFallback
                               src={imageUrls[getThumbCover(work)] || getThumbCover(work)}
-                              alt={displayProminentHeadline(work, t('work.untitled'))}
+                              alt={displayExhibitionTitle(work, t('work.untitled'))}
                               className="w-full h-full object-contain object-center"
                             />
                           </div>
                           <div className="pt-2">
-                            <p className="text-sm font-medium text-foreground truncate">{displayProminentHeadline(work, t('work.untitled'))}</p>
-                            <p className="text-[12px] text-muted-foreground mt-0.5">{work.artist?.name}</p>
+                            <div className="flex items-center gap-1.5">
+                              <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                                {t('profile.exhibitionNameBadge')}
+                              </span>
+                              <p className="text-sm font-medium text-foreground truncate">
+                                {displayExhibitionTitle(work, t('work.untitled'))}
+                              </p>
+                            </div>
+                            {isGroupExhibition(work) && work.groupName ? (
+                              <p className="text-[12px] text-muted-foreground mt-0.5 flex items-center gap-1.5">
+                                <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                                  {t('profile.groupNameBadge')}
+                                </span>
+                                <span className="truncate">{work.groupName}</span>
+                              </p>
+                            ) : (
+                              <p className="text-[12px] text-muted-foreground mt-0.5 flex items-center gap-1.5">
+                                <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                                  {t('profile.artistNameBadge')}
+                                </span>
+                                <span className="truncate">{work.artist?.name ?? t('work.unknownUploader')}</span>
+                              </p>
+                            )}
                           </div>
                         </div>
                       ))}
@@ -1216,13 +1297,34 @@ export default function Profile() {
                           <div className="relative aspect-square rounded-sm overflow-hidden bg-white border border-border/40">
                             <ImageWithFallback
                               src={imageUrls[getThumbCover(work)] || getThumbCover(work)}
-                              alt={displayProminentHeadline(work, t('work.untitled'))}
+                              alt={displayExhibitionTitle(work, t('work.untitled'))}
                               className="w-full h-full object-contain object-center"
                             />
                           </div>
                           <div className="pt-2">
-                            <p className="text-sm font-medium text-foreground truncate">{displayProminentHeadline(work, t('work.untitled'))}</p>
-                            <p className="text-[12px] text-muted-foreground mt-0.5">{work.artist?.name}</p>
+                            <div className="flex items-center gap-1.5">
+                              <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                                {t('profile.exhibitionNameBadge')}
+                              </span>
+                              <p className="text-sm font-medium text-foreground truncate">
+                                {displayExhibitionTitle(work, t('work.untitled'))}
+                              </p>
+                            </div>
+                            {isGroupExhibition(work) && work.groupName ? (
+                              <p className="text-[12px] text-muted-foreground mt-0.5 flex items-center gap-1.5">
+                                <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                                  {t('profile.groupNameBadge')}
+                                </span>
+                                <span className="truncate">{work.groupName}</span>
+                              </p>
+                            ) : (
+                              <p className="text-[12px] text-muted-foreground mt-0.5 flex items-center gap-1.5">
+                                <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                                  {t('profile.artistNameBadge')}
+                                </span>
+                                <span className="truncate">{work.artist?.name ?? t('work.unknownUploader')}</span>
+                              </p>
+                            )}
                           </div>
                         </div>
                       ))}

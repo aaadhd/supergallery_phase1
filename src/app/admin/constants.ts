@@ -28,7 +28,7 @@ export const LABELS = {
   GROUP_NAME: '그룹명',
 
   // 액션
-  PUBLISH: '발행하기',
+  PUBLISH: '전시하기',
   SAVE_DRAFT: '초안으로 저장',
   FOLLOW: '팔로우',
   FOLLOWING: '팔로잉',

@@ -36,7 +36,7 @@ npm run preview
 | `REFERENCE_DELTA.md` | reference 폴더 217개 파일 대조표 |
 | `product-policies.md` | 개발자 인수인계 (변경·목업·수치) |
 | `docs/upload_spec.md` | 작품 올리기 전체 스펙 |
-| `docs/SuperGallery_Phase 1 PRD_v 1.4.md` | 통합 PRD |
+| `docs/SuperGallery_Phase 1 PRD_v 1.5.md` | 통합 PRD |
 
 ## 환경 변수
 

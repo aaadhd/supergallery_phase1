@@ -161,7 +161,7 @@ export function pointsOnWorkPublished(work: {
       const gk = `m:${month}:inst`;
       if (!s.groupCreateMonth[gk]) {
         s.groupCreateMonth[gk] = true;
-        award(30, 'group_create', '그룹전시 생성(발행)');
+        award(30, 'group_create', '그룹전시 생성');
       }
     } else {
       const n = (s.groupParticipationMonth[month] || 0) + 1;
