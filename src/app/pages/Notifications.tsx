@@ -285,7 +285,7 @@ export default function Notifications() {
                 {unreadCount > 0 && (
                   <span
                     aria-label={`${unreadCount}개 미확인`}
-                    className="inline-flex min-w-[20px] h-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-[11px] font-semibold text-white"
+                    className="inline-flex min-w-[20px] h-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white"
                   >
                     {unreadCount > 99 ? '99+' : unreadCount}
                   </span>
@@ -321,7 +321,7 @@ export default function Notifications() {
             <h3 className="text-sm sm:text-base font-semibold text-muted-foreground mb-2">
               {readFilter === 'unread' ? t('notifications.emptyUnread') : t('notifications.empty')}
             </h3>
-            <p className="text-[13px] text-muted-foreground">{t('notifications.emptyHint')}</p>
+            <p className="text-sm text-muted-foreground">{t('notifications.emptyHint')}</p>
           </div>
         ) : (
           <div className="divide-y divide-border/60">
@@ -348,7 +348,7 @@ export default function Notifications() {
                     </div>
                   )}
                   <div className="flex-1 min-w-0">
-                    <p className={`text-[13px] sm:text-sm leading-relaxed ${notif.read ? 'text-muted-foreground' : 'text-foreground'}`}>
+                    <p className={`text-sm sm:text-sm leading-relaxed ${notif.read ? 'text-muted-foreground' : 'text-foreground'}`}>
                       {notif.fromUser && <span className="font-semibold">{notif.fromUser.name}</span>}
                       {notif.message}
                     </p>

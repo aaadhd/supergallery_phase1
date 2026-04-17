@@ -9,7 +9,7 @@ export default function Privacy() {
     <div className="min-h-screen bg-white pb-20 md:pb-0">
       <div className="mx-auto max-w-3xl px-6 py-16">
         <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-8">{tp('title')}</h1>
-        <div className="prose prose-gray max-w-none text-[15px] leading-relaxed space-y-6 text-foreground">
+        <div className="prose prose-gray max-w-none text-base leading-relaxed space-y-6 text-foreground">
           <p className="text-muted-foreground">{tp('effective')}</p>
 
           <h2 className="text-lg font-bold text-foreground mt-8">{tp('s1h')}</h2>
@@ -27,7 +27,7 @@ export default function Privacy() {
           <h2 className="text-lg font-bold text-foreground mt-8">{tp('s5h')}</h2>
           <p>{tp('s5p')}</p>
 
-          <p className="text-muted-foreground mt-12 text-[13px]">{tp('footer')}</p>
+          <p className="text-muted-foreground mt-12 text-sm">{tp('footer')}</p>
         </div>
       </div>
     </div>

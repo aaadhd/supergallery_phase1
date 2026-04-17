@@ -9,7 +9,7 @@ export default function Terms() {
     <div className="min-h-screen bg-white pb-20 md:pb-0">
       <div className="mx-auto max-w-3xl px-6 py-16">
         <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-8">{tt('title')}</h1>
-        <div className="prose prose-gray max-w-none text-[15px] leading-relaxed space-y-6 text-foreground">
+        <div className="prose prose-gray max-w-none text-base leading-relaxed space-y-6 text-foreground">
           <p className="text-muted-foreground">{tt('effective')}</p>
 
           <h2 className="text-lg font-bold text-foreground mt-8">{tt('art1h')}</h2>
@@ -33,7 +33,7 @@ export default function Terms() {
           <h2 className="text-lg font-bold text-foreground mt-8">{tt('art5h')}</h2>
           <p>{tt('art5p')}</p>
 
-          <p className="text-muted-foreground mt-12 text-[13px]">{tt('footerNote')}</p>
+          <p className="text-muted-foreground mt-12 text-sm">{tt('footerNote')}</p>
         </div>
       </div>
     </div>

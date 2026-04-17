@@ -209,7 +209,7 @@ export default function Search() {
               role="combobox"
               aria-expanded={suggestOpen && autocompleteSuggestions.length > 0}
               aria-autocomplete="list"
-              className="w-full pl-12 sm:pl-14 pr-12 sm:pr-14 py-4 sm:py-5 text-[15px] sm:text-base border-2 border-border rounded-2xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all bg-white"
+              className="w-full pl-12 sm:pl-14 pr-12 sm:pr-14 py-4 sm:py-5 text-base sm:text-base border-2 border-border rounded-2xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all bg-white"
             />
             {query && (
               <Button
@@ -225,7 +225,7 @@ export default function Search() {
                 className="absolute left-0 right-0 top-full mt-2 z-20 rounded-xl border border-border bg-white shadow-lg py-1 max-h-64 overflow-y-auto"
                 role="listbox"
               >
-                <li className="px-3 py-1.5 text-[11px] font-medium text-muted-foreground uppercase tracking-wide">
+                <li className="px-3 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wide">
                   {t('search.autocompleteHeading')}
                 </li>
                 {autocompleteSuggestions.map((s) => (
@@ -295,7 +295,7 @@ export default function Search() {
         {/* Search results */}
         {searchTerm && (
           <div className="space-y-6 sm:space-y-10">
-            <p className="text-[13px] sm:text-sm text-muted-foreground">
+            <p className="text-sm sm:text-sm text-muted-foreground">
               {t('search.resultsLine')
                 .replace('{q}', searchTerm)
                 .replace('{n}', String(results.works.length + results.artists.length))}
@@ -323,10 +323,10 @@ export default function Search() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <h3 className="text-base font-bold text-foreground">{results.artists[0].name}</h3>
-                          <span className="text-[10px] font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded">{t('browse.artistLabel')}</span>
+                          <span className="text-xs font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded">{t('browse.artistLabel')}</span>
                         </div>
                         {results.artists[0].bio && (
-                          <p className="text-[13px] text-muted-foreground truncate italic">"{results.artists[0].bio}"</p>
+                          <p className="text-sm text-muted-foreground truncate italic">"{results.artists[0].bio}"</p>
                         )}
                       </div>
                     </button>
@@ -349,7 +349,7 @@ export default function Search() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <h3 className="text-sm font-bold text-foreground truncate">{displayProminentHeadline(work, t('work.untitled'))}</h3>
-                          <span className="text-[10px] font-bold text-zinc-500 bg-zinc-200 px-1.5 py-0.5 rounded">작품</span>
+                          <span className="text-xs font-bold text-zinc-500 bg-zinc-200 px-1.5 py-0.5 rounded">작품</span>
                         </div>
                         <p className="text-xs text-muted-foreground">{work.artist.name}</p>
                       </div>
@@ -380,7 +380,7 @@ export default function Search() {
                       <div className="flex-1 min-w-0">
                         <h3 className="text-sm sm:text-base font-semibold text-foreground">{artist.name}</h3>
                         {artist.bio && (
-                          <p className="text-[13px] text-muted-foreground truncate">{artist.bio}</p>
+                          <p className="text-sm text-muted-foreground truncate">{artist.bio}</p>
                         )}
                       </div>
                       <div className="text-xs text-muted-foreground shrink-0">
@@ -431,7 +431,7 @@ export default function Search() {
               <div className="text-center py-12 sm:py-20">
                 <SearchIcon className="h-12 w-12 text-muted-foreground/20 mx-auto mb-3" />
                 <h3 className="text-sm sm:text-base font-semibold text-foreground mb-2">{t('search.noResults').replace('{query}', searchTerm)}</h3>
-                <p className="text-[13px] sm:text-sm text-muted-foreground mb-6">{t('search.noResultsHint')}</p>
+                <p className="text-sm sm:text-sm text-muted-foreground mb-6">{t('search.noResultsHint')}</p>
 
                 {recentSearches.length > 0 && (
                   <div className="mb-6">
@@ -442,7 +442,7 @@ export default function Search() {
                           key={term}
                           type="button"
                           onClick={() => { setQuery(term); setSearchParams({ q: term }); }}
-                          className="min-h-[36px] rounded-full border border-border px-3 text-[13px] text-foreground lg:hover:bg-muted/50"
+                          className="min-h-[36px] rounded-full border border-border px-3 text-sm text-foreground lg:hover:bg-muted/50"
                         >
                           {term}
                         </button>

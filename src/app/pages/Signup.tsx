@@ -18,7 +18,7 @@ import { birthYearOptions, isValidDate, meetsMinAge } from '../utils/ageCheck';
 import { containsProfanity } from '../utils/profanityFilter';
 
 const inputClass =
-  'min-h-[44px] rounded-lg border-border/40 px-3 py-3 text-[13px] text-foreground placeholder:text-muted-foreground sm:px-4 sm:text-sm focus-visible:ring-primary/25';
+  'min-h-[44px] rounded-lg border-border/40 px-3 py-3 text-sm text-foreground placeholder:text-muted-foreground sm:px-4 sm:text-sm focus-visible:ring-primary/25';
 
 const emailValid = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 
@@ -198,7 +198,7 @@ export default function Signup() {
         onCheckedChange={(v) => onChange(v === true)}
         className="mt-0.5 border-border/40"
       />
-      <Label htmlFor={id} className="cursor-pointer text-[13px] font-normal leading-snug text-foreground sm:text-sm">
+      <Label htmlFor={id} className="cursor-pointer text-sm font-normal leading-snug text-foreground sm:text-sm">
         {label}
       </Label>
     </div>
@@ -236,7 +236,7 @@ export default function Signup() {
             <div className={`h-2 w-10 rounded-full transition-colors ${step >= 1 ? 'bg-primary' : 'bg-muted'}`} />
             <div className={`h-2 w-10 rounded-full transition-colors ${step >= 2 ? 'bg-primary' : 'bg-muted'}`} />
             <div className={`h-2 w-10 rounded-full transition-colors ${step >= 3 ? 'bg-primary' : 'bg-muted'}`} />
-            <span className="ml-2 text-[13px] font-medium text-muted-foreground tabular-nums">{step}/3</span>
+            <span className="ml-2 text-sm font-medium text-muted-foreground tabular-nums">{step}/3</span>
           </div>
         </div>
 
@@ -246,7 +246,7 @@ export default function Signup() {
               <div>
                 <Label
                   htmlFor="signup-email"
-                  className="mb-1.5 flex items-center gap-1.5 text-[13px] font-semibold text-foreground sm:text-sm"
+                  className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-foreground sm:text-sm"
                 >
                   <Mail className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={2} />
                   {t('signup.emailLabel')}
@@ -261,13 +261,13 @@ export default function Signup() {
                   placeholder={t('signup.emailPh')}
                   className={inputClass}
                 />
-                {emailError ? <p className="mt-1.5 text-[13px] text-destructive">{emailError}</p> : null}
+                {emailError ? <p className="mt-1.5 text-sm text-destructive">{emailError}</p> : null}
               </div>
 
               <div>
                 <Label
                   htmlFor="signup-password"
-                  className="mb-1.5 flex items-center gap-1.5 text-[13px] font-semibold text-foreground sm:text-sm"
+                  className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-foreground sm:text-sm"
                 >
                   <Lock className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={2} />
                   {t('signup.passwordLabel')}
@@ -281,10 +281,10 @@ export default function Signup() {
                   placeholder={t('signup.passwordPh')}
                   className={inputClass}
                 />
-                <p className="mt-1.5 text-[12px] sm:text-[13px] text-muted-foreground">
+                <p className="mt-1.5 text-xs sm:text-sm text-muted-foreground">
                   {t('signup.passwordHint')}
                 </p>
-                {passwordError ? <p className="mt-1 text-[13px] text-destructive">{passwordError}</p> : null}
+                {passwordError ? <p className="mt-1 text-sm text-destructive">{passwordError}</p> : null}
               </div>
 
               <Button
@@ -295,7 +295,7 @@ export default function Signup() {
                   if (step1Ok) setStep(2);
                 }}
                 disabled={!step1Ok}
-                className="w-full min-h-[44px] mt-4 rounded-lg bg-primary text-white text-[13px] sm:text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50"
+                className="w-full min-h-[44px] mt-4 rounded-lg bg-primary text-white text-sm sm:text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50"
               >
                 {t('upload.nextStep')}
               </Button>
@@ -307,7 +307,7 @@ export default function Signup() {
               <div>
                 <Label
                   htmlFor="signup-nickname"
-                  className="mb-1.5 flex items-center gap-1.5 text-[13px] font-semibold text-foreground sm:text-sm"
+                  className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-foreground sm:text-sm"
                 >
                   <User className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={2} />
                   {t('signup.nicknameLabel')}
@@ -323,13 +323,13 @@ export default function Signup() {
                   className={inputClass}
                 />
                 {nicknameError ? (
-                  <p className="mt-1.5 text-[13px] text-destructive">{nicknameError}</p>
+                  <p className="mt-1.5 text-sm text-destructive">{nicknameError}</p>
                 ) : null}
               </div>
 
               <div>
                 <Label
-                  className="mb-1.5 flex items-center gap-1.5 text-[13px] font-semibold text-foreground sm:text-sm"
+                  className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-foreground sm:text-sm"
                 >
                   <Calendar className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={2} />
                   {t('signup.birthLabel')}
@@ -341,7 +341,7 @@ export default function Signup() {
                     value={birthYear}
                     onChange={(e) => { setBirthYear(e.target.value); markTouched('birth'); }}
                     onBlur={() => markTouched('birth')}
-                    className="min-h-[44px] rounded-lg border border-border/40 px-3 py-2 text-[13px] sm:text-sm text-foreground bg-white focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:outline-none"
+                    className="min-h-[44px] rounded-lg border border-border/40 px-3 py-2 text-sm sm:text-sm text-foreground bg-white focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:outline-none"
                   >
                     <option value="">{t('signup.birthYear')}</option>
                     {yearOptions.map((y) => (<option key={y} value={y}>{y}</option>))}
@@ -351,7 +351,7 @@ export default function Signup() {
                     value={birthMonth}
                     onChange={(e) => { setBirthMonth(e.target.value); markTouched('birth'); }}
                     onBlur={() => markTouched('birth')}
-                    className="min-h-[44px] rounded-lg border border-border/40 px-3 py-2 text-[13px] sm:text-sm text-foreground bg-white focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:outline-none"
+                    className="min-h-[44px] rounded-lg border border-border/40 px-3 py-2 text-sm sm:text-sm text-foreground bg-white focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:outline-none"
                   >
                     <option value="">{t('signup.birthMonth')}</option>
                     {monthOptions.map((m) => (<option key={m} value={m}>{m}</option>))}
@@ -361,14 +361,14 @@ export default function Signup() {
                     value={birthDay}
                     onChange={(e) => { setBirthDay(e.target.value); markTouched('birth'); }}
                     onBlur={() => markTouched('birth')}
-                    className="min-h-[44px] rounded-lg border border-border/40 px-3 py-2 text-[13px] sm:text-sm text-foreground bg-white focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:outline-none"
+                    className="min-h-[44px] rounded-lg border border-border/40 px-3 py-2 text-sm sm:text-sm text-foreground bg-white focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:outline-none"
                   >
                     <option value="">{t('signup.birthDay')}</option>
                     {dayOptions.map((d) => (<option key={d} value={d}>{d}</option>))}
                   </select>
                 </div>
-                <p className="mt-1.5 text-[12px] sm:text-[13px] text-muted-foreground">{t('signup.birthHint')}</p>
-                {birthError ? <p className="mt-1 text-[13px] text-destructive">{birthError}</p> : null}
+                <p className="mt-1.5 text-xs sm:text-sm text-muted-foreground">{t('signup.birthHint')}</p>
+                {birthError ? <p className="mt-1 text-sm text-destructive">{birthError}</p> : null}
               </div>
 
               <div className="flex gap-2 mt-4">
@@ -376,7 +376,7 @@ export default function Signup() {
                   type="button"
                   variant="outline"
                   onClick={() => setStep(1)}
-                  className="w-1/3 min-h-[44px] rounded-lg text-foreground text-[13px] sm:text-sm"
+                  className="w-1/3 min-h-[44px] rounded-lg text-foreground text-sm sm:text-sm"
                 >
                   {t('signup.previous')}
                 </Button>
@@ -388,7 +388,7 @@ export default function Signup() {
                     if (step2Ok) setStep(3);
                   }}
                   disabled={!step2Ok}
-                  className="flex-1 min-h-[44px] rounded-lg bg-primary text-white text-[13px] sm:text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50"
+                  className="flex-1 min-h-[44px] rounded-lg bg-primary text-white text-sm sm:text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50"
                 >
                   {t('upload.nextStep')}
                 </Button>
@@ -399,7 +399,7 @@ export default function Signup() {
           {step === 3 && (
             <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="pt-2">
-                <p className="text-[13px] sm:text-sm font-semibold text-foreground mb-3">
+                <p className="text-sm sm:text-sm font-semibold text-foreground mb-3">
                   {t('signup.agreeSection')}
                 </p>
                 <div className="space-y-2.5 rounded-lg border border-border/40 p-4 bg-muted/50">
@@ -412,7 +412,7 @@ export default function Signup() {
                     />
                     <Label
                       htmlFor="signup-agree-all"
-                      className="cursor-pointer text-[13px] font-semibold text-foreground sm:text-sm"
+                      className="cursor-pointer text-sm font-semibold text-foreground sm:text-sm"
                     >
                       {t('signup.agreeAll')}
                     </Label>
@@ -463,7 +463,7 @@ export default function Signup() {
                     </>
                   )}
                 </div>
-                <p className="mt-3 text-[12px] sm:text-[13px] text-muted-foreground leading-relaxed">{t('signup.ageRestrictionLead')}</p>
+                <p className="mt-3 text-xs sm:text-sm text-muted-foreground leading-relaxed">{t('signup.ageRestrictionLead')}</p>
               </div>
 
               <div className="flex gap-2 mt-4">
@@ -471,14 +471,14 @@ export default function Signup() {
                   type="button"
                   variant="outline"
                   onClick={() => setStep(2)}
-                  className="w-1/3 min-h-[44px] rounded-lg text-foreground text-[13px] sm:text-sm"
+                  className="w-1/3 min-h-[44px] rounded-lg text-foreground text-sm sm:text-sm"
                 >
                   {t('signup.previous')}
                 </Button>
                 <Button
                   type="submit"
                   disabled={!canSubmit}
-                  className="flex-1 min-h-[44px] rounded-lg bg-primary text-white text-[13px] sm:text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
+                  className="flex-1 min-h-[44px] rounded-lg bg-primary text-white text-sm sm:text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {t('signup.submit')}
                 </Button>
@@ -486,7 +486,7 @@ export default function Signup() {
             </div>
           )}
         </form>
-        <p className="text-center mt-10 text-[13px] sm:text-sm text-muted-foreground">
+        <p className="text-center mt-10 text-sm sm:text-sm text-muted-foreground">
           {t('signup.hasAccount')}{' '}
           <Link to="/login" className="text-primary font-semibold lg:hover:underline">
             {t('signup.loginLink')}

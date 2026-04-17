@@ -8,7 +8,7 @@ export default function ServerError() {
     <div className="min-h-[70vh] flex flex-col items-center justify-center text-center px-6 pb-20 md:pb-0">
       <h1 className="text-7xl font-bold text-foreground mb-2">500</h1>
       <p className="text-sm text-muted-foreground mb-2">{t('error500.message')}</p>
-      <p className="text-[15px] text-muted-foreground mb-8">{t('error500.hint')}</p>
+      <p className="text-base text-muted-foreground mb-8">{t('error500.hint')}</p>
       <div className="flex gap-3">
         <Button
           type="button"

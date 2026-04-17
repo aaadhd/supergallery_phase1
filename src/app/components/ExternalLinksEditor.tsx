@@ -27,9 +27,9 @@ const PLATFORMS: PlatformDef[] = [
   { key: 'twitter', label: 'twitter.com/', prefix: 'twitter.com/', placeholder: '나머지 URL을 입력해주세요.',
     icon: <Twitter className="h-5 w-5 text-[#1DA1F2]" /> },
   { key: 'pinterest', label: 'pinterest.co.kr/', prefix: 'pinterest.co.kr/', placeholder: '나머지 URL을 입력해주세요.',
-    icon: <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#E60023] text-[10px] font-bold text-white">P</span> },
+    icon: <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#E60023] text-xs font-bold text-white">P</span> },
   { key: 'vimeo', label: 'vimeo.com/', prefix: 'vimeo.com/', placeholder: '나머지 URL을 입력해주세요.',
-    icon: <span className="flex h-5 w-5 items-center justify-center rounded bg-[#1AB7EA] text-[10px] font-bold text-white">V</span> },
+    icon: <span className="flex h-5 w-5 items-center justify-center rounded bg-[#1AB7EA] text-xs font-bold text-white">V</span> },
 ];
 
 const PLATFORM_KEYS = new Set(PLATFORMS.map(p => p.key));

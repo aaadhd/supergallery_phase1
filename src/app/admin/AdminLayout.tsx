@@ -56,9 +56,9 @@ export default function AdminLayout() {
             <ArrowLeft className="w-4 h-4" />
             {LABELS.SERVICE_NAME} {t('admin.backToApp')}
           </Link>
-          <p className="text-[10px] font-semibold uppercase tracking-wider text-amber-400/90">{t('admin.consoleLabel')}</p>
+          <p className="text-xs font-semibold uppercase tracking-wider text-amber-400/90">{t('admin.consoleLabel')}</p>
           <h1 className="text-lg font-bold text-white mt-0.5">{LABELS.NAV_ADMIN}</h1>
-          <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-emerald-400/15 border border-emerald-400/40 px-2 py-0.5 text-[10px] font-medium text-emerald-300">
+          <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-emerald-400/15 border border-emerald-400/40 px-2 py-0.5 text-xs font-medium text-emerald-300">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
             {t('admin.roleBadge')}
           </div>

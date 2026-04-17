@@ -6,6 +6,16 @@
 
 > Phase 1 클라이언트 구현·명세 동기화는 **`IMPLEMENTATION_DELTA.md`와 현재 `src/app/` 코드**를 기준으로 한다. 완성도를 퍼센트로 표기하지 않는다.
 
+### 용어 주의 (코드 ↔ 한국어)
+
+코드 타입 이름과 실제 뜻이 어긋나는 지점이 있으므로 읽기 전 확인:
+
+- **`Work` 타입 (data.ts)** = 한국어 **"전시(Exhibition)"** 컨테이너. 1~10장의 이미지·`exhibitionName`·`primaryExhibitionType`·`groupName` 등 전시 단위 메타를 모두 담는다. 업로드 한 번 = `Work` 하나.
+- **한국어 "작품"** (개별 이미지 1장) = 코드상 **별도 엔티티가 없고** `Work` 안의 `image[i]` + `imagePieceTitles[i]` + `imageArtists[i]` 배열 요소로 존재.
+- 따라서 좋아요·저장·Pick·신고·뱃지는 모두 `Work`(=전시) 단위 스칼라. 이미지별 인터랙션 필드는 구조적으로 존재하지 않음.
+- URL은 이미 `/exhibitions/:workId`로 "exhibition" 용어를 쓰고 있어 일관성 있음. 타입 이름만 과거 명이 남은 상태.
+- Phase 2 백엔드 ERD 설계 시 `Work` → `Exhibition` 리네이밍 검토 권장.
+
 ## 스펙 문서
 - 개발자 인수인계 문서 (reference 대비 변경·목업·확정 수치): `product-policies.md`
 - 작품 올리기 전체 스펙: `docs/upload_spec.md`
@@ -28,7 +38,6 @@
 
 ### 컴포넌트
 - `src/app/components/ConfirmDialog.tsx` — 커스텀 확인 다이얼로그 (Radix AlertDialog 기반, Promise API)
-- `src/app/components/WorkCard.tsx` — 좋아요·저장 상태 아이콘 (숫자 미노출)
 - `src/app/components/WorkDetailModal.tsx` — 공유 URL에 `?from=invite` 자동 부여
 - `src/app/components/PointsBootstrap.tsx` — 부트스트랩 포인트 동기화
 - `src/app/components/WorksStorageSync.tsx` — works 스토리지 버전 동기화
@@ -51,7 +60,7 @@
 - `src/app/utils/reviewLabels.ts` — 검수 사유 4분류
 - `src/app/utils/analytics.ts` — GA4 스캐폴딩
 - `src/app/utils/registeredAccounts.ts` — 가입 이메일·전화 중복 검사 레지스트리
-- `src/app/utils/groupNameRegistry.ts` — 그룹명 자동완성·정규화·캐논 맵
+- `src/app/utils/groupNameRegistry.ts` — 그룹명 자동완성(내 최근·작품 기반). 중복 허용 정책(2026-04-17)으로 정규화·캐논 맵 제거됨
 - `src/app/utils/imageHelper.ts` — 이미지 리사이즈·유틸
 - `src/app/utils/searchRank.ts` — 검색 결과 랭킹
 - `src/app/utils/pointsBackground.ts` — 포인트 적립/회수 (`pointsRecallIfQuickDelete`, `addDemoPp`)
@@ -110,6 +119,14 @@
 - 한 작품이라도 `isInstructorUpload === true`로 발행되면 → 프로필에 "수강생 작품" 탭 자동 노출
 - 모든 해당 작품 삭제 시 → 자동 비노출
 
+### 전시 업로드 자격 (본인 작품 포함 규칙)
+
+누구나 **자기 작품이 포함된 전시**만 개설할 수 있다. 강사 예외만이 본인 작품 없이 전시 개설 가능(수강생 작품 전용 전시).
+
+- **강사 OFF** → 그룹 전시에 본인 작품 최소 1점 포함 **필수**. 위반 시 발행 차단(`upload.errMustIncludeSelf`). 검증 위치: [Upload.tsx](src/app/pages/Upload.tsx)의 발행 핸들러, `errMissingArtist` 검증 직후.
+- **강사 ON** → 본인 작품 포함 **금지**. 작가 선택 리스트에서 본인 필터링([Upload.tsx:1591](src/app/pages/Upload.tsx#L1591)), 강사 ON 전환 시 본인 지정된 슬롯 자동 초기화([Upload.tsx:374-389](src/app/pages/Upload.tsx#L374-L389)).
+- 혼자 올리기는 정의상 본인 작품만 포함되므로 별도 검증 없음.
+
 ### 금지
 - `UserProfile.isInstructor` 필드 부활 (삭제됨)
 - 프로필 편집 화면에 "강사 토글" 추가 (UX 단순화 + 상태 불일치 차단 목적)
@@ -162,10 +179,10 @@
 - **핵심 앱 상태 (`store.ts`)**: `artier_works_version`, `artier_works`, `artier_drafts`, `artier_profile`, `artier_interactions`, `artier_auth`, `artier_follows`, `artier_account_suspension`, `artier_withdrawn_artists`, `artier_demo_last_withdraw_reason`
 - **작품·피드·알림**: `artier_curation_v1`, `artier_feed_seen_work_ids`, `artier_notifications`, `artier_notification_settings`
 - **배너·이벤트·어드민**: `artier_admin_banners_v1`, `artier_managed_events_v1`, `artier_event_subscriptions`, `artier_admin_issues`, `artier_admin_checklist`, `artier_admin_partners`, `artier_admin_members_v1`, `artier_admin_picks_v1`
-- **초대·포인트·신고·기타**: `artier_invite_messaging_log`, `artier_invite_match_log`, `artier_points_ledger`, `artier_points_state`, `artier_work_publish_times`, `artier_pp_balance`, `artier_artist_follower_delta`, `artier_reports`, `artier_report_hidden_v2`, `artier_report_signatures_v1`, `artier_reported_works`, `artier_reported_artists` (레거시 신고 키), `artier_warning_counter_v1`, `artier_false_report_counter_v1`, `artier_social_signed_up__<provider>` (kakao/google/apple), `artier_pending_sms_invite` (초대 링크 → 가입 중 플래그, 온보딩 종료 시 정리), `artier_pending_signup_nickname`·`artier_pending_signup_email`·`artier_pending_signup_phone`·`artier_pending_signup_realname`·`artier_pending_social_signup` (Signup/소셜 가입/SMS 초대 → Onboarding 프리필 핸드오프, 온보딩 종료 시 정리), `artier_registered_emails_v1`·`artier_registered_phones_v1` (가입 완료된 이메일·전화 레지스트리 — 중복 가입 차단, `utils/registeredAccounts.ts`), `artier_group_canonical_map`, `artier_last_group_name`, `artier_my_group_names`, `artier_inquiries`
+- **초대·포인트·신고·기타**: `artier_invite_messaging_log`, `artier_invite_match_log`, `artier_points_ledger`, `artier_points_state`, `artier_work_publish_times`, `artier_pp_balance`, `artier_artist_follower_delta`, `artier_reports`, `artier_report_hidden_v2`, `artier_report_signatures_v1`, `artier_reported_works`, `artier_reported_artists` (레거시 신고 키), `artier_warning_counter_v1`, `artier_false_report_counter_v1`, `artier_social_signed_up__<provider>` (kakao/google/apple), `artier_pending_sms_invite` (초대 링크 → 가입 중 플래그, 온보딩 종료 시 정리), `artier_pending_signup_nickname`·`artier_pending_signup_email`·`artier_pending_signup_phone`·`artier_pending_signup_realname`·`artier_pending_social_signup` (Signup/소셜 가입/SMS 초대 → Onboarding 프리필 핸드오프, 온보딩 종료 시 정리), `artier_registered_emails_v1`·`artier_registered_phones_v1` (가입 완료된 이메일·전화 레지스트리 — 중복 가입 차단, `utils/registeredAccounts.ts`), `artier_last_group_name`, `artier_my_group_names`, `artier_inquiries`
 - **UX·데모**: `artier_locale`, `artier_font_scale`, `artier_cookie_consent`, `artier_onboarding_done`, `artier_splash_seen`, `artier_mock_jwt_session`, `artier_geo_demo_cache`, `artier_admin_session_v1` (`adminGate`), `artier_recent_searches__guest`, `artier_recent_searches__<slug>` (`Search.tsx`)
 - **sessionStorage** (별도): 접두 `artier_scroll_` + 논리 키 — 스크롤 복원 (`src/app/utils/scrollRestore.ts`); `artier_pending_invite_claims` — 가입 시 이름 불일치로 자동 매칭 실패한 초대 목록, `PendingInviteClaimGate` 모달에서 소비
-- **Deprecated (부팅 시 제거)**: `artier_instructor_public_ids` — `PointsBootstrap` 마운트 시 `LEGACY_STORAGE_KEYS`로 제거 (IMPLEMENTATION_DELTA §11.1)
+- **Deprecated (부팅 시 제거)**: `artier_instructor_public_ids` (2026-04-13 강사 단일화), `artier_pin_comments` (2026-04-15 Phase 2 선행 제거), `artier_upload_guide_seen` (2026-04-15), `artier_group_canonical_map` (2026-04-17 그룹명 중복 허용) — `PointsBootstrap` 마운트 시 `LEGACY_STORAGE_KEYS`로 일괄 정리
 
 ### 기타
 - **버전 관리**: `WORKS_STORAGE_VERSION` (`local-gallery-v11`) 변경 시 works 데이터 자동 재시드

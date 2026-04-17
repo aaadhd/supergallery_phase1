@@ -329,7 +329,7 @@ function SortableBannerRow({ banner: b, index: idx, onToggleActive, onRemove }: 
         <div className="flex items-center gap-2 flex-wrap">
           <p className="text-sm font-semibold text-foreground">{b.title}</p>
           {b.badge && (
-            <span className="inline-flex rounded px-1.5 py-0.5 text-[10px] font-bold bg-primary/10 text-primary border border-primary/20">
+            <span className="inline-flex rounded px-1.5 py-0.5 text-xs font-bold bg-primary/10 text-primary border border-primary/20">
               {b.badge}
             </span>
           )}

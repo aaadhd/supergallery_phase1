@@ -95,7 +95,7 @@ export function Footer() {
 
       {/* 하단 한 줄 바 — 전 링크 동일 굵기/크기. button/Link 혼용을 inline style로 강제 통일 */}
       <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-2.5 sm:py-3">
-        <div className="flex flex-wrap items-center gap-x-4 sm:gap-x-5 gap-y-1.5 text-[12px] sm:text-[13px] text-muted-foreground">
+        <div className="flex flex-wrap items-center gap-x-4 sm:gap-x-5 gap-y-1.5 text-xs sm:text-sm text-muted-foreground">
           <button
             type="button"
             onClick={() => setExpanded((v) => !v)}

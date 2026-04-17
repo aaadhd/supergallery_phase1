@@ -271,7 +271,7 @@ export default function EventManagement() {
                     <td className="px-4 py-3">
                       <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${statusBadgeClass(s)}`}>
                         {statusLabelKo(s)}
-                        {ev.status && <span className="ml-1 text-[10px] opacity-70">· 수동</span>}
+                        {ev.status && <span className="ml-1 text-xs opacity-70">· 수동</span>}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">{ev.worksPublic ? '즉시' : '종료 후'}</td>

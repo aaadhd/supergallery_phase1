@@ -415,7 +415,7 @@ export default function Profile() {
               <div className="space-y-6">
                 {/* 사용자 이름 */}
                 <div>
-                  <label className="block text-[15px] font-semibold text-foreground mb-2">
+                  <label className="block text-base font-semibold text-foreground mb-2">
                     {t('profile.formDisplayName')}
                   </label>
                   <div className="relative">
@@ -428,10 +428,10 @@ export default function Profile() {
                         }
                       }}
                       placeholder={t('profile.formDisplayNamePh')}
-                      className="w-full px-4 py-3.5 border border-input rounded-lg text-[15px] focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                      className="w-full px-4 py-3.5 border border-input rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
                       maxLength={20}
                     />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[13px] text-muted-foreground">
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
                       {profileNickname.length}/20
                     </span>
                   </div>
@@ -439,7 +439,7 @@ export default function Profile() {
 
                 {/* 한 줄 프로필 */}
                 <div>
-                  <label className="block text-[15px] font-semibold text-foreground mb-2">
+                  <label className="block text-base font-semibold text-foreground mb-2">
                     {t('profile.formHeadline')}
                   </label>
                   <div className="relative">
@@ -452,10 +452,10 @@ export default function Profile() {
                         }
                       }}
                       placeholder={t('profile.formHeadlinePh')}
-                      className="w-full px-4 py-3.5 border border-input rounded-lg text-[15px] focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                      className="w-full px-4 py-3.5 border border-input rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
                       maxLength={20}
                     />
-                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[13px] text-muted-foreground">
+                    <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
                       {profileHeadline.length}/20
                     </span>
                   </div>
@@ -463,7 +463,7 @@ export default function Profile() {
 
                 {/* 소개 */}
                 <div>
-                  <label className="block text-[15px] font-semibold text-foreground mb-2">
+                  <label className="block text-base font-semibold text-foreground mb-2">
                     {t('profile.formBio')}
                   </label>
                   <textarea
@@ -471,13 +471,13 @@ export default function Profile() {
                     onChange={(e) => setProfileBio(e.target.value)}
                     placeholder={t('profile.formBioPh')}
                     rows={5}
-                    className="w-full px-4 py-3.5 border border-input rounded-lg text-[15px] focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none leading-relaxed"
+                    className="w-full px-4 py-3.5 border border-input rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none leading-relaxed"
                   />
                 </div>
 
                 {/* 국가 */}
                 <div>
-                  <label className="block text-[15px] font-semibold text-foreground mb-2">
+                  <label className="block text-base font-semibold text-foreground mb-2">
                     {t('profile.formCountry')}
                   </label>
                   <div className="relative">
@@ -485,7 +485,7 @@ export default function Profile() {
                     <select
                       value={profileLocation}
                       onChange={(e) => setProfileLocation(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3.5 border border-input rounded-lg text-[15px] focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent appearance-none bg-white cursor-pointer"
+                      className="w-full pl-10 pr-4 py-3.5 border border-input rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent appearance-none bg-white cursor-pointer"
                       style={{
                         backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`,
                         backgroundPosition: 'right 0.5rem center',
@@ -511,7 +511,7 @@ export default function Profile() {
 
                 {/* 관심 화풍 */}
                 <div>
-                  <label className="block text-[15px] font-semibold text-foreground mb-2">
+                  <label className="block text-base font-semibold text-foreground mb-2">
                     {t('profile.formInterests')}
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -534,7 +534,7 @@ export default function Profile() {
 
                 {/* 외부 링크 (SNS·라우드소싱 연동) — 플랫폼 고정 행 방식 */}
                 <div>
-                  <label className="block text-[15px] font-semibold text-foreground mb-1">
+                  <label className="block text-base font-semibold text-foreground mb-1">
                     {t('profile.formLinks')}
                   </label>
                   <p className="text-xs text-muted-foreground mb-3">
@@ -550,7 +550,7 @@ export default function Profile() {
               <Button
                 variant="ghost"
                 onClick={closeProfileEdit}
-                className="px-6 py-3 text-[15px]"
+                className="px-6 py-3 text-base"
               >
                 {t('loginPrompt.cancel')}
               </Button>
@@ -572,7 +572,7 @@ export default function Profile() {
                   setShowProfileEditModal(false);
                   toast.success(t('profile.toastProfileSaved'));
                 }}
-                className="px-8 py-3 bg-primary text-white text-[15px] font-medium rounded-lg lg:hover:bg-primary/90 transition-colors"
+                className="px-8 py-3 bg-primary text-white text-base font-medium rounded-lg lg:hover:bg-primary/90 transition-colors"
               >
                 {t('profile.saveProfile')}
               </Button>
@@ -607,7 +607,7 @@ export default function Profile() {
               <div className="mt-4 sm:mt-6 flex flex-wrap items-center gap-2">
                 <h1 className="text-xl sm:text-2xl font-semibold">{displayName}</h1>
                 {instructorVisible && (
-                  <span className="inline-flex items-center rounded-full bg-muted text-foreground text-[11px] font-semibold px-2.5 py-0.5">
+                  <span className="inline-flex items-center rounded-full bg-muted text-foreground text-xs font-semibold px-2.5 py-0.5">
                     {t('profile.instructorBadge')}
                   </span>
                 )}
@@ -615,17 +615,9 @@ export default function Profile() {
 
               {/* 한 줄 프로필 */}
               {viewProfile.headline && (
-                <p className="mt-3 text-[15px] text-muted-foreground font-medium">
+                <p className="mt-3 text-base text-muted-foreground font-medium">
                   {viewProfile.headline}
                 </p>
-              )}
-
-              {/* 지역 */}
-              {viewProfile.location && (
-                <div className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
-                  <MapPin className="h-4 w-4" />
-                  <span>{locationDisplayLabel(viewProfile.location, t)}</span>
-                </div>
               )}
 
               {/* 소개글 */}
@@ -637,6 +629,28 @@ export default function Profile() {
                 <p className="mt-4 text-sm text-foreground leading-relaxed">
                   {profileArtist.bio || t('profile.bioPlaceholderEmpty')}
                 </p>
+              )}
+
+              {/* 국가 */}
+              {viewProfile.location && (
+                <div className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
+                  <MapPin className="h-4 w-4" />
+                  <span>{locationDisplayLabel(viewProfile.location, t)}</span>
+                </div>
+              )}
+
+              {/* 관심 화풍 */}
+              {viewProfile.interests && viewProfile.interests.length > 0 && (
+                <div className="mt-3 flex flex-wrap gap-1.5">
+                  {viewProfile.interests.map((id) => (
+                    <span
+                      key={id}
+                      className="inline-flex items-center rounded-full border border-border/60 bg-muted/40 px-2.5 py-0.5 text-xs font-medium text-muted-foreground"
+                    >
+                      {t(`onboarding.tag.${id}` as any)}
+                    </span>
+                  ))}
+                </div>
               )}
 
               {/* 외부 링크 — 플랫폼 아이콘 버튼 */}
@@ -777,7 +791,7 @@ export default function Profile() {
                   )}
                 </TabsList>
 
-                <p className="mt-3 rounded-lg border border-border/60 bg-muted/30 px-3.5 py-2.5 text-[12px] sm:text-[13px] text-muted-foreground">
+                <p className="mt-3 rounded-lg border border-border/60 bg-muted/30 px-3.5 py-2.5 text-xs sm:text-sm text-muted-foreground">
                   {t(profileTabGuideKey)}
                 </p>
 
@@ -785,12 +799,12 @@ export default function Profile() {
                 <TabsContent value="exhibition" className="mt-6">
                   {showPublishedBanner && (
                     <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 flex items-start gap-3">
-                      <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-500 text-white text-[12px] font-bold" aria-hidden>✓</span>
+                      <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-500 text-white text-xs font-bold" aria-hidden>✓</span>
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-amber-900">
                           {t('profile.publishedBannerTitle')}
                         </p>
-                        <p className="text-[13px] text-amber-800 mt-1 leading-relaxed">
+                        <p className="text-sm text-amber-800 mt-1 leading-relaxed">
                           {t('profile.publishedBannerDesc')}
                         </p>
                       </div>
@@ -814,7 +828,7 @@ export default function Profile() {
                           type="button"
                           key={f}
                           onClick={() => setExhibitionFilter(f)}
-                          className={`px-3.5 py-1.5 rounded-full text-[13px] font-medium transition-all border ${
+                          className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-all border ${
                             exhibitionFilter === f
                               ? 'border-foreground bg-foreground/5 text-foreground'
                               : 'border-border text-muted-foreground lg:hover:border-foreground/50'
@@ -825,7 +839,7 @@ export default function Profile() {
                       );
                     })}
                     {isOwnProfile && (
-                      <label className="ml-auto flex min-h-[36px] items-center gap-2 rounded-full border border-border/60 px-3.5 py-1.5 text-[13px] text-foreground cursor-pointer select-none lg:hover:border-foreground/50">
+                      <label className="ml-auto flex min-h-[36px] items-center gap-2 rounded-full border border-border/60 px-3.5 py-1.5 text-sm text-foreground cursor-pointer select-none lg:hover:border-foreground/50">
                         <input
                           type="checkbox"
                           checked={onlyMyUploads}
@@ -876,7 +890,7 @@ export default function Profile() {
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent align="end" sideOffset={4}>
                                     <DropdownMenuItem
-                                      className="text-[13px]"
+                                      className="text-sm"
                                       onSelect={(e) => e.preventDefault()}
                                       onClick={() => navigate(`/upload?edit=${work.id}`)}
                                     >
@@ -884,7 +898,7 @@ export default function Profile() {
                                       {t('profile.editWork')}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
-                                      className="text-destructive focus:text-destructive text-[13px]"
+                                      className="text-destructive focus:text-destructive text-sm"
                                       onSelect={(e) => e.preventDefault()}
                                       onClick={async () => {
                                         const ok = await openConfirm({
@@ -906,7 +920,7 @@ export default function Profile() {
                             {/* 이미지 개수 배지 */}
                             {getImageCount(work.image) > 1 && (
                               <div className="absolute left-2 top-2 z-10">
-                                <div className="flex items-center gap-1 rounded-full bg-black/70 px-2 py-1 text-[11px] font-medium text-white backdrop-blur-sm">
+                                <div className="flex items-center gap-1 rounded-full bg-black/70 px-2 py-1 text-xs font-medium text-white backdrop-blur-sm">
                                   <ImageIcon className="h-3 w-3" />
                                   {getImageCount(work.image)}
                                 </div>
@@ -918,7 +932,7 @@ export default function Profile() {
                               <div className="absolute left-2 bottom-2 z-10 flex flex-col gap-1">
                                 {isMyUpload && work.feedReviewStatus === 'pending' && (
                                   <span
-                                    className="inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium bg-muted/95 text-foreground border border-border backdrop-blur-sm w-fit"
+                                    className="inline-flex rounded-full px-2 py-0.5 text-xs font-medium bg-muted/95 text-foreground border border-border backdrop-blur-sm w-fit"
                                     title={t('review.badgePendingHint')}
                                     aria-label={`${t('review.badgePending')} · ${t('review.badgePendingHint')}`}
                                   >
@@ -929,7 +943,7 @@ export default function Profile() {
                                   <button
                                     type="button"
                                     onClick={(e) => { e.stopPropagation(); setRejectedModalWork(work); }}
-                                    className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium bg-red-500/95 text-white backdrop-blur-sm w-fit lg:hover:bg-red-600 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none transition-colors"
+                                    className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium bg-red-500/95 text-white backdrop-blur-sm w-fit lg:hover:bg-red-600 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none transition-colors"
                                     title={t('review.badgeRejectedHint')}
                                     aria-label={`${t('review.badgeRejected')} — ${t('review.badgeRejectedClickHint')}`}
                                   >
@@ -944,7 +958,7 @@ export default function Profile() {
                           {/* 이미지 하단 정보 */}
                           <div className="pt-2">
                             <div className="flex items-center gap-1.5">
-                              <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                              <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
                                 {t('profile.exhibitionNameBadge')}
                               </span>
                               <p className="text-sm font-medium text-foreground truncate">
@@ -952,16 +966,16 @@ export default function Profile() {
                               </p>
                             </div>
                             {isGroupExhibition(work) && work.groupName ? (
-                              <p className="text-[12px] text-muted-foreground mt-0.5 flex items-center gap-1.5">
-                                <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                              <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5">
+                                <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
                                   {t('profile.groupNameBadge')}
                                 </span>
                                 {work.groupName}
                               </p>
                             ) : (
                               !(isOwnProfile && !isMyUpload) && (
-                                <p className="text-[12px] text-muted-foreground mt-0.5 flex items-center gap-1.5">
-                                  <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                                <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5">
+                                  <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
                                     {t('profile.artistNameBadge')}
                                   </span>
                                   {work.artist?.name ?? t('work.unknownUploader')}
@@ -978,14 +992,14 @@ export default function Profile() {
                       <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-muted">
                         <ImageIcon className="h-6 w-6 text-muted-foreground" />
                       </div>
-                      <p className="text-[15px] text-muted-foreground mb-1">{t('profile.emptyExhibitions')}</p>
+                      <p className="text-base text-muted-foreground mb-1">{t('profile.emptyExhibitions')}</p>
                       {isOwnProfile && (
                         <>
                           <p className="text-sm text-muted-foreground mb-5">{t('profile.emptyExhibitionsOwnHint')}</p>
                           <Button
                             onClick={() => navigate('/upload')}
                             size="sm"
-                            className="text-[13px] gap-1.5"
+                            className="text-sm gap-1.5"
                           >
                             <Plus className="h-3.5 w-3.5" />
                             {t('profile.firstUploadCta')}
@@ -1034,7 +1048,7 @@ export default function Profile() {
                                     </DropdownMenuTrigger>
                                     <DropdownMenuContent align="end" sideOffset={4}>
                                       <DropdownMenuItem
-                                        className="text-[13px]"
+                                        className="text-sm"
                                         onSelect={(e) => e.preventDefault()}
                                         onClick={() => navigate(`/upload?edit=${work.id}`)}
                                       >
@@ -1042,7 +1056,7 @@ export default function Profile() {
                                         {t('profile.editWork')}
                                       </DropdownMenuItem>
                                       <DropdownMenuItem
-                                        className="text-destructive focus:text-destructive text-[13px]"
+                                        className="text-destructive focus:text-destructive text-sm"
                                         onSelect={(e) => e.preventDefault()}
                                         onClick={async () => {
                                           const ok = await openConfirm({
@@ -1066,7 +1080,7 @@ export default function Profile() {
 
                               {getImageCount(work.image) > 1 && (
                                 <div className="absolute left-2 top-2 z-10">
-                                  <div className="flex items-center gap-1 rounded-full bg-black/70 px-2 py-1 text-[11px] font-medium text-white backdrop-blur-sm">
+                                  <div className="flex items-center gap-1 rounded-full bg-black/70 px-2 py-1 text-xs font-medium text-white backdrop-blur-sm">
                                     <ImageIcon className="h-3 w-3" />
                                     {getImageCount(work.image)}
                                   </div>
@@ -1077,7 +1091,7 @@ export default function Profile() {
                               {isOwnProfile && (work.feedReviewStatus === 'pending' || work.feedReviewStatus === 'rejected') && (
                                 <div className="absolute left-2 bottom-2 z-10 flex flex-col gap-1">
                                   {work.feedReviewStatus === 'pending' && (
-                                    <span className="inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium bg-muted/95 text-foreground border border-border backdrop-blur-sm w-fit">
+                                    <span className="inline-flex rounded-full px-2 py-0.5 text-xs font-medium bg-muted/95 text-foreground border border-border backdrop-blur-sm w-fit">
                                       {t('review.badgePending')}
                                     </span>
                                   )}
@@ -1085,7 +1099,7 @@ export default function Profile() {
                                     <button
                                       type="button"
                                       onClick={(e) => { e.stopPropagation(); setRejectedModalWork(work); }}
-                                      className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-[11px] font-medium bg-red-500/95 text-white backdrop-blur-sm w-fit lg:hover:bg-red-600 transition-colors"
+                                      className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium bg-red-500/95 text-white backdrop-blur-sm w-fit lg:hover:bg-red-600 transition-colors"
                                     >
                                       {t('review.badgeRejected')}
                                       <span aria-hidden>›</span>
@@ -1098,7 +1112,7 @@ export default function Profile() {
 
                             <div className="pt-2">
                               <div className="flex items-center gap-1.5">
-                                <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                                <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
                                   {t('profile.exhibitionNameBadge')}
                                 </span>
                                 <p className="text-sm font-medium text-foreground truncate">
@@ -1106,16 +1120,16 @@ export default function Profile() {
                                 </p>
                               </div>
                               {work.groupName && (
-                                <p className="text-[12px] text-muted-foreground mt-0.5 flex items-center gap-1.5">
-                                  <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                                <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5">
+                                  <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
                                     {t('profile.groupNameBadge')}
                                   </span>
                                   {work.groupName}
                                 </p>
                               )}
                               {linkedArtistLabels.length > 0 && (
-                                <p className="text-[12px] text-muted-foreground mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-1">
-                                  <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                                <p className="text-xs text-muted-foreground mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-1">
+                                  <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
                                     {t('profile.artistNameBadge')}
                                   </span>
                                   <span className="min-w-0 break-words">{linkedArtistLabels.join(', ')}</span>
@@ -1164,7 +1178,7 @@ export default function Profile() {
                                 </DropdownMenuTrigger>
                                 <DropdownMenuContent align="end" sideOffset={4}>
                                   <DropdownMenuItem
-                                    className="text-[13px]"
+                                    className="text-sm"
                                     onSelect={(e) => e.preventDefault()}
                                     onClick={() => { setRenameValue(fi.pieceTitle === t('work.untitled') ? '' : fi.pieceTitle); setRenamingFlatImage(fi); }}
                                   >
@@ -1178,7 +1192,7 @@ export default function Profile() {
                             {/* 개별 이미지 상태 뱃지 (작품 관리용) */}
                             {fi.work.feedReviewStatus && fi.work.feedReviewStatus !== 'approved' && (
                               <div className="absolute left-2 bottom-2 z-10">
-                                <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium backdrop-blur-sm ${
+                                <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium backdrop-blur-sm ${
                                   fi.work.feedReviewStatus === 'pending' 
                                     ? 'bg-muted/90 text-foreground border border-border' 
                                     : 'bg-red-500/90 text-white'
@@ -1194,13 +1208,13 @@ export default function Profile() {
                             onClick={() => setWorksViewerIndex(flatIdx)}
                           >
                             <p className="text-sm font-medium text-foreground flex items-center gap-1.5 truncate">
-                              <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                              <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
                                 {t('profile.workNameBadge')}
                               </span>
                               <span className="truncate">{fi.pieceTitle}</span>
                             </p>
-                            <p className="text-[12px] text-muted-foreground mt-0.5 flex items-center gap-1.5 truncate">
-                              <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                            <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5 truncate">
+                              <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
                                 {t('profile.exhibitionNameBadge')}
                               </span>
                               <span className="truncate">{displayExhibitionTitle(fi.work, t('work.untitled'))}</span>
@@ -1215,9 +1229,9 @@ export default function Profile() {
                       <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-muted">
                         <Folder className="h-6 w-6 text-muted-foreground" />
                       </div>
-                      <p className="text-[15px] text-muted-foreground mb-1">{t('profile.emptyWorksManage')}</p>
+                      <p className="text-base text-muted-foreground mb-1">{t('profile.emptyWorksManage')}</p>
                       <p className="text-sm text-muted-foreground mb-5">{t('profile.emptyWorksManageHint')}</p>
-                      <Button variant="outline" onClick={() => navigate('/upload')} size="sm" className="text-[13px] gap-1.5">
+                      <Button variant="outline" onClick={() => navigate('/upload')} size="sm" className="text-sm gap-1.5">
                         <Plus className="h-3.5 w-3.5" />
                         {t('profile.firstUploadCta')}
                       </Button>
@@ -1244,7 +1258,7 @@ export default function Profile() {
                           </div>
                           <div className="pt-2">
                             <div className="flex items-center gap-1.5">
-                              <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                              <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
                                 {t('profile.exhibitionNameBadge')}
                               </span>
                               <p className="text-sm font-medium text-foreground truncate">
@@ -1252,15 +1266,15 @@ export default function Profile() {
                               </p>
                             </div>
                             {isGroupExhibition(work) && work.groupName ? (
-                              <p className="text-[12px] text-muted-foreground mt-0.5 flex items-center gap-1.5">
-                                <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                              <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5">
+                                <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
                                   {t('profile.groupNameBadge')}
                                 </span>
                                 <span className="truncate">{work.groupName}</span>
                               </p>
                             ) : (
-                              <p className="text-[12px] text-muted-foreground mt-0.5 flex items-center gap-1.5">
-                                <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                              <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5">
+                                <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
                                   {t('profile.artistNameBadge')}
                                 </span>
                                 <span className="truncate">{work.artist?.name ?? t('work.unknownUploader')}</span>
@@ -1275,9 +1289,9 @@ export default function Profile() {
                       <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-muted">
                         <ThumbsUp className="h-6 w-6 text-muted-foreground" />
                       </div>
-                      <p className="text-[15px] text-muted-foreground mb-1">{t('profile.emptyLikes')}</p>
+                      <p className="text-base text-muted-foreground mb-1">{t('profile.emptyLikes')}</p>
                       <p className="text-sm text-muted-foreground mb-5">{t('profile.emptyLikesHint')}</p>
-                      <Button onClick={() => navigate('/')} variant="outline" size="sm" className="text-[13px]">
+                      <Button onClick={() => navigate('/')} variant="outline" size="sm" className="text-sm">
                         {t('profile.browseWorks')}
                       </Button>
                     </div>
@@ -1303,7 +1317,7 @@ export default function Profile() {
                           </div>
                           <div className="pt-2">
                             <div className="flex items-center gap-1.5">
-                              <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                              <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
                                 {t('profile.exhibitionNameBadge')}
                               </span>
                               <p className="text-sm font-medium text-foreground truncate">
@@ -1311,15 +1325,15 @@ export default function Profile() {
                               </p>
                             </div>
                             {isGroupExhibition(work) && work.groupName ? (
-                              <p className="text-[12px] text-muted-foreground mt-0.5 flex items-center gap-1.5">
-                                <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                              <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5">
+                                <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
                                   {t('profile.groupNameBadge')}
                                 </span>
                                 <span className="truncate">{work.groupName}</span>
                               </p>
                             ) : (
-                              <p className="text-[12px] text-muted-foreground mt-0.5 flex items-center gap-1.5">
-                                <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-[10px] font-semibold text-primary">
+                              <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5">
+                                <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
                                   {t('profile.artistNameBadge')}
                                 </span>
                                 <span className="truncate">{work.artist?.name ?? t('work.unknownUploader')}</span>
@@ -1334,9 +1348,9 @@ export default function Profile() {
                       <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-muted">
                         <Folder className="h-6 w-6 text-muted-foreground" />
                       </div>
-                      <p className="text-[15px] text-muted-foreground mb-1">{t('profile.emptySaves')}</p>
+                      <p className="text-base text-muted-foreground mb-1">{t('profile.emptySaves')}</p>
                       <p className="text-sm text-muted-foreground mb-5">{t('profile.emptySavesHint')}</p>
-                      <Button onClick={() => navigate('/')} variant="outline" size="sm" className="text-[13px]">
+                      <Button onClick={() => navigate('/')} variant="outline" size="sm" className="text-sm">
                         {t('profile.browseWorks')}
                       </Button>
                     </div>
@@ -1364,7 +1378,7 @@ export default function Profile() {
                                 </div>
                               )}
                               <div className="absolute left-2 top-2 z-10">
-                                <span className="rounded-full bg-foreground/70 px-2 py-0.5 text-[11px] text-white backdrop-blur-sm">
+                                <span className="rounded-full bg-foreground/70 px-2 py-0.5 text-xs text-white backdrop-blur-sm">
                                   {t('profile.draftBadge')}
                                 </span>
                               </div>
@@ -1376,11 +1390,11 @@ export default function Profile() {
                                     </Button>
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent align="end" sideOffset={4}>
-                                    <DropdownMenuItem className="text-[13px]" onClick={() => navigate(`/upload?draft=${draft.id}`)}>
+                                    <DropdownMenuItem className="text-sm" onClick={() => navigate(`/upload?draft=${draft.id}`)}>
                                       {t('profile.continueEditDraft')}
                                     </DropdownMenuItem>
                                     <DropdownMenuItem
-                                      className="text-destructive focus:text-destructive text-[13px]"
+                                      className="text-destructive focus:text-destructive text-sm"
                                       onSelect={(e) => e.preventDefault()}
                                       onClick={async () => {
                                         const ok = await openConfirm({ title: t('profile.deleteDraftConfirm'), destructive: true, confirmLabel: t('profile.delete') });
@@ -1398,7 +1412,7 @@ export default function Profile() {
                               <p className="text-sm font-medium text-foreground truncate">
                                 {draft.title || t('profile.draftNoTitle')}
                               </p>
-                              <p className="text-[12px] text-muted-foreground mt-0.5">
+                              <p className="text-xs text-muted-foreground mt-0.5">
                                 {new Date(draft.savedAt).toLocaleDateString(locale === 'en' ? 'en-US' : 'ko-KR')} ·{' '}
                                 {t('profile.draftImageCount').replace('{n}', String(draft.contents.length))}
                               </p>
@@ -1412,9 +1426,9 @@ export default function Profile() {
                       <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-muted">
                         <Folder className="h-6 w-6 text-muted-foreground" />
                       </div>
-                      <p className="text-[15px] text-muted-foreground mb-1">{t('profile.emptyDrafts')}</p>
+                      <p className="text-base text-muted-foreground mb-1">{t('profile.emptyDrafts')}</p>
                       <p className="text-sm text-muted-foreground mb-5">{t('profile.emptyDraftsHint')}</p>
-                      <Button variant="outline" onClick={() => navigate('/upload')} size="sm" className="text-[13px] gap-1.5">
+                      <Button variant="outline" onClick={() => navigate('/upload')} size="sm" className="text-sm gap-1.5">
                         <Plus className="h-3.5 w-3.5" />
                         {t('profile.uploadWork')}
                       </Button>
@@ -1437,7 +1451,7 @@ export default function Profile() {
                 <Button
                   variant="ghost"
                   onClick={() => setFollowModalTab('followers')}
-                  className={`text-[15px] font-semibold pb-1 rounded-none px-1 transition-colors ${
+                  className={`text-base font-semibold pb-1 rounded-none px-1 transition-colors ${
                     followModalTab === 'followers' ? 'text-foreground border-b-2 border-foreground' : 'text-muted-foreground'
                   }`}
                 >
@@ -1447,7 +1461,7 @@ export default function Profile() {
                 <Button
                   variant="ghost"
                   onClick={() => setFollowModalTab('following')}
-                  className={`text-[15px] font-semibold pb-1 rounded-none px-1 transition-colors ${
+                  className={`text-base font-semibold pb-1 rounded-none px-1 transition-colors ${
                     followModalTab === 'following' ? 'text-foreground border-b-2 border-foreground' : 'text-muted-foreground'
                   }`}
                 >
@@ -1611,7 +1625,7 @@ export default function Profile() {
                     <img src={viewerArtist.avatar} alt="" className="h-8 w-8 rounded-full object-cover" />
                     <span className="text-white text-sm font-medium">{viewerArtist.name}</span>
                   </div>
-                  <p className="text-white text-[15px] font-semibold">{fi.pieceTitle}</p>
+                  <p className="text-white text-base font-semibold">{fi.pieceTitle}</p>
                 </div>
               </div>
             </div>
@@ -1702,9 +1716,9 @@ export default function Profile() {
                 }}
                 maxLength={TITLE_FIELD_MAX_LEN}
                 placeholder={t('work.untitled')}
-                className="w-full px-4 py-3.5 border border-input rounded-lg text-[15px] focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                className="w-full px-4 py-3.5 border border-input rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
               />
-              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-[13px] text-muted-foreground">
+              <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
                 {renameValue.length}/{TITLE_FIELD_MAX_LEN}
               </span>
             </div>

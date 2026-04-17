@@ -50,7 +50,7 @@ export default function EventDetail() {
     return (
       <div className="min-h-[60vh] flex flex-col items-center justify-center text-center px-4 sm:px-6 pb-20 md:pb-0">
         <p className="text-sm text-muted-foreground mb-6">{t('events.detailNotFound')}</p>
-        <Link to="/events" className="text-[15px] text-primary lg:hover:underline">
+        <Link to="/events" className="text-base text-primary lg:hover:underline">
           {t('events.detailBackLink')}
         </Link>
       </div>
@@ -69,7 +69,7 @@ export default function EventDetail() {
               {eventStatus === 'active' ? t('eventDetail.statusActive') : eventStatus === 'scheduled' ? t('eventDetail.statusScheduled') : t('eventDetail.statusEnded')}
             </span>
             <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white mb-2">{event.title}</h1>
-            {event.subtitle && <p className="text-sm sm:text-[15px] lg:text-base text-white/90">{event.subtitle}</p>}
+            {event.subtitle && <p className="text-sm sm:text-base lg:text-base text-white/90">{event.subtitle}</p>}
           </div>
         </div>
       </div>
@@ -82,7 +82,7 @@ export default function EventDetail() {
 
         <div className="bg-white rounded-2xl border border-input p-4 sm:p-6 md:p-8">
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 sm:gap-6 mb-6 sm:mb-8">
-            <div className="flex items-center gap-3 text-[15px] text-foreground">
+            <div className="flex items-center gap-3 text-base text-foreground">
               <Calendar className="w-5 h-5 text-muted-foreground" />
               <div>
                 <p className="text-xs text-muted-foreground">{t('events.detailPeriod')}</p>
@@ -90,7 +90,7 @@ export default function EventDetail() {
               </div>
             </div>
             {event.participantsLabel && (
-              <div className="flex items-center gap-3 text-[15px] text-foreground">
+              <div className="flex items-center gap-3 text-base text-foreground">
                 <Users className="w-5 h-5 text-muted-foreground" />
                 <div>
                   <p className="text-xs text-muted-foreground">{t('events.detailTarget')}</p>
@@ -101,7 +101,7 @@ export default function EventDetail() {
           </div>
 
           <h2 className="text-base sm:text-lg font-bold text-foreground mb-3 sm:mb-4">{t('events.detailGuide')}</h2>
-          <p className="text-[13px] sm:text-sm lg:text-[15px] text-foreground leading-relaxed mb-6 sm:mb-10">{event.description}</p>
+          <p className="text-sm sm:text-sm lg:text-base text-foreground leading-relaxed mb-6 sm:mb-10">{event.description}</p>
 
           <p className="text-xs sm:text-sm text-muted-foreground mb-6 sm:mb-8">
             {t('eventDetail.notifHint')}{' '}
@@ -111,13 +111,13 @@ export default function EventDetail() {
           </p>
 
           {isEnded ? (
-            <div className="flex sm:inline-flex items-center justify-center gap-2 px-5 sm:px-8 py-3 sm:py-3.5 bg-muted text-muted-foreground rounded-lg text-[13px] sm:text-sm font-medium cursor-not-allowed w-full sm:w-auto">
+            <div className="flex sm:inline-flex items-center justify-center gap-2 px-5 sm:px-8 py-3 sm:py-3.5 bg-muted text-muted-foreground rounded-lg text-sm sm:text-sm font-medium cursor-not-allowed w-full sm:w-auto">
               {t('events.detailEnded')}
             </div>
           ) : (
             <Button
               onClick={handleParticipate}
-              className="inline-flex items-center gap-2 px-5 sm:px-8 py-3 sm:py-3.5 bg-foreground text-white rounded-lg text-[13px] sm:text-sm font-medium lg:hover:bg-foreground/90 transition-colors w-full sm:w-auto justify-center"
+              className="inline-flex items-center gap-2 px-5 sm:px-8 py-3 sm:py-3.5 bg-foreground text-white rounded-lg text-sm sm:text-sm font-medium lg:hover:bg-foreground/90 transition-colors w-full sm:w-auto justify-center"
             >
               {t('events.participate')}
               <ArrowRight className="h-5 w-5" />

@@ -10,7 +10,7 @@ import { Label } from '../components/ui/label';
 import { PasswordInput } from '../components/ui/password-input';
 
 const inputClass =
-  'min-h-[44px] rounded-lg border-border/40 px-3 py-3 text-[13px] text-foreground placeholder:text-muted-foreground sm:px-4 sm:text-sm focus-visible:ring-primary/25';
+  'min-h-[44px] rounded-lg border-border/40 px-3 py-3 text-sm text-foreground placeholder:text-muted-foreground sm:px-4 sm:text-sm focus-visible:ring-primary/25';
 
 const emailValid = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
 
@@ -142,12 +142,12 @@ export default function PasswordReset() {
 
         {sent ? (
           <div className="space-y-6">
-            <p className="text-[13px] sm:text-sm text-foreground leading-relaxed text-center px-1">
+            <p className="text-sm sm:text-sm text-foreground leading-relaxed text-center px-1">
               {t('passwordReset.sent')}
             </p>
             <Link
               to="/login"
-              className="flex w-full min-h-[44px] items-center justify-center rounded-lg border border-border/40 text-[13px] sm:text-sm font-semibold text-foreground lg:hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-colors"
+              className="flex w-full min-h-[44px] items-center justify-center rounded-lg border border-border/40 text-sm sm:text-sm font-semibold text-foreground lg:hover:bg-muted/50 focus:outline-none focus:ring-2 focus:ring-primary/25 focus:border-primary transition-colors"
             >
               {t('passwordReset.backLogin')}
             </Link>
@@ -157,7 +157,7 @@ export default function PasswordReset() {
             <div>
               <Label
                 htmlFor="reset-email"
-                className="mb-1.5 flex items-center gap-1.5 text-[13px] font-semibold text-foreground sm:text-sm"
+                className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-foreground sm:text-sm"
               >
                 <Mail className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={2} />
                 {t('passwordReset.email')}
@@ -172,13 +172,13 @@ export default function PasswordReset() {
                 className={inputClass}
               />
               {emailError ? (
-                <p className="mt-1.5 text-[13px] text-destructive">{emailError}</p>
+                <p className="mt-1.5 text-sm text-destructive">{emailError}</p>
               ) : null}
             </div>
 
             <Button
               type="submit"
-              className="w-full min-h-[44px] rounded-lg bg-primary text-white text-[13px] sm:text-sm font-semibold lg:hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors"
+              className="w-full min-h-[44px] rounded-lg bg-primary text-white text-sm sm:text-sm font-semibold lg:hover:bg-primary/90 focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2 transition-colors"
             >
               {t('passwordReset.submit')}
             </Button>
@@ -186,7 +186,7 @@ export default function PasswordReset() {
             <p className="text-center pt-4">
               <Link
                 to="/login"
-                className="text-[13px] sm:text-sm text-primary font-semibold lg:hover:underline"
+                className="text-sm sm:text-sm text-primary font-semibold lg:hover:underline"
               >
                 {t('passwordReset.backLogin')}
               </Link>

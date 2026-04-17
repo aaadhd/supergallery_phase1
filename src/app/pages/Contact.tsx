@@ -80,7 +80,7 @@ export default function Contact() {
             <Send className="h-6 w-6 sm:h-7 sm:h-7 text-primary shrink-0" />
             <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('contact.title')}</h1>
           </div>
-          <p className="text-[13px] sm:text-sm text-muted-foreground">
+          <p className="text-sm sm:text-sm text-muted-foreground">
             {t('contact.leadBeforeFaq')}
             <Link to="/faq" className="text-primary lg:hover:underline font-medium">
               {t('footer.faq')}
@@ -93,7 +93,7 @@ export default function Contact() {
       <div className="mx-auto max-w-[700px] px-4 sm:px-6 py-5 sm:py-8">
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-border p-5 sm:p-8 space-y-4 sm:space-y-6">
           <div>
-            <Label className="mb-1.5 block text-[13px] font-semibold text-foreground sm:mb-2 sm:text-sm">
+            <Label className="mb-1.5 block text-sm font-semibold text-foreground sm:mb-2 sm:text-sm">
               {t('contact.name')} <span className="text-red-500">*</span>
             </Label>
             <Input
@@ -101,12 +101,12 @@ export default function Contact() {
               value={name}
               onChange={(e) => setName(e.target.value)}
               placeholder={t('contact.placeholderName')}
-              className="min-h-[44px] rounded-lg border-border px-3 py-3 text-[13px] sm:px-4 sm:py-3.5 sm:text-sm focus-visible:ring-primary/20"
+              className="min-h-[44px] rounded-lg border-border px-3 py-3 text-sm sm:px-4 sm:py-3.5 sm:text-sm focus-visible:ring-primary/20"
             />
           </div>
 
           <div>
-            <Label className="mb-1.5 block text-[13px] font-semibold text-foreground sm:mb-2 sm:text-sm">
+            <Label className="mb-1.5 block text-sm font-semibold text-foreground sm:mb-2 sm:text-sm">
               {t('contact.email')} <span className="text-red-500">*</span>
             </Label>
             <Input
@@ -114,16 +114,16 @@ export default function Contact() {
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder={t('contact.placeholderEmail')}
-              className="min-h-[44px] rounded-lg border-border px-3 py-3 text-[13px] sm:px-4 sm:py-3.5 sm:text-sm focus-visible:ring-primary/20"
+              className="min-h-[44px] rounded-lg border-border px-3 py-3 text-sm sm:px-4 sm:py-3.5 sm:text-sm focus-visible:ring-primary/20"
             />
           </div>
 
           <div>
-            <Label className="mb-1.5 block text-[13px] font-semibold text-foreground sm:mb-2 sm:text-sm">
+            <Label className="mb-1.5 block text-sm font-semibold text-foreground sm:mb-2 sm:text-sm">
               {t('contact.category')} <span className="text-red-500">*</span>
             </Label>
             <Select value={category || undefined} onValueChange={setCategory}>
-              <SelectTrigger className="min-h-[44px] w-full rounded-lg border-border px-3 py-3 text-[13px] sm:px-4 sm:py-3.5 sm:text-sm focus:ring-primary/20">
+              <SelectTrigger className="min-h-[44px] w-full rounded-lg border-border px-3 py-3 text-sm sm:px-4 sm:py-3.5 sm:text-sm focus:ring-primary/20">
                 <SelectValue placeholder={t('contact.categoryPlaceholder')} />
               </SelectTrigger>
               <SelectContent>
@@ -137,7 +137,7 @@ export default function Contact() {
           </div>
 
           <div>
-            <Label className="mb-1.5 block text-[13px] font-semibold text-foreground sm:mb-2 sm:text-sm">
+            <Label className="mb-1.5 block text-sm font-semibold text-foreground sm:mb-2 sm:text-sm">
               {t('contact.message')} <span className="text-red-500">*</span>
             </Label>
             <Textarea
@@ -147,7 +147,7 @@ export default function Contact() {
               }}
               placeholder={t('contact.placeholderMessage')}
               rows={6}
-              className="min-h-[140px] resize-none rounded-lg border-border px-3 py-3 text-[13px] sm:px-4 sm:py-3.5 sm:text-sm focus-visible:ring-primary/20"
+              className="min-h-[140px] resize-none rounded-lg border-border px-3 py-3 text-sm sm:px-4 sm:py-3.5 sm:text-sm focus-visible:ring-primary/20"
             />
             <div className="text-right text-xs text-muted-foreground mt-1">
               {t('contact.charCount').replace('{n}', String(message.length))}
@@ -156,7 +156,7 @@ export default function Contact() {
 
           {/* 파일 첨부 (최대 5MB × 3) */}
           <div>
-            <Label className="mb-1.5 block text-[13px] font-semibold text-foreground sm:mb-2 sm:text-sm">
+            <Label className="mb-1.5 block text-sm font-semibold text-foreground sm:mb-2 sm:text-sm">
               {t('contact.attachments')}
             </Label>
             <input

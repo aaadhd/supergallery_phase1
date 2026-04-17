@@ -103,13 +103,13 @@ export default function Points() {
 
         <div className="grid grid-cols-2 gap-3 mb-8">
           <div className="rounded-2xl border border-border bg-white p-4 shadow-sm">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{t('points.apLabel')}</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t('points.apLabel')}</p>
             <p className="mt-1 text-2xl font-bold text-foreground tabular-nums">{ap.toLocaleString()}</p>
           </div>
           <div className="rounded-2xl border border-border bg-white p-4 shadow-sm">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground">{t('points.ppLabel')}</p>
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground">{t('points.ppLabel')}</p>
             <p className="mt-1 text-2xl font-bold text-foreground tabular-nums">{pp.toLocaleString()}</p>
-            <p className="mt-1 text-[10px] text-muted-foreground leading-snug">{t('points.ppHint')}</p>
+            <p className="mt-1 text-xs text-muted-foreground leading-snug">{t('points.ppHint')}</p>
           </div>
         </div>
 
@@ -138,7 +138,7 @@ export default function Points() {
                   <div className="min-w-0 flex-1">
                     <p className="text-sm font-medium text-foreground">{e.kind}</p>
                     {e.note ? <p className="text-xs text-muted-foreground mt-0.5 break-words">{e.note}</p> : null}
-                    <p className="text-[11px] text-muted-foreground mt-1">{formatAt(e.at)}</p>
+                    <p className="text-xs text-muted-foreground mt-1">{formatAt(e.at)}</p>
                   </div>
                   <span
                     className={`text-sm font-semibold tabular-nums shrink-0 ${

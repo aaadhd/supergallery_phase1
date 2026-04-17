@@ -171,7 +171,7 @@ export default function ContentReview() {
                       <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${statusBadgeClass(ui)}`}>
                         {ui}
                         {ui === '반려' && w.rejectionReason && (
-                          <span className="ml-1 text-[10px] opacity-80">
+                          <span className="ml-1 text-xs opacity-80">
                             · {t(REJECTION_REASON_LABEL_KEY[w.rejectionReason])}
                           </span>
                         )}

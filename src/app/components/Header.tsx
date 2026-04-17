@@ -89,7 +89,7 @@ export function Header() {
             <nav className="hidden md:flex items-center gap-1">
               <Link
                 to="/"
-                className={`relative px-3 py-1.5 text-[13px] font-medium rounded-lg transition-colors ${
+                className={`relative px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
                   location.pathname === '/' ? 'text-foreground bg-muted/90' : 'text-muted-foreground lg:hover:text-foreground lg:hover:bg-muted/50'
                 }`}
               >
@@ -97,7 +97,7 @@ export function Header() {
               </Link>
               <Link
                 to="/events"
-                className={`relative px-3 py-1.5 text-[13px] font-medium rounded-lg transition-colors ${
+                className={`relative px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
                   location.pathname.startsWith('/events')
                     ? 'text-foreground bg-muted/90'
                     : 'text-muted-foreground lg:hover:text-foreground lg:hover:bg-muted/50'
@@ -159,7 +159,7 @@ export function Header() {
                   >
                     <Bell className="h-5 w-5" />
                     {unreadCount > 0 && (
-                      <span className="absolute -top-0.5 -right-0.5 flex h-[18px] sm:h-5 min-w-[18px] sm:min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-[11px] font-bold text-white">
+                      <span className="absolute -top-0.5 -right-0.5 flex h-[18px] sm:h-5 min-w-[18px] sm:min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-bold text-white">
                         {unreadCount > 99 ? '99+' : unreadCount}
                       </span>
                     )}
@@ -230,7 +230,7 @@ export function Header() {
             className={`h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 ${location.pathname === '/' ? 'text-primary' : 'text-muted-foreground'}`}
           >
             <Home className="h-5 w-5" />
-            <span className="text-[11px] font-medium">{t('nav.browse')}</span>
+            <span className="text-xs font-medium">{t('nav.browse')}</span>
           </Button>
           <Button
             variant="ghost"
@@ -239,13 +239,13 @@ export function Header() {
             className={`h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 ${location.pathname.startsWith('/events') ? 'text-primary' : 'text-muted-foreground'}`}
           >
             <CalendarDays className="h-5 w-5" />
-            <span className="text-[11px] font-medium">{t('nav.events')}</span>
+            <span className="text-xs font-medium">{t('nav.events')}</span>
           </Button>
           <Button variant="ghost" type="button" onClick={() => { if (loggedIn) { if (location.pathname === '/upload') { navigate('/upload?new=' + Date.now()); } else { navigate('/upload'); } } else { setLoginPromptOpen(true); } }} className="h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 text-muted-foreground">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary -mt-3 shadow-lg">
               <Plus className="h-5 w-5 text-white" />
             </div>
-            <span className="text-[11px] font-medium text-primary -mt-0.5">{t('nav.uploadShort')}</span>
+            <span className="text-xs font-medium text-primary -mt-0.5">{t('nav.uploadShort')}</span>
           </Button>
           <Button
             variant="ghost"
@@ -254,7 +254,7 @@ export function Header() {
             className={`h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 ${location.pathname === '/search' ? 'text-primary' : 'text-muted-foreground'}`}
           >
             <Search className="h-5 w-5" />
-            <span className="text-[11px] font-medium">{t('nav.search')}</span>
+            <span className="text-xs font-medium">{t('nav.search')}</span>
           </Button>
           <Button
             variant="ghost"
@@ -265,7 +265,7 @@ export function Header() {
             }`}
           >
             <User className="h-5 w-5" />
-            <span className="text-[11px] font-medium">{loggedIn ? t('nav.profile') : t('nav.my')}</span>
+            <span className="text-xs font-medium">{loggedIn ? t('nav.profile') : t('nav.my')}</span>
           </Button>
         </div>
       </nav>

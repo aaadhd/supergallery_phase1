@@ -52,9 +52,7 @@ import { shouldBlockCameraPhoto } from '../utils/cameraExifBlock';
 import {
   collectGroupNameSuggestions,
   getLastUsedGroupName,
-  resolveCanonicalGroupName,
   setLastUsedGroupName,
-  lookupCanonicalGroupName,
 } from '../utils/groupNameRegistry';
 import { TITLE_FIELD_MAX_LEN } from '../utils/workDisplay';
 import { Button } from '../components/ui/button';
@@ -406,19 +404,6 @@ export default function Upload() {
     return collectGroupNameSuggestions(groupName, names);
   }, [groupName, workTick]);
 
-  /**
-   * 입력 중 실시간 프리뷰 — 기존 canonical과 같은 key면 해당 이름을 표시.
-   * "수요살롱" 입력 → 기존 "수요 살롱"과 같은 그룹 안내.
-   */
-  const canonicalPreview = useMemo<{ kind: 'merge'; canonical: string } | { kind: 'new' } | null>(() => {
-    const trimmed = groupName.trim();
-    if (!trimmed) return null;
-    const existing = lookupCanonicalGroupName(trimmed);
-    if (!existing) return { kind: 'new' };
-    if (existing === trimmed) return null; // 똑같은 입력이면 안내 불필요
-    return { kind: 'merge', canonical: existing };
-  }, [groupName, workTick]);
-
   const uploadedImageCount = useMemo(
     () => contents.filter((c) => c.type === 'image' && c.url).length,
     [contents],
@@ -644,6 +629,18 @@ export default function Upload() {
       }
     }
 
+    // 그룹 전시 + 강사 아님 → 본인 작품 최소 1점 포함 필수 (정책: 강사 체크 없으면 본인 작품 포함)
+    if (uploadType === 'group' && !isInstructor) {
+      const selfId = artists[0]?.id;
+      const includesSelf = imageContents.some(
+        (c) => c.artistType === 'member' && c.artist?.id === selfId,
+      );
+      if (!includesSelf) {
+        toast.error(t('upload.errMustIncludeSelf'));
+        return;
+      }
+    }
+
     // 그룹 전시 + 강사 아님 + 유니크 작가 1명 → 개인 전시 전환 제안
     if (uploadType === 'group' && !isInstructor) {
       const unique = new Set(
@@ -689,7 +686,7 @@ export default function Upload() {
     const resolvedPieceTitle = imagePieceTitles[0] ?? '';
     const resolvedGroup =
       uploadType === 'group'
-        ? resolveCanonicalGroupName(groupName.trim().slice(0, TITLE_FIELD_MAX_LEN))
+        ? groupName.trim().slice(0, TITLE_FIELD_MAX_LEN)
         : undefined;
 
     // v1.7: 그룹전시 자동 분류
@@ -1287,11 +1284,6 @@ export default function Upload() {
                             </span>
                             <span className="text-xs text-muted-foreground">{groupName.length}/{TITLE_FIELD_MAX_LEN}</span>
                           </div>
-                          {canonicalPreview?.kind === 'merge' && (
-                            <p className="mt-1 px-1 text-xs text-emerald-700">
-                              {t('upload.groupMergePreview').replace('{canonical}', canonicalPreview.canonical)}
-                            </p>
-                          )}
                           {groupSuggestOpen && groupSuggestions.length > 0 && (
                             <ul className="absolute z-20 top-full mt-1 w-full max-h-48 overflow-auto rounded-xl border border-border bg-white shadow-[0_10px_40px_-15px_rgba(0,0,0,0.15)] py-2 text-sm">
                               {groupSuggestions.map((name) => (

@@ -89,7 +89,7 @@ export function QaScreenShortcuts() {
           className={cn(
             'pointer-events-auto inline-flex min-h-[44px] min-w-[44px] items-center gap-1.5 rounded-full',
             'border border-border bg-background/95 px-3 shadow-lg backdrop-blur-md',
-            'text-muted-foreground text-[12px] sm:text-[13px] font-medium',
+            'text-muted-foreground text-xs sm:text-sm font-medium',
             'lg:hover:border-primary/40 lg:hover:text-primary transition-colors',
             'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
           )}

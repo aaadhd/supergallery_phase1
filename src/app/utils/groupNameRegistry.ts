@@ -1,56 +1,16 @@
 /**
- * 그룹명 정규화·자동완성 (기능 모음: 그룹명 자동완성 및 정규화 / 그룹명 처리 정책)
+ * 그룹명 자동완성 — 내 최근 그룹명 + 작품에 달린 그룹명을 모아 드롭다운에 제안.
+ *
+ * 그룹명은 중복 허용 정책(2026-04-17): 다른 사용자가 같은 이름을 써도 병합하지 않는다.
+ * canonical 맵(`artier_group_canonical_map`)·normalizeGroupKey는 이때 제거됐다.
+ * 내 목록 안에서만 가벼운 중복 제거(대소문자·공백 무시)를 적용한다.
  */
 
-const CANONICAL_MAP_KEY = 'artier_group_canonical_map';
 const LAST_GROUP_KEY = 'artier_last_group_name';
 const MY_GROUPS_KEY = 'artier_my_group_names';
 
-export function normalizeGroupKey(input: string): string {
-  return input
-    .normalize('NFKC')
-    .replace(/\s+/g, '')
-    .replace(/[^\p{L}\p{N}]/gu, '')
-    .toLowerCase();
-}
-
-function loadCanonicalMap(): Record<string, string> {
-  try {
-    const raw = localStorage.getItem(CANONICAL_MAP_KEY);
-    if (!raw) return {};
-    const p = JSON.parse(raw) as Record<string, string>;
-    return typeof p === 'object' && p !== null ? p : {};
-  } catch {
-    return {};
-  }
-}
-
-function saveCanonicalMap(map: Record<string, string>) {
-  localStorage.setItem(CANONICAL_MAP_KEY, JSON.stringify(map));
-}
-
-/**
- * 부수효과 없이 기존 canonical만 조회 — 입력 중 실시간 프리뷰용.
- * 반환: 같은 key의 기존 canonical 이름(있으면) / null(신규로 등록될 예정)
- */
-export function lookupCanonicalGroupName(trimmedInput: string): string | null {
-  if (!trimmedInput) return null;
-  const key = normalizeGroupKey(trimmedInput);
-  if (!key) return null;
-  const map = loadCanonicalMap();
-  return map[key] ?? null;
-}
-
-/** 입력을 정규화 키로 매칭해 표시용 캐논 이름 반환 (최초 등록 시 입력값이 캐논) */
-export function resolveCanonicalGroupName(trimmedInput: string): string {
-  if (!trimmedInput) return '';
-  const key = normalizeGroupKey(trimmedInput);
-  if (!key) return trimmedInput;
-  const map = loadCanonicalMap();
-  if (map[key]) return map[key];
-  map[key] = trimmedInput;
-  saveCanonicalMap(map);
-  return trimmedInput;
+function softKey(input: string): string {
+  return input.trim().replace(/\s+/g, '').toLowerCase();
 }
 
 export function getLastUsedGroupName(): string {
@@ -62,9 +22,10 @@ export function getLastUsedGroupName(): string {
 }
 
 export function setLastUsedGroupName(displayName: string) {
-  if (!displayName.trim()) return;
-  localStorage.setItem(LAST_GROUP_KEY, displayName.trim());
-  addMyGroupName(displayName.trim());
+  const trimmed = displayName.trim();
+  if (!trimmed) return;
+  localStorage.setItem(LAST_GROUP_KEY, trimmed);
+  addMyGroupName(trimmed);
 }
 
 function loadMyGroupNames(): string[] {
@@ -79,20 +40,19 @@ function loadMyGroupNames(): string[] {
 }
 
 function addMyGroupName(displayName: string) {
-  const list = loadMyGroupNames().filter((x) => normalizeGroupKey(x) !== normalizeGroupKey(displayName));
+  const key = softKey(displayName);
+  const list = loadMyGroupNames().filter((x) => softKey(x) !== key);
   localStorage.setItem(MY_GROUPS_KEY, JSON.stringify([displayName, ...list].slice(0, 50)));
 }
 
-/** 작품에 달린 그룹명 + 레지스트리 + 내 목록 */
+/** 내가 쓴 그룹명 + 작품에 달린 그룹명을 합쳐 제안. 부분 일치 필터. */
 export function collectGroupNameSuggestions(
   partial: string,
   workGroupNames: string[]
 ): string[] {
-  const map = loadCanonicalMap();
-  const fromRegistry = Object.values(map);
   const mine = loadMyGroupNames();
-  const fromWorks = [...new Set(workGroupNames.filter(Boolean) as string[])];
-  const merged = [...new Set([...mine, ...fromRegistry, ...fromWorks])];
+  const fromWorks = [...new Set(workGroupNames.filter(Boolean))];
+  const merged = [...new Set([...mine, ...fromWorks])];
   const q = partial.trim().toLowerCase();
   if (!q) return merged.slice(0, 30);
   return merged.filter((name) => name.toLowerCase().includes(q)).slice(0, 20);

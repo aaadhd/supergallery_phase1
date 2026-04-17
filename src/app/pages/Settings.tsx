@@ -93,7 +93,7 @@ function ToggleRow({
   return (
     <div className="flex justify-between items-center py-4 border-b border-border/40 gap-3">
       <div className="min-w-0">
-        <span className="text-[15px] text-foreground">{label}</span>
+        <span className="text-base text-foreground">{label}</span>
         {hint && <p className="text-xs text-muted-foreground mt-0.5">{hint}</p>}
       </div>
       <Button
@@ -197,7 +197,7 @@ export default function Settings() {
         <h1 className="text-2xl font-semibold text-foreground tracking-tight mb-10">{t('settings.title')}</h1>
 
         <section className="mb-10">
-          <h2 className="text-[13px] font-medium uppercase tracking-wide text-muted-foreground mb-1">
+          <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-1">
             {t('settings.sectionAccount')}
           </h2>
           <div className="rounded-lg border border-border/40 overflow-hidden bg-white px-4 py-4">
@@ -206,19 +206,19 @@ export default function Settings() {
             </p>
             {sessionSub ? (
               <p
-                className={`text-[15px] text-foreground break-all ${isEmailShape ? '' : 'font-mono'}`}
+                className={`text-base text-foreground break-all ${isEmailShape ? '' : 'font-mono'}`}
               >
                 {sessionSub}
               </p>
             ) : (
-              <p className="text-[15px] text-muted-foreground">{t('settings.accountEmailUnavailable')}</p>
+              <p className="text-base text-muted-foreground">{t('settings.accountEmailUnavailable')}</p>
             )}
           </div>
         </section>
 
 
         <section className="mb-10" id="font-scale">
-          <h2 className="text-[13px] font-medium uppercase tracking-wide text-muted-foreground mb-3">
+          <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-3">
             {t('settings.sectionFontScale')}
           </h2>
           <p className="text-xs text-muted-foreground mb-3">{t('settings.fontScaleIntro')}</p>
@@ -249,13 +249,13 @@ export default function Settings() {
 
 
         <section className="mb-10" id="notifications">
-          <h2 className="text-[13px] font-medium uppercase tracking-wide text-muted-foreground mb-3">
+          <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-3">
             {t('settings.sectionNotif')}
           </h2>
           <p className="text-xs text-muted-foreground mb-3">{t('settings.notifIntro')}</p>
 
           <div className="rounded-lg border border-border/40 px-4 bg-white mb-4">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground pt-4 pb-1">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground pt-4 pb-1">
               {t('settings.notifOptionalGroup')}
             </p>
             <ToggleRow
@@ -292,7 +292,7 @@ export default function Settings() {
           </div>
 
           <div className="rounded-lg border border-border/40 px-4 bg-white">
-            <p className="text-[11px] font-semibold uppercase tracking-wide text-muted-foreground pt-4 pb-1">
+            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground pt-4 pb-1">
               {t('settings.notifRequiredGroup')}
             </p>
             <ToggleRow
@@ -308,7 +308,7 @@ export default function Settings() {
         <div className="h-px bg-border my-10" aria-hidden />
 
         <section>
-          <h2 className="text-[13px] font-medium uppercase tracking-wide text-muted-foreground mb-3">
+          <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-3">
             {t('settings.sectionAccountActions')}
           </h2>
           <div className="rounded-lg border border-border/40 overflow-hidden bg-white">
@@ -323,15 +323,15 @@ export default function Settings() {
               }}
               className="flex w-full justify-between items-center py-4 px-4 border-b border-border/40 min-h-[44px] lg:hover:bg-muted/50 transition-colors text-left"
             >
-              <span className="text-[15px] text-foreground">{t('settings.changePassword')}</span>
+              <span className="text-base text-foreground">{t('settings.changePassword')}</span>
               <ChevronRight className="w-5 h-5 text-muted-foreground" aria-hidden />
             </button>
             <div className="flex justify-between items-center py-4 px-4 border-b border-border/40">
-              <span className="text-[15px] text-foreground">{t('settings.logoutRow')}</span>
+              <span className="text-base text-foreground">{t('settings.logoutRow')}</span>
               <Button variant="ghost"
                 type="button"
                 onClick={handleLogout}
-                className="text-[15px] font-medium text-primary lg:hover:opacity-90"
+                className="text-base font-medium text-primary lg:hover:opacity-90"
               >
                 {t('nav.logout')}
               </Button>

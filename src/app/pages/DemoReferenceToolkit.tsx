@@ -53,7 +53,7 @@ function EmailFrame({
     <div className="rounded-lg border border-border bg-muted p-3">
       <div className="rounded-md border border-border bg-white shadow-sm overflow-hidden">
         <div className="border-b border-border/40 px-4 py-2.5 bg-muted/50">
-          <p className="text-[11px] font-medium text-muted-foreground uppercase tracking-wide">Subject</p>
+          <p className="text-xs font-medium text-muted-foreground uppercase tracking-wide">Subject</p>
           <p className="text-sm font-semibold text-foreground mt-0.5">{subject}</p>
         </div>
         <div className="px-4 py-4 text-sm text-foreground leading-relaxed whitespace-pre-line font-sans">
@@ -122,7 +122,7 @@ export default function DemoReferenceToolkit() {
           {!session ? (
             <p className="text-sm text-muted-foreground">{t('refStub.jwtEmpty')}</p>
           ) : (
-            <div className="space-y-3 font-mono text-[11px] sm:text-xs break-all">
+            <div className="space-y-3 font-mono text-xs sm:text-xs break-all">
               <p>
                 <span className="text-muted-foreground">{t('refStub.jwtSub')} </span>
                 <span className="text-foreground">{session.sub}</span>
@@ -149,7 +149,7 @@ export default function DemoReferenceToolkit() {
               </Button>
             </div>
           )}
-          <p className="text-[11px] text-muted-foreground mt-4 leading-snug">{t('refStub.jwtHint')}</p>
+          <p className="text-xs text-muted-foreground mt-4 leading-snug">{t('refStub.jwtHint')}</p>
         </section>
 
         {/* GeoIP */}

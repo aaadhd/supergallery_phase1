@@ -12,7 +12,7 @@ export default function Maintenance() {
       <h1 className="text-xl sm:text-2xl font-semibold text-foreground mb-4 max-w-md">
         {t('maintenance.title')}
       </h1>
-      <p className="text-[15px] leading-relaxed text-muted-foreground max-w-md whitespace-pre-line mb-8">
+      <p className="text-base leading-relaxed text-muted-foreground max-w-md whitespace-pre-line mb-8">
         {t('maintenance.body')}
       </p>
       <p className="text-sm text-muted-foreground mb-2">

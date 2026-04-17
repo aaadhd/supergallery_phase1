@@ -85,7 +85,7 @@ function NotFoundBlock({ title, homeLabel }: { title: string; homeLabel: string 
   return (
     <div className="min-h-screen bg-white flex flex-col items-center justify-center px-6 py-20">
       <p className="text-muted-foreground text-center mb-6">{title}</p>
-      <Link to="/" className="text-[15px] font-medium text-primary lg:hover:underline">
+      <Link to="/" className="text-base font-medium text-primary lg:hover:underline">
         {homeLabel}
       </Link>
     </div>
@@ -255,7 +255,7 @@ export default function ExhibitionDetail() {
         <div className="mt-10 sm:mt-14 flex flex-col sm:flex-row sm:items-start sm:justify-between gap-6">
           <div className="flex-1 min-w-0 space-y-6">
             <div>
-              <p className="text-[13px] font-medium text-primary mb-2">{typeLabel}</p>
+              <p className="text-sm font-medium text-primary mb-2">{typeLabel}</p>
               <h1 className="text-2xl sm:text-3xl font-semibold text-foreground tracking-tight">
                 {exhibition.title}
               </h1>
@@ -272,10 +272,10 @@ export default function ExhibitionDetail() {
                   className="w-12 h-12 rounded-full object-cover border border-border/40"
                 />
                 <div>
-                  <p className="text-[15px] font-medium text-foreground lg:group-hover:text-primary transition-colors">
+                  <p className="text-base font-medium text-foreground lg:group-hover:text-primary transition-colors">
                     {primaryArtist.name}
                   </p>
-                  <p className="text-[13px] text-muted-foreground">{primarySub}</p>
+                  <p className="text-sm text-muted-foreground">{primarySub}</p>
                 </div>
               </Link>
             </div>
@@ -284,13 +284,13 @@ export default function ExhibitionDetail() {
               {exhibition.startDate} — {exhibition.endDate}
             </p>
 
-            <p className="text-[15px] leading-relaxed text-foreground max-w-2xl whitespace-pre-line">
+            <p className="text-base leading-relaxed text-foreground max-w-2xl whitespace-pre-line">
               {exhibition.description}
             </p>
 
             {exhibition.type === 'group' && participatingArtists.length > 0 && (
               <div className="pt-4 border-t border-border/40">
-                <h2 className="text-[13px] font-medium uppercase tracking-wide text-muted-foreground mb-4">
+                <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-4">
                   {t('exhibition.participantsHeading')}
                 </h2>
                 <ul className="flex flex-wrap gap-3">
@@ -382,7 +382,7 @@ export default function ExhibitionDetail() {
                         <ImageWithFallback src={thumb} alt="" className="w-full h-full object-contain object-center" />
                       </div>
                       <div className="min-w-0 py-0.5">
-                        <p className="text-[13px] text-primary mb-1">{relType}</p>
+                        <p className="text-sm text-primary mb-1">{relType}</p>
                         <p className="font-medium text-foreground line-clamp-2">{ex.title}</p>
                         <p className="text-xs text-muted-foreground mt-2">
                           {ex.startDate} — {ex.endDate}

@@ -72,7 +72,7 @@ export default function Faq() {
             <HelpCircle className="h-6 w-6 sm:h-7 sm:h-7 text-primary shrink-0" />
             <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('faq.title')}</h1>
           </div>
-          <p className="text-[13px] sm:text-sm text-muted-foreground">
+          <p className="text-sm sm:text-sm text-muted-foreground">
             {t('faq.contactLead')}{' '}
             <Link to="/contact" className="text-primary lg:hover:underline font-medium">
               {t('faq.contactLink')}
@@ -118,7 +118,7 @@ export default function Faq() {
                     <span className="shrink-0 self-start px-2.5 py-1 bg-muted text-muted-foreground text-xs rounded-full font-medium">
                       {item.categoryLabel}
                     </span>
-                    <span className="text-[13px] sm:text-sm font-medium text-foreground">{item.q}</span>
+                    <span className="text-sm sm:text-sm font-medium text-foreground">{item.q}</span>
                   </div>
                   <ChevronDown
                     className={`h-5 w-5 text-muted-foreground shrink-0 ml-2 sm:ml-3 transition-transform ${isOpen ? 'rotate-180' : ''}`}
@@ -126,7 +126,7 @@ export default function Faq() {
                 </Button>
                 {isOpen ? (
                   <div className="px-4 sm:px-5 pb-4 sm:pb-5">
-                    <div className="pl-0 sm:pl-[72px] text-xs sm:text-[13px] text-muted-foreground leading-relaxed">
+                    <div className="pl-0 sm:pl-[72px] text-xs sm:text-sm text-muted-foreground leading-relaxed">
                       {item.a}
                     </div>
                   </div>

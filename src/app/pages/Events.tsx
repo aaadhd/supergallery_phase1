@@ -98,7 +98,7 @@ export default function Events() {
 
                       <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 lg:p-14">
                         <div className="max-w-[800px]">
-                          <span className="inline-block px-3 py-1 text-[10px] sm:text-[11px] font-bold tracking-wider text-white bg-primary rounded-full mb-3.5 shadow-sm">
+                          <span className="inline-block px-3 py-1 text-xs sm:text-xs font-bold tracking-wider text-white bg-primary rounded-full mb-3.5 shadow-sm">
                             {t('events.badge')}
                           </span>
                           <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold text-white mb-2 sm:mb-3 leading-tight tracking-tight">
@@ -110,12 +110,12 @@ export default function Events() {
                             </p>
                           )}
                           <div className="flex items-center gap-4 flex-wrap text-white/80">
-                            <div className="flex items-center gap-2 text-[12px] sm:text-[13px] font-medium bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
+                            <div className="flex items-center gap-2 text-xs sm:text-sm font-medium bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
                               <Calendar className="h-4 w-4" />
                               <span>{event.startAt} ~ {event.endAt}</span>
                             </div>
                             {event.participantsLabel && (
-                              <span className="text-[12px] sm:text-[13px] font-medium opacity-80">
+                              <span className="text-xs sm:text-sm font-medium opacity-80">
                                 · {event.participantsLabel}
                               </span>
                             )}
@@ -183,21 +183,21 @@ export default function Events() {
                     className="w-full h-full object-cover transition-transform duration-500 lg:group-hover:scale-[1.03]"
                   />
                   <div className="absolute top-3 right-3">
-                    <span className="px-2.5 py-1 text-[11px] font-bold text-white bg-foreground/80 backdrop-blur-sm rounded-full">
+                    <span className="px-2.5 py-1 text-xs font-bold text-white bg-foreground/80 backdrop-blur-sm rounded-full">
                       {t('events.comingSoonBadge')}
                     </span>
                   </div>
                 </div>
 
                 <div className="p-4">
-                  <h3 className="text-[15px] font-bold text-foreground mb-1.5 leading-snug">
+                  <h3 className="text-base font-bold text-foreground mb-1.5 leading-snug">
                     {event.title}
                   </h3>
-                  <div className="flex items-center gap-1.5 text-[13px] text-muted-foreground mb-2">
+                  <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-2">
                     <Calendar className="h-3.5 w-3.5" />
                     <span>{event.startAt} ~ {event.endAt}</span>
                   </div>
-                  <p className="text-[13px] text-muted-foreground leading-relaxed line-clamp-2">
+                  <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">
                     {event.description}
                   </p>
                 </div>
@@ -211,7 +211,7 @@ export default function Events() {
       <div className="bg-foreground text-white">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-10 sm:py-12 text-center">
           <h2 className="text-xl sm:text-2xl font-bold mb-3">{t('events.ctaTitle')}</h2>
-          <p className="text-[15px] text-white/80 mb-8">{t('events.ctaLead')}</p>
+          <p className="text-base text-white/80 mb-8">{t('events.ctaLead')}</p>
           <Button
             variant="secondary"
             onClick={() => setShowNotifyModal(true)}

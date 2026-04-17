@@ -129,14 +129,30 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
   const prevWork = currentIndex > 0 ? allWorks[currentIndex - 1] : null;
   const nextWork = currentIndex < allWorks.length - 1 ? allWorks[currentIndex + 1] : null;
 
-  const relatedWorks = (() => {
+  // 관련 작품 노출 규칙 (2026-04-17):
+  //  - 개인 전시: 같은 작가 최신 3개. 같은 작가 작품이 3개를 **초과**할 때만 [더보기] 버튼(→ 작가 프로필)
+  //  - 그룹 전시: 참여 작가별 최신 1개씩 (채움 없음, 더보기 없음)
+  //  - 어느 쪽이든 0개이면 섹션 전체 미노출 (렌더 시 length > 0 조건)
+  const { relatedWorks, hasMore } = (() => {
     const isGroup = work.primaryExhibitionType === 'group' || !!work.coOwners?.length || work.owner?.type === 'group';
+    const byRecent = (a: Work, b: Work) => {
+      const ta = a.uploadedAt ? new Date(a.uploadedAt).getTime() : 0;
+      const tb = b.uploadedAt ? new Date(b.uploadedAt).getTime() : 0;
+      return tb - ta;
+    };
+
     if (!isGroup) {
-      return allWorks.filter(w => w.artistId === work.artistId && w.id !== work.id).slice(0, 8);
+      const artistOthers = allWorks
+        .filter(w => w.artistId === work.artistId && w.id !== work.id)
+        .sort(byRecent);
+      return {
+        relatedWorks: artistOthers.slice(0, 3),
+        hasMore: artistOthers.length > 3,
+      };
     }
-    // 그룹 전시: 참여 작가별 최소 1개씩, 나머지는 채움
-    // 참여자는 imageArtists / coOwners / 업로더(artistId)로만 판정.
-    // (그룹 멤버 전체는 참여자 ≠ 그룹원이므로 fallback에 쓰지 않음)
+
+    // 그룹 전시: 참여자 = imageArtists 멤버 + coOwners + 업로더(artistId).
+    // 그룹원 전체는 참여자가 아니므로 fallback에 쓰지 않음.
     const participantIds = new Set<string>();
     if (work.imageArtists?.length) {
       work.imageArtists.forEach(ia => { if (ia.type === 'member' && ia.memberId) participantIds.add(ia.memberId); });
@@ -146,25 +162,14 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
     }
     participantIds.add(work.artistId);
 
-    const picked = new Map<string, typeof allWorks[number]>();
-    const usedIds = new Set<string>([work.id]);
-    // 각 작가별 1개씩 우선 확보
+    const sorted = [...allWorks].sort(byRecent);
+    const out: Work[] = [];
+    const seen = new Set<string>();
     for (const aid of participantIds) {
-      const found = allWorks.find(w => w.artistId === aid && !usedIds.has(w.id));
-      if (found) { picked.set(found.id, found); usedIds.add(found.id); }
+      const found = sorted.find(w => w.artistId === aid && w.id !== work.id && !seen.has(w.id));
+      if (found) { out.push(found); seen.add(found.id); }
     }
-    // 나머지 슬롯을 참여 작가 작품으로 채움
-    const MAX = 9;
-    if (picked.size < MAX) {
-      for (const aid of participantIds) {
-        for (const w of allWorks) {
-          if (picked.size >= MAX) break;
-          if (w.artistId === aid && !usedIds.has(w.id)) { picked.set(w.id, w); usedIds.add(w.id); }
-        }
-        if (picked.size >= MAX) break;
-      }
-    }
-    return [...picked.values()];
+    return { relatedWorks: out, hasMore: false };
   })();
 
   // Simple click-to-zoom toggle
@@ -348,15 +353,15 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                 </button>
               )}
               <div className="flex flex-col gap-0.5 min-w-0">
-                <h2 className="text-zinc-900 text-[15px] sm:text-[17px] font-extrabold leading-tight truncate">{headline}</h2>
+                <h2 className="text-zinc-900 text-base sm:text-lg font-extrabold leading-tight truncate">{headline}</h2>
                 {isGroupWork ? (
                   // 그룹 작품은 "그룹 자체"가 프로필을 가지지 않음 — 그룹명만 표시하고 팔로우/클릭은 개별 멤버(ArtistRow)로 유도
-                  <span className="text-zinc-600 text-[13px] font-medium">
+                  <span className="text-zinc-600 text-sm font-medium">
                     {work.groupName?.trim() || groupOrgLine || displayArtistName}
                   </span>
                 ) : (
                   <span
-                    className="text-zinc-600 font-medium text-[13px] cursor-pointer lg:hover:text-zinc-900 lg:hover:underline transition-colors"
+                    className="text-zinc-600 font-medium text-sm cursor-pointer lg:hover:text-zinc-900 lg:hover:underline transition-colors"
                     onClick={() => handleArtistClick(work.artist.id)}
                   >
                     {displayArtistName}
@@ -364,7 +369,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                 )}
                 {showUploaderLine && (
                   <span
-                    className="text-zinc-500 text-[12px] cursor-pointer lg:hover:text-zinc-700 lg:hover:underline transition-colors"
+                    className="text-zinc-500 text-xs cursor-pointer lg:hover:text-zinc-700 lg:hover:underline transition-colors"
                     onClick={() => handleArtistClick(uploaderArtist.id)}
                   >
                     {t('profile.uploaderLabel')}: {uploaderName}
@@ -374,7 +379,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
             </div>
             <div className="flex items-center gap-2 shrink-0">
               {isPick && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 text-[11px] font-bold whitespace-nowrap">
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 text-xs font-bold whitespace-nowrap">
                   <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.957c.3.921-.755 1.688-1.54 1.118l-3.37-2.448a1 1 0 00-1.176 0l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.287-3.957a1 1 0 00-.364-1.118L2.063 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.957z" />
                   </svg>
@@ -386,7 +391,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
               <button
                 type="button"
                 onClick={() => requireAuth(() => followStore.toggle(work.artist.id))}
-                className={`hidden sm:flex min-h-[38px] shrink-0 items-center gap-1.5 rounded-lg px-4 py-2 text-[13px] font-bold transition-colors border ${
+                className={`hidden sm:flex min-h-[38px] shrink-0 items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-bold transition-colors border ${
                   follows.isFollowing(work.artist.id)
                     ? 'bg-zinc-100 text-zinc-600 lg:hover:bg-zinc-200 border-zinc-200'
                     : 'bg-primary text-white border-primary lg:hover:bg-primary/95 shadow-sm'
@@ -444,7 +449,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                   {/* Image index indicator */}
                   {totalImages > 1 && (
                     <div className="absolute top-4 right-4 z-20 bg-black/60 backdrop-blur-sm px-3.5 py-1.5 rounded-full shadow-md">
-                      <span className="text-white text-[11px] font-bold tracking-wider">{index + 1} / {totalImages}</span>
+                      <span className="text-white text-xs font-bold tracking-wider">{index + 1} / {totalImages}</span>
                     </div>
                   )}
 
@@ -460,20 +465,20 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                     return (imgArtistName || slideLabel !== t('work.untitled')) ? (
                       <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black/60 via-black/25 to-transparent px-4 sm:px-5 pb-3.5 pt-8">
                         {slideLabel !== t('work.untitled') && (
-                          <p className="absolute left-0 right-0 bottom-3.5 text-white/90 text-[15px] font-semibold drop-shadow-md text-center pointer-events-none">{slideLabel}</p>
+                          <p className="absolute left-0 right-0 bottom-3.5 text-white/90 text-base font-semibold drop-shadow-md text-center pointer-events-none">{slideLabel}</p>
                         )}
                         <div className="flex items-center gap-2">
                           {imgArtistAvatar && (
                             <img src={imgArtistAvatar} alt="" className="w-7 h-7 rounded-full object-cover border border-white/30 shrink-0" />
                           )}
                           {imgArtistName && (
-                            <span className="text-white text-[13px] font-semibold drop-shadow-md">{imgArtistName}</span>
+                            <span className="text-white text-sm font-semibold drop-shadow-md">{imgArtistName}</span>
                           )}
                           {showFollow && (
                             <button
                               type="button"
                               onClick={(e) => { e.stopPropagation(); requireAuth(() => followStore.toggle(imgArtist.id)); }}
-                              className={`text-[11px] font-bold px-3 py-1.5 rounded-full shrink-0 transition-colors ${
+                              className={`text-xs font-bold px-3 py-1.5 rounded-full shrink-0 transition-colors ${
                                 follows.isFollowing(imgArtist.id)
                                   ? 'bg-white/20 text-white/80'
                                   : 'bg-white/90 text-zinc-800'
@@ -564,7 +569,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                     {work.artist.name}
                   </h3>
                   {work.artist.bio && (
-                    <p className="mb-5 text-[14px] text-zinc-600">{work.artist.bio}</p>
+                    <p className="mb-5 text-sm text-zinc-600">{work.artist.bio}</p>
                   )}
                 </div>
               );
@@ -621,13 +626,25 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                           className="w-full h-full object-contain object-center group-hover:scale-105 transition-transform duration-300"
                         />
                       </div>
-                      <div className="text-[14px] font-bold text-zinc-900 group-hover:text-primary transition-colors mb-0.5 sm:mb-1 truncate px-0.5">
+                      <div className="text-sm font-bold text-zinc-900 group-hover:text-primary transition-colors mb-0.5 sm:mb-1 truncate px-0.5">
                         {displayProminentHeadline(rw, t('work.untitled'))}
                       </div>
-                      <div className="text-[13px] text-zinc-500 truncate px-0.5">{rw.artist?.name ?? displayArtistName}</div>
+                      <div className="text-sm text-zinc-500 truncate px-0.5">{rw.artist?.name ?? displayArtistName}</div>
                     </button>
                   ))}
                 </div>
+                {hasMore && (
+                  <div className="mt-5 flex justify-center">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      onClick={(e) => { e.stopPropagation(); handleArtistClick(work.artistId); }}
+                      className="px-6 py-3 text-sm font-medium"
+                    >
+                      {t('workDetail.relatedMore')}
+                    </Button>
+                  </div>
+                )}
                 </div>
               </div>
             )}
@@ -675,12 +692,12 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                       </div>
                     ) : (
                       <div className="absolute -bottom-1 -right-1 flex h-[22px] w-[22px] items-center justify-center rounded-full bg-primary border-2 border-[#111]">
-                        <span className="text-[14px] text-white font-bold leading-none">+</span>
+                        <span className="text-sm text-white font-bold leading-none">+</span>
                       </div>
                     )
                   )}
                 </div>
-                <span className="text-[12px] font-bold text-white/90 group-hover:text-white truncate max-w-[66px] text-center leading-snug drop-shadow-md">{work.artist.name}</span>
+                <span className="text-xs font-bold text-white/90 group-hover:text-white truncate max-w-[66px] text-center leading-snug drop-shadow-md">{work.artist.name}</span>
               </button>
             )}
 
@@ -697,10 +714,10 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                 <Heart className={`h-[22px] w-[22px] transition-colors ${isLiked ? 'text-white fill-white' : 'text-white'}`} />
               </div>
               <div className="flex flex-col items-center leading-tight">
-                <span className="text-[11px] font-bold text-white/90 group-hover:text-white transition-colors uppercase drop-shadow-md">
+                <span className="text-xs font-bold text-white/90 group-hover:text-white transition-colors uppercase drop-shadow-md">
                   {t('workDetail.like')}
                 </span>
-                <span className="text-[10px] font-medium text-white/60 group-hover:text-white/80 transition-colors">
+                <span className="text-xs font-medium text-white/60 group-hover:text-white/80 transition-colors">
                   {(workStore.getWork(workId)?.likes ?? work.likes ?? 0).toLocaleString()}
                 </span>
               </div>
@@ -719,10 +736,10 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                 <Bookmark className={`h-[22px] w-[22px] transition-colors gap-1 text-white ${isSaved ? 'fill-white' : ''}`} />
               </div>
               <div className="flex flex-col items-center leading-tight">
-                <span className="text-[11px] font-bold text-white/90 group-hover:text-white transition-colors uppercase drop-shadow-md">
+                <span className="text-xs font-bold text-white/90 group-hover:text-white transition-colors uppercase drop-shadow-md">
                   {t('workDetail.save')}
                 </span>
-                <span className="text-[10px] font-medium text-white/60 group-hover:text-white/80 transition-colors">
+                <span className="text-xs font-medium text-white/60 group-hover:text-white/80 transition-colors">
                   {(workStore.getWork(workId)?.saves ?? work.saves ?? 0).toLocaleString()}
                 </span>
               </div>
@@ -739,7 +756,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                   <div className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-[#333333] shadow-lg lg:group-hover:bg-[#444] transition-all">
                     <Share2 className="h-[22px] w-[22px] text-white" />
                   </div>
-                  <span className="text-[11px] font-bold text-white/80 group-hover:text-white transition-colors uppercase drop-shadow-md">{t('workDetail.share')}</span>
+                  <span className="text-xs font-bold text-white/80 group-hover:text-white transition-colors uppercase drop-shadow-md">{t('workDetail.share')}</span>
                 </button>
               </PopoverTrigger>
               <PopoverContent side="left" align="center" className="w-[min(100vw-2rem,17rem)] p-2 bg-white border-zinc-200 shadow-2xl z-[110] text-zinc-900">
@@ -747,7 +764,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                   type="button"
                   variant="toolbar"
                   onClick={handleCopyInvitation}
-                  className="flex h-auto w-full items-center justify-start gap-3 rounded-lg px-3 py-2.5 text-left text-[13px] text-zinc-800 lg:hover:bg-zinc-100"
+                  className="flex h-auto w-full items-center justify-start gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-zinc-800 lg:hover:bg-zinc-100"
                 >
                   <Mail className="h-4 w-4 shrink-0" />
                   {t('workDetail.copyInviteCard')}
@@ -756,7 +773,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                   type="button"
                   variant="toolbar"
                   onClick={handleCopyLink}
-                  className="flex h-auto w-full items-center justify-start gap-3 rounded-lg px-3 py-2.5 text-[13px] text-zinc-800 lg:hover:bg-zinc-100"
+                  className="flex h-auto w-full items-center justify-start gap-3 rounded-lg px-3 py-2.5 text-sm text-zinc-800 lg:hover:bg-zinc-100"
                 >
                   <Link2 className="h-4 w-4" />
                   {t('workDetail.copyLink')}
@@ -765,7 +782,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                   type="button"
                   variant="toolbar"
                   onClick={handleKakaoShare}
-                  className="flex h-auto w-full items-center justify-start gap-3 rounded-lg px-3 py-2.5 text-left text-[13px] text-zinc-800 lg:hover:bg-zinc-100"
+                  className="flex h-auto w-full items-center justify-start gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-zinc-800 lg:hover:bg-zinc-100"
                 >
                   <MessageCircle className="h-4 w-4 shrink-0" />
                   {t('workDetail.kakaoShare')}
@@ -783,7 +800,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                 <div className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-[#333333] shadow-lg lg:group-hover:bg-red-500/80 transition-all">
                   <Flag className="h-[20px] w-[20px] text-white/90 group-hover:text-white transition-colors" />
                 </div>
-                <span className="text-[11px] font-bold text-white/80 group-hover:text-red-400 uppercase transition-colors drop-shadow-md">{t('workDetail.report')}</span>
+                <span className="text-xs font-bold text-white/80 group-hover:text-red-400 uppercase transition-colors drop-shadow-md">{t('workDetail.report')}</span>
               </button>
             )}
           </div>
@@ -831,7 +848,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
             className="flex flex-col items-center gap-1 p-1.5 -m-1 border-0 bg-transparent shadow-none cursor-pointer"
           >
             <Heart className={`h-6 w-6 ${isLiked ? 'text-[#FF2E63] fill-[#FF2E63]' : 'text-white'}`} />
-            <span className="text-[11px] text-white/70">{(work.likes || 0).toLocaleString()}</span>
+            <span className="text-xs text-white/70">{(work.likes || 0).toLocaleString()}</span>
           </button>
           <button
             type="button"
@@ -839,7 +856,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
             className="flex flex-col items-center gap-1 p-1.5 -m-1 border-0 bg-transparent shadow-none cursor-pointer"
           >
             <Bookmark className={`h-6 w-6 ${isSaved ? 'text-white fill-white' : 'text-white'}`} />
-            <span className="text-[11px] text-white/70">{t('workDetail.save')}</span>
+            <span className="text-xs text-white/70">{t('workDetail.save')}</span>
           </button>
           <Popover open={isShareOpen} onOpenChange={setIsShareOpen}>
             <PopoverTrigger asChild>
@@ -848,7 +865,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                 className="flex flex-col items-center gap-1 p-1.5 -m-1 border-0 bg-transparent shadow-none cursor-pointer"
               >
                 <Share2 className="h-6 w-6 text-white" />
-                <span className="text-[11px] text-white/70">{t('workDetail.share')}</span>
+                <span className="text-xs text-white/70">{t('workDetail.share')}</span>
               </button>
             </PopoverTrigger>
             <PopoverContent side="top" className="w-[min(100vw-2rem,17rem)] p-2 bg-[#2a2a2a] border-white/10 z-[110] mb-2">
@@ -856,7 +873,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                 type="button"
                 variant="toolbar"
                 onClick={handleCopyInvitation}
-                className="flex h-auto w-full items-center justify-start gap-3 rounded-lg px-3 py-2.5 text-left text-[13px] text-white"
+                className="flex h-auto w-full items-center justify-start gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-white"
               >
                 <Mail className="h-4 w-4 shrink-0" />
                 {t('workDetail.copyInviteCard')}
@@ -865,7 +882,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                 type="button"
                 variant="toolbar"
                 onClick={handleCopyLink}
-                className="flex h-auto w-full items-center justify-start gap-3 rounded-lg px-3 py-2.5 text-[13px] text-white"
+                className="flex h-auto w-full items-center justify-start gap-3 rounded-lg px-3 py-2.5 text-sm text-white"
               >
                 <Link2 className="h-4 w-4" />
                 {t('workDetail.copyLink')}
@@ -874,7 +891,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                 type="button"
                 variant="toolbar"
                 onClick={handleKakaoShare}
-                className="flex h-auto w-full items-center justify-start gap-3 rounded-lg px-3 py-2.5 text-left text-[13px] text-white"
+                className="flex h-auto w-full items-center justify-start gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-white"
               >
                 <MessageCircle className="h-4 w-4 shrink-0" />
                 {t('workDetail.kakaoShare')}
@@ -889,7 +906,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
               className="flex flex-col items-center gap-1 p-1.5 -m-1 border-0 bg-transparent shadow-none cursor-pointer"
             >
               <UserPlus className={`h-6 w-6 ${follows.isFollowing(work.artist.id) ? 'text-primary' : 'text-white'}`} />
-              <span className="text-[11px] text-white/70">
+              <span className="text-xs text-white/70">
                 {follows.isFollowing(work.artist.id) ? t('social.following') : t('social.follow')}
               </span>
             </button>
@@ -901,7 +918,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
               className="flex flex-col items-center gap-1 p-1.5 -m-1 border-0 bg-transparent shadow-none cursor-pointer"
             >
               <Flag className="h-6 w-6 text-white" />
-              <span className="text-[11px] text-white/70">{t('workDetail.report')}</span>
+              <span className="text-xs text-white/70">{t('workDetail.report')}</span>
             </button>
           )}
         </div>
@@ -936,13 +953,13 @@ function CoOwnerSection({ work }: { work: Work }) {
   return (
     <div className="flex flex-wrap items-center gap-3 mb-6">
       {hasCoOwners && (
-        <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-zinc-100 text-zinc-700 text-[13px] border border-zinc-200">
+        <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-zinc-100 text-zinc-700 text-sm border border-zinc-200">
           <Users className="h-4 w-4" />
           {t('workDetail.coWork')} · {work.coOwners!.map(c => c.name).join(', ')}
         </span>
       )}
       {taggedEmails && taggedEmails.length > 0 && (
-        <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-zinc-100 text-zinc-500 text-[13px] border border-zinc-200">
+        <span className="inline-flex items-center gap-1.5 px-4 py-2 rounded-full bg-zinc-100 text-zinc-500 text-sm border border-zinc-200">
           {t('workDetail.participants')}: {taggedEmails.join(', ')}
         </span>
       )}
@@ -979,24 +996,24 @@ function ArtistRow({ artist, onArtistClick, isInstructor = false }: { artist: Ar
       <div className="flex-1 min-w-0">
         <div className="flex items-center gap-2 mb-0.5">
           <h4
-            className="text-[15px] font-bold text-zinc-900 truncate cursor-pointer lg:hover:text-primary transition-colors"
+            className="text-base font-bold text-zinc-900 truncate cursor-pointer lg:hover:text-primary transition-colors"
             onClick={() => onArtistClick?.(artist.id)}
           >
             {artist.name}
           </h4>
           {isInstructor && (
-            <span className="inline-flex items-center shrink-0 px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 text-[11px] font-bold border border-amber-500/20">
+            <span className="inline-flex items-center shrink-0 px-2 py-0.5 rounded-full bg-amber-500/10 text-amber-600 text-xs font-bold border border-amber-500/20">
               {t('profile.instructorBadge')}
             </span>
           )}
         </div>
-        {artist.bio && <p className="text-[13px] text-zinc-500 truncate">{artist.bio}</p>}
+        {artist.bio && <p className="text-sm text-zinc-500 truncate">{artist.bio}</p>}
       </div>
       {!isMe && (
         <button
           type="button"
           onClick={handleFollow}
-          className={`flex h-9 min-h-[36px] items-center gap-1.5 rounded-lg px-4 text-[13px] font-semibold transition-colors border ${
+          className={`flex h-9 min-h-[36px] items-center gap-1.5 rounded-lg px-4 text-sm font-semibold transition-colors border ${
             isFollowing
               ? 'bg-zinc-100 text-zinc-600 border-zinc-200 lg:hover:bg-zinc-200'
               : 'bg-primary text-white border-primary lg:hover:bg-primary/90'

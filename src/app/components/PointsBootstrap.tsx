@@ -4,9 +4,10 @@ import { pointsOnFollowerCount, runPointsExpiryBatch } from '../utils/pointsBack
 
 /** 부트 시점에 더 이상 사용하지 않는 레거시 localStorage 키 정리 */
 const LEGACY_STORAGE_KEYS = [
-  'artier_instructor_public_ids', // 강사 토글 단일화 이후(2026-04-13) orphan
-  'artier_pin_comments',          // PinCommentLayer 삭제(2026-04-15) 후 orphan
-  'artier_upload_guide_seen',     // 업로드 인라인 가이드 제거(2026-04-15) 후 orphan
+  'artier_instructor_public_ids',   // 강사 토글 단일화 이후(2026-04-13) orphan
+  'artier_pin_comments',            // PinCommentLayer 삭제(2026-04-15) 후 orphan
+  'artier_upload_guide_seen',       // 업로드 인라인 가이드 제거(2026-04-15) 후 orphan
+  'artier_group_canonical_map',     // 그룹명 중복 허용 정책(2026-04-17) 이후 orphan
 ];
 
 function cleanupLegacyStorage() {

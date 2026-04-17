@@ -84,7 +84,7 @@ export function SocialSignupModal({ open, provider, onClose, onComplete }: Props
               {profile.avatar}
             </div>
             <div className="min-w-0">
-              <p className="text-[11px] uppercase tracking-wide text-muted-foreground">
+              <p className="text-xs uppercase tracking-wide text-muted-foreground">
                 {t(`socialSignup.provider_${provider}`)}
               </p>
               <p className="truncate text-sm font-medium text-foreground">{profile.email}</p>
@@ -95,7 +95,7 @@ export function SocialSignupModal({ open, provider, onClose, onComplete }: Props
           <div className="space-y-2">
             <Label htmlFor="social-nickname">
               {t('socialSignup.nicknameLabel')}
-              <span className="ml-1 text-[11px] font-medium text-red-500">(필수)</span>
+              <span className="ml-1 text-xs font-medium text-red-500">(필수)</span>
             </Label>
             <Input
               id="social-nickname"
@@ -107,7 +107,7 @@ export function SocialSignupModal({ open, provider, onClose, onComplete }: Props
               maxLength={20}
               autoFocus
             />
-            <p className="text-[11px] text-muted-foreground">{t('socialSignup.nicknameHint')}</p>
+            <p className="text-xs text-muted-foreground">{t('socialSignup.nicknameHint')}</p>
           </div>
 
           {/* 약관 동의 */}
@@ -118,31 +118,31 @@ export function SocialSignupModal({ open, provider, onClose, onComplete }: Props
                 onCheckedChange={toggleAll}
                 className="mt-0.5 border-border/40"
               />
-              <span className="text-[13px] font-semibold text-foreground sm:text-sm">
+              <span className="text-sm font-semibold text-foreground sm:text-sm">
                 {t('socialSignup.agreeAll')}
               </span>
             </label>
             <label className="flex items-start gap-3 cursor-pointer">
               <Checkbox checked={agreeTerms} onCheckedChange={(v) => setAgreeTerms(!!v)} className="mt-0.5" />
-              <span className="text-[13px] text-foreground sm:text-sm">
+              <span className="text-sm text-foreground sm:text-sm">
                 <span className="text-red-500">[필수]</span> {t('socialSignup.termsTerms')}
               </span>
             </label>
             <label className="flex items-start gap-3 cursor-pointer">
               <Checkbox checked={agreePrivacy} onCheckedChange={(v) => setAgreePrivacy(!!v)} className="mt-0.5" />
-              <span className="text-[13px] text-foreground sm:text-sm">
+              <span className="text-sm text-foreground sm:text-sm">
                 <span className="text-red-500">[필수]</span> {t('socialSignup.termsPrivacy')}
               </span>
             </label>
             <label className="flex items-start gap-3 cursor-pointer">
               <Checkbox checked={agreeAge} onCheckedChange={(v) => setAgreeAge(!!v)} className="mt-0.5" />
-              <span className="text-[13px] text-foreground sm:text-sm">
+              <span className="text-sm text-foreground sm:text-sm">
                 <span className="text-red-500">[필수]</span> {t('socialSignup.termsAge')}
               </span>
             </label>
             <label className="flex items-start gap-3 cursor-pointer">
               <Checkbox checked={agreeMarketing} onCheckedChange={(v) => setAgreeMarketing(!!v)} className="mt-0.5" />
-              <span className="text-[13px] text-muted-foreground sm:text-sm">
+              <span className="text-sm text-muted-foreground sm:text-sm">
                 <span>[선택]</span> {t('socialSignup.termsMarketing')}
               </span>
             </label>

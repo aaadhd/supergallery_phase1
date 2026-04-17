@@ -54,7 +54,7 @@ function FlowMapBlock({ text }: { text: string }) {
           <li key={`${it.path}-${idx}`} className="flex flex-col gap-0.5 border-b border-border/40 pb-2.5 last:border-0 last:pb-0">
             <Link
               to={it.path}
-              className="font-mono text-[12px] sm:text-[13px] text-primary lg:hover:underline break-all"
+              className="font-mono text-xs sm:text-sm text-primary lg:hover:underline break-all"
             >
               {it.path}
             </Link>

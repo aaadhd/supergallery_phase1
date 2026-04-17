@@ -367,13 +367,11 @@ export function buildLocalPublicWorks(paths: string[], artistsList: Artist[]): W
     const tagList = [exhibitionName, artist.name, '로컬 갤러리'];
     if (groupName) tagList.splice(1, 0, groupName);
 
-    // 단일 이미지 → 작가 1명만. imageArtists에 대표 작가만 기록.
-    const imageArtists: Work['imageArtists'] | undefined = isGroup ? [{
-      type: 'member' as const,
-      memberId: artist.id,
-      memberName: artist.name,
-      memberAvatar: artist.avatar,
-    }] : undefined;
+    // 단일 이미지 그룹 전시 기여작은 imageArtists를 비워두고 owner.memberIds 폴백에 맡긴다.
+    // 정책: 그룹 전시는 2+ 작가 필수. imageArtists에 1명만 넣으면 카드 peek에 1명만 노출돼
+    // 정책 위배로 보이므로, 그룹 맥락은 소유 그룹 전체 멤버로 대체. (2026-04-17)
+    // 여러 장이 같은 전시·그룹 키로 묶인 경우 아래 groupMultiMocks 단계에서 실제 기여자로 재구성.
+    const imageArtists: Work['imageArtists'] | undefined = undefined;
 
     return {
       id: `local-img-${i}`,

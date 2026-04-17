@@ -77,7 +77,7 @@ export default function ExhibitionWorkShareLanding() {
             {t('invite.workShareExhibitionLine').replace('{title}', exhibitionTitle)}
           </p>
           {work.feedReviewStatus === 'pending' && (
-            <div className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-full bg-amber-400/20 border border-amber-300/50 px-3 py-1 text-[11px] font-medium text-amber-100">
+            <div className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-full bg-amber-400/20 border border-amber-300/50 px-3 py-1 text-xs font-medium text-amber-100">
               <span className="h-1.5 w-1.5 rounded-full bg-amber-300" />
               {t('review.badgePending')} · {t('invite.pendingNotice')}
             </div>
@@ -94,7 +94,7 @@ export default function ExhibitionWorkShareLanding() {
               className="w-full h-full object-contain"
             />
             {imgCount > 1 && (
-              <div className="absolute left-3 top-3 rounded-full bg-black/70 px-2.5 py-0.5 text-[11px] font-medium text-white">
+              <div className="absolute left-3 top-3 rounded-full bg-black/70 px-2.5 py-0.5 text-xs font-medium text-white">
                 {imgCount}
               </div>
             )}

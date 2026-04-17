@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect, useCallback, useRef, type ReactElement, type ReactNode } from 'react';
-import { Heart, Bookmark, ChevronRight, ChevronLeft, Image as ImageIcon, Users, MoreHorizontal, Flag } from 'lucide-react';
+import { ChevronRight, ChevronLeft, Image as ImageIcon, Users, MoreHorizontal, Flag } from 'lucide-react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
@@ -334,7 +334,7 @@ export default function Browse() {
       {/* ----------------------------------------------------------------- */}
       <div className="bg-white">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 pt-4 sm:pt-6 pb-2 sm:pb-3">
-          <p className="text-[11px] sm:text-xs text-muted-foreground tracking-[0.14em] uppercase mb-2">
+          <p className="text-xs sm:text-xs text-muted-foreground tracking-[0.14em] uppercase mb-2">
             {t('browse.heroKicker')}
           </p>
           <div className="relative group">
@@ -356,7 +356,7 @@ export default function Browse() {
                       <div className="absolute inset-x-0 bottom-0 px-8 sm:px-12 lg:px-20 pb-6 sm:pb-8 lg:pb-10">
                         <div className="max-w-[720px]">
                           {banner.tag && (
-                            <span className="inline-block px-2.5 py-1 text-[10px] sm:text-[11px] font-semibold tracking-[0.14em] uppercase text-white border border-white/35 bg-white/5 backdrop-blur-[2px] mb-3">
+                            <span className="inline-block px-2.5 py-1 text-xs sm:text-xs font-semibold tracking-[0.14em] uppercase text-white border border-white/35 bg-white/5 backdrop-blur-[2px] mb-3">
                               {banner.tag}
                             </span>
                           )}
@@ -418,7 +418,7 @@ export default function Browse() {
               variant="ghost"
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`relative shrink-0 h-auto rounded-md px-1.5 pb-2.5 pt-1.5 text-xs sm:text-[13px] font-medium transition-colors shadow-none hover:bg-transparent focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none ${
+              className={`relative shrink-0 h-auto rounded-md px-1.5 pb-2.5 pt-1.5 text-xs sm:text-sm font-medium transition-colors shadow-none hover:bg-transparent focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none ${
                 activeCategory === cat.id
                   ? 'text-foreground after:absolute after:left-1.5 after:right-1.5 after:bottom-0 after:h-0.5 after:bg-primary'
                   : 'text-muted-foreground hover:text-foreground'
@@ -437,7 +437,7 @@ export default function Browse() {
       <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-6 sm:py-8 pb-6 md:pb-8">
         {filteredWorks.length > 0 && (
           <header className="mb-6 sm:mb-8 max-w-xl">
-            <p className="text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.16em] text-muted-foreground mb-1">
+            <p className="text-xs sm:text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground mb-1">
               {t('browse.collectionKicker')}
             </p>
             <h2 className="text-lg sm:text-xl font-semibold text-foreground tracking-tight">
@@ -448,7 +448,7 @@ export default function Browse() {
         {filteredWorks.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 sm:py-24 text-center rounded-2xl border border-dashed border-border bg-muted/20 px-6">
             <p className="text-sm text-foreground font-medium mb-2">{t('browse.emptyTitle')}</p>
-            <p className="text-[13px] text-muted-foreground mb-6">{t('browse.emptyHint')}</p>
+            <p className="text-sm text-muted-foreground mb-6">{t('browse.emptyHint')}</p>
             <div className="flex flex-wrap items-center justify-center gap-2">
               <Button
                 type="button"
@@ -477,40 +477,6 @@ export default function Browse() {
                 index={idx}
                 onSelect={() => openWork(work.id)}
                 onArtistClick={(artistId) => navigate(`/profile/${artistId}`)}
-                isLiked={interactions.isLiked(work.id)}
-                isSaved={interactions.isSaved(work.id)}
-                onToggleLike={(id) => {
-                  if (!requestLogin()) return;
-                  const wasLiked = userInteractionStore.isLiked(id);
-                  userInteractionStore.toggleLike(id);
-                  const delta = userInteractionStore.isLiked(id) ? 1 : -1;
-                  workStore.updateWork(id, { likes: (workStore.getWork(id)?.likes ?? 0) + delta });
-                  if (wasLiked) {
-                    toast(t('browse.unliked'), {
-                      action: { label: t('browse.undo'), onClick: () => {
-                        userInteractionStore.toggleLike(id);
-                        workStore.updateWork(id, { likes: (workStore.getWork(id)?.likes ?? 0) + 1 });
-                      }},
-                      duration: 3000,
-                    });
-                  }
-                }}
-                onToggleSave={(id) => {
-                  if (!requestLogin()) return;
-                  const wasSaved = userInteractionStore.isSaved(id);
-                  userInteractionStore.toggleSave(id);
-                  const delta = userInteractionStore.isSaved(id) ? 1 : -1;
-                  workStore.updateWork(id, { saves: (workStore.getWork(id)?.saves ?? 0) + delta });
-                  if (wasSaved) {
-                    toast(t('browse.unsaved'), {
-                      action: { label: t('browse.undo'), onClick: () => {
-                        userInteractionStore.toggleSave(id);
-                        workStore.updateWork(id, { saves: (workStore.getWork(id)?.saves ?? 0) + 1 });
-                      }},
-                      duration: 3000,
-                    });
-                  }
-                }}
                 isFollowing={(artistId) => follows.isFollowing(artistId)}
                 onToggleFollow={(artistId) => {
                   if (!requestLogin()) return;
@@ -662,16 +628,12 @@ interface WorkCardProps {
   index: number;
   onSelect: () => void;
   onArtistClick: (artistId: string) => void;
-  isLiked: boolean;
-  isSaved: boolean;
-  onToggleLike: (id: string) => void;
-  onToggleSave: (id: string) => void;
   isFollowing: (artistId: string) => boolean;
   onToggleFollow: (artistId: string) => void;
   onReport: (work: Work) => void;
 }
 
-function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onToggleLike, onToggleSave, isFollowing, onToggleFollow, onReport }: WorkCardProps) {
+function WorkCard({ work, index, onSelect, onArtistClick, isFollowing, onToggleFollow, onReport }: WorkCardProps) {
   const navigate = useNavigate();
   const { t } = useI18n();
   const coarsePointer = usePointerCoarse();
@@ -774,7 +736,7 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
         {/* Artier's Pick badge */}
         {isPick && (
           <div className="absolute left-3 bottom-3 z-10">
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500 text-white text-[10px] font-bold shadow-md backdrop-blur-sm">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500 text-white text-xs font-bold shadow-md backdrop-blur-sm">
               ★ Artier&apos;s Pick
             </span>
           </div>
@@ -786,15 +748,15 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
       {/* Info */}
       <div className="px-3 pt-3 pb-4 sm:px-3.5 sm:pb-5 bg-card">
         <div className="flex items-baseline justify-between gap-2 mb-1">
-          <h3 className="text-[13px] font-medium text-foreground leading-snug line-clamp-2 min-w-0">
+          <h3 className="text-sm font-medium text-foreground leading-snug line-clamp-2 min-w-0">
             {exhibitionLabel}
           </h3>
-          {work.uploadedAt && (() => { const rel = formatRelativeShort(work.uploadedAt, t); return rel ? <span className="text-[11px] text-muted-foreground/60 shrink-0">{rel}</span> : null; })()}
+          {work.uploadedAt && (() => { const rel = formatRelativeShort(work.uploadedAt, t); return rel ? <span className="text-xs text-muted-foreground/60 shrink-0">{rel}</span> : null; })()}
         </div>
 
         {/* Artist row */}
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-2 min-w-0">
+        <div className="flex items-center">
+          <div className="flex items-center gap-2 min-w-0 w-full">
             {useGroupStyleRow ? (
               <BrowseArtistPeek
                 coarse={coarsePointer}
@@ -802,7 +764,7 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
                   <Button
                     variant="ghost"
                     type="button"
-                    className="flex items-center gap-2 min-h-10 min-w-0 text-[13px] text-muted-foreground transition-none touch-manipulation rounded-md px-1 -mx-1 lg:hover:bg-transparent lg:hover:text-muted-foreground active:bg-transparent cursor-default"
+                    className="flex items-center gap-2 min-h-10 min-w-0 text-sm text-muted-foreground transition-none touch-manipulation rounded-md px-1 -mx-1 lg:hover:bg-transparent lg:hover:text-muted-foreground active:bg-transparent cursor-default"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <Users className="h-4 w-4 shrink-0" />
@@ -839,7 +801,7 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
                   <Button
                     variant="ghost"
                     type="button"
-                    className="flex items-center gap-2 min-h-10 min-w-0 text-[13px] text-muted-foreground transition-none touch-manipulation rounded-md px-1 -mx-1 lg:hover:bg-transparent lg:hover:text-muted-foreground active:bg-transparent cursor-default"
+                    className="flex items-center gap-2 min-h-10 min-w-0 text-sm text-muted-foreground transition-none touch-manipulation rounded-md px-1 -mx-1 lg:hover:bg-transparent lg:hover:text-muted-foreground active:bg-transparent cursor-default"
                     onClick={(e) => e.stopPropagation()}
                   >
                     <Users className="h-4 w-4 shrink-0" />
@@ -873,7 +835,7 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
               <Button
                 variant="ghost"
                 type="button"
-                className="flex items-center gap-2 min-h-10 min-w-0 text-[13px] text-muted-foreground lg:hover:text-foreground active:text-foreground transition-colors touch-manipulation rounded-md px-1 -mx-1"
+                className="flex items-center gap-2 min-h-10 min-w-0 text-sm text-muted-foreground lg:hover:text-foreground active:text-foreground transition-colors touch-manipulation rounded-md px-1 -mx-1"
                 onClick={(e) => {
                   e.stopPropagation();
                   onArtistClick(artist.id);
@@ -889,26 +851,6 @@ function WorkCard({ work, index, onSelect, onArtistClick, isLiked, isSaved, onTo
                 <span>{truncateArtistName(artist.name)}</span>
               </Button>
             )}
-          </div>
-
-          {/* Like & save status icons (숫자 비노출 — CLAUDE.md WorkCard 표시 규칙) */}
-          <div className="flex items-center gap-3 shrink-0 ml-2">
-            <Button
-              variant="ghost"
-              type="button"
-              className={`min-h-10 min-w-10 sm:min-h-0 sm:min-w-0 flex items-center justify-center px-2 -mr-1 transition-colors touch-manipulation active:opacity-70 rounded-md ${isLiked ? 'text-red-500' : 'text-muted-foreground lg:hover:text-red-400'}`}
-              onClick={(e) => { e.stopPropagation(); onToggleLike(work.id); }}
-            >
-              <Heart className={`h-3.5 w-3.5 ${isLiked ? 'fill-current' : ''}`} />
-            </Button>
-            <Button
-              variant="ghost"
-              type="button"
-              className={`min-h-10 min-w-10 sm:min-h-0 sm:min-w-0 flex items-center justify-center px-2 -mr-1 transition-colors touch-manipulation active:opacity-70 rounded-md ${isSaved ? 'text-primary' : 'text-muted-foreground lg:hover:text-foreground'}`}
-              onClick={(e) => { e.stopPropagation(); onToggleSave(work.id); }}
-            >
-              <Bookmark className={`h-3.5 w-3.5 ${isSaved ? 'fill-current' : ''}`} />
-            </Button>
           </div>
         </div>
       </div>
@@ -970,7 +912,7 @@ function MemberRow({
             {truncateArtistName(artist.name)}
           </p>
           {isInstructor && (
-            <span className="inline-flex rounded-full border border-primary/25 bg-primary/10 px-1.5 py-0.5 text-[10px] font-semibold text-primary">
+            <span className="inline-flex rounded-full border border-primary/25 bg-primary/10 px-1.5 py-0.5 text-xs font-semibold text-primary">
               {t('profile.instructorBadge')}
             </span>
           )}

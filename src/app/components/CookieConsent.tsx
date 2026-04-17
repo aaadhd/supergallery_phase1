@@ -33,8 +33,8 @@ export function CookieConsent() {
             <Cookie className="h-5 w-5 text-amber-600" />
           </div>
           <div className="flex-1 min-w-0">
-            <h3 className="text-[15px] font-semibold text-foreground mb-1">{t('cookie.title')}</h3>
-            <p className="text-[13px] text-muted-foreground leading-relaxed">
+            <h3 className="text-base font-semibold text-foreground mb-1">{t('cookie.title')}</h3>
+            <p className="text-sm text-muted-foreground leading-relaxed">
               {t('cookie.body')}
               <Link to="/privacy" className="text-primary lg:hover:underline">
                 {t('cookie.privacyLink')}
@@ -44,14 +44,14 @@ export function CookieConsent() {
             <div className="flex flex-wrap gap-3 mt-4">
               <Button
                 onClick={() => accept('all')}
-                className="bg-foreground lg:hover:bg-foreground/80 text-[13px] px-6"
+                className="bg-foreground lg:hover:bg-foreground/80 text-sm px-6"
               >
                 {t('cookie.acceptAll')}
               </Button>
               <Button
                 variant="outline"
                 onClick={() => accept('essential')}
-                className="text-[13px] px-6"
+                className="text-sm px-6"
               >
                 {t('cookie.essentialOnly')}
               </Button>

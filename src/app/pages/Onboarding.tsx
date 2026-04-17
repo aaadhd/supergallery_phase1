@@ -288,7 +288,7 @@ export default function Onboarding() {
                   <h2 className="text-lg font-bold text-foreground mb-1">{t('onboarding.nicknameTitle')}</h2>
                   <p className="text-sm text-muted-foreground mb-4">{t('onboarding.nicknameLead')}</p>
                   {(isInviteFlow || isSocialSignup) && (
-                    <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-3 text-[13px] text-amber-900">
+                    <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
                       {isSocialSignup ? t('onboarding.socialNotice') : t('onboarding.inviteNotice')}
                     </div>
                   )}
@@ -313,7 +313,7 @@ export default function Onboarding() {
                   {/* 실명 */}
                   <label className="block text-sm font-medium text-foreground mb-2">
                     {t('onboarding.realNameLabel')}
-                    <span className="ml-1 text-[11px] font-medium text-red-500">{t('common.required')}</span>
+                    <span className="ml-1 text-xs font-medium text-red-500">{t('common.required')}</span>
                   </label>
                   <input
                     type="text"
@@ -342,7 +342,7 @@ export default function Onboarding() {
                   {/* 전화번호 */}
                   <label className="block text-sm font-medium text-foreground mb-2 mt-5">
                     {t('onboarding.phoneLabel')}
-                    <span className="ml-1 text-[11px] font-medium text-red-500">{t('common.required')}</span>
+                    <span className="ml-1 text-xs font-medium text-red-500">{t('common.required')}</span>
                   </label>
                   <input
                     type="tel"
@@ -357,7 +357,7 @@ export default function Onboarding() {
                   {/* 이메일 */}
                   <label className="block text-sm font-medium text-foreground mb-2 mt-5">
                     {t('onboarding.emailLabel')}
-                    <span className="ml-1 text-[11px] font-medium text-red-500">{t('common.required')}</span>
+                    <span className="ml-1 text-xs font-medium text-red-500">{t('common.required')}</span>
                   </label>
                   <input
                     type="email"

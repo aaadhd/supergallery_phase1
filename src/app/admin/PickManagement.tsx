@@ -325,7 +325,7 @@ export default function PickManagement() {
                           <p className="text-sm font-semibold text-foreground truncate">{p.title}</p>
                           <p className="text-xs text-muted-foreground truncate">{p.artist}</p>
                         </div>
-                        <span className={`shrink-0 inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium ${isCurrent ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-muted text-muted-foreground border border-border'}`}>
+                        <span className={`shrink-0 inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium ${isCurrent ? 'bg-emerald-50 text-emerald-700 border border-emerald-200' : 'bg-muted text-muted-foreground border border-border'}`}>
                           {isCurrent ? '현재 Pick' : 'Pick 이력'}
                         </span>
                       </div>
