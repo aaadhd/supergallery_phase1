@@ -435,16 +435,6 @@ export default function Browse() {
       {/* WORK GRID                                                           */}
       {/* ----------------------------------------------------------------- */}
       <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-6 sm:py-8 pb-6 md:pb-8">
-        {filteredWorks.length > 0 && (
-          <header className="mb-6 sm:mb-8 max-w-xl">
-            <p className="text-xs sm:text-xs font-medium uppercase tracking-[0.16em] text-muted-foreground mb-1">
-              {t('browse.collectionKicker')}
-            </p>
-            <h2 className="text-lg sm:text-xl font-semibold text-foreground tracking-tight">
-              {t('browse.collectionHeading')}
-            </h2>
-          </header>
-        )}
         {filteredWorks.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 sm:py-24 text-center rounded-2xl border border-dashed border-border bg-muted/20 px-6">
             <p className="text-sm text-foreground font-medium mb-2">{t('browse.emptyTitle')}</p>
