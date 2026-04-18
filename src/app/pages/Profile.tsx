@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { MapPin, Plus, Eye, EyeOff, X, ThumbsUp, Users, Folder, MoreHorizontal, Trash2, Tag, UserPlus, Camera, Share2, ChevronLeft, ChevronRight, Pencil } from 'lucide-react';
+import { MapPin, Plus, Eye, EyeOff, X, ThumbsUp, Users, Folder, MoreHorizontal, Trash2, Tag, UserPlus, Camera, Share2, ChevronLeft, ChevronRight, Pencil, CircleHelp } from 'lucide-react';
 import { Image as ImageIcon, User as UserIcon } from 'lucide-react';
 import ProfileImageModal from '../components/ProfileImageModal';
 import { artists, type Work } from '../data';
@@ -334,6 +334,30 @@ export default function Profile() {
         return 'profile.tabGuideExhibition';
     }
   }, [profileTab]);
+
+  // 탭별 안내 박스 표시 여부 — 한 번 닫으면 localStorage에 기록, '안내 보기' 버튼으로 다시 열 수 있음
+  const guideSeenKey = (tab: ProfileTabValue) => `artier_profile_guide_seen__${tab}`;
+  const [guideOpen, setGuideOpen] = useState<boolean>(() => {
+    if (typeof window === 'undefined') return true;
+    try {
+      return localStorage.getItem(guideSeenKey(profileTab)) !== '1';
+    } catch {
+      return true;
+    }
+  });
+  useEffect(() => {
+    if (typeof window === 'undefined') return;
+    try {
+      setGuideOpen(localStorage.getItem(guideSeenKey(profileTab)) !== '1');
+    } catch {
+      setGuideOpen(true);
+    }
+  }, [profileTab]);
+  const dismissGuide = () => {
+    try { localStorage.setItem(guideSeenKey(profileTab), '1'); } catch { /* ignore */ }
+    setGuideOpen(false);
+  };
+  const reopenGuide = () => setGuideOpen(true);
 
   useEffect(() => {
     const q = searchParams.get('tab');
@@ -687,11 +711,11 @@ export default function Profile() {
               )}
 
               {/* 팔로워/팔로잉 */}
-              <div className="mt-4 flex items-center gap-5 text-sm">
+              <div className="mt-4 flex items-center gap-2 text-sm">
                 <button
                   type="button"
                   onClick={() => { setFollowModalTab('followers'); setShowFollowersModal(true); }}
-                  className="flex items-center gap-1 lg:hover:underline underline-offset-2 transition-opacity lg:hover:opacity-80 cursor-pointer"
+                  className="flex items-center gap-1 min-h-[44px] px-2 -ml-2 rounded-lg lg:hover:bg-muted/40 transition-colors"
                 >
                   <span className="font-semibold text-foreground">
                     {getDisplayFollowerCount(profileArtist).toLocaleString()}
@@ -701,7 +725,7 @@ export default function Profile() {
                 <button
                   type="button"
                   onClick={() => { setFollowModalTab('following'); setShowFollowersModal(true); }}
-                  className="flex items-center gap-1 lg:hover:underline underline-offset-2 transition-opacity lg:hover:opacity-80 cursor-pointer"
+                  className="flex items-center gap-1 min-h-[44px] px-2 rounded-lg lg:hover:bg-muted/40 transition-colors"
                 >
                   <span className="font-semibold text-foreground">{profileArtist.following?.toLocaleString() || '0'}</span>
                   <span className="text-muted-foreground">{t('profile.followModalFollowing')}</span>
@@ -748,19 +772,17 @@ export default function Profile() {
             {/* 오른쪽: 탭 컨텐츠 */}
             <div className="flex-1 py-4 sm:py-8">
               <Tabs value={profileTab} onValueChange={(v) => setProfileTab(v as ProfileTabValue)} className="w-full">
-                <div className="relative">
-                <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent z-10 sm:hidden" />
-                <TabsList className="h-auto p-0 bg-transparent border-b border-border/40 rounded-none w-full justify-start gap-0 overflow-x-auto scrollbar-hide">
+                <TabsList className="h-auto p-0 bg-transparent border-b border-border/40 rounded-none w-full justify-start gap-0 grid grid-cols-3 sm:flex sm:flex-row">
                   <TabsTrigger
                     value="exhibition"
-                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground pb-3 text-sm px-4 text-muted-foreground"
+                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground py-3 min-h-[44px] text-sm px-4 text-muted-foreground"
                   >
                     {t('profile.exhibition')}
                   </TabsTrigger>
                   {isOwnProfile && (
                     <TabsTrigger
                       value="works"
-                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground pb-3 text-sm px-4 text-muted-foreground"
+                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground py-3 min-h-[44px] text-sm px-4 text-muted-foreground"
                     >
                       {t('profile.tabWorkManage')}
                     </TabsTrigger>
@@ -768,7 +790,7 @@ export default function Profile() {
                   {instructorVisible && (
                     <TabsTrigger
                       value="student-works"
-                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground pb-3 text-sm px-4 text-muted-foreground"
+                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground py-3 min-h-[44px] text-sm px-4 text-muted-foreground"
                     >
                       {t('profile.studentWorks')}
                     </TabsTrigger>
@@ -776,7 +798,7 @@ export default function Profile() {
                   {isOwnProfile && (
                     <TabsTrigger
                       value="likes"
-                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground pb-3 text-sm px-4 text-muted-foreground"
+                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground py-3 min-h-[44px] text-sm px-4 text-muted-foreground"
                     >
                       {t('profile.tabLikes')}
                     </TabsTrigger>
@@ -784,7 +806,7 @@ export default function Profile() {
                   {isOwnProfile && (
                     <TabsTrigger
                       value="saved"
-                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground pb-3 text-sm px-4 text-muted-foreground"
+                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground py-3 min-h-[44px] text-sm px-4 text-muted-foreground"
                     >
                       {t('profile.tabSaves')}
                     </TabsTrigger>
@@ -792,18 +814,37 @@ export default function Profile() {
                   {isOwnProfile && (
                     <TabsTrigger
                       value="drafts"
-                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground pb-3 text-sm px-4 text-muted-foreground"
+                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground py-3 min-h-[44px] text-sm px-4 text-muted-foreground"
                     >
                       {t('profile.tabDrafts')}
                       {drafts.length > 0 ? ` (${drafts.length})` : ''}
                     </TabsTrigger>
                   )}
                 </TabsList>
-                </div>
 
-                <p className="mt-3 rounded-lg border border-border/60 bg-muted/30 px-3.5 py-2.5 text-xs sm:text-sm text-muted-foreground">
-                  {t(profileTabGuideKey)}
-                </p>
+                {guideOpen ? (
+                  <div className="mt-3 relative rounded-lg border border-border/60 bg-muted/30 pl-3.5 pr-12 py-2.5 text-xs sm:text-sm text-muted-foreground">
+                    {t(profileTabGuideKey)}
+                    <button
+                      type="button"
+                      onClick={dismissGuide}
+                      aria-label={t('profile.tabGuideClose')}
+                      className="absolute right-1 top-1/2 -translate-y-1/2 h-11 w-11 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-full text-muted-foreground lg:hover:text-foreground lg:hover:bg-muted/60 transition-colors"
+                    >
+                      <X className="h-4 w-4" />
+                    </button>
+                  </div>
+                ) : (
+                  <button
+                    type="button"
+                    onClick={reopenGuide}
+                    aria-label={t('profile.tabGuideShow')}
+                    className="mt-3 inline-flex items-center gap-1.5 px-2 py-1 -ml-2 rounded-md text-xs text-muted-foreground lg:hover:text-foreground lg:hover:bg-muted/30 transition-colors min-h-[44px]"
+                  >
+                    <CircleHelp className="h-3.5 w-3.5" />
+                    <span>{t('profile.tabGuideShow')}</span>
+                  </button>
+                )}
 
                 {/* ===== 전시 탭 ===== */}
                 <TabsContent value="exhibition" className="mt-6">
@@ -849,7 +890,7 @@ export default function Profile() {
                       );
                     })}
                     {isOwnProfile && (
-                      <label className="ml-auto flex min-h-[36px] items-center gap-2 rounded-full border border-border/60 px-3.5 py-1.5 text-sm text-foreground cursor-pointer select-none lg:hover:border-foreground/50">
+                      <label className="ml-auto flex items-center gap-2 min-h-[44px] px-2 cursor-pointer select-none text-sm text-foreground">
                         <input
                           type="checkbox"
                           checked={onlyMyUploads}
