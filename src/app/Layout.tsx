@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
-import { Outlet, useLocation } from 'react-router-dom';
+import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
 import { CookieConsent } from './components/CookieConsent';
 import { getStoredLocale } from './i18n/uiStrings';
 import { useI18n } from './i18n/I18nProvider';
+import { accountSuspensionStore, authStore } from './store';
 
 const TITLE_BY_PATH: { prefix: string; ko: string; en: string }[] = [
   { prefix: '/search', ko: '검색 · Artier', en: 'Search · Artier' },
@@ -19,11 +20,20 @@ const TITLE_BY_PATH: { prefix: string; ko: string; en: string }[] = [
 
 export default function Layout() {
   const { pathname } = useLocation();
+  const navigate = useNavigate();
   /** 홈 둘러보기: 스크롤은 main만, 푸터는 항상 화면 하단에 보임 */
   const { t } = useI18n();
   const browseDocked = pathname === '/';
   const hideFooter = pathname.startsWith('/upload');
   const [localeTick, setLocaleTick] = useState(0);
+
+  // 전역 계정 정지 가드 — 정지된 상태면 강제 로그아웃
+  useEffect(() => {
+    if (authStore.isLoggedIn() && accountSuspensionStore.get().active) {
+      authStore.logout();
+      navigate('/login', { replace: true });
+    }
+  }, [pathname, navigate]);
 
   useEffect(() => {
     const onLocale = () => setLocaleTick((x) => x + 1);

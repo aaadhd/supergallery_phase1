@@ -110,10 +110,30 @@ function maskPhone(phone: string): string {
   return digits.slice(0, digits.length - 4).replace(/./g, (c, i) => i < 3 || c === '+' ? c : '*') + digits.slice(-4);
 }
 
+/** 최소 전화번호 형식 검증: 숫자 7자리 이상 */
+function isValidPhoneFormat(phone: string): boolean {
+  const digits = phone.replace(/[^\d]/g, '');
+  return digits.length >= 7;
+}
+
 /** 모의 발송. 실패 시에도 게시는 계속 진행된다(호출 측에서 보장). */
 export function sendInviteToNonMember(input: SendInviteInput): SendInviteResult {
   const { phoneNumber, displayName, workId, exhibitionUrl, locale } = input;
   const channel = pickChannel(phoneNumber);
+
+  // 전화번호 형식 검증
+  if (!isValidPhoneFormat(phoneNumber)) {
+    return { success: false, channel, failReason: 'invalid_phone_format' };
+  }
+
+  // 이미 가입된 번호인지 확인
+  try {
+    const registered = JSON.parse(localStorage.getItem('artier_registered_phones_v1') || '[]') as string[];
+    const normalized = phoneNumber.replace(/[^\d+]/g, '');
+    if (registered.some((r) => r.replace(/[^\d+]/g, '') === normalized)) {
+      return { success: false, channel, failReason: 'already_registered' };
+    }
+  } catch { /* ignore */ }
 
   if (hasAlreadySent(phoneNumber, workId)) {
     return { success: true, channel, deduplicated: true };

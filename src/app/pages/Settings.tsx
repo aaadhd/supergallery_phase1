@@ -314,17 +314,20 @@ export default function Settings() {
           <div className="rounded-lg border border-border/40 overflow-hidden bg-white">
             <button
               type="button"
+              disabled={!isEmailShape}
               onClick={() => {
-                if (!isEmailShape) {
-                  toast.info(t('settings.changePasswordSocialHint'));
-                  return;
-                }
+                if (!isEmailShape) return;
                 setPwResetOpen(true);
               }}
-              className="flex w-full justify-between items-center py-4 px-4 border-b border-border/40 min-h-[44px] lg:hover:bg-muted/50 transition-colors text-left"
+              className={`flex w-full justify-between items-center py-4 px-4 border-b border-border/40 min-h-[44px] transition-colors text-left ${isEmailShape ? 'lg:hover:bg-muted/50' : 'opacity-50 cursor-not-allowed'}`}
             >
-              <span className="text-base text-foreground">{t('settings.changePassword')}</span>
-              <ChevronRight className="w-5 h-5 text-muted-foreground" aria-hidden />
+              <div>
+                <span className="text-base text-foreground">{t('settings.changePassword')}</span>
+                {!isEmailShape && (
+                  <p className="text-xs text-muted-foreground mt-0.5">{t('settings.changePasswordSocialHint')}</p>
+                )}
+              </div>
+              {isEmailShape && <ChevronRight className="w-5 h-5 text-muted-foreground" aria-hidden />}
             </button>
             <div className="flex justify-between items-center py-4 px-4 border-b border-border/40">
               <span className="text-base text-foreground">{t('settings.logoutRow')}</span>
@@ -338,12 +341,13 @@ export default function Settings() {
             </div>
           </div>
 
-          <div className="mt-8 text-center">
+          <div className="mt-8 pt-6 border-t border-destructive/20">
+            <p className="text-xs text-muted-foreground mb-3 text-center">{t('settings.withdrawWarning')}</p>
             <Button
-              variant="ghost"
+              variant="outline"
               type="button"
               onClick={() => setWithdrawOpen(true)}
-              className="text-xs text-muted-foreground lg:hover:text-muted-foreground underline underline-offset-2"
+              className="w-full text-sm text-destructive border-destructive/30 hover:bg-destructive/5 min-h-[44px]"
             >
               {t('settings.withdraw')}
             </Button>

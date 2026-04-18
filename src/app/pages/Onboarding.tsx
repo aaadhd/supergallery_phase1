@@ -9,6 +9,7 @@ import { matchSmsInviteOnSignup } from '../utils/inviteMessaging';
 import { isEmailRegistered, isPhoneRegistered, registerAccount } from '../utils/registeredAccounts';
 import { toast } from 'sonner';
 import { useI18n } from '../i18n/I18nProvider';
+import { containsProfanity } from '../utils/profanityFilter';
 import { Button } from '../components/ui/button';
 
 const TOTAL_STEPS = 3;
@@ -178,6 +179,14 @@ export default function Onboarding() {
   const finishOnboarding = () => {
     const name = nickname.trim();
     const real = realName.trim();
+    if (name && containsProfanity(name)) {
+      toast.error(t('onboarding.errProfanityNickname'));
+      return;
+    }
+    if (real && containsProfanity(real)) {
+      toast.error(t('onboarding.errProfanityRealName'));
+      return;
+    }
     profileStore.updateProfile({
       name,
       nickname: name,

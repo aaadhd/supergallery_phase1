@@ -747,7 +747,7 @@ export default function Upload() {
 
     const uploadedAt = new Date().toISOString().slice(0, 10);
     const newWork: Work = {
-      id: `user-${Date.now()}`,
+      id: `user-${crypto.randomUUID()}`,
       title: resolvedPieceTitle,
       image: urls.length === 1 ? urls[0] : urls,
       artistId: currentUser.id,
@@ -1731,6 +1731,11 @@ export default function Upload() {
                       >
                         {t('upload.saveDraft')}
                       </Button>
+                      {lastAutoSavedAt && (
+                        <p className="text-xs text-muted-foreground text-center mt-1">
+                          {t('upload.autoSavedAt').replace('{time}', new Date(lastAutoSavedAt).toLocaleTimeString(locale === 'en' ? 'en-US' : 'ko-KR', { hour: '2-digit', minute: '2-digit' }))}
+                        </p>
+                      )}
 
                       {contents.length > 1 && (
                         <Button

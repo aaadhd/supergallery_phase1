@@ -19,6 +19,11 @@ export default function Login() {
   const rawRedirect = searchParams.get('redirect') || '/';
   const redirectTo = rawRedirect.startsWith('/') && !rawRedirect.startsWith('//') ? rawRedirect : '/';
 
+  // 이미 로그인된 상태면 홈으로
+  useEffect(() => {
+    if (authStore.isLoggedIn()) navigate(redirectTo, { replace: true });
+  }, [navigate, redirectTo]);
+
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [showPassword, setShowPassword] = useState(false);

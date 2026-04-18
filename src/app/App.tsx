@@ -9,6 +9,7 @@ import { ConfirmDialogRoot } from './components/ConfirmDialog';
 import { OfflineBanner } from './components/OfflineBanner';
 import { PendingInviteClaimGate } from './components/PendingInviteClaimGate';
 import { applyFontScale } from './utils/fontScale';
+import { ErrorBoundary } from './components/ErrorBoundary';
 
 export default function App() {
   useEffect(() => {
@@ -16,14 +17,16 @@ export default function App() {
   }, []);
 
   return (
-    <I18nProvider>
-      <PointsBootstrap />
-      <WorksStorageSync />
-      <OfflineBanner />
-      <RouterProvider router={router} />
-      <Toaster position="top-center" richColors toastOptions={{ duration: 5000 }} />
-      <ConfirmDialogRoot />
-      <PendingInviteClaimGate />
-    </I18nProvider>
+    <ErrorBoundary>
+      <I18nProvider>
+        <PointsBootstrap />
+        <WorksStorageSync />
+        <OfflineBanner />
+        <RouterProvider router={router} />
+        <Toaster position="top-center" richColors toastOptions={{ duration: 5000 }} />
+        <ConfirmDialogRoot />
+        <PendingInviteClaimGate />
+      </I18nProvider>
+    </ErrorBoundary>
   );
 }

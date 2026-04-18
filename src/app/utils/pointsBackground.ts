@@ -7,6 +7,12 @@ const STATE_KEY = 'artier_points_state';
 const PUBLISH_TIMES_KEY = 'artier_work_publish_times';
 const PP_BALANCE_KEY = 'artier_pp_balance';
 
+/** 로컬 시간대 기준 YYYY-MM-DD (UTC 대신 사용자 시간대) */
+function localDateString(): string {
+  const d = new Date();
+  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+}
+
 export const POINTS_LEDGER_EVENT = 'artier-points-ledger';
 
 function notifyLedgerChanged() {
@@ -109,7 +115,7 @@ export function pointsOnOnboardingStep1Complete() {
 }
 
 export function pointsOnBrowseDailyVisit() {
-  const day = new Date().toISOString().slice(0, 10);
+  const day = localDateString();
   const s = loadState();
   if (s.dailyBrowseStreak === day) return;
   s.dailyBrowseStreak = day;
@@ -124,7 +130,7 @@ export function pointsOnWorkPublished(work: {
   groupName?: string;
 }) {
   const s = loadState();
-  const day = new Date().toISOString().slice(0, 10);
+  const day = localDateString();
   const month = day.slice(0, 7);
 
   let times: Record<string, string> = {};
