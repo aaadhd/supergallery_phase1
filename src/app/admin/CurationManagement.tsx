@@ -28,7 +28,7 @@ export default function CurationManagement() {
     e.preventDefault();
     const title = draftTitle.trim();
     if (!title) {
-      toast.error('테마 제목을 입력해 주세요.');
+      toast.error('기획전 제목을 입력해 주세요.');
       return;
     }
     const ids = draftWorkIds
@@ -41,19 +41,19 @@ export default function CurationManagement() {
       workIds: ids,
     };
     curationStore.setTheme(next);
-    toast.success('이번 주 테마전이 저장되었습니다.');
+    toast.success('이번 주 기획전이 저장되었습니다.');
   };
 
   const clearTheme = async () => {
     const ok = await openConfirm({
-      title: '이번 주 테마전을 해제할까요?',
-      description: '해제하면 둘러보기 피드의 테마 레이어가 비활성됩니다.',
+      title: '이번 주 기획전을 해제할까요?',
+      description: '해제하면 둘러보기 피드의 기획전 레이어가 비활성됩니다.',
       destructive: true,
       confirmLabel: '해제',
     });
     if (!ok) return;
     curationStore.clearTheme();
-    toast.success('테마전이 해제되었습니다.');
+    toast.success('기획전이 해제되었습니다.');
   };
 
   const toggleFeatured = (artistId: string) => {
@@ -75,19 +75,19 @@ export default function CurationManagement() {
     <div className="min-h-full">
       <h1 className="text-xl font-bold text-foreground mb-1">피드 큐레이션</h1>
       <p className="text-sm text-muted-foreground mb-6">
-        둘러보기 피드 노출 순서: <strong>Pick → 테마전 → 추천 작가 → 신규(14일) → 일반</strong>. 여기서 테마전·추천 작가 레이어를 관리합니다.
+        둘러보기 피드 노출 순서: <strong>Pick → 기획전 → 추천 작가 → 신규(14일) → 일반</strong>. 여기서 기획전·추천 작가 레이어를 관리합니다.
       </p>
 
-      {/* 테마전 */}
+      {/* 기획전 */}
       <section className="mb-10">
-        <h2 className="text-base font-semibold text-foreground mb-3">이번 주 테마전</h2>
+        <h2 className="text-base font-semibold text-foreground mb-3">이번 주 기획전</h2>
         <form
           onSubmit={saveTheme}
           className="rounded-lg border border-border p-4 space-y-3 bg-muted/30"
         >
           <div className="grid sm:grid-cols-2 gap-3">
             <input
-              placeholder="테마 제목 * (예: 봄 수채화 특집)"
+              placeholder="기획전 제목 * (예: 봄 수채화 특집)"
               value={draftTitle}
               onChange={(e) => setDraftTitle(e.target.value)}
               className="border border-border rounded-lg px-3 py-2 text-sm bg-white"
@@ -120,14 +120,14 @@ export default function CurationManagement() {
                 className="text-sm px-3 py-1.5 rounded-lg border border-red-200 text-red-700 lg:hover:bg-red-50 inline-flex items-center gap-1.5"
               >
                 <Trash2 className="w-3.5 h-3.5" />
-                테마 해제
+                기획전 해제
               </Button>
             )}
           </div>
         </form>
         {theme && (
           <div className="mt-3 text-xs text-muted-foreground">
-            현재 활성 테마: <strong className="text-foreground">{theme.title}</strong>
+            현재 활성 기획전: <strong className="text-foreground">{theme.title}</strong>
             {theme.subtitle ? ` · ${theme.subtitle}` : ''} · 포함 작품 {theme.workIds.length}개
           </div>
         )}
@@ -137,7 +137,7 @@ export default function CurationManagement() {
       <section>
         <h2 className="text-base font-semibold text-foreground mb-3">추천 작가 (피드 부스트)</h2>
         <p className="text-sm text-muted-foreground mb-4">
-          체크한 작가의 작품은 Pick/테마전 다음 우선순위로 노출됩니다. 현재 <strong>{featuredArtistIds.length}</strong>명 활성.
+          체크한 작가의 작품은 Pick/기획전 다음 우선순위로 노출됩니다. 현재 <strong>{featuredArtistIds.length}</strong>명 활성.
         </p>
         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
           {artists.map((a) => {
