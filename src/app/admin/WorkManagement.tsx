@@ -26,7 +26,6 @@ export default function WorkManagement() {
   const { t } = useI18n();
   const [loading, setLoading] = useState(true);
   const [works, setWorks] = useState<Work[]>(() => workStore.getWorks());
-  const [category, setCategory] = useState<string>('전체');
   const [visibility, setVisibility] = useState<VisibilityFilter>('전체');
   const [artistQ, setArtistQ] = useState('');
 
@@ -39,21 +38,14 @@ export default function WorkManagement() {
     return workStore.subscribe(() => setWorks(workStore.getWorks()));
   }, []);
 
-  const categories = useMemo(() => {
-    const set = new Set<string>();
-    for (const w of works) if (w.category) set.add(w.category);
-    return ['전체', ...[...set].sort()];
-  }, [works]);
-
   const filtered = useMemo(() => {
     const q = artistQ.trim().toLowerCase();
     return works.filter((w) => {
-      if (category !== '전체' && w.category !== category) return false;
       if (visibility !== '전체' && visibilityOf(w) !== visibility) return false;
       if (q && !w.artist.name.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [works, category, visibility, artistQ]);
+  }, [works, visibility, artistQ]);
 
   const toggleHidden = (w: Work) => {
     const next = !w.isHidden;
@@ -91,17 +83,6 @@ export default function WorkManagement() {
 
       <div className="flex flex-wrap gap-3 mb-6">
         <select
-          value={category}
-          onChange={(e) => setCategory(e.target.value)}
-          className="border border-border rounded-lg px-3 py-2 text-sm bg-white min-w-[140px]"
-        >
-          {categories.map((c) => (
-            <option key={c} value={c}>
-              카테고리: {c}
-            </option>
-          ))}
-        </select>
-        <select
           value={visibility}
           onChange={(e) => setVisibility(e.target.value as VisibilityFilter)}
           className="border border-border rounded-lg px-3 py-2 text-sm bg-white min-w-[140px]"
@@ -132,7 +113,6 @@ export default function WorkManagement() {
                 <th className="px-4 py-3 font-medium">전시명</th>
                 <th className="px-4 py-3 font-medium">작가명</th>
                 <th className="px-4 py-3 font-medium">업로드일</th>
-                <th className="px-4 py-3 font-medium">카테고리</th>
                 <th className="px-4 py-3 font-medium">상태</th>
                 <th className="px-4 py-3 font-medium text-right">작업</th>
               </tr>
@@ -152,7 +132,6 @@ export default function WorkManagement() {
                     <td className="px-4 py-3 font-medium text-foreground">{displayExhibitionTitle(w, t('work.untitled'))}</td>
                     <td className="px-4 py-3 text-muted-foreground">{w.artist.name}</td>
                     <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{w.uploadedAt || '—'}</td>
-                    <td className="px-4 py-3 text-muted-foreground">{w.category || '—'}</td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${visBadge(v)}`}>
                         {v}

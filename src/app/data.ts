@@ -32,10 +32,8 @@ export interface Work {
   artist: Artist;
   likes: number;
   saves: number;
-  comments: number;
   description?: string;
   tags?: string[];
-  category?: 'art' | 'fashion' | 'craft' | 'product';
   coOwners?: Artist[]; // 레거시 호환용
   /** 기획 전시 제목(예: 25회 정기 전시). 상세·검색의 「전시」 표시 1순위 */
   exhibitionName?: string;

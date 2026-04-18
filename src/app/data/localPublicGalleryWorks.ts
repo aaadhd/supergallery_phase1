@@ -384,8 +384,6 @@ export function buildLocalPublicWorks(paths: string[], artistsList: Artist[]): W
       imageArtists,
       likes: (i * 17 + 11) % 2400 + 3,
       saves: (i * 11 + 7) % 600 + 1,
-      comments: (i * 5) % 80,
-      category: 'art',
       description: groupName
         ? `전시 「${exhibitionName}」·그룹 「${groupName}」에 속한 작품입니다. 대표 작가 ${artist.name}. public/images 로컬 갤러리.`
         : `전시 「${exhibitionName}」에 속한 작품입니다. 대표 작가 ${artist.name}. public/images 로컬 갤러리.`,
@@ -445,7 +443,6 @@ export function buildLocalPublicWorks(paths: string[], artistsList: Artist[]): W
       title: pieceTitles[0],
       likes: lead.likes + imageList.length * 7,
       saves: lead.saves + imageList.length * 3,
-      comments: lead.comments + imageList.length * 2,
       primaryExhibitionType: 'group',
     });
 
@@ -489,7 +486,6 @@ export function buildLocalPublicWorks(paths: string[], artistsList: Artist[]): W
       // 원본 단일 작품보다 살짝 높은 노출 수치로 목업 카드가 섞여 보이게 조정
       likes: lead.likes + imageList.length * 9,
       saves: lead.saves + imageList.length * 4,
-      comments: lead.comments + imageList.length * 2,
       primaryExhibitionType: 'solo',
     } satisfies Work;
   };
