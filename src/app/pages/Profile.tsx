@@ -162,6 +162,16 @@ export default function Profile() {
   const [profileBio, setProfileBio] = useState(() => profileStore.getProfile().bio);
   const [profileLocation, setProfileLocation] = useState(() => profileStore.getProfile().location);
 
+  const openProfileEdit = () => {
+    setProfileNickname(displayName);
+    setProfileHeadline(savedProfile.headline);
+    setProfileBio(savedProfile.bio);
+    setProfileLocation(savedProfile.location);
+    setProfileLinks(savedProfile.externalLinks || []);
+    setProfileInterests(savedProfile.interests || []);
+    setShowProfileEditModal(true);
+  };
+
   const closeProfileEdit = async () => {
     const p = profileStore.getProfile();
     const dirty = profileNickname !== (p.nickname || '') || profileHeadline !== (p.headline || '') || profileBio !== (p.bio || '') || profileLocation !== (p.location || '');
@@ -440,7 +450,7 @@ export default function Profile() {
               <div className="space-y-6">
                 {/* 사용자 이름 */}
                 <div>
-                  <label className="block text-base font-semibold text-foreground mb-2">
+                  <label className="block text-sm font-semibold text-muted-foreground mb-2">
                     {t('profile.formDisplayName')}
                   </label>
                   <div className="relative">
@@ -464,7 +474,7 @@ export default function Profile() {
 
                 {/* 한 줄 프로필 */}
                 <div>
-                  <label className="block text-base font-semibold text-foreground mb-2">
+                  <label className="block text-sm font-semibold text-muted-foreground mb-2">
                     {t('profile.formHeadline')}
                   </label>
                   <div className="relative">
@@ -488,7 +498,7 @@ export default function Profile() {
 
                 {/* 소개 */}
                 <div>
-                  <label className="block text-base font-semibold text-foreground mb-2">
+                  <label className="block text-sm font-semibold text-muted-foreground mb-2">
                     {t('profile.formBio')}
                   </label>
                   <div className="relative">
@@ -506,7 +516,7 @@ export default function Profile() {
 
                 {/* 국가 */}
                 <div>
-                  <label className="block text-base font-semibold text-foreground mb-2">
+                  <label className="block text-sm font-semibold text-muted-foreground mb-2">
                     {t('profile.formCountry')}
                   </label>
                   <div className="relative">
@@ -540,7 +550,7 @@ export default function Profile() {
 
                 {/* 관심 화풍 */}
                 <div>
-                  <label className="block text-base font-semibold text-foreground mb-2">
+                  <label className="block text-sm font-semibold text-muted-foreground mb-2">
                     {t('profile.formInterests')}
                   </label>
                   <div className="flex flex-wrap gap-2">
@@ -563,7 +573,7 @@ export default function Profile() {
 
                 {/* 외부 링크 (SNS·라우드소싱 연동) — 플랫폼 고정 행 방식 */}
                 <div>
-                  <label className="block text-base font-semibold text-foreground mb-1">
+                  <label className="block text-sm font-semibold text-muted-foreground mb-1">
                     {t('profile.formLinks')}
                   </label>
                   <p className="text-xs text-muted-foreground mb-3">
@@ -641,6 +651,16 @@ export default function Profile() {
                     {t('profile.instructorBadge')}
                   </span>
                 )}
+                {isOwnProfile && (
+                  <button
+                    type="button"
+                    onClick={openProfileEdit}
+                    aria-label={t('profile.edit')}
+                    className="sm:hidden ml-auto h-11 w-11 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-full text-muted-foreground hover:bg-muted/60 transition-colors"
+                  >
+                    <Pencil className="h-5 w-5" />
+                  </button>
+                )}
               </div>
 
               {/* 한 줄 프로필 */}
@@ -675,7 +695,7 @@ export default function Profile() {
                   {viewProfile.interests.map((id) => (
                     <span
                       key={id}
-                      className="inline-flex items-center rounded-full border border-border/60 bg-muted/40 px-2.5 py-0.5 text-xs font-medium text-muted-foreground"
+                      className="inline-flex items-center rounded-full border border-border/60 bg-muted/40 px-2.5 py-0.5 text-xs font-medium text-foreground/80"
                     >
                       {t(`onboarding.tag.${id}` as any)}
                     </span>
@@ -701,7 +721,7 @@ export default function Profile() {
                         rel="noopener noreferrer"
                         title={display.name}
                         aria-label={`${display.name} 프로필 열기`}
-                        className="inline-flex h-10 w-10 items-center justify-center rounded-full border border-border/60 bg-white lg:hover:border-foreground/40 lg:hover:bg-muted/50 transition-colors"
+                        className="inline-flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-border/60 bg-white lg:hover:border-foreground/40 lg:hover:bg-muted/50 transition-colors"
                       >
                         {display.icon}
                       </a>
@@ -748,24 +768,15 @@ export default function Profile() {
                 </div>
               )}
 
-              {/* 프로필 편집 + 설정/로그아웃 (본인 프로필) */}
+              {/* 프로필 편집 버튼 — 데스크톱 전용 (모바일은 이름 옆 아이콘 버튼으로 노출) */}
               {isOwnProfile && (
                 <Button
-                  onClick={() => {
-                    setProfileNickname(displayName);
-                    setProfileHeadline(savedProfile.headline);
-                    setProfileBio(savedProfile.bio);
-                    setProfileLocation(savedProfile.location);
-                    setProfileLinks(savedProfile.externalLinks || []);
-                    setProfileInterests(savedProfile.interests || []);
-                    setShowProfileEditModal(true);
-                  }}
-                  className="mt-6 w-full bg-primary lg:hover:bg-primary/90 text-sm py-3 min-h-[44px]"
+                  onClick={openProfileEdit}
+                  className="hidden sm:flex mt-6 w-full bg-primary lg:hover:bg-primary/90 text-sm py-3 min-h-[44px]"
                 >
                   <Pencil className="h-4 w-4 mr-2" />
                   {t('profile.edit')}
                 </Button>
-
               )}
             </div>
 
@@ -863,9 +874,9 @@ export default function Profile() {
                         type="button"
                         onClick={() => setPublishedBannerDismissed(true)}
                         aria-label={t('profile.publishedBannerDismiss')}
-                        className="shrink-0 p-1 -m-1 rounded text-amber-700 lg:hover:text-amber-900 lg:hover:bg-amber-100 transition-colors"
+                        className="shrink-0 -mr-1 -mt-1 h-11 w-11 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-full text-amber-700 lg:hover:text-amber-900 lg:hover:bg-amber-100 transition-colors"
                       >
-                        <X className="h-4 w-4" />
+                        <X className="h-5 w-5" />
                       </button>
                     </div>
                   )}
@@ -1438,14 +1449,14 @@ export default function Profile() {
                               <div className="absolute right-2 top-2 z-20" onClick={(e) => e.stopPropagation()}>
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
-                                    <Button className="flex items-center justify-center h-9 w-9 min-h-[44px] min-w-[44px] rounded-full bg-black/60 text-white lg:hover:bg-black/80 hover-action">
+                                    <Button
+                                      className="flex items-center justify-center h-9 w-9 min-h-[44px] min-w-[44px] rounded-full bg-black/60 text-white lg:hover:bg-black/80 hover-action"
+                                      aria-label={t('profile.workMenuA11y')}
+                                    >
                                       <MoreHorizontal className="h-3.5 w-3.5" />
                                     </Button>
                                   </DropdownMenuTrigger>
                                   <DropdownMenuContent align="end" sideOffset={4}>
-                                    <DropdownMenuItem className="text-sm" onClick={() => navigate(`/upload?draft=${draft.id}`)}>
-                                      {t('profile.continueEditDraft')}
-                                    </DropdownMenuItem>
                                     <DropdownMenuItem
                                       className="text-destructive focus:text-destructive text-sm"
                                       onSelect={(e) => e.preventDefault()}
@@ -1471,6 +1482,10 @@ export default function Profile() {
                               <p className="text-xs text-muted-foreground mt-0.5">
                                 {new Date(draft.savedAt).toLocaleDateString(locale === 'en' ? 'en-US' : 'ko-KR')} ·{' '}
                                 {t('profile.draftImageCount').replace('{n}', String(draft.contents.length))}
+                              </p>
+                              <p className="text-xs font-medium text-primary mt-1.5 inline-flex items-center gap-0.5">
+                                {t('profile.continueEditDraft')}
+                                <ChevronRight className="h-3 w-3" />
                               </p>
                             </div>
                           </div>
