@@ -754,6 +754,17 @@ export default function Upload() {
       customCoverUrl: customCoverUrl && coverImageIndex === -1 ? customCoverUrl : undefined,
     };
 
+    // Prevent duplicate event participation (editing the same work is OK)
+    if (linkedEventId && !editingWorkId) {
+      const alreadySubmitted = workStore.getWorks().some(
+        w => w.linkedEventId?.toString() === linkedEventId.toString() && w.artistId === artists[0]?.id
+      );
+      if (alreadySubmitted) {
+        toast.error(t('upload.errDuplicateEvent'));
+        return;
+      }
+    }
+
     setIsPublishing(true);
     const targetId = editingWorkId || newWork.id;
     const wasEditingExistingWork = Boolean(editingWorkId);
@@ -765,6 +776,12 @@ export default function Upload() {
     if (resolvedGroup) setLastUsedGroupName(resolvedGroup);
     if (!editingWorkId) pointsOnWorkPublished(newWork);
     setShowDetailsModal(false);
+
+    // Clear draft that was used for this publish
+    const loadedDraftId = searchParams.get('draft');
+    if (loadedDraftId) {
+      draftStore.deleteDraft(loadedDraftId);
+    }
 
     // 비가입자 초대 모의 발송
     const nonMemberRecipients = imageArtists

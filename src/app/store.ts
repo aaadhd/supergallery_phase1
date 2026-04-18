@@ -2,7 +2,7 @@
 import { useState, useEffect } from 'react';
 import { Work, works as initialWorks, artists } from './data';
 import { pointsRecallIfQuickDelete } from './utils/pointsBackground';
-import { adjustArtistFollowerDelta, clearFollowerDeltas } from './utils/artistFollowDelta';
+import { adjustArtistFollowerDelta, removeArtistFollowerDelta } from './utils/artistFollowDelta';
 import { clearMockSession } from './services/sessionTokens';
 import {
   offloadHeavyMediaInWorks,
@@ -188,6 +188,44 @@ export const workStore = {
     currentWorks = currentWorks.filter(w => w.id !== id);
     userInteractionStore.removeWorkId(id);
     cleanupOrphanedWorkId(id);
+
+    // Clean up notifications referencing this work
+    try {
+      const nRaw = localStorage.getItem('artier_notifications');
+      if (nRaw) {
+        const notifs = JSON.parse(nRaw) as { workId?: string }[];
+        const cleaned = notifs.filter(n => n.workId !== id);
+        if (cleaned.length !== notifs.length) {
+          localStorage.setItem('artier_notifications', JSON.stringify(cleaned));
+          window.dispatchEvent(new Event('artier-notifications-changed'));
+        }
+      }
+    } catch { /* ignore */ }
+
+    // Clean up reports referencing this work
+    try {
+      const rRaw = localStorage.getItem('artier_reports');
+      if (rRaw) {
+        const reports = JSON.parse(rRaw) as { targetId?: string }[];
+        const cleaned = reports.filter(r => r.targetId !== id);
+        if (cleaned.length !== reports.length) {
+          localStorage.setItem('artier_reports', JSON.stringify(cleaned));
+        }
+      }
+    } catch { /* ignore */ }
+
+    // Clean up admin picks referencing this work
+    try {
+      const pRaw = localStorage.getItem('artier_admin_picks_v1');
+      if (pRaw) {
+        const picks = JSON.parse(pRaw) as string[];
+        const cleaned = picks.filter(p => p !== id);
+        if (cleaned.length !== picks.length) {
+          localStorage.setItem('artier_admin_picks_v1', JSON.stringify(cleaned));
+        }
+      }
+    } catch { /* ignore */ }
+
     emitWorksChanged();
     return schedulePersist();
   },
@@ -432,20 +470,32 @@ export const userInteractionStore = {
   isLiked: (id: string) => currentInteractions.liked.includes(id),
   isSaved: (id: string) => currentInteractions.saved.includes(id),
   toggleLike: (id: string) => {
-    if (currentInteractions.liked.includes(id)) {
+    const alreadyLiked = currentInteractions.liked.includes(id);
+    if (alreadyLiked) {
       currentInteractions.liked = currentInteractions.liked.filter(i => i !== id);
     } else {
       currentInteractions.liked = [...currentInteractions.liked, id];
     }
     saveInteractions();
+    const w = currentWorks.find(w => w.id === id);
+    if (w) {
+      const delta = alreadyLiked ? -1 : 1;
+      workStore.updateWork(id, { likes: Math.max(0, (w.likes ?? 0) + delta) });
+    }
   },
   toggleSave: (id: string) => {
-    if (currentInteractions.saved.includes(id)) {
+    const alreadySaved = currentInteractions.saved.includes(id);
+    if (alreadySaved) {
       currentInteractions.saved = currentInteractions.saved.filter(i => i !== id);
     } else {
       currentInteractions.saved = [...currentInteractions.saved, id];
     }
     saveInteractions();
+    const w = currentWorks.find(w => w.id === id);
+    if (w) {
+      const delta = alreadySaved ? -1 : 1;
+      workStore.updateWork(id, { saves: Math.max(0, (w.saves ?? 0) + delta) });
+    }
   },
   removeWorkId: (id: string) => {
     currentInteractions.liked = currentInteractions.liked.filter(i => i !== id);
@@ -683,7 +733,7 @@ export function performAccountWithdrawal(currentArtistId: string, withdrawReason
   localStorage.setItem('artier_interactions', JSON.stringify(currentInteractions));
   interactionListeners.forEach((l) => l());
   currentFollows = [];
-  clearFollowerDeltas();
+  removeArtistFollowerDelta(currentArtistId);
   saveFollows();
   const draftIds = draftStore.getDrafts().map((d) => d.id);
   draftIds.forEach((id) => draftStore.deleteDraft(id));

@@ -200,12 +200,13 @@ export default function Profile() {
     const own = storeWorks
       .filter(w => w.artistId === profileArtist.id)
       .filter(w => !w.isInstructorUpload)
-      .filter(w => isOwnProfile || (w.feedReviewStatus !== 'pending' && w.feedReviewStatus !== 'rejected'));
+      .filter(w => isOwnProfile || (!w.isHidden && w.feedReviewStatus !== 'pending' && w.feedReviewStatus !== 'rejected'));
     const ownIds = new Set(own.map(w => w.id));
 
     const hydrated = hydrateGroupWorks(artists) as Work[];
     const participating = hydrated.filter(gw => {
       if (ownIds.has(gw.id)) return false;
+      if (!isOwnProfile && gw.isHidden) return false;
       if (gw.artistId === profileArtist.id) return true;
       return gw.imageArtists?.some(ia => ia.type === 'member' && ia.memberId === profileArtist.id) ?? false;
     });
@@ -423,16 +424,16 @@ export default function Profile() {
                       type="text"
                       value={profileNickname}
                       onChange={(e) => {
-                        if (e.target.value.length <= 20) {
+                        if (e.target.value.length <= TITLE_FIELD_MAX_LEN) {
                           setProfileNickname(e.target.value);
                         }
                       }}
                       placeholder={t('profile.formDisplayNamePh')}
                       className="w-full px-4 py-3.5 border border-input rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
-                      maxLength={20}
+                      maxLength={TITLE_FIELD_MAX_LEN}
                     />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-                      {profileNickname.length}/20
+                      {profileNickname.length}/{TITLE_FIELD_MAX_LEN}
                     </span>
                   </div>
                 </div>
@@ -447,16 +448,16 @@ export default function Profile() {
                       type="text"
                       value={profileHeadline}
                       onChange={(e) => {
-                        if (e.target.value.length <= 20) {
+                        if (e.target.value.length <= TITLE_FIELD_MAX_LEN) {
                           setProfileHeadline(e.target.value);
                         }
                       }}
                       placeholder={t('profile.formHeadlinePh')}
                       className="w-full px-4 py-3.5 border border-input rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
-                      maxLength={20}
+                      maxLength={TITLE_FIELD_MAX_LEN}
                     />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
-                      {profileHeadline.length}/20
+                      {profileHeadline.length}/{TITLE_FIELD_MAX_LEN}
                     </span>
                   </div>
                 </div>

@@ -9,6 +9,7 @@ import type { MessageKey } from '../i18n/messages';
 import { useI18n } from '../i18n/I18nProvider';
 import { loadNotificationSettings, type NotificationSettingsState } from './Settings';
 import { openConfirm } from '../components/ConfirmDialog';
+import { authStore } from '../store';
 
 const STORAGE_KEY = 'artier_notifications';
 const MAX_NOTIFICATIONS = 200;
@@ -179,6 +180,13 @@ type CategoryTab = 'all' | Notification['type'];
 export default function Notifications() {
   const navigate = useNavigate();
   const { t, locale } = useI18n();
+
+  useEffect(() => {
+    if (!authStore.isLoggedIn()) {
+      navigate('/login?redirect=/notifications', { replace: true });
+    }
+  }, [navigate]);
+
   const [notifications, setNotifications] = useState<Notification[]>(loadNotifications);
   const [readFilter, setReadFilter] = useState<'all' | 'unread'>('all');
   const [categoryTab, setCategoryTab] = useState<CategoryTab>('all');

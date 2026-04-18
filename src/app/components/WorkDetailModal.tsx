@@ -105,7 +105,9 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
-  if (!work) return null;
+  // Hidden works are only visible to the owning artist
+  const isOwnerViewing = authStore.isLoggedIn() && work?.artistId === allArtists[0]?.id;
+  if (!work || (work.isHidden && !isOwnerViewing)) return null;
 
   const headline = displayExhibitionTitle(work, t('work.untitled'));
   const groupOrgLine = displayGroupOrgName(work);

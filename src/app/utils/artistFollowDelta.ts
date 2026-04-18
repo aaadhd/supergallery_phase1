@@ -35,3 +35,9 @@ export function getDisplayFollowerCount(artist: { id: string; followers?: number
 export function clearFollowerDeltas() {
   localStorage.removeItem(KEY);
 }
+
+export function removeArtistFollowerDelta(artistId: string) {
+  const d = load();
+  delete d[artistId];
+  save(d);
+}

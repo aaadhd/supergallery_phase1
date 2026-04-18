@@ -48,7 +48,7 @@
 - `src/app/components/PendingInviteClaimGate.tsx` — 가입 직후 이름 불일치로 자동 매칭 실패한 초대에 대해 본인 확인 모달 (수락/거부/나중에). 수락 시 수동 승격, 거부 시 발신 작가에게 경고 +1
 
 ### 유틸 / Store
-- `src/app/store.ts` — `WORKS_STORAGE_VERSION` 스토리지 버전 관리 (현재 값 `local-gallery-v11`, 키 `artier_works_version`)
+- `src/app/store.ts` — `WORKS_STORAGE_VERSION` 스토리지 버전 관리 (현재 값 `local-gallery-v13`, 키 `artier_works_version`)
 - `src/app/store/workStore.ts`, `draftStore.ts` — 작품/초안 상태
 - `src/app/utils/inviteMessaging.ts` — 초대 발송 (5% 랜덤 실패 시뮬, `artier_invite_messaging_log`) + `matchSmsInviteOnSignup` 가입 시 전화+실명 일치 작품 자동 연결 (이름 불일치는 `blockedList`로 반환 → 본인 확인 후 `claimBlockedInvite`로 수동 승격)
 - `src/app/utils/sanctionStore.ts` — 경고·허위신고 카운터 + 정지 단계 (`SuspensionLevel`, `addWarning`, `addFalseReport`, `suspendDemoUser`)
@@ -185,7 +185,7 @@
 - **Deprecated (부팅 시 제거)**: `artier_instructor_public_ids` (2026-04-13 강사 단일화), `artier_pin_comments` (2026-04-15 Phase 2 선행 제거), `artier_upload_guide_seen` (2026-04-15), `artier_group_canonical_map` (2026-04-17 그룹명 중복 허용) — `PointsBootstrap` 마운트 시 `LEGACY_STORAGE_KEYS`로 일괄 정리
 
 ### 기타
-- **버전 관리**: `WORKS_STORAGE_VERSION` (`local-gallery-v11`) 변경 시 works 데이터 자동 재시드
+- **버전 관리**: `WORKS_STORAGE_VERSION` (`local-gallery-v13`) 변경 시 works 데이터 자동 재시드
 - **이벤트 데이터**: `eventStore.ts` 단일 소스 + `artier_managed_events_v1` 영속화 (IMPLEMENTATION_DELTA §8.5·§9.7)
 - **포인트 회수**: 업로드 후 24시간 이내 삭제 시 AP -20 (`pointsBackground.ts:pointsRecallIfQuickDelete`)
 - **강사 표시**: 별도 저장소 없음. `workStore` 작품 목록에서 파생 (`Profile.tsx`의 `instructorVisible`, 단일 소스)
