@@ -247,6 +247,7 @@ export default function Upload() {
   const [reorderMode, setReorderMode] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
+  const [publishedResult, setPublishedResult] = useState<{ workId: string; autoApproved: boolean; hasNonMemberInvites: boolean } | null>(null);
   /* dragIndex 삭제됨 — @dnd-kit이 드래그 상태를 자체 관리 */
   /* hoveredBlockId 삭제됨 — 툴바를 항상 노출하므로 호버 추적 불필요 */
 
@@ -843,10 +844,11 @@ export default function Upload() {
       // 이벤트 응모면 이벤트 상세로 복귀
       if (linkedEventId) {
         navigate(`/events/${linkedEventId}`);
-      } else if (wasEditingExistingWork || autoApproved) {
+      } else if (wasEditingExistingWork) {
         navigate('/me?tab=exhibition');
       } else {
-        navigate(`/me?tab=exhibition&published=pending&workId=${targetId}`);
+        // 발행 확인 화면 표시
+        setPublishedResult({ workId: targetId, autoApproved, hasNonMemberInvites });
       }
     }, 600);
   };
@@ -991,6 +993,37 @@ export default function Upload() {
       coverImageIndex: customCoverUrl && coverImageIndex === -1 ? -1 : Math.max(0, coverImageIndex),
     } satisfies Work;
   }, [previewMode, contents, exhibitionName, groupName, uploadType, customCoverUrl, coverImageIndex, t]);
+
+  // ━━━━━━ 전시 완료 확인 화면 ━━━━━━
+  if (publishedResult) {
+    const { workId: pubWorkId, autoApproved: pubAutoApproved, hasNonMemberInvites: pubHasInvites } = publishedResult;
+    return (
+      <div className="flex flex-col items-center justify-center min-h-[60vh] px-6 py-16 text-center">
+        <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-6">
+          <svg className="h-8 w-8 text-primary" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
+            <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
+          </svg>
+        </div>
+        <h2 className="text-xl font-bold text-foreground mb-3">
+          {pubAutoApproved ? t('upload.publishedConfirmTitleApproved') : t('upload.publishedConfirmTitle')}
+        </h2>
+        <p className="text-base text-muted-foreground mb-2 max-w-md">
+          {pubAutoApproved ? t('upload.publishedConfirmDescApproved') : t('upload.publishedConfirmDesc')}
+        </p>
+        {pubHasInvites && (
+          <p className="text-sm text-primary mb-4">{t('upload.toastInvitePending')}</p>
+        )}
+        <div className="flex flex-col sm:flex-row gap-3 mt-6">
+          <Button onClick={() => navigate('/me?tab=exhibition')} className="min-h-[44px] px-6">
+            {t('upload.publishedConfirmGoProfile')}
+          </Button>
+          <Button variant="outline" onClick={() => navigate('/')} className="min-h-[44px] px-6">
+            {t('upload.publishedConfirmGoBrowse')}
+          </Button>
+        </div>
+      </div>
+    );
+  }
 
   if (previewMode && previewWork) {
     return (

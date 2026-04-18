@@ -45,8 +45,8 @@ export function addWarning(targetArtistId: string): {
   map[targetArtistId] = next;
   writeMap(WARNING_KEY, map);
 
-  // 데모 사용자(artists[0])이고 3회 누적이면 자동 7일 정지
-  if (next >= 3 && targetArtistId === artists[0].id) {
+  // 3회 누적이면 자동 7일 정지
+  if (next >= 3) {
     suspendDemoUser(7, '경고 누적 3회로 자동 정지되었습니다.');
     return { count: next, triggeredSuspension: true };
   }
@@ -64,7 +64,7 @@ export function addFalseReport(reporterId: string): {
   map[reporterId] = next;
   writeMap(FALSE_REPORT_KEY, map);
 
-  if (next >= 3 && reporterId === artists[0].id) {
+  if (next >= 3) {
     suspendDemoUser(7, '허위 신고 3회 누적으로 7일 차단되었습니다.');
     return { count: next, triggeredBlock: true };
   }
