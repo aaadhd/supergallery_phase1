@@ -1,5 +1,5 @@
 import { motion } from 'framer-motion';
-import { X, Heart, Bookmark, Share2, ChevronLeft, ChevronRight, UserPlus, Users, Link2, MessageCircle, Flag, Mail } from 'lucide-react';
+import { X, Heart, Bookmark, Share2, ChevronLeft, ChevronRight, UserPlus, Users, Flag } from 'lucide-react';
 import { useI18n } from '../i18n/I18nProvider';
 import { Work, Artist, works, artists as allArtists } from '../data';
 import { hydrateGroupWorks } from '../groupData';
@@ -14,7 +14,6 @@ import { CopyrightProtectedImage } from './work';
 import { toast } from 'sonner';
 import { LoginPromptModal } from './LoginPromptModal';
 import { ReportModal } from './ReportModal';
-import { Popover, PopoverTrigger, PopoverContent } from './ui/popover';
 import DeepZoomViewer from './DeepZoomViewer';
 import { Button } from './ui/button';
 import {
@@ -48,7 +47,6 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
   const [zoomOrigin, setZoomOrigin] = useState('center center');
   const [deepZoomSrc, setDeepZoomSrc] = useState<string | null>(null);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
-  const [isShareOpen, setIsShareOpen] = useState(false);
   const [showReport, setShowReport] = useState(false);
 
   const navigate = useNavigate();
@@ -244,22 +242,25 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
       .replace('{brand}', t('brand.name'));
   };
 
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(workShareUrl);
+  const handleShare = async () => {
+    const shareText = buildInvitationCardText();
+    // 네이티브 공유 API (모바일: 카톡/문자/라인 등 앱 선택)
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: t('workDetail.shareTitle').replace('{artist}', work?.artist.name ?? ''),
+          text: shareText,
+          url: workShareUrl,
+        });
+        return;
+      } catch (e) {
+        // 사용자가 취소한 경우 — 폴백으로 복사
+        if (e instanceof Error && e.name === 'AbortError') return;
+      }
+    }
+    // 데스크탑 폴백: 클립보드에 멘트+링크 복사
+    navigator.clipboard.writeText(`${shareText}\n${workShareUrl}`);
     toast.success(t('workDetail.toastLinkCopied'));
-    setIsShareOpen(false);
-  };
-
-  const handleCopyInvitation = () => {
-    navigator.clipboard.writeText(buildInvitationCardText());
-    toast.success(t('workDetail.toastInviteCopied'));
-    setIsShareOpen(false);
-  };
-
-  const handleKakaoShare = () => {
-    navigator.clipboard.writeText(buildInvitationCardText());
-    toast.success(t('workDetail.toastKakaoCopied'));
-    setIsShareOpen(false);
   };
 
   return (
@@ -748,50 +749,18 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
               </div>
             </button>
 
-            {/* Share */}
-            <Popover open={isShareOpen} onOpenChange={setIsShareOpen}>
-              <PopoverTrigger asChild>
-                <button
-                  type="button"
-                  className="flex h-auto min-h-0 flex-col items-center gap-1.5 py-1 text-white group"
-                  aria-label={t('workDetail.share')}
-                >
-                  <div className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-[#333333] shadow-lg lg:group-hover:bg-[#444] transition-all">
-                    <Share2 className="h-[22px] w-[22px] text-white" />
-                  </div>
-                  <span className="text-xs font-bold text-white/80 group-hover:text-white transition-colors uppercase drop-shadow-md">{t('workDetail.share')}</span>
-                </button>
-              </PopoverTrigger>
-              <PopoverContent side="left" align="center" className="w-[min(100vw-2rem,17rem)] p-2 bg-white border-zinc-200 shadow-2xl z-[110] text-zinc-900">
-                <Button
-                  type="button"
-                  variant="toolbar"
-                  onClick={handleCopyInvitation}
-                  className="flex h-auto w-full items-center justify-start gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-zinc-800 lg:hover:bg-zinc-100"
-                >
-                  <Mail className="h-4 w-4 shrink-0" />
-                  {t('workDetail.copyInviteCard')}
-                </Button>
-                <Button
-                  type="button"
-                  variant="toolbar"
-                  onClick={handleCopyLink}
-                  className="flex h-auto w-full items-center justify-start gap-3 rounded-lg px-3 py-2.5 text-sm text-zinc-800 lg:hover:bg-zinc-100"
-                >
-                  <Link2 className="h-4 w-4" />
-                  {t('workDetail.copyLink')}
-                </Button>
-                <Button
-                  type="button"
-                  variant="toolbar"
-                  onClick={handleKakaoShare}
-                  className="flex h-auto w-full items-center justify-start gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-zinc-800 lg:hover:bg-zinc-100"
-                >
-                  <MessageCircle className="h-4 w-4 shrink-0" />
-                  {t('workDetail.kakaoShare')}
-                </Button>
-              </PopoverContent>
-            </Popover>
+            {/* Share — 단일 버튼 (모바일: 네이티브 공유, 데스크탑: 클립보드 복사) */}
+            <button
+              type="button"
+              onClick={handleShare}
+              className="flex h-auto min-h-0 flex-col items-center gap-1.5 py-1 text-white group"
+              aria-label={t('workDetail.share')}
+            >
+              <div className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-[#333333] shadow-lg lg:group-hover:bg-[#444] transition-all">
+                <Share2 className="h-[22px] w-[22px] text-white" />
+              </div>
+              <span className="text-xs font-bold text-white/80 group-hover:text-white transition-colors uppercase drop-shadow-md">{t('workDetail.share')}</span>
+            </button>
 
             {work.artistId !== allArtists[0].id && (
               <button
@@ -861,46 +830,14 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
             <Bookmark className={`h-6 w-6 ${isSaved ? 'text-white fill-white' : 'text-white'}`} />
             <span className="text-xs text-white/90">{t('workDetail.save')}</span>
           </button>
-          <Popover open={isShareOpen} onOpenChange={setIsShareOpen}>
-            <PopoverTrigger asChild>
-              <button
-                type="button"
-                className="flex flex-col items-center gap-1 p-1.5 -m-1 border-0 bg-transparent shadow-none cursor-pointer"
-              >
-                <Share2 className="h-6 w-6 text-white" />
-                <span className="text-xs text-white/90">{t('workDetail.share')}</span>
-              </button>
-            </PopoverTrigger>
-            <PopoverContent side="top" className="w-[min(100vw-2rem,17rem)] p-2 bg-[#2a2a2a] border-white/10 z-[110] mb-2">
-              <Button
-                type="button"
-                variant="toolbar"
-                onClick={handleCopyInvitation}
-                className="flex h-auto w-full items-center justify-start gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-white"
-              >
-                <Mail className="h-4 w-4 shrink-0" />
-                {t('workDetail.copyInviteCard')}
-              </Button>
-              <Button
-                type="button"
-                variant="toolbar"
-                onClick={handleCopyLink}
-                className="flex h-auto w-full items-center justify-start gap-3 rounded-lg px-3 py-2.5 text-sm text-white"
-              >
-                <Link2 className="h-4 w-4" />
-                {t('workDetail.copyLink')}
-              </Button>
-              <Button
-                type="button"
-                variant="toolbar"
-                onClick={handleKakaoShare}
-                className="flex h-auto w-full items-center justify-start gap-3 rounded-lg px-3 py-2.5 text-left text-sm text-white"
-              >
-                <MessageCircle className="h-4 w-4 shrink-0" />
-                {t('workDetail.kakaoShare')}
-              </Button>
-            </PopoverContent>
-          </Popover>
+          <button
+            type="button"
+            onClick={handleShare}
+            className="flex flex-col items-center gap-1 p-1.5 -m-1 border-0 bg-transparent shadow-none cursor-pointer"
+          >
+            <Share2 className="h-6 w-6 text-white" />
+            <span className="text-xs text-white/90">{t('workDetail.share')}</span>
+          </button>
           {/* 그룹·내 작품은 팔로우 버튼 숨김 */}
           {!isGroupWork && work.artist.id !== allArtists[0]?.id && (
             <button
