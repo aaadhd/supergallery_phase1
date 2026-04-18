@@ -748,6 +748,8 @@ export default function Profile() {
             {/* 오른쪽: 탭 컨텐츠 */}
             <div className="flex-1 py-4 sm:py-8">
               <Tabs value={profileTab} onValueChange={(v) => setProfileTab(v as ProfileTabValue)} className="w-full">
+                <div className="relative">
+                <div className="pointer-events-none absolute right-0 top-0 bottom-0 w-8 bg-gradient-to-l from-white to-transparent z-10 sm:hidden" />
                 <TabsList className="h-auto p-0 bg-transparent border-b border-border/40 rounded-none w-full justify-start gap-0 overflow-x-auto scrollbar-hide">
                   <TabsTrigger
                     value="exhibition"
@@ -797,6 +799,7 @@ export default function Profile() {
                     </TabsTrigger>
                   )}
                 </TabsList>
+                </div>
 
                 <p className="mt-3 rounded-lg border border-border/60 bg-muted/30 px-3.5 py-2.5 text-xs sm:text-sm text-muted-foreground">
                   {t(profileTabGuideKey)}
@@ -889,7 +892,7 @@ export default function Profile() {
                                   <DropdownMenuTrigger asChild>
                                     <Button
                                       type="button"
-                                      className="flex h-7 w-7 items-center justify-center rounded-full bg-black/60 p-0 text-white shadow-none hover:bg-black/75 hover:text-white"
+                                      className="flex h-9 w-9 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-black/60 p-0 text-white shadow-none hover:bg-black/75 hover:text-white"
                                       aria-label={t('profile.workMenuA11y')}
                                     >
                                       <MoreHorizontal className="h-4 w-4" strokeWidth={2.5} />
@@ -1055,7 +1058,7 @@ export default function Profile() {
                                     <DropdownMenuTrigger asChild>
                                       <Button
                                         type="button"
-                                        className="flex h-7 w-7 items-center justify-center rounded-full bg-black/60 p-0 text-white shadow-none hover:bg-black/75 hover:text-white"
+                                        className="flex h-9 w-9 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-black/60 p-0 text-white shadow-none hover:bg-black/75 hover:text-white"
                                         aria-label={t('profile.workMenuA11y')}
                                       >
                                         <MoreHorizontal className="h-4 w-4" strokeWidth={2.5} />
@@ -1189,7 +1192,7 @@ export default function Profile() {
                                 <DropdownMenuTrigger asChild>
                                   <Button
                                     type="button"
-                                    className="flex h-7 w-7 items-center justify-center rounded-full bg-black/60 p-0 text-white shadow-none hover:bg-black/75 hover:text-white"
+                                    className="flex h-9 w-9 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-black/60 p-0 text-white shadow-none hover:bg-black/75 hover:text-white"
                                     aria-label={t('profile.workMenuA11y')}
                                   >
                                     <MoreHorizontal className="h-4 w-4" strokeWidth={2.5} />
@@ -1404,7 +1407,7 @@ export default function Profile() {
                               <div className="absolute right-2 top-2 z-20" onClick={(e) => e.stopPropagation()}>
                                 <DropdownMenu>
                                   <DropdownMenuTrigger asChild>
-                                    <Button className="flex items-center justify-center h-7 w-7 rounded-full bg-black/60 text-white lg:hover:bg-black/80 hover-action">
+                                    <Button className="flex items-center justify-center h-9 w-9 min-h-[44px] min-w-[44px] rounded-full bg-black/60 text-white lg:hover:bg-black/80 hover-action">
                                       <MoreHorizontal className="h-3.5 w-3.5" />
                                     </Button>
                                   </DropdownMenuTrigger>

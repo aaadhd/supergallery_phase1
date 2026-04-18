@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { useNavigate, useSearchParams, useBlocker } from 'react-router-dom';
-import { Image as ImageIcon, Plus, X, Search, GripVertical, ArrowLeft, ChevronLeft, ChevronRight, Trash2, Replace, ArrowUpDown, Monitor, Users, CalendarCheck, Star, Check, CircleHelp } from 'lucide-react';
+import { Image as ImageIcon, Plus, X, Search, GripVertical, ArrowLeft, ChevronLeft, ChevronRight, Trash2, Replace, ArrowUpDown, Monitor, Users, CalendarCheck, Star, Check, CircleHelp, GraduationCap } from 'lucide-react';
 import { artists } from '../data';
 import { workStore, draftStore, useAuthStore } from '../store';
 
@@ -311,6 +311,8 @@ export default function Upload() {
   /* ── 강사 ── */
   const [isInstructor, setIsInstructor] = useState(false);
   const [roleInfoOpen, setRoleInfoOpen] = useState(false);
+  const [groupSubStep, setGroupSubStep] = useState<'askRole' | null>(null);
+  const [cameraBlockNotice, setCameraBlockNotice] = useState(false);
 
   /* ── 이벤트 연결 ── */
   const linkedEventId = searchParams.get('event');
@@ -360,6 +362,7 @@ export default function Upload() {
     if (!newKey) return;
     setContents([]);
     setUploadType(null);
+    setGroupSubStep(null);
     setExhibitionName('');
     setGroupName('');
     setIsOriginalWork(false);
@@ -550,7 +553,7 @@ export default function Upload() {
       }
       try {
         if (await shouldBlockCameraPhoto(file)) {
-          toast.error(t('upload.cameraBlocked'));
+          setCameraBlockNotice(true);
           continue;
         }
         const { convertImageFileToWebpDataUrlIfPossible } = await import('../utils/imageToWebp');
@@ -1083,7 +1086,7 @@ export default function Upload() {
               <p className="text-sm text-muted-foreground font-medium leading-relaxed">{t('upload.typeSoloDesc1')}</p>
             </button>
             <button
-              onClick={() => setUploadType('group')}
+              onClick={() => setGroupSubStep('askRole')}
               className="flex flex-col items-center text-center p-10 bg-white border-2 border-border/60 hover:border-foreground transition-all rounded-2xl group shadow-sm hover:shadow-md"
             >
               <div className="w-16 h-16 rounded-full bg-foreground text-white flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
@@ -1093,6 +1096,49 @@ export default function Upload() {
               <p className="text-sm text-muted-foreground font-medium leading-relaxed">{t('upload.typeGroupDesc1')}</p>
             </button>
           </div>
+
+          {/* 함께 올리기 — 역할 선택 모달 */}
+          {groupSubStep === 'askRole' && (
+            <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setGroupSubStep(null)}>
+              <div className="absolute inset-0 bg-black/50 animate-in fade-in duration-200" />
+              <div
+                className="relative z-10 w-full max-w-lg bg-white rounded-2xl shadow-2xl p-8 sm:p-10 animate-in fade-in zoom-in-95 duration-300"
+                onClick={(e) => e.stopPropagation()}
+              >
+                <button
+                  type="button"
+                  onClick={() => setGroupSubStep(null)}
+                  className="absolute right-4 top-4 p-2 rounded-full text-muted-foreground hover:bg-muted transition-colors"
+                >
+                  <X className="h-5 w-5" />
+                </button>
+                <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2 text-center">{t('upload.groupRoleTitle')}</h2>
+                <p className="text-sm text-muted-foreground mb-8 text-center">{t('upload.groupRoleSubtitle')}</p>
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                  <button
+                    onClick={() => { setIsInstructor(false); setGroupSubStep(null); setUploadType('group'); }}
+                    className="flex flex-col items-center text-center p-6 sm:p-8 bg-white border-2 border-border/60 hover:border-foreground transition-all rounded-2xl group shadow-sm hover:shadow-md"
+                  >
+                    <div className="w-14 h-14 rounded-full bg-foreground text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                      <Users className="w-7 h-7" />
+                    </div>
+                    <h3 className="text-base font-bold text-foreground mb-2">{t('upload.groupRoleParticipant')}</h3>
+                    <p className="text-xs text-muted-foreground font-medium leading-relaxed">{t('upload.groupRoleParticipantDesc')}</p>
+                  </button>
+                  <button
+                    onClick={() => { setIsInstructor(true); setGroupSubStep(null); setUploadType('group'); }}
+                    className="flex flex-col items-center text-center p-6 sm:p-8 bg-white border-2 border-border/60 hover:border-foreground transition-all rounded-2xl group shadow-sm hover:shadow-md"
+                  >
+                    <div className="w-14 h-14 rounded-full bg-foreground text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
+                      <GraduationCap className="w-7 h-7" />
+                    </div>
+                    <h3 className="text-base font-bold text-foreground mb-2">{t('upload.groupRoleInstructor')}</h3>
+                    <p className="text-xs text-muted-foreground font-medium leading-relaxed">{t('upload.groupRoleInstructorDesc')}</p>
+                  </button>
+                </div>
+              </div>
+            </div>
+          )}
         </div>
       ) : (
         <>
@@ -1144,10 +1190,7 @@ export default function Upload() {
                   <div className="px-6 py-5 overflow-y-auto flex-1 space-y-5">
                     {/* 커버 이미지 */}
                     <div className="space-y-3">
-                      <div>
-                        <p className="text-sm font-medium text-foreground">{t('upload.coverSectionTitle')}</p>
-                        <p className="text-sm text-muted-foreground mt-0.5">{t('upload.coverSectionDesc')}</p>
-                      </div>
+                      <p className="text-sm font-medium text-foreground">{t('upload.coverSectionTitle')}</p>
                       <div className="flex gap-2 overflow-x-auto pb-2 scrollbar-hide">
                         {/* 커스텀 커버 (로컬 파일, 선택 시 전시 이미지 배열엔 포함되지 않음) */}
                         {customCoverUrl && (
@@ -1213,7 +1256,6 @@ export default function Upload() {
                           onChange={handleCoverFileChange}
                         />
                       </div>
-                      <p className="text-xs text-muted-foreground">{t('upload.customCoverHint')}</p>
                     </div>
 
                     {/* 원작 확인 */}
@@ -1242,10 +1284,13 @@ export default function Upload() {
                   </div>
 
                   {/* 푸터 */}
-                  <div className="border-t border-border px-6 py-4">
+                  <div className="sticky bottom-0 z-10 border-t border-border px-6 py-4 bg-white">
+                    {!isOriginalWork && !isPublishing && (
+                      <p className="text-xs text-amber-600 text-center mb-2">{t('upload.hintCheckOriginal')}</p>
+                    )}
                     <div className="flex items-center justify-end gap-3">
                       <Button variant="ghost" onClick={() => setShowDetailsModal(false)} className="px-5 py-2.5 text-sm min-h-[44px]">{t('upload.close')}</Button>
-                      <Button disabled={isPublishing || !isOriginalWork} onClick={handlePublish} className="px-6 py-2.5 bg-primary text-white text-sm font-medium rounded-lg lg:hover:bg-primary/90 transition-colors min-h-[44px] disabled:opacity-60">
+                      <Button disabled={isPublishing || !isOriginalWork} onClick={handlePublish} className={`px-6 py-2.5 text-sm font-medium rounded-lg transition-colors min-h-[44px] ${isPublishing || !isOriginalWork ? 'bg-muted text-muted-foreground' : 'bg-primary text-white lg:hover:bg-primary/90'}`}>
                         {isPublishing
                           ? (editingWorkId ? t('upload.editModeSaving') : t('upload.publishing'))
                           : editingWorkId ? t('upload.editModeSave') : t('upload.publish')}
@@ -1266,6 +1311,16 @@ export default function Upload() {
                 >
                   <div className="w-full max-w-4xl flex flex-col items-center">
                     
+                    {/* 전시 유형 뱃지 */}
+                    {uploadType === 'group' && (
+                      <div className="w-full mb-4 flex justify-center md:justify-start animate-in fade-in duration-500">
+                        <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-muted text-xs font-medium text-muted-foreground">
+                          {isInstructor ? <GraduationCap className="h-3.5 w-3.5" /> : <Users className="h-3.5 w-3.5" />}
+                          {isInstructor ? t('upload.groupRoleDisplayInstructor') : t('upload.groupRoleDisplayParticipant')}
+                        </span>
+                      </div>
+                    )}
+
                     {/* 제목 입력부 */}
                     <div className="w-full mb-12 animate-in fade-in slide-in-from-bottom-4 duration-700 space-y-4">
                       <div className="relative">
@@ -1336,17 +1391,6 @@ export default function Upload() {
                         </div>
                       )}
 
-                      {uploadType === 'group' && contents.length === 0 && (
-                        <div className="md:hidden pt-1">
-                          <GroupInstructorSection
-                            checkboxId="upload-role-instructor-mobile"
-                            isInstructor={isInstructor}
-                            onInstructorChange={setIsInstructor}
-                            roleInfoOpen={roleInfoOpen}
-                            onRoleInfoOpenChange={setRoleInfoOpen}
-                          />
-                        </div>
-                      )}
                     </div>
 
                   {!contents.length ? (
@@ -1358,6 +1402,22 @@ export default function Upload() {
                         <p className="mb-2 text-sm font-medium text-foreground">{t('upload.dropzoneTitle')}</p>
                         <p className="text-xs text-muted-foreground">{t('upload.dropzoneFormats')}</p>
                       </div>
+                      {cameraBlockNotice && (
+                        <div className="rounded-xl border border-amber-200 bg-amber-50 p-4 animate-in fade-in duration-300">
+                          <div className="flex items-start gap-3">
+                            <div className="shrink-0 mt-0.5 h-8 w-8 rounded-full bg-amber-100 flex items-center justify-center">
+                              <ImageIcon className="h-4 w-4 text-amber-600" />
+                            </div>
+                            <div className="flex-1 min-w-0">
+                              <p className="text-sm font-semibold text-amber-900">{t('upload.cameraBlockTitle')}</p>
+                              <p className="text-sm text-amber-800 mt-1 leading-relaxed">{t('upload.cameraBlockDesc')}</p>
+                            </div>
+                            <button type="button" onClick={() => setCameraBlockNotice(false)} className="shrink-0 p-1.5 rounded-full text-amber-400 hover:text-amber-600 hover:bg-amber-100 transition-colors">
+                              <X className="h-4 w-4" />
+                            </button>
+                          </div>
+                        </div>
+                      )}
                     </div>
                   ) : (
                     <div className="relative w-full pb-20 z-10">
@@ -1713,18 +1773,6 @@ export default function Upload() {
                             </li>
                           ))}
                         </ul>
-                        {uploadType === 'group' && (
-                          <div className="mt-3 pt-3 border-t border-dashed border-border/60">
-                            <GroupInstructorSection
-                              embedded
-                              checkboxId="upload-role-instructor-sidebar"
-                              isInstructor={isInstructor}
-                              onInstructorChange={setIsInstructor}
-                              roleInfoOpen={roleInfoOpen}
-                              onRoleInfoOpenChange={setRoleInfoOpen}
-                            />
-                          </div>
-                        )}
                       </div>
                       <Button
                         disabled={isPublishing || publishBlockers.length > 0}

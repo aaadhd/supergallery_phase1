@@ -418,10 +418,10 @@ export default function Browse() {
               variant="ghost"
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`relative shrink-0 h-auto rounded-md px-1.5 pb-2.5 pt-1.5 text-xs sm:text-sm font-medium transition-colors shadow-none hover:bg-transparent focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none ${
+              className={`relative shrink-0 h-auto rounded-md px-1.5 pb-2.5 pt-1.5 text-xs sm:text-sm transition-colors shadow-none hover:bg-transparent focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none ${
                 activeCategory === cat.id
-                  ? 'text-foreground after:absolute after:left-1.5 after:right-1.5 after:bottom-0 after:h-0.5 after:bg-primary'
-                  : 'text-muted-foreground hover:text-foreground'
+                  ? 'text-foreground font-bold after:absolute after:left-1.5 after:right-1.5 after:bottom-0 after:h-0.5 after:bg-primary'
+                  : 'text-muted-foreground font-medium hover:text-foreground'
               }`}
             >
               {cat.label}

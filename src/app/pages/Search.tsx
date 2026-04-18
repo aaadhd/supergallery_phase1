@@ -216,7 +216,7 @@ export default function Search() {
               <Button
                 type="button"
                 onClick={() => { setQuery(''); setSearchParams({}); setSuggestOpen(false); }}
-                className="absolute right-4 sm:right-5 top-1/2 -translate-y-1/2 h-8 w-8 flex items-center justify-center rounded-full lg:hover:bg-muted"
+                className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 h-10 w-10 flex items-center justify-center rounded-full lg:hover:bg-muted min-h-[44px] min-w-[44px]"
               >
                 <X className="h-5 w-5 text-muted-foreground" />
               </Button>

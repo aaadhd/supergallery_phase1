@@ -123,7 +123,9 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
   // 그룹 전시는 헤더에 그룹명만 나오므로 올린이를 별도 표시
   const showUploaderLine = isGroupWork && !!uploaderArtist;
 
-  const images = Array.isArray(work.image) ? work.image : [work.image];
+  const workImages = Array.isArray(work.image) ? work.image : [work.image];
+  const hasCoverPage = !!(work.customCoverUrl && work.coverImageIndex === -1);
+  const images = hasCoverPage ? [work.customCoverUrl as string, ...workImages] : workImages;
   const totalImages = images.length;
 
   const currentIndex = allWorks.findIndex(w => w.id === workId);
@@ -418,18 +420,24 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
             }}
           >
             {/* Images - 그림 소스에서 추출된 블러 배경 적용 (Notefolio Style: No extra padding) */}
-            <div className={`w-full flex-col flex ${totalImages === 1 ? 'min-h-[60vh] justify-center' : ''}`}>
+            <div className={`w-full flex-col flex ${workImages.length === 1 && !hasCoverPage ? 'min-h-[60vh] justify-center' : ''}`}>
               {images.map((image, index) => {
                 const src = imageUrls[image] || image;
-                const slideLabel = displayPieceTitleAtIndex(work, index, t('work.untitled'));
+                const isCoverSlide = hasCoverPage && index === 0;
+                const workImageIndex = hasCoverPage ? index - 1 : index;
+                const slideLabel = isCoverSlide ? (work.exhibitionName || t('work.untitled')) : displayPieceTitleAtIndex(work, workImageIndex, t('work.untitled'));
                 return (
-                <div key={index} className="relative w-full flex items-center justify-center overflow-hidden mb-0 py-8 sm:py-10">
-                  
-                  {/* Dynamic Color Extracted Background (Blur Effect) */}
-                  <div className="absolute inset-0 z-0 bg-[#f4f4f4] pointer-events-none overflow-hidden">
-                    <img src={src} className="w-full h-full object-cover blur-[120px] opacity-[0.95] scale-[1.3]" alt="" />
-                    <div className="absolute inset-0 bg-black/5 mix-blend-overlay" />
-                  </div>
+                <div key={index} className={`relative w-full flex items-center justify-center overflow-hidden mb-0 ${isCoverSlide ? 'py-12 sm:py-16' : 'py-8 sm:py-10'}`}>
+
+                  {/* Background — 커버: 블랙, 작품: 블러 */}
+                  {isCoverSlide ? (
+                    <div className="absolute inset-0 z-0 bg-black pointer-events-none" />
+                  ) : (
+                    <div className="absolute inset-0 z-0 bg-[#f4f4f4] pointer-events-none overflow-hidden">
+                      <img src={src} className="w-full h-full object-cover blur-[120px] opacity-[0.95] scale-[1.3]" alt="" />
+                      <div className="absolute inset-0 bg-black/5 mix-blend-overlay" />
+                    </div>
+                  )}
 
                   <div className="relative z-10 w-full flex flex-col items-center justify-center px-4 sm:px-6">
                     <div
@@ -450,16 +458,16 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                       />
                     </div>
                   </div>
-                  {/* Image index indicator */}
-                  {totalImages > 1 && (
+                  {/* Image index indicator — 커버는 카운트 제외 */}
+                  {workImages.length > 1 && !isCoverSlide && (
                     <div className="absolute top-4 right-4 z-20 bg-black/60 backdrop-blur-sm px-3.5 py-1.5 rounded-full shadow-md">
-                      <span className="text-white text-xs font-bold tracking-wider">{index + 1} / {totalImages}</span>
+                      <span className="text-white text-xs font-bold tracking-wider">{workImageIndex + 1} / {workImages.length}</span>
                     </div>
                   )}
 
-                  {/* 이미지 하단: 작가 + 작품명 (가로 한줄) */}
-                  {(() => {
-                    const ia = work.imageArtists?.[index];
+                  {/* 이미지 하단: 작가 + 작품명 (가로 한줄) — 커버 슬라이드는 작가 오버레이 생략 */}
+                  {!isCoverSlide && (() => {
+                    const ia = work.imageArtists?.[workImageIndex];
                     const imgArtist = ia?.type === 'member' && ia.memberId
                       ? allArtists.find(a => a.id === ia.memberId)
                       : undefined;
@@ -467,7 +475,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                     const imgArtistAvatar = imgArtist?.avatar || (totalImages === 1 ? work.artist.avatar : undefined);
                     const showFollow = imgArtist && imgArtist.id !== allArtists[0]?.id;
                     return (imgArtistName || slideLabel !== t('work.untitled')) ? (
-                      <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black/60 via-black/25 to-transparent px-4 sm:px-5 pb-3.5 pt-8">
+                      <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black/70 via-black/35 to-transparent px-4 sm:px-5 pb-3.5 pt-10">
                         {slideLabel !== t('work.untitled') && (
                           <p className="absolute left-0 right-0 bottom-3.5 text-white/90 text-base font-semibold drop-shadow-md text-center pointer-events-none">{slideLabel}</p>
                         )}

@@ -323,7 +323,7 @@ export default function Notifications() {
                 type="button"
                 variant="ghost"
                 onClick={() => setCategoryTab(c.id)}
-                className={`shrink-0 px-3.5 py-1.5 rounded-full text-xs font-medium border transition-colors ${
+                className={`shrink-0 px-4 py-2 rounded-full text-xs font-medium border transition-colors min-h-[44px] ${
                   categoryTab === c.id
                     ? 'border-foreground/80 bg-foreground/5 text-foreground'
                     : 'border-border text-muted-foreground lg:hover:border-foreground/30 lg:hover:text-foreground'
@@ -384,7 +384,7 @@ export default function Notifications() {
                   <button
                     type="button"
                     onClick={() => deleteNotification(notif.id)}
-                    className="shrink-0 p-1.5 rounded-full text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10 transition-colors"
+                    className="shrink-0 p-2.5 -mr-1.5 rounded-full text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10 transition-colors min-h-[44px] min-w-[44px] flex items-center justify-center"
                     aria-label={t('notifications.delete')}
                   >
                     <X className="h-4 w-4" />

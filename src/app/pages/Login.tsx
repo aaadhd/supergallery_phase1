@@ -218,7 +218,7 @@ export default function Login() {
                   type="button"
                   variant="ghost"
                   size="icon"
-                  className="absolute right-1 top-1/2 h-9 w-9 -translate-y-1/2 text-muted-foreground"
+                  className="absolute right-1 top-1/2 h-10 w-10 min-h-[44px] min-w-[44px] -translate-y-1/2 text-muted-foreground"
                   onClick={() => setShowPassword(!showPassword)}
                 >
                   {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
