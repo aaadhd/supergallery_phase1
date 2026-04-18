@@ -906,9 +906,13 @@ export default function Profile() {
                                       className="text-destructive focus:text-destructive text-sm"
                                       onSelect={(e) => e.preventDefault()}
                                       onClick={async () => {
+                                        const hasPendingInvites = work.imageArtists?.some((a) => a.type === 'non-member' && a.phoneNumber);
+                                        const desc = hasPendingInvites
+                                          ? t('profile.deleteWorkPermanent') + '\n' + t('profile.deleteWorkHasPendingInvites')
+                                          : t('profile.deleteWorkPermanent');
                                         const ok = await openConfirm({
                                           title: t('profile.deleteWorkConfirm').replace('{title}', displayExhibitionTitle(work, t('work.untitled'))),
-                                          description: t('profile.deleteWorkPermanent'),
+                                          description: desc,
                                           destructive: true,
                                           confirmLabel: t('profile.delete'),
                                         });

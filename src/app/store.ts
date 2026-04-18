@@ -727,7 +727,7 @@ export const withdrawnArtistStore = {
   },
 };
 
-const ANON_DISPLAY = '삭제된 사용자';
+const ANON_DISPLAY = '작가 미상';
 const ANON_AVATAR =
   'https://images.unsplash.com/photo-1618005182384-a83a8bd57fbe?w=100&h=100&fit=crop';
 

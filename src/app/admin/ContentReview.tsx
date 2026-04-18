@@ -10,6 +10,7 @@ import { Button } from '../components/ui/button';
 import { REJECTION_REASONS, REJECTION_REASON_LABEL_KEY, type RejectionReason } from '../utils/reviewLabels';
 import { useI18n } from '../i18n/I18nProvider';
 import { pushDemoNotification } from '../utils/pushDemoNotification';
+import { sendInviteToNonMember } from '../utils/inviteMessaging';
 
 type ReviewStatusUi = '대기중' | '승인' | '반려';
 
@@ -69,6 +70,23 @@ export default function ContentReview() {
       message: t('review.notifApproved'),
       workId: w.id,
     });
+
+    // 검수 승인 시점에 비가입자 초대 발송 (Upload에서 보류된 것)
+    const pending = w.imageArtists?.filter((a) => a.type === 'non-member' && a.phoneNumber && a.displayName) ?? [];
+    if (pending.length > 0) {
+      let sent = 0;
+      for (const r of pending) {
+        const exhibitionUrl = `${window.location.origin}/exhibitions/${w.id}?from=credited&invited_phone=${encodeURIComponent(r.phoneNumber!)}&invited_name=${encodeURIComponent(r.displayName!)}`;
+        const result = sendInviteToNonMember({ phoneNumber: r.phoneNumber!, displayName: r.displayName!, workId: w.id, exhibitionUrl, locale: 'ko' });
+        if (result.success) sent++;
+      }
+      // 발송 후 전화번호 scrub
+      const scrubbed = w.imageArtists!.map((a) =>
+        a.type === 'non-member' ? { ...a, phoneNumber: undefined } : a,
+      );
+      workStore.updateWork(w.id, { imageArtists: scrubbed });
+      if (sent > 0) toast.info(`비가입 작가 ${sent}명에게 초대가 발송되었습니다.`);
+    }
   };
 
   const openReject = (w: Work) => {

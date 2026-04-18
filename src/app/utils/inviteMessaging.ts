@@ -68,10 +68,17 @@ function appendLog(entry: InviteLogEntry) {
   localStorage.setItem(LOG_KEY, JSON.stringify(list.slice(0, MAX_LOG)));
 }
 
+/** 간단 해시 (중복 체크용, 보안용 아님) */
+function simpleHash(s: string): string {
+  let h = 0;
+  for (let i = 0; i < s.length; i++) h = ((h << 5) - h + s.charCodeAt(i)) | 0;
+  return 'ph_' + (h >>> 0).toString(36);
+}
+
 export function hasAlreadySent(phoneNumber: string, workId: string): boolean {
-  const normalized = phoneNumber.replace(/\s+/g, '');
+  const hash = simpleHash(phoneNumber.replace(/\s+/g, ''));
   return readLog().some(
-    (e) => e.workId === workId && e.phoneNumber.replace(/\s+/g, '') === normalized && e.success,
+    (e) => e.workId === workId && (e as Record<string, unknown>).phoneHash === hash && e.success,
   );
 }
 
@@ -90,6 +97,13 @@ export type SendInviteResult = {
   deduplicated?: boolean;
 };
 
+/** 전화번호 마스킹: 010-1234-5678 → 010-****-5678 */
+function maskPhone(phone: string): string {
+  const digits = phone.replace(/[^0-9+]/g, '');
+  if (digits.length <= 4) return '****';
+  return digits.slice(0, digits.length - 4).replace(/./g, (c, i) => i < 3 || c === '+' ? c : '*') + digits.slice(-4);
+}
+
 /** 모의 발송. 실패 시에도 게시는 계속 진행된다(호출 측에서 보장). */
 export function sendInviteToNonMember(input: SendInviteInput): SendInviteResult {
   const { phoneNumber, displayName, workId, exhibitionUrl, locale } = input;
@@ -99,27 +113,23 @@ export function sendInviteToNonMember(input: SendInviteInput): SendInviteResult 
     return { success: true, channel, deduplicated: true };
   }
 
-  // 5% 실패 시뮬 — 게시 흐름이 영향받지 않는지 확인 용도
-  const failed = Math.random() < 0.05;
   const message = buildMessage(displayName, exhibitionUrl, locale);
 
-  const entry: InviteLogEntry = {
+  const entry = {
     id: `inv-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
     at: new Date().toISOString(),
     workId,
-    phoneNumber,
+    phoneNumber: maskPhone(phoneNumber),
+    phoneHash: simpleHash(phoneNumber.replace(/\s+/g, '')),
     displayName,
     channel,
     locale,
     message,
-    success: !failed,
-    failReason: failed ? 'simulated_delivery_failure' : undefined,
-  };
+    success: true,
+  } satisfies InviteLogEntry & { phoneHash: string };
   appendLog(entry);
 
-  return failed
-    ? { success: false, channel, failReason: 'simulated_delivery_failure' }
-    : { success: true, channel };
+  return { success: true, channel };
 }
 
 export function readInviteLog(): InviteLogEntry[] {

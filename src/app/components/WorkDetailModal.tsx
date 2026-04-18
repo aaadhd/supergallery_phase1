@@ -9,7 +9,7 @@ import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCoverImage } from '../utils/imageHelper';
-import { userInteractionStore, workStore, authStore, followStore, useFollowStore } from '../store';
+import { userInteractionStore, workStore, authStore, followStore, useFollowStore, withdrawnArtistStore } from '../store';
 import { CopyrightProtectedImage } from './work';
 import { toast } from 'sonner';
 import { LoginPromptModal } from './LoginPromptModal';
@@ -108,6 +108,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
   // Hidden works are only visible to the owning artist
   const isOwnerViewing = authStore.isLoggedIn() && work?.artistId === allArtists[0]?.id;
   if (!work || (work.isHidden && !isOwnerViewing)) return null;
+  const isWithdrawnArtist = withdrawnArtistStore.isWithdrawn(work.artistId);
 
   const headline = displayExhibitionTitle(work, t('work.untitled'));
   const groupOrgLine = displayGroupOrgName(work);
@@ -671,7 +672,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
           </button>
 
           {/* Action buttons — vertically centered */}
-          <div className={`flex-1 flex flex-col items-center justify-start gap-4 pt-10 ${isPreview ? 'opacity-40 pointer-events-none' : ''}`}>
+          <div className={`flex-1 flex flex-col items-center justify-start gap-4 pt-10 ${(isPreview || isWithdrawnArtist) ? 'opacity-40 pointer-events-none' : ''}`}>
 
             {/* Avatar + name — 개인 전시만 표시 (그룹 전시는 이미지별 작가로 대체) */}
             {!isGroupWork && (
@@ -824,7 +825,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
       </div>
 
       {/* Mobile bottom action bar */}
-      <div className={`sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#1A1A2E]/95 backdrop-blur-sm border-t border-white/10 safe-area-bottom ${isPreview ? 'opacity-40 pointer-events-none' : ''}`}>
+      <div className={`sm:hidden fixed bottom-0 left-0 right-0 z-50 bg-[#1A1A2E]/95 backdrop-blur-sm border-t border-white/10 safe-area-bottom ${(isPreview || isWithdrawnArtist) ? 'opacity-40 pointer-events-none' : ''}`}>
         {/* Mobile prev/next row */}
         {(prevWork || nextWork) && (
           <div className="flex items-center justify-between px-4 py-2 border-b border-white/5">

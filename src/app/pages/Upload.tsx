@@ -61,7 +61,7 @@ import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popove
 import { pointsOnWorkPublished } from '../utils/pointsBackground';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
-import { sendInviteToNonMember } from '../utils/inviteMessaging';
+// sendInviteToNonMember moved to ContentReview — invites sent after approval
 import { openConfirm } from '../components/ConfirmDialog';
 import { RequiredMark } from '../components/RequiredMark';
 import { containsProfanity } from '../utils/profanityFilter';
@@ -805,30 +805,11 @@ export default function Upload() {
       draftStore.deleteDraft(loadedDraftId);
     }
 
-    // 비가입자 초대 모의 발송
-    const nonMemberRecipients = imageArtists
-      .map((a, idx) => (a.type === 'non-member' && a.phoneNumber && a.displayName ? { idx, phoneNumber: a.phoneNumber, displayName: a.displayName } : null))
-      .filter((v): v is { idx: number; phoneNumber: string; displayName: string } => v !== null);
-    let inviteSent = 0;
-    let inviteFailed = 0;
-    if (nonMemberRecipients.length > 0) {
-      const inviteLocale = locale === 'en' ? 'en' : 'ko';
-      for (const r of nonMemberRecipients) {
-        // 초대받은 전화번호를 URL에 실어 보내 → 랜딩 → 가입 시 prefill (재입력 방지 + 매칭 성공률 ↑)
-        const exhibitionUrl = `${window.location.origin}/exhibitions/${targetId}?from=credited&invited_phone=${encodeURIComponent(r.phoneNumber)}&invited_name=${encodeURIComponent(r.displayName)}`;
-        const result = sendInviteToNonMember({ phoneNumber: r.phoneNumber, displayName: r.displayName, workId: targetId, exhibitionUrl, locale: inviteLocale });
-        if (result.success) inviteSent++;
-        else inviteFailed++;
-      }
-      const scrubbedImageArtists = imageArtists.map((a) =>
-        a.type === 'non-member' ? { ...a, phoneNumber: undefined } : a,
-      );
-      workStore.updateWork(targetId, { imageArtists: scrubbedImageArtists });
-    }
+    // 비가입자 초대는 검수 승인 시점에 발송 (전화번호는 Work.imageArtists에 보관)
+    const hasNonMemberInvites = imageArtists.some((a) => a.type === 'non-member' && a.phoneNumber);
 
-    if (inviteSent > 0 || inviteFailed > 0) {
-      if (inviteFailed === 0) toast.success(tn('upload.toastNonMemberInviteSent', { n: String(inviteSent) }));
-      else toast.success(tn('upload.toastNonMemberInviteMixed', { sent: String(inviteSent), failed: String(inviteFailed) }));
+    if (hasNonMemberInvites && !editingWorkId) {
+      toast.info(t('upload.toastInvitePending'));
     } else if (editingWorkId) {
       toast.success(t('upload.editModeToast'));
     } else if (import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true') {
