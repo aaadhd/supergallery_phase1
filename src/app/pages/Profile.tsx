@@ -735,8 +735,9 @@ export default function Profile() {
                     setProfileInterests(savedProfile.interests || []);
                     setShowProfileEditModal(true);
                   }}
-                  className="mt-6 w-full bg-primary lg:hover:bg-primary/90 text-sm py-3"
+                  className="mt-6 w-full bg-primary lg:hover:bg-primary/90 text-sm py-3 min-h-[44px]"
                 >
+                  <Pencil className="h-4 w-4 mr-2" />
                   {t('profile.edit')}
                 </Button>
 
@@ -1495,8 +1496,8 @@ export default function Profile() {
             <div className="overflow-y-auto flex-1 p-4">
               {(() => {
                 const sampleList = followModalTab === 'followers'
-                  ? artists.filter(a => a.id !== profileArtist.id).slice(0, 5)
-                  : artists.filter(a => a.id !== profileArtist.id).slice(2, 6);
+                  ? artists.filter(a => a.id !== profileArtist.id)
+                  : artists.filter(a => followStore.isFollowing(a.id));
                 return sampleList.length === 0 ? (
                   <p className="text-center py-12 text-sm text-muted-foreground">
                     {followModalTab === 'followers'
@@ -1700,9 +1701,12 @@ export default function Profile() {
       {renamingFlatImage && (() => {
         const saveTitle = () => {
           const trimmed = renameValue.trim();
+          if (!trimmed) {
+            toast.error(t('profile.errEmptyTitle'));
+            return;
+          }
           const workId = renamingFlatImage.work.id;
           const imgIndex = renamingFlatImage.imgIndex;
-          // 최신 store에서 work 조회 (스냅샷 아님)
           const latestWork = workStore.getWorks().find(w => w.id === workId) ?? renamingFlatImage.work;
           const imgs = Array.isArray(latestWork.image) ? latestWork.image : [latestWork.image];
           const prev = latestWork.imagePieceTitles ?? [];

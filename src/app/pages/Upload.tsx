@@ -661,11 +661,11 @@ export default function Upload() {
 
     // 그룹 업로드 시 작가 검증 (이름만 있으면 통과, 번호는 선택)
     if (uploadType === 'group') {
-      const missingArtist = imageContents.some(
-        (c) => !c.artist && !c.nonMemberArtist?.displayName,
-      );
-      if (missingArtist) {
-        toast.error(t('upload.errMissingArtist'));
+      const missingIndices = imageContents
+        .map((c, i) => (!c.artist && !c.nonMemberArtist?.displayName ? i + 1 : -1))
+        .filter((i) => i > 0);
+      if (missingIndices.length > 0) {
+        toast.error(t('upload.errMissingArtistAt').replace('{positions}', missingIndices.join(', ')));
         return;
       }
     }
@@ -847,7 +847,7 @@ export default function Upload() {
       } else if (wasEditingExistingWork) {
         navigate('/me?tab=exhibition');
       } else {
-        // 발행 확인 화면 표시
+        // 전시 완료 확인 화면 표시
         setPublishedResult({ workId: targetId, autoApproved, hasNonMemberInvites });
       }
     }, 600);
