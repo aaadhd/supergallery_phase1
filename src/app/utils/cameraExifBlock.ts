@@ -110,13 +110,20 @@ export function extractJpegExifMakeModel(buffer: ArrayBuffer): { make?: string; 
   return null;
 }
 
+/** JPEG magic bytes: FF D8 FF */
+function isJpegByMagicBytes(buf: ArrayBuffer): boolean {
+  if (buf.byteLength < 3) return false;
+  const view = new Uint8Array(buf);
+  return view[0] === 0xFF && view[1] === 0xD8 && view[2] === 0xFF;
+}
+
 /** 카메라 메타가 감지되면 true (업로드 차단). */
 export async function shouldBlockCameraPhoto(file: File): Promise<boolean> {
-  const isJpeg = file.type === 'image/jpeg' || /\.jpe?g$/i.test(file.name);
-  if (!isJpeg) return false;
-
   try {
     const buf = await file.slice(0, Math.min(file.size, 512 * 1024)).arrayBuffer();
+    // Magic bytes로 실제 JPEG 여부 판별 (확장자/MIME 우회 방지)
+    if (!isJpegByMagicBytes(buf)) return false;
+
     const tags = extractJpegExifMakeModel(buf);
     if (!tags) return false;
     const make = (tags.make || '').trim();

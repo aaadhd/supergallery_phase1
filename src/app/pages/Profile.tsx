@@ -602,9 +602,10 @@ export default function Profile() {
                     variant="outline"
                     size="icon"
                     onClick={() => setShowProfileImageModal(true)}
-                    className="absolute bottom-0 right-0 h-8 w-8 rounded-full bg-white border border-border shadow-sm"
+                    className="absolute bottom-0 right-0 h-10 w-10 rounded-full bg-primary text-white border-2 border-white shadow-md hover:bg-primary/90"
+                    aria-label={t('profile.changePhoto')}
                   >
-                    <Camera className="h-4 w-4" />
+                    <Camera className="h-5 w-5" />
                   </Button>
                 )}
               </div>
