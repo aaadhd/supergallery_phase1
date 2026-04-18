@@ -219,6 +219,24 @@ export default function Upload() {
     }
   }, [auth, navigate]);
 
+  // 기존 초안 감지 — 빈 양식으로 진입했을 때 저장된 초안이 있으면 안내
+  useEffect(() => {
+    const hasDraftParam = searchParams.get('draft');
+    const hasEditParam = searchParams.get('edit');
+    if (hasDraftParam || hasEditParam) return;
+    const drafts = draftStore.getDrafts();
+    if (drafts.length === 0) return;
+    const latest = drafts[0];
+    toast(t('upload.existingDraftNotice'), {
+      duration: 8000,
+      action: {
+        label: t('upload.existingDraftResume'),
+        onClick: () => navigate(`/upload?draft=${latest.id}`, { replace: true }),
+      },
+    });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   const tn = (key: MessageKey, replacements: Record<string, string>) => {
     let s = t(key);
     for (const [k, v] of Object.entries(replacements)) s = s.replace(`{${k}}`, v);
@@ -833,9 +851,7 @@ export default function Upload() {
     }, 600);
   };
 
-  /* ━━━━━━ 초안 저장 ━━━━━━ */
-  const [lastAutoSavedAt, setLastAutoSavedAt] = useState<number | null>(null);
-
+  /* ━━━━━━ 초안 저장 (수동만) ━━━━━━ */
   const handleSaveDraft = () => {
     const firstUrl = contents.find((c) => c.url);
     const draft: Draft = {
@@ -866,39 +882,7 @@ export default function Upload() {
     navigate('/me');
   };
 
-  // 자동 저장
   const hasContent = contents.some((c) => c.url);
-  useEffect(() => {
-    if (!hasContent) return;
-    const interval = setInterval(() => {
-      const firstUrl = contents.find((c) => c.url);
-      const draft: Draft = {
-        id: 'autosave',
-        title: exhibitionName.trim() || firstUrl?.title?.trim() || '',
-        exhibitionName: exhibitionName.trim(),
-        uploadType: uploadType ?? undefined,
-        groupName: groupName.trim() || undefined,
-        isInstructor: uploadType === 'group' ? isInstructor : undefined,
-        coverImageIndex,
-        contents: contents.map((c) => ({
-          id: c.id,
-          type: 'image' as const,
-          url: c.url,
-          title: c.title,
-          artist: c.artist,
-          nonMemberArtist: c.nonMemberArtist,
-          artistType: c.artistType,
-          fullWidth: c.fullWidth,
-        })),
-        tags: [],
-        categories: [],
-        savedAt: new Date().toISOString(),
-      };
-      draftStore.saveDraft(draft);
-      setLastAutoSavedAt(Date.now());
-    }, 30000);
-    return () => clearInterval(interval);
-  }, [hasContent, contents, exhibitionName, uploadType, groupName, isInstructor, coverImageIndex, customCoverUrl]);
 
   useEffect(() => {
     if (!hasContent) return;
@@ -1731,11 +1715,6 @@ export default function Upload() {
                       >
                         {t('upload.saveDraft')}
                       </Button>
-                      {lastAutoSavedAt && (
-                        <p className="text-xs text-muted-foreground text-center mt-1">
-                          {t('upload.autoSavedAt').replace('{time}', new Date(lastAutoSavedAt).toLocaleTimeString(locale === 'en' ? 'en-US' : 'ko-KR', { hour: '2-digit', minute: '2-digit' }))}
-                        </p>
-                      )}
 
                       {contents.length > 1 && (
                         <Button
