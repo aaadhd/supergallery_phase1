@@ -8,6 +8,7 @@
  */
 
 import { useSyncExternalStore } from 'react';
+import { todayLocalIso } from './localDate';
 
 export type EventStatus = 'scheduled' | 'active' | 'ended';
 
@@ -132,7 +133,7 @@ function writeToStorage(list: ManagedEvent[]) {
 /** start/end 날짜 기준 자동 상태 계산 (수동 status가 있으면 그걸 우선) */
 export function deriveStatus(e: ManagedEvent, now: Date = new Date()): EventStatus {
   if (e.status) return e.status;
-  const today = now.toISOString().slice(0, 10);
+  const today = todayLocalIso(now);
   if (today < e.startAt) return 'scheduled';
   if (today > e.endAt) return 'ended';
   return 'active';

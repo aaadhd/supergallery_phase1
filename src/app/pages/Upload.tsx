@@ -65,6 +65,7 @@ import type { MessageKey } from '../i18n/messages';
 import { openConfirm } from '../components/ConfirmDialog';
 import { RequiredMark } from '../components/RequiredMark';
 import { containsProfanity } from '../utils/profanityFilter';
+import { todayLocalIso } from '../utils/localDate';
 import { normalizeStoredPieceTitle } from '../utils/workDisplay';
 import { WorkDetailModal } from '../components/WorkDetailModal';
 import {
@@ -767,7 +768,7 @@ export default function Upload() {
       if (!ok) return;
     }
 
-    const uploadedAt = new Date().toISOString().slice(0, 10);
+    const uploadedAt = todayLocalIso();
     const newWork: Work = {
       id: `user-${crypto.randomUUID()}`,
       title: resolvedPieceTitle,
