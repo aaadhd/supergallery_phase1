@@ -35,7 +35,7 @@ function cleanupOrphanedWorkId(workId: string) {
  * public/images·manifest가 바뀌면 저장된 work.image 경로가 디스크와 어긋나 썸네일 404가 남.
  * 버전을 올리면 시드(현재 manifest 기반)로 다시 채운 뒤 저장된다.
  */
-const WORKS_STORAGE_VERSION = 'local-gallery-v13';
+const WORKS_STORAGE_VERSION = 'local-gallery-v14';
 
 // 초안 타입 정의
 export interface Draft {
@@ -93,9 +93,18 @@ const loadWorksFromStorage = (): Work[] => {
     try {
       const raw = localStorage.getItem('artier_works');
       if (raw) {
-        const all = JSON.parse(raw) as Work[];
+        const all = JSON.parse(raw) as Array<Work & { editorsPick?: boolean }>;
         const seedIds = new Set(initialWorks.map((w) => w.id));
-        userWorks = all.filter((w) => !seedIds.has(w.id));
+        userWorks = all
+          .filter((w) => !seedIds.has(w.id))
+          .map((w) => {
+            // v14: editorsPick → pickBadge 리네이밍
+            if ('editorsPick' in w) {
+              const { editorsPick, ...rest } = w;
+              return { ...rest, pickBadge: editorsPick || rest.pickBadge } as Work;
+            }
+            return w as Work;
+          });
       }
     } catch { /* ignore corrupt data */ }
     const merged = [...initialWorks, ...userWorks];

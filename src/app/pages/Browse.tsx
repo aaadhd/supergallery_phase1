@@ -632,7 +632,7 @@ function WorkCard({ work, index, onSelect, onArtistClick, isFollowing, onToggleF
   const coOwners = work.coOwners;
   const hasCoOwnersNoGroup = !groupName && coOwners && coOwners.length > 0;
   const exhibitionLabel = displayExhibitionTitle(work, t('work.untitled'));
-  const isPick = work.editorsPick === true || work.pick === true;
+  const isPick = work.pickBadge === true || work.pick === true;
   const useGroupStyleRow =
     Boolean(groupName?.trim()) &&
     (work.primaryExhibitionType === 'group' ||

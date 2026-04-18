@@ -53,7 +53,7 @@ function randomNoise(source: FeedSource): number {
 
 function isPickWork(w: Work): boolean {
   // 주간 Pick 버킷은 "현재 활성 Pick"만 사용한다.
-  // editorsPick은 이력 배지(영구 표시) 용도라 버킷 진입 조건에서 제외.
+  // pickBadge은 이력 배지(영구 표시) 용도라 버킷 진입 조건에서 제외.
   return w.pick === true;
 }
 

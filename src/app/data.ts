@@ -42,8 +42,10 @@ export interface Work {
   owner?: any; // groupData.ts WorkOwner 타입 호환
   taggedEmails?: string[]; // 강사가 태그한 수강생 이메일
   isInstructorUpload?: boolean; // 강사 대리 업로드 여부
-  pick?: boolean; // Artier's Pick
-  editorsPick?: boolean;
+  /** 이번 주 Artier's Pick 활성 여부 (매주 교체) */
+  pick?: boolean;
+  /** Pick 선정 이력 (한 번 선정되면 영구 배지) */
+  pickBadge?: boolean;
   // Phase 1 신규 필드
   primaryExhibitionType?: 'solo' | 'group'; // 전시 유형 (강사+그룹명 → group, 그 외 → solo)
   imageArtists?: ImageArtistAssignment[]; // 이미지별 작가 지정 (인덱스 = 이미지 인덱스)

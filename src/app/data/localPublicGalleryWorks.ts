@@ -638,7 +638,7 @@ export function buildLocalPublicWorks(paths: string[], artistsList: Artist[]): W
   const activeIds = new Set(activePicks.map((w) => w.id));
 
   for (const w of ordered) {
-    w.editorsPick = historyIds.has(w.id);
+    w.pickBadge = historyIds.has(w.id);
     w.pick = activeIds.has(w.id);
   }
 

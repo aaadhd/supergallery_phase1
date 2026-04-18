@@ -66,7 +66,7 @@ export default function PickManagement() {
   const pickHistory = useMemo(
     () =>
       works
-        .filter((w) => w.editorsPick === true)
+        .filter((w) => w.pickBadge === true)
         .sort((a, b) => {
           const aActive = pickIdSet.has(a.id) ? 1 : 0;
           const bActive = pickIdSet.has(b.id) ? 1 : 0;
@@ -79,14 +79,14 @@ export default function PickManagement() {
   useEffect(() => {
     if (!pickIdsHydrated) return;
     // 현재 Pick 목록을 work.pick 플래그와 동기화.
-    // pick: 주간 활성 목록 / editorsPick: 이력 배지(한 번 선정되면 유지)
+    // pick: 주간 활성 목록 / pickBadge: 이력 배지(한 번 선정되면 유지)
     for (const w of works) {
       const shouldBeActivePick = pickIdSet.has(w.id);
       if ((w.pick === true) !== shouldBeActivePick) {
         workStore.updateWork(w.id, { pick: shouldBeActivePick });
       }
-      if (shouldBeActivePick && w.editorsPick !== true) {
-        workStore.updateWork(w.id, { editorsPick: true });
+      if (shouldBeActivePick && w.pickBadge !== true) {
+        workStore.updateWork(w.id, { pickBadge: true });
       }
     }
   }, [works, pickIdSet, pickIdsHydrated]);
@@ -141,7 +141,7 @@ export default function PickManagement() {
     if (pickIdSet.has(work.id)) return;
     setPickIds((prev) => [...prev, work.id]);
     // 활성 Pick + 영구 Pick 이력 배지
-    workStore.updateWork(work.id, { pick: true, editorsPick: true });
+    workStore.updateWork(work.id, { pick: true, pickBadge: true });
     setSearch('');
     toast.success('Pick에 추가되었습니다.');
   };

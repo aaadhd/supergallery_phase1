@@ -217,7 +217,7 @@ const _rawGroupWorks = [
     saves: 567,
     description: '전통 한국화를 디지털 기법으로 재해석한 협업 프로젝트',
     tags: ['디지털아트', '한국화', '협업', '스튜디오'],
-    editorsPick: true,
+    pickBadge: true,
     saleOptions: {
       download: { price: 85000 },
       print: { sizes: [{ size: 'A3', price: 165000 }, { size: 'A2', price: 245000 }] },
@@ -243,7 +243,7 @@ const _rawGroupWorks = [
     saves: 892,
     description: '서울의 다양한 야경을 작가들의 시선으로 담은 공동 작업',
     tags: ['서울', '야경', '도시', '공동작업'],
-    editorsPick: true,
+    pickBadge: true,
     saleOptions: {
       download: { price: 95000 },
       print: { sizes: [{ size: 'A3', price: 175000 }, { size: 'A2', price: 265000 }] }
@@ -292,7 +292,7 @@ const _rawGroupWorks = [
     saves: 1432,
     description: '봄의 따뜻한 순간들을 담은 감성 일러스트 시리즈',
     tags: ['봄', '일러스트', '감성', '팀작업'],
-    editorsPick: true,
+    pickBadge: true,
     saleOptions: {
       download: { price: 68000 },
       print: { sizes: [{ size: 'A3', price: 148000 }, { size: 'A2', price: 228000 }] },
@@ -366,7 +366,7 @@ const _rawGroupWorks = [
     saves: 987,
     description: '독창적인 캐릭터 개발 및 스토리텔링',
     tags: ['캐릭터디자인', 'IP', '일러스트', '스튜디오'],
-    editorsPick: true,
+    pickBadge: true,
     saleOptions: {
       download: { price: 98000 },
       print: { sizes: [{ size: 'A3', price: 178000 }, { size: 'A2', price: 268000 }] },
@@ -416,7 +416,7 @@ const _rawGroupWorks = [
     saves: 1234,
     description: '프리미엄 제품 디자인 3D 렌더링',
     tags: ['제품디자인', '3D렌더링', '모던', '스튜디오'],
-    editorsPick: true,
+    pickBadge: true,
     saleOptions: {
       download: { price: 105000 },
       print: { sizes: [{ size: 'A3', price: 185000 }, { size: 'A2', price: 275000 }] },
@@ -466,7 +466,7 @@ const _rawGroupWorks = [
     saves: 1687,
     description: '2026 S/S 패션 화보 시리즈',
     tags: ['패션', '에디토리얼', '포트레이트', '에이전시'],
-    editorsPick: true,
+    pickBadge: true,
     saleOptions: {
       download: { price: 115000 },
       print: { sizes: [{ size: 'A3', price: 195000 }, { size: 'A2', price: 285000 }] },
@@ -492,7 +492,7 @@ const _rawGroupWorks = [
     saves: 1567,
     description: '제주 자연을 담은 사계절 풍경 사진',
     tags: ['자연사진', '풍경', '제주', '컬렉티브'],
-    editorsPick: true,
+    pickBadge: true,
     saleOptions: {
       download: { price: 88000 },
       print: { sizes: [{ size: 'A3', price: 168000 }, { size: 'A2', price: 248000 }] },
@@ -571,7 +571,7 @@ const _rawGroupWorks = [
     artistId: groups[3].id,
     artist: { id: groups[3].id, name: groups[3].name, avatar: groups[3].avatar, bio: groups[3].bio, followers: groups[3].followers },
     likes: 2341, saves: 1023,
-    editorsPick: true,
+    pickBadge: true,
     feedReviewStatus: 'approved' as const,
     _forceImageArtists: [
       { type: 'member' as const, memberId: 'local-cozy-illus' },
@@ -671,7 +671,7 @@ const _rawGroupWorks = [
     artist: { id: groups[1].id, name: groups[1].name, avatar: groups[1].avatar, bio: groups[1].bio, followers: groups[1].followers },
     likes: 1789, saves: 623,
     isInstructorUpload: true,
-    editorsPick: true,
+    pickBadge: true,
     _instructorId: 'local-night-scene',
     feedReviewStatus: 'approved' as const,
     _forceImageArtists: [

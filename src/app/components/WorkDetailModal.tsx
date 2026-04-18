@@ -110,7 +110,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
 
   const headline = displayExhibitionTitle(work, t('work.untitled'));
   const groupOrgLine = displayGroupOrgName(work);
-  const isPick = work.editorsPick === true || work.pick === true;
+  const isPick = work.pickBadge === true || work.pick === true;
   const hasCoOwners = !!work.coOwners?.length;
   const isGroupWork =
     work.primaryExhibitionType === 'group' ||

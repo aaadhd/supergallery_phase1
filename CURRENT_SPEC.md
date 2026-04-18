@@ -336,7 +336,7 @@ Phase 1에서 포인트는 프론트에 미노출. 백그라운드 적립만 동
 #### PickManagement (`/admin/picks`)
 - 주간 에디터스 픽 선정 (최대 10개)
 - 추가/제거, 히스토리 보기
-- `pick: true` = 주간 활성, `editorsPick: true` = 영구 배지
+- `pick: true` = 주간 활성, `pickBadge: true` = 영구 배지 (한 번 Pick 받은 이력)
 
 #### CurationManagement (`/admin/curation`)
 - 주간 테마 전시 설정 (제목, 부제, 작품 ID)
@@ -766,7 +766,7 @@ Phase 1은 백엔드가 없으므로 모든 데이터가 localStorage(일부 ses
   uploadedAt?: string                    // ISO 8601
   linkedEventId?: string | number
   pick?: boolean                         // 주간 에디터스 픽
-  editorsPick?: boolean                  // 영구 배지
+  pickBadge?: boolean                    // Pick 선정 이력 (영구 배지)
   coverImageIndex?: number
   customCoverUrl?: string
 }
