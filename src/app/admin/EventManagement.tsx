@@ -11,6 +11,7 @@ import {
   type ManagedEvent,
   type EventStatus,
 } from '../utils/eventStore';
+import { workStore } from '../store';
 
 type DraftState = {
   title: string;
@@ -92,6 +93,12 @@ export default function EventManagement() {
     });
     if (!ok) return;
     eventStore.remove(ev.id);
+    // Clear linkedEventId from orphaned works
+    workStore.getWorks().forEach((w) => {
+      if (w.linkedEventId?.toString() === ev.id) {
+        workStore.updateWork(w.id, { linkedEventId: undefined });
+      }
+    });
     toast.success('이벤트가 삭제되었습니다.');
   };
 
@@ -104,6 +111,10 @@ export default function EventManagement() {
     const end = draft.endAt.trim();
     if (!title || !desc || !img || !start || !end) {
       toast.error('제목·설명·배너 이미지·기간은 필수입니다.');
+      return;
+    }
+    if (start > end) {
+      toast.error('시작일이 종료일보다 늦을 수 없습니다.');
       return;
     }
     const payload: Omit<ManagedEvent, 'id'> = {

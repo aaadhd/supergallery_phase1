@@ -158,9 +158,15 @@ export default function Onboarding() {
     goNext();
   };
 
+  const MAX_PROFILE_IMAGE_SIZE = 5 * 1024 * 1024; // 5MB
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file || !file.type.startsWith('image/')) return;
+    if (file.size > MAX_PROFILE_IMAGE_SIZE) {
+      toast.error(t('onboarding.errImageTooLarge'));
+      e.target.value = '';
+      return;
+    }
     const reader = new FileReader();
     reader.onload = () => {
       if (typeof reader.result === 'string') setProfileImage(reader.result);

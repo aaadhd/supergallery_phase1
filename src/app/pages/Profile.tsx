@@ -467,13 +467,17 @@ export default function Profile() {
                   <label className="block text-base font-semibold text-foreground mb-2">
                     {t('profile.formBio')}
                   </label>
-                  <textarea
-                    value={profileBio}
-                    onChange={(e) => setProfileBio(e.target.value)}
-                    placeholder={t('profile.formBioPh')}
-                    rows={5}
-                    className="w-full px-4 py-3.5 border border-input rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none leading-relaxed"
-                  />
+                  <div className="relative">
+                    <textarea
+                      value={profileBio}
+                      onChange={(e) => { if (e.target.value.length <= 200) setProfileBio(e.target.value); }}
+                      placeholder={t('profile.formBioPh')}
+                      rows={5}
+                      maxLength={200}
+                      className="w-full px-4 py-3.5 border border-input rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none leading-relaxed"
+                    />
+                    <span className="absolute right-3 bottom-2 text-xs text-muted-foreground">{profileBio.length}/200</span>
+                  </div>
                 </div>
 
                 {/* 국가 */}
@@ -904,10 +908,14 @@ export default function Profile() {
                                       onClick={async () => {
                                         const ok = await openConfirm({
                                           title: t('profile.deleteWorkConfirm').replace('{title}', displayExhibitionTitle(work, t('work.untitled'))),
+                                          description: t('profile.deleteWorkPermanent'),
                                           destructive: true,
                                           confirmLabel: t('profile.delete'),
                                         });
-                                        if (ok) workStore.removeWork(work.id);
+                                        if (ok) {
+                                          workStore.removeWork(work.id);
+                                          toast.success(t('profile.toastWorkDeleted'));
+                                        }
                                       }}
                                     >
                                       <Trash2 className="h-4 w-4 mr-2" />
@@ -1065,10 +1073,14 @@ export default function Profile() {
                                               '{title}',
                                               displayProminentHeadline(work, t('work.untitled')),
                                             ),
+                                            description: t('profile.deleteWorkPermanent'),
                                             destructive: true,
                                             confirmLabel: t('profile.delete'),
                                           });
-                                          if (ok) workStore.removeWork(work.id);
+                                          if (ok) {
+                                            workStore.removeWork(work.id);
+                                            toast.success(t('profile.toastWorkDeleted'));
+                                          }
                                         }}
                                       >
                                         <Trash2 className="h-4 w-4 mr-2" />
@@ -1398,8 +1410,11 @@ export default function Profile() {
                                       className="text-destructive focus:text-destructive text-sm"
                                       onSelect={(e) => e.preventDefault()}
                                       onClick={async () => {
-                                        const ok = await openConfirm({ title: t('profile.deleteDraftConfirm'), destructive: true, confirmLabel: t('profile.delete') });
-                                        if (ok) draftStore.deleteDraft(draft.id);
+                                        const ok = await openConfirm({ title: t('profile.deleteDraftConfirm'), description: t('profile.deleteWorkPermanent'), destructive: true, confirmLabel: t('profile.delete') });
+                                        if (ok) {
+                                          draftStore.deleteDraft(draft.id);
+                                          toast.success(t('profile.toastDraftDeleted'));
+                                        }
                                       }}
                                     >
                                       <Trash2 className="h-4 w-4 mr-2" />

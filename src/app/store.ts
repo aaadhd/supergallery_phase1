@@ -88,8 +88,19 @@ const loadWorksFromStorage = (): Work[] => {
 
   const version = localStorage.getItem('artier_works_version');
   if (version !== WORKS_STORAGE_VERSION) {
-    saveWorksToStoragePlain(initialWorks);
-    return initialWorks;
+    // Migration: keep user-uploaded works, refresh only seed data
+    let userWorks: Work[] = [];
+    try {
+      const raw = localStorage.getItem('artier_works');
+      if (raw) {
+        const all = JSON.parse(raw) as Work[];
+        const seedIds = new Set(initialWorks.map((w) => w.id));
+        userWorks = all.filter((w) => !seedIds.has(w.id));
+      }
+    } catch { /* ignore corrupt data */ }
+    const merged = [...initialWorks, ...userWorks];
+    saveWorksToStoragePlain(merged);
+    return merged;
   }
 
   const stored = localStorage.getItem('artier_works');
@@ -441,7 +452,9 @@ export const profileStore = {
 
 export const useProfileStore = () => {
   const [, forceUpdate] = useState({});
-  useEffect(() => profileStore.subscribe(() => forceUpdate({})), []);
+  useEffect(() => {
+    return profileStore.subscribe(() => forceUpdate({}));
+  }, []);
   return profileStore;
 };
 
@@ -513,7 +526,9 @@ export const userInteractionStore = {
 
 export const useInteractionStore = () => {
   const [, forceUpdate] = useState({});
-  useEffect(() => userInteractionStore.subscribe(() => forceUpdate({})), []);
+  useEffect(() => {
+    return userInteractionStore.subscribe(() => forceUpdate({}));
+  }, []);
   return userInteractionStore;
 };
 
@@ -555,7 +570,9 @@ export const authStore = {
 
 export const useAuthStore = () => {
   const [, forceUpdate] = useState({});
-  useEffect(() => authStore.subscribe(() => forceUpdate({})), []);
+  useEffect(() => {
+    return authStore.subscribe(() => forceUpdate({}));
+  }, []);
   return authStore;
 };
 
@@ -582,6 +599,9 @@ export const followStore = {
   getFollows: () => currentFollows,
   isFollowing: (id: string) => currentFollows.includes(id),
   toggle: (id: string) => {
+    // Guard: no self-follow, no following withdrawn artists
+    if (id === artists[0]?.id) return;
+    if (withdrawnArtistStore.isWithdrawn(id)) return;
     if (currentFollows.includes(id)) {
       currentFollows = currentFollows.filter(f => f !== id);
       adjustArtistFollowerDelta(id, -1);
@@ -615,7 +635,9 @@ export const followStore = {
 
 export const useFollowStore = () => {
   const [, forceUpdate] = useState({});
-  useEffect(() => followStore.subscribe(() => forceUpdate({})), []);
+  useEffect(() => {
+    return followStore.subscribe(() => forceUpdate({}));
+  }, []);
   return followStore;
 };
 
@@ -675,7 +697,9 @@ export const accountSuspensionStore = {
 
 export const useAccountSuspensionStore = () => {
   const [, forceUpdate] = useState({});
-  useEffect(() => accountSuspensionStore.subscribe(() => forceUpdate({})), []);
+  useEffect(() => {
+    return accountSuspensionStore.subscribe(() => forceUpdate({}));
+  }, []);
   return accountSuspensionStore;
 };
 

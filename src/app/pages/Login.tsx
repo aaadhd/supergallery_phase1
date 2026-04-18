@@ -16,7 +16,8 @@ export default function Login() {
   const { t, locale } = useI18n();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
-  const redirectTo = searchParams.get('redirect') || '/';
+  const rawRedirect = searchParams.get('redirect') || '/';
+  const redirectTo = rawRedirect.startsWith('/') && !rawRedirect.startsWith('//') ? rawRedirect : '/';
 
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');

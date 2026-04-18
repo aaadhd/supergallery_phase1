@@ -214,7 +214,8 @@ export default function Upload() {
   // 비로그인 시 로그인 화면으로 (URL 직접 진입 차단)
   useEffect(() => {
     if (!auth.isLoggedIn()) {
-      navigate('/login?redirect=/upload', { replace: true });
+      const fullPath = window.location.pathname + window.location.search;
+      navigate(`/login?redirect=${encodeURIComponent(fullPath)}`, { replace: true });
     }
   }, [auth, navigate]);
 
@@ -378,14 +379,24 @@ export default function Upload() {
     if (!selfId) return;
     const hasSelfSlot = contents.some((c) => c.artistType === 'member' && c.artist?.id === selfId);
     if (!hasSelfSlot) return;
-    setContents((prev) =>
-      prev.map((c) =>
-        c.artistType === 'member' && c.artist?.id === selfId
-          ? { ...c, artist: undefined, artistType: undefined }
-          : c,
-      ),
-    );
-    toast.info(t('upload.roleInstructorSelfCleared'));
+    // 본인 슬롯이 있으면 확인 후 초기화
+    openConfirm({
+      title: t('upload.confirmInstructorClearSelf'),
+      destructive: true,
+    }).then((ok) => {
+      if (ok) {
+        setContents((prev) =>
+          prev.map((c) =>
+            c.artistType === 'member' && c.artist?.id === selfId
+              ? { ...c, artist: undefined, artistType: undefined }
+              : c,
+          ),
+        );
+        toast.info(t('upload.roleInstructorSelfCleared'));
+      } else {
+        setIsInstructor(false);
+      }
+    });
   }, [isInstructor]);
 
   // 선택된 이미지의 작가 타입에 맞춰 탭 자동 전환
@@ -459,7 +470,11 @@ export default function Upload() {
     const editId = searchParams.get('edit');
     if (!editId) return;
     const work = workStore.getWork(editId);
-    if (!work) return;
+    if (!work) {
+      toast.error(t('upload.errWorkNotFound'));
+      navigate('/upload', { replace: true });
+      return;
+    }
     setEditingWorkId(editId);
     setUploadType(work.primaryExhibitionType === 'group' ? 'group' : 'solo');
     setExhibitionName(work.exhibitionName || '');
@@ -599,6 +614,10 @@ export default function Upload() {
       toast.error(t('upload.errMinOneImage'));
       return;
     }
+    if (!exhibitionName.trim()) {
+      toast.error(t('upload.errExhibitionNameRequired'));
+      return;
+    }
     if (!isOriginalWork) {
       toast.error(
         uploadType === 'group' ? t('upload.errCheckStudentConsent') : t('upload.errCheckOriginal'),
@@ -606,10 +625,13 @@ export default function Upload() {
       return;
     }
 
-    // 비속어 검증
-    const profanityTarget = [exhibitionName, groupName].find((s) => s && containsProfanity(s));
-    if (profanityTarget) {
-      toast.error(t('upload.errProfanity'));
+    // 비속어 검증 (필드별)
+    if (exhibitionName && containsProfanity(exhibitionName)) {
+      toast.error(t('upload.errProfanityExhibitionName'));
+      return;
+    }
+    if (groupName && containsProfanity(groupName)) {
+      toast.error(t('upload.errProfanityGroupName'));
       return;
     }
 

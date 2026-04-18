@@ -121,6 +121,10 @@ export default function BannerManagement() {
       toast.error('제목과 이미지 URL을 입력해 주세요.');
       return;
     }
+    if (draft.startAt && draft.endAt && draft.startAt > draft.endAt) {
+      toast.error('시작일이 종료일보다 늦을 수 없습니다.');
+      return;
+    }
     const result = bannerStore.add({
       title: draft.title.trim(),
       subtitle: draft.subtitle.trim() || undefined,

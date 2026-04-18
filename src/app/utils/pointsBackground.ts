@@ -133,6 +133,8 @@ export function pointsOnWorkPublished(work: {
   } catch {
     times = {};
   }
+  // Prevent double-awarding for the same work
+  if (times[work.id]) return;
   times[work.id] = new Date().toISOString();
   localStorage.setItem(PUBLISH_TIMES_KEY, JSON.stringify(times));
 
@@ -231,7 +233,8 @@ export function readPointsLedger(): PointLedgerEntry[] {
 
 /** 표시용 AP 잔액: 원장 합계(데모와 일치) */
 export function getApBalanceFromLedger(): number {
-  return readPointsLedger().reduce((s, e) => s + (typeof e.ap === 'number' ? e.ap : 0), 0);
+  const sum = readPointsLedger().reduce((s, e) => s + (typeof e.ap === 'number' ? e.ap : 0), 0);
+  return Math.max(0, sum);
 }
 
 export function getPpBalance(): number {

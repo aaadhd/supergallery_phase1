@@ -209,6 +209,7 @@ export default function Search() {
               role="combobox"
               aria-expanded={suggestOpen && autocompleteSuggestions.length > 0}
               aria-autocomplete="list"
+              maxLength={100}
               className="w-full pl-12 sm:pl-14 pr-12 sm:pr-14 py-4 sm:py-5 text-base sm:text-base border-2 border-border rounded-2xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all bg-white"
             />
             {query && (
