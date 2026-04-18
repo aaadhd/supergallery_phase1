@@ -70,6 +70,13 @@ export default function ContentReview() {
       message: t('review.notifApproved'),
       workId: w.id,
     });
+    // 팔로워 신작 알림 (Phase 1 데모: 로그인 사용자에게 1건)
+    pushDemoNotification({
+      type: 'like',
+      message: t('review.notifNewWork'),
+      workId: w.id,
+      fromUser: { name: w.artist.name, avatar: w.artist.avatar, id: w.artistId },
+    });
 
     // 검수 승인 시점에 비가입자 초대 발송 (Upload에서 보류된 것)
     const pending = w.imageArtists?.filter((a) => a.type === 'non-member' && a.phoneNumber && a.displayName) ?? [];

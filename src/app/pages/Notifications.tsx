@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Heart, UserPlus, Star, Bell, Check, Calendar } from 'lucide-react';
+import { Heart, UserPlus, Star, Bell, Check, Calendar, X } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';
 import { artists } from '../data';
@@ -230,6 +230,15 @@ export default function Notifications() {
     setNotifications((prev) => prev.map((n) => ({ ...n, read: true })));
   };
 
+  const deleteNotification = (id: string) => {
+    setNotifications((prev) => prev.filter((n) => n.id !== id));
+  };
+
+  const deleteAllRead = async () => {
+    if (!(await openConfirm({ title: t('notifications.confirmDeleteRead'), destructive: true }))) return;
+    setNotifications((prev) => prev.filter((n) => !n.read));
+  };
+
   const handleClick = (notif: Notification) => {
     markAsRead(notif.id);
     if (notif.type === 'event') {
@@ -266,6 +275,11 @@ export default function Notifications() {
                 <Button variant="ghost" size="sm" onClick={markAllRead} className="text-sm text-muted-foreground">
                   <Check className="h-4 w-4 mr-1" />
                   {t('notifications.markAll')}
+                </Button>
+              )}
+              {notifications.some((n) => n.read) && (
+                <Button variant="ghost" size="sm" onClick={deleteAllRead} className="text-sm text-destructive/70">
+                  {t('notifications.deleteRead')}
                 </Button>
               )}
             </div>
@@ -337,37 +351,45 @@ export default function Notifications() {
               const Icon = typeIcons[notif.type];
               const colorClass = typeColors[notif.type];
               return (
-                <button
+                <div
                   key={notif.id}
-                  type="button"
-                  onClick={() => handleClick(notif)}
                   className={`flex items-start gap-3 sm:gap-4 w-full px-4 py-4 sm:px-5 sm:py-5 text-left transition-colors ${
                     notif.read ? 'bg-white lg:hover:bg-muted/30' : 'bg-primary/[0.04] lg:hover:bg-primary/[0.07]'
                   }`}
                 >
-                  {notif.fromUser ? (
-                    <Avatar className="h-10 w-10 shrink-0 ring-1 ring-border/50">
-                      <AvatarImage src={notif.fromUser.avatar} alt={notif.fromUser.name} />
-                      <AvatarFallback>{notif.fromUser.name[0]}</AvatarFallback>
-                    </Avatar>
-                  ) : (
-                    <div className={`h-10 w-10 shrink-0 rounded-full flex items-center justify-center ${colorClass}`}>
-                      <Icon className="h-4 w-4" />
+                  <button type="button" onClick={() => handleClick(notif)} className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0 text-left bg-transparent border-0 p-0 cursor-pointer">
+                    {notif.fromUser ? (
+                      <Avatar className="h-10 w-10 shrink-0 ring-1 ring-border/50">
+                        <AvatarImage src={notif.fromUser.avatar} alt={notif.fromUser.name} />
+                        <AvatarFallback>{notif.fromUser.name[0]}</AvatarFallback>
+                      </Avatar>
+                    ) : (
+                      <div className={`h-10 w-10 shrink-0 rounded-full flex items-center justify-center ${colorClass}`}>
+                        <Icon className="h-4 w-4" />
+                      </div>
+                    )}
+                    <div className="flex-1 min-w-0">
+                      <p className={`text-sm sm:text-sm leading-relaxed ${notif.read ? 'text-muted-foreground' : 'text-foreground'}`}>
+                        {notif.fromUser && <span className="font-semibold">{notif.fromUser.name}</span>}
+                        {notif.message}
+                      </p>
+                      <div className="flex items-center gap-2 mt-1.5">
+                        <span className="text-xs text-muted-foreground/70">
+                          {formatRelativeTime(notif.createdAt, t, locale)}
+                        </span>
+                        {!notif.read && <span className="h-1.5 w-1.5 rounded-full bg-primary" />}
+                      </div>
                     </div>
-                  )}
-                  <div className="flex-1 min-w-0">
-                    <p className={`text-sm sm:text-sm leading-relaxed ${notif.read ? 'text-muted-foreground' : 'text-foreground'}`}>
-                      {notif.fromUser && <span className="font-semibold">{notif.fromUser.name}</span>}
-                      {notif.message}
-                    </p>
-                    <div className="flex items-center gap-2 mt-1.5">
-                      <span className="text-xs text-muted-foreground/70">
-                        {formatRelativeTime(notif.createdAt, t, locale)}
-                      </span>
-                      {!notif.read && <span className="h-1.5 w-1.5 rounded-full bg-primary" />}
-                    </div>
-                  </div>
-                </button>
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => deleteNotification(notif.id)}
+                    className="shrink-0 p-1.5 rounded-full text-muted-foreground/50 hover:text-destructive hover:bg-destructive/10 transition-colors"
+                    aria-label={t('notifications.delete')}
+                  >
+                    <X className="h-4 w-4" />
+                  </button>
+                </div>
               );
             })}
           </div>

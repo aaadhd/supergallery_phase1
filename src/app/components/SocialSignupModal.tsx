@@ -78,6 +78,7 @@ export function SocialSignupModal({ open, provider, onClose, onComplete }: Props
         </header>
 
         <div className="space-y-5 px-5 py-5">
+          <p className="text-sm text-muted-foreground">{t('socialSignup.guide').replace('{provider}', t(`socialSignup.provider_${provider}`))}</p>
           {/* 소셜 계정 정보 */}
           <div className="flex items-center gap-3 rounded-lg border border-border/60 bg-muted/30 px-3 py-3">
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white text-lg" aria-hidden>

@@ -831,14 +831,14 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
           <div className="flex items-center justify-between px-4 py-2 border-b border-white/5">
             {prevWork ? (
               <button type="button" onClick={() => onNavigate?.(prevWork.id)} className="flex items-center gap-1.5 p-0 m-0 border-0 bg-transparent shadow-none cursor-pointer">
-                <ChevronLeft className="h-4 w-4 text-white/50" />
-                <span className="text-xs text-white/50">{t('workDetail.prev')}</span>
+                <ChevronLeft className="h-4 w-4 text-white/80" />
+                <span className="text-xs text-white/80">{t('workDetail.prev')}</span>
               </button>
             ) : <div />}
             {nextWork ? (
               <button type="button" onClick={() => onNavigate?.(nextWork.id)} className="flex items-center gap-1.5 p-0 m-0 border-0 bg-transparent shadow-none cursor-pointer">
-                <span className="text-xs text-white/50">{t('workDetail.next')}</span>
-                <ChevronRight className="h-4 w-4 text-white/50" />
+                <span className="text-xs text-white/80">{t('workDetail.next')}</span>
+                <ChevronRight className="h-4 w-4 text-white/80" />
               </button>
             ) : <div />}
           </div>
@@ -851,7 +851,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
             className="flex flex-col items-center gap-1 p-1.5 -m-1 border-0 bg-transparent shadow-none cursor-pointer"
           >
             <Heart className={`h-6 w-6 ${isLiked ? 'text-[#FF2E63] fill-[#FF2E63]' : 'text-white'}`} />
-            <span className="text-xs text-white/70">{(work.likes || 0).toLocaleString()}</span>
+            <span className="text-xs text-white/90">{t('workDetail.like')}</span>
           </button>
           <button
             type="button"
@@ -859,7 +859,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
             className="flex flex-col items-center gap-1 p-1.5 -m-1 border-0 bg-transparent shadow-none cursor-pointer"
           >
             <Bookmark className={`h-6 w-6 ${isSaved ? 'text-white fill-white' : 'text-white'}`} />
-            <span className="text-xs text-white/70">{t('workDetail.save')}</span>
+            <span className="text-xs text-white/90">{t('workDetail.save')}</span>
           </button>
           <Popover open={isShareOpen} onOpenChange={setIsShareOpen}>
             <PopoverTrigger asChild>
@@ -868,7 +868,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                 className="flex flex-col items-center gap-1 p-1.5 -m-1 border-0 bg-transparent shadow-none cursor-pointer"
               >
                 <Share2 className="h-6 w-6 text-white" />
-                <span className="text-xs text-white/70">{t('workDetail.share')}</span>
+                <span className="text-xs text-white/90">{t('workDetail.share')}</span>
               </button>
             </PopoverTrigger>
             <PopoverContent side="top" className="w-[min(100vw-2rem,17rem)] p-2 bg-[#2a2a2a] border-white/10 z-[110] mb-2">
@@ -909,7 +909,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
               className="flex flex-col items-center gap-1 p-1.5 -m-1 border-0 bg-transparent shadow-none cursor-pointer"
             >
               <UserPlus className={`h-6 w-6 ${follows.isFollowing(work.artist.id) ? 'text-primary' : 'text-white'}`} />
-              <span className="text-xs text-white/70">
+              <span className="text-xs text-white/90">
                 {follows.isFollowing(work.artist.id) ? t('social.following') : t('social.follow')}
               </span>
             </button>
@@ -921,7 +921,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
               className="flex flex-col items-center gap-1 p-1.5 -m-1 border-0 bg-transparent shadow-none cursor-pointer"
             >
               <Flag className="h-6 w-6 text-white" />
-              <span className="text-xs text-white/70">{t('workDetail.report')}</span>
+              <span className="text-xs text-white/90">{t('workDetail.report')}</span>
             </button>
           )}
         </div>
