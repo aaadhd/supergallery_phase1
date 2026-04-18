@@ -333,14 +333,17 @@ Phase 1에서 포인트는 프론트에 미노출. 백그라운드 적립만 동
 - 반려 사유: `low_quality`, `spam`, `inappropriate`, `copyright`
 - 승인 시: 보류된 비회원 초대 자동 발송 + 팔로워 신작 알림 생성
 
-#### PickManagement (`/admin/picks`)
-- 주간 에디터스 픽 선정 (최대 10개)
+#### PickManagement (`/admin/picks`) — Artier's Pick
+- Artier's Pick 선정 (최대 10개, 주 단위 교체)
 - 추가/제거, 히스토리 보기
-- `pick: true` = 주간 활성, `pickBadge: true` = 영구 배지 (한 번 Pick 받은 이력)
+- Pick 선정 시 `pick: true`, `pickBadge: true` 동시 부여
+- 해제 시 `pick: false`로 전환, `pickBadge`는 영구 유지 (한 번 받은 이력 배지)
 
-#### CurationManagement (`/admin/curation`)
-- 주간 테마 전시 설정 (제목, 부제, 작품 ID)
-- 추천 작가 토글
+#### CurationManagement (`/admin/curation`) — 기획전
+- 기획전 설정 (제목, 부제, 포함 전시 ID)
+  - 여러 전시를 주제·맥락으로 엮는 공개 컬렉션. 그룹전·작가전·특집전 포괄.
+  - 배지 부여 없음 (노출용)
+- 추천 작가 토글 (피드 `featured` 버킷 부스트)
 
 #### BannerManagement (`/admin/banners`)
 - 배너 CRUD (최대 5개)
