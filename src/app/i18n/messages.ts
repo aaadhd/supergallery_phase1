@@ -897,7 +897,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'profile.toastProfileSaved': '프로필이 저장되었어요.',
   'profile.errProfanity': '닉네임·한 줄 소개·자기소개에 부적절한 단어가 포함되어 있어요.',
   'profile.bioPlaceholderEmpty': '아직 소개가 없습니다.',
-  'profile.tabWorkManage': '작품 관리',
+  'profile.tabWorkManage': '내 작품',
   'profile.exhibitionNameBadge': '전시명',
   'profile.workNameBadge': '작품명',
   'profile.artistNameBadge': '작가명',
@@ -906,7 +906,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'profile.tabSaves': '저장',
   'profile.tabDrafts': '초안',
   'profile.tabGuideExhibition': '전시 탭은 전시 단위로 보여요. 내가 올리지 않은 전시도 참여 작가로 연결되면 함께 보여요. 수정은 내가 올린 전시만 우상단 버튼으로 할 수 있어요. 내가 올리지 않은 전시에서 수정이 필요하면 업로더를 통해 수정해 주세요.',
-  'profile.tabGuideWorks': '작품 관리는 전시에 포함된 내 그림을 모아보는 탭이에요. 작품명을 탭하면 바로 수정할 수 있어요.',
+  'profile.tabGuideWorks': '내 작품 탭에는 전시에 포함된 내 그림이 모여요. 작품명을 탭하거나 연필 아이콘을 누르면 바로 수정할 수 있어요.',
   'profile.tabGuideStudentWorks': '수강생 작품 탭에는 내가 강사로 업로드한 그룹 전시 작품만 모아 보여줍니다.',
   'profile.tabGuideLikes': '좋아요 탭에는 내가 좋아요를 누른 작품이 모여요.',
   'profile.tabGuideSaves': '저장 탭에는 나중에 보려고 저장한 작품이 모여요.',
@@ -2046,7 +2046,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points are Phase
   'profile.toastProfileSaved': 'Profile saved.',
   'profile.errProfanity': 'Nickname, headline, or bio contains inappropriate language.',
   'profile.bioPlaceholderEmpty': 'No bio yet.',
-  'profile.tabWorkManage': 'Manage Works',
+  'profile.tabWorkManage': 'My Works',
   'profile.exhibitionNameBadge': 'Exhibition',
   'profile.workNameBadge': 'Work',
   'profile.artistNameBadge': 'Artist',
@@ -2057,7 +2057,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points are Phase
   'profile.tabGuideExhibition':
     'The Exhibition tab is shown by exhibition. Exhibitions you did not upload can also appear when you are linked as a participant. Only exhibitions you uploaded can be edited via the top-right menu button.',
   'profile.tabGuideWorks':
-    'Manage Works shows all your images across exhibitions. Tap the title to rename a work.',
+    'My Works shows all your images across exhibitions. Tap the title or pencil icon to rename a work.',
   'profile.tabGuideStudentWorks':
     'The Student works tab shows only group exhibitions you uploaded as an instructor.',
   'profile.tabGuideLikes': 'The Likes tab collects works you liked.',

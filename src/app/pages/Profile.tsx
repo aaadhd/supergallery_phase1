@@ -1165,11 +1165,15 @@ export default function Profile() {
                   )}
                 </TabsContent>
 
-                {/* ===== 작품 관리 탭 — 개별 이미지(그림) 단위 ===== */}
+                {/* ===== 내 작품 탭 — 개별 이미지(그림) 단위 ===== */}
                 <TabsContent value="works" className="mt-6">
                   {worksManageFlatImages.length > 0 ? (
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-[1.625rem] sm:gap-[2.275rem] lg:gap-[2.6rem]">
                       {worksManageFlatImages.map((fi, flatIdx) => {
+                        const openRename = () => {
+                          setRenameValue(fi.pieceTitle === t('work.untitled') ? '' : fi.pieceTitle);
+                          setRenamingFlatImage(fi);
+                        };
                         return (
                         <div
                           key={`${fi.work.id}-img-${fi.imgIndex}`}
@@ -1177,46 +1181,20 @@ export default function Profile() {
                         >
                           <div
                             className="relative aspect-square rounded-sm overflow-hidden bg-white border border-border/40 cursor-pointer"
-                            onClick={(e) => {
-                              if ((e.target as HTMLElement).closest('[data-works-manage-menu]')) return;
-                              setWorksViewerIndex(flatIdx);
-                            }}
+                            onClick={() => setWorksViewerIndex(flatIdx)}
                           >
                             <ImageWithFallback
                               src={fi.imgSrc}
                               alt={fi.pieceTitle}
                               className="w-full h-full object-contain object-center"
                             />
-                            <div className="absolute right-2 top-2 z-20" data-works-manage-menu onClick={(e) => e.stopPropagation()}>
-                              <DropdownMenu>
-                                <DropdownMenuTrigger asChild>
-                                  <Button
-                                    type="button"
-                                    className="flex h-9 w-9 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-black/60 p-0 text-white shadow-none hover:bg-black/75 hover:text-white"
-                                    aria-label={t('profile.workMenuA11y')}
-                                  >
-                                    <MoreHorizontal className="h-4 w-4" strokeWidth={2.5} />
-                                  </Button>
-                                </DropdownMenuTrigger>
-                                <DropdownMenuContent align="end" sideOffset={4}>
-                                  <DropdownMenuItem
-                                    className="text-sm"
-                                    onSelect={(e) => e.preventDefault()}
-                                    onClick={() => { setRenameValue(fi.pieceTitle === t('work.untitled') ? '' : fi.pieceTitle); setRenamingFlatImage(fi); }}
-                                  >
-                                    <Pencil className="h-4 w-4 mr-2" />
-                                    {t('profile.renameWork')}
-                                  </DropdownMenuItem>
-                                </DropdownMenuContent>
-                              </DropdownMenu>
-                            </div>
 
-                            {/* 개별 이미지 상태 뱃지 (작품 관리용) */}
+                            {/* 개별 이미지 상태 뱃지 (내 작품 탭) */}
                             {fi.work.feedReviewStatus && fi.work.feedReviewStatus !== 'approved' && (
                               <div className="absolute left-2 bottom-2 z-10">
                                 <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium backdrop-blur-sm ${
-                                  fi.work.feedReviewStatus === 'pending' 
-                                    ? 'bg-muted/90 text-foreground border border-border' 
+                                  fi.work.feedReviewStatus === 'pending'
+                                    ? 'bg-muted/90 text-foreground border border-border'
                                     : 'bg-red-500/90 text-white'
                                 }`}>
                                   {fi.work.feedReviewStatus === 'pending' ? t('review.badgePending') : t('review.badgeRejected')}
@@ -1224,24 +1202,36 @@ export default function Profile() {
                               </div>
                             )}
                           </div>
-                          <button
-                            type="button"
-                            className="w-full text-left pt-2 cursor-pointer"
-                            onClick={() => setWorksViewerIndex(flatIdx)}
-                          >
-                            <p className="text-sm font-medium text-foreground flex items-center gap-1.5 truncate">
+                          <div className="pt-2">
+                            {/* 작품명: 탭하면 인라인 편집 모달 진입 + 연필 아이콘 affordance */}
+                            <div className="flex items-center gap-1.5">
                               <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
                                 {t('profile.workNameBadge')}
                               </span>
-                              <span className="truncate">{fi.pieceTitle}</span>
-                            </p>
-                            <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5 truncate">
-                              <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
-                                {t('profile.exhibitionNameBadge')}
-                              </span>
-                              <span className="truncate">{displayExhibitionTitle(fi.work, t('work.untitled'))}</span>
-                            </p>
-                          </button>
+                              <button
+                                type="button"
+                                onClick={openRename}
+                                className="group/title min-h-[44px] flex items-center gap-1.5 flex-1 min-w-0 text-left -ml-1 pl-1 pr-2 rounded lg:hover:bg-muted/40 transition-colors"
+                                aria-label={t('profile.renameWork')}
+                              >
+                                <span className="truncate text-sm font-medium text-foreground">{fi.pieceTitle}</span>
+                                <Pencil className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60 lg:group-hover/title:text-foreground transition-colors" aria-hidden />
+                              </button>
+                            </div>
+                            {/* 전시명: 뷰어로 진입 */}
+                            <button
+                              type="button"
+                              className="w-full text-left cursor-pointer"
+                              onClick={() => setWorksViewerIndex(flatIdx)}
+                            >
+                              <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5 truncate">
+                                <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
+                                  {t('profile.exhibitionNameBadge')}
+                                </span>
+                                <span className="truncate">{displayExhibitionTitle(fi.work, t('work.untitled'))}</span>
+                              </p>
+                            </button>
+                          </div>
                         </div>
                         );
                       })}
