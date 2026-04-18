@@ -10,6 +10,7 @@ import {
   type BannerBadge,
 } from '../utils/bannerStore';
 import { openConfirm } from '../components/ConfirmDialog';
+import { todayLocalIso } from '../utils/localDate';
 import {
   DndContext,
   closestCenter,
@@ -29,7 +30,7 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const BADGES: BannerBadge[] = ['NEW', 'HOT', 'EVENT', 'PICK'];
+const BADGES: BannerBadge[] = ['NEW', 'HOT', 'EVENT'];
 
 type DraftState = {
   title: string;
@@ -61,7 +62,7 @@ function statusBadgeClass(active: boolean, expired: boolean) {
 
 function isExpired(b: AdminBanner): boolean {
   if (!b.endAt) return false;
-  return new Date().toISOString().slice(0, 10) > b.endAt;
+  return todayLocalIso() > b.endAt;
 }
 
 function formatPeriod(b: AdminBanner): string {

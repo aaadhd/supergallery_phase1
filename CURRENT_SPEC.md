@@ -345,7 +345,7 @@ Phase 1에서 포인트는 프론트에 미노출. 백그라운드 적립만 동
 #### BannerManagement (`/admin/banners`)
 - 배너 CRUD (최대 5개)
 - 드래그앤드롭 순서 변경
-- 뱃지: NEW / HOT / EVENT / PICK
+- 뱃지: NEW / HOT / EVENT
 - 기간 만료 시 자동 비활성화
 - 시작일 > 종료일 날짜 순서 검증
 
@@ -586,7 +586,7 @@ total = base + following_bonus
 | 규칙 | 값 |
 |------|-----|
 | 최대 배너 수 | 5개 |
-| 뱃지 종류 | NEW / HOT / EVENT / PICK |
+| 뱃지 종류 | NEW / HOT / EVENT |
 | 기간 만료 | endAt 이후 자동 비활성화 |
 
 ### 5.10 그룹명 (groupNameRegistry.ts)
@@ -828,7 +828,7 @@ Phase 1은 백엔드가 없으므로 모든 데이터가 localStorage(일부 ses
   subtitle?: string
   imageUrl: string
   linkUrl?: string
-  badge?: 'NEW' | 'HOT' | 'EVENT' | 'PICK'
+  badge?: 'NEW' | 'HOT' | 'EVENT'
   startAt?: string         // ISO date
   endAt?: string           // ISO date
   isActive: boolean

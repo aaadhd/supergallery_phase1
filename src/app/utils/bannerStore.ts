@@ -6,8 +6,9 @@
  */
 
 import { useSyncExternalStore } from 'react';
+import { todayLocalIso } from './localDate';
 
-export type BannerBadge = 'NEW' | 'HOT' | 'EVENT' | 'PICK';
+export type BannerBadge = 'NEW' | 'HOT' | 'EVENT';
 
 export type AdminBanner = {
   id: string;
@@ -31,7 +32,8 @@ function readFromStorage(): AdminBanner[] {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return [];
     const list = JSON.parse(raw);
-    return Array.isArray(list) ? list : [];
+    if (!Array.isArray(list)) return [];
+    return list.map((b) => (b?.badge === 'PICK' ? { ...b, badge: undefined } : b));
   } catch {
     return [];
   }
@@ -46,7 +48,7 @@ function writeToStorage(list: AdminBanner[]) {
 }
 
 function withinPeriod(b: AdminBanner, now: Date): boolean {
-  const todayIso = now.toISOString().slice(0, 10);
+  const todayIso = todayLocalIso(now);
   if (b.startAt && todayIso < b.startAt) return false;
   if (b.endAt && todayIso > b.endAt) return false;
   return true;
