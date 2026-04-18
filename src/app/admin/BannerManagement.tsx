@@ -7,7 +7,6 @@ import {
   useAdminBanners,
   MAX_BANNERS,
   type AdminBanner,
-  type BannerBadge,
 } from '../utils/bannerStore';
 import { openConfirm } from '../components/ConfirmDialog';
 import { todayLocalIso } from '../utils/localDate';
@@ -30,14 +29,11 @@ import {
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
-const BADGES: BannerBadge[] = ['NEW', 'HOT', 'EVENT'];
-
 type DraftState = {
   title: string;
   subtitle: string;
   imageUrl: string;
   linkUrl: string;
-  badge: BannerBadge | '';
   startAt: string;
   endAt: string;
   isActive: boolean;
@@ -48,7 +44,6 @@ const emptyDraft: DraftState = {
   subtitle: '',
   imageUrl: '',
   linkUrl: '',
-  badge: '',
   startAt: '',
   endAt: '',
   isActive: true,
@@ -131,7 +126,6 @@ export default function BannerManagement() {
       subtitle: draft.subtitle.trim() || undefined,
       imageUrl: draft.imageUrl.trim(),
       linkUrl: draft.linkUrl.trim() || undefined,
-      badge: draft.badge || undefined,
       startAt: draft.startAt || undefined,
       endAt: draft.endAt || undefined,
       isActive: draft.isActive,
@@ -205,18 +199,6 @@ export default function BannerManagement() {
               onChange={(e) => setDraft((d) => ({ ...d, linkUrl: e.target.value }))}
               className="border border-border rounded-lg px-3 py-2 text-sm bg-white sm:col-span-2"
             />
-            <select
-              value={draft.badge}
-              onChange={(e) => setDraft((d) => ({ ...d, badge: e.target.value as BannerBadge | '' }))}
-              className="border border-border rounded-lg px-3 py-2 text-sm bg-white"
-            >
-              <option value="">배지 없음</option>
-              {BADGES.map((b) => (
-                <option key={b} value={b}>
-                  {b}
-                </option>
-              ))}
-            </select>
             <label className="flex items-center gap-2 text-sm text-foreground px-1">
               <input
                 type="checkbox"
@@ -331,14 +313,7 @@ function SortableBannerRow({ banner: b, index: idx, onToggleActive, onRemove }: 
         </div>
       </div>
       <div className="flex-1 min-w-0 space-y-1">
-        <div className="flex items-center gap-2 flex-wrap">
-          <p className="text-sm font-semibold text-foreground">{b.title}</p>
-          {b.badge && (
-            <span className="inline-flex rounded px-1.5 py-0.5 text-xs font-bold bg-primary/10 text-primary border border-primary/20">
-              {b.badge}
-            </span>
-          )}
-        </div>
+        <p className="text-sm font-semibold text-foreground">{b.title}</p>
         {b.subtitle && <p className="text-xs text-muted-foreground">{b.subtitle}</p>}
         {b.linkUrl && <p className="text-xs text-primary break-all">{b.linkUrl}</p>}
         <p className="text-xs text-muted-foreground">{formatPeriod(b)}</p>

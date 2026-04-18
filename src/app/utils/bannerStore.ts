@@ -8,15 +8,12 @@
 import { useSyncExternalStore } from 'react';
 import { todayLocalIso } from './localDate';
 
-export type BannerBadge = 'NEW' | 'HOT' | 'EVENT';
-
 export type AdminBanner = {
   id: string;
   title: string;
   subtitle?: string;
   imageUrl: string;
   linkUrl?: string;
-  badge?: BannerBadge;
   startAt?: string; // ISO date (예: 2026-04-01)
   endAt?: string; // ISO date
   isActive: boolean;
@@ -33,7 +30,13 @@ function readFromStorage(): AdminBanner[] {
     if (!raw) return [];
     const list = JSON.parse(raw);
     if (!Array.isArray(list)) return [];
-    return list.map((b) => (b?.badge === 'PICK' ? { ...b, badge: undefined } : b));
+    return list.map((b) => {
+      if (b && 'badge' in b) {
+        const { badge: _ignored, ...rest } = b;
+        return rest;
+      }
+      return b;
+    });
   } catch {
     return [];
   }

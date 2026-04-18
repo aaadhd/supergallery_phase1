@@ -79,7 +79,7 @@ export default function Browse() {
           image: b.imageUrl,
           title: b.title,
           subtitle: b.subtitle || '',
-          tag: b.badge || '',
+          tag: '',
           linkUrl: b.linkUrl,
         }));
       }
