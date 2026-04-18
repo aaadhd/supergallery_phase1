@@ -5,15 +5,16 @@ import { workStore } from '../store';
  * - 명세: 작가 설정 및 비가입자 초대 기능 스펙
  * - 실제 발송 없음. localStorage에 로그만 기록하여 PM이 확인 가능
  * - 중복 발송 방지: 동일 (phoneNumber + workId) 조합
- * - 채널: 한국 번호(+82 또는 010~019로 시작) → 카카오 알림톡 우선, 그 외 → SMS
- * - 5% 확률로 실패 시뮬레이션 (게시는 정상 처리됨을 확인하기 위함)
- * - Phase 2에서 실 외부 서비스 연동 예정
+ * - 채널 라우팅:
+ *   한국 (+82, 01x): 카카오 알림톡 1순위 → SMS 폴백
+ *   해외: 이메일 (전화번호가 아닌 이메일로 발송)
+ * - 출시 전 실 외부 서비스 연동 예정
  */
 
 const LOG_KEY = 'artier_invite_messaging_log';
 const MAX_LOG = 300;
 
-export type InviteChannel = 'kakao_alimtalk' | 'sms';
+export type InviteChannel = 'kakao_alimtalk' | 'sms' | 'email';
 
 export type InviteLogEntry = {
   id: string;
@@ -35,8 +36,13 @@ function isKoreanNumber(raw: string): boolean {
   return /^01[0-9]/.test(digits);
 }
 
+/**
+ * 채널 라우팅:
+ * - 한국 번호 → kakao_alimtalk (실서비스에서 실패 시 sms 폴백)
+ * - 해외 번호 → email (전화번호 기반 SMS 대신 이메일 발송)
+ */
 function pickChannel(phoneNumber: string): InviteChannel {
-  return isKoreanNumber(phoneNumber) ? 'kakao_alimtalk' : 'sms';
+  return isKoreanNumber(phoneNumber) ? 'kakao_alimtalk' : 'email';
 }
 
 function buildMessage(
