@@ -124,6 +124,7 @@ Phase 1은 단일 Operator 레벨이므로, 아래 모든 화면에 대해 Opera
 - **상단 필터 바**: 상태 토글(4종) + 기간 피커(시작~종료)
 - **대기 건수 배지**: 큐 상단에 "검수 대기 N건"
 - **테이블 컬럼**: 썸네일 · 작품명 · 작가 · 업로드일 · 상태 · 액션(상세 진입)
+- **재검수 배지**: 작품명 옆에 노출. `pending` 상태이면서 `rejectionHistory.length > 0`이면 "재검수 요청"(1회차) 또는 "재검수 N회차"(2회 이상) 앰버 배지. 툴팁에 이전 반려 횟수 안내.
 - **빈 상태**: "조건에 맞는 항목이 없습니다" + 필터 초기화 버튼
 
 #### 처리
@@ -135,6 +136,9 @@ Phase 1은 단일 Operator 레벨이므로, 아래 모든 화면에 대해 Opera
 - AC-01: Given 대기 23건 / When 기본 진입 / Then "검수 대기 23건" 배지 + 최신 업로드 순 20건.
 - AC-02: Given 상태 "반려" 필터 / When 탭 / Then `rejected` 항목만 노출 + URL `?status=rejected`.
 - AC-03: Given 필터 조합 결과 0건 / When 로드 / Then 빈 상태 UI + 필터 초기화 CTA.
+- AC-04: Given `pending` + `rejectionHistory.length === 0` / When 행 렌더 / Then 재검수 배지 비노출.
+- AC-05: Given `pending` + `rejectionHistory.length === 1` / When 행 렌더 / Then "재검수 요청" 앰버 배지 노출.
+- AC-06: Given `pending` + `rejectionHistory.length === 3` / When 행 렌더 / Then "재검수 3회차" 앰버 배지 + 툴팁 "이전 반려 3회 후 수정되어 재검수 대기 중입니다".
 
 #### 엣지케이스
 - EC-01: 다른 운영자가 처리한 항목이 큐에 남아있음 → 행 새로고침 버튼 노출.
@@ -801,6 +805,7 @@ Phase 2 권한 3단계 분리 시 본 문서의 §0.4 권한 매트릭스가 세
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.3 | 2026-04-19 | PM × Claude | ADM-REV-01 검수 큐에 재검수 배지 표시(rejectionHistory 기반) — "재검수 요청"(1회차) / "재검수 N회차"(2회+). AC-04~06 추가. |
 | v1.2 | 2026-04-19 | PM × Claude | ADM-WRK-01 "연쇄 정리" 8항목으로 구체화(+ AC-02 갱신). SystemArch §4.3 참조. |
 | v1.1 | 2026-04-19 | PM × Claude | ADM-REV-02 반려 액션에 `rejectionHistory` append 단계 추가(Policy §12.1.1 신규 정책 반영). |
 | v1.0 | 2026-04-19 | PM × Claude | 최초 작성. 어드민 12개 P0 화면 카드(목적·입력·처리·출력·수용기준·엣지케이스·의존) + 권한 매트릭스(§0.4) + 공통 동작(§13) + 엔티티 부록(§14). |

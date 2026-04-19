@@ -198,7 +198,19 @@ export default function ContentReview() {
                         <ImageWithFallback src={src} alt="" className="w-full h-full object-contain object-center" />
                       </div>
                     </td>
-                    <td className="px-4 py-3 font-medium text-foreground">{w.title}</td>
+                    <td className="px-4 py-3 font-medium text-foreground">
+                      <div className="flex items-center gap-2">
+                        <span>{w.title}</span>
+                        {ui === '대기중' && (w.rejectionHistory?.length ?? 0) > 0 && (
+                          <span
+                            className="inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium bg-amber-100 text-amber-700 border border-amber-200"
+                            title={`이전 반려 ${w.rejectionHistory!.length}회 후 수정되어 재검수 대기 중입니다.`}
+                          >
+                            재검수 {w.rejectionHistory!.length > 1 ? `${w.rejectionHistory!.length}회차` : '요청'}
+                          </span>
+                        )}
+                      </div>
+                    </td>
                     <td className="px-4 py-3 text-muted-foreground">{w.artist.name}</td>
                     <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{date || '—'}</td>
                     <td className="px-4 py-3">
