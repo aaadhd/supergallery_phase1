@@ -71,6 +71,16 @@ export function addFalseReport(reporterId: string): {
   return { count: next, triggeredBlock: false };
 }
 
+/** 전체 경고 카운터 맵 (대시보드 집계용). */
+export function getAllWarningCounters(): CounterMap {
+  return readMap(WARNING_KEY);
+}
+
+/** 전체 허위 신고 카운터 맵 (대시보드 집계용). */
+export function getAllFalseReportCounters(): CounterMap {
+  return readMap(FALSE_REPORT_KEY);
+}
+
 export function getWarningCount(targetArtistId: string): number {
   return readMap(WARNING_KEY)[targetArtistId] ?? 0;
 }

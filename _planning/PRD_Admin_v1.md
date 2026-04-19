@@ -76,34 +76,33 @@ Phase 1은 단일 Operator 레벨이므로, 아래 모든 화면에 대해 Opera
 **우선순위**: **P0**
 
 #### 입력
-- 미결 이슈 수
-- 체크리스트 완료율
-- 파트너 작가 현황(단계별 수)
-- 작품 수, 대기 중인 검수 수
-- 블로커(차단됨 상태의 체크리스트·긴급 이슈)
+- 작품 검수 상태 분포(pending·rejected 개수, rejectionHistory 누적 수)
+- 신고 큐 미결 건수
+- 경고 카운터 1회 이상 누적 회원 수
+- 미결 이슈 수·체크리스트 진행률·파트너 현황
+- 블로커(차단됨 체크리스트·긴급 이슈)
 
-#### 처리
-1. 블로커가 있으면 최상단에 경고 카드(색·라벨로 강조).
-2. 주요 지표를 카드로 배치:
-   - 검수 대기 건수 → ADM-REV-01 이동 링크
-   - 미결 이슈 건수(긴급/높음) → ADM-ISU-01
-   - 체크리스트 진행률(완료/전체) → ADM-CKL-01
-   - 파트너 현황 요약 → ADM-PTN-01
-   - 작품 수 요약 → ADM-WRK-01
+#### 구성 (두 개 섹션으로 분리)
 
-#### 출력
-- 블로커 경고 블록(조건부)
-- 지표 카드 6~8개
-- 최근 액티비티(Phase 2에서 보강)
+**1) 콘텐츠 운영** — 운영자가 매일 확인하는 지표
+- **검수 대기 카드** (→ `/admin/content-review`) — pending 건수 + 재검수(rejectionHistory > 0) 건수 인라인 표시 + "SLA 24시간"
+- **반려 상태 카드** (→ `/admin/content-review?status=rejected`) — rejected 건수 + "작가 수정 대기 중"
+- **미결 신고 카드** (→ `/admin/reports`) — pending 신고 건수 + "긴급 건 24시간 SLA"
+- **경고 누적 회원 카드** (→ `/admin/members`) — 경고 1회 이상 회원 수 + "3회 누적 시 자동 정지"
+
+**2) 런칭 준비** — 기존 지표 유지
+- 미결 이슈 / 체크리스트 % / 파트너 작가 / 파트너 작품 / 블로커 경고 / 카테고리별 진행률 / 최근 업데이트
 
 #### 수용기준
 - AC-01: Given 체크리스트 중 "차단됨" 1건 / When 대시보드 로드 / Then 상단 블로커 경고 + 해당 항목 링크.
-- AC-02: Given 검수 대기 23건 / When 로드 / Then 카드에 "23건" 표시 + 탭 시 ADM-REV-01 이동.
-- AC-03: Given 모든 지표 0 / When 로드 / Then 빈 상태 UI("정리된 상태입니다").
+- AC-02: Given 검수 대기 23건(재검수 5건 포함) / When 로드 / Then 카드에 "23" + 서브 "재검수 5건 포함 · SLA 24시간" 문구 노출.
+- AC-03: Given 모든 지표 0 / When 로드 / Then 카드 수치는 0이지만 카드 자체 비활성화 없이 표시.
+- AC-04: Given "반려 상태" 카드 탭 / When 클릭 / Then ADM-REV-01에서 `?status=rejected` 필터 적용 상태로 이동.
+- AC-05: Given 신고가 실시간 추가(다른 탭·사용자) / When `REPORTS_CHANGED_EVENT` 수신 / Then 미결 신고 카드 수치 자동 갱신(새로고침 없이).
 
 #### 의존
-- 엔티티: EXHIBITION, UNRESOLVED_ISSUE, LAUNCH_CHECK_ITEM, PARTNER_ARTIST, REPORT
-- 연결 화면: ADM-REV-01, ADM-ISU-01, ADM-CKL-01, ADM-PTN-01, ADM-WRK-01, ADM-RPT-01
+- 엔티티: EXHIBITION, UNRESOLVED_ISSUE, LAUNCH_CHECK_ITEM, PARTNER_ARTIST, REPORT, SANCTION(경고 카운터)
+- 연결 화면: ADM-REV-01, ADM-RPT-01, ADM-MBR-01, ADM-ISU-01, ADM-CKL-01, ADM-PTN-01, ADM-WRK-01
 
 ---
 
@@ -121,7 +120,8 @@ Phase 1은 단일 Operator 레벨이므로, 아래 모든 화면에 대해 Opera
 - 정렬: 업로드 시각 기본(최신순)
 
 #### 구성
-- **상단 필터 바**: 상태 토글(4종) + 기간 피커(시작~종료)
+- **상단 필터 바**: 상태 토글(4종: 전체·대기중·승인·반려) + 기간 피커(시작~종료)
+- **URL 동기화**: 상태 필터 ↔ `?status=all|pending|approved|rejected` 양방향 동기화(`replace` 모드, `all`은 쿼리 생략). 대시보드·외부 링크에서 특정 필터로 딥링크 가능(예: `/admin/content-review?status=rejected`).
 - **대기 건수 배지**: 큐 상단에 "검수 대기 N건"
 - **테이블 컬럼**: 썸네일 · 작품명 · 작가 · 업로드일 · 상태 · 액션(상세 진입)
 - **재검수 배지**: 작품명 옆에 노출. `pending` 상태이면서 `rejectionHistory.length > 0`이면 "재검수 요청"(1회차) 또는 "재검수 N회차"(2회 이상) 앰버 배지. 툴팁에 이전 반려 횟수 안내.
@@ -139,6 +139,8 @@ Phase 1은 단일 Operator 레벨이므로, 아래 모든 화면에 대해 Opera
 - AC-04: Given `pending` + `rejectionHistory.length === 0` / When 행 렌더 / Then 재검수 배지 비노출.
 - AC-05: Given `pending` + `rejectionHistory.length === 1` / When 행 렌더 / Then "재검수 요청" 앰버 배지 노출.
 - AC-06: Given `pending` + `rejectionHistory.length === 3` / When 행 렌더 / Then "재검수 3회차" 앰버 배지 + 툴팁 "이전 반려 3회 후 수정되어 재검수 대기 중입니다".
+- AC-07: Given `/admin/content-review?status=rejected` 직접 진입 / When 로드 / Then 반려 상태로 필터링 시작.
+- AC-08: Given 상태 필터 "대기중" 선택 / When 선택 / Then URL이 `?status=pending`로 갱신되고 뒤로가기로 이전 상태 복원.
 
 #### 엣지케이스
 - EC-01: 다른 운영자가 처리한 항목이 큐에 남아있음 → 행 새로고침 버튼 노출.
@@ -805,6 +807,7 @@ Phase 2 권한 3단계 분리 시 본 문서의 §0.4 권한 매트릭스가 세
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.4 | 2026-04-19 | PM × Claude | ADM-DSH-01 콘텐츠 운영 지표 섹션 신설(검수 대기·반려 상태·미결 신고·경고 누적 회원 4 카드, Policy §22 SLA 연동). ADM-REV-01 `?status=` URL 동기화(딥링크 지원). AC 보강. |
 | v1.3 | 2026-04-19 | PM × Claude | ADM-REV-01 검수 큐에 재검수 배지 표시(rejectionHistory 기반) — "재검수 요청"(1회차) / "재검수 N회차"(2회+). AC-04~06 추가. |
 | v1.2 | 2026-04-19 | PM × Claude | ADM-WRK-01 "연쇄 정리" 8항목으로 구체화(+ AC-02 갱신). SystemArch §4.3 참조. |
 | v1.1 | 2026-04-19 | PM × Claude | ADM-REV-02 반려 액션에 `rejectionHistory` append 단계 추가(Policy §12.1.1 신규 정책 반영). |

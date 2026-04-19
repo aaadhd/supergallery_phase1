@@ -1,19 +1,52 @@
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertCircle, CheckSquare, Users, AlertTriangle, TrendingUp } from 'lucide-react';
+import { AlertCircle, CheckSquare, Users, AlertTriangle, TrendingUp, Eye, Flag, RotateCcw, ShieldAlert } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Progress } from '../components/ui/progress';
 import { useIssueStore, useChecklistStore, usePartnerStore } from './adminStore';
 import { STATUS_COLORS } from './constants';
+import { workStore, useWorkStore } from '../store';
+import { loadUserReports, REPORTS_CHANGED_EVENT } from '../utils/reportsStore';
+import { getAllWarningCounters } from '../utils/sanctionStore';
 
 export default function AdminDashboard() {
   const issueStore = useIssueStore();
   const checklistStore = useChecklistStore();
   const partnerStore = usePartnerStore();
+  useWorkStore(); // workStore 구독 — 작품 변화 시 지표 자동 갱신
 
   const issues = issueStore.getAll();
   const checklist = checklistStore.getAll();
   const partners = partnerStore.getAll();
+
+  // 콘텐츠 운영 지표 (Policy §22 SLA 기반)
+  const allWorks = workStore.getWorks();
+  const pendingWorks = allWorks.filter(w => w.feedReviewStatus === 'pending');
+  const pendingCount = pendingWorks.length;
+  const resubmitCount = pendingWorks.filter(w => (w.rejectionHistory?.length ?? 0) > 0).length;
+  const rejectedCount = allWorks.filter(w => w.feedReviewStatus === 'rejected').length;
+
+  // 신고 큐 (신고 처리 변경 이벤트 구독)
+  const [reportPendingCount, setReportPendingCount] = useState(() =>
+    loadUserReports().filter(r => (r.adminStatus ?? 'pending') === 'pending').length
+  );
+  useEffect(() => {
+    const refresh = () =>
+      setReportPendingCount(
+        loadUserReports().filter(r => (r.adminStatus ?? 'pending') === 'pending').length,
+      );
+    window.addEventListener(REPORTS_CHANGED_EVENT, refresh);
+    window.addEventListener('storage', refresh);
+    return () => {
+      window.removeEventListener(REPORTS_CHANGED_EVENT, refresh);
+      window.removeEventListener('storage', refresh);
+    };
+  }, []);
+
+  // 경고 누적 회원 수(1회 이상)
+  const warningMap = getAllWarningCounters();
+  const warnedMemberCount = Object.values(warningMap).filter(n => n > 0).length;
 
   // Issue stats
   const issuesByStatus = issues.reduce((acc, i) => {
@@ -53,9 +86,80 @@ export default function AdminDashboard() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">운영 대시보드</h1>
-        <p className="text-sm text-muted-foreground mt-1">SuperGallery Phase 1 런칭 준비 현황</p>
+        <p className="text-sm text-muted-foreground mt-1">Artier Phase 1 운영 현황 · 런칭 준비</p>
       </div>
 
+      {/* 콘텐츠 운영 지표 — 오늘 처리 우선순위 파악용 */}
+      <section>
+        <h2 className="text-sm font-semibold text-muted-foreground mb-3">콘텐츠 운영</h2>
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+          <Link to="/admin/content-review">
+            <Card className="lg:hover:shadow-md transition-shadow cursor-pointer">
+              <CardHeader className="pb-2">
+                <CardDescription className="flex items-center gap-2">
+                  <Eye className="w-4 h-4" />
+                  검수 대기
+                </CardDescription>
+                <CardTitle className="text-3xl">{pendingCount}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs text-muted-foreground">
+                  {resubmitCount > 0
+                    ? `재검수 ${resubmitCount}건 포함 · SLA 24시간`
+                    : 'SLA 24시간 내 처리'}
+                </p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to="/admin/content-review?status=rejected">
+            <Card className="lg:hover:shadow-md transition-shadow cursor-pointer">
+              <CardHeader className="pb-2">
+                <CardDescription className="flex items-center gap-2">
+                  <RotateCcw className="w-4 h-4" />
+                  반려 상태
+                </CardDescription>
+                <CardTitle className="text-3xl">{rejectedCount}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs text-muted-foreground">작가 수정 대기 중</p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to="/admin/reports">
+            <Card className="lg:hover:shadow-md transition-shadow cursor-pointer">
+              <CardHeader className="pb-2">
+                <CardDescription className="flex items-center gap-2">
+                  <Flag className="w-4 h-4" />
+                  미결 신고
+                </CardDescription>
+                <CardTitle className="text-3xl">{reportPendingCount}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs text-muted-foreground">긴급 건은 24시간 SLA</p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to="/admin/members">
+            <Card className="lg:hover:shadow-md transition-shadow cursor-pointer">
+              <CardHeader className="pb-2">
+                <CardDescription className="flex items-center gap-2">
+                  <ShieldAlert className="w-4 h-4" />
+                  경고 누적 회원
+                </CardDescription>
+                <CardTitle className="text-3xl">{warnedMemberCount}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs text-muted-foreground">경고 3회 누적 시 자동 정지</p>
+              </CardContent>
+            </Card>
+          </Link>
+        </div>
+      </section>
+
+      <h2 className="text-sm font-semibold text-muted-foreground mb-3">런칭 준비</h2>
       {/* Summary Cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <Link to="/admin/issues">

@@ -1,4 +1,5 @@
-import { useMemo, useState, useEffect } from 'react';
+import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Check, X } from 'lucide-react';
 import { workStore } from '../store';
@@ -28,11 +29,53 @@ function statusBadgeClass(s: ReviewStatusUi) {
   return 'bg-amber-50 text-amber-800 border border-amber-200';
 }
 
+// URL `?status=pending|approved|rejected|all` ↔ 내부 한국어 필터 매핑
+const STATUS_URL_TO_UI: Record<string, ReviewStatusUi | '전체'> = {
+  pending: '대기중',
+  approved: '승인',
+  rejected: '반려',
+  all: '전체',
+};
+const STATUS_UI_TO_URL: Record<string, string> = {
+  '대기중': 'pending',
+  '승인': 'approved',
+  '반려': 'rejected',
+  '전체': 'all',
+};
+
 export default function ContentReview() {
   const { t } = useI18n();
+  const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [works, setWorks] = useState<Work[]>(() => workStore.getWorks());
-  const [statusFilter, setStatusFilter] = useState<string>('전체');
+  // 초기 필터: URL `?status=` 이 유효하면 반영, 아니면 '전체'
+  const initialStatus: string = ((): string => {
+    const raw = searchParams.get('status') ?? '';
+    return STATUS_URL_TO_UI[raw] ?? '전체';
+  })();
+  const [statusFilter, setStatusFilterState] = useState<string>(initialStatus);
+  const setStatusFilter = useCallback(
+    (next: string) => {
+      setStatusFilterState(next);
+      setSearchParams(
+        (prev) => {
+          const sp = new URLSearchParams(prev);
+          const urlVal = STATUS_UI_TO_URL[next] ?? 'all';
+          if (urlVal === 'all') sp.delete('status');
+          else sp.set('status', urlVal);
+          return sp;
+        },
+        { replace: true },
+      );
+    },
+    [setSearchParams],
+  );
+  // 외부 URL 변경(뒤로가기·딥링크) 역방향 동기화
+  useEffect(() => {
+    const raw = searchParams.get('status') ?? '';
+    const next = STATUS_URL_TO_UI[raw] ?? '전체';
+    setStatusFilterState((prev) => (prev === next ? prev : next));
+  }, [searchParams]);
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
   const [rejectTarget, setRejectTarget] = useState<Work | null>(null);
