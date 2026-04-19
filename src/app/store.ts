@@ -496,6 +496,9 @@ export const userInteractionStore = {
   isLiked: (id: string) => currentInteractions.liked.includes(id),
   isSaved: (id: string) => currentInteractions.saved.includes(id),
   toggleLike: (id: string) => {
+    // 탈퇴 작가의 작품은 인터랙션 불가(Policy §4.2). 기존 기록은 보존, 신규 토글 차단.
+    const w = currentWorks.find(w => w.id === id);
+    if (w && withdrawnArtistStore.isWithdrawn(w.artistId)) return;
     const alreadyLiked = currentInteractions.liked.includes(id);
     if (alreadyLiked) {
       currentInteractions.liked = currentInteractions.liked.filter(i => i !== id);
@@ -503,13 +506,15 @@ export const userInteractionStore = {
       currentInteractions.liked = [...currentInteractions.liked, id];
     }
     saveInteractions();
-    const w = currentWorks.find(w => w.id === id);
     if (w) {
       const delta = alreadyLiked ? -1 : 1;
       workStore.updateWork(id, { likes: Math.max(0, (w.likes ?? 0) + delta) });
     }
   },
   toggleSave: (id: string) => {
+    // 탈퇴 작가의 작품은 인터랙션 불가(Policy §4.2).
+    const w = currentWorks.find(w => w.id === id);
+    if (w && withdrawnArtistStore.isWithdrawn(w.artistId)) return;
     const alreadySaved = currentInteractions.saved.includes(id);
     if (alreadySaved) {
       currentInteractions.saved = currentInteractions.saved.filter(i => i !== id);
@@ -517,7 +522,6 @@ export const userInteractionStore = {
       currentInteractions.saved = [...currentInteractions.saved, id];
     }
     saveInteractions();
-    const w = currentWorks.find(w => w.id === id);
     if (w) {
       const delta = alreadySaved ? -1 : 1;
       workStore.updateWork(id, { saves: Math.max(0, (w.saves ?? 0) + delta) });

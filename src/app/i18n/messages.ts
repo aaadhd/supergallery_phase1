@@ -880,6 +880,8 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'search.suggest6': '추상',
   'profile.deletedUser': '작가 미상',
   'profile.notFound': '존재하지 않는 프로필입니다.',
+  'profile.withdrawnTitle': '탈퇴한 작가입니다',
+  'profile.withdrawnDesc': '이 작가는 Artier를 떠났어요. 이전에 공개한 작품은 둘러보기에서 "작가 미상"으로 감상할 수 있어요.',
   'profile.formDisplayName': '사용자 이름',
   'profile.formDisplayNamePh': '이름을 입력해주세요',
   'profile.formHeadline': '한 줄 프로필',
@@ -1033,6 +1035,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'report.errReason': '신고 사유를 선택해 주세요.',
   'report.toastSuccess': '신고가 접수되었어요.',
   'report.toastDuplicate': '이미 신고한 대상입니다.',
+  'report.errWithdrawnArtist': '탈퇴한 작가의 작품에는 신고할 수 없어요.',
   'report.step2Title': '신고가 접수되었어요',
   'report.step2Body':
     '운영팀이 7일 이내 처리합니다. 관련 법에 따른 긴급 건은 우선 처리됩니다. 허위 신고는 제재될 수 있습니다.',
@@ -2040,6 +2043,8 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points are Phase
   'search.suggest6': 'Abstract',
   'profile.deletedUser': 'Unknown artist',
   'profile.notFound': 'This profile does not exist.',
+  'profile.withdrawnTitle': 'Artist has left',
+  'profile.withdrawnDesc': 'This artist has left Artier. Their past works are still viewable on Browse under "Anonymous artist".',
   'profile.formDisplayName': 'Display name',
   'profile.formDisplayNamePh': 'Enter your name',
   'profile.formHeadline': 'Headline',
@@ -2196,6 +2201,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points are Phase
   'report.errReason': 'Please select a reason.',
   'report.toastSuccess': 'Your report has been submitted.',
   'report.toastDuplicate': 'You have already reported this.',
+  'report.errWithdrawnArtist': 'This artist has left the service — reports are not accepted.',
   'report.step2Title': 'Report received',
   'report.step2Body':
     'Our team will review within 7 business days. Urgent cases required by law are prioritized. False reports may be penalized.',

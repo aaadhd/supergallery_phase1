@@ -446,6 +446,20 @@ export default function Profile() {
     );
   }
 
+  // 탈퇴 작가 프로필(본인이 아닌 타인이 탈퇴한 경우)은 접근 차단.
+  // 작품은 피드에 "작가 미상"으로 유지되지만 프로필 페이지 자체는 접근 불가(Policy §4.1).
+  if (!isOwnProfile && withdrawnArtistStore.isWithdrawn(profileArtist.id)) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center px-4">
+        <div className="text-center space-y-4 max-w-sm">
+          <h1 className="text-xl font-semibold text-foreground">{t('profile.withdrawnTitle')}</h1>
+          <p className="text-sm text-muted-foreground">{t('profile.withdrawnDesc')}</p>
+          <Button variant="outline" onClick={() => navigate('/')}>{t('error.goHome')}</Button>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white">
       {/* 프로필 이미지 변경 모달 */}

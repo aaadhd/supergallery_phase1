@@ -12,7 +12,7 @@ import { Flag } from 'lucide-react';
 import { toast } from 'sonner';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
-import { authStore } from '../store';
+import { authStore, workStore, withdrawnArtistStore } from '../store';
 import {
   addHiddenForReporter,
   hasAlreadyReported,
@@ -79,6 +79,14 @@ export function ReportModal({
     if (!selectedReasonKey) {
       toast.error(t('report.errReason'));
       return;
+    }
+    // 탈퇴 작가의 작품·프로필에는 신고 불가(Policy §4.2).
+    if (targetId) {
+      const targetWork = workStore.getWork(targetId);
+      if (targetWork && withdrawnArtistStore.isWithdrawn(targetWork.artistId)) {
+        toast.error(t('report.errWithdrawnArtist'));
+        return;
+      }
     }
     if (hasAlreadyReported(targetType, targetId)) {
       toast.error(t('report.toastDuplicate'));
