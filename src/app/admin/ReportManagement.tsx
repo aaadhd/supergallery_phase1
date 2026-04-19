@@ -13,6 +13,8 @@ import {
   type StoredUserReport,
 } from '../utils/reportsStore';
 import { addWarning, addFalseReport, getWarningCount, getFalseReportCount } from '../utils/sanctionStore';
+import { pushDemoNotification } from '../utils/pushDemoNotification';
+import { useI18n } from '../i18n/I18nProvider';
 
 type ReportState = '대기' | '비공개' | '삭제' | '경고' | '기각' | '처리완료';
 type ReportKind = '작품' | '댓글' | '프로필';
@@ -78,6 +80,7 @@ function kindBadge(k: ReportKind) {
 }
 
 export default function ReportManagement() {
+  const { t } = useI18n();
   const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState<ReportRow[]>(mergeReportRows);
   const [statusFilter, setStatusFilter] = useState('전체');
@@ -117,6 +120,12 @@ export default function ReportManagement() {
     if (raw.targetType === 'work' && raw.targetId) {
       workStore.updateWork(raw.targetId, { isHidden: true });
       updateUserReport(id, { adminStatus: 'hidden' });
+      // 작품 작가에게 비공개 처리 알림 (Loop: 신고 → 조치 → 피드백)
+      pushDemoNotification({
+        type: 'system',
+        message: t('report.notifTargetWorkHidden').replace('{title}', raw.targetName),
+        workId: raw.targetId,
+      });
       toast.success('작품을 비공개로 저장했습니다. Artier 둘러보기·검색에서 제외됩니다.');
       return;
     }
@@ -138,8 +147,16 @@ export default function ReportManagement() {
       confirmLabel: '삭제',
     });
     if (!ok) return;
-    workStore.removeWork(raw.targetId);
+    // 삭제 전에 targetName을 캡처(removeWork 후에는 work 조회 불가).
+    const deletedTitle = raw.targetName;
+    const deletedWorkId = raw.targetId;
+    workStore.removeWork(deletedWorkId);
     updateUserReport(id, { adminStatus: 'deleted' });
+    // 작품 작가에게 삭제 알림 (workId는 이미 삭제됐으니 참조하지 않음)
+    pushDemoNotification({
+      type: 'system',
+      message: t('report.notifTargetWorkDeleted').replace('{title}', deletedTitle),
+    });
     toast.success('작품이 삭제되었습니다.');
   };
 
@@ -169,7 +186,17 @@ export default function ReportManagement() {
     }
     const { count, triggeredSuspension } = addWarning(targetArtistId);
     updateUserReport(id, { adminStatus: 'warned' });
+    // 대상 작가에게 경고 알림 (자동 승격 시 추가 알림)
+    pushDemoNotification({
+      type: 'system',
+      message: t('report.notifTargetWarned').replace('{count}', String(count)),
+      workId: raw.targetId,
+    });
     if (triggeredSuspension) {
+      pushDemoNotification({
+        type: 'system',
+        message: t('report.notifTargetAutoSuspended'),
+      });
       toast.error(`경고 ${count}회 누적 — 7일 정지가 자동 적용되었습니다.`);
     } else {
       toast.success(`경고가 적용되었습니다. (누적 ${count}/3회)`);
@@ -197,13 +224,26 @@ export default function ReportManagement() {
       }
       const { count, triggeredBlock } = addFalseReport(reporterId);
       updateUserReport(id, { adminStatus: 'dismissed' });
+      // 신고자에게 기각 알림 (자동 차단 시 추가 알림)
+      pushDemoNotification({
+        type: 'system',
+        message: t('report.notifReporterDismissed'),
+      });
       if (triggeredBlock) {
+        pushDemoNotification({
+          type: 'system',
+          message: t('report.notifReporterAutoBlocked'),
+        });
         toast.error(`허위 신고 ${count}회 누적 — 신고자가 7일 차단되었습니다.`);
       } else {
         toast.message(`신고를 기각했습니다. 신고자 허위 신고 누적 ${count}/3회.`);
       }
     } else {
       updateUserReport(id, { adminStatus: 'dismissed' });
+      pushDemoNotification({
+        type: 'system',
+        message: t('report.notifReporterDismissed'),
+      });
       toast.message('신고를 기각했습니다.');
     }
   };
