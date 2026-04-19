@@ -1,7 +1,12 @@
 import { useEffect, useRef, useState } from 'react';
 import { User } from 'lucide-react';
+import { toast } from 'sonner';
 import { useI18n } from '../i18n/I18nProvider';
 import { Button } from './ui/button';
+
+/** 프로필 이미지 제약 — Policy §20 확정 수치. */
+const PROFILE_IMAGE_MAX_BYTES = 5 * 1024 * 1024; // 5MB
+const PROFILE_IMAGE_ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
 
 export type ProfileImageModalProps = {
   open: boolean;
@@ -31,13 +36,27 @@ export default function ProfileImageModal({
 
   const handleFile = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
-    if (!file || !file.type.startsWith('image/')) return;
-    const reader = new FileReader();
-    reader.onload = () => {
-      if (typeof reader.result === 'string') setPreview(reader.result);
-    };
-    reader.readAsDataURL(file);
-    e.target.value = '';
+    // 입력 초기화는 finally에 두어 같은 파일 재선택이 가능하도록 함.
+    try {
+      if (!file) return;
+      // 1) 포맷 검증 (JPG·PNG·WebP·GIF)
+      if (!PROFILE_IMAGE_ALLOWED_TYPES.includes(file.type)) {
+        toast.error(t('profilePhoto.errFileType'));
+        return;
+      }
+      // 2) 크기 검증 (5MB 이하)
+      if (file.size > PROFILE_IMAGE_MAX_BYTES) {
+        toast.error(t('profilePhoto.errFileTooBig'));
+        return;
+      }
+      const reader = new FileReader();
+      reader.onload = () => {
+        if (typeof reader.result === 'string') setPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
+    } finally {
+      e.target.value = '';
+    }
   };
 
   const handleSave = () => {

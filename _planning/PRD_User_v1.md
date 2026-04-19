@@ -1114,23 +1114,34 @@ total = base + following_bonus + bucket_boost + noise
 
 ### USR-PRF-03 · 프로필 사진 모달
 
-**목적**: 프로필 사진 업로드·크롭·교체.
+**목적**: 프로필 사진 업로드·교체·기본 이미지 복원.
 **트리거**: USR-PRF-01 헤더 카메라 아이콘.
 **우선순위**: **P0**
 
 #### 입력
-- 이미지 파일 (5MB 이하)
+- 이미지 파일 (JPG·PNG·WebP·GIF, **5MB 이하**)
 
 #### 처리
-- 크롭(정사각형) + 업로드.
-- 기존 프로필 이미지는 덮어씀.
+1. 파일 선택 시 검증 순서:
+   - 포맷(MIME): `image/jpeg` · `image/png` · `image/webp` · `image/gif` 중 하나여야 함. 아니면 에러 토스트 "이미지 파일만 선택할 수 있어요. (JPG·PNG·WebP·GIF)"
+   - 크기: 5MB 초과 시 에러 토스트 "파일 크기는 5MB 이하여야 해요."
+2. 검증 통과 시 FileReader로 data URL 변환 후 미리보기 표시.
+3. "저장" 시 프로필 이미지 교체, 기존 이미지는 덮어쓰기.
+4. "기본 이미지로 변경" → 아바타를 기본 이미지로 전환.
 
 #### 수용기준
-- AC-01: Given 이미지 6MB / When 선택 / Then 에러 "5MB 이하 이미지를 선택해 주세요".
-- AC-02: Given 크롭 영역 확정 / When 저장 / Then 프로필 헤더 썸네일 즉시 반영.
+- AC-01: Given 이미지 6MB 선택 / When 파일 선택 / Then 에러 토스트 "파일 크기는 5MB 이하여야 해요." + 미리보기 업데이트 안 됨.
+- AC-02: Given PDF 파일 선택 시도 / When 파일 선택 / Then 에러 토스트 "이미지 파일만 선택할 수 있어요." + 미리보기 업데이트 안 됨.
+- AC-03: Given 유효 이미지(4MB, JPG) / When 저장 / Then 프로필 헤더 썸네일 즉시 반영.
+- AC-04: Given 에러 토스트 뜬 후 같은 파일 재선택 / When 선택 / Then 다시 검증 수행(input value 초기화 보장).
+
+#### 엣지케이스
+- EC-01: 매우 큰 파일(50MB+) 선택 → 즉시 차단, FileReader 미호출(메모리 보호).
+- EC-02: 확장자 위변조(예: `.txt`를 `.jpg`로) → MIME 검증으로 차단.
 
 #### 의존
 - 엔티티: USER_PROFILE
+- 정책: [Policy §20 확정 수치](Policy_v1.md#20-확정-수치-종합표)
 - 연결 화면: USR-PRF-01
 
 ---
@@ -1801,6 +1812,7 @@ total = base + following_bonus + bucket_boost + noise
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.5 | 2026-04-19 | PM × Claude | USR-PRF-03 프로필 사진 모달 — 포맷(JPG/PNG/WebP/GIF)·크기(5MB) 검증 추가. AC 4종·EC 2종 보강. 코드 구현 동기화. |
 | v1.4 | 2026-04-19 | PM × Claude | USR-UPL-02 F / USR-PRF-05·06·07 편집 정책 차별 재검수 반영(Policy §12.1.2) — 이미지 변경 여부로만 상태 전이 · pending 중 수정 경고 · 5 시나리오 토스트 · 탭별 편집 범위 차이. |
 | v1.3 | 2026-04-19 | PM × Claude | USR-UPL-02 D 편집 저장 성공 시 UX 명시 — "수정한 작품이 재검수 대기에 들어갔어요" 토스트 + 프로필 전시 탭 복귀. i18n `upload.editModeToast` 문구 개선. |
 | v1.2 | 2026-04-19 | PM × Claude | USR-UPL-02 D에 `rejectionHistory` 보존 추가 · AC-11 갱신. 반려 이력을 별도 누적 보존(Policy §12.1.1). |
