@@ -12,7 +12,7 @@ import {
   REPORTS_STORAGE_KEY,
   type StoredUserReport,
 } from '../utils/reportsStore';
-import { addWarning, addFalseReport } from '../utils/sanctionStore';
+import { addWarning, addFalseReport, getWarningCount, getFalseReportCount } from '../utils/sanctionStore';
 
 type ReportState = '대기' | '비공개' | '삭제' | '경고' | '기각' | '처리완료';
 type ReportKind = '작품' | '댓글' | '프로필';
@@ -143,14 +143,29 @@ export default function ReportManagement() {
     toast.success('작품이 삭제되었습니다.');
   };
 
-  /** 경고: 신고 대상자에게 경고 누적 (3회 시 자동 7일 정지) */
-  const warnTarget = (id: string) => {
+  /**
+   * 경고: 신고 대상자에게 경고 누적 (3회 시 자동 7일 정지).
+   * 자동 승격 임박(누적 2회 → 이번 3회)인 경우 파괴적 확인 다이얼로그로 한 번 더 체크.
+   * Policy §22.4 어뷰즈 방지 — 실수로 무고한 사용자 정지 방지.
+   */
+  const warnTarget = async (id: string) => {
     const raw = loadUserReports().find((r) => r.id === id);
     if (!raw) return;
     const targetArtistId = raw.targetArtistId ?? '';
     if (!targetArtistId) {
       toast.error('대상 작가 ID가 없어 경고를 적용할 수 없습니다.');
       return;
+    }
+    // 자동 승격 임박 경고
+    const currentCount = getWarningCount(targetArtistId);
+    if (currentCount === 2) {
+      const ok = await openConfirm({
+        title: '경고 3회 누적 — 자동 7일 정지됩니다',
+        description: `${raw.targetName} 작가가 이미 경고 2회 누적 상태입니다. 이 경고로 자동 7일 정지가 적용됩니다. 계속할까요?`,
+        destructive: true,
+        confirmLabel: '경고 적용',
+      });
+      if (!ok) return;
     }
     const { count, triggeredSuspension } = addWarning(targetArtistId);
     updateUserReport(id, { adminStatus: 'warned' });
@@ -161,12 +176,25 @@ export default function ReportManagement() {
     }
   };
 
-  /** 기각: 신고를 부당하다고 판단 — 신고자에게 허위 신고 카운트 +1 */
-  const dismissReport = (id: string) => {
+  /**
+   * 기각: 신고를 부당하다고 판단 — 신고자에게 허위 신고 카운트 +1.
+   * 자동 차단 임박(누적 2회 → 이번 3회)인 경우 확인 다이얼로그.
+   */
+  const dismissReport = async (id: string) => {
     const raw = loadUserReports().find((r) => r.id === id);
     if (!raw) return;
     const reporterId = raw.reporterId ?? '';
     if (reporterId) {
+      const currentCount = getFalseReportCount(reporterId);
+      if (currentCount === 2) {
+        const ok = await openConfirm({
+          title: '허위 신고 3회 누적 — 신고자 7일 차단됩니다',
+          description: '신고자가 이미 허위 신고 2회 누적 상태입니다. 이번 기각으로 신고자가 자동 7일 차단됩니다. 계속할까요?',
+          destructive: true,
+          confirmLabel: '기각',
+        });
+        if (!ok) return;
+      }
       const { count, triggeredBlock } = addFalseReport(reporterId);
       updateUserReport(id, { adminStatus: 'dismissed' });
       if (triggeredBlock) {
