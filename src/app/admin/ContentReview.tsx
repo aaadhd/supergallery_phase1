@@ -8,7 +8,17 @@ import { getCoverImage } from '../utils/imageHelper';
 import { imageUrls } from '../imageUrls';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { Button } from '../components/ui/button';
+import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import { REJECTION_REASONS, REJECTION_REASON_LABEL_KEY, type RejectionReason } from '../utils/reviewLabels';
+
+/** 반려 이력 항목 — 팝오버/모달 공통 서식. */
+function formatHistoryDate(iso: string): string {
+  // YYYY-MM-DD HH:mm (로컬)
+  const d = new Date(iso);
+  if (Number.isNaN(d.getTime())) return iso;
+  const pad = (n: number) => String(n).padStart(2, '0');
+  return `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())} ${pad(d.getHours())}:${pad(d.getMinutes())}`;
+}
 import { useI18n } from '../i18n/I18nProvider';
 import { pushDemoNotification } from '../utils/pushDemoNotification';
 import { sendInviteToNonMember } from '../utils/inviteMessaging';
@@ -245,12 +255,46 @@ export default function ContentReview() {
                       <div className="flex items-center gap-2">
                         <span>{w.title}</span>
                         {ui === '대기중' && (w.rejectionHistory?.length ?? 0) > 0 && (
-                          <span
-                            className="inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium bg-amber-100 text-amber-700 border border-amber-200"
-                            title={`이전 반려 ${w.rejectionHistory!.length}회 후 수정되어 재검수 대기 중입니다.`}
-                          >
-                            재검수 {w.rejectionHistory!.length > 1 ? `${w.rejectionHistory!.length}회차` : '요청'}
-                          </span>
+                          <Popover>
+                            <PopoverTrigger asChild>
+                              <button
+                                type="button"
+                                className="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium bg-amber-100 text-amber-700 border border-amber-200 cursor-pointer lg:hover:bg-amber-200 transition-colors"
+                                aria-label={`이전 반려 ${w.rejectionHistory!.length}회 이력 보기`}
+                              >
+                                재검수 {w.rejectionHistory!.length > 1 ? `${w.rejectionHistory!.length}회차` : '요청'}
+                              </button>
+                            </PopoverTrigger>
+                            <PopoverContent align="start" className="w-80 p-0">
+                              <div className="p-3 border-b border-border">
+                                <p className="text-xs font-semibold text-foreground">반려 이력 {w.rejectionHistory!.length}건</p>
+                                <p className="text-[11px] text-muted-foreground mt-0.5">
+                                  작가가 수정 재발행 후 재검수 대기 중입니다. 과거 판정을 참고해 결정하세요.
+                                </p>
+                              </div>
+                              <ul className="max-h-64 overflow-y-auto divide-y divide-border/60">
+                                {[...(w.rejectionHistory ?? [])]
+                                  .slice()
+                                  .reverse()
+                                  .map((entry, idx, arr) => (
+                                    <li key={`${entry.rejectedAt}-${idx}`} className="p-3">
+                                      <div className="flex items-start justify-between gap-2">
+                                        <span className="inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium bg-red-50 text-red-700 border border-red-200">
+                                          {t(REJECTION_REASON_LABEL_KEY[entry.reason])}
+                                        </span>
+                                        <span className="text-[11px] text-muted-foreground whitespace-nowrap">
+                                          {arr.length - idx}회차
+                                        </span>
+                                      </div>
+                                      <p className="text-[11px] text-muted-foreground mt-1">{formatHistoryDate(entry.rejectedAt)}</p>
+                                      {entry.note && (
+                                        <p className="text-xs text-foreground mt-1 whitespace-pre-wrap break-words">{entry.note}</p>
+                                      )}
+                                    </li>
+                                  ))}
+                              </ul>
+                            </PopoverContent>
+                          </Popover>
                         )}
                       </div>
                     </td>
@@ -310,6 +354,26 @@ export default function ContentReview() {
             <p className="text-sm text-muted-foreground mb-4">
               {t('review.rejectPickDesc')}
             </p>
+
+            {/* 이전 반려 이력이 있으면 미리보기 — 재검수 판단 시 참고용 */}
+            {(rejectTarget.rejectionHistory?.length ?? 0) > 0 && (
+              <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50/60 p-3">
+                <p className="text-xs font-semibold text-amber-900 mb-2">
+                  이전 반려 이력 {rejectTarget.rejectionHistory!.length}건 (최신순)
+                </p>
+                <ul className="space-y-1.5 max-h-32 overflow-y-auto">
+                  {[...(rejectTarget.rejectionHistory ?? [])].reverse().map((entry, idx) => (
+                    <li key={`${entry.rejectedAt}-${idx}`} className="flex items-center gap-2 text-[11px]">
+                      <span className="inline-flex rounded-full px-1.5 py-0.5 font-medium bg-red-100 text-red-700 border border-red-200">
+                        {t(REJECTION_REASON_LABEL_KEY[entry.reason])}
+                      </span>
+                      <span className="text-muted-foreground">{formatHistoryDate(entry.rejectedAt)}</span>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            )}
+
             <div className="space-y-2 mb-5">
               {REJECTION_REASONS.map((r) => (
                 <label
