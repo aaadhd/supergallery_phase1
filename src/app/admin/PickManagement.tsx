@@ -5,6 +5,8 @@ import { Button } from '../components/ui/button';
 import { workStore } from '../store';
 import type { Work } from '../data';
 import { displayExhibitionTitle } from '../utils/workDisplay';
+import { pushDemoNotification } from '../utils/pushDemoNotification';
+import { useI18n } from '../i18n/I18nProvider';
 
 const MAX_PICKS = 10;
 const PICKS_KEY = 'artier_admin_picks_v1';
@@ -45,6 +47,7 @@ function toAdminPickItem(work: Work): { id: string; title: string; artist: strin
 }
 
 export default function PickManagement() {
+  const { t } = useI18n();
   const [loading, setLoading] = useState(true);
   const [works, setWorks] = useState(workStore.getWorks());
   const [pickIds, setPickIds] = useState<string[]>(loadPickIds);
@@ -142,6 +145,12 @@ export default function PickManagement() {
     setPickIds((prev) => [...prev, work.id]);
     // 활성 Pick + 영구 Pick 이력 배지
     workStore.updateWork(work.id, { pick: true, pickBadge: true });
+    // 대상 작가에게 Pick 선정 알림 (Loop: 운영팀 선정 → 작가 피드백)
+    pushDemoNotification({
+      type: 'pick',
+      message: t('pick.notifSelected').replace('{title}', displayExhibitionTitle(work, t('work.untitled'))),
+      workId: work.id,
+    });
     setSearch('');
     toast.success('Pick에 추가되었습니다.');
   };

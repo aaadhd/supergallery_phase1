@@ -5,6 +5,7 @@ import { artists as seedArtists } from '../data';
 import { claimBlockedInvite, type BlockedInvite } from '../utils/inviteMessaging';
 import { addWarning } from '../utils/sanctionStore';
 import { useI18n } from '../i18n/I18nProvider';
+import { pushDemoNotification } from '../utils/pushDemoNotification';
 import {
   AlertDialog,
   AlertDialogAction,
@@ -76,8 +77,19 @@ export function PendingInviteClaimGate() {
       name: profile.name || me.name,
       avatar: profile.avatarUrl || me.avatar,
     });
-    if (ok) toast.success(t('claim.accepted').replace('{title}', item.workTitle));
-    else toast.error(t('claim.acceptFailed'));
+    if (ok) {
+      toast.success(t('claim.accepted').replace('{title}', item.workTitle));
+      // 초대한 작가에게 "본인 확인 완료" 알림(수동 매칭 loop). Policy §3.5.
+      pushDemoNotification({
+        type: 'system',
+        message: t('invite.notifManualClaimed')
+          .replace('{name}', profile.name || me.name)
+          .replace('{title}', item.workTitle),
+        workId: item.workId,
+      });
+    } else {
+      toast.error(t('claim.acceptFailed'));
+    }
     setItems((prev) => (prev ? prev.filter((x) => x.inviteId !== item.inviteId) : prev));
   };
 

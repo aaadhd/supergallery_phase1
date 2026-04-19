@@ -176,7 +176,7 @@ export default function Onboarding() {
     e.target.value = '';
   };
 
-  const finishOnboarding = () => {
+  const finishOnboarding = async () => {
     const name = nickname.trim();
     const real = realName.trim();
     if (name && containsProfanity(name)) {
@@ -204,6 +204,21 @@ export default function Onboarding() {
       });
       if (result.matched > 0) {
         toast.success(`초대받은 작품 ${result.matched}개가 내 계정과 연결되었어요.`);
+      }
+      // 자동 매칭 성공한 각 건에 대해 "초대한 작가"에게 연결 알림.
+      // 데모 환경에선 pushDemoNotification이 현재 세션(= 사용자 본인)에 쌓이므로
+      // 단일 데모 사용자 관점에서 Loop 확인 가능. Policy §3.5.
+      for (const detail of result.promotedDetails) {
+        try {
+          const { pushDemoNotification } = await import('../utils/pushDemoNotification');
+          pushDemoNotification({
+            type: 'system',
+            message: t('invite.notifAutoMatched')
+              .replace('{name}', detail.invitedName)
+              .replace('{title}', detail.workTitle),
+            workId: detail.workId,
+          });
+        } catch { /* ignore */ }
       }
       /**
        * 전화는 일치했으나 이름이 달라 매칭이 거부된 초대가 있으면,

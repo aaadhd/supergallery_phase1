@@ -182,6 +182,17 @@ export type BlockedInvite = {
   invitedName: string;
 };
 
+/**
+ * 자동 매칭 성공으로 비회원 슬롯이 회원으로 승격된 초대 1건의 상세.
+ * 호출자(Onboarding)가 이 목록으로 "초대한 작가" 측에 알림을 push하는 데 사용한다.
+ * Loop: 비회원 초대 → 가입 → 자동 매칭 → 초대한 작가에게 피드백
+ */
+export type PromotedInviteDetail = {
+  workId: string;
+  workTitle: string;
+  invitedName: string;
+};
+
 export function matchSmsInviteOnSignup(
   phone: string,
   realName: string,
@@ -190,6 +201,7 @@ export function matchSmsInviteOnSignup(
   matched: number;
   blocked: number;
   promotedWorkIds: string[];
+  promotedDetails: PromotedInviteDetail[];
   blockedList: BlockedInvite[];
 } {
   const normalized = phone.replace(/[\s-]/g, '');
@@ -197,6 +209,7 @@ export function matchSmsInviteOnSignup(
   let matched = 0;
   let blocked = 0;
   const promotedWorkIds: string[] = [];
+  const promotedDetails: PromotedInviteDetail[] = [];
   const blockedList: BlockedInvite[] = [];
 
   for (const entry of log) {
@@ -216,6 +229,12 @@ export function matchSmsInviteOnSignup(
       });
       if (promoteNonMemberSlot(entry.workId, entry.displayName, currentUser)) {
         promotedWorkIds.push(entry.workId);
+        const promotedWork = workStore.getWork(entry.workId);
+        promotedDetails.push({
+          workId: entry.workId,
+          workTitle: promotedWork?.exhibitionName || promotedWork?.title || '전시',
+          invitedName: entry.displayName,
+        });
       }
     } else {
       blocked++;
@@ -232,7 +251,7 @@ export function matchSmsInviteOnSignup(
     }
   }
 
-  return { matched, blocked, promotedWorkIds, blockedList };
+  return { matched, blocked, promotedWorkIds, promotedDetails, blockedList };
 }
 
 /**
