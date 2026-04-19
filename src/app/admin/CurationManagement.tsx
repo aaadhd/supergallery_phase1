@@ -106,7 +106,7 @@ export default function CurationManagement() {
             className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white min-h-[80px]"
           />
           <p className="text-xs text-muted-foreground">
-            작품 ID는 작품 상세 URL `/exhibitions/:id`의 `:id`를 사용합니다. 브라우저 콘솔이나 workStore에서 확인 가능.
+            전시 ID는 전시 상세 URL `/exhibitions/:id`의 `:id`를 사용합니다. 브라우저 콘솔이나 workStore에서 확인 가능.
           </p>
           <div className="flex gap-2">
             <Button type="submit" className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white inline-flex items-center gap-1.5">

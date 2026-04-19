@@ -192,7 +192,7 @@ const koMessages = {
 /onboarding|가입 직후 온보딩(동일 경로)`,
   'flowMap.section12': `12. 전시 초대장 공유
 /exhibitions/{workId}?from=invite|공유 받은 사람이 보는 초대장 오픈 화면
-(실제 URL은 작품 상세 모달 공유 버튼에서 자동 생성됨)`,
+(실제 URL은 전시 상세 모달 공유 버튼에서 자동 생성됨)`,
   'flowMap.section13': `13. 이벤트 참여
 /events|이벤트 목록
 /events/1|이벤트 상세 예시`,
@@ -407,11 +407,11 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.toastNonMemberInviteSent': '비가입 작가 {n}명에게 초대 메시지가 발송되었어요',
   'upload.toastNonMemberInviteMixed': '초대 메시지 {sent}건 발송 / {failed}건 실패 — 전시는 정상 등록되었어요',
   'upload.toastPublished':
-    '작품이 등록되었어요. 운영팀 검토 후 둘러보기에 노출돼요 (최대 24시간).',
+    '작품이 등록되었어요. 운영팀 검수 후 둘러보기에 노출돼요 (최대 24시간).',
   'review.badgePending': '확인 중',
   'review.badgePendingHint': '운영팀이 확인하고 있어요. 보통 24시간 이내 게시돼요.',
   'review.badgeRejected': '수정 필요',
-  'review.badgeRejectedHint': '심사 기준에 맞지 않아 공개되지 않았어요. 수정해서 다시 올려 주세요.',
+  'review.badgeRejectedHint': '검수 기준에 맞지 않아 공개되지 않았어요. 수정해서 다시 올려 주세요.',
   'review.badgeRejectedClickHint': '눌러서 사유 보기',
   'review.reasonLowQuality': '저품질',
   'review.reasonSpam': '스팸/광고',
@@ -422,7 +422,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'review.rejectConfirm': '반려 처리',
   'review.rejectCancel': '취소',
   'review.rejectedModalTitle': '수정이 필요해요',
-  'review.rejectedModalDesc': '아래 사유로 아직 둘러보기에 공개되지 않았어요. 수정해서 다시 올리면 검토를 받을 수 있어요.',
+  'review.rejectedModalDesc': '아래 사유로 아직 둘러보기에 공개되지 않았어요. 수정해서 다시 올리면 검수를 받을 수 있어요.',
   'review.rejectedModalEdit': '수정하기',
   'review.rejectedModalClose': '닫기',
   'review.notifRejected': '업로드한 작품이 반려되었어요. 사유: {reason}',
@@ -496,7 +496,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.coverSectionTitle': '커버 이미지',
   'upload.coverSectionDesc': '둘러보기 피드에 보이는 대표 이미지를 선택하세요',
   'upload.coverUpload': '직접 추가',
-  'upload.workDetailSettings': '작품 상세 설정',
+  'upload.workDetailSettings': '전시 상세 설정',
   'upload.pieceTitleLabel': '해당 작품의 제목',
   'upload.pieceTitlePlaceholder': '작품의 개별 제목을 입력하세요',
   'upload.artistAssignRequired': '해당 작품의 작가',
@@ -700,7 +700,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
     '운영팀이 매주 우수 작품을 선정하여 배지를 부여합니다. 선정된 작품은 피드 상단에 노출되며, 작가에게 알림이 발송됩니다.',
   'faq.q9': '부적절한 작품을 발견했어요.',
   'faq.a9':
-    '작품 상세 화면에서 신고 버튼(깃발 아이콘)을 눌러 신고할 수 있습니다. 운영팀이 7일 이내에 검토하여 조치합니다.',
+    '전시 상세 화면에서 신고 버튼(깃발 아이콘)을 눌러 신고할 수 있습니다. 운영팀이 7일 이내에 처리합니다.',
   'faq.q10': '서비스 이용료가 있나요?',
   'faq.a10': '현재 {brand}의 모든 기능은 무료로 이용하실 수 있습니다.',
   'meta.ogDescription':
@@ -918,7 +918,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'profile.filterGroup': '그룹',
   'profile.filterOnlyMine': '내가 올린 전시만',
   'profile.publishedBannerTitle': '전시가 등록되었어요! 지금은 나만 볼 수 있어요',
-  'profile.publishedBannerDesc': '운영팀이 24시간 이내에 검토한 뒤 둘러보기에 공개돼요. 검수 중에는 배지로 상태를 확인할 수 있고, 공개되면 알림으로 알려드려요.',
+  'profile.publishedBannerDesc': '운영팀이 24시간 이내에 검수한 뒤 둘러보기에 공개돼요. 검수 중에는 배지로 상태를 확인할 수 있고, 공개되면 알림으로 알려드려요.',
   'profile.publishedBannerDismiss': '닫기',
   'profile.uploaderLabel': '게시자',
   'profile.deleteWorkConfirm': '"{title}" 작품을 삭제할까요?',
@@ -1015,7 +1015,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'report.leadWork': '{name}을(를) 신고합니다.',
   'report.leadArtist': '{name}님을 신고합니다.',
   'report.policyNote':
-    '접수 후 운영 정책에 따라 검토합니다. 일반 신고는 7일 이내, 관련 법에 따른 긴급 건은 우선 처리됩니다.',
+    '접수 후 운영 정책에 따라 처리합니다. 일반 신고는 7일 이내, 관련 법에 따른 긴급 건은 우선 처리됩니다.',
   'report.reasonCopyright': '저작권 침해',
   'report.reasonInappropriate': '부적절한 콘텐츠',
   'report.reasonSpam': '스팸',
@@ -1028,7 +1028,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'report.toastDuplicate': '이미 신고한 대상입니다.',
   'report.step2Title': '신고가 접수되었어요',
   'report.step2Body':
-    '운영팀이 7일 이내 검토합니다. 관련 법에 따른 긴급 건은 우선 처리됩니다. 허위 신고는 제재될 수 있습니다.',
+    '운영팀이 7일 이내 처리합니다. 관련 법에 따른 긴급 건은 우선 처리됩니다. 허위 신고는 제재될 수 있습니다.',
   'report.okClose': '확인',
   'cookie.title': '쿠키 사용 안내',
   'cookie.body':
@@ -1104,7 +1104,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'admin.nav.checklist': '런칭 체크리스트',
   'admin.nav.partners': '파트너 작가',
   'admin.nav.eventParticipants': '이벤트 참여자',
-  'admin.nav.contentReview': '콘텐츠 검토',
+  'admin.nav.contentReview': '콘텐츠 검수',
   'admin.nav.works': '작품 관리',
   'admin.nav.picks': "Artier's Pick",
   'admin.nav.curation': '피드 큐레이션',
@@ -1138,7 +1138,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'footer.qaReferenceToolkit': '레퍼런스 툴킷',
   'footer.qaGroupAdmin': '어드민 (메뉴 없음)',
   'footer.qaAdminDashboard': '대시보드',
-  'footer.qaAdminContentReview': '콘텐츠 검토',
+  'footer.qaAdminContentReview': '콘텐츠 검수',
   'footer.qaAdminWorks': '작품 관리',
   'footer.qaAdminReports': '신고 관리',
   'footer.qaAdminMembers': '회원 관리',

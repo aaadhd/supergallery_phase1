@@ -127,7 +127,7 @@ export default function ContentReview() {
   if (loading) {
     return (
       <div>
-        <h1 className="text-xl font-bold mb-6 text-foreground">콘텐츠 검토</h1>
+        <h1 className="text-xl font-bold mb-6 text-foreground">콘텐츠 검수</h1>
         <div className="rounded-lg border border-border bg-white py-16 text-center text-sm text-muted-foreground">불러오는 중…</div>
       </div>
     );
@@ -135,7 +135,7 @@ export default function ContentReview() {
 
   return (
     <div className="min-h-full">
-      <h1 className="text-xl font-bold mb-1 text-foreground">콘텐츠 검토</h1>
+      <h1 className="text-xl font-bold mb-1 text-foreground">콘텐츠 검수</h1>
       <p className="text-sm text-muted-foreground mb-6">
         업로드된 전시는 검수 전까지 둘러보기 피드에 나오지 않습니다. 본인 프로필에는 즉시 노출됩니다. 로컬 개발에서 관리자 화면은{' '}
         <code className="text-xs bg-muted/50 px-1 rounded">/admin/content-review</code> · 먼저 일반 로그인이 필요합니다(
