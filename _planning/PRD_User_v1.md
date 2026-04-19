@@ -798,49 +798,78 @@ total = base + following_bonus + bucket_boost + noise
 
 ### USR-PRF-01 · 프로필 홈
 
-**목적**: 본인/타인 프로필의 작품·인터랙션·초안 등을 탭 단위로 제공.
-**트리거**: 헤더 아바타, 작가 이름 탭, `/profile/:id` 직접 진입, `/me`.
+**목적**: 본인/타인 프로필의 작품·인터랙션·초안 등을 탭 단위로 제공. 시니어 작가의 "내 갤러리" 역할 + 감상자의 작가 탐색 지점.
+**트리거**: 헤더 아바타, 작품 카드·알림의 작가 이름 탭, `/profile/:id` 직접 진입, `/me`, `/me/edit` → `/settings` 리다이렉트.
 **우선순위**: **P0**
 
 #### 입력
-- 프로필 대상 사용자(본인/타인) — `/profile`·`/me`는 본인
-- 선택된 탭(URL 쿼리)
-- 현재 사용자 팔로잉·강사 파생 상태
+- 대상 사용자 ID(`/profile`·`/me`는 본인, `/profile/:id`는 타인)
+- 선택된 탭(URL 쿼리 `?tab=<exhibition|works|likes|saved|drafts|student-works>`)
+- 현재 로그인 사용자의 팔로잉 목록
+- 작품 스토어(강사 배지·수강생 작품 탭 파생 기준)
+- 탈퇴 작가 목록(익명화 판정)
 
 #### 처리
-1. 프로필 헤더 렌더: 사진·이름·소개·바이오(200자)·지역·관심사·외부 링크.
-2. **강사 배지 자동 파생**: 본인이 업로드한 전시 중 `isInstructorUpload === true`가 1건이라도 있으면 노출([Policy §13.4](Policy_v1.md#13-업로드-유형역할-정책)).
-3. 팔로워·팔로잉 숫자 탭 → USR-PRF-04 모달.
-4. 탭 구성:
-   - 공통: `exhibition`
-   - 본인만: `works` · `likes` · `saved` · `drafts`
-   - 강사일 때만: `student-works`
-5. 탭별 상세 동작은 아래 §5.1.1~§5.1.6.
-6. 탈퇴 작가 프로필: "작가 미상" 표시 + 모든 인터랙션 차단.
+
+**1) 헤더 렌더**
+- 프로필 사진(기본 이미지 or 사용자 업로드 아바타)
+- 이름(최대 20자) + 한 줄 프로필(headline, 최대 20자)
+- 바이오(최대 200자, 여러 줄)
+- 위치 배지(선택, 드롭다운에서 선택된 국가/지역)
+- 관심사 토글 선택분(15종 중 선택된 것만 칩으로 표시 — 예: painting·drawing·digitalArt·printmaking·sculpture 등)
+- 외부 링크(최대 6 플랫폼 중 입력된 것: Instagram·YouTube·Facebook·Twitter·Pinterest·Vimeo)
+- **강사 배지**(자동 파생): 본인 업로드 전시 중 `isInstructorUpload === true`가 1건 이상.
+- 팔로워·팔로잉 숫자(탭 시 USR-PRF-04 모달).
+- 본인 프로필: 우상단에 "편집" 연필 아이콘(USR-PRF-02) + "카메라" 아이콘(USR-PRF-03).
+- 타인 프로필: 팔로우/언팔로우 버튼(자기 자신·탈퇴 작가는 숨김 또는 비활성).
+
+**2) 탈퇴 작가 처리**
+- 대상 사용자 ID가 탈퇴 목록에 있으면:
+  - 작가명을 "작가 미상"(deletedUser 라벨, 회색 텍스트)으로 대체
+  - 아바타를 기본 이미지로 대체
+  - 팔로우·신고 비활성(opacity 40% + `pointer-events-none`)
+
+**3) 탭 가시성**
+- 본인: `exhibition` / `works` / `likes` / `saved` / `drafts` + 강사면 `student-works`
+- 타인: `exhibition` 단독. 다른 탭 URL 직접 진입 → `exhibition`으로 리다이렉트.
+- 본인 탭에서 `?tab=student-works` 요청 + 강사 아님 → 기본 탭으로.
+
+**4) 탭 상세 (§§5.1.1~5.1.6 참조)**
 
 #### 출력
-- 프로필 헤더 + 탭 바 + 탭별 콘텐츠
+- 헤더(사진·이름·headline·바이오·위치·관심사·외부 링크·팔로워·팔로잉)
+- 탭 바(본인/타인에 따라 탭 수 가변)
+- 탭 콘텐츠
 
 #### 주요 인터랙션
-- 프로필 편집(본인만) → USR-PRF-02
-- 프로필 사진 변경(본인만) → USR-PRF-03
-- 팔로워·팔로잉 모달(양쪽) → USR-PRF-04
-- 팔로우/언팔로우(타인만·탈퇴 작가 제외)
+
+| 액션 | 동작 |
+|---|---|
+| 연필 아이콘(본인) | USR-PRF-02 편집 모달 |
+| 카메라 아이콘(본인) | USR-PRF-03 사진 모달 |
+| 팔로워·팔로잉 숫자 탭 | USR-PRF-04 모달(두 탭 전환) |
+| 타인 프로필 팔로우 버튼 | 팔로우 토글(비로그인 → CM-02) |
+| 외부 링크 탭 | 해당 URL 새 탭 |
+| 탭 전환 | URL 쿼리 갱신, 스크롤 최상단 |
 
 #### 수용기준
-- AC-01: Given 본인 업로드 중 `isInstructorUpload === true` 1건 / When 프로필 로드 / Then 강사 배지 + `student-works` 탭 노출.
-- AC-02: Given 강사 업로드 전부 삭제 / When 프로필 재로드 / Then 배지·탭 모두 비노출.
-- AC-03: Given 탈퇴 작가 프로필 / When 팔로우 탭 / Then 비활성 + 안내.
-- AC-04: Given 타인 프로필 / When `drafts`·`likes`·`saved` 탭 URL 직접 진입 / Then 접근 불가 → `exhibition` 탭으로 리다이렉트.
+- AC-01: Given 본인 업로드 중 `isInstructorUpload === true` 1건 이상 / When 프로필 로드 / Then 헤더에 강사 배지 + `student-works` 탭 노출.
+- AC-02: Given 강사 업로드 **전부 삭제** / When 프로필 재로드 / Then 배지·탭 모두 자동 비노출.
+- AC-03: Given 탈퇴 작가 프로필 / When 로드 / Then 이름 "작가 미상" + 팔로우·신고 액션 비활성.
+- AC-04: Given 타인 프로필에서 `?tab=drafts` URL / When 진입 / Then `exhibition` 탭으로 리다이렉트.
+- AC-05: Given 본인 헤더 편집 완료 / When 저장 / Then 헤더에 즉시 반영(리로드 없이).
+- AC-06: Given 비로그인 + 타인 프로필 팔로우 버튼 / When 탭 / Then CM-02.
 
 #### 엣지케이스
-- EC-01: 사용자 ID가 존재하지 않음 → "사용자를 찾을 수 없습니다" 안내 + 피드로.
-- EC-02: 본인 탭에서 `?tab=student-works` 요청 + 강사 아님 → 기본 탭으로.
+- EC-01: 존재하지 않는 사용자 ID → "사용자를 찾을 수 없습니다" + 피드로 복귀 CTA.
+- EC-02: 대상 사용자가 정지 영구 상태 → 프로필 접근 차단 안내 + 피드로.
+- EC-03: 본인 프로필을 다른 탭에서 로그아웃 → 타인 프로필 뷰로 자동 전환.
+- EC-04: 관심사·외부 링크가 0건 → 해당 영역 숨김(빈 블록 대신).
 
 #### 의존
 - 엔티티: USER_PROFILE, EXHIBITION, DRAFT, FOLLOW, INTERACTION
 - 정책: [Policy §4 탈퇴 작가](Policy_v1.md#4-탈퇴-작가-정책) · [Policy §13.4 강사 파생](Policy_v1.md#13-업로드-유형역할-정책)
-- 연결 화면: USR-EXH-01, USR-UPL-02, USR-PRF-02~04, USR-AUT-02
+- 연결 화면: USR-EXH-01, USR-UPL-02, USR-PRF-02~04, USR-AUT-02, CM-02
 
 #### 5.1.1 전시 탭 (`exhibition`)
 
