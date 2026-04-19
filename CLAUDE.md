@@ -4,7 +4,7 @@
 시니어/중장년 순수미술 작가를 위한 웹 기반 디지털 갤러리 플랫폼.
 개인 작품 업로드 및 그룹 전시(동호회·클래스·친구) 기능 제공.
 
-> Phase 1 클라이언트 구현·명세 동기화는 **`IMPLEMENTATION_DELTA.md`와 현재 `src/app/` 코드**를 기준으로 한다. 완성도를 퍼센트로 표기하지 않는다.
+> Phase 1 기획 문서는 **`_planning/`** 단일 소스이며, 구현은 현재 `src/app/` 코드를 기준으로 한다. 완성도를 퍼센트로 표기하지 않는다.
 
 ### 용어 주의 (코드 ↔ 한국어)
 
@@ -17,11 +17,9 @@
 - Phase 2 백엔드 ERD 설계 시 `Work` → `Exhibition` 리네이밍 검토 권장.
 
 ## 스펙 문서
-- 개발자 인수인계 문서 (reference 대비 변경·목업·확정 수치): `product-policies.md`
-- 작품 올리기 전체 스펙: `docs/upload_spec.md`
-- 전시명·작품명·그룹명 글자 상한: **`TITLE_FIELD_MAX_LEN`** (`src/app/utils/workDisplay.ts`, 현재 **20**). 코드·`docs/`·`product-policies.md` 변경 시 함께 맞출 것.
-- 작품 톤 배경 묻어나는 효과: **원본 이미지를 blur + scale + opacity로 깔아** 순수 CSS로 구현 ([WorkDetailModal.tsx:407](src/app/components/WorkDetailModal.tsx#L407), [Upload.tsx:12,1140](src/app/pages/Upload.tsx#L12)). dominant-color 추출 알고리즘 불필요 — 관련 모듈·spec 문서는 2026-04-15 삭제됨
-- 구현 델타·레퍼런스 수정 지침: `IMPLEMENTATION_DELTA.md`, `REFERENCE_DELTA.md`
+- **기획 단일 소스**: `_planning/` — 정책(`Policy_v1.md`)·사용자 PRD(`PRD_User_v1.md`)·어드민 PRD(`PRD_Admin_v1.md`)·아키텍처(`SystemArchitecture_v1.md`)·화면 목록(`IA_ScreenList_v1.md`)·디자인 시스템(`DesignSystem_v1.md`)
+- 전시명·작품명·그룹명 글자 상한: **`TITLE_FIELD_MAX_LEN`** (`src/app/utils/workDisplay.ts`, 현재 **20**).
+- 작품 톤 배경 묻어나는 효과: **원본 이미지를 blur + scale + opacity로 깔아** 순수 CSS로 구현 ([WorkDetailModal.tsx:407](src/app/components/WorkDetailModal.tsx#L407), [Upload.tsx:12,1140](src/app/pages/Upload.tsx#L12)). dominant-color 추출 알고리즘 불필요.
 
 ## 주요 파일
 
@@ -32,7 +30,7 @@
 - `src/app/pages/ExhibitionInviteLanding.tsx` — 전시 초대장 오픈 화면 (2026-04-13 신설)
 - `src/app/pages/ExhibitionWorkShareLanding.tsx` — `?from=work` 작품 공유 랜딩
 - `src/app/pages/Profile.tsx` — 강사 표시 자동 파생 (`instructorVisible`)
-- `src/app/pages/Search.tsx` — 검색 (계정별/게스트 키; 로그인 시 guest 히스토리 병합 — IMPLEMENTATION_DELTA §11.3)
+- `src/app/pages/Search.tsx` — 검색 (계정별/게스트 키; 로그인 시 guest 히스토리 병합)
 - `src/app/pages/FlowDemoTools.tsx` — `/demo` PM 데모 맵
 - `src/app/pages/DemoReferenceToolkit.tsx` — `/demo/reference` 검수 툴킷
 
@@ -103,15 +101,13 @@
 ### PRD §2.2 적용으로 UI 제거됨, 데이터 필드만 잔존
 다음 항목은 위와 다른 범주 — **한때 구현되었다가 PRD Out of Scope에 맞춰 UI를 제거**한 흔적.
 관련 필드/계산 로직이 아직 코드에 남아 있으니 건드릴 때 주의:
-- 댓글 — `WorkCard` 하단 숫자 미노출 (IMPLEMENTATION_DELTA §10.2). `Work.comments` 필드는 데이터에 남아 있으나 **`feedOrdering.ts`의 `scoreWork()`는 좋아요·저장·팔로우만 반영**하고 댓글 가중치는 사용하지 않음
+- 댓글 — `WorkCard` 하단 숫자 미노출. `Work.comments` 필드는 데이터에 남아 있으나 **`feedOrdering.ts`의 `scoreWork()`는 좋아요·저장·팔로우만 반영**하고 댓글 가중치는 사용하지 않음
 
 ### WorkCard 표시 규칙
 - 카드 하단에 **좋아요·저장 상태 아이콘만** 노출 (숫자 비노출)
 - 댓글 숫자는 PRD §2.2 Out of Scope 적용으로 제거됨
 
 ## 강사 표시 정책 (2026-04-13 단일화)
-
-> IMPLEMENTATION_DELTA §3.3 / §10.4 참조
 
 - 강사 여부는 **업로드 이력에서 자동 파생**되는 단일 소스 정책
 - `Profile.tsx`: `workStore`에서 구독한 `storeWorks`로 `instructorVisible = storeWorks.some((w) => w.artistId === profileArtist.id && w.isInstructorUpload === true)` (`useMemo`, 의존성 `[storeWorks, profileArtist.id]`)
@@ -186,31 +182,13 @@
 
 ### 기타
 - **버전 관리**: `WORKS_STORAGE_VERSION` (`local-gallery-v13`) 변경 시 works 데이터 자동 재시드
-- **이벤트 데이터**: `eventStore.ts` 단일 소스 + `artier_managed_events_v1` 영속화 (IMPLEMENTATION_DELTA §8.5·§9.7)
+- **이벤트 데이터**: `eventStore.ts` 단일 소스 + `artier_managed_events_v1` 영속화
 - **포인트 회수**: 업로드 후 24시간 이내 삭제 시 AP -20 (`pointsBackground.ts:pointsRecallIfQuickDelete`)
 - **강사 표시**: 별도 저장소 없음. `workStore` 작품 목록에서 파생 (`Profile.tsx`의 `instructorVisible`, 단일 소스)
 
-## 알려진 잔여 이슈 (Technical Polish)
-
-> IMPLEMENTATION_DELTA §11 — 기능 동작에는 영향 없으나 정리 권장 항목.
-
-| # | 항목 | 위치 | 영향도 | 작업량 |
-|---|---|---|---|---|
-| 11.1 | Orphan localStorage (`artier_instructor_public_ids`) | `PointsBootstrap` | — | ✅ §11.1 완료 |
-| 11.2 | 어드민 작품·이벤트 store | `WorkManagement`, `EventManagement` | — | ✅ 실 store 연동됨 |
-| 11.3 | 검색 히스토리 guest → 로그인 | `Search.tsx` | — | ✅ §11.3 완료 |
-| 11.4 | ExhibitionInviteLanding seed | `ExhibitionInviteLanding.tsx` | — | ✅ §11.4 완료 |
-| 11.5 | ContentReview locale | `ContentReview.tsx` | — | ✅ §11.5 완료 |
-| 11.6 | 배너 드래그앤드롭 순서 변경 | `bannerStore.ts`, `admin/BannerManagement.tsx` | — | ✅ `@dnd-kit/sortable` 적용 완료 |
-
-### 남은 권장 작업
-- 모든 §11 항목 완료됨.
-
-## 외부 연동 미완 (Phase 2 예정)
+## 외부 연동 미완 (런칭 전 백엔드 연동 후)
 소셜 OAuth(카카오/구글/애플), 이메일 발송, SMS/카카오 알림톡, Supabase 실서버, OG 이미지 동적 생성.
 모두 모의(localStorage 로그) 수준이며 PM 데모 목적상 의도적 유보.
 
-## 우선 보완 항목 (배포 전)
-아래 Phase 1 클라 항목은 **완료**됨: 이벤트 단일 store, 만 14세 차단, 비속어 필터, 피드 큐레이션·팔로우 가중치 등 — `IMPLEMENTATION_DELTA.md` §9 TOP 8·§10 참조.
-
-**남은 대표 과제 (런칭·인프라)**: 실 OAuth·이메일/SMS 발송·프로덕션 BaaS, 약관 법무 확정, 파비콘/manifest(§9.4), 배너 순서(§11.6) 등 — §7·§12 참조.
+## 우선 보완 항목 (런칭 전)
+**남은 대표 과제**: 실 OAuth·이메일/SMS 발송·프로덕션 BaaS, 약관 법무 확정(SystemArch §10 N-10), 파비콘/manifest. 세부 항목은 `_planning/SystemArchitecture_v1.md` §10 참조.
