@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { UserX, UserCheck, X, ShieldAlert, Flag, AlertTriangle } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -89,10 +90,28 @@ export default function MemberManagement() {
   const [pickedLevel, setPickedLevel] = useState<SuspensionLevel>('days7');
   /** 회원 상세 모달. 행의 이름 탭 시 열리고, 제재 카운터·최근 신고·정지 상태를 한 화면에서 확인. */
   const [detailId, setDetailId] = useState<string | null>(null);
+  const [searchParams, setSearchParams] = useSearchParams();
 
   useEffect(() => {
     saveMembers(members);
   }, [members]);
+
+  // 딥링크: /admin/members?artist=<id> 로 진입 시 해당 회원 상세 모달 자동 오픈
+  useEffect(() => {
+    const artistId = searchParams.get('artist');
+    if (artistId && members.some((m) => m.id === artistId)) {
+      setDetailId(artistId);
+    }
+  }, [searchParams, members]);
+
+  const closeDetail = () => {
+    setDetailId(null);
+    if (searchParams.get('artist')) {
+      const next = new URLSearchParams(searchParams);
+      next.delete('artist');
+      setSearchParams(next, { replace: true });
+    }
+  };
 
   useEffect(() => {
     const t = window.setTimeout(() => setLoading(false), 320);
@@ -253,7 +272,7 @@ export default function MemberManagement() {
             role="dialog"
             aria-modal="true"
             aria-labelledby="member-detail-title"
-            onClick={() => setDetailId(null)}
+            onClick={closeDetail}
           >
             <div
               className="w-full max-w-lg rounded-2xl bg-white shadow-xl overflow-hidden"
@@ -272,7 +291,7 @@ export default function MemberManagement() {
                 </div>
                 <button
                   type="button"
-                  onClick={() => setDetailId(null)}
+                  onClick={closeDetail}
                   className="rounded-md p-1 text-muted-foreground lg:hover:bg-muted/50"
                   aria-label="닫기"
                 >
@@ -355,7 +374,7 @@ export default function MemberManagement() {
                     type="button"
                     onClick={() => {
                       unsuspend(member.id);
-                      setDetailId(null);
+                      closeDetail();
                     }}
                     className="min-h-[44px] px-4 py-2 text-sm font-medium rounded-lg bg-primary text-white lg:hover:bg-primary/90"
                   >
@@ -365,7 +384,7 @@ export default function MemberManagement() {
                   <Button
                     type="button"
                     onClick={() => {
-                      setDetailId(null);
+                      closeDetail();
                       openSuspendModal(member.id);
                     }}
                     className="min-h-[44px] px-4 py-2 text-sm font-medium rounded-lg border border-red-200 text-red-700 lg:hover:bg-red-50"
@@ -375,7 +394,7 @@ export default function MemberManagement() {
                 )}
                 <Button
                   type="button"
-                  onClick={() => setDetailId(null)}
+                  onClick={closeDetail}
                   className="min-h-[44px] px-4 py-2 text-sm font-medium rounded-lg border border-border lg:hover:bg-muted/50"
                 >
                   닫기

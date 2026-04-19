@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect, useCallback } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Check, X } from 'lucide-react';
+import { Check, X, ExternalLink } from 'lucide-react';
 import { workStore } from '../store';
 import type { Work } from '../data';
 import { getCoverImage } from '../utils/imageHelper';
@@ -55,6 +55,7 @@ const STATUS_UI_TO_URL: Record<string, string> = {
 
 export default function ContentReview() {
   const { t } = useI18n();
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [works, setWorks] = useState<Work[]>(() => workStore.getWorks());
@@ -252,8 +253,17 @@ export default function ContentReview() {
                       </div>
                     </td>
                     <td className="px-4 py-3 font-medium text-foreground">
-                      <div className="flex items-center gap-2">
-                        <span>{w.title}</span>
+                      <div className="flex items-center gap-2 min-w-0">
+                        <a
+                          href={`/exhibitions/${w.id}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1 text-primary lg:hover:underline truncate"
+                          title="전시 상세 새 탭으로 열기"
+                        >
+                          <span className="truncate">{w.title}</span>
+                          <ExternalLink className="w-3 h-3 shrink-0" />
+                        </a>
                         {ui === '대기중' && (w.rejectionHistory?.length ?? 0) > 0 && (
                           <Popover>
                             <PopoverTrigger asChild>
@@ -298,7 +308,17 @@ export default function ContentReview() {
                         )}
                       </div>
                     </td>
-                    <td className="px-4 py-3 text-muted-foreground">{w.artist.name}</td>
+                    <td className="px-4 py-3 text-muted-foreground">
+                      <button
+                        type="button"
+                        onClick={() => navigate(`/admin/members?artist=${w.artistId}`)}
+                        className="inline-flex items-center gap-1 text-primary lg:hover:underline text-left"
+                        title="회원 상세 모달 열기"
+                      >
+                        <span>{w.artist.name}</span>
+                        <ExternalLink className="w-3 h-3 shrink-0" />
+                      </button>
+                    </td>
                     <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{date || '—'}</td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${statusBadgeClass(ui)}`}>

@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { CheckCircle2, EyeOff, Trash2, AlertTriangle, XCircle } from 'lucide-react';
+import { CheckCircle2, EyeOff, Trash2, AlertTriangle, XCircle, ExternalLink } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { openConfirm } from '../components/ConfirmDialog';
 import { workStore } from '../store';
@@ -26,6 +27,8 @@ type ReportRow = {
   reason: string;
   reportedAt: string;
   status: ReportState;
+  workId?: string;
+  artistId?: string;
 };
 
 function mapUserReportToRow(r: StoredUserReport): ReportRow {
@@ -52,6 +55,8 @@ function mapUserReportToRow(r: StoredUserReport): ReportRow {
     reason: r.reason ?? r.reasonLabel ?? r.reasonKey ?? '',
     reportedAt,
     status,
+    workId: r.targetType === 'work' ? r.targetId : undefined,
+    artistId: r.targetArtistId,
   };
 }
 
@@ -81,6 +86,7 @@ function kindBadge(k: ReportKind) {
 
 export default function ReportManagement() {
   const { t } = useI18n();
+  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState<ReportRow[]>(mergeReportRows);
   const [statusFilter, setStatusFilter] = useState('전체');
@@ -322,7 +328,32 @@ export default function ReportManagement() {
             <tbody>
               {filtered.map((r) => (
                 <tr key={r.id} className="border-b border-border/40 lg:hover:bg-muted/50 transition-colors">
-                  <td className="px-4 py-3 text-foreground max-w-[200px]">{r.target}</td>
+                  <td className="px-4 py-3 text-foreground max-w-[200px]">
+                    {r.workId ? (
+                      <a
+                        href={`/exhibitions/${r.workId}`}
+                        target="_blank"
+                        rel="noreferrer"
+                        className="inline-flex items-center gap-1 text-primary lg:hover:underline"
+                        title="전시 상세 새 탭으로 열기"
+                      >
+                        {r.target}
+                        <ExternalLink className="w-3 h-3 shrink-0" />
+                      </a>
+                    ) : r.artistId ? (
+                      <button
+                        type="button"
+                        onClick={() => navigate(`/admin/members?artist=${r.artistId}`)}
+                        className="inline-flex items-center gap-1 text-primary lg:hover:underline text-left"
+                        title="회원 상세 모달 열기"
+                      >
+                        {r.target}
+                        <ExternalLink className="w-3 h-3 shrink-0" />
+                      </button>
+                    ) : (
+                      r.target
+                    )}
+                  </td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${kindBadge(r.kind)}`}>
                       {r.kind}

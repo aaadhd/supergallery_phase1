@@ -272,14 +272,26 @@ export default function Browse() {
   // Auto-rotate banner every 5 seconds
   useEffect(() => {
     if (!emblaApi) return;
-    let timer = setInterval(() => emblaApi.scrollNext(), 5000);
-    // 사용자가 터치/드래그 시 타이머 리셋, 조작 완료 후 재시작
-    const pause = () => { clearInterval(timer); };
-    const resume = () => { clearInterval(timer); timer = setInterval(() => emblaApi.scrollNext(), 5000); };
-    emblaApi.on('pointerDown', pause);
-    emblaApi.on('pointerUp', resume);
-    emblaApi.on('settle', resume);
-    return () => { clearInterval(timer); emblaApi.off('pointerDown', pause); emblaApi.off('pointerUp', resume); emblaApi.off('settle', resume); };
+    let timer: ReturnType<typeof setInterval> | null = null;
+    const stop = () => {
+      if (timer !== null) { clearInterval(timer); timer = null; }
+    };
+    const start = () => {
+      stop();
+      if (document.visibilityState === 'hidden') return;
+      timer = setInterval(() => emblaApi.scrollNext(), 5000);
+    };
+    const onVisibility = () => { document.visibilityState === 'hidden' ? stop() : start(); };
+    start();
+    emblaApi.on('pointerDown', stop);
+    emblaApi.on('pointerUp', start);
+    document.addEventListener('visibilitychange', onVisibility);
+    return () => {
+      stop();
+      emblaApi.off('pointerDown', stop);
+      emblaApi.off('pointerUp', start);
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
   }, [emblaApi]);
 
   // -- Combine + PRD 근사 피드 순서(Pick → 신규 → 가중) + 시청 이력 반영 -------
