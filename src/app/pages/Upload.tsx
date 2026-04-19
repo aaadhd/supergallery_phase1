@@ -59,6 +59,7 @@ import { Button } from '../components/ui/button';
 import { Checkbox } from '../components/ui/checkbox';
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import { pointsOnWorkPublished } from '../utils/pointsBackground';
+import { pushDemoNotification } from '../utils/pushDemoNotification';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
 // sendInviteToNonMember moved to ContentReview — invites sent after approval
@@ -892,6 +893,40 @@ export default function Upload() {
     }
     if (resolvedGroup) setLastUsedGroupName(resolvedGroup);
     if (!editingWorkId) pointsOnWorkPublished(newWork);
+
+    /**
+     * 발행 알림 (그룹 전시 한정 · 신규 발행만):
+     * 참여 멤버 작가 각각에게 "내 작품이 공개됐어요" 시스템 알림 push.
+     * - 본인(`currentUser.id`)은 제외.
+     * - 멤버(`type: 'member'`) 슬롯만 대상. 비회원(`type: 'non-member'`)은 SMS 발송이
+     *   별도 (`hasNonMemberInvites` 분기) — 백엔드 연동 후 통합 예정.
+     * - Phase 1 데모 환경: `pushDemoNotification`은 현재 세션(데모 사용자)의 알림함에만
+     *   쌓이므로 단일 사용자 관점에서 "강사 발행 → 본인 알림함에 멤버 수만큼 새 알림"
+     *   으로 동작 확인 가능. 백엔드 연동 시 `targetArtistId` 라우팅으로 진짜 수강생에게 전달.
+     */
+    if (!editingWorkId && uploadType === 'group') {
+      const memberIds = new Set<string>();
+      newWork.imageArtists?.forEach((ia) => {
+        if (ia.type === 'member' && ia.memberId && ia.memberId !== currentUser.id) {
+          memberIds.add(ia.memberId);
+        }
+      });
+      if (memberIds.size > 0) {
+        const notifTitle = newWork.exhibitionName || newWork.title || t('work.untitled');
+        memberIds.forEach((memberId) => {
+          const memberArtist = artists.find((a) => a.id === memberId);
+          pushDemoNotification({
+            type: 'system',
+            message: t('notif.workPublished').replace('{title}', notifTitle),
+            workId: newWork.id,
+            fromUser: memberArtist
+              ? { id: memberArtist.id, name: memberArtist.name, avatar: memberArtist.avatar }
+              : undefined,
+          });
+        });
+      }
+    }
+
     setShowDetailsModal(false);
 
     // Clear draft that was used for this publish
@@ -1271,7 +1306,34 @@ export default function Upload() {
                 >
                   {/* 헤더 */}
                   <div className="flex items-center justify-between px-6 py-4 border-b border-border">
-                    <h2 className="text-lg font-semibold text-foreground">{t('upload.detailsModalTitle')}</h2>
+                    <div className="flex items-center gap-1.5 min-w-0">
+                      <h2 className="text-lg font-semibold text-foreground">{t('upload.detailsModalTitle')}</h2>
+                      <Popover>
+                        <PopoverTrigger asChild>
+                          <button
+                            type="button"
+                            aria-label={t('upload.reviewInfoAria')}
+                            className="inline-flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full text-muted-foreground hover:bg-muted hover:text-foreground"
+                          >
+                            <CircleHelp className="h-4 w-4" />
+                          </button>
+                        </PopoverTrigger>
+                        <PopoverContent
+                          className="w-[min(calc(100vw-2rem),22rem)] p-4 z-[60]"
+                          align="start"
+                          side="bottom"
+                          sideOffset={6}
+                        >
+                          <p className="text-sm font-semibold text-foreground mb-3">{t('upload.reviewInfoTitle')}</p>
+                          <ul className="space-y-2 text-xs text-muted-foreground leading-relaxed">
+                            <li>• {t('upload.reviewInfoTimeline')}</li>
+                            <li>• {t('upload.reviewInfoEditImg')}</li>
+                            <li>• {t('upload.reviewInfoEditMeta')}</li>
+                            <li>• {t('upload.reviewInfoReject')}</li>
+                          </ul>
+                        </PopoverContent>
+                      </Popover>
+                    </div>
                     <Button variant="ghost" size="icon" onClick={() => setShowDetailsModal(false)} aria-label={t('upload.close')} className="h-11 w-11 min-h-[44px] min-w-[44px] rounded-full">
                       <X className="h-5 w-5" />
                     </Button>

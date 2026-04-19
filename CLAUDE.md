@@ -17,9 +17,40 @@
 - Phase 2 백엔드 ERD 설계 시 `Work` → `Exhibition` 리네이밍 검토 권장.
 
 ## 스펙 문서
-- **기획 단일 소스**: `_planning/` — 정책(`Policy_v1.md`)·사용자 PRD(`PRD_User_v1.md`)·어드민 PRD(`PRD_Admin_v1.md`)·아키텍처(`SystemArchitecture_v1.md`)·화면 목록(`IA_ScreenList_v1.md`)·디자인 시스템(`DesignSystem_v1.md`)
+- **기획 단일 소스**: `_planning/` — 정책(`Policy_v1.md`)·사용자 PRD(`PRD_User_v1.md`)·어드민 PRD(`PRD_Admin_v1.md`)·아키텍처(`SystemArchitecture_v1.md`)·화면 목록(`IA_ScreenList_v1.md`)·디자인 시스템(`DesignSystem_v1.md`)·카피 가이드(`Copy_v1.md`)
 - 전시명·작품명·그룹명 글자 상한: **`TITLE_FIELD_MAX_LEN`** (`src/app/utils/workDisplay.ts`, 현재 **20**).
 - 작품 톤 배경 묻어나는 효과: **원본 이미지를 blur + scale + opacity로 깔아** 순수 CSS로 구현 ([WorkDetailModal.tsx:407](src/app/components/WorkDetailModal.tsx#L407), [Upload.tsx:12,1140](src/app/pages/Upload.tsx#L12)). dominant-color 추출 알고리즘 불필요.
+
+## 문서 동기화·버전 규칙
+
+### 1) 코드 ↔ 플래닝 동시 갱신 (필수)
+
+- 코드 변경이 스펙(정책·화면·컴포넌트·카피·엔티티)에 영향이 있으면 **해당 `_planning/*.md` 문서를 같은 작업 범위에서 반드시 함께 업데이트**한다.
+- 반대로 스펙만 바뀌고 구현이 따라오지 않는 상태도 동일 규칙의 위반. 스펙-구현은 단일 푸시 단위로 일치시킨다.
+- 영향 매핑 가이드:
+  - 정책·수치·규칙 → `Policy_v1.md`
+  - 화면·경로·ID → `IA_ScreenList_v1.md`
+  - 사용자 기능·AC → `PRD_User_v1.md` · 어드민 기능 → `PRD_Admin_v1.md`
+  - 엔티티·스토어·컴포넌트 계약·환경 플래그 → `SystemArchitecture_v1.md`
+  - 토큰·컴포넌트 스펙·시각 법칙 → `DesignSystem_v1.md`
+  - UX 문구·i18n 키 → `Copy_v1.md`
+
+### 2) 문서 버전 표기 (push 단위)
+
+각 `_planning/*.md` 말미에 `## 문서 이력` 테이블이 있으며 규칙은 다음과 같다.
+
+- **Push 이후 그 문서의 첫 수정** → 새 버전 행 1개 추가 (그 시점 변경 요약)
+- **같은 push 사이클 내 추가 수정** → 같은 행의 "변경 내용"에 **텍스트만 append**, 버전 숫자는 유지
+- **Push 시점** → 현재 최신 행이 인계된 상태. 별도 작업 없음
+- **다음 push 이후 첫 수정 시점** → 다음 버전으로 새 행 1개 추가, 이후 규칙 반복
+
+판별 기준: `git log origin/main -1 -- _planning/<파일>.md` 이후 로컬 커밋에 해당 파일이 이미 등장했으면 "행 추가됨" 상태이며 같은 행에 append, 아니면 새 행 추가.
+
+### 3) 금지
+
+- Push 대기 상태에서 **한 파일에 여러 버전 행 추가** (v1.9 + v2.0 같이)
+- 문서 수정 없이 코드만 수정한 PR / 코드 수정 없이 문서만 수정한 PR (정책·버그픽스 제외)
+- `_planning/*.md` 문서 내부에 **개발 코드 경로·라인 넘버 참조** (문서 단독 재현성 보장). 계약 이름(스토어·컴포넌트)은 허용.
 
 ## 주요 파일
 
