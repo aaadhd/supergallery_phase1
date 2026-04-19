@@ -74,6 +74,43 @@ export function markSignatureReported(
   }
 }
 
+/**
+ * 작품 삭제 시 이 작품 ID를 참조하는 신고 관련 데이터를 정리.
+ *  - DEDUPE_KEY(artier_report_signatures_v1): `<reporter>|work|<workId>` 서명 제거
+ *  - HIDDEN_KEY(artier_report_hidden_v2): 모든 reporter의 works 배열에서 workId 제거
+ * (감사 목적 이력은 `artier_reports`에 남아 있으며 그쪽은 store.removeWork에서 별도 정리)
+ */
+export function cleanupReportRefsForWork(workId: string): void {
+  if (!workId) return;
+  // 1) Dedupe 서명 제거
+  try {
+    const list = parseJson<string[]>(localStorage.getItem(DEDUPE_KEY), []);
+    const cleaned = list.filter((sig) => {
+      const parts = sig.split('|');
+      // `<reporter>|<type>|<targetId>` 형식. type=work && targetId===workId 매칭 제거.
+      return !(parts[1] === 'work' && parts[2] === workId);
+    });
+    if (cleaned.length !== list.length) {
+      localStorage.setItem(DEDUPE_KEY, JSON.stringify(cleaned));
+    }
+  } catch { /* ignore */ }
+
+  // 2) 신고자별 숨김 목록에서 제거
+  try {
+    const all = readHidden();
+    let touched = false;
+    for (const rk of Object.keys(all)) {
+      const bucket = all[rk];
+      if (Array.isArray(bucket.works) && bucket.works.includes(workId)) {
+        bucket.works = bucket.works.filter((id) => id !== workId);
+        all[rk] = bucket;
+        touched = true;
+      }
+    }
+    if (touched) localStorage.setItem(HIDDEN_KEY, JSON.stringify(all));
+  } catch { /* ignore */ }
+}
+
 export function addHiddenForReporter(
   targetType: 'work' | 'artist',
   targetId: string | undefined,

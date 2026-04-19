@@ -10,6 +10,8 @@ import {
   deleteWorkMediaFromIdb,
   workContainsMediaRefs,
 } from './utils/workMediaIdb';
+import { forgetSeenWork } from './utils/seenFeedWorks';
+import { cleanupReportRefsForWork } from './utils/reportStorage';
 
 function cleanupOrphanedWorkId(workId: string) {
   if (typeof window === 'undefined') return;
@@ -203,11 +205,13 @@ export const workStore = {
   },
 
   removeWork: (id: string): Promise<void> => {
-    pointsRecallIfQuickDelete(id);
+    pointsRecallIfQuickDelete(id); // artier_work_publish_times 엔트리도 함께 정리
     void deleteWorkMediaFromIdb(id);
     currentWorks = currentWorks.filter(w => w.id !== id);
     userInteractionStore.removeWorkId(id);
-    cleanupOrphanedWorkId(id);
+    cleanupOrphanedWorkId(id); // 기획전(artier_curation_v1) workIds 정리
+    forgetSeenWork(id); // 이미 본 작품 목록에서 제거
+    cleanupReportRefsForWork(id); // 신고 중복 서명·신고자 숨김 참조 정리
 
     // Clean up notifications referencing this work
     try {

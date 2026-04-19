@@ -22,3 +22,14 @@ export function rememberSeenWork(workId: string) {
   list.push(workId);
   localStorage.setItem(STORAGE_KEY, JSON.stringify(list.slice(-MAX_IDS)));
 }
+
+/** 작품 삭제 시 “이미 본 작품” 목록에서 해당 ID 제거(stale ID 누적 방지). */
+export function forgetSeenWork(workId: string) {
+  try {
+    const list = loadIdList();
+    const cleaned = list.filter((id) => id !== workId);
+    if (cleaned.length !== list.length) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(cleaned));
+    }
+  } catch { /* ignore */ }
+}
