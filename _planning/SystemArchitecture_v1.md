@@ -206,6 +206,262 @@ Pick은 주간 최대 10개 전시 선정(교체 가능), 기획전은 운영팀
 **SUSPENSION (정지)**
 주의 / 7일 정지 / 30일 정지 / 영구 정지 4단계. 자동 승격(경고 3회·허위 신고 3회)과 운영팀 수동 조치 모두 지원.
 
+### 3.2 엔티티 필드 상세
+
+각 엔티티의 주요 필드를 모두 나열한다. 필드명은 논리명이며 실제 저장·API 계약 시 네이밍은 별도 가이드를 따른다.
+
+#### EXHIBITION (Work)
+
+| 필드 | 타입 | 설명 | 제약 |
+|---|---|---|---|
+| id | string | 전시 고유 ID | UUID |
+| artistId | string | 업로더 작가 ID | 필수 |
+| authorId | string? | 실제 업로드자 ID | 강사 대리 업로드 시 artistId와 다름 |
+| exhibitionName | string | 전시명 | 필수, 최대 20자, 비속어 불가 |
+| primaryExhibitionType | 'solo'\|'group' | 전시 유형 | 혼자/함께 구분 |
+| groupName | string? | 그룹명 | 그룹 전시 필수, 최대 20자 |
+| isInstructorUpload | boolean? | 강사 대리 업로드 | 강사 역할 시 true |
+| image | string[] | 이미지 배열 | 1~10장, WebP 변환됨 |
+| imagePieceTitles | string[] | 이미지별 작품명 | image와 동일 길이, 빈 값은 "무제" 표시 |
+| imageArtists | ImageArtistAssignment[] | 이미지별 작가 지정 | 회원 또는 비회원 |
+| customCoverUrl | string? | 커스텀 커버 이미지 | data URL, 이미지 배열에 미포함 |
+| coverImageIndex | number? | 대표 이미지 인덱스 | 기본 0, -1은 customCover 사용 |
+| description | string? | 전시 설명 | |
+| tags | string[]? | 태그 목록 | 검색 가중치 |
+| likes | number | 좋아요 수 | 기본 0 |
+| saves | number | 저장 수 | 기본 0 |
+| feedReviewStatus | 'pending'\|'approved'\|'rejected' | 검수 상태 | 기본 'pending' |
+| rejectionReason | 'low_quality'\|'spam'\|'inappropriate'\|'copyright'? | 반려 사유 | rejected 시만 유의미 |
+| isHidden | boolean? | 운영자 비공개 | true → 피드·검색·타인 프로필에서 제외 |
+| pick | boolean? | 현재 주간 Pick 활성 | 매주 교체 |
+| pickBadge | boolean? | Pick 선정 이력 배지 | 한 번 받으면 영구 |
+| linkedEventId | string\|number? | 연결 이벤트 ID | 중복 참여 검증에 사용 |
+| uploadedAt | string | 업로드 시각 | 로컬 ISO 기준 |
+| coOwners | Artist[]? | 공동 제작자(레거시) | Phase 2 재검토 |
+
+**ImageArtistAssignment**:
+- `type: 'member'` → { memberId, memberName, memberAvatar }
+- `type: 'non-member'` → { displayName, phoneNumber }
+
+#### USER_PROFILE
+
+| 필드 | 타입 | 설명 | 제약 |
+|---|---|---|---|
+| id | string | 사용자 ID | PK |
+| name | string | 표시 이름 | 최대 20자, 비속어 불가 |
+| nickname | string? | 닉네임 | 2~20자, 비속어 불가 |
+| realName | string | 실명 | 2~20자, 본인인증 결과 또는 온보딩 수집 |
+| phone | string | 전화번호 | 숫자 7자리 이상, 중복 불가 |
+| email | string? | 이메일 | 형식 검증, 중복 불가(소셜 첫 가입·해외 시 필수) |
+| birthDate | string | 생년월일 | 만 14세 이상 |
+| headline | string? | 한 줄 소개 | 최대 20자 |
+| bio | string? | 상세 소개 | 최대 200자 |
+| location | string? | 지역 | 드롭다운 선택(국가/기타) |
+| interests | string[]? | 관심사 | 최대 15종 토글 |
+| avatarUrl | string? | 프로필 사진 | 5MB 이하 |
+| externalLinks | { label, url }[]? | 외부 링크 | 6 플랫폼 지원 |
+| authProvider | 'email'\|'kakao'\|'google'\|'apple' | 가입 경로 | |
+| createdAt | string | 가입 시각 | ISO |
+| instructorVisible | boolean (파생) | 강사 표시 여부 | 업로드 이력에서 자동 파생 |
+
+#### DRAFT
+
+| 필드 | 타입 | 설명 |
+|---|---|---|
+| id | string | 초안 ID |
+| title | string | 표시용 제목 |
+| uploadType | 'solo'\|'group'? | |
+| isInstructor | boolean? | |
+| groupName | string? | |
+| exhibitionName | string? | |
+| coverImageIndex | number? | |
+| customCoverUrl | string? | |
+| contents | 초안 이미지·작가 스냅샷[] | 전시 구성 저장 |
+| savedAt | string | 저장 시각 |
+
+#### INTERACTION
+
+| 필드 | 타입 | 설명 |
+|---|---|---|
+| liked | string[] | 좋아요한 전시 ID |
+| saved | string[] | 저장한 전시 ID |
+
+#### FOLLOW
+
+| 필드 | 타입 | 설명 |
+|---|---|---|
+| followingIds | string[] | 현재 사용자가 팔로우하는 작가 ID |
+
+#### NOTIFICATION
+
+| 필드 | 타입 | 설명 |
+|---|---|---|
+| id | string | 알림 ID |
+| type | 'like'\|'follow'\|'pick'\|'system'\|'event' | 5종(검수 승인·반려·초대 수락은 system 계열) |
+| message | string | i18n 템플릿 렌더 결과 |
+| fromUser | { id, name, avatar }? | like·follow 시 |
+| workId | string? | 관련 전시 |
+| read | boolean | 읽음 상태 |
+| createdAt | string | 생성 시각 |
+
+보관 200건 · 90일 자동 정리.
+
+#### NOTIFICATION_SETTING
+
+| 필드 | 기본 | 설명 |
+|---|---|---|
+| like | true | 좋아요 알림 |
+| newFollower | true | 팔로워 알림 |
+| groupExhibitionInvite | true | 그룹 초대 알림 |
+| followingNewWork | false | 팔로우 작가 신작 |
+| weeklyTheme | false | 주간 기획전 |
+| marketing | false | 마케팅 |
+
+#### EVENT (ManagedEvent)
+
+| 필드 | 타입 | 설명 |
+|---|---|---|
+| id | string\|number | 이벤트 ID |
+| title | string | 제목 |
+| subtitle | string? | 부제 |
+| description | string | 설명 |
+| bannerImageUrl | string | 배너 이미지 |
+| linkUrl | string? | 외부 링크 |
+| startAt | string | 시작일(YYYY-MM-DD, 로컬) |
+| endAt | string | 종료일 |
+| status | 'scheduled'\|'active'\|'ended'? | 자동 계산 또는 수동 오버라이드 |
+| worksPublic | boolean | true = 즉시 참여작 공개 |
+| participantsLabel | string? | 참여 안내 |
+
+#### BANNER (AdminBanner)
+
+| 필드 | 타입 | 설명 |
+|---|---|---|
+| id | string | 배너 ID |
+| title | string | |
+| subtitle | string? | |
+| imageUrl | string | |
+| linkUrl | string? | |
+| startAt | string? | |
+| endAt | string? | |
+| isActive | boolean | 기간 내 + 활성 = 노출 |
+
+상한 5개 · DnD 순서 · 로컬 자정 기준 만료 자동 판정.
+
+#### CURATION
+
+| 필드 | 타입 | 설명 |
+|---|---|---|
+| theme | { title, subtitle?, workIds: string[] }? | 현재 기획전 |
+| featuredArtistIds | string[] | 추천 작가 |
+
+#### PICK
+
+현재 Pick과 영구 이력은 분리:
+- 현재: EXHIBITION.pick = true
+- 이력: EXHIBITION.pickBadge = true(한 번 선정되면 영구)
+- 이력 목록: 별도 저장소에 워크 ID 배열
+
+#### SANCTION
+
+| 필드 | 타입 | 설명 |
+|---|---|---|
+| targetArtistId | string | 대상 |
+| warningCount | number | 경고 누적 |
+| falseReportCount | number | 허위 신고 누적(신고자용) |
+| suspensionLevel | 'warning'\|'days7'\|'days30'\|'permanent'? | 정지 단계 |
+| suspendedUntil | string? | 해제일(영구면 null) |
+| reason | string? | 정지 사유 |
+
+자동 승격: warningCount == 3 → days7, falseReportCount == 3 → days7 차단.
+
+#### REPORT
+
+| 필드 | 타입 | 설명 |
+|---|---|---|
+| id | string | 신고 ID |
+| targetType | 'work'\|'artist' | 대상 유형 |
+| targetId | string | 대상 ID |
+| targetName | string | UI 표시용 |
+| targetArtistId | string? | 경고 카운트 누적용 |
+| reporterId | string | 신고자 |
+| reasonKey | 'copyright'\|'inappropriate'\|'spam'\|'misleading'\|'other' | 신고 사유 5종 |
+| detail | string | 상세(최대 200자) |
+| createdAt | string | 접수 시각 |
+| adminStatus | 'pending'\|'deleted'\|'warned'\|'dismissed'\|'hidden' | 처리 결과 |
+
+> **주의**: **사용자 신고 사유(Report.reasonKey)는 5종** (저작권·부적절·스팸·오도·기타), **검수 반려 사유(Exhibition.rejectionReason)는 4종** (저품질·스팸·부적절·저작권)로 별도 집합임.
+
+#### INVITE (비회원 초대)
+
+발송 로그(최대 300): id, workId, 전화 마스킹, 표시명, 채널, locale, 메시지, 성공 여부, 실패 사유, at
+매칭 로그(최대 200): inviteId, workId, 전화, 초대 이름, 가입 실명, status(`matched`\|`blocked_name_mismatch`), at
+
+#### POINT_LEDGER
+
+엔트리: id, at, kind(이벤트 종류), ap(음수=회수), note
+상태: 누적 AP · 각 마일스톤 달성 여부 · 일일 업로드 수 · 월별 카운터
+원장 상한 500건 순환.
+
+#### 기타 엔티티 (요약)
+
+- **EVENT_SUBSCRIPTION** — 이메일·이벤트 ID·구독 시각
+- **NOTICE** — 제목·본문·카테고리·게시일·고정 여부
+- **INQUIRY** — 이름·이메일·카테고리(6종)·내용·첨부
+- **SEARCH_HISTORY** — 기록 배열(최대 10), 계정별/게스트 분리
+- **UI_PREFERENCES** — locale, fontScale, cookieConsent, onboardingDone, splashSeen
+- **AUTH_SESSION** — 토큰·만료(Phase 1 모의)
+- **PARTNER_ARTIST** — 이름·연락처·단계(5)·제출 상태(5)·메모·이력
+- **LAUNCH_CHECK_ITEM** — 제목·카테고리·상태(4)·기한·담당자
+- **UNRESOLVED_ISSUE** — 제목·설명·상태(4)·우선순위(4)·담당자·차단 여부
+- **ACCOUNT_SUSPENSION** — 현재 정지 상태 글로벌 레코드
+- **WITHDRAWN_ARTIST_LIST** — 탈퇴 작가 ID 집합(익명화 판정)
+
+### 3.3 상태 전이 다이어그램
+
+```mermaid
+stateDiagram-v2
+    direction LR
+    [*] --> pending: 업로드 발행
+    pending --> approved: 운영팀 승인
+    pending --> rejected: 운영팀 반려
+    approved --> isHidden: 운영팀 비공개 처리
+    isHidden --> approved: 운영팀 재공개
+    rejected --> pending: 작가 수정 후 재발행
+    approved --> [*]: 삭제
+    rejected --> [*]: 삭제
+    isHidden --> [*]: 삭제
+```
+
+**전시 상태**: `pending`은 본인 프로필에서만 보이고, `approved`만 피드·검색·큐레이션 노출. `rejected`는 본인 프로필에서만 보이고 반려 사유 모달로 재진입. `isHidden`은 본인 프로필만 예외 노출.
+
+```mermaid
+stateDiagram-v2
+    direction LR
+    [*] --> warning: 경고 1~2회
+    warning --> days7: 경고 3회 누적(자동) 또는 수동
+    warning --> days30: 수동
+    warning --> permanent: 수동
+    days7 --> [*]: 해제일 경과 또는 수동
+    days30 --> [*]: 해제일 경과 또는 수동
+    permanent --> [*]: 수동 해제
+```
+
+**정지 단계**: `warning`은 차단 없음. `days7/30/permanent`는 다음 로그인 시 차단.
+
+```mermaid
+stateDiagram-v2
+    direction LR
+    [*] --> scheduled: 생성
+    scheduled --> active: startAt ≤ 오늘
+    active --> ended: endAt < 오늘
+    scheduled --> ended: 수동 오버라이드
+    active --> [*]: 삭제
+    ended --> [*]: 삭제
+```
+
+**이벤트 상태**: 로컬 자정 기준 자동 계산, 운영자가 수동 오버라이드 가능.
+
 ---
 
 ## 4. 저장소 전략
@@ -418,6 +674,172 @@ sequenceDiagram
 ```
 
 **요약**: 비회원 초대는 검수 승인 시점에만 발송되고, 가입 시 전화번호+실명으로 자동 매칭된다. 이름이 다르면 본인 확인 모달에서 최종 판단. 거부 시 발신한 작가에게 경고 1회 누적.
+
+### 7.5 둘러보기 피드 인터랙션 (좋아요·저장·팔로우·신고)
+
+```mermaid
+sequenceDiagram
+    participant U as 사용자
+    participant APP as 사용자 앱
+    participant DB as 저장소
+
+    U->>APP: 피드 또는 전시 상세에서 인터랙션 시도
+    alt 비로그인
+        APP->>U: 로그인 유도 모달(세션당 1회, 이후 토스트)
+        U-->>APP: "로그인" 선택
+        APP-->>U: 로그인 화면(redirect=현재 경로)
+    else 로그인
+        alt 좋아요
+            APP->>DB: 토글 + 전시 카운터 증감
+            DB->>DB: 대상 작가에게 알림 생성(설정 ON 시)
+        else 저장
+            APP->>DB: 토글 + 전시 카운터 증감
+        else 팔로우
+            APP->>APP: 자신·탈퇴 작가 가드
+            APP->>DB: 팔로잉 목록 + 팔로워 델타 증감
+            DB->>DB: 대상 작가에게 알림 생성
+        else 신고
+            APP->>U: 신고 모달(사유 5종 라디오 + 상세 200자)
+            U-->>APP: 사유 선택 + 상세 입력
+            APP->>APP: (신고자, 대상) 중복 검사
+            APP->>DB: 신고 큐 적재 + 신고자 개인 숨김 목록 갱신
+            APP->>U: 접수 완료 토스트
+        end
+    end
+```
+
+**요약**: 모든 보호 액션(좋아요·저장·팔로우·신고)은 비로그인 시 로그인 유도 → 세션당 1회 모달. 신고 사유는 저작권·부적절·스팸·오도·기타 5종이며 중복 신고는 한 번만 접수된다.
+
+### 7.6 신고 → 운영팀 처리 → 자동 승격
+
+```mermaid
+sequenceDiagram
+    participant R as 신고자
+    participant ADM as 어드민(신고 큐)
+    participant DB as 저장소
+    participant T as 대상 작가/신고자
+
+    R->>DB: 신고 접수
+    ADM->>DB: 신고 큐 열람
+    alt 삭제 (전시 한정)
+        ADM->>DB: 전시 영구 삭제 + 관련 상호작용 연쇄 정리
+    else 경고
+        ADM->>DB: 대상 작가 경고 카운트 +1
+        alt 3회 누적
+            DB->>DB: 7일 정지 자동 승격
+            DB->>T: 정지 알림
+        end
+    else 기각
+        ADM->>DB: 신고자 허위 신고 카운트 +1
+        alt 3회 누적
+            DB->>DB: 신고자 7일 차단 자동 승격
+            DB->>R: 차단 알림
+        end
+    else 비공개
+        ADM->>DB: 전시 `isHidden=true` (본인 프로필 외 비노출)
+    end
+```
+
+**요약**: 운영팀의 4액션(삭제·경고·기각·비공개) 각각에 따라 전시 상태·작가 카운트·신고자 카운트가 변한다. 경고·허위신고 모두 3회 누적 시 자동 7일 제재.
+
+### 7.7 계정 정지 → 로그인 차단 → 이의제기
+
+```mermaid
+sequenceDiagram
+    participant U as 사용자
+    participant APP as 사용자 앱
+    participant DB as 저장소
+    participant OP as 운영팀
+
+    U->>APP: 로그인 시도
+    APP->>DB: 세션 검증
+    alt 정지 상태 감지
+        APP->>U: 정지 안내 화면(사유·해제일·이의제기 CTA)
+        U-->>APP: 이의제기 선택
+        APP-->>U: 문의 페이지 프리필(카테고리: 신고·기타)
+        U->>DB: 문의 접수
+        OP->>DB: 문의 검토 후 해제 판단
+        alt 소명 타당
+            OP->>DB: 정지 해제 + 이력 기록
+            DB-->>U: 다음 로그인부터 정상 이용 가능
+        else 소명 부당
+            OP-->>U: 사유 유지 회신
+        end
+    else 정상
+        APP-->>U: 세션 발급 + 홈으로 이동
+    end
+```
+
+**요약**: 정지 단계 중 "주의"는 차단 없이 경고만. "7일/30일/영구"는 다음 로그인 시 차단 + 이의제기 링크 노출. 해제는 운영팀 수동 또는 시한 만료 시 자동.
+
+### 7.8 탈퇴 → 작품 유지·익명화
+
+```mermaid
+sequenceDiagram
+    participant U as 사용자
+    participant APP as 설정 → 탈퇴 모달
+    participant DB as 저장소
+
+    U->>APP: 탈퇴 사유 선택 + 비밀번호·재인증
+    APP->>DB: 탈퇴 작가 목록에 추가(해시)
+    APP->>DB: 작가명 "작가 미상" + 기본 아바타로 대체
+    APP->>DB: 프로필 접근 차단
+    APP->>DB: 좋아요·저장·팔로우·신고 등 신규 액션 차단
+    Note over DB: 기존 업로드 전시는 유지<br/>(제목·이미지 보존, 큐레이션·피드 노출 유지)
+    APP->>U: 로그아웃 + 로그인 화면으로
+```
+
+**요약**: 탈퇴는 사용자 식별 정보만 익명화하고 작품은 유지. 탈퇴 작가의 작품에 대한 새로운 상호작용은 모두 차단되며, 기존 상호작용은 유지된다.
+
+### 7.9 큐레이션(Pick) 선정 → 피드 부스트 → 영구 이력 배지
+
+```mermaid
+sequenceDiagram
+    participant OP as 운영팀
+    participant ADM as 어드민(Pick)
+    participant DB as 저장소
+    participant FEED as 사용자 피드
+
+    OP->>ADM: 이번 주 Pick 10개 선정
+    ADM->>DB: 선정 전시에 `pick=true` + `pickBadge=true` 부여
+    ADM->>DB: 선정 알림(대상 작가)
+    FEED->>DB: 피드 로드 시 Pick 버킷 우선 배치 + 점수 +14
+    Note over DB: 다음 주 교체 시<br/>`pick=false`로 전환
+    Note over DB: `pickBadge`는 **영구 유지**<br/>(한 번이라도 선정되면)
+```
+
+**요약**: Pick은 주간 10건 상한 · 교체되어도 이력 배지는 영구. 피드 점수에 +14 부스트 + 버킷 최상단 배치로 노출 우위를 가진다.
+
+### 7.10 이벤트 참여 → 중복 차단
+
+```mermaid
+sequenceDiagram
+    participant U as 사용자
+    participant APP as 이벤트 상세
+    participant UPL as 업로드 화면
+    participant DB as 저장소
+
+    U->>APP: 이벤트 상세 접근
+    APP->>DB: 사용자의 해당 이벤트 참여 이력 검증
+    alt 이미 참여
+        APP->>U: "참여하기" 버튼 비활성 + "이미 참여한 이벤트입니다" 안내
+    else 미참여 + 활성
+        U->>APP: "참여하기" 탭
+        APP->>UPL: `/upload?event=<id>` 이동 (이벤트 연결 모드)
+        U->>UPL: 업로드 입력
+        UPL->>UPL: 발행 시 중복 참여 2차 검증
+        alt 업로드 도중 다른 탭에서 먼저 참여
+            UPL-->>U: 에러 토스트 "이미 참여한 이벤트입니다"
+        else 정상
+            UPL->>DB: 전시 저장 + `linkedEventId` 세팅
+            UPL->>U: 발행 완료 → 이벤트 상세로 복귀
+        end
+    else 종료
+        APP->>U: "종료된 이벤트입니다" + 버튼 비활성
+    end
+```
+
+**요약**: 이벤트 연결 업로드는 진입·발행 두 시점에서 중복 참여 검증. 종료 이벤트는 버튼 자체 비활성.
 
 ---
 
