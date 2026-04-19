@@ -179,6 +179,24 @@ export default function Profile() {
     setShowProfileEditModal(false);
   };
 
+  /**
+   * 전시 수정 진입점. 검수 대기(`pending`) 상태이면 경고 모달로 한 번 확인.
+   * 반려(`rejected`) 상태는 반려 모달에서 이미 맥락을 제공하므로 추가 경고 없음.
+   * 승인(`approved`) 상태는 수정 시 pending으로 재전환(Upload.tsx 로직). 경고 불필요.
+   * Policy §12.1.2 검수 대기 중 수정·삭제 정책.
+   */
+  const handleEditWork = async (workId: string, status?: 'pending' | 'approved' | 'rejected') => {
+    if (status === 'pending') {
+      const ok = await openConfirm({
+        title: t('profile.editPendingConfirmTitle'),
+        description: t('profile.editPendingConfirmDesc'),
+        confirmLabel: t('profile.editPendingConfirmAction'),
+      });
+      if (!ok) return;
+    }
+    navigate(`/upload?edit=${workId}`);
+  };
+
   // 현재 프로필 아티스트
   const matchedArtist = id ? artists.find(a => a.id === id) : artists[0];
   const profileArtist = matchedArtist ?? artists[0];
@@ -954,7 +972,7 @@ export default function Profile() {
                                     <DropdownMenuItem
                                       className="text-sm"
                                       onSelect={(e) => e.preventDefault()}
-                                      onClick={() => navigate(`/upload?edit=${work.id}`)}
+                                      onClick={() => handleEditWork(work.id, work.feedReviewStatus)}
                                     >
                                       <Tag className="h-4 w-4 mr-2" />
                                       {t('profile.editWork')}
@@ -1120,7 +1138,7 @@ export default function Profile() {
                                       <DropdownMenuItem
                                         className="text-sm"
                                         onSelect={(e) => e.preventDefault()}
-                                        onClick={() => navigate(`/upload?edit=${work.id}`)}
+                                        onClick={() => handleEditWork(work.id, work.feedReviewStatus)}
                                       >
                                         <Tag className="h-4 w-4 mr-2" />
                                         {t('profile.editWork')}

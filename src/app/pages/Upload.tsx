@@ -811,13 +811,59 @@ export default function Upload() {
     setIsPublishing(true);
     const targetId = editingWorkId || newWork.id;
     const wasEditingExistingWork = Boolean(editingWorkId);
+
+    // 편집 모드 차별 재검수: 이미지 계열 변경 여부를 먼저 판정해 둔다(토스트 분기에도 사용).
+    // Policy §12.1.2 / PRD_User USR-UPL-02 D.
+    let editDiff: {
+      imageFieldsChanged: boolean;
+      originalStatus: 'pending' | 'approved' | 'rejected';
+    } | null = null;
+
     if (editingWorkId) {
       // 전시 수정: id·likes·saves·uploadedAt·artistId·artist·rejectionHistory 등 불변 필드는 보존하고
-      // 편집 가능 필드만 갱신한다. Policy §12·PRD_User USR-UPL-02 D 준수.
-      //  - feedReviewStatus: 항상 pending으로 재설정 (재검수 대상). auto-approve 환경만 예외.
-      //  - rejectionReason: 재발행 시 "현재" 반려 사유 제거(빈 값으로 덮기).
-      //  - rejectionHistory: 명시적으로 전달하지 않음 → updateWork 머지 규칙상 원본 이력 그대로 보존됨.
+      // 편집 가능 필드만 갱신한다. Policy §12.1.2 · PRD_User USR-UPL-02 D.
+      //
+      // feedReviewStatus 결정 규칙:
+      //  - 이미지 계열(image 배열·imageArtists·customCoverUrl) 변경 시 → pending 재설정(재검수 필요)
+      //  - 메타만 변경(전시명·그룹명·작품명·커버 인덱스·이벤트 연결) 시 → 원본 상태 유지
+      //    (approved 유지 = 즉시 반영 · pending 유지 = 큐 안에서 갱신 · rejected 유지 = 반려 사유 미해소)
+      //  - auto-approve 환경은 기존 동작 유지(즉시 approved).
+      //
+      // rejectionReason:
+      //  - 상태가 rejected에서 바뀌면 초기화(빈 값). 같은 rejected로 유지되면 원본 사유 보존.
+      //
+      // rejectionHistory: 명시적으로 전달하지 않아 updateWork 머지 규칙상 원본 이력 그대로 보존됨.
       const autoApprove = import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true';
+      const original = workStore.getWork(editingWorkId);
+      const originalStatus: 'pending' | 'approved' | 'rejected' = original?.feedReviewStatus ?? 'pending';
+
+      // 이미지 계열 변경 판정
+      const origImages: string[] = original
+        ? (Array.isArray(original.image) ? original.image : [original.image])
+        : [];
+      const newImages: string[] = Array.isArray(newWork.image) ? newWork.image : [newWork.image];
+      const imagesArrayChanged =
+        origImages.length !== newImages.length || origImages.some((u, i) => u !== newImages[i]);
+      const artistsJsonChanged =
+        JSON.stringify(original?.imageArtists ?? []) !== JSON.stringify(newWork.imageArtists ?? []);
+      const coverChanged = (original?.customCoverUrl || null) !== (newWork.customCoverUrl || null);
+      const imageFieldsChanged = imagesArrayChanged || artistsJsonChanged || coverChanged;
+
+      let nextStatus: 'pending' | 'approved' | 'rejected';
+      if (autoApprove) {
+        nextStatus = 'approved';
+      } else if (imageFieldsChanged) {
+        nextStatus = 'pending';
+      } else {
+        nextStatus = originalStatus;
+      }
+
+      // rejectionReason 처리: 상태가 rejected로 유지될 때만 보존. 그 외 초기화.
+      const nextRejectionReason: Work['rejectionReason'] | undefined =
+        nextStatus === 'rejected' ? original?.rejectionReason : undefined;
+
+      editDiff = { imageFieldsChanged, originalStatus };
+
       const editingUpdates: Partial<Work> = {
         title: newWork.title,
         image: newWork.image,
@@ -830,8 +876,8 @@ export default function Upload() {
         linkedEventId: newWork.linkedEventId,
         coverImageIndex: newWork.coverImageIndex,
         customCoverUrl: newWork.customCoverUrl,
-        feedReviewStatus: autoApprove ? 'approved' : 'pending',
-        rejectionReason: undefined,
+        feedReviewStatus: nextStatus,
+        rejectionReason: nextRejectionReason,
       };
       workStore.updateWork(editingWorkId, editingUpdates);
     } else {
@@ -852,8 +898,23 @@ export default function Upload() {
 
     if (hasNonMemberInvites && !editingWorkId) {
       toast.info(t('upload.toastInvitePending'));
-    } else if (editingWorkId) {
-      toast.success(t('upload.editModeToast'));
+    } else if (editingWorkId && editDiff) {
+      // 편집 저장 후 5 시나리오 분기 (Policy §12.1.2 토스트 문구).
+      const { originalStatus, imageFieldsChanged } = editDiff;
+      let toastKey: string;
+      if (originalStatus === 'approved' && !imageFieldsChanged) {
+        toastKey = 'upload.editModeToastApprovedKept';
+      } else if (originalStatus === 'approved' && imageFieldsChanged) {
+        toastKey = 'upload.editModeToastPendingFromApproved';
+      } else if (originalStatus === 'rejected' && !imageFieldsChanged) {
+        toastKey = 'upload.editModeToastRejectedKept';
+      } else if (originalStatus === 'rejected' && imageFieldsChanged) {
+        toastKey = 'upload.editModeToastResubmit';
+      } else {
+        // originalStatus === 'pending' (이미지든 메타든 pending 유지)
+        toastKey = 'upload.editModeToast';
+      }
+      toast.success(t(toastKey as MessageKey));
     } else if (import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true') {
       toast.success(t('upload.toastPublishedImmediate'));
     } else {
