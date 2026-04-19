@@ -56,8 +56,18 @@ export interface Work {
   isForSale?: boolean;
   /** 둘러보기 피드 편입 — 미지정·승인 = 피드 노출, 대기·반려 = 피드 제외 (콘텐츠 운영 정책) */
   feedReviewStatus?: 'pending' | 'approved' | 'rejected';
-  /** 반려 사유 카테고리 (명세: 저품질/스팸/부적절/저작권 침해 의심) */
+  /** 반려 사유 카테고리 (명세: 저품질/스팸/부적절/저작권 침해 의심) — 현재 반려 상태의 사유만 의미 있음. 과거 이력은 rejectionHistory 참조. */
   rejectionReason?: 'low_quality' | 'spam' | 'inappropriate' | 'copyright';
+  /**
+   * 반려 이력. 운영팀이 반려할 때마다 누적 append된다.
+   * 작가가 수정 재발행해서 `rejectionReason`을 초기화해도 이 배열은 **보존**된다.
+   * 감사·재범 추적·사유 트렌드 분석 용도.
+   */
+  rejectionHistory?: Array<{
+    reason: 'low_quality' | 'spam' | 'inappropriate' | 'copyright';
+    rejectedAt: string; // ISO timestamp
+    note?: string; // 운영자 내부 메모(선택)
+  }>;
   /** 업로드일 (검수 목록용, 선택) */
   uploadedAt?: string;
   /** 이벤트 연결 ID */

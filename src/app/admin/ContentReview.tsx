@@ -104,7 +104,16 @@ export default function ContentReview() {
   const confirmReject = () => {
     if (!rejectTarget) return;
     const w = rejectTarget;
-    workStore.updateWork(w.id, { feedReviewStatus: 'rejected', rejectionReason: pickedReason });
+    // 반려 이력에 누적 append — 작가가 수정 재발행해도 보존됨(감사·재범 추적·사유 트렌드).
+    const nextHistory = [
+      ...(w.rejectionHistory ?? []),
+      { reason: pickedReason, rejectedAt: new Date().toISOString() },
+    ];
+    workStore.updateWork(w.id, {
+      feedReviewStatus: 'rejected',
+      rejectionReason: pickedReason,
+      rejectionHistory: nextHistory,
+    });
     toast.error('반려 처리되었습니다. 피드에는 노출되지 않습니다.');
     const reasonLabel = t(REJECTION_REASON_LABEL_KEY[pickedReason]);
     pushDemoNotification({

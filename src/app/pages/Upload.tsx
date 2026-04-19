@@ -812,10 +812,11 @@ export default function Upload() {
     const targetId = editingWorkId || newWork.id;
     const wasEditingExistingWork = Boolean(editingWorkId);
     if (editingWorkId) {
-      // 전시 수정: id·likes·saves·uploadedAt·artistId·artist 등 불변 필드는 보존하고
+      // 전시 수정: id·likes·saves·uploadedAt·artistId·artist·rejectionHistory 등 불변 필드는 보존하고
       // 편집 가능 필드만 갱신한다. Policy §12·PRD_User USR-UPL-02 D 준수.
       //  - feedReviewStatus: 항상 pending으로 재설정 (재검수 대상). auto-approve 환경만 예외.
-      //  - rejectionReason: 재발행 시 과거 반려 사유 제거(빈 값으로 덮기).
+      //  - rejectionReason: 재발행 시 "현재" 반려 사유 제거(빈 값으로 덮기).
+      //  - rejectionHistory: 명시적으로 전달하지 않음 → updateWork 머지 규칙상 원본 이력 그대로 보존됨.
       const autoApprove = import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true';
       const editingUpdates: Partial<Work> = {
         title: newWork.title,

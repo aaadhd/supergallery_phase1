@@ -763,9 +763,9 @@ total = base + following_bonus + bucket_boost + noise
 - 기존 전시 프리필(유형·전시명·이미지·작가·커버·역할·이벤트 연결)
 - 상단 "수정 중" 뱃지 + CTA 라벨 "수정 저장"
 - 저장 시 **편집 가능 필드만 갱신**한다. 아래 불변 필드는 **보존**:
-  - `id`(참조 무결성), `likes`·`saves`(인터랙션 카운터), `uploadedAt`(업로드 시각·피드 정렬 기준), `artistId`·`artist`(업로더 정체성)
+  - `id`(참조 무결성), `likes`·`saves`(인터랙션 카운터), `uploadedAt`(업로드 시각·피드 정렬 기준), `artistId`·`artist`(업로더 정체성), **`rejectionHistory`(반려 이력 — 감사·재범 추적용)**
 - **`feedReviewStatus`는 항상 `pending`으로 재설정**(auto-approve 환경만 `approved`). 재검수 대상.
-- **`rejectionReason`은 빈 값으로 초기화**(재발행 시 과거 반려 사유 제거).
+- **`rejectionReason`은 빈 값으로 초기화**(재발행 시 "현재" 반려 사유만 제거. 이력 배열 `rejectionHistory`는 별도로 보존).
 - AP 적립 없음, 중복 이벤트 검증 스킵, 비회원 초대 미발송.
 - 삭제된 전시 수정 시도 → 에러 토스트 "수정하려는 작품을 찾을 수 없습니다" + `/upload` 리다이렉트.
 
@@ -824,7 +824,7 @@ total = base + following_bonus + bucket_boost + noise
 - AC-08: Given 당일 일반 업로드 2회 후 3번째 / When 발행 / Then AP 적립 없음(상한).
 - AC-09: Given 24시간 이내 삭제 / When 확정 / Then AP -20 회수(잔액 음수 방지).
 - AC-10: Given `?edit=<id>` + 전시 존재 / When 로드 / Then 전 필드 프리필 + "수정 중" 뱃지.
-- AC-11: Given `?edit=<id>` 저장 / When 완료 / Then `feedReviewStatus: pending` 재설정(auto-approve 시 `approved`) + `rejectionReason` 제거 + `id`·`likes`·`saves`·`uploadedAt` 보존 + AP 적립 없음.
+- AC-11: Given `?edit=<id>` 저장 / When 완료 / Then `feedReviewStatus: pending` 재설정(auto-approve 시 `approved`) + `rejectionReason` 제거 + `id`·`likes`·`saves`·`uploadedAt`·`rejectionHistory` 보존 + AP 적립 없음.
 - AC-12: Given 비회원 포함 발행 / When "전시하기" / Then USR-UPL-08 프리뷰 → 확인 후 발행.
 - AC-13: Given `?event=<id>` 중복 참여 / When 발행 / Then 에러 "이미 참여한 이벤트입니다".
 - AC-14: Given 내용 입력 + 다른 경로 이동 시도 / When 이탈 / Then USR-UPL-09 모달.
@@ -1787,5 +1787,6 @@ total = base + following_bonus + bucket_boost + noise
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.2 | 2026-04-19 | PM × Claude | USR-UPL-02 D에 `rejectionHistory` 보존 추가 · AC-11 갱신. 반려 이력을 별도 누적 보존(Policy §12.1.1). |
 | v1.1 | 2026-04-19 | PM × Claude | USR-UPL-02 D `?edit=` 동작 정정 — 편집 시 불변 필드(`id`·`likes`·`saves`·`uploadedAt`·`artistId`) 보존 명시, `rejectionReason` 초기화 명시. 코드 동작(편집 시 전체 객체 덮어쓰기) 정정과 함께 반영. |
 | v1.0 | 2026-04-19 | PM × Claude | 최초 작성. 사용자 앱 28개 P0 화면 + 공통(CM) 10개 + 사용자 플로우 요약 + 엔티티 부록. 수용기준(AC)·엣지케이스(EC) 포함. |

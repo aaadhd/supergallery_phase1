@@ -231,7 +231,8 @@ Pick은 주간 최대 10개 전시 선정(교체 가능), 기획전은 운영팀
 | likes | number | 좋아요 수 | 기본 0 |
 | saves | number | 저장 수 | 기본 0 |
 | feedReviewStatus | 'pending'\|'approved'\|'rejected' | 검수 상태 | 기본 'pending' |
-| rejectionReason | 'low_quality'\|'spam'\|'inappropriate'\|'copyright'? | 반려 사유 | rejected 시만 유의미 |
+| rejectionReason | 'low_quality'\|'spam'\|'inappropriate'\|'copyright'? | **현재** 반려 사유 | rejected 시만 유의미. 재발행 시 초기화됨 |
+| rejectionHistory | Array&lt;{reason, rejectedAt, note?}&gt;? | 반려 이력(누적) | 반려할 때마다 append. 재발행해도 **보존**. 감사·재범 추적용 |
 | isHidden | boolean? | 운영자 비공개 | true → 피드·검색·타인 프로필에서 제외 |
 | pick | boolean? | 현재 주간 Pick 활성 | 매주 교체 |
 | pickBadge | boolean? | Pick 선정 이력 배지 | 한 번 받으면 영구 |
@@ -1014,4 +1015,5 @@ Phase 1은 단일 운영자 레벨. Phase 2에서 §6.2의 3단계(최고 운영
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.1 | 2026-04-19 | PM × Claude | §3.2 EXHIBITION 필드 테이블에 `rejectionHistory` 추가(반려 이력 누적 · 감사·재범 추적 용도). `rejectionReason` 설명을 "현재" 반려 사유로 명확화. |
 | v1.0 | 2026-04-19 | PM × Claude | 최초 작성. 사용자 앱 구현 역공학 기준 단일 스냅샷. 정합성 보정: §5.2 "Policy §6" → "Policy §1"(알림 채널). §10에 N-10 추가. §11 SEO·robots, §12 배포 정책, §13 다음 문서 연결 추가. |
