@@ -37,7 +37,7 @@ function cleanupOrphanedWorkId(workId: string) {
  * public/images·manifest가 바뀌면 저장된 work.image 경로가 디스크와 어긋나 썸네일 404가 남.
  * 버전을 올리면 시드(현재 manifest 기반)로 다시 채운 뒤 저장된다.
  */
-const WORKS_STORAGE_VERSION = 'local-gallery-v14';
+const WORKS_STORAGE_VERSION = 'local-gallery-v15';
 
 // 초안 타입 정의
 export interface Draft {

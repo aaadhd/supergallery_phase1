@@ -1,18 +1,20 @@
+headersOrigin = "config"
 redirectsOrigin = "config"
 plugins = []
-headers = []
 
 [functions]
 
 [functions."*"]
 
 [build]
-publish = "dist"
+publish = "/Users/im_1688/Documents/vibe/Supergallery 복사본/dist"
 publishOrigin = "config"
 commandOrigin = "config"
-command = "pnpm run build"
+command = "npm run build"
 
 [build.environment]
+NODE_VERSION = "20"
+VITE_FOOTER_QA_LINKS = "true"
 
 [build.processing]
 
@@ -25,6 +27,17 @@ command = "pnpm run build"
 [build.processing.js]
 
 [build.services]
+
+[[headers]]
+for = "/*"
+
+[headers.values]
+Strict-Transport-Security = "max-age=31536000; includeSubDomains"
+X-Frame-Options = "DENY"
+X-Content-Type-Options = "nosniff"
+Referrer-Policy = "strict-origin-when-cross-origin"
+Permissions-Policy = "camera=(), microphone=(), geolocation=(), payment=()"
+Content-Security-Policy = "default-src 'self'; img-src 'self' data: https:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-inline'; font-src 'self' data:; connect-src 'self' https:; frame-ancestors 'none'; base-uri 'self'; form-action 'self'"
 
 [[redirects]]
 from = "/*"

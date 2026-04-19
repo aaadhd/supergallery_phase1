@@ -13,7 +13,7 @@ export interface Artist {
 
 // 이미지별 작가 지정 (1 이미지 = 1 작가)
 export interface ImageArtistAssignment {
-  type: 'member' | 'non-member';
+  type: 'member' | 'non-member' | 'unknown';
   // member인 경우
   memberId?: string;
   memberName?: string;
@@ -21,6 +21,8 @@ export interface ImageArtistAssignment {
   // non-member인 경우 (향후 초대/가입 연동용)
   displayName?: string;
   phoneNumber?: string;
+  // 'unknown' 슬롯은 부가 필드 없음.
+  // 초대 자동 연결 후 disavow로 원복된 슬롯(작가 미상 표시). Policy §3.5 / §4.1.
 }
 
 export interface Work {

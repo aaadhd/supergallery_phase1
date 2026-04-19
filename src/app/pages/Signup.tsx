@@ -14,7 +14,7 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Checkbox } from '../components/ui/checkbox';
 import { PasswordInput } from '../components/ui/password-input';
-import { birthYearOptions, isValidDate, meetsMinAge } from '../utils/ageCheck';
+import { isValidDate, meetsMinAge } from '../utils/ageCheck';
 import { containsProfanity } from '../utils/profanityFilter';
 
 const inputClass =
@@ -92,7 +92,6 @@ export default function Signup() {
         ? t('signup.errBirthUnderAge')
         : '';
 
-  const yearOptions = useMemo(() => birthYearOptions(), []);
   const monthOptions = useMemo(() => Array.from({ length: 12 }, (_, i) => i + 1), []);
   const dayOptions = useMemo(() => Array.from({ length: 31 }, (_, i) => i + 1), []);
 
@@ -336,16 +335,23 @@ export default function Signup() {
                   <span className="text-destructive ml-0.5">*</span>
                 </Label>
                 <div className="grid grid-cols-3 gap-2">
-                  <select
+                  <input
+                    type="text"
+                    inputMode="numeric"
+                    pattern="[0-9]*"
+                    autoComplete="bday-year"
                     aria-label={t('signup.birthYear')}
                     value={birthYear}
-                    onChange={(e) => { setBirthYear(e.target.value); markTouched('birth'); }}
+                    onChange={(e) => {
+                      const v = e.target.value.replace(/[^0-9]/g, '').slice(0, 4);
+                      setBirthYear(v);
+                      if (v.length >= 4) markTouched('birth');
+                    }}
                     onBlur={() => markTouched('birth')}
-                    className="min-h-[44px] rounded-lg border border-border/40 px-3 py-2 text-sm sm:text-sm text-foreground bg-white focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:outline-none"
-                  >
-                    <option value="">{t('signup.birthYear')}</option>
-                    {yearOptions.map((y) => (<option key={y} value={y}>{y}</option>))}
-                  </select>
+                    placeholder={t('signup.birthYearPlaceholder')}
+                    maxLength={4}
+                    className="min-h-[44px] rounded-lg border border-border/40 px-3 py-2 text-sm sm:text-sm text-foreground bg-white focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:outline-none placeholder:text-muted-foreground/50"
+                  />
                   <select
                     aria-label={t('signup.birthMonth')}
                     value={birthMonth}

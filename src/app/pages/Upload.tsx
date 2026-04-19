@@ -99,7 +99,7 @@ type ContentItem = {
   title?: string;
   artist?: { id: string; name: string; avatar: string };
   nonMemberArtist?: { displayName: string; phoneNumber: string };
-  artistType?: 'member' | 'non-member' | 'self';
+  artistType?: 'member' | 'non-member' | 'self' | 'unknown';
   fullWidth?: boolean; // default false (padded), true = 전폭 확장
 };
 
@@ -516,6 +516,9 @@ export default function Upload() {
       } else if (ia?.type === 'non-member' && ia.displayName) {
         item.nonMemberArtist = { displayName: ia.displayName, phoneNumber: ia.phoneNumber || '' };
         item.artistType = 'non-member';
+      } else if (ia?.type === 'unknown') {
+        // 초대 자동 연결 후 disavow된 슬롯(Policy §3.5) — 'unknown' 유지. 편집 시 사용자가 수동으로 재지정 가능.
+        item.artistType = 'unknown';
       }
       return item;
     }));
@@ -663,10 +666,10 @@ export default function Upload() {
       return;
     }
 
-    // 그룹 업로드 시 작가 검증 (이름만 있으면 통과, 번호는 선택)
+    // 그룹 업로드 시 작가 검증 (이름만 있으면 통과, 번호는 선택). 'unknown'(작가 미상) 슬롯은 유효한 상태로 허용.
     if (uploadType === 'group') {
       const missingIndices = imageContents
-        .map((c, i) => (!c.artist && !c.nonMemberArtist?.displayName ? i + 1 : -1))
+        .map((c, i) => (c.artistType !== 'unknown' && !c.artist && !c.nonMemberArtist?.displayName ? i + 1 : -1))
         .filter((i) => i > 0);
       if (missingIndices.length > 0) {
         toast.error(t('upload.errMissingArtistAt').replace('{positions}', missingIndices.join(', ')));
@@ -741,6 +744,10 @@ export default function Upload() {
     const primaryExhibitionType = uploadType === 'group' && uniqueArtists.size >= 2 ? 'group' : uploadType === 'group' ? 'group' : 'solo';
 
     const imageArtists = imageContents.map((c) => {
+      if (c.artistType === 'unknown') {
+        // 이전 disavow로 생성된 '작가 미상' 슬롯 유지 (Policy §3.5). 업로더가 수정하지 않으면 그대로 보존.
+        return { type: 'unknown' as const };
+      }
       if (c.artistType === 'non-member' && c.nonMemberArtist) {
         return { type: 'non-member' as const, displayName: c.nonMemberArtist.displayName, phoneNumber: c.nonMemberArtist.phoneNumber };
       }
@@ -1049,6 +1056,9 @@ export default function Upload() {
     const urls = contents.filter(c => c.url).map(c => c.url!);
     if (urls.length === 0) return null;
     const imageArtists = contents.filter(c => c.url).map(c => {
+      if (c.artistType === 'unknown') {
+        return { type: 'unknown' as const };
+      }
       if (c.artistType === 'member' && c.artist) {
         return { type: 'member' as const, memberId: c.artist.id, memberName: c.artist.name, memberAvatar: c.artist.avatar };
       }
@@ -1188,7 +1198,8 @@ export default function Upload() {
                 <button
                   type="button"
                   onClick={() => setGroupSubStep(null)}
-                  className="absolute right-4 top-4 p-2 rounded-full text-muted-foreground hover:bg-muted transition-colors"
+                  aria-label={t('upload.close')}
+                  className="absolute right-2 top-2 h-11 w-11 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-full text-muted-foreground hover:bg-muted transition-colors"
                 >
                   <X className="h-5 w-5" />
                 </button>
@@ -1261,7 +1272,7 @@ export default function Upload() {
                   {/* 헤더 */}
                   <div className="flex items-center justify-between px-6 py-4 border-b border-border">
                     <h2 className="text-lg font-semibold text-foreground">{t('upload.detailsModalTitle')}</h2>
-                    <Button variant="ghost" size="icon" onClick={() => setShowDetailsModal(false)} className="h-9 w-9 rounded-full">
+                    <Button variant="ghost" size="icon" onClick={() => setShowDetailsModal(false)} aria-label={t('upload.close')} className="h-11 w-11 min-h-[44px] min-w-[44px] rounded-full">
                       <X className="h-5 w-5" />
                     </Button>
                   </div>
@@ -1294,9 +1305,11 @@ export default function Upload() {
                               type="button"
                               onClick={clearCustomCover}
                               aria-label={t('upload.customCoverRemove')}
-                              className="absolute -top-1.5 -right-1.5 z-10 h-5 w-5 rounded-full bg-red-500 text-white flex items-center justify-center shadow"
+                              className="absolute -top-3 -right-3 z-10 h-11 w-11 min-h-[44px] min-w-[44px] flex items-center justify-center"
                             >
-                              <X className="h-3 w-3" />
+                              <span className="h-6 w-6 rounded-full bg-red-500 text-white flex items-center justify-center shadow">
+                                <X className="h-3.5 w-3.5" />
+                              </span>
                             </button>
                           </div>
                         )}
@@ -1719,7 +1732,9 @@ export default function Upload() {
                         {/* ── 카드 2: 작가 지정 (함께 올리기 전용, 필수) ── */}
                         {uploadType === 'group' && (() => {
                           const artistDone = (sc.artistType === 'member' && !!sc.artist)
-                            || (sc.artistType === 'non-member' && !!sc.nonMemberArtist?.displayName?.trim());
+                            || (sc.artistType === 'non-member' && !!sc.nonMemberArtist?.displayName?.trim())
+                            || sc.artistType === 'unknown';
+                          const isUnknown = sc.artistType === 'unknown';
                           return (
                           <section
                             aria-labelledby={`card-artist-${sc.id}`}
@@ -1736,6 +1751,21 @@ export default function Upload() {
                               </span>
                             )}
                           </header>
+
+                          {/* 'unknown' 슬롯: 이전 초대받은 작가가 연결을 끊은 상태. 유지하거나 재지정 가능 (Policy §3.5) */}
+                          {isUnknown && (
+                            <div className="mb-3 rounded-xl border border-amber-200 bg-amber-50/60 p-3 text-xs text-amber-900">
+                              <p className="font-semibold mb-1">{t('work.unknownArtist')}</p>
+                              <p className="mb-2 text-amber-900/80">{t('upload.unknownSlotHint')}</p>
+                              <button
+                                type="button"
+                                onClick={() => setContents(contents.map(c => c.id === selectedContentId ? { ...c, artist: undefined, nonMemberArtist: undefined, artistType: undefined } : c))}
+                                className="inline-flex items-center min-h-[44px] px-3 py-2 rounded-lg bg-white border border-amber-300 text-amber-900 text-xs font-semibold hover:bg-amber-50 transition-colors"
+                              >
+                                {t('upload.unknownSlotReassign')}
+                              </button>
+                            </div>
+                          )}
 
                             {/* 탭 헤더 */}
                             <div className="flex bg-muted/40 p-1 rounded-xl">

@@ -10,10 +10,17 @@ const LEGACY_STORAGE_KEYS = [
   'artier_group_canonical_map',     // 그룹명 중복 허용 정책(2026-04-17) 이후 orphan
 ];
 
+const LEGACY_SESSION_KEYS = [
+  'artier_pending_invite_claims',   // PendingInviteClaimGate 제거(2026-04-19) 후 orphan
+];
+
 function cleanupLegacyStorage() {
   if (typeof window === 'undefined') return;
   for (const key of LEGACY_STORAGE_KEYS) {
     try { localStorage.removeItem(key); } catch { /* quota·private mode 무시 */ }
+  }
+  for (const key of LEGACY_SESSION_KEYS) {
+    try { sessionStorage.removeItem(key); } catch { /* ignore */ }
   }
   try {
     for (let i = localStorage.length - 1; i >= 0; i--) {

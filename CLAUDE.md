@@ -43,12 +43,11 @@
 - `src/app/components/SocialSignupModal.tsx` — 소셜 첫 가입 시 약관 동의 + 닉네임 입력 (SCR-AUTH-03)
 - `src/app/components/QaScreenShortcuts.tsx` — QA/검수용 바로가기 플로팅 버튼 (DEV 또는 `VITE_FOOTER_QA_LINKS` 활성 시)
 - `src/app/components/RequiredMark.tsx` — 필수 입력 표시 (빨간 별 + sr-only 라벨)
-- `src/app/components/PendingInviteClaimGate.tsx` — 가입 직후 이름 불일치로 자동 매칭 실패한 초대에 대해 본인 확인 모달 (수락/거부/나중에). 수락 시 수동 승격, 거부 시 발신 작가에게 경고 +1
 
 ### 유틸 / Store
 - `src/app/store.ts` — `WORKS_STORAGE_VERSION` 스토리지 버전 관리 (현재 값 `local-gallery-v13`, 키 `artier_works_version`)
 - `src/app/store/workStore.ts`, `draftStore.ts` — 작품/초안 상태
-- `src/app/utils/inviteMessaging.ts` — 초대 발송 (5% 랜덤 실패 시뮬, `artier_invite_messaging_log`) + `matchSmsInviteOnSignup` 가입 시 전화+실명 일치 작품 자동 연결 (이름 불일치는 `blockedList`로 반환 → 본인 확인 후 `claimBlockedInvite`로 수동 승격)
+- `src/app/utils/inviteMessaging.ts` — 초대 발송 (5% 랜덤 실패 시뮬, `artier_invite_messaging_log`) + `matchSmsInviteOnSignup` 가입 시 **전화번호 단독 일치로 모든 초대 작품 자동 연결** (2026-04-19 단순화 — PASS 본인인증 전제, 실명 대조 폐기). `demoteSlotToUnknown`으로 마이페이지 disavow 시 슬롯을 `'unknown'` (작가 미상)으로 원복 + 발신자에게 알림(경고 없음).
 - `src/app/utils/sanctionStore.ts` — 경고·허위신고 카운터 + 정지 단계 (`SuspensionLevel`, `addWarning`, `addFalseReport`, `suspendDemoUser`)
 - `src/app/utils/adminGate.ts` — 운영팀 역할 토글
 - `src/app/utils/feedOrdering.ts` — 둘러보기 피드 랭킹
@@ -106,6 +105,15 @@
 ### WorkCard 표시 규칙
 - 카드 하단에 **좋아요·저장 상태 아이콘만** 노출 (숫자 비노출)
 - 댓글 숫자는 PRD §2.2 Out of Scope 적용으로 제거됨
+
+## 초대 자동 연결 정책 (2026-04-19 단순화)
+
+- **자동 연결**: 가입 시 PASS 본인인증 기반 — 전화번호가 일치하는 모든 초대 슬롯(`imageArtists[i] type === 'non-member'` + 전화 일치)을 회원 슬롯으로 조용히 승격. 실명 대조·사전 확인 모달 없음 (Policy §3.5).
+- **원복(disavow)**: 본인 작품이 아닌 경우 USR-PRF-06("내 작품" 탭)의 piece 카드 + WorkDetailModal piece 오버레이의 "본인 작품 아님" 액션으로 원복 가능. 슬롯을 `{ type: 'unknown' }`(작가 미상)으로 전환하고 번호·이름 스크럽. 발신자에게 시스템 알림 발송(경고 없음).
+- **타입**: `ImageArtistAssignment.type` = `'member' | 'non-member' | 'unknown'` ([data.ts](src/app/data.ts#L15)). `'unknown'` 슬롯은 부가 필드 없으며 렌더는 `t('work.unknownArtist')` ("작가 미상")로 통일.
+- **Profile 노출 규칙**: 자동 연결된 storeWorks도 `artistWorks` 버킷에 포함 (Profile.tsx `storeParticipating`, 2026-04-19). 이전엔 `hydrateGroupWorks` 시드만 참여 작품으로 인식해 자동 연결 결과가 마이페이지에 노출되지 않았음.
+- **Upload 편집 시 'unknown' 슬롯**: 로드·저장에서 원상 보존([Upload.tsx](src/app/pages/Upload.tsx) `artistType: 'unknown'`). 그룹 업로드 필수 작가 검증에서 'unknown'은 유효 상태로 통과. 편집 UI에 "작가 다시 지정하기" 버튼 제공.
+- **제거됨**: `PendingInviteClaimGate`, `blockedList`·`BlockedInvite`·`claimBlockedInvite`, `artier_pending_invite_claims` 세션 키, i18n `claim.*` 키 + `invite.notifManualClaimed`, Onboarding의 "초대 연결됨" 토스트.
 
 ## 강사 표시 정책 (2026-04-13 단일화)
 
@@ -177,8 +185,8 @@
 - **배너·이벤트·어드민**: `artier_admin_banners_v1`, `artier_managed_events_v1`, `artier_event_subscriptions`, `artier_admin_issues`, `artier_admin_checklist`, `artier_admin_partners`, `artier_admin_members_v1`, `artier_admin_picks_v1`, `artier_admin_audit_log_v1` (운영자 감사 로그 — 런칭 전 백엔드 이관 후 서버 테이블로 재출발)
 - **초대·포인트·신고·기타**: `artier_invite_messaging_log`, `artier_invite_match_log`, `artier_points_ledger`, `artier_points_state`, `artier_work_publish_times`, `artier_pp_balance`, `artier_artist_follower_delta`, `artier_reports`, `artier_report_hidden_v2`, `artier_report_signatures_v1`, `artier_reported_works`, `artier_reported_artists` (레거시 신고 키), `artier_warning_counter_v1`, `artier_false_report_counter_v1`, `artier_social_signed_up__<provider>` (kakao/google/apple), `artier_pending_sms_invite` (초대 링크 → 가입 중 플래그, 온보딩 종료 시 정리), `artier_pending_signup_nickname`·`artier_pending_signup_email`·`artier_pending_signup_phone`·`artier_pending_signup_realname`·`artier_pending_social_signup` (Signup/소셜 가입/SMS 초대 → Onboarding 프리필 핸드오프, 온보딩 종료 시 정리), `artier_registered_emails_v1`·`artier_registered_phones_v1` (가입 완료된 이메일·전화 레지스트리 — 중복 가입 차단, `utils/registeredAccounts.ts`), `artier_last_group_name`, `artier_my_group_names`, `artier_inquiries`
 - **UX·데모**: `artier_locale`, `artier_font_scale`, `artier_cookie_consent`, `artier_onboarding_done`, `artier_splash_seen`, `artier_mock_jwt_session`, `artier_geo_demo_cache`, `artier_admin_session_v1` (`adminGate`), `artier_recent_searches__guest`, `artier_recent_searches__<slug>` (`Search.tsx`)
-- **sessionStorage** (별도): 접두 `artier_scroll_` + 논리 키 — 스크롤 복원 (`src/app/utils/scrollRestore.ts`); `artier_pending_invite_claims` — 가입 시 이름 불일치로 자동 매칭 실패한 초대 목록, `PendingInviteClaimGate` 모달에서 소비
-- **Deprecated (부팅 시 제거)**: `artier_instructor_public_ids` (2026-04-13 강사 단일화), `artier_pin_comments` (2026-04-15 Phase 2 선행 제거), `artier_upload_guide_seen` (2026-04-15), `artier_group_canonical_map` (2026-04-17 그룹명 중복 허용) — `PointsBootstrap` 마운트 시 `LEGACY_STORAGE_KEYS`로 일괄 정리
+- **sessionStorage** (별도): 접두 `artier_scroll_` + 논리 키 — 스크롤 복원 (`src/app/utils/scrollRestore.ts`)
+- **Deprecated (부팅 시 제거)**: `artier_instructor_public_ids` (2026-04-13 강사 단일화), `artier_pin_comments` (2026-04-15 Phase 2 선행 제거), `artier_upload_guide_seen` (2026-04-15), `artier_group_canonical_map` (2026-04-17 그룹명 중복 허용) — `PointsBootstrap` 마운트 시 `LEGACY_STORAGE_KEYS`로 일괄 정리. sessionStorage `artier_pending_invite_claims` (2026-04-19 초대 자동 연결 단순화)도 `LEGACY_SESSION_KEYS`로 동일 시점 정리
 
 ### 기타
 - **버전 관리**: `WORKS_STORAGE_VERSION` (`local-gallery-v13`) 변경 시 works 데이터 자동 재시드

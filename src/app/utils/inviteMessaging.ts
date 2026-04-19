@@ -169,20 +169,6 @@ export type SignupMatchUser = {
 };
 
 /**
- * 회원가입 시 SMS 초대 매칭
- * 전화번호 일치 + 실명 일치 → 작품 자동 연결:
- *   - 매칭 로그에 기록 + workStore의 해당 작품 imageArtists에서
- *     비회원 슬롯(같은 displayName)을 회원 슬롯(currentUser)으로 승격
- * 전화번호 일치 + 실명 불일치 → 매칭 차단(로그에 기록 + blocked 목록 반환 →
- *   가입 직후 "회원님의 번호로 받은 초대" 모달에서 본인 확인 후 수동 claim 가능)
- */
-export type BlockedInvite = {
-  inviteId: string;
-  workId: string;
-  invitedName: string;
-};
-
-/**
  * 자동 매칭 성공으로 비회원 슬롯이 회원으로 승격된 초대 1건의 상세.
  * 호출자(Onboarding)가 이 목록으로 "초대한 작가" 측에 알림을 push하는 데 사용한다.
  * Loop: 비회원 초대 → 가입 → 자동 매칭 → 초대한 작가에게 피드백
@@ -193,79 +179,51 @@ export type PromotedInviteDetail = {
   invitedName: string;
 };
 
+/**
+ * 회원가입 시 SMS 초대 자동 매칭 (Policy §3.5).
+ * PASS 본인인증 기반 — 전화번호가 일치하는 모든 비회원 슬롯을 회원 슬롯으로 승격한다.
+ * 실명 대조는 하지 않음. 잘못 연결된 건은 사용자가 마이페이지에서 사후 원복(disavow).
+ */
 export function matchSmsInviteOnSignup(
   phone: string,
-  realName: string,
+  _realName: string,
   currentUser: SignupMatchUser,
 ): {
   matched: number;
-  blocked: number;
   promotedWorkIds: string[];
   promotedDetails: PromotedInviteDetail[];
-  blockedList: BlockedInvite[];
 } {
   const normalized = phone.replace(/[\s-]/g, '');
   const log = readLog().filter((e) => e.success);
   let matched = 0;
-  let blocked = 0;
   const promotedWorkIds: string[] = [];
   const promotedDetails: PromotedInviteDetail[] = [];
-  const blockedList: BlockedInvite[] = [];
 
   for (const entry of log) {
     const entryPhone = entry.phoneNumber.replace(/[\s-]/g, '');
     if (entryPhone !== normalized) continue;
 
-    if (entry.displayName.trim() === realName.trim()) {
-      matched++;
-      appendMatchResult({
-        inviteId: entry.id,
+    matched++;
+    appendMatchResult({
+      inviteId: entry.id,
+      workId: entry.workId,
+      phone: normalized,
+      invitedName: entry.displayName,
+      status: 'matched',
+      at: new Date().toISOString(),
+    });
+    if (promoteNonMemberSlot(entry.workId, entry.displayName, currentUser)) {
+      promotedWorkIds.push(entry.workId);
+      const promotedWork = workStore.getWork(entry.workId);
+      promotedDetails.push({
         workId: entry.workId,
-        phone: normalized,
+        workTitle: promotedWork?.exhibitionName || promotedWork?.title || '전시',
         invitedName: entry.displayName,
-        signupName: realName,
-        status: 'matched',
-        at: new Date().toISOString(),
-      });
-      if (promoteNonMemberSlot(entry.workId, entry.displayName, currentUser)) {
-        promotedWorkIds.push(entry.workId);
-        const promotedWork = workStore.getWork(entry.workId);
-        promotedDetails.push({
-          workId: entry.workId,
-          workTitle: promotedWork?.exhibitionName || promotedWork?.title || '전시',
-          invitedName: entry.displayName,
-        });
-      }
-    } else {
-      blocked++;
-      blockedList.push({ inviteId: entry.id, workId: entry.workId, invitedName: entry.displayName });
-      appendMatchResult({
-        inviteId: entry.id,
-        workId: entry.workId,
-        phone: normalized,
-        invitedName: entry.displayName,
-        signupName: realName,
-        status: 'blocked_name_mismatch',
-        at: new Date().toISOString(),
       });
     }
   }
 
-  return { matched, blocked, promotedWorkIds, promotedDetails, blockedList };
-}
-
-/**
- * 본인 확인을 거친 뒤 수동 매칭. `matchSmsInviteOnSignup`이 이름 불일치로
- * block한 초대를 회원이 "본인 맞다" 확인한 경우 호출.
- * 작품의 비회원 슬롯을 회원 슬롯으로 승격한다.
- */
-export function claimBlockedInvite(
-  inviteId: string,
-  currentUser: SignupMatchUser,
-): boolean {
-  const entry = readLog().find((e) => e.id === inviteId && e.success);
-  if (!entry) return false;
-  return promoteNonMemberSlot(entry.workId, entry.displayName, currentUser);
+  return { matched, promotedWorkIds, promotedDetails };
 }
 
 /**
@@ -301,13 +259,50 @@ function promoteNonMemberSlot(
   return true;
 }
 
+/**
+ * 마이페이지 disavow: 본인이 member 슬롯으로 자동 연결된 piece를
+ * 'unknown' (작가 미상) 슬롯으로 원복. 번호·이름 스크럽 (Policy §3.5).
+ * 반환: { ok, workTitle, pieceTitle } — 발신자 알림 작성용.
+ */
+export function demoteSlotToUnknown(
+  workId: string,
+  pieceIndex: number,
+  expectedMemberId: string,
+): { ok: boolean; workTitle?: string; pieceTitle?: string } {
+  if (typeof window === 'undefined') return { ok: false };
+  const work = workStore.getWork(workId);
+  if (!work || !Array.isArray(work.imageArtists)) return { ok: false };
+  const slot = work.imageArtists[pieceIndex];
+  if (!slot || slot.type !== 'member' || slot.memberId !== expectedMemberId) {
+    return { ok: false };
+  }
+  const next = work.imageArtists.map((ia, idx) =>
+    idx === pieceIndex ? ({ type: 'unknown' as const }) : ia,
+  );
+  workStore.updateWork(workId, { imageArtists: next });
+  appendMatchResult({
+    inviteId: `disavow-${Date.now()}-${Math.random().toString(36).slice(2, 8)}`,
+    workId,
+    phone: '',
+    invitedName: slot.memberName ?? '',
+    status: 'disavowed',
+    at: new Date().toISOString(),
+  });
+  return {
+    ok: true,
+    workTitle: work.exhibitionName || work.title,
+    pieceTitle: work.imagePieceTitles?.[pieceIndex],
+  };
+}
+
 export type MatchResult = {
   inviteId: string;
   workId: string;
   phone: string;
   invitedName: string;
-  signupName: string;
-  status: 'matched' | 'blocked_name_mismatch';
+  /** 자동 연결 시 signupName 기록은 더 이상 안 함 (실명 대조 폐기) */
+  signupName?: string;
+  status: 'matched' | 'disavowed';
   at: string;
 };
 

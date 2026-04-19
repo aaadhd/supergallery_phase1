@@ -202,20 +202,21 @@ function exhibitionForFileview(norm: string, h: number): string {
   const idx =
     tb > 0
       ? (tb * 17 + (h & 0xff)) % FILEVIEW_EXHIBITIONS.length
-      : (h >> 9) % FILEVIEW_EXHIBITIONS.length;
+      : (h >>> 9) % FILEVIEW_EXHIBITIONS.length;
   return FILEVIEW_EXHIBITIONS[idx] ?? FILEVIEW_EXHIBITIONS[0];
 }
 
 function exhibitionForMisc(h: number): string {
-  const idx = (h >> 11) % MISC_GROUP_EXHIBITIONS.length;
+  const idx = (h >>> 11) % MISC_GROUP_EXHIBITIONS.length;
   return MISC_GROUP_EXHIBITIONS[idx] ?? MISC_GROUP_EXHIBITIONS[0];
 }
 
 function hashedTitle(h: number, genre: Genre): string {
   const pool = TITLE_POOLS[genre];
   const base = pool[h % pool.length];
-  // 같은 제목 반복 방지: 해시 하위 비트로 일부에 번호 접미 (연작 느낌)
-  const variant = (h >> 12) % 97;
+  // 같은 제목 반복 방지: 해시 하위 비트로 일부에 번호 접미 (연작 느낌).
+  // `>>>` 를 써야 부호 비트가 켜졌을 때도 음수가 되지 않음 (예전에 "· -39" 같은 잘못된 표기 발생).
+  const variant = (h >>> 12) % 97;
   return variant < 15 ? `${base} · ${variant + 1}` : base;
 }
 
@@ -298,7 +299,7 @@ export function buildLocalPublicWorks(paths: string[], artistsList: Artist[]): W
       const n = counters[bucket]++;
       // misc는 일부만 개인작가(랜덤 풀), 일부는 그룹 스튜디오
       artistId = (h % 100 < 35)
-        ? ARTIST_ROTATION[(h >> 5) % ARTIST_ROTATION.length]
+        ? ARTIST_ROTATION[(h >>> 5) % ARTIST_ROTATION.length]
         : BUCKET_ARTIST[bucket];
       // 파일명(타임스탬프 등)은 제목으로 쓰지 않음 — 항상 장르 풀에서 선택
       title = hashedTitle(h ^ (n * 17), genre);

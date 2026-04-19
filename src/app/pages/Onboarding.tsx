@@ -202,12 +202,8 @@ export default function Onboarding() {
         name: name || me.name,
         avatar: profileImage || me.avatar,
       });
-      if (result.matched > 0) {
-        toast.success(`초대받은 작품 ${result.matched}개가 내 계정과 연결되었어요.`);
-      }
-      // 자동 매칭 성공한 각 건에 대해 "초대한 작가"에게 연결 알림.
-      // 데모 환경에선 pushDemoNotification이 현재 세션(= 사용자 본인)에 쌓이므로
-      // 단일 데모 사용자 관점에서 Loop 확인 가능. Policy §3.5.
+      // 자동 연결은 조용히 진행 (토스트 없음) — 사용자는 마이페이지 전시 탭에서 확인한다. Policy §3.5.
+      // 발신자에게는 매 건마다 "초대 성공" 시스템 알림 발송.
       for (const detail of result.promotedDetails) {
         try {
           const { pushDemoNotification } = await import('../utils/pushDemoNotification');
@@ -218,19 +214,6 @@ export default function Onboarding() {
               .replace('{title}', detail.workTitle),
             workId: detail.workId,
           });
-        } catch { /* ignore */ }
-      }
-      /**
-       * 전화는 일치했으나 이름이 달라 매칭이 거부된 초대가 있으면,
-       * 본인 확인 모달을 띄우기 위해 sessionStorage에 저장한다.
-       * (가입 직후 홈 도착 시 `PendingInviteClaimGate`가 읽어 모달 오픈)
-       */
-      if (result.blockedList.length > 0) {
-        try {
-          sessionStorage.setItem(
-            'artier_pending_invite_claims',
-            JSON.stringify(result.blockedList),
-          );
         } catch { /* ignore */ }
       }
     }

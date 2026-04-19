@@ -22,6 +22,9 @@ import {
   displayPieceTitleAtIndex,
   displayProminentHeadline,
 } from '../utils/workDisplay';
+import { openConfirm } from './ConfirmDialog';
+import { demoteSlotToUnknown } from '../utils/inviteMessaging';
+import { pushDemoNotification } from '../utils/pushDemoNotification';
 
 interface WorkDetailModalProps {
   workId: string;
@@ -397,7 +400,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
               <button
                 type="button"
                 onClick={() => requireAuth(() => followStore.toggle(work.artist.id))}
-                className={`hidden sm:flex min-h-[38px] shrink-0 items-center gap-1.5 rounded-lg px-4 py-2 text-sm font-bold transition-colors border ${
+                className={`hidden sm:flex min-h-[44px] shrink-0 items-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-bold transition-colors border ${
                   follows.isFollowing(work.artist.id)
                     ? 'bg-zinc-100 text-zinc-600 lg:hover:bg-zinc-200 border-zinc-200'
                     : 'bg-primary text-white border-primary lg:hover:bg-primary/95 shadow-sm'
@@ -471,10 +474,43 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                     const imgArtist = ia?.type === 'member' && ia.memberId
                       ? allArtists.find(a => a.id === ia.memberId)
                       : undefined;
-                    const imgArtistName = imgArtist?.name || (ia?.type === 'non-member' ? ia.displayName : undefined) || (totalImages === 1 ? work.artist.name : undefined);
+                    const imgArtistName = imgArtist?.name
+                      || (ia?.type === 'non-member' ? ia.displayName : undefined)
+                      || (ia?.type === 'unknown' ? t('work.unknownArtist') : undefined)
+                      || (totalImages === 1 ? work.artist.name : undefined);
                     const imgArtistAvatar = imgArtist?.avatar || (totalImages === 1 ? work.artist.avatar : undefined);
                     const showFollow = imgArtist && imgArtist.id !== allArtists[0]?.id;
-                    return (imgArtistName || slideLabel !== t('work.untitled')) ? (
+                    // 초대 자동 연결 piece의 원복 진입점(Policy §3.5): 현재 로그인 사용자가 이 슬롯의 member이면서 업로더가 아닐 때 노출
+                    const viewerId = allArtists[0]?.id;
+                    const isDisavowable = authStore.isLoggedIn()
+                      && ia?.type === 'member'
+                      && ia.memberId === viewerId
+                      && work.artistId !== viewerId;
+                    const handleDisavow = async (e: React.MouseEvent) => {
+                      e.stopPropagation();
+                      const ok = await openConfirm({
+                        title: t('invite.disavowConfirmTitle'),
+                        description: t('invite.disavowConfirmDesc'),
+                      });
+                      if (!ok) return;
+                      const result = demoteSlotToUnknown(work.id, workImageIndex, viewerId!);
+                      if (!result.ok) {
+                        toast.error(t('invite.disavowFailed'));
+                        return;
+                      }
+                      const pieceLabel = result.pieceTitle && result.pieceTitle.trim()
+                        ? result.pieceTitle
+                        : t('invite.fallbackPieceIndex').replace('{n}', String(workImageIndex + 1));
+                      pushDemoNotification({
+                        type: 'system',
+                        message: t('invite.notifDisavowed')
+                          .replace('{workTitle}', result.workTitle || t('work.untitled'))
+                          .replace('{piece}', pieceLabel),
+                        workId: work.id,
+                      });
+                      toast.success(t('invite.disavowDone'));
+                    };
+                    return (imgArtistName || slideLabel !== t('work.untitled') || isDisavowable) ? (
                       <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black/70 via-black/35 to-transparent px-4 sm:px-5 pb-3.5 pt-10">
                         {slideLabel !== t('work.untitled') && (
                           <p className="absolute left-0 right-0 bottom-3.5 text-white/90 text-base font-semibold drop-shadow-md text-center pointer-events-none">{slideLabel}</p>
@@ -490,13 +526,23 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                             <button
                               type="button"
                               onClick={(e) => { e.stopPropagation(); requireAuth(() => followStore.toggle(imgArtist.id)); }}
-                              className={`text-xs font-bold px-3 py-1.5 rounded-full shrink-0 transition-colors ${
+                              className={`min-h-[44px] text-sm font-bold px-4 py-2 rounded-full shrink-0 transition-colors ${
                                 follows.isFollowing(imgArtist.id)
                                   ? 'bg-white/20 text-white/80'
                                   : 'bg-white/90 text-zinc-800'
                               }`}
                             >
                               {follows.isFollowing(imgArtist.id) ? t('social.following') : t('social.follow')}
+                            </button>
+                          )}
+                          {isDisavowable && (
+                            <button
+                              type="button"
+                              onClick={handleDisavow}
+                              aria-label={t('invite.disavowAction')}
+                              className="ml-auto min-h-[44px] text-xs font-semibold px-3 py-2 rounded-full bg-white/15 text-white/90 hover:bg-white/25 transition-colors shrink-0"
+                            >
+                              {t('invite.disavowAction')}
                             </button>
                           )}
                         </div>
@@ -961,7 +1007,7 @@ function ArtistRow({ artist, onArtistClick, isInstructor = false }: { artist: Ar
         <button
           type="button"
           onClick={handleFollow}
-          className={`flex h-9 min-h-[36px] items-center gap-1.5 rounded-lg px-4 text-sm font-semibold transition-colors border ${
+          className={`flex h-11 min-h-[44px] items-center gap-1.5 rounded-lg px-4 text-sm font-semibold transition-colors border ${
             isFollowing
               ? 'bg-zinc-100 text-zinc-600 border-zinc-200 lg:hover:bg-zinc-200'
               : 'bg-primary text-white border-primary lg:hover:bg-primary/90'

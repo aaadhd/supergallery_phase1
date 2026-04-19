@@ -8,6 +8,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
+import {
+  Tooltip,
+  TooltipContent,
+  TooltipProvider,
+  TooltipTrigger,
+} from './ui/tooltip';
 import { LoginPromptModal } from './LoginPromptModal';
 import { artists } from '../data';
 import { useState, useEffect } from 'react';
@@ -71,6 +77,7 @@ export function Header() {
 
   return (
     <>
+      <TooltipProvider delayDuration={150}>
       <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-white/80 backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-white/72">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-3 sm:py-3.5">
           <div className="flex items-center justify-between gap-3 sm:gap-8">
@@ -141,39 +148,65 @@ export function Header() {
                   </Button>
 
                   {/* 검색 — 데스크톱만 */}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="hidden md:flex h-10 w-10 rounded-full text-muted-foreground lg:hover:text-foreground"
-                    onClick={() => navigate('/search')}
-                  >
-                    <Search className="h-5 w-5" />
-                  </Button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label={t('nav.search')}
+                        className="hidden md:flex h-10 w-10 rounded-full text-muted-foreground lg:hover:text-foreground"
+                        onClick={() => navigate('/search')}
+                      >
+                        <Search className="h-5 w-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">{t('nav.search')}</TooltipContent>
+                  </Tooltip>
 
                   {/* 알림 */}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-9 w-9 sm:h-10 sm:w-10 rounded-full relative text-muted-foreground lg:hover:text-foreground"
-                    onClick={() => navigate('/notifications')}
-                  >
-                    <Bell className="h-5 w-5" />
-                    {unreadCount > 0 && (
-                      <span className="absolute -top-0.5 -right-0.5 flex h-[18px] sm:h-5 min-w-[18px] sm:min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-bold text-white">
-                        {unreadCount > 99 ? '99+' : unreadCount}
-                      </span>
-                    )}
-                  </Button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label={
+                          unreadCount > 0
+                            ? t('nav.notificationsWithCount').replace('{n}', String(unreadCount))
+                            : t('nav.notifications')
+                        }
+                        className="h-9 w-9 sm:h-10 sm:w-10 rounded-full relative text-muted-foreground lg:hover:text-foreground"
+                        onClick={() => navigate('/notifications')}
+                      >
+                        <Bell className="h-5 w-5" />
+                        {unreadCount > 0 && (
+                          <span className="absolute -top-0.5 -right-0.5 flex h-[18px] sm:h-5 min-w-[18px] sm:min-w-5 items-center justify-center rounded-full bg-red-500 px-1 text-xs font-bold text-white" aria-hidden="true">
+                            {unreadCount > 99 ? '99+' : unreadCount}
+                          </span>
+                        )}
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">
+                      {unreadCount > 0
+                        ? t('nav.notificationsWithCount').replace('{n}', String(unreadCount))
+                        : t('nav.notifications')}
+                    </TooltipContent>
+                  </Tooltip>
 
                   {/* 설정 */}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-9 w-9 sm:h-10 sm:w-10 rounded-full text-muted-foreground lg:hover:text-foreground"
-                    onClick={() => navigate('/settings')}
-                  >
-                    <Settings className="h-5 w-5" />
-                  </Button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label={t('nav.settings')}
+                        className="h-9 w-9 sm:h-10 sm:w-10 rounded-full text-muted-foreground lg:hover:text-foreground"
+                        onClick={() => navigate('/settings')}
+                      >
+                        <Settings className="h-5 w-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">{t('nav.settings')}</TooltipContent>
+                  </Tooltip>
                 </>
               ) : (
                 <>
@@ -184,14 +217,20 @@ export function Header() {
                   >
                     {t('nav.login')}
                   </Button>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="hidden md:flex h-10 w-10 rounded-full text-muted-foreground lg:hover:text-foreground"
-                    onClick={() => navigate('/search')}
-                  >
-                    <Search className="h-5 w-5" />
-                  </Button>
+                  <Tooltip>
+                    <TooltipTrigger asChild>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        aria-label={t('nav.search')}
+                        className="hidden md:flex h-10 w-10 rounded-full text-muted-foreground lg:hover:text-foreground"
+                        onClick={() => navigate('/search')}
+                      >
+                        <Search className="h-5 w-5" />
+                      </Button>
+                    </TooltipTrigger>
+                    <TooltipContent side="bottom">{t('nav.search')}</TooltipContent>
+                  </Tooltip>
                 </>
               )}
 
@@ -200,6 +239,8 @@ export function Header() {
                   <Button
                     variant="ghost"
                     size="icon"
+                    aria-label={t('nav.language')}
+                    title={t('nav.language')}
                     className="hidden sm:flex h-9 w-9 rounded-full text-muted-foreground lg:hover:text-foreground"
                   >
                     <Globe className="h-5 w-5" />
@@ -271,6 +312,7 @@ export function Header() {
       </nav>
 
       <LoginPromptModal open={loginPromptOpen} onClose={() => setLoginPromptOpen(false)} />
+      </TooltipProvider>
     </>
   );
 }

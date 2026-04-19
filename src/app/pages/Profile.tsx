@@ -43,6 +43,8 @@ import { openConfirm } from '../components/ConfirmDialog';
 import { containsProfanity } from '../utils/profanityFilter';
 import { WorkDetailModal } from '../components/WorkDetailModal';
 import { hydrateGroupWorks } from '../groupData';
+import { demoteSlotToUnknown } from '../utils/inviteMessaging';
+import { pushDemoNotification } from '../utils/pushDemoNotification';
 
 function workHasStudentCredits(w: Work, instructorId: string): boolean {
   const ia = w.imageArtists;
@@ -241,13 +243,22 @@ export default function Profile() {
   const [profileNickname, setProfileNickname] = useState(() => profileStore.getProfile().name || profileArtist.name);
 
   // 작품 필터링 (강사 대리 업로드 작품은 전시/작품관리에서 제외 — 수강생 작품 탭에서만 노출)
-  // + 그룹 전시에서 이 작가가 참여 작가로 포함된 작품도 합산
+  // + 그룹 전시(시드·유저 업로드 공통)에서 이 작가가 참여 작가로 포함된 작품도 합산
   const artistWorks = useMemo(() => {
     const own = storeWorks
       .filter(w => w.artistId === profileArtist.id)
       .filter(w => !w.isInstructorUpload)
       .filter(w => isOwnProfile || (!w.isHidden && w.feedReviewStatus !== 'pending' && w.feedReviewStatus !== 'rejected'));
     const ownIds = new Set(own.map(w => w.id));
+
+    // 초대 자동 연결(Policy §3.5): 유저 업로드 work의 imageArtists member 슬롯으로 연결된 경우도 참여 작품에 포함.
+    const storeParticipating = storeWorks.filter(w => {
+      if (ownIds.has(w.id)) return false;
+      if (w.artistId === profileArtist.id) return false;
+      if (!isOwnProfile && w.isHidden) return false;
+      if (!isOwnProfile && (w.feedReviewStatus === 'pending' || w.feedReviewStatus === 'rejected')) return false;
+      return w.imageArtists?.some(ia => ia.type === 'member' && ia.memberId === profileArtist.id) ?? false;
+    });
 
     const hydrated = hydrateGroupWorks(artists) as Work[];
     const participating = hydrated.filter(gw => {
@@ -257,7 +268,7 @@ export default function Profile() {
       return gw.imageArtists?.some(ia => ia.type === 'member' && ia.memberId === profileArtist.id) ?? false;
     });
 
-    return [...own, ...participating];
+    return [...own, ...storeParticipating, ...participating];
   }, [storeWorks, profileArtist.id, isOwnProfile]);
 
   // 좋아요/저장 탭용 — storeWorks + groupWorks 통합 검색
@@ -307,7 +318,7 @@ export default function Profile() {
   ), [storeWorks, profileArtist.id]);
 
   // 작품 관리 탭용 — 내 그림만 이미지 단위 flat
-  type FlatImage = { work: Work; imgSrc: string; imgIndex: number; pieceTitle: string };
+  type FlatImage = { work: Work; imgSrc: string; imgIndex: number; pieceTitle: string; isDisavowable: boolean };
   const worksManageFlatImages: FlatImage[] = useMemo(() => {
     const allMyWorks = [...artistWorks, ...taggedWorks];
     const myId = profileArtist.id;
@@ -332,6 +343,11 @@ export default function Profile() {
           imgSrc: imageUrls[imgs[idx]] || imgs[idx],
           imgIndex: idx,
           pieceTitle: displayPieceTitleAtIndex(work, idx, t('work.untitled')),
+          // Disavow 대상: 본인이 업로더가 아니고, 이 이미지의 imageArtists 슬롯이 member(본인)인 경우.
+          // 초대 자동 연결로 참여 슬롯에 붙은 piece만 해당. Policy §3.5.
+          isDisavowable: work.artistId !== myId
+            && ias?.[idx]?.type === 'member'
+            && ias[idx]?.memberId === myId,
         }));
     });
   }, [artistWorks, taggedWorks, profileArtist.id, imageUrls, t]);
@@ -940,7 +956,8 @@ export default function Profile() {
                           type="button"
                           key={f}
                           onClick={() => setExhibitionFilter(f)}
-                          className={`px-3.5 py-1.5 rounded-full text-sm font-medium transition-all border ${
+                          aria-pressed={exhibitionFilter === f}
+                          className={`min-h-[44px] px-4 py-2 rounded-full text-sm font-medium transition-all border ${
                             exhibitionFilter === f
                               ? 'border-foreground bg-foreground/5 text-foreground'
                               : 'border-border text-muted-foreground lg:hover:border-foreground/50'
@@ -1276,6 +1293,30 @@ export default function Profile() {
                           setRenameValue(fi.pieceTitle === t('work.untitled') ? '' : fi.pieceTitle);
                           setRenamingFlatImage(fi);
                         };
+                        const handleDisavow = async (e: React.MouseEvent) => {
+                          e.stopPropagation();
+                          const ok = await openConfirm({
+                            title: t('invite.disavowConfirmTitle'),
+                            description: t('invite.disavowConfirmDesc'),
+                          });
+                          if (!ok) return;
+                          const result = demoteSlotToUnknown(fi.work.id, fi.imgIndex, profileArtist.id);
+                          if (!result.ok) {
+                            toast.error(t('invite.disavowFailed'));
+                            return;
+                          }
+                          const pieceLabel = result.pieceTitle && result.pieceTitle.trim()
+                            ? result.pieceTitle
+                            : t('invite.fallbackPieceIndex').replace('{n}', String(fi.imgIndex + 1));
+                          pushDemoNotification({
+                            type: 'system',
+                            message: t('invite.notifDisavowed')
+                              .replace('{workTitle}', result.workTitle || t('work.untitled'))
+                              .replace('{piece}', pieceLabel),
+                            workId: fi.work.id,
+                          });
+                          toast.success(t('invite.disavowDone'));
+                        };
                         return (
                         <div
                           key={`${fi.work.id}-img-${fi.imgIndex}`}
@@ -1302,6 +1343,18 @@ export default function Profile() {
                                   {fi.work.feedReviewStatus === 'pending' ? t('review.badgePending') : t('review.badgeRejected')}
                                 </span>
                               </div>
+                            )}
+
+                            {/* 초대 자동 연결 piece — "본인 작품 아님" 액션 (업로더가 아닐 때만) */}
+                            {fi.isDisavowable && isOwnProfile && (
+                              <button
+                                type="button"
+                                onClick={handleDisavow}
+                                aria-label={t('invite.disavowAction')}
+                                className="absolute top-2 right-2 z-10 inline-flex items-center rounded-full bg-black/60 backdrop-blur-sm px-3 py-1 text-xs font-semibold text-white hover:bg-black/75 transition-colors min-h-[44px]"
+                              >
+                                {t('invite.disavowAction')}
+                              </button>
                             )}
                           </div>
                           <div className="pt-2">

@@ -267,21 +267,22 @@ export default function Search() {
                   {recentSearches.map((term) => (
                     <div
                       key={term}
-                      className="flex items-center gap-2 px-4 py-2.5 border border-border rounded-full lg:hover:bg-muted/50 transition-colors group"
+                      className="flex items-center gap-1 pl-4 pr-1 min-h-[44px] border border-border rounded-full lg:hover:bg-muted/50 transition-colors group"
                     >
                       <button
                         type="button"
                         onClick={() => doSearch(term)}
-                        className="text-sm text-foreground"
+                        className="min-h-[44px] flex items-center text-sm text-foreground"
                       >
                         {term}
                       </button>
                       <button
                         type="button"
                         onClick={() => removeRecent(term)}
-                        className="h-5 w-5 flex items-center justify-center rounded-full lg:hover:bg-muted active:bg-muted transition-all"
+                        aria-label={t('search.removeRecent').replace('{term}', term)}
+                        className="h-11 w-11 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-full lg:hover:bg-muted active:bg-muted transition-all shrink-0"
                       >
-                        <X className="h-3 w-3 text-muted-foreground" />
+                        <X className="h-4 w-4 text-muted-foreground" />
                       </button>
                     </div>
                   ))}
@@ -443,7 +444,7 @@ export default function Search() {
                           key={term}
                           type="button"
                           onClick={() => { setQuery(term); setSearchParams({ q: term }); }}
-                          className="min-h-[36px] rounded-full border border-border px-3 text-sm text-foreground lg:hover:bg-muted/50"
+                          className="min-h-[44px] rounded-full border border-border px-4 text-sm text-foreground lg:hover:bg-muted/50"
                         >
                           {term}
                         </button>
