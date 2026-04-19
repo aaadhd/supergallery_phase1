@@ -163,6 +163,11 @@ erDiagram
     NOTIFICATION }o--o| EVENT : "관련 이벤트"
 
     NON_MEMBER_INVITE }o--|| WORK : "비회원 초대 발송"
+
+    ADMIN_AUDIT_LOG }o--|| USER : "행위자(운영자)"
+    ADMIN_AUDIT_LOG }o--o| WORK : "대상이 전시일 때"
+    ADMIN_AUDIT_LOG }o--o| USER : "대상이 회원일 때"
+    ADMIN_AUDIT_LOG }o--o| EVENT : "대상이 이벤트일 때"
 ```
 
 ### 3.1 핵심 엔티티 설명
@@ -205,6 +210,9 @@ Pick은 주간 최대 10개 전시 선정(교체 가능), 기획전은 운영팀
 
 **SUSPENSION (정지)**
 주의 / 7일 정지 / 30일 정지 / 영구 정지 4단계. 자동 승격(경고 3회·허위 신고 3회)과 운영팀 수동 조치 모두 지원.
+
+**ADMIN_AUDIT_LOG (운영자 감사 로그)**
+모든 어드민 액션을 append-only로 기록. 행위자·대상·사유·스냅샷·시각을 포함해 감사 추적성을 보장한다. Phase 1은 localStorage(`artier_admin_audit_log_v1`)에 누적하되 런칭 전 백엔드 이관 시 서버 테이블로 재출발하며 Phase 1 기록은 폐기한다. 보존 5년·append-only. 상세는 [PRD_Admin §0.6](PRD_Admin_v1.md#06-감사-로그-audit-trail).
 
 ### 3.2 엔티티 필드 상세
 
@@ -417,6 +425,25 @@ Pick은 주간 최대 10개 전시 선정(교체 가능), 기획전은 운영팀
 - **UNRESOLVED_ISSUE** — 제목·설명·상태(4)·우선순위(4)·담당자·차단 여부
 - **ACCOUNT_SUSPENSION** — 현재 정지 상태 글로벌 레코드
 - **WITHDRAWN_ARTIST_LIST** — 탈퇴 작가 ID 집합(익명화 판정)
+
+#### ADMIN_AUDIT_LOG
+
+| 필드 | 타입 | 설명 |
+|---|---|---|
+| id | string | 로그 ID (ULID) |
+| actorId | string | 행위자 운영자 ID |
+| actorRole | enum | `operator`(Phase 1) · `super`/`editor`/`viewer`(Phase 2) |
+| action | string | 액션 코드(`review.approve`·`report.delete`·`member.suspend.perm` 등) |
+| targetType | enum | `work`·`artist`·`event`·`banner`·`pick`·`theme`·`notice`·`inquiry` |
+| targetId | string | 대상 ID |
+| targetSnapshot | object? | 파괴적 액션 전 대상 핵심 필드 스냅샷 |
+| reason | string? | 사유 메모(반려 사유·신고 처리 메모) |
+| metadata | object? | 액션별 부가(정지 기간·반려 사유 분류 등) |
+| ip | string? | 운영자 IP(백엔드 이관 후 기록) |
+| userAgent | string? | 운영자 UA |
+| createdAt | string | ISO 8601 |
+
+보존 5년·append-only·조회 권한 Phase 2 최고 운영자 전용. [PRD_Admin §0.6](PRD_Admin_v1.md#06-감사-로그-audit-trail) 참조.
 
 ### 3.3 상태 전이 다이어그램
 
@@ -1035,6 +1062,7 @@ Phase 1은 단일 운영자 레벨. Phase 2에서 §6.2의 3단계(최고 운영
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.4 | 2026-04-19 | PM × Claude | §3 ERD · §3.1 엔티티 설명 · §3.2 필드 표에 `ADMIN_AUDIT_LOG` 추가 — 운영자 감사 로그 append-only 12필드 스키마, USER/WORK/EVENT와의 관계. 단일 소스는 PRD_Admin §0.6. |
 | v1.3 | 2026-04-19 | PM × Claude | Phase 2 용어 정비 — §1 TOC · §1 다이어그램 외부 시스템 라벨 · §3 ERD 서문 · §4.3 삭제 연쇄 정리 · §4.4 헤더("Phase 2 — 백엔드 전환" → "런칭 전 백엔드 전환") · §5.1 인증 표 컬럼 · §5.2 알림 · §5.3 분석 · §6.1 접근 제어 · §10 N-6 · §12.1 배포 9곳에서 런칭 전 백엔드 연동 작업을 "런칭 전 백엔드 연동 후"로 교체. coOwners 재검토는 "후순위"로 이관. 수익 모델·권한 계층·카테고리 분류·커뮤니티 확장·OG 동적 생성 등 실제 2차 그랜드 오픈 범위는 Phase 2 유지. |
 | v1.2 | 2026-04-19 | PM × Claude | §4.3 전시 삭제 시 연쇄 정리(참조 무결성) 신설 — 11개 대상 스토어와 정리 트리거 명시. 이후 4.4로 백엔드 전환 섹션 리넘버링. |
 | v1.1 | 2026-04-19 | PM × Claude | §3.2 EXHIBITION 필드 테이블에 `rejectionHistory` 추가(반려 이력 누적 · 감사·재범 추적 용도). `rejectionReason` 설명을 "현재" 반려 사유로 명확화. |
