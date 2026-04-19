@@ -812,7 +812,27 @@ export default function Upload() {
     const targetId = editingWorkId || newWork.id;
     const wasEditingExistingWork = Boolean(editingWorkId);
     if (editingWorkId) {
-      workStore.updateWork(editingWorkId, newWork);
+      // 전시 수정: id·likes·saves·uploadedAt·artistId·artist 등 불변 필드는 보존하고
+      // 편집 가능 필드만 갱신한다. Policy §12·PRD_User USR-UPL-02 D 준수.
+      //  - feedReviewStatus: 항상 pending으로 재설정 (재검수 대상). auto-approve 환경만 예외.
+      //  - rejectionReason: 재발행 시 과거 반려 사유 제거(빈 값으로 덮기).
+      const autoApprove = import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true';
+      const editingUpdates: Partial<Work> = {
+        title: newWork.title,
+        image: newWork.image,
+        exhibitionName: newWork.exhibitionName,
+        groupName: newWork.groupName,
+        imagePieceTitles: newWork.imagePieceTitles,
+        isInstructorUpload: newWork.isInstructorUpload,
+        primaryExhibitionType: newWork.primaryExhibitionType,
+        imageArtists: newWork.imageArtists,
+        linkedEventId: newWork.linkedEventId,
+        coverImageIndex: newWork.coverImageIndex,
+        customCoverUrl: newWork.customCoverUrl,
+        feedReviewStatus: autoApprove ? 'approved' : 'pending',
+        rejectionReason: undefined,
+      };
+      workStore.updateWork(editingWorkId, editingUpdates);
     } else {
       workStore.addWork(newWork);
     }
