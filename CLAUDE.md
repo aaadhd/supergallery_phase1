@@ -77,7 +77,7 @@
 - **시니어 친화**: 모든 인터랙티브 요소 `min-h-[44px]` 유지
 - **확인 다이얼로그**: 브라우저 네이티브 `window.confirm()` **금지**.
   반드시 `openConfirm({ title, description?, destructive? })` (ConfirmDialog) 사용.
-  파괴적 작업은 `destructive: true`로 빨간 버튼 표시.
+  복구 불가 작업은 `destructive: true`로 빨간 버튼 표시.
 
 ### 금지
 - 스프레드시트형 UI, 다중선택(Shift+Click), Tab 이동 방식

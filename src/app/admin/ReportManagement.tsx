@@ -168,7 +168,7 @@ export default function ReportManagement() {
 
   /**
    * 경고: 신고 대상자에게 경고 누적 (3회 시 자동 7일 정지).
-   * 자동 승격 임박(누적 2회 → 이번 3회)인 경우 파괴적 확인 다이얼로그로 한 번 더 체크.
+   * 자동 승격 임박(누적 2회 → 이번 3회)인 경우 복구 불가 확인 다이얼로그로 한 번 더 체크.
    * Policy §22.4 어뷰즈 방지 — 실수로 무고한 사용자 정지 방지.
    */
   const warnTarget = async (id: string) => {

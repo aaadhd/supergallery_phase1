@@ -436,7 +436,7 @@ Pick은 주간 최대 10개 전시 선정(교체 가능), 기획전은 운영팀
 | action | string | 액션 코드(`review.approve`·`report.delete`·`member.suspend.perm` 등) |
 | targetType | enum | `work`·`artist`·`event`·`banner`·`pick`·`theme`·`notice`·`inquiry` |
 | targetId | string | 대상 ID |
-| targetSnapshot | object? | 파괴적 액션 전 대상 핵심 필드 스냅샷 |
+| targetSnapshot | object? | 복구 불가 액션 전 대상 핵심 필드 스냅샷 |
 | reason | string? | 사유 메모(반려 사유·신고 처리 메모) |
 | metadata | object? | 액션별 부가(정지 기간·반려 사유 분류 등) |
 | ip | string? | 운영자 IP(백엔드 이관 후 기록) |

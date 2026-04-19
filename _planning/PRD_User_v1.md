@@ -771,7 +771,7 @@ total = base + following_bonus + bucket_boost + noise
 
 **재정렬·삭제·교체**
 - 2장 이상 시 "순서 변경" 버튼 → USR-UPL-05(DnD 모드)
-- 카드 휴지통 → 파괴적 확인 다이얼로그
+- 카드 휴지통 → 복구 불가 확인 다이얼로그
 - Replace 아이콘 → 파일 선택 + 검증 반복 + 대표 이미지 인덱스 자동 재정렬
 
 #### B. 작가 지정 (함께 전용 · USR-UPL-06 사이드패널)
@@ -869,7 +869,7 @@ total = base + following_bonus + bucket_boost + noise
 
 - `useBlocker`: hasUnsavedWork = 이미지 > 0 || 전시명 || 그룹명 입력됨
 - 경로 이동 감지 → USR-UPL-09 확인 다이얼로그
-- 3 버튼: 취소 / 초안 저장(USR-PRF-10 이동) / 나가기(파괴적)
+- 3 버튼: 취소 / 초안 저장(USR-PRF-10 이동) / 나가기(복구 불가)
 
 #### 수용기준 (통합 15개)
 
@@ -1043,7 +1043,7 @@ total = base + following_bonus + bucket_boost + noise
     - 제목: "검수 중인 전시를 수정할까요?"
     - 설명: "지금 수정하면 검수 대기에 변경 사항이 반영되고, 검수 대기 시간이 다시 시작됩니다."
     - [취소] / [수정하기]
-- **삭제** (파괴적 스타일)
+- **삭제** (복구 불가 스타일)
 
 **전시 수정 동작** (Policy §12.1.2 차별 재검수 규칙)
 - 기존 정보 전부 프리필.
@@ -1111,7 +1111,7 @@ total = base + following_bonus + bucket_boost + noise
 **점점점 메뉴**(본인 프로필에서만)
 - **전시 수정** → `/upload?edit=<id>` (강사 역할 자동 프리필, 본인 슬롯 없음)
   - 전시 탭과 동일한 편집 경로를 공유 → **§5.1.1 전시 수정 동작의 차별 재검수 규칙 동일 적용** (pending 중 수정 경고 모달 · 이미지 변경 여부에 따른 상태 전이 · 5 시나리오 토스트).
-- **삭제** (파괴적)
+- **삭제** (복구 불가)
 
 #### 5.1.4 좋아요·저장 탭
 
@@ -1512,7 +1512,7 @@ total = base + following_bonus + bucket_boost + noise
 #### 출력
 - 경고 블록("이 작업은 되돌릴 수 없습니다")
 - 사유 라디오 + 기타 텍스트 필드
-- 파괴적 확정 버튼
+- 복구 불가 확정 버튼
 
 #### 수용기준
 - AC-01: Given 비밀번호 오답 / When 확정 시도 / Then 에러.
@@ -1750,7 +1750,7 @@ total = base + following_bonus + bucket_boost + noise
 > 모든 CM 화면의 상세 정의는 [IA_ScreenList §4](IA_ScreenList_v1.md#4-공통-팝업다이얼로그-cm). 아래는 사용자 앱(USR) 기준의 수용기준.
 
 ### CM-01 · 확인 다이얼로그
-- AC-01: Given 파괴적 액션 트리거 / When 다이얼로그 오픈 / Then 확정 버튼 빨간 스타일 + 취소는 기본 스타일.
+- AC-01: Given 복구 불가 액션 트리거 / When 다이얼로그 오픈 / Then 확정 버튼 빨간 스타일 + 취소는 기본 스타일.
 - AC-02: Given 배경 탭 또는 ESC / When 트리거 / Then 닫힘(취소와 동일).
 - AC-03: Given 제목에 변수(예: 전시명) 포함 / When 오픈 / Then 변수가 렌더링됨.
 

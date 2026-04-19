@@ -22,7 +22,7 @@ export type ConfirmOptions = {
   description?: string;
   confirmLabel?: string;
   cancelLabel?: string;
-  /** 파괴적 작업(삭제 등) — 확인 버튼을 destructive 색으로 */
+  /** 복구 불가 작업(삭제 등) — 확인 버튼을 destructive 색으로 */
   destructive?: boolean;
 };
 
