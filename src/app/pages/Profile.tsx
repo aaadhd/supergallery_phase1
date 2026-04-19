@@ -113,7 +113,7 @@ type ProfileTabValue = 'exhibition' | 'works' | 'student-works' | 'likes' | 'sav
 export default function Profile() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { t, locale } = useI18n();
   const follows = useFollowStore();
   const auth = useAuthStore();
@@ -125,6 +125,24 @@ export default function Profile() {
   const [detailWorkId, setDetailWorkId] = useState<string | null>(null);
   const [worksViewerIndex, setWorksViewerIndex] = useState<number | null>(null);
   const [profileTab, setProfileTab] = useState<ProfileTabValue>('exhibition');
+
+  /**
+   * 탭 변경 시 URL `?tab=<value>` 동기화.
+   * - 'exhibition'은 기본값이라 URL에서 생략(깔끔한 URL 유지).
+   * - URL 쓰기는 replace 모드 — 탭 전환마다 브라우저 히스토리 쌓이지 않게.
+   */
+  const changeProfileTab = useCallback((next: ProfileTabValue) => {
+    setProfileTab(next);
+    setSearchParams(
+      (prev) => {
+        const sp = new URLSearchParams(prev);
+        if (next === 'exhibition') sp.delete('tab');
+        else sp.set('tab', next);
+        return sp;
+      },
+      { replace: true },
+    );
+  }, [setSearchParams]);
   const [profileLinks, setProfileLinks] = useState<{ label: string; url: string }[]>([]);
 
   const [profileInterests, setProfileInterests] = useState<string[]>([]);
@@ -800,7 +818,7 @@ export default function Profile() {
 
             {/* 오른쪽: 탭 컨텐츠 */}
             <div className="flex-1 py-4 sm:py-8">
-              <Tabs value={profileTab} onValueChange={(v) => setProfileTab(v as ProfileTabValue)} className="w-full">
+              <Tabs value={profileTab} onValueChange={(v) => changeProfileTab(v as ProfileTabValue)} className="w-full">
                 <TabsList className="h-auto p-0 bg-transparent border-b border-border/40 rounded-none w-full justify-start gap-0 grid grid-cols-3 sm:flex sm:flex-row">
                   <TabsTrigger
                     value="exhibition"

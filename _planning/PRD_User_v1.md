@@ -442,7 +442,8 @@ total = base + following_bonus + bucket_boost + noise
 | 카드 내 좋아요·저장 | 전시 단위 토글. 비로그인 → CM-02 |
 | 카드 내 작가 아바타·이름 탭 | USR-PRF-01 프로필 이동 |
 | 배너 탭 | 외부 링크 또는 USR-EVT-02 |
-| 탭 전환 | URL 쿼리 갱신 + 피드 재구성(스크롤 최상단) |
+| 탭 전환 | URL `?tab=all|individual|group` 즉시 동기화(`all`은 쿼리 생략) + 피드 재구성(스크롤 최상단) + `replace` 모드로 히스토리 누적 방지 |
+| 직접 URL(`/?tab=group`) 또는 뒤로가기 | 해당 탭으로 상태 복원 (URL → UI 단방향 반영) |
 | 스크롤 끝 도달 | 다음 24건 로드 |
 | 카드 길게 누르기 | **동작 없음**(시니어 UX 오조작 방지) |
 | 풀 투 리프레시(모바일) | 최신 피드 재로드 |
@@ -467,8 +468,10 @@ total = base + following_bonus + bucket_boost + noise
 
 **무한 스크롤·탭**
 - AC-11: Given 승인된 전시 80건 / When 스크롤 끝 도달 / Then 24 → 24 → 24 → 8 순으로 페이지네이션.
-- AC-12: Given 탭 "함께 올리기" 선택 / When 탭 / Then `primaryExhibitionType === 'group'` 만 노출 + URL `?tab=group` 갱신.
+- AC-12: Given 탭 "함께 올리기" 선택 / When 탭 / Then `primaryExhibitionType === 'group'` 만 노출 + URL `?tab=group` 즉시 갱신(`replace` 모드).
 - AC-13: Given 탭 전환 / When 탭 / Then 스크롤이 최상단으로 복귀.
+- AC-13.1: Given `/?tab=individual` 직접 진입 또는 북마크 / When 로드 / Then 혼자 올리기 탭 상태로 시작.
+- AC-13.2: Given `?tab=xxx` 알 수 없는 값 / When 로드 / Then `all` 탭으로 복원(URL `?tab=` 생략).
 
 **비로그인·인터랙션**
 - AC-14: Given 비로그인 + 좋아요 아이콘 탭 / When 탭 / Then CM-02(로그인 유도) 모달 오픈 1회, 같은 세션 재시도 시 토스트.
@@ -945,15 +948,17 @@ total = base + following_bonus + bucket_boost + noise
 | 팔로워·팔로잉 숫자 탭 | USR-PRF-04 모달(두 탭 전환) |
 | 타인 프로필 팔로우 버튼 | 팔로우 토글(비로그인 → CM-02) |
 | 외부 링크 탭 | 해당 URL 새 탭 |
-| 탭 전환 | URL 쿼리 갱신, 스크롤 최상단 |
+| 탭 전환 | URL `?tab=<value>` 즉시 동기화(`exhibition`은 쿼리 생략) + `replace` 모드로 히스토리 누적 방지 |
+| 직접 URL(`/me?tab=works`) 또는 뒤로가기 | 해당 탭으로 상태 복원. 본인이 아닌데 본인 전용 탭(works·drafts·likes·saved·student-works) 요청 시 `exhibition`으로 리다이렉트 |
 
 #### 수용기준
 - AC-01: Given 본인 업로드 중 `isInstructorUpload === true` 1건 이상 / When 프로필 로드 / Then 헤더에 강사 배지 + `student-works` 탭 노출.
 - AC-02: Given 강사 업로드 **전부 삭제** / When 프로필 재로드 / Then 배지·탭 모두 자동 비노출.
 - AC-03: Given 탈퇴 작가 프로필 / When 로드 / Then 이름 "작가 미상" + 팔로우·신고 액션 비활성.
-- AC-04: Given 타인 프로필에서 `?tab=drafts` URL / When 진입 / Then `exhibition` 탭으로 리다이렉트.
+- AC-04: Given 타인 프로필에서 `?tab=drafts` URL / When 진입 / Then `exhibition` 탭으로 리다이렉트 + URL도 `?tab=` 제거.
 - AC-05: Given 본인 헤더 편집 완료 / When 저장 / Then 헤더에 즉시 반영(리로드 없이).
 - AC-06: Given 비로그인 + 타인 프로필 팔로우 버튼 / When 탭 / Then CM-02.
+- AC-07: Given 본인 프로필 + `drafts` 탭 선택 / When 탭 클릭 / Then URL `/me?tab=drafts`로 갱신(히스토리 추가 없음). 해당 링크를 공유하면 다른 기기에서도 drafts 탭으로 오픈.
 
 #### 엣지케이스
 - EC-01: 존재하지 않는 사용자 ID → "사용자를 찾을 수 없습니다" + 피드로 복귀 CTA.
@@ -1812,6 +1817,7 @@ total = base + following_bonus + bucket_boost + noise
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.6 | 2026-04-19 | PM × Claude | USR-BRW-01·USR-PRF-01 탭 ↔ URL `?tab=` 양방향 동기화 명시 — replace 모드, 기본값은 쿼리 생략, 알 수 없는 값 복원 규칙. AC 5종 추가. |
 | v1.5 | 2026-04-19 | PM × Claude | USR-PRF-03 프로필 사진 모달 — 포맷(JPG/PNG/WebP/GIF)·크기(5MB) 검증 추가. AC 4종·EC 2종 보강. 코드 구현 동기화. |
 | v1.4 | 2026-04-19 | PM × Claude | USR-UPL-02 F / USR-PRF-05·06·07 편집 정책 차별 재검수 반영(Policy §12.1.2) — 이미지 변경 여부로만 상태 전이 · pending 중 수정 경고 · 5 시나리오 토스트 · 탭별 편집 범위 차이. |
 | v1.3 | 2026-04-19 | PM × Claude | USR-UPL-02 D 편집 저장 성공 시 UX 명시 — "수정한 작품이 재검수 대기에 들어갔어요" 토스트 + 프로필 전시 탭 복귀. i18n `upload.editModeToast` 문구 개선. |

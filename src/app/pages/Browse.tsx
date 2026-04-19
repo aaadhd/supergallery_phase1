@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useCallback, useRef, type ReactElement, type ReactNode } from 'react';
 import { ChevronRight, ChevronLeft, Image as ImageIcon, Users, MoreHorizontal, Flag } from 'lucide-react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { Work, Artist, artists as allArtists } from '../data';
@@ -150,7 +150,40 @@ export default function Browse() {
   }, []);
 
   // -- UI state -------------------------------------------------------------
-  const [activeCategory, setActiveCategory] = useState<string>('all');
+  // 탭 상태 ↔ URL `?tab=all|individual|group` 동기화.
+  // - 초기 진입: URL 쿼리가 유효 값이면 해당 탭으로 시작.
+  // - 사용자 탭 변경: setSearchParams로 URL 갱신(뒤로가기·북마크·공유 가능).
+  // - 'all'은 기본값이라 URL에서 생략(기본 상태 = 깔끔한 URL).
+  const [searchParams, setSearchParams] = useSearchParams();
+  const VALID_TABS = ['all', 'individual', 'group'] as const;
+  type BrowseTab = (typeof VALID_TABS)[number];
+  const initialTab = ((): BrowseTab => {
+    const q = searchParams.get('tab');
+    return q && (VALID_TABS as readonly string[]).includes(q) ? (q as BrowseTab) : 'all';
+  })();
+  const [activeCategory, setActiveCategoryState] = useState<BrowseTab>(initialTab);
+  const setActiveCategory = useCallback((next: string) => {
+    const valid = (VALID_TABS as readonly string[]).includes(next) ? (next as BrowseTab) : 'all';
+    setActiveCategoryState(valid);
+    setSearchParams(
+      (prev) => {
+        const sp = new URLSearchParams(prev);
+        if (valid === 'all') sp.delete('tab');
+        else sp.set('tab', valid);
+        return sp;
+      },
+      { replace: true },
+    );
+  }, [setSearchParams]);
+
+  // 외부에서 URL이 바뀐 경우(뒤로가기 등) 탭 동기화
+  useEffect(() => {
+    const q = searchParams.get('tab');
+    const next: BrowseTab =
+      q && (VALID_TABS as readonly string[]).includes(q) ? (q as BrowseTab) : 'all';
+    setActiveCategoryState((prev) => (prev === next ? prev : next));
+  }, [searchParams]);
+
   const [selectedWork, setSelectedWork] = useState<string | null>(null);
 
   // -- Embla banner carousel (터치 스와이프 + 자동 회전) ----------------------
