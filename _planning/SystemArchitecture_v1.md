@@ -970,6 +970,9 @@ Phase 1은 단일 운영자 레벨. Phase 2에서 §6.2의 3단계(최고 운영
 ### N-10. 약관·개인정보처리방침 법무 확정본 (런칭 전 필수)
 이용약관·개인정보처리방침 현재 초안 상태. 런칭 전 법무 검토 후 확정 필요. 개인정보보호법 대응을 위해 데이터 내보내기·삭제 요청 기능도 함께 구비해야 한다. DPO(개인정보보호 책임자) 지정·공개도 법적 요건. 상세는 Policy §21(법무 체크포인트) 참조.
 
+### N-11. 전시 상태 3중 구조 통합 (Phase 2 검토)
+현재 전시는 `feedReviewStatus`(검수) · `adminStatus`(신고 처리) · `isHidden`(자동·확정 비공개) 3개 상태를 동시에 가진다. "공개 여부" 판정이 AND 조합으로 복잡하고 운영자·개발자 모두 혼동 소지. Phase 2에서 **단일 `visibility` enum**(`public` / `pending` / `rejected` / `hidden` / `deleted`)으로 통합하는 방향을 검토한다. 기존 localStorage 데이터 마이그레이션 필요. Phase 1은 현 구조 유지(Policy §12·§23.2).
+
 ---
 
 ## 11. SEO 및 robots 정책
@@ -1254,6 +1257,7 @@ useI18n() => {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.7 | 2026-04-20 | PM × Claude | §10 N-11 신설 — "전시 상태 3중 구조 통합 (Phase 2 검토)". 현 `feedReviewStatus`·`adminStatus`·`isHidden` 3필드를 단일 `visibility` enum으로 통합하는 방향 명시. Policy §23.2 노트와 쌍으로 연결. |
 | v1.6 | 2026-04-20 | PM × Claude | §13.3 스토어 계약 갱신 — `accountSuspensionStore`·`sanctionStore`에 "Phase 2 준비용 · Phase 1 미사용" 주석 추가 (Policy v2.1 연동). |
 | v1.5 | 2026-04-20 | PM × Claude | §13 "공용 컴포넌트·스토어 계약" 신설 — openConfirm·pushDemoNotification·**11개 스토어 전수 API**(8 도메인 + 3 피처 + 2 함수형)·i18n 계약·**공용 컴포넌트 20개 전수 목록**·부트 절차·**환경 플래그 4개 전수**. 기존 §13(다음 문서 연결)은 §14로 리넘버링. 문서 단독 재현성 목표(코드 경로 없음). |
 | v1.4 | 2026-04-19 | PM × Claude | §3 ERD · §3.1 엔티티 설명 · §3.2 필드 표에 `ADMIN_AUDIT_LOG` 추가 — 운영자 감사 로그 append-only 12필드 스키마, USER/WORK/EVENT와의 관계. 단일 소스는 PRD_Admin §0.6. |
