@@ -827,7 +827,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'onboarding.socialNotice': '소셜 계정으로 빠르게 가입했어요. 회원 정보 보완을 위해 **실명·전화·이메일**을 입력해주세요.',
   'onboarding.emailLabel': '이메일',
   'onboarding.emailPlaceholder': 'name@example.com',
-  'onboarding.emailHint': '중요 안내·비밀번호 재설정 등에 사용돼요.',
+  'onboarding.emailHint': '중요 안내와 로그인·가입 인증 링크 수신에 사용돼요.',
   'onboarding.nicknameLabel': '작가명 (닉네임)',
   'onboarding.nicknamePlaceholder': '활동할 닉네임을 입력하세요',
   'onboarding.errNicknameShort': '작가명은 2자 이상 입력해주세요',
@@ -869,9 +869,9 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'faq.q1': '가입은 어떻게 하나요?',
   'faq.a1':
     '홈 화면에서 로그인 버튼을 클릭하면 간편하게 가입할 수 있습니다. 소셜 로그인(카카오, 구글, 애플)과 이메일 가입을 지원합니다.',
-  'faq.q2': '비밀번호를 잊었어요.',
+  'faq.q2': '로그인 링크 메일이 오지 않아요.',
   'faq.a2':
-    '로그인 화면에서 "비밀번호 찾기"를 클릭하면 이메일로 재설정 링크가 발송됩니다. 링크는 1시간 동안 유효합니다.',
+    'Artier는 비밀번호 대신 이메일 인증 링크로 로그인합니다. 이메일을 받지 못했다면 스팸함을 먼저 확인해 주시고, 로그인 화면에서 "로그인 링크 다시 보내기"를 눌러 주세요. 30초 쿨다운 후 재발송이 가능합니다. 링크는 30분 동안 유효합니다.',
   'faq.q3': '탈퇴하면 작품은 어떻게 되나요?',
   'faq.a3':
     '탈퇴 후에도 업로드한 작품은 "작가 미상"으로 갤러리에 유지됩니다. 탈퇴 전 작품 삭제를 원하시면 먼저 작품을 개별 삭제해 주세요.',
@@ -2016,7 +2016,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points are Phase
   'onboarding.socialNotice': 'You signed up with a social account. Please complete your profile with **real name, phone, and email**.',
   'onboarding.emailLabel': 'Email',
   'onboarding.emailPlaceholder': 'name@example.com',
-  'onboarding.emailHint': 'Used for important notices and password reset.',
+  'onboarding.emailHint': 'Used for important notices and sign-in verification links.',
   'onboarding.nicknameLabel': 'Artist name (nickname)',
   'onboarding.nicknamePlaceholder': 'Enter a nickname',
   'onboarding.errNicknameShort': 'Please enter at least 2 characters',
@@ -2058,9 +2058,9 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points are Phase
   'faq.q1': 'How do I sign up?',
   'faq.a1':
     'Tap Log in on the home screen to sign up. We support social sign-in (Kakao, Google, Apple) and email sign-up.',
-  'faq.q2': 'I forgot my password.',
+  'faq.q2': "I didn't receive the sign-in link email.",
   'faq.a2':
-    'On the log-in screen, tap “Forgot password” to receive a reset link by email. The link is valid for one hour.',
+    'Artier uses an email verification link instead of a password. If you can\'t find the email, check your spam folder first, then tap "Resend sign-in link" on the login screen (available after a 30-second cooldown). Links are valid for 30 minutes.',
   'faq.q3': 'What happens to my works if I delete my account?',
   'faq.a3':
     'After you leave, uploaded works may remain in the gallery under a “deleted user” label. Delete individual works first if you want them removed.',
@@ -2600,4 +2600,5 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.1 | 2026-04-21 | PM × Claude | 이메일 인증 매직 링크 전환 반영(Policy §2.5 v2.8) — `onboarding.emailHint` 문구를 "비밀번호 재설정" → "로그인·가입 인증 링크" 수신으로 교체(ko/en). `faq.q2/a2`를 "비밀번호 찾기" → "로그인 링크 메일이 오지 않을 때"(스팸함·재전송·30분 TTL 안내)로 재작성(ko/en). §6 한국어·영어 사전의 비번 관련 블록(`login.password*`·`signup.password*`·`passwordReset.*`·`passwordResetDemo.*`·`settings.changePassword*`·`settings.withdrawPw*`·`signupDemo.region*`·`signupDemo.email*`·`signupDemo.demoBanner`·`refStub.tplReset*`·`refStub.tplPwdChanged*`·`footer.qaResetDemo*`)과 신규 매직 링크 키(`signup.linkSent*`·`signup.openMockLink*`·`login.sendMagicLink`·`login.linkSent*`·`verify.*`·`settings.withdrawConsent*`·`footer.qaAuthVerifyDemo*` 등)는 실제 구현 기준 `src/app/i18n/messages.ts`와 ongoing sync(본 문서 §6 사전은 후속 일괄 스냅샷 갱신 예정). |
 | v1.0 | 2026-04-20 | PM × Claude | Copy_v1.md 신설 — Voice·Tone, 용어, 카피 구조 규칙, 패턴별 템플릿(확인·에러·빈상태·알림·토스트·로딩), 시니어 친화 6원칙, 전체 i18n 사전(ko/en 2,170 키), i18n 기술 규칙, 변경 워크플로우. |

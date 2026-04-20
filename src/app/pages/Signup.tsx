@@ -1,19 +1,19 @@
-import { useMemo, useState, FormEvent, ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, FormEvent, ReactNode } from 'react';
 import { toast } from 'sonner';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Mail, Lock, User, Calendar } from 'lucide-react';
+import { Mail, User, Calendar } from 'lucide-react';
 import { useAuthStore } from '../store';
 import { pointsOnSignupComplete } from '../utils/pointsBackground';
-import { passwordMatchesPhase1Policy } from '../utils/passwordPolicy';
-import { registerEmailAccount, isApiConfigured } from '../services/apiClient';
 import { persistMockSession } from '../services/sessionTokens';
 import { isEmailRegistered } from '../utils/registeredAccounts';
+import { requestEmailMagicLink } from '../services/apiClient';
+import { issueMagicLink, buildVerifyUrl, latestMagicLinkFor } from '../utils/magicLinkStore';
 import { useI18n } from '../i18n/I18nProvider';
+import { fetchGeoDemo } from '../utils/geoIpDemo';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Checkbox } from '../components/ui/checkbox';
-import { PasswordInput } from '../components/ui/password-input';
 import { isValidDate, meetsMinAge } from '../utils/ageCheck';
 import { containsProfanity } from '../utils/profanityFilter';
 
@@ -21,15 +21,16 @@ const inputClass =
   'min-h-[44px] rounded-lg border-border/40 px-3 py-3 text-sm text-foreground placeholder:text-muted-foreground sm:px-4 sm:text-sm focus-visible:ring-primary/25';
 
 const emailValid = (v: string) => /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v.trim());
+const RESEND_COOLDOWN_SEC = 30;
 
 export default function Signup() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const demo = searchParams.get('demo');
+  const stepParam = Math.max(1, Math.min(3, Number(searchParams.get('step')) || 1));
   const auth = useAuthStore();
   const { t } = useI18n();
   const [email, setEmail] = useState('');
-  const [password, setPassword] = useState('');
   const [nickname, setNickname] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
@@ -37,17 +38,62 @@ export default function Signup() {
   const [birthMonth, setBirthMonth] = useState<string>('');
   const [birthDay, setBirthDay] = useState<string>('');
 
-  const [step, setStep] = useState(1);
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
   const [agreeMarketingEmail, setAgreeMarketingEmail] = useState(false);
   const [agreeMarketingPush, setAgreeMarketingPush] = useState(false);
   const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
 
-  const allAgreed =
-    agreeTerms && agreePrivacy && agreeMarketingEmail && agreeMarketingPush;
-  const someAgreed =
-    agreeTerms || agreePrivacy || agreeMarketingEmail || agreeMarketingPush;
+  const [linkSent, setLinkSent] = useState(false);
+  const [sending, setSending] = useState(false);
+  const [resendSec, setResendSec] = useState(0);
+  const resendTimer = useRef<number | null>(null);
+
+  // Signup 진입 시 지역 추정 (Policy §2.1.1) — artier_signup_region에 저장
+  useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      if (typeof localStorage === 'undefined') return;
+      if (localStorage.getItem('artier_signup_region')) return;
+      try {
+        const r = await fetchGeoDemo();
+        if (cancelled) return;
+        localStorage.setItem('artier_signup_region', r.countryCode === 'KR' ? 'KR' : 'INTL');
+      } catch {
+        localStorage.setItem('artier_signup_region', 'INTL');
+      }
+    })();
+    return () => { cancelled = true; };
+  }, []);
+
+  // step>=2인데 이메일이 없으면 1단계로 복귀
+  useEffect(() => {
+    if (stepParam === 1) return;
+    const saved = typeof localStorage !== 'undefined' ? localStorage.getItem('artier_pending_signup_email') : null;
+    if (saved && emailValid(saved)) {
+      setEmail(saved);
+    } else {
+      navigate('/signup?step=1', { replace: true });
+    }
+  }, [stepParam, navigate]);
+
+  // 재전송 쿨다운 카운터
+  useEffect(() => {
+    if (resendSec <= 0) {
+      if (resendTimer.current != null) {
+        window.clearTimeout(resendTimer.current);
+        resendTimer.current = null;
+      }
+      return;
+    }
+    resendTimer.current = window.setTimeout(() => setResendSec((s) => s - 1), 1000);
+    return () => {
+      if (resendTimer.current != null) window.clearTimeout(resendTimer.current);
+    };
+  }, [resendSec]);
+
+  const allAgreed = agreeTerms && agreePrivacy && agreeMarketingEmail && agreeMarketingPush;
+  const someAgreed = agreeTerms || agreePrivacy || agreeMarketingEmail || agreeMarketingPush;
 
   const toggleMaster = () => {
     const next = !allAgreed;
@@ -59,6 +105,7 @@ export default function Signup() {
 
   const touched = (field: string) => submitted || touchedFields.has(field);
   const markTouched = (field: string) => setTouchedFields((prev) => new Set(prev).add(field));
+
   const emailError = touched('email')
     ? !emailValid(email)
       ? t('signup.errEmail')
@@ -66,24 +113,19 @@ export default function Signup() {
         ? t('signup.errEmailRegistered')
         : ''
     : '';
-  const passwordError =
-    touched('password') && !passwordMatchesPhase1Policy(password) ? t('signup.passwordPolicyError') : '';
+
   const nicknameTrim = nickname.trim();
   const nicknameLengthOk = nicknameTrim.length >= 2 && nicknameTrim.length <= 20;
   const nicknameClean = !containsProfanity(nicknameTrim);
-  const nicknameError =
-    touched('nickname') && !nicknameLengthOk
-      ? t('signup.errNickname')
-      : touched('nickname') && !nicknameClean
-        ? t('signup.errProfanity')
-        : '';
+  const nicknameError = touched('nickname') && !nicknameLengthOk
+    ? t('signup.errNickname')
+    : touched('nickname') && !nicknameClean
+      ? t('signup.errProfanity')
+      : '';
 
-  // 생년월일 검증 (3개 모두 선택되어야 검증 시작)
   const birthFilled = birthYear !== '' && birthMonth !== '' && birthDay !== '';
-  const birthValid =
-    birthFilled && isValidDate(Number(birthYear), Number(birthMonth), Number(birthDay));
-  const birthMeetsAge =
-    birthValid && meetsMinAge(Number(birthYear), Number(birthMonth), Number(birthDay));
+  const birthValid = birthFilled && isValidDate(Number(birthYear), Number(birthMonth), Number(birthDay));
+  const birthMeetsAge = birthValid && meetsMinAge(Number(birthYear), Number(birthMonth), Number(birthDay));
   const birthError = !touched('birth')
     ? ''
     : !birthFilled || !birthValid
@@ -95,93 +137,136 @@ export default function Signup() {
   const monthOptions = useMemo(() => Array.from({ length: 12 }, (_, i) => i + 1), []);
   const dayOptions = useMemo(() => Array.from({ length: 31 }, (_, i) => i + 1), []);
 
-  const requiredOk = agreeTerms && agreePrivacy && birthMeetsAge;
-  const step1Ok = emailValid(email) && !isEmailRegistered(email) && passwordMatchesPhase1Policy(password);
-  const step2Ok = nicknameLengthOk && nicknameClean && birthMeetsAge;
-  const canSubmit = requiredOk && step1Ok && step2Ok;
+  const emailOk = emailValid(email) && !isEmailRegistered(email);
+  const profileOk = nicknameLengthOk && nicknameClean && birthMeetsAge;
+  const agreementsOk = agreeTerms && agreePrivacy;
 
-  const handleSubmit = (e: FormEvent) => {
+  const sendMagicLink = async (): Promise<boolean> => {
+    if (!emailOk) {
+      markTouched('email');
+      return false;
+    }
+    setSending(true);
+    try {
+      issueMagicLink({ email: email.trim(), intent: 'signup' });
+      try { localStorage.setItem('artier_pending_signup_email', email.trim()); } catch { /* ignore */ }
+      await requestEmailMagicLink({ email: email.trim(), intent: 'signup' });
+      setLinkSent(true);
+      setResendSec(RESEND_COOLDOWN_SEC);
+      return true;
+    } catch {
+      toast.error(t('login.errEmailInvalid'));
+      return false;
+    } finally {
+      setSending(false);
+    }
+  };
+
+  const handleResend = async () => {
+    if (resendSec > 0) return;
+    const ok = await sendMagicLink();
+    if (ok) toast.success(t('signup.resendSuccess'));
+  };
+
+  const openDemoVerifyLink = () => {
+    const ref = latestMagicLinkFor(email.trim());
+    if (!ref) return;
+    navigate(buildVerifyUrl(ref.token));
+  };
+
+  const goEditEmail = () => {
+    setLinkSent(false);
+    setResendSec(0);
+  };
+
+  const handleFinalSubmit = (e: FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
-    if (!canSubmit) return;
-    const stashPendingProfile = () => {
-      try {
-        localStorage.setItem('artier_pending_signup_email', email.trim());
-        localStorage.setItem('artier_pending_signup_nickname', nicknameTrim);
-      } catch { /* ignore */ }
-    };
-    if (isApiConfigured()) {
-      registerEmailAccount({
-        email: email.trim(),
-        password,
-        nickname: nicknameTrim,
-      })
-        .then(() => {
-          auth.login();
-          persistMockSession(email.trim());
-          pointsOnSignupComplete();
-          stashPendingProfile();
-          navigate('/onboarding');
-        })
-        .catch(() => {
-          toast.error(t('signup.errRegisterFailed'));
-        });
-      return;
-    }
+    if (!profileOk || !agreementsOk) return;
+    try {
+      localStorage.setItem('artier_pending_signup_email', email.trim());
+      localStorage.setItem('artier_pending_signup_nickname', nicknameTrim);
+    } catch { /* ignore */ }
     auth.login();
     persistMockSession(email.trim());
     pointsOnSignupComplete();
-    stashPendingProfile();
     navigate('/onboarding');
   };
 
-  if (demo === 'email_sent') {
-    return (
-      <div className="min-h-screen bg-white flex items-center justify-center px-4 sm:px-6 py-10">
-        <div className="w-full max-w-md text-center space-y-6">
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('signupDemo.emailSentTitle')}</h1>
-          <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{t('signupDemo.emailSentBody')}</p>
-          <div className="flex flex-col gap-2">
-            <Button variant="ghost"
-              type="button"
-              onClick={() => toast.success(t('signupDemo.resendSuccess'))}
-              className="w-full min-h-[44px] rounded-lg border border-border text-sm font-semibold text-foreground lg:hover:bg-muted/50"
-            >
-              {t('signupDemo.resendEmail')}
-            </Button>
-            <Link
-              to="/login"
-              className="w-full min-h-[44px] flex items-center justify-center rounded-lg bg-primary text-white text-sm font-semibold lg:hover:bg-primary/90"
-            >
-              {t('signup.loginLink')}
-            </Link>
+  const sentBanner = (
+    <div className="min-h-screen bg-white flex items-center justify-center px-4 sm:px-6 py-10">
+      <div className="w-full max-w-md space-y-6">
+        <div className="space-y-3 text-center">
+          <div className="mx-auto flex h-12 w-12 items-center justify-center rounded-full bg-primary/10">
+            <Mail className="h-5 w-5 text-primary" />
           </div>
-          <p className="text-xs text-muted-foreground">{t('signupDemo.demoBanner')}</p>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('signup.linkSentTitle')}</h1>
+          <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
+            {t('signup.linkSentBody').replace('{email}', email || 'you@example.com')}
+          </p>
+          <p className="text-xs text-muted-foreground">{t('signup.linkSentSpam')}</p>
+        </div>
+
+        <div className="space-y-2">
+          <Button
+            type="button"
+            onClick={openDemoVerifyLink}
+            disabled={!latestMagicLinkFor(email.trim())}
+            className="w-full min-h-[44px] rounded-lg bg-primary text-white text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50"
+          >
+            {t('signup.openMockLink')}
+          </Button>
+          <p className="text-center text-xs text-muted-foreground">{t('signup.openMockLinkHint')}</p>
+        </div>
+
+        <div className="flex flex-col gap-2 border-t border-border/40 pt-4">
+          <Button
+            type="button"
+            variant="outline"
+            onClick={handleResend}
+            disabled={resendSec > 0 || sending}
+            className="w-full min-h-[44px] rounded-lg text-sm font-medium"
+          >
+            {resendSec > 0
+              ? t('signup.resendCooldown').replace('{sec}', String(resendSec))
+              : t('signup.resendLink')}
+          </Button>
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={goEditEmail}
+            className="w-full min-h-[44px] text-sm text-muted-foreground"
+          >
+            {t('signup.changeEmail')}
+          </Button>
         </div>
       </div>
-    );
-  }
+    </div>
+  );
 
   if (demo === 'email_expired') {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center px-4 sm:px-6 py-10">
         <div className="w-full max-w-md text-center space-y-6">
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('signupDemo.emailExpiredTitle')}</h1>
-          <p className="text-sm text-muted-foreground leading-relaxed">{t('signupDemo.emailExpiredBody')}</p>
-          <Button
-            type="button"
-            onClick={() => toast.success(t('signupDemo.resendSuccess'))}
-            className="w-full min-h-[44px] rounded-lg bg-primary text-white text-sm font-semibold lg:hover:bg-primary/90"
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('signup.linkExpiredTitle')}</h1>
+          <p className="text-sm text-muted-foreground leading-relaxed">{t('signup.linkExpiredBody')}</p>
+          <Link
+            to="/signup"
+            className="flex w-full min-h-[44px] items-center justify-center rounded-lg bg-primary text-white text-sm font-semibold lg:hover:bg-primary/90"
           >
-            {t('signupDemo.resendEmail')}
-          </Button>
-          <Link to="/signup" className="block text-sm text-primary font-medium lg:hover:underline">
-            {t('signupDemo.backToSignup')}
+            {t('signup.resendLink')}
           </Link>
-          <p className="text-xs text-muted-foreground">{t('signupDemo.demoBanner')}</p>
         </div>
       </div>
     );
+  }
+
+  if (demo === 'email_sent') {
+    return sentBanner;
+  }
+
+  if (stepParam === 1 && linkSent) {
+    return sentBanner;
   }
 
   const checkboxRow = (
@@ -203,105 +288,92 @@ export default function Signup() {
     </div>
   );
 
+  const progressBar = (
+    <div
+      className="mx-auto mt-4 flex max-w-[240px] items-center justify-center gap-2"
+      role="progressbar"
+      aria-valuenow={stepParam}
+      aria-valuemin={1}
+      aria-valuemax={3}
+      aria-label={`${t('signup.title')} · ${stepParam}/3`}
+    >
+      <div className={`h-2 w-10 rounded-full transition-colors ${stepParam >= 1 ? 'bg-primary' : 'bg-muted'}`} />
+      <div className={`h-2 w-10 rounded-full transition-colors ${stepParam >= 2 ? 'bg-primary' : 'bg-muted'}`} />
+      <div className={`h-2 w-10 rounded-full transition-colors ${stepParam >= 3 ? 'bg-primary' : 'bg-muted'}`} />
+      <span className="ml-2 text-sm font-medium text-muted-foreground tabular-nums">{stepParam}/3</span>
+    </div>
+  );
+
+  if (stepParam === 1) {
+    return (
+      <div className="min-h-screen bg-white flex items-center justify-center px-4 sm:px-6 py-10">
+        <div className="w-full max-w-md">
+          <div className="mb-8">
+            <h1 className="text-xl sm:text-2xl font-bold text-foreground text-center">{t('signup.emailStepTitle')}</h1>
+            <p className="mt-2 text-center text-sm text-muted-foreground leading-relaxed">{t('signup.emailStepDesc')}</p>
+            {progressBar}
+          </div>
+
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              markTouched('email');
+              if (emailOk) void sendMagicLink();
+            }}
+            className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300"
+          >
+            <div>
+              <Label
+                htmlFor="signup-email"
+                className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-foreground sm:text-sm"
+              >
+                <Mail className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={2} />
+                {t('signup.emailLabel')}
+              </Label>
+              <Input
+                id="signup-email"
+                type="email"
+                autoComplete="email"
+                value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                onBlur={() => markTouched('email')}
+                placeholder={t('signup.emailPh')}
+                className={inputClass}
+                autoFocus
+              />
+              {emailError ? <p className="mt-1.5 text-sm text-destructive">{emailError}</p> : null}
+            </div>
+
+            <Button
+              type="submit"
+              disabled={!emailOk || sending}
+              className="w-full min-h-[44px] mt-2 rounded-lg bg-primary text-white text-sm sm:text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50"
+            >
+              {sending ? t('signup.linkSending') : t('signup.linkSendCta')}
+            </Button>
+          </form>
+
+          <p className="text-center mt-10 text-sm sm:text-sm text-muted-foreground">
+            {t('signup.hasAccount')}{' '}
+            <Link to="/login" className="text-primary font-semibold lg:hover:underline">
+              {t('signup.loginLink')}
+            </Link>
+          </p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4 sm:px-6 py-10">
       <div className="w-full max-w-md">
-        {demo === 'region' ? (
-          <div className="mb-8 rounded-xl border border-border bg-muted/60 p-4 text-left">
-            <p className="text-xs font-semibold text-foreground mb-3">{t('signupDemo.regionBanner')}</p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 text-xs text-muted-foreground">
-              <div className="rounded-lg bg-card/80 border border-border p-3 space-y-1">
-                <p className="font-semibold text-foreground">{t('signupDemo.regionKr')}</p>
-                <p>{t('signupDemo.regionKrOpts')}</p>
-              </div>
-              <div className="rounded-lg bg-card/80 border border-border p-3 space-y-1">
-                <p className="font-semibold text-foreground">{t('signupDemo.regionIntl')}</p>
-                <p>{t('signupDemo.regionIntlOpts')}</p>
-              </div>
-            </div>
-          </div>
-        ) : null}
-
         <div className="mb-8">
           <h1 className="text-xl sm:text-2xl font-bold text-foreground text-center">{t('signup.title')}</h1>
-          <div
-            className="mx-auto mt-4 flex max-w-[240px] items-center justify-center gap-2"
-            role="progressbar"
-            aria-valuenow={step}
-            aria-valuemin={1}
-            aria-valuemax={3}
-            aria-label={`${t('signup.title')} · ${step}/3`}
-          >
-            <div className={`h-2 w-10 rounded-full transition-colors ${step >= 1 ? 'bg-primary' : 'bg-muted'}`} />
-            <div className={`h-2 w-10 rounded-full transition-colors ${step >= 2 ? 'bg-primary' : 'bg-muted'}`} />
-            <div className={`h-2 w-10 rounded-full transition-colors ${step >= 3 ? 'bg-primary' : 'bg-muted'}`} />
-            <span className="ml-2 text-sm font-medium text-muted-foreground tabular-nums">{step}/3</span>
-          </div>
+          {progressBar}
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
-          {step === 1 && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
-              <div>
-                <Label
-                  htmlFor="signup-email"
-                  className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-foreground sm:text-sm"
-                >
-                  <Mail className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={2} />
-                  {t('signup.emailLabel')}
-                </Label>
-                <Input
-                  id="signup-email"
-                  type="email"
-                  autoComplete="email"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  onBlur={() => markTouched('email')}
-                  placeholder={t('signup.emailPh')}
-                  className={inputClass}
-                />
-                {emailError ? <p className="mt-1.5 text-sm text-destructive">{emailError}</p> : null}
-              </div>
-
-              <div>
-                <Label
-                  htmlFor="signup-password"
-                  className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-foreground sm:text-sm"
-                >
-                  <Lock className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={2} />
-                  {t('signup.passwordLabel')}
-                </Label>
-                <PasswordInput
-                  id="signup-password"
-                  autoComplete="new-password"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  onBlur={() => markTouched('password')}
-                  placeholder={t('signup.passwordPh')}
-                  className={inputClass}
-                />
-                <p className="mt-1.5 text-xs sm:text-sm text-muted-foreground">
-                  {t('signup.passwordHint')}
-                </p>
-                {passwordError ? <p className="mt-1 text-sm text-destructive">{passwordError}</p> : null}
-              </div>
-
-              <Button
-                type="button"
-                onClick={() => {
-                  markTouched('email');
-                  markTouched('password');
-                  if (step1Ok) setStep(2);
-                }}
-                disabled={!step1Ok}
-                className="w-full min-h-[44px] mt-4 rounded-lg bg-primary text-white text-sm sm:text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50"
-              >
-                {t('upload.nextStep')}
-              </Button>
-            </div>
-          )}
-
-          {step === 2 && (
+        <form onSubmit={handleFinalSubmit} className="space-y-4">
+          {stepParam === 2 && (
             <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
               <div>
                 <Label
@@ -320,6 +392,7 @@ export default function Signup() {
                   onBlur={() => markTouched('nickname')}
                   placeholder={t('signup.nicknamePh')}
                   className={inputClass}
+                  autoFocus
                 />
                 {nicknameError ? (
                   <p className="mt-1.5 text-sm text-destructive">{nicknameError}</p>
@@ -327,9 +400,7 @@ export default function Signup() {
               </div>
 
               <div>
-                <Label
-                  className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-foreground sm:text-sm"
-                >
+                <Label className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-foreground sm:text-sm">
                   <Calendar className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={2} />
                   {t('signup.birthLabel')}
                   <span className="text-destructive ml-0.5">*</span>
@@ -380,21 +451,13 @@ export default function Signup() {
               <div className="flex gap-2 mt-4">
                 <Button
                   type="button"
-                  variant="outline"
-                  onClick={() => setStep(1)}
-                  className="w-1/3 min-h-[44px] rounded-lg text-foreground text-sm sm:text-sm"
-                >
-                  {t('signup.previous')}
-                </Button>
-                <Button
-                  type="button"
                   onClick={() => {
                     markTouched('nickname');
                     markTouched('birth');
-                    if (step2Ok) setStep(3);
+                    if (profileOk) navigate('/signup?step=3');
                   }}
-                  disabled={!step2Ok}
-                  className="flex-1 min-h-[44px] rounded-lg bg-primary text-white text-sm sm:text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50"
+                  disabled={!profileOk}
+                  className="w-full min-h-[44px] rounded-lg bg-primary text-white text-sm sm:text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50"
                 >
                   {t('upload.nextStep')}
                 </Button>
@@ -402,7 +465,7 @@ export default function Signup() {
             </div>
           )}
 
-          {step === 3 && (
+          {stepParam === 3 && (
             <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
               <div className="pt-2">
                 <p className="text-sm sm:text-sm font-semibold text-foreground mb-3">
@@ -476,14 +539,14 @@ export default function Signup() {
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => setStep(2)}
+                  onClick={() => navigate('/signup?step=2')}
                   className="w-1/3 min-h-[44px] rounded-lg text-foreground text-sm sm:text-sm"
                 >
                   {t('signup.previous')}
                 </Button>
                 <Button
                   type="submit"
-                  disabled={!canSubmit}
+                  disabled={!profileOk || !agreementsOk}
                   className="flex-1 min-h-[44px] rounded-lg bg-primary text-white text-sm sm:text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
                 >
                   {t('signup.submit')}
@@ -492,12 +555,6 @@ export default function Signup() {
             </div>
           )}
         </form>
-        <p className="text-center mt-10 text-sm sm:text-sm text-muted-foreground">
-          {t('signup.hasAccount')}{' '}
-          <Link to="/login" className="text-primary font-semibold lg:hover:underline">
-            {t('signup.loginLink')}
-          </Link>
-        </p>
       </div>
     </div>
   );

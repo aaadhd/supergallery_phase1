@@ -12,7 +12,7 @@ import NotFound from './pages/NotFound';
 import Onboarding from './pages/Onboarding';
 import Login from './pages/Login';
 import Signup from './pages/Signup';
-import PasswordReset from './pages/PasswordReset';
+import AuthVerify from './pages/AuthVerify';
 import Search from './pages/Search';
 import Notifications from './pages/Notifications';
 import About from './pages/About';
@@ -89,7 +89,7 @@ export const router = createBrowserRouter([
       { path: '/login', Component: Login },
       { path: '/maintenance', Component: Maintenance },
       { path: '/signup', Component: Signup },
-      { path: '/reset-password', Component: PasswordReset },
+      { path: '/auth/verify', Component: AuthVerify },
       // Admin (접근 제어는 AdminLayout 내부에서 처리)
       {
         path: '/admin',

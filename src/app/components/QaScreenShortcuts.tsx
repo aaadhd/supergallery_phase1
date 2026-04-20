@@ -71,7 +71,6 @@ export function QaScreenShortcuts() {
 
   const linkCls = 'cursor-pointer';
   const shareInvitePath = `/exhibitions/${sampleWorkId}?from=invite`;
-  const workSharePath = `/exhibitions/${sampleWorkId}?from=work`;
   const creditedPath = `/exhibitions/${sampleWorkId}?from=credited`;
 
   return (
@@ -115,11 +114,6 @@ export function QaScreenShortcuts() {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link to={workSharePath} className={linkCls}>
-              {t('footer.qaExhibitionWork')}
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
             <Link to={creditedPath} className={linkCls}>
               {t('footer.qaExhibitionCredited')}
             </Link>
@@ -135,7 +129,12 @@ export function QaScreenShortcuts() {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link to="/signup" className={linkCls}>
+            <Link to="/login?mode=email" className={linkCls}>
+              {t('footer.qaLoginEmail')}
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem asChild>
+            <Link to="/signup?step=1" className={linkCls}>
               {t('footer.qaSignup')}
             </Link>
           </DropdownMenuItem>
@@ -145,38 +144,13 @@ export function QaScreenShortcuts() {
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link to="/login?demo=suspended" className={linkCls}>
+            <Link to="/login?mode=email&demo=suspended" className={linkCls}>
               {t('footer.qaLoginDemoSuspended')}
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>
-            <Link to="/login?demo=clear_suspension" className={linkCls}>
-              {t('footer.qaLoginDemoClear')}
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link to="/signup?demo=email_sent" className={linkCls}>
-              {t('footer.qaSignupDemoEmailSent')}
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link to="/signup?demo=email_expired" className={linkCls}>
-              {t('footer.qaSignupDemoEmailExpired')}
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link to="/signup?demo=region" className={linkCls}>
-              {t('footer.qaSignupDemoRegion')}
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link to="/reset-password?demo=link_expired" className={linkCls}>
-              {t('footer.qaResetDemoExpired')}
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link to="/reset-password?demo=new_password" className={linkCls}>
-              {t('footer.qaResetDemoNewPw')}
+            <Link to="/auth/verify?demo=expired" className={linkCls}>
+              {t('footer.qaAuthVerifyDemoExpired')}
             </Link>
           </DropdownMenuItem>
 

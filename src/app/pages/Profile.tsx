@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { MapPin, Plus, Eye, EyeOff, X, ThumbsUp, Users, Folder, MoreHorizontal, Trash2, Tag, UserPlus, Camera, Share2, ChevronLeft, ChevronRight, Pencil, CircleHelp } from 'lucide-react';
+import { MapPin, Plus, Eye, EyeOff, X, ThumbsUp, Users, Folder, MoreHorizontal, Trash2, Tag, UserPlus, Camera, ChevronLeft, ChevronRight, Pencil, CircleHelp } from 'lucide-react';
 import { Image as ImageIcon, User as UserIcon } from 'lucide-react';
 import ProfileImageModal from '../components/ProfileImageModal';
 import { artists, type Work } from '../data';
@@ -318,9 +318,12 @@ export default function Profile() {
   ), [storeWorks, profileArtist.id]);
 
   // 작품 관리 탭용 — 내 그림만 이미지 단위 flat
-  type FlatImage = { work: Work; imgSrc: string; imgIndex: number; pieceTitle: string; isDisavowable: boolean };
+  type FlatImage = { work: Work; imgSrc: string; imgIndex: number; pieceTitle: string; isDisavowable: boolean; isOwnUpload: boolean };
   const worksManageFlatImages: FlatImage[] = useMemo(() => {
-    const allMyWorks = [...artistWorks, ...taggedWorks];
+    const pool = [...artistWorks, ...taggedWorks];
+    const allMyWorks = onlyMyUploads
+      ? pool.filter((w) => w.artistId === profileArtist.id || w.authorId === profileArtist.id)
+      : pool;
     const myId = profileArtist.id;
     return allMyWorks.flatMap((work) => {
       const imgs = Array.isArray(work.image) ? work.image : [work.image];
@@ -348,9 +351,11 @@ export default function Profile() {
           isDisavowable: work.artistId !== myId
             && ias?.[idx]?.type === 'member'
             && ias[idx]?.memberId === myId,
+          // piece 제목 편집 권한: 본인이 업로드한 전시의 이미지에만 부여 (Policy §9 v2.6).
+          isOwnUpload: work.artistId === myId || work.authorId === myId,
         }));
     });
-  }, [artistWorks, taggedWorks, profileArtist.id, imageUrls, t]);
+  }, [artistWorks, taggedWorks, profileArtist.id, imageUrls, t, onlyMyUploads]);
 
   // 작품 관리 뷰어 키보드 네비게이션
   useEffect(() => {
@@ -1286,6 +1291,19 @@ export default function Profile() {
 
                 {/* ===== 내 작품 탭 — 개별 이미지(그림) 단위 ===== */}
                 <TabsContent value="works" className="mt-6">
+                  {isOwnProfile && (
+                    <div className="mb-4 flex items-center gap-2 flex-wrap">
+                      <label className="ml-auto flex items-center gap-2 min-h-[44px] px-2 cursor-pointer select-none text-sm text-foreground">
+                        <input
+                          type="checkbox"
+                          checked={onlyMyUploads}
+                          onChange={(e) => setOnlyMyUploads(e.target.checked)}
+                          className="h-4 w-4 accent-primary"
+                        />
+                        {t('profile.filterOnlyMine')}
+                      </label>
+                    </div>
+                  )}
                   {worksManageFlatImages.length > 0 ? (
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-[1.625rem] sm:gap-[2.275rem] lg:gap-[2.6rem]">
                       {worksManageFlatImages.map((fi, flatIdx) => {
@@ -1358,20 +1376,26 @@ export default function Profile() {
                             )}
                           </div>
                           <div className="pt-2">
-                            {/* 작품명: 탭하면 인라인 편집 모달 진입 + 연필 아이콘 affordance */}
+                            {/* 작품명: 본인 업로드 전시의 이미지에만 편집 가능 (Policy §9 v2.6) */}
                             <div className="flex items-center gap-1.5">
                               <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
                                 {t('profile.workNameBadge')}
                               </span>
-                              <button
-                                type="button"
-                                onClick={openRename}
-                                className="group/title min-h-[44px] flex items-center gap-1.5 flex-1 min-w-0 text-left -ml-1 pl-1 pr-2 rounded lg:hover:bg-muted/40 transition-colors"
-                                aria-label={t('profile.renameWork')}
-                              >
-                                <span className="truncate text-sm font-medium text-foreground">{fi.pieceTitle}</span>
-                                <Pencil className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60 lg:group-hover/title:text-foreground transition-colors" aria-hidden />
-                              </button>
+                              {fi.isOwnUpload ? (
+                                <button
+                                  type="button"
+                                  onClick={openRename}
+                                  className="group/title min-h-[44px] flex items-center gap-1.5 flex-1 min-w-0 text-left -ml-1 pl-1 pr-2 rounded lg:hover:bg-muted/40 transition-colors"
+                                  aria-label={t('profile.renameWork')}
+                                >
+                                  <span className="truncate text-sm font-medium text-foreground">{fi.pieceTitle}</span>
+                                  <Pencil className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60 lg:group-hover/title:text-foreground transition-colors" aria-hidden />
+                                </button>
+                              ) : (
+                                <span className="min-h-[44px] flex items-center flex-1 min-w-0 px-1 truncate text-sm font-medium text-foreground">
+                                  {fi.pieceTitle}
+                                </span>
+                              )}
                             </div>
                             {/* 전시명: 뷰어로 진입 */}
                             <button
@@ -1739,19 +1763,8 @@ export default function Profile() {
               className="relative z-10 w-full max-w-[1280px] mx-auto h-[100dvh] sm:h-[96vh] sm:my-[2vh] flex flex-col bg-zinc-900 sm:rounded-2xl overflow-hidden"
               onClick={(e) => e.stopPropagation()}
             >
-              {/* 상단 바: 닫기 + 공유 */}
+              {/* 상단 바: 닫기만 (작품 단위 공유 기능 제거 — Policy §10·USR-PRF-14) */}
               <div className="flex items-center justify-end gap-2 px-4 py-3">
-                <button
-                  type="button"
-                  className="flex items-center justify-center h-10 w-10 rounded-full bg-white/10 text-white lg:hover:bg-white/20"
-                  onClick={(e) => {
-                    e.stopPropagation();
-                    const url = `${window.location.origin}/exhibitions/${fi.work.id}?from=work`;
-                    navigator.clipboard.writeText(url).then(() => toast(t('workDetail.toastLinkCopied')));
-                  }}
-                >
-                  <Share2 className="h-5 w-5" />
-                </button>
                 <button
                   type="button"
                   className="flex items-center justify-center h-10 w-10 rounded-full bg-white/10 text-white lg:hover:bg-white/20"

@@ -40,6 +40,19 @@ export default function Onboarding() {
   })();
   const [phone, setPhone] = useState(prefilledPhone);
   const [phoneError, setPhoneError] = useState('');
+  /**
+   * 지역 추정 결과 (Policy §2.1.1)
+   * - KR: 전화번호 필수 (본인인증 전제)
+   * - INTL: 전화번호 미수집, 이메일 필수
+   * - SMS 초대로 전화번호가 프리필됐으면 KR로 강제 (§2.1.1 경로 예외)
+   */
+  const signupRegion: 'KR' | 'INTL' = (() => {
+    if (typeof localStorage === 'undefined') return 'INTL';
+    if (prefilledPhone) return 'KR';
+    const stored = localStorage.getItem('artier_signup_region');
+    return stored === 'KR' ? 'KR' : 'INTL';
+  })();
+  const collectsPhone = signupRegion === 'KR';
   /** 이메일 가입(Signup) 또는 소셜 가입(Login) 직후 provider에서 받은 이메일 */
   const prefilledEmail = (() => {
     if (typeof window === 'undefined') return '';
@@ -109,6 +122,11 @@ export default function Onboarding() {
   };
 
   const validatePhone = (): boolean => {
+    // 해외 사용자(INTL)는 전화번호 미수집 — 검증 스킵 (Policy §2.1.1)
+    if (!collectsPhone) {
+      setPhoneError('');
+      return true;
+    }
     const trimmed = phone.trim();
     if (trimmed.length === 0) {
       setPhoneError(
@@ -352,20 +370,24 @@ export default function Onboarding() {
                   <p className="mt-1 text-xs text-muted-foreground">{nickname.trim().length}/20</p>
                   {nicknameError ? <p className="mt-1 text-sm text-destructive">{nicknameError}</p> : null}
 
-                  {/* 전화번호 */}
-                  <label className="block text-sm font-medium text-foreground mb-2 mt-5">
-                    {t('onboarding.phoneLabel')}
-                    <span className="ml-1 text-xs font-medium text-red-500">{t('common.required')}</span>
-                  </label>
-                  <input
-                    type="tel"
-                    value={phone}
-                    onChange={e => { setPhone(e.target.value); setPhoneError(''); }}
-                    placeholder={t('onboarding.phonePlaceholder')}
-                    className="w-full rounded-xl border border-border px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
-                  />
-                  {phoneError ? <p className="mt-1 text-sm text-destructive">{phoneError}</p> : null}
-                  <p className="mt-1 text-xs text-muted-foreground">{t('onboarding.phoneHint')}</p>
+                  {/* 전화번호 — 한국 사용자만 (Policy §2.1.1) */}
+                  {collectsPhone && (
+                    <>
+                      <label className="block text-sm font-medium text-foreground mb-2 mt-5">
+                        {t('onboarding.phoneLabel')}
+                        <span className="ml-1 text-xs font-medium text-red-500">{t('common.required')}</span>
+                      </label>
+                      <input
+                        type="tel"
+                        value={phone}
+                        onChange={e => { setPhone(e.target.value); setPhoneError(''); }}
+                        placeholder={t('onboarding.phonePlaceholder')}
+                        className="w-full rounded-xl border border-border px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                      />
+                      {phoneError ? <p className="mt-1 text-sm text-destructive">{phoneError}</p> : null}
+                      <p className="mt-1 text-xs text-muted-foreground">{t('onboarding.phoneHint')}</p>
+                    </>
+                  )}
 
                   {/* 이메일 */}
                   <label className="block text-sm font-medium text-foreground mb-2 mt-5">

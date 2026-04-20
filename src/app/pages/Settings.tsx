@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { ChevronRight } from 'lucide-react';
+import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Toaster } from 'sonner';
 import { artists } from '../data';
@@ -12,15 +11,8 @@ import {
 import { loadMockSession } from '../services/sessionTokens';
 import { Button } from '../components/ui/button';
 import { openConfirm } from '../components/ConfirmDialog';
-import { PasswordInput } from '../components/ui/password-input';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogFooter,
-  DialogHeader,
-  DialogTitle,
-} from '../components/ui/dialog';
+import { Checkbox } from '../components/ui/checkbox';
+import { Label } from '../components/ui/label';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
 import { getFontScale, setFontScale, type FontScale } from '../utils/fontScale';
@@ -123,10 +115,9 @@ export default function Settings() {
   const [notifications, setNotifications] = useState<NotificationSettingsState>(loadNotificationSettings);
   const [fontScale, setFontScaleState] = useState<FontScale>(() => getFontScale());
   const [withdrawOpen, setWithdrawOpen] = useState(false);
-  const [withdrawPassword, setWithdrawPassword] = useState('');
+  const [withdrawConsent, setWithdrawConsent] = useState(false);
   const [withdrawReason, setWithdrawReason] = useState<WithdrawReasonId | ''>('');
   const [withdrawBusy, setWithdrawBusy] = useState(false);
-  const [pwResetOpen, setPwResetOpen] = useState(false);
 
   const sessionSub = loadMockSession()?.sub;
   const isEmailShape = Boolean(sessionSub?.includes('@'));
@@ -170,8 +161,8 @@ export default function Settings() {
       toast.error(t('settings.withdrawReasonPickErr'));
       return;
     }
-    if (!withdrawPassword.trim()) {
-      toast.error(t('settings.toastWithdrawPw'));
+    if (!withdrawConsent) {
+      toast.error(t('settings.withdrawConsentErr'));
       return;
     }
     setWithdrawBusy(true);
@@ -179,7 +170,7 @@ export default function Settings() {
       performAccountWithdrawal(currentArtistId, withdrawReason);
       setWithdrawBusy(false);
       setWithdrawOpen(false);
-      setWithdrawPassword('');
+      setWithdrawConsent(false);
       setWithdrawReason('');
       toast.success(t('settings.toastWithdrawDone'));
       navigate('/');
@@ -312,23 +303,6 @@ export default function Settings() {
             {t('settings.sectionAccountActions')}
           </h2>
           <div className="rounded-lg border border-border/40 overflow-hidden bg-white">
-            <button
-              type="button"
-              disabled={!isEmailShape}
-              onClick={() => {
-                if (!isEmailShape) return;
-                setPwResetOpen(true);
-              }}
-              className={`flex w-full justify-between items-center py-4 px-4 border-b border-border/40 min-h-[44px] transition-colors text-left ${isEmailShape ? 'lg:hover:bg-muted/50' : 'opacity-50 cursor-not-allowed'}`}
-            >
-              <div>
-                <span className="text-base text-foreground">{t('settings.changePassword')}</span>
-                {!isEmailShape && (
-                  <p className="text-xs text-muted-foreground mt-0.5">{t('settings.changePasswordSocialHint')}</p>
-                )}
-              </div>
-              {isEmailShape && <ChevronRight className="w-5 h-5 text-muted-foreground" aria-hidden />}
-            </button>
             <div className="flex justify-between items-center py-4 px-4 border-b border-border/40">
               <span className="text-base text-foreground">{t('settings.logoutRow')}</span>
               <Button variant="ghost"
@@ -354,31 +328,6 @@ export default function Settings() {
           </div>
         </section>
       </div>
-
-      <Dialog open={pwResetOpen} onOpenChange={setPwResetOpen}>
-        <DialogContent className="max-w-md">
-          <DialogHeader>
-            <DialogTitle>{t('settings.changePasswordDialogTitle')}</DialogTitle>
-            <DialogDescription>
-              {t('settings.changePasswordDialogBody').replace('{email}', sessionSub || '')}
-            </DialogDescription>
-          </DialogHeader>
-          <DialogFooter>
-            <Button
-              type="button"
-              className="min-h-[44px]"
-              onClick={() => {
-                setPwResetOpen(false);
-                toast.success(
-                  t('settings.changePasswordToast').replace('{email}', sessionSub || ''),
-                );
-              }}
-            >
-              {t('settings.changePasswordSend')}
-            </Button>
-          </DialogFooter>
-        </DialogContent>
-      </Dialog>
 
       {withdrawOpen && (
         <div
@@ -415,25 +364,26 @@ export default function Settings() {
                 ))}
               </div>
             </div>
-            <div>
-              <label htmlFor="withdraw-pw" className="text-xs text-muted-foreground block mb-1.5">
-                {t('settings.withdrawPwLabel')}
-              </label>
-              <PasswordInput
-                id="withdraw-pw"
-                autoComplete="current-password"
-                value={withdrawPassword}
-                onChange={(e) => setWithdrawPassword(e.target.value)}
-                className="w-full min-h-[44px] px-3 py-2.5 rounded-lg border border-input bg-white text-sm focus:outline-none focus:ring-2 focus:ring-ring"
-                placeholder={t('settings.withdrawPwPh')}
+            <div className="flex items-start gap-3 rounded-lg border border-border/40 bg-muted/40 p-3">
+              <Checkbox
+                id="withdraw-consent"
+                checked={withdrawConsent}
+                onCheckedChange={(v) => setWithdrawConsent(v === true)}
+                className="mt-0.5"
               />
+              <Label
+                htmlFor="withdraw-consent"
+                className="cursor-pointer text-sm font-normal leading-snug text-foreground"
+              >
+                {t('settings.withdrawConsentLabel')}
+              </Label>
             </div>
             <div className="flex gap-2 justify-end pt-2">
               <Button
                 type="button"
                 onClick={() => {
                   setWithdrawOpen(false);
-                  setWithdrawPassword('');
+                  setWithdrawConsent(false);
                   setWithdrawReason('');
                 }}
                 className="min-h-[44px] px-4 py-2.5 text-sm font-medium rounded-lg border border-border lg:hover:bg-muted/50"

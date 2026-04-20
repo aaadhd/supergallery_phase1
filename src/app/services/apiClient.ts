@@ -26,14 +26,14 @@ export async function apiFetch(path: string, init?: RequestInit): Promise<Respon
   });
 }
 
-/** 회원가입 등 — 백엔드 준비 전에는 호출하지 않음 */
-export async function registerEmailAccount(_payload: {
+/** 이메일 매직 링크 발송 — 백엔드 미구성 시 no-op (Phase 1은 magicLinkStore 로컬 모의로 대체) */
+export async function requestEmailMagicLink(_payload: {
   email: string;
-  password: string;
-  nickname: string;
+  intent: 'login' | 'signup';
+  redirectTo?: string;
 }): Promise<void> {
   if (!isApiConfigured()) return;
-  await apiFetch('/auth/register', {
+  await apiFetch('/auth/magic-link', {
     method: 'POST',
     body: JSON.stringify(_payload),
   });
