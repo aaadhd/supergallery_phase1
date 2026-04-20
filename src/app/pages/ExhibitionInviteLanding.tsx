@@ -59,13 +59,47 @@ export default function ExhibitionInviteLanding() {
   const works = store.getWorks();
   const seed = useMemo(() => works.find((w) => w.id === id), [works, id]);
 
+  // 전시 삭제 (Policy §3.3)
   if (!seed) {
     return (
-      <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4">
-        <p className="text-muted-foreground text-center">{t('invite.invalid')}</p>
-        <Link to="/" className="mt-4 text-sm font-medium text-primary lg:hover:underline">
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 gap-3 text-center">
+        <h1 className="text-lg font-semibold text-foreground">{t('invite.deletedTitle')}</h1>
+        <p className="text-sm text-muted-foreground max-w-md">{t('invite.deletedBody')}</p>
+        <Link to="/" className="mt-2 inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 rounded-xl border border-border text-sm font-semibold text-foreground lg:hover:bg-muted/50">
           {t('invite.browse')}
         </Link>
+      </div>
+    );
+  }
+
+  // 자동·확정 비공개 전시 (Policy §3.3 · §12.2) — 본문 비노출, 가입 CTA 유지
+  if (seed.isHidden === true) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 gap-4 text-center">
+        <h1 className="text-lg font-semibold text-foreground">{t('invite.hiddenTitle')}</h1>
+        <p className="text-sm text-muted-foreground max-w-md">{t('invite.hiddenBody')}</p>
+        <div className="mt-2 flex flex-wrap gap-2 justify-center">
+          {!auth.isLoggedIn() && (
+            <Link
+              to="/signup?invited=1"
+              onClick={() => {
+                try {
+                  localStorage.setItem('artier_pending_sms_invite', '1');
+                  const invitedPhone = searchParams.get('invited_phone');
+                  const invitedName = searchParams.get('invited_name');
+                  if (invitedPhone) localStorage.setItem('artier_pending_signup_phone', invitedPhone);
+                  if (invitedName) localStorage.setItem('artier_pending_signup_realname', invitedName);
+                } catch { /* ignore */ }
+              }}
+              className="inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold lg:hover:bg-primary/90"
+            >
+              {t('workDetail.inspireCtaButton')}
+            </Link>
+          )}
+          <Link to="/" className="inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 rounded-xl border border-border text-sm font-semibold text-foreground lg:hover:bg-muted/50">
+            {t('invite.browse')}
+          </Link>
+        </div>
       </div>
     );
   }

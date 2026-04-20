@@ -1,11 +1,14 @@
-# Artier — 서비스 정책 v1.0
+# Artier — 서비스 정책 v2.4
 
-> **v1.0 변경 요약 (2026-04-19)**:
-> - 최초 작성. 가입·인증, 업로드, 신고, 탈퇴, 큐레이션, 포인트 등 Artier Phase 1 전체 정책을 22개 섹션으로 통합.
-> - §21 법무 체크포인트(검토 문서 4종 · 정책 포인트 10개 · 런칭 전 필수 수행 리스트), §22 운영 리스크·SLA(검수·신고·이의제기·어뷰즈 방지·에스컬레이션·보관 기준) 포함.
+> **v2.4 변경 요약 (2026-04-20)**:
+> - §3.3 자동·확정 비공개 전시의 초대 링크 랜딩 안내 추가.
+> - §4.1 "작가 미상" 라벨 의미(탈퇴·disavow 동일 취급) 명시.
+> - §23.2 Phase 2 상태 통합(단일 visibility enum) 검토 노트 추가(SystemArch N-11 연결).
+> - §25.2 이벤트 변경 재검수 트리거 여부 명확화(메타 변경이므로 트리거 없음).
 
 **작성일**: 2026-04-19
-**버전**: v1.0
+**최종 갱신**: 2026-04-20
+**버전**: v2.4
 **상위 참조**: [README.md](README.md), [SystemArchitecture_v1.md](SystemArchitecture_v1.md), [IA_ScreenList_v1.md](IA_ScreenList_v1.md)
 **본 문서의 목적**: Artier 서비스 운영·개발·CS·법무가 참조하는 **모든 정책·수치·규칙**의 단일 소스. 화면·UI 구현은 [`PRD_User_v1.md`](PRD_User_v1.md) · [`PRD_Admin_v1.md`](PRD_Admin_v1.md)에서, 데이터 모델·외부 연동은 [`SystemArchitecture_v1.md`](SystemArchitecture_v1.md)에서 다룬다.
 
