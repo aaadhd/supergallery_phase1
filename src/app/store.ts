@@ -63,7 +63,7 @@ export interface Draft {
     title?: string;
     artist?: { id: string; name: string; avatar: string };
     nonMemberArtist?: { displayName: string; phoneNumber: string };
-    artistType?: 'member' | 'non-member' | 'self';
+    artistType?: 'member' | 'non-member' | 'self' | 'unknown';
     fullWidth?: boolean;
   }>;
   tags: string[];

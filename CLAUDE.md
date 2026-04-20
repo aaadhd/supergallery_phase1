@@ -79,7 +79,7 @@
 - `src/app/store.ts` — `WORKS_STORAGE_VERSION` 스토리지 버전 관리 (현재 값 `local-gallery-v13`, 키 `artier_works_version`)
 - `src/app/store/workStore.ts`, `draftStore.ts` — 작품/초안 상태
 - `src/app/utils/inviteMessaging.ts` — 초대 발송 (5% 랜덤 실패 시뮬, `artier_invite_messaging_log`) + `matchSmsInviteOnSignup` 가입 시 **전화번호 단독 일치로 모든 초대 작품 자동 연결** (2026-04-19 단순화 — PASS 본인인증 전제, 실명 대조 폐기). `demoteSlotToUnknown`으로 마이페이지 disavow 시 슬롯을 `'unknown'` (작가 미상)으로 원복 + 발신자에게 알림(경고 없음).
-- `src/app/utils/sanctionStore.ts` — 경고·허위신고 카운터 + 정지 단계 (`SuspensionLevel`, `addWarning`, `addFalseReport`, `suspendDemoUser`)
+- `src/app/utils/sanctionStore.ts` — (Phase 2 준비용) 경고·허위신고 카운터 + 정지 단계. Phase 1 정책(§12.3)상 호출부 없음. Phase 2 사용자 제재 재설계 시 활용.
 - `src/app/utils/adminGate.ts` — 운영팀 역할 토글
 - `src/app/utils/feedOrdering.ts` — 둘러보기 피드 랭킹
 - `src/app/utils/feedVisibility.ts` — 피드 공개 여부 필터
@@ -177,33 +177,33 @@
 | `VITE_UPLOAD_AUTO_APPROVE=true` | 업로드 즉시 `approved` (검수 대기 우회) | 로컬·PM 데모 편의 — **프로덕션 비권장** |
 | `VITE_ADMIN_OPEN=true` | 어드민 게이트 우회 | CI / 프리뷰 환경 |
 
-## 신고·정지 정책 (2026-04-15 보강)
+## 신고·모더레이션 정책 (2026-04-20 Phase 1 단순화)
+
+Phase 1은 **작품 단위 모더레이션만** 다룬다. 사용자 계정 차원 제재(주의·시한부 정지·영구 정지·경고 카운터·허위 신고 카운터)는 **Phase 2**에서 재설계. Policy §12.3.
 
 ### 신고 처리 액션 (어드민 콘솔 `admin/ReportManagement.tsx`)
-운영팀이 접수된 신고를 처리할 때 4가지 액션 + 1가지 리스트 정리 옵션:
+
+3가지 액션 + 1가지 리스트 정리 옵션:
 
 | 액션 | 효과 | 비고 |
 |---|---|---|
 | **삭제** | 작품 신고 한정. `workStore.removeWork`로 영구 삭제 후 `adminStatus: 'deleted'` | `openConfirm`으로 confirm 필요 |
-| **경고** | 신고 대상 작가에게 경고 카운트 +1 (`sanctionStore.addWarning`). 3회 누적 시 7일 정지로 자동 승격 | `adminStatus: 'warned'` |
-| **기각** | 신고를 부당으로 판정. 신고자 허위 신고 카운트 +1 (`sanctionStore.addFalseReport`). 3회 누적 시 신고자 7일 차단 | `adminStatus: 'dismissed'` |
-| **비공개** | 작품에 `isHidden: true` 적용 (둘러보기·검색에서 제외, 작가 본인 프로필엔 보임) | `adminStatus: 'hidden'` |
+| **기각** | 신고 부당 판정. 자동 비공개 상태였다면 **즉시 복원**(`isHidden: false`) | `adminStatus: 'dismissed'` |
+| **비공개 유지** | 작품에 `isHidden: true` 유지 (둘러보기·검색에서 제외, 작가 본인 프로필엔 보임) | `adminStatus: 'hidden'` |
 | (목록에서 제거) | 액션 없이 큐에서만 제거 (레거시 호환) | `removeUserReport` |
 
-### 정지 단계 (어드민 콘솔 `admin/MemberManagement.tsx`)
-4단계 라디오 모달로 선택:
-- **주의** (warning): 정지 없이 경고 표시만. 누적 시 정지로 승격
-- **7일 정지**: 시한부
-- **30일 정지**: 시한부
-- **영구 정지**: 무기한
+### 2회 자동 비공개 (Phase 1 핵심)
 
-데모 사용자(`artists[0]` = 카테)에 한해 글로벌 `accountSuspensionStore` + `authStore.logout()` 즉시 적용 → 다음 로그인 시 차단. 기타 목업 회원은 표시만 변경.
+- 같은 전시에 **2번째 신고가 접수되는 순간** 즉시 `isHidden: true` + `adminStatus: 'hidden'` 전환. 작가에게 시스템 알림 1건.
+- 운영팀이 위 3액션 중 하나로 확정. 기각 판정 시 복원.
+- 트리거 위치: `reportsStore.appendUserReport` (신고 저장 직후 동일 `workId` 카운트 체크).
 
-### 자동 승격 로직 (`utils/sanctionStore.ts`)
-- 경고 누적 3회 → 자동 7일 정지
-- 허위 신고 누적 3회 → 자동 7일 차단
-- 카운트는 `artier_warning_counter_v1` / `artier_false_report_counter_v1` 키로 저장
-- 백엔드 연동 시 사용자 sanction history 테이블로 이관, 이 store는 폐기 예정
+### 폐기된 것 (2026-04-20 기준)
+
+- `sanctionStore.addWarning` / `addFalseReport` 호출부 — 제거됨(스토어 자체는 Phase 2 준비용으로 남음)
+- `accountSuspensionStore` 호출부 — 제거됨(데모용 Login.tsx 쿼리 플래그만 남음)
+- `ADM-MBR-03` 정지 모달 UI — Phase 2 이관
+- 경고·자동 승격·이의제기 SLA 관련 모든 로직
 
 ## 데이터·영속화
 

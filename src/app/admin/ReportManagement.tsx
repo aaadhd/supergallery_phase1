@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { CheckCircle2, EyeOff, Trash2, AlertTriangle, XCircle, ExternalLink } from 'lucide-react';
+import { CheckCircle2, EyeOff, Trash2, XCircle, ExternalLink } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { openConfirm } from '../components/ConfirmDialog';
 import { workStore } from '../store';
@@ -9,15 +9,15 @@ import {
   loadUserReports,
   updateUserReport,
   removeUserReport,
+  maybeRestoreAfterDismiss,
   REPORTS_CHANGED_EVENT,
   REPORTS_STORAGE_KEY,
   type StoredUserReport,
 } from '../utils/reportsStore';
-import { addWarning, addFalseReport, getWarningCount, getFalseReportCount } from '../utils/sanctionStore';
 import { pushDemoNotification } from '../utils/pushDemoNotification';
 import { useI18n } from '../i18n/I18nProvider';
 
-type ReportState = '대기' | '비공개' | '삭제' | '경고' | '기각' | '처리완료';
+type ReportState = '대기' | '비공개 유지' | '삭제' | '기각' | '처리완료';
 type ReportKind = '작품' | '댓글' | '프로필';
 
 type ReportRow = {
@@ -42,9 +42,9 @@ function mapUserReportToRow(r: StoredUserReport): ReportRow {
   const statusMap: Record<NonNullable<StoredUserReport['adminStatus']>, ReportState> = {
     pending: '대기',
     resolved: '처리완료',
-    hidden: '비공개',
+    hidden: '비공개 유지',
     deleted: '삭제',
-    warned: '경고',
+    warned: '처리완료', // legacy data: "경고"는 Phase 2로 이관됨
     dismissed: '기각',
   };
   const status: ReportState = statusMap[r.adminStatus ?? 'pending'];
@@ -67,8 +67,7 @@ function mergeReportRows(): ReportRow[] {
 function stateBadge(s: ReportState) {
   switch (s) {
     case '삭제': return 'bg-red-50 text-red-700 border border-red-200';
-    case '비공개': return 'bg-orange-50 text-orange-700 border border-orange-200';
-    case '경고': return 'bg-amber-50 text-amber-700 border border-amber-200';
+    case '비공개 유지': return 'bg-orange-50 text-orange-700 border border-orange-200';
     case '기각': return 'bg-slate-100 text-slate-600 border border-slate-200';
     case '처리완료': return 'bg-emerald-50 text-emerald-700 border border-emerald-200';
     default: return 'bg-amber-50 text-amber-900 border border-amber-200';
@@ -120,23 +119,23 @@ export default function ReportManagement() {
     });
   }, [rows, statusFilter, typeFilter]);
 
-  const makePrivate = (id: string) => {
+  /** 비공개 유지: 자동 비공개(Policy §12.2) 또는 아직 공개 중인 대상을 운영자 확정 비공개로 전환. */
+  const keepHidden = (id: string) => {
     const raw = loadUserReports().find((r) => r.id === id);
     if (!raw) return;
     if (raw.targetType === 'work' && raw.targetId) {
       workStore.updateWork(raw.targetId, { isHidden: true });
       updateUserReport(id, { adminStatus: 'hidden' });
-      // 작품 작가에게 비공개 처리 알림 (Loop: 신고 → 조치 → 피드백)
       pushDemoNotification({
         type: 'system',
         message: t('report.notifTargetWorkHidden').replace('{title}', raw.targetName),
         workId: raw.targetId,
       });
-      toast.success('작품을 비공개로 저장했습니다. Artier 둘러보기·검색에서 제외됩니다.');
+      toast.success('작품 비공개를 유지했습니다. Artier 둘러보기·검색에서 제외됩니다.');
       return;
     }
     updateUserReport(id, { adminStatus: 'hidden' });
-    toast.message('이 신고는 비공개 처리로 마감했습니다.');
+    toast.message('이 신고는 비공개 유지로 마감했습니다.');
   };
 
   /** 삭제: 작품을 영구 삭제 + 신고 처리 (작품 신고에만 적용) */
@@ -167,91 +166,30 @@ export default function ReportManagement() {
   };
 
   /**
-   * 경고: 신고 대상자에게 경고 누적 (3회 시 자동 7일 정지).
-   * 자동 승격 임박(누적 2회 → 이번 3회)인 경우 복구 불가 확인 다이얼로그로 한 번 더 체크.
-   * Policy §22.4 어뷰즈 방지 — 실수로 무고한 사용자 정지 방지.
+   * 기각: 신고 부당 판정. 자동 비공개 상태(관리자 확정 비공개가 하나도 없음)였다면 즉시 복원.
+   * Phase 1은 신고자 카운트 없음 (Policy §12.3).
    */
-  const warnTarget = async (id: string) => {
+  const dismissReport = (id: string) => {
     const raw = loadUserReports().find((r) => r.id === id);
     if (!raw) return;
-    const targetArtistId = raw.targetArtistId ?? '';
-    if (!targetArtistId) {
-      toast.error('대상 작가 ID가 없어 경고를 적용할 수 없습니다.');
-      return;
-    }
-    // 자동 승격 임박 경고
-    const currentCount = getWarningCount(targetArtistId);
-    if (currentCount === 2) {
-      const ok = await openConfirm({
-        title: '경고 3회 누적 — 자동 7일 정지됩니다',
-        description: `${raw.targetName} 작가가 이미 경고 2회 누적 상태입니다. 이 경고로 자동 7일 정지가 적용됩니다. 계속할까요?`,
-        destructive: true,
-        confirmLabel: '경고 적용',
-      });
-      if (!ok) return;
-    }
-    const { count, triggeredSuspension } = addWarning(targetArtistId);
-    updateUserReport(id, { adminStatus: 'warned' });
-    // 대상 작가에게 경고 알림 (자동 승격 시 추가 알림)
+    updateUserReport(id, { adminStatus: 'dismissed' });
     pushDemoNotification({
       type: 'system',
-      message: t('report.notifTargetWarned').replace('{count}', String(count)),
-      workId: raw.targetId,
+      message: t('report.notifReporterDismissed'),
     });
-    if (triggeredSuspension) {
-      pushDemoNotification({
-        type: 'system',
-        message: t('report.notifTargetAutoSuspended'),
-      });
-      toast.error(`경고 ${count}회 누적 — 7일 정지가 자동 적용되었습니다.`);
-    } else {
-      toast.success(`경고가 적용되었습니다. (누적 ${count}/3회)`);
-    }
-  };
-
-  /**
-   * 기각: 신고를 부당하다고 판단 — 신고자에게 허위 신고 카운트 +1.
-   * 자동 차단 임박(누적 2회 → 이번 3회)인 경우 확인 다이얼로그.
-   */
-  const dismissReport = async (id: string) => {
-    const raw = loadUserReports().find((r) => r.id === id);
-    if (!raw) return;
-    const reporterId = raw.reporterId ?? '';
-    if (reporterId) {
-      const currentCount = getFalseReportCount(reporterId);
-      if (currentCount === 2) {
-        const ok = await openConfirm({
-          title: '허위 신고 3회 누적 — 신고자 7일 차단됩니다',
-          description: '신고자가 이미 허위 신고 2회 누적 상태입니다. 이번 기각으로 신고자가 자동 7일 차단됩니다. 계속할까요?',
-          destructive: true,
-          confirmLabel: '기각',
-        });
-        if (!ok) return;
-      }
-      const { count, triggeredBlock } = addFalseReport(reporterId);
-      updateUserReport(id, { adminStatus: 'dismissed' });
-      // 신고자에게 기각 알림 (자동 차단 시 추가 알림)
-      pushDemoNotification({
-        type: 'system',
-        message: t('report.notifReporterDismissed'),
-      });
-      if (triggeredBlock) {
+    if (raw.targetType === 'work' && raw.targetId) {
+      const restored = maybeRestoreAfterDismiss(raw.targetId);
+      if (restored) {
         pushDemoNotification({
           type: 'system',
-          message: t('report.notifReporterAutoBlocked'),
+          message: `'${raw.targetName}' 전시가 검토 결과 정상 복원되었습니다.`,
+          workId: raw.targetId,
         });
-        toast.error(`허위 신고 ${count}회 누적 — 신고자가 7일 차단되었습니다.`);
-      } else {
-        toast.message(`신고를 기각했습니다. 신고자 허위 신고 누적 ${count}/3회.`);
+        toast.message('기각 처리 — 자동 비공개였던 전시를 복원했습니다.');
+        return;
       }
-    } else {
-      updateUserReport(id, { adminStatus: 'dismissed' });
-      pushDemoNotification({
-        type: 'system',
-        message: t('report.notifReporterDismissed'),
-      });
-      toast.message('신고를 기각했습니다.');
     }
+    toast.message('신고를 기각했습니다.');
   };
 
   /** 목록에서만 제거 (레거시 무시 액션) */
@@ -291,8 +229,7 @@ export default function ReportManagement() {
           <option value="전체">상태: 전체</option>
           <option value="대기">대기</option>
           <option value="삭제">삭제</option>
-          <option value="비공개">비공개</option>
-          <option value="경고">경고</option>
+          <option value="비공개 유지">비공개 유지</option>
           <option value="기각">기각</option>
           <option value="처리완료">처리완료(레거시)</option>
         </select>
@@ -381,18 +318,9 @@ export default function ReportManagement() {
                         type="button"
                         variant="outline"
                         disabled={r.status !== '대기'}
-                        onClick={() => warnTarget(r.id)}
-                        className="text-sm px-3 py-1.5 rounded-lg border-amber-300 text-amber-700 lg:hover:bg-amber-50"
-                      >
-                        <AlertTriangle className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
-                        경고
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        disabled={r.status !== '대기'}
                         onClick={() => dismissReport(r.id)}
                         className="text-sm px-3 py-1.5 rounded-lg"
+                        title="신고 기각 — 자동 비공개였다면 즉시 복원"
                       >
                         <XCircle className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
                         기각
@@ -401,12 +329,12 @@ export default function ReportManagement() {
                         type="button"
                         variant="ghost"
                         disabled={r.status !== '대기'}
-                        onClick={() => makePrivate(r.id)}
+                        onClick={() => keepHidden(r.id)}
                         className="text-sm px-3 py-1.5 rounded-lg text-muted-foreground"
-                        title="작품만 비공개로 전환 (대상 게시는 삭제하지 않음)"
+                        title="비공개 유지 — 운영자 확정 비공개로 전환"
                       >
                         <EyeOff className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
-                        비공개
+                        비공개 유지
                       </Button>
                       <Button
                         type="button"

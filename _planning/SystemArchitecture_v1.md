@@ -1125,11 +1125,11 @@ pushDemoNotification({
 - `toggle(id): void` — 탈퇴 작가는 no-op
 - `subscribe(listener): () => void`
 
-#### `accountSuspensionStore`
+#### `accountSuspensionStore` (Phase 2 준비용 — Phase 1 미사용)
 - `get(): AccountSuspension` (`{ active, until }`)
 - `set(next): void` / `clear(): void`
 - `subscribe(listener): () => void`
-- 데모 사용자 한해 즉시 로그아웃 적용.
+- 데모 사용자 한해 즉시 로그아웃 적용 스캐폴딩. **Phase 1은 계정 단위 정지가 없으므로(Policy §12.3) 호출부 없음**. Phase 2 사용자 제재 재설계 시 활용 예정.
 
 #### `withdrawnArtistStore`
 - `getIds(): string[]`
@@ -1157,13 +1157,14 @@ pushDemoNotification({
 - `appendUserReport(entry)` / `updateUserReport(id, patch)` / `removeUserReport(id)`
 - 변경 알림: window event `artier-reports-changed` (`REPORTS_CHANGED_EVENT` 상수 export).
 
-#### 함수형 스토어 — `sanctionStore` (패턴 B, 제재 카운터)
+#### 함수형 스토어 — `sanctionStore` (Phase 2 준비용 — Phase 1 미사용)
 - `addWarning(targetArtistId): { count, triggeredSuspension }`
 - `addFalseReport(reporterId): { count, triggeredBlock }`
 - `getWarningCount(id)` / `getFalseReportCount(id)`
-- `getAllWarningCounters()` / `getAllFalseReportCounters()` — 어드민 조회용
-- `suspendDemoUser(days, reason): void` — 데모 한정 즉시 적용
-- `SUSPENSION_LEVEL_DAYS`: Record (warning/7/30/permanent) 상수 export
+- `getAllWarningCounters()` / `getAllFalseReportCounters()`
+- `suspendDemoUser(days, reason): void`
+- `SUSPENSION_LEVEL_DAYS`: Record 상수
+- **Phase 1은 계정 단위 제재가 없다(Policy §12.3)**. 본 스토어의 export는 Phase 2 사용자 제재 재설계 시 재활용 예정이며, Phase 1 어드민·신고 처리 플로우에서 호출하지 않는다.
 
 **대응 React 훅** (패턴 A 도메인 스토어만): `useWorkStore`, `useDraftStore`, `useProfileStore`, `useAuthStore`, `useInteractionStore`, `useFollowStore`, `useAccountSuspensionStore`. 훅 내부에서 `subscribe` + `useState`로 리렌더 유도. 피처 스토어는 호출 측에서 필요 시 직접 `subscribe` 래핑.
 
@@ -1253,6 +1254,7 @@ useI18n() => {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.6 | 2026-04-20 | PM × Claude | §13.3 스토어 계약 갱신 — `accountSuspensionStore`·`sanctionStore`에 "Phase 2 준비용 · Phase 1 미사용" 주석 추가 (Policy v2.1 연동). |
 | v1.5 | 2026-04-20 | PM × Claude | §13 "공용 컴포넌트·스토어 계약" 신설 — openConfirm·pushDemoNotification·**11개 스토어 전수 API**(8 도메인 + 3 피처 + 2 함수형)·i18n 계약·**공용 컴포넌트 20개 전수 목록**·부트 절차·**환경 플래그 4개 전수**. 기존 §13(다음 문서 연결)은 §14로 리넘버링. 문서 단독 재현성 목표(코드 경로 없음). |
 | v1.4 | 2026-04-19 | PM × Claude | §3 ERD · §3.1 엔티티 설명 · §3.2 필드 표에 `ADMIN_AUDIT_LOG` 추가 — 운영자 감사 로그 append-only 12필드 스키마, USER/WORK/EVENT와의 관계. 단일 소스는 PRD_Admin §0.6. |
 | v1.3 | 2026-04-19 | PM × Claude | Phase 2 용어 정비 — §1 TOC · §1 다이어그램 외부 시스템 라벨 · §3 ERD 서문 · §4.3 삭제 연쇄 정리 · §4.4 헤더("Phase 2 — 백엔드 전환" → "런칭 전 백엔드 전환") · §5.1 인증 표 컬럼 · §5.2 알림 · §5.3 분석 · §6.1 접근 제어 · §10 N-6 · §12.1 배포 9곳에서 런칭 전 백엔드 연동 작업을 "런칭 전 백엔드 연동 후"로 교체. coOwners 재검토는 "후순위"로 이관. 수익 모델·권한 계층·카테고리 분류·커뮤니티 확장·OG 동적 생성 등 실제 2차 그랜드 오픈 범위는 Phase 2 유지. |

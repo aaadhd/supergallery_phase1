@@ -8,7 +8,6 @@ import { useIssueStore, useChecklistStore, usePartnerStore } from './adminStore'
 import { STATUS_COLORS } from './constants';
 import { workStore, useWorkStore } from '../store';
 import { loadUserReports, REPORTS_CHANGED_EVENT } from '../utils/reportsStore';
-import { getAllWarningCounters } from '../utils/sanctionStore';
 
 export default function AdminDashboard() {
   const issueStore = useIssueStore();
@@ -44,9 +43,8 @@ export default function AdminDashboard() {
     };
   }, []);
 
-  // 경고 누적 회원 수(1회 이상)
-  const warningMap = getAllWarningCounters();
-  const warnedMemberCount = Object.values(warningMap).filter(n => n > 0).length;
+  // 자동 비공개 처리된 전시 수 (Policy §12.2)
+  const autoHiddenCount = workStore.getWorks().filter(w => w.isHidden === true).length;
 
   // Issue stats
   const issuesByStatus = issues.reduce((acc, i) => {
@@ -142,17 +140,17 @@ export default function AdminDashboard() {
             </Card>
           </Link>
 
-          <Link to="/admin/members">
+          <Link to="/admin/reports">
             <Card className="lg:hover:shadow-md transition-shadow cursor-pointer">
               <CardHeader className="pb-2">
                 <CardDescription className="flex items-center gap-2">
                   <ShieldAlert className="w-4 h-4" />
-                  경고 누적 회원
+                  비공개 전시
                 </CardDescription>
-                <CardTitle className="text-3xl">{warnedMemberCount}</CardTitle>
+                <CardTitle className="text-3xl">{autoHiddenCount}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-xs text-muted-foreground">경고 3회 누적 시 자동 정지</p>
+                <p className="text-xs text-muted-foreground">2회 신고 자동 비공개 + 확정 비공개 합계</p>
               </CardContent>
             </Card>
           </Link>
