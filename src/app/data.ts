@@ -115,7 +115,7 @@ export const artists: Artist[] = [
   { id: '18', name: '권순자', avatar: 'https://images.unsplash.com/photo-1546967191-fdfb13ed6b1e?w=100&h=100&fit=crop', bio: '전통 민화를 디지털로 재해석합니다', followers: 2765, following: 134 },
   { id: '19', name: '빛을그리다', avatar: 'https://images.unsplash.com/photo-1566492031773-4f4e44671857?w=100&h=100&fit=crop', bio: '빛과 그림자의 감성 디지털 페인팅', followers: 2987, following: 189 },
   { id: '20', name: '정림수채화', avatar: 'https://images.unsplash.com/photo-1607746882042-944635dfe10e?w=100&h=100&fit=crop', bio: '40년 화가 인생, 디지털 수채의 매력에 빠지다', followers: 5234, following: 223 },
-  { id: '21', name: '오후의캔버스', avatar: 'https://images.unsplash.com/photo-1580820258381-20c91a156841?w=100&h=100&fit=crop', bio: '오후의 햇살 같은 따뜻한 그림', followers: 1876, following: 156 },
+  { id: '21', name: '오후의캔버스', avatar: 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=100&h=100&fit=crop', bio: '오후의 햇살 같은 따뜻한 그림', followers: 1876, following: 156 },
   { id: '22', name: '장혜숙', avatar: 'https://images.unsplash.com/photo-1559839734-2b71ea197ec2?w=100&h=100&fit=crop', bio: '식물 세밀화와 디지털 일러스트', followers: 2543, following: 198 },
   { id: '23', name: '고요한붓끝', avatar: 'https://images.unsplash.com/photo-1438761681033-6461ffad8d80?w=100&h=100&fit=crop', bio: '침묵 속에서 피어나는 색', followers: 1654, following: 123 },
   { id: '24', name: '안명순', avatar: 'https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?w=100&h=100&fit=crop', bio: '정원과 꽃을 주로 그립니다', followers: 3298, following: 187 },
