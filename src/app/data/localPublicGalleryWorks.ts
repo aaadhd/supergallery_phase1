@@ -412,19 +412,29 @@ export function buildLocalPublicWorks(paths: string[], artistsList: Artist[]): W
 
   const groupMultiMocks: Work[] = [];
   const removeGroupSingleIds = new Set<string>();
+  // Policy §13.4 그룹 전시는 2+ 작가 필수. multi 목업으로 묶이지 못한 group single은 solo로 강등.
+  const downgradeToSoloIds = new Set<string>();
   const sortedGroupBuckets = Array.from(groupBuckets.values()).sort((a, b) => b.length - a.length);
   const targetGroupedCoverage = Math.round(groupSingles.length * 0.72);
   let groupedCoverage = 0;
   let groupMockIdx = 0;
   for (const list of sortedGroupBuckets) {
-    if (groupedCoverage >= targetGroupedCoverage) break;
-    if (list.length < 2) continue;
+    const canBecomeMulti = list.length >= 2 && groupedCoverage < targetGroupedCoverage;
+    if (!canBecomeMulti) {
+      // 2+ 묶이지 못했거나 타깃 커버리지 초과 — 그룹 전시 요건 미충족 → 강등
+      list.forEach((w) => downgradeToSoloIds.add(w.id));
+      continue;
+    }
 
     const picked = list.slice(0, Math.min(6, list.length));
     const imageList = picked
       .map((w) => (Array.isArray(w.image) ? w.image[0] : w.image))
       .filter((src): src is string => Boolean(src));
-    if (imageList.length < 2) continue;
+    if (imageList.length < 2) {
+      // 실제 이미지 수도 부족 → 강등
+      list.forEach((w) => downgradeToSoloIds.add(w.id));
+      continue;
+    }
 
     const lead = picked[0];
     const pieceTitles = picked.map((w, idx) => w.title?.trim() || `작품 ${idx + 1}`);
@@ -450,10 +460,30 @@ export function buildLocalPublicWorks(paths: string[], artistsList: Artist[]): W
     for (const w of picked) {
       removeGroupSingleIds.add(w.id);
     }
+    // picked에 들지 못한 버킷 내 나머지(list.length > 6)도 강등 — 한 버킷 내 잔여 single이
+    // 그룹 전시 타이틀만 달고 남으면 동일 문제 재발하므로.
+    for (const w of list) {
+      if (!removeGroupSingleIds.has(w.id)) downgradeToSoloIds.add(w.id);
+    }
     groupedCoverage += picked.length;
   }
 
-  const baseWorksAfterGroupMerge = baseWorks.filter((w) => !removeGroupSingleIds.has(w.id));
+  const baseWorksAfterGroupMerge = baseWorks
+    .filter((w) => !removeGroupSingleIds.has(w.id))
+    .map((w) => {
+      if (!downgradeToSoloIds.has(w.id)) return w;
+      // 강등: 그룹 맥락 제거 → 개인 전시로. 전시명은 작가 개인전으로 재설정.
+      return {
+        ...w,
+        primaryExhibitionType: 'solo' as const,
+        groupName: undefined,
+        owner: undefined,
+        coOwners: undefined,
+        exhibitionName: `${w.artist.name} 개인전`,
+        description: `전시 「${w.artist.name} 개인전」에 속한 작품입니다. 대표 작가 ${w.artist.name}. public/images 로컬 갤러리.`,
+        tags: [`${w.artist.name} 개인전`, w.artist.name, '로컬 갤러리'],
+      };
+    });
 
   // 둘러보기 목업 다양성: 개인전시(solo)의 약 30%를 다장 업로드 케이스로 합성한다.
   const soloBuckets = new Map<string, Work[]>();
