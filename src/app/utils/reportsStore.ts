@@ -72,7 +72,10 @@ export function appendUserReport(
     if (sameWorkReports.length >= AUTO_HIDE_REPORT_THRESHOLD) {
       const work = workStore.getWork(workId);
       if (work && work.isHidden !== true) {
-        workStore.updateWork(workId, { isHidden: true });
+        workStore.updateWork(workId, {
+          isHidden: true,
+          autoHiddenAt: new Date().toISOString(),
+        });
         pushDemoNotification({
           type: 'system',
           message: `'${work.exhibitionName || work.title}' 전시가 신고 누적으로 자동 비공개 처리되었습니다. 운영팀 검토 대기 중.`,

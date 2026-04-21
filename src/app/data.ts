@@ -54,6 +54,13 @@ export interface Work {
   /** image 배열과 동일 순서·길이. 장별 작품명(비어 있으면 표시는 무제). 업로드 시 빈 칸은 전시명으로 채울 수 있음 */
   imagePieceTitles?: string[];
   isHidden?: boolean; // 비공개 여부
+  /**
+   * 자동 비공개 발동 시각 (Policy §12.2 / §12.2.1 SLA 기준).
+   * `appendUserReport`에서 2회 신고 트리거 시 `isHidden: true`와 함께 ISO 8601로 기록.
+   * 운영팀이 판정(삭제·기각·비공개 유지)을 완료하면 새 판정 시점까지 유지됨.
+   * ADM-RPT-01 큐 SLA 배지 계산 기준.
+   */
+  autoHiddenAt?: string;
   /** 컬렉터블/판매 배지 등 (UI 데모) */
   isForSale?: boolean;
   /** 둘러보기 피드 편입 — 미지정·승인 = 피드 노출, 대기·반려 = 피드 제외 (콘텐츠 운영 정책) */

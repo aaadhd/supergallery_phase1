@@ -15,6 +15,7 @@ import {
   CalendarRange,
   Flag,
   UserCog,
+  MessageSquare,
 } from 'lucide-react';
 import { LABELS } from './constants';
 import { authStore } from '../store';
@@ -36,6 +37,7 @@ const navItems: { to: string; icon: typeof LayoutDashboard; labelKey: MessageKey
   { to: '/admin/managed-events', icon: CalendarRange, labelKey: 'admin.nav.managedEvents' },
   { to: '/admin/reports', icon: Flag, labelKey: 'admin.nav.reports' },
   { to: '/admin/members', icon: UserCog, labelKey: 'admin.nav.members' },
+  { to: '/admin/inquiries', icon: MessageSquare, labelKey: 'admin.nav.inquiries' },
 ];
 
 export default function AdminLayout() {

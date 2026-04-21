@@ -273,21 +273,18 @@ const koMessages = {
   'refStub.geoSource': '출처',
   'refStub.geoSourceIpapi': 'ipapi.co',
   'refStub.geoSourceFallback': '로컬 폴백',
-  'refStub.tplTitle': '3. 이메일 알림 템플릿 (미리보기 · PRD 10종)',
+  'refStub.tplTitle': '3. 이메일 알림 템플릿 (미리보기 · PRD 9종)',
   'refStub.tplLead':
-    '기능 모음 「이메일 알림 템플릿」과 동일한 10종입니다. 실제 발송 없이 문구만 확인합니다. 좋아요·팔로우 등은 인앱(및 옵트인 이메일)로 별도 정의됩니다.',
+    '기능 모음 「이메일 알림 템플릿」과 동일한 9종입니다. 실제 발송 없이 문구만 확인합니다. 좋아요·팔로우 등은 인앱(및 옵트인 이메일)로 별도 정의됩니다. 비밀번호 재설정·변경 템플릿은 §2.5 매직 링크 전환으로 폐기되었습니다.',
   'refStub.tplWelcomeSubject': 'Artier에 오신 것을 환영합니다 🎨',
   'refStub.tplWelcomeBody':
     '{nickname}님, 환영해요!\nArtier는 나의 그림이 전시가 되는 디지털 갤러리예요.\n작품을 올리면 자동으로 나만의 전시가 열리고, 다른 작가들의 작품도 감상할 수 있어요.\n먼저 프로필을 완성해보세요!\n\nCTA: 프로필 완성하기 → /me/edit',
   'refStub.tplVerifySubject': '[Artier] 이메일 주소를 인증해주세요',
   'refStub.tplVerifyBody':
     '안녕하세요, {nickname}님.\nArtier 계정의 이메일 인증을 완료해주세요.\n아래 버튼을 누르면 인증이 완료됩니다.\n이 링크는 30분간 유효해요.\n만료된 경우 로그인 후 재발송을 요청해주세요.\n\nCTA: 이메일 인증하기 → {verify_url}',
-  'refStub.tplResetSubject': '[Artier] 비밀번호 재설정 링크입니다',
-  'refStub.tplResetBody':
-    '안녕하세요.\n비밀번호 재설정이 요청되었습니다.\n아래 버튼을 눌러 새 비밀번호를 설정해주세요.\n이 링크는 1시간 동안 유효해요.\n이 요청을 하지 않으셨다면 이 이메일을 무시해주세요. 비밀번호는 변경되지 않습니다.\n\nCTA: 비밀번호 재설정 → {reset_url}',
-  'refStub.tplPwdChangedSubject': '[Artier] 비밀번호가 변경되었습니다',
-  'refStub.tplPwdChangedBody':
-    '안녕하세요, {nickname}님.\n{date}에 비밀번호가 변경되었습니다.\n본인이 변경한 것이 아니라면 즉시 비밀번호를 재설정하거나 고객센터로 문의해주세요.',
+  'refStub.tplSignInSubject': '[Artier] 로그인 링크를 보내드려요',
+  'refStub.tplSignInBody':
+    '안녕하세요.\n입력하신 이메일 주소로 Artier 로그인 요청이 들어왔어요.\n아래 버튼을 누르면 자동으로 로그인됩니다.\n이 링크는 30분간 유효해요.\n본인이 요청하지 않으셨다면 이 이메일을 무시해주세요.\n\nCTA: 로그인하기 → {signin_url}',
   'refStub.tplPickSubject': "🎉 내 작품이 이번 주 Artier's Pick에 선정됐어요!",
   'refStub.tplPickBody':
     "{nickname}님, 축하해요!\n'{work_title}'이(가) 이번 주 Artier's Pick에 선정되었어요.\n작품이 둘러보기 피드 상단에 노출되고, 더 많은 분들이 감상할 수 있게 됩니다.\n앞으로도 멋진 작품 기대할게요!\n\nCTA: 내 작품 보기 → {exhibition_url}",
@@ -911,6 +908,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'contact.categoryAccount': '계정 관련',
   'contact.categoryUpload': '업로드/전시 관련',
   'contact.categoryReport': '신고/저작권 관련',
+  'contact.categoryPrivacy': '개인정보 열람·정정·삭제 요청',
   'contact.categorySuggestion': '제안/피드백',
   'contact.categoryBug': '오류 제보',
   'contact.categoryOther': '기타',
@@ -1462,21 +1460,18 @@ const enMessages: Record<MessageKey, string> = {
   'refStub.geoSource': 'Source',
   'refStub.geoSourceIpapi': 'ipapi.co',
   'refStub.geoSourceFallback': 'Local fallback',
-  'refStub.tplTitle': '3. Email templates (preview · PRD set of 10)',
+  'refStub.tplTitle': '3. Email templates (preview · PRD set of 9)',
   'refStub.tplLead':
-    'Same 10 templates as the feature doc. No sending. Likes/follows use in-app (and opt-in email) per the notification matrix.',
+    'Same 9 templates as the feature doc. No sending. Likes/follows use in-app (and opt-in email) per the notification matrix. Password reset/changed templates were removed when §2.5 magic-link sign-in replaced passwords.',
   'refStub.tplWelcomeSubject': 'Welcome to Artier 🎨',
   'refStub.tplWelcomeBody':
     'Hi {nickname},\nWelcome to Artier — a digital gallery where your art becomes an exhibition.\nUpload your work and it automatically becomes your own exhibition. You can also discover and enjoy other artists\' works.\nStart by completing your profile!\n\nCTA: Complete your profile → /me/edit',
   'refStub.tplVerifySubject': '[Artier] Please verify your email address',
   'refStub.tplVerifyBody':
     'Hi {nickname},\nPlease verify your email for your Artier account.\nClick the button below to complete verification.\nThis link is valid for 30 minutes.\nIf it has expired, log in and request a new one.\n\nCTA: Verify email → {verify_url}',
-  'refStub.tplResetSubject': '[Artier] Reset your password',
-  'refStub.tplResetBody':
-    'Hi,\nA password reset was requested for your account.\nClick the button below to set a new password.\nThis link is valid for 1 hour.\nIf you didn\'t request this, you can safely ignore this email. Your password will not be changed.\n\nCTA: Reset password → {reset_url}',
-  'refStub.tplPwdChangedSubject': '[Artier] Your password has been changed',
-  'refStub.tplPwdChangedBody':
-    'Hi {nickname},\nYour password was changed on {date}.\nIf you did not make this change, please reset your password immediately or contact support.',
+  'refStub.tplSignInSubject': '[Artier] Here is your sign-in link',
+  'refStub.tplSignInBody':
+    'Hi,\nSomeone requested a sign-in for your Artier account.\nTap the button below to sign in automatically.\nThis link is valid for 30 minutes.\nIf you didn\'t request this, you can safely ignore this email.\n\nCTA: Sign in → {signin_url}',
   'refStub.tplPickSubject': "🎉 Your work was selected as this week's Artier's Pick!",
   'refStub.tplPickBody':
     "Congratulations, {nickname}!\nYour work '{work_title}' has been selected as this week's Artier's Pick.\nIt will be featured at the top of the Browse feed for more people to discover.\nKeep creating amazing work!\n\nCTA: View my work → {exhibition_url}",
@@ -2100,6 +2095,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points are Phase
   'contact.categoryAccount': 'Account',
   'contact.categoryUpload': 'Upload / exhibition',
   'contact.categoryReport': 'Report / copyright',
+  'contact.categoryPrivacy': 'Personal data access / correction / deletion',
   'contact.categorySuggestion': 'Feedback',
   'contact.categoryBug': 'Bug report',
   'contact.categoryOther': 'Other',
@@ -2600,5 +2596,6 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.2 | 2026-04-21 | PM × Claude | **§6 사전 부분 동기화 — 매직 링크 관련 키 정렬** — `refStub.tplResetSubject/Body`·`tplPwdChangedSubject/Body` 4키 제거(§2.5 매직 링크 도입으로 비번 개념 폐기) → `tplSignInSubject/Body`로 대체(가입 인증은 기존 `tplVerify` 그대로 유지). `refStub.tplTitle/Lead`의 PRD 10종 → 9종으로 갱신, "비밀번호 재설정·변경 템플릿은 §2.5 매직 링크 전환으로 폐기되었습니다" 명시(ko/en). 신규 카테고리 키 `contact.categoryPrivacy`("개인정보 열람·정정·삭제 요청") 추가 — Policy §30·USR-INF-07 연동(ko/en). |
 | v1.1 | 2026-04-21 | PM × Claude | 이메일 인증 매직 링크 전환 반영(Policy §2.5 v2.8) — `onboarding.emailHint` 문구를 "비밀번호 재설정" → "로그인·가입 인증 링크" 수신으로 교체(ko/en). `faq.q2/a2`를 "비밀번호 찾기" → "로그인 링크 메일이 오지 않을 때"(스팸함·재전송·30분 TTL 안내)로 재작성(ko/en). §6 한국어·영어 사전의 비번 관련 블록(`login.password*`·`signup.password*`·`passwordReset.*`·`passwordResetDemo.*`·`settings.changePassword*`·`settings.withdrawPw*`·`signupDemo.region*`·`signupDemo.email*`·`signupDemo.demoBanner`·`refStub.tplReset*`·`refStub.tplPwdChanged*`·`footer.qaResetDemo*`)과 신규 매직 링크 키(`signup.linkSent*`·`signup.openMockLink*`·`login.sendMagicLink`·`login.linkSent*`·`verify.*`·`settings.withdrawConsent*`·`footer.qaAuthVerifyDemo*` 등)는 실제 구현 기준 `src/app/i18n/messages.ts`와 ongoing sync(본 문서 §6 사전은 후속 일괄 스냅샷 갱신 예정). |
 | v1.0 | 2026-04-20 | PM × Claude | Copy_v1.md 신설 — Voice·Tone, 용어, 카피 구조 규칙, 패턴별 템플릿(확인·에러·빈상태·알림·토스트·로딩), 시니어 친화 6원칙, 전체 i18n 사전(ko/en 2,170 키), i18n 기술 규칙, 변경 워크플로우. |

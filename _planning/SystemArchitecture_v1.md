@@ -949,8 +949,8 @@ Pick은 주간 10개 개별 전시 선정(영구 배지), 기획전은 운영팀
 ### N-3. 작품 카테고리 분류 (Phase 2)
 `art / fashion / craft / product` 등 카테고리 축으로 작품을 분류하는 기능. Phase 1엔 UI·정책 없음. Phase 2에 도입 시 업로드 플로우·검색·필터에 반영 필요.
 
-### N-4. 소셜 가입 시 만 14세 연령 검증
-이메일 가입은 생년월일 입력·검증이 있으나 소셜 가입은 OAuth 결과만 신뢰하는 구조라 연령 검증이 빈틈. 본인 인증 API 연동 또는 소셜 가입 후 생년월일 추가 수집이 필요.
+### N-4. 소셜 가입 시 만 14세 연령 검증 — **해소됨 (Policy §2.2 v2.11)**
+모든 가입 경로(이메일·카카오·구글·애플)가 PASS 본인인증을 통과하는 것이 한국 사용자 정책의 전제. PASS 결과의 생년월일로 만 14세 검증이 자동 처리되므로 "소셜 OAuth만 신뢰하는 빈틈"은 정책상 존재하지 않는다. 해외 사용자는 PASS 대상이 아니어서 경로 무관하게 생년월일 직접 입력으로 검증한다. 본 카드는 **PASS 연동 완료 시점(§5.x)과 함께 완전 종결** 상태로 이관된다. 연동 전까지는 온보딩 생년월일 입력으로 대체.
 
 ### N-5. 이벤트 알림 구독 해지 수단
 Phase 1 현재는 이메일 구독 추가만 가능하고 해지 UI가 없다. 개인정보보호법·GDPR 관점에서 **런칭 전 반드시 해결 필요**.
@@ -972,6 +972,14 @@ Phase 1은 단일 운영자 레벨. Phase 2에서 §6.2의 3단계(최고 운영
 
 ### N-11. 전시 상태 3중 구조 통합 (Phase 2 검토)
 현재 전시는 `feedReviewStatus`(검수) · `adminStatus`(신고 처리) · `isHidden`(자동·확정 비공개) 3개 상태를 동시에 가진다. "공개 여부" 판정이 AND 조합으로 복잡하고 운영자·개발자 모두 혼동 소지. Phase 2에서 **단일 `visibility` enum**(`public` / `pending` / `rejected` / `hidden` / `deleted`)으로 통합하는 방향을 검토한다. 기존 localStorage 데이터 마이그레이션 필요. Phase 1은 현 구조 유지(Policy §12·§23.2).
+
+### N-12. 어드민 회원 상세의 포인트 표시 (Phase 2 후보)
+Phase 1의 포인트(AP) 원장은 사용자에게 비노출이며 **내부 적립 전용**(Policy §7.1). Phase 2에서 포인트 UI가 공개될 때, 운영팀이 개별 회원의 누적 AP·이벤트 이력을 한눈에 보고 **과거 활동의 소급 반영**을 판단하려면 어드민 회원 상세(ADM-MBR-02)에 포인트 원장 뷰가 필요하다.
+
+- 대상 화면: ADM-MBR-02 회원 상세 → "포인트 이력" 탭 신설 검토.
+- 표시 내용: 누적 AP · 최근 이벤트 N건(시각·사유·증감) · 수동 조정 흔적.
+- 권한: Phase 2 권한 계층(§6.2)상 **최고 운영자·에디터** 열람, 수동 조정은 최고 운영자만.
+- Phase 2 킥오프 시 Policy §7.2 적립 이벤트 표 기준으로 소급 로직 확정. Phase 1 동안 원장을 꾸준히 누적해 두는 것이 본 카드의 전제.
 
 ---
 
@@ -1041,6 +1049,44 @@ Phase 1은 단일 운영자 레벨. Phase 2에서 §6.2의 3단계(최고 운영
 - 클라이언트: 시맨틱 버전(semver) + 빌드 해시.
 - 스토리지 버전은 별도 키(§4 저장소 전략)로 관리되며, 버전 상승 시 부팅 시 재시드.
 - 이용약관·개인정보처리방침 개정 시 "최근 개정일"을 UI에 노출하고 필요 시 법적 의무 알림을 이메일로 발송(Policy §1.1).
+
+### 12.5 번들·코드 분할 정책 (시니어 모바일 초기 로딩 최우선)
+
+타깃 사용자가 시니어 모바일이고 광대역이 약한 환경(셀룰러·복지관 와이파이)도 가정. 단일 chunk 1MB 이상은 **로딩 지연 → 이탈** 직결. 다음 원칙으로 번들을 구성한다.
+
+**필수 분할 단위**
+
+| 분할 기준 | 대상 | 이유 |
+|---|---|---|
+| **라우트** | 사용자 라우트(`/`, `/exhibitions/:id`, `/upload`, `/profile`, `/settings`, `/events`, `/notifications`, `/search`, `/login`, `/signup`, `/onboarding`, `/auth/verify`, `/contact`, `/about`, `/faq`, `/terms`, `/privacy`, `/notices`, `/notices/:id`) | 사용자가 첫 진입 시 본 라우트 chunk만 로드. 시니어 평균 사용 라우트는 5~6개에 불과. |
+| **어드민 전체** | `/admin/*` 모든 라우트 | 일반 사용자는 어드민 chunk 절대 로드하지 않도록 분리. 어드민은 별도 chunk 군. |
+| **무거운 컴포넌트** | 업로드 화면의 이미지 변환·EXIF 파서, 둘러보기의 Masonry, ConfirmDialog 같은 모달, 매직 링크 콜백 등 | dynamic import로 지연 로딩 — 사용 시점에만 다운로드. |
+| **vendor split** | `react-router-dom` · `lucide-react` · `sonner` · Radix UI 묶음 | 버전 변경 빈도 낮은 라이브러리는 별도 chunk → 캐시 효율. |
+
+**상한 가이드 (Phase 1 런칭 기준)**
+
+- **루트 첫 화면(LCP) 도달 chunk 합계**: ≤ 250KB (gzipped). 측정 기준은 `Lighthouse Mobile`.
+- **개별 chunk 최대 크기**: ≤ 200KB (gzipped). Vite 빌드 경고(`build.chunkSizeWarningLimit`) 200KB로 강화.
+- **이미지·폰트는 chunk에 인라인 금지**. 모든 정적 자산은 CDN 캐시(immutable header).
+- 빌드 후 `dist/assets/*.js` 파일별 크기를 CI에서 검사. 상한 초과 시 빌드 실패(블로킹).
+
+**구현 패턴**
+
+```ts
+// src/app/routes.ts (Phase 1 패턴 — 개발자 참고)
+const Browse = lazy(() => import('./pages/Browse'));
+const Upload = lazy(() => import('./pages/Upload'));
+// ...
+// <Suspense fallback={<RouteSkeleton />}>로 감싸 로딩 상태 일관 처리
+```
+
+- **Suspense fallback**: 시니어 친화 — 빈 화면이 아니라 "잠시만 기다려 주세요" 텍스트 + 단순 스피너. 1초 이내 도달 못하면 추가 안내.
+- **Prefetch hint**: 푸터 링크·헤더 메뉴 hover 시 해당 라우트 chunk를 백그라운드로 prefetch(데스크톱 한정).
+
+**런칭 전 검증**
+
+- ADM-CKL-01 체크리스트 `CL-032 라우트 단위 코드 분할` 완료가 런칭 블로커.
+- 빌드 산출물 분석 리포트(rollup-plugin-visualizer 등) 정기 검토 — 매 PR마다 chunk 크기 회귀 확인.
 
 ---
 
@@ -1169,6 +1215,84 @@ pushDemoNotification({
 - `SUSPENSION_LEVEL_DAYS`: Record 상수
 - **Phase 1은 계정 단위 제재가 없다(Policy §12.3)**. 본 스토어의 export는 Phase 2 사용자 제재 재설계 시 재활용 예정이며, Phase 1 어드민·신고 처리 플로우에서 호출하지 않는다.
 
+#### 함수형 스토어 — `auditLogStore` (운영자 감사 로그)
+
+PRD_Admin §0.6 운영자 감사 로그의 **단일 기록 진입점**. Phase 1은 localStorage 누적, 런칭 후 백엔드 테이블로 대체된다(데모 누적은 이관하지 않음).
+
+**localStorage 키**: `artier_admin_audit_log_v1` — `AuditLogEntry[]` 배열(시간순). 보관 5년·append-only(클라 단에서도 삭제·수정 API 노출하지 않음).
+
+**엔티티: `AuditLogEntry`** — PRD_Admin §0.6.2 스키마와 1:1 대응.
+| 필드 | 타입 | 필수 | 설명 |
+|---|---|---|---|
+| `id` | string | O | ULID 권장. 클라 측 폴백은 `Date.now()_<rand>`. |
+| `actorId` | string | O | 운영자 ID. Phase 1은 `adminGate`의 데모 행위자 식별자. |
+| `actorRole` | string | O | Phase 1=`'operator'` 고정. Phase 2 권한 계층에서 분기. |
+| `action` | string | O | PRD_Admin §0.6.5 enum 코드. |
+| `targetType` | string | O | `'work' \| 'artist' \| 'event' \| 'banner' \| 'pick' \| 'theme' \| 'notice' \| 'inquiry'` |
+| `targetId` | string | O | 대상 고유 ID. |
+| `targetSnapshot` | object \| null | 액션별 (§0.6.5) | 복구 불가 액션은 필수. 작가·작품 핵심 필드만(이메일·전화는 §0.4.3 마스킹 적용). |
+| `reason` | string \| null | — | 사유 메모. |
+| `metadata` | object \| null | — | 액션별 부가 데이터(§0.6.5 예시). |
+| `ip` | string \| null | — | Phase 1 미수집. 백엔드 연동 후 X-Forwarded-For 등에서. |
+| `userAgent` | string \| null | — | 동상. |
+| `createdAt` | string | O | ISO 8601. |
+
+**API 계약**
+
+| 함수 | 시그니처 | 동작 |
+|---|---|---|
+| `auditLog` | `(input: Omit<AuditLogEntry, 'id'\|'actorId'\|'actorRole'\|'createdAt'>) => AuditLogEntry` | 행위자·시각·ID 자동 채움 후 append. 결과 entry 반환. |
+| `loadAuditLog` | `(filter?: { action?, targetType?, targetId?, since?, until? }) => AuditLogEntry[]` | 시간 역순 정렬. Phase 1 한정 클라 조회 — Phase 2 ADM-LOG-01에서 사용. |
+| `clearAuditLogForDemo` | `() => void` | **DEV 전용**. PM 데모 리셋용. 실 빌드에서 비공개. |
+
+**불변식**
+- `auditLog` 호출 후 entry는 **수정·삭제 불가**(append-only). 잘못 기록된 경우 보정 entry를 새로 추가(예: `action: 'admin.correction'`).
+- 동일 액션·동일 대상·1초 이내 중복 호출은 **클라 측에서 무시하지 않는다** — 의도된 재실행으로 간주(서버에서 dedup 정책 결정).
+- 어드민 mutation **성공 직후에만** 호출. 실패 시 로깅이 필요하면 `metadata.result: 'failed'`를 명시.
+- localStorage quota 초과 시 가장 오래된 100건을 머리에서 제거(런칭 후 백엔드 보장 책임).
+
+**구현 가이드 (Phase 1)**
+- 어드민 컴포넌트는 도메인 mutation(예: `workStore.removeWork`) 직후 1줄로 `auditLog(...)` 호출.
+- 단일 사용자 액션이 여러 mutation을 트리거하면(예: 신고 처리 → 작품 삭제 + 신고 큐 정리) **사용자 의도 단위로 1건만** 기록.
+- 액션 코드는 PRD_Admin §0.6.5의 enum 외 사용 금지. enum에 없으면 enum을 먼저 추가하고 PR 단위로 PRD 갱신.
+
+#### 함수형 스토어 — `magicLinkStore` (이메일 매직 링크 토큰)
+
+Policy §2.5 이메일 매직 링크의 **로컬 토큰 저장소**. 백엔드 SMTP 연동 전 Phase 1은 본 스토어가 토큰 발행·소비·만료를 모의한다. 런칭 후엔 실 백엔드 토큰 테이블로 대체되며 본 스토어는 폐기된다.
+
+**localStorage 키**: `artier_pending_magic_links` — 토큰을 키로 갖는 객체 맵 `Record<token, MagicLinkRequest>`.
+
+**엔티티: `MagicLinkRequest`**
+| 필드 | 타입 | 설명 |
+|---|---|---|
+| `token` | string | 32자 hex (crypto.randomUUID에서 `-` 제거 또는 폴백) |
+| `email` | string | 정규화된 사용자 이메일 (trim) |
+| `intent` | `'login'` \| `'signup'` | 콜백에서의 분기 기준 |
+| `createdAt` | number(ms) | 발급 시각 |
+| `expiresAt` | number(ms) | TTL: `createdAt + 30분` |
+| `redirectTo` | string \| undefined | 로그인 성공 후 이동할 내부 경로(화이트리스트 검증) |
+
+**API 계약**
+
+| 함수 | 시그니처 | 동작 |
+|---|---|---|
+| `issueMagicLink` | `(p: { email; intent; redirectTo? }) => MagicLinkRequest` | 신규 토큰 발행. **같은 이메일의 미사용 토큰을 즉시 무효화**(중복 발행 방지). 만료된 토큰도 함께 정리. |
+| `getMagicLink` | `(token: string) => MagicLinkRequest \| null` | 조회만. 만료 시 null 반환 + 즉시 정리. |
+| `consumeMagicLink` | `(token: string) => MagicLinkRequest \| null` | **일회성 소비**. 성공 시 저장소에서 즉시 제거. 동일 토큰 재사용 불가. |
+| `latestMagicLinkFor` | `(email: string) => MagicLinkRequest \| null` | QA 데모용. 해당 이메일의 가장 최근 유효 토큰 조회. 실 서비스 빌드에서는 호출 금지(데모 버튼만 사용). |
+| `buildVerifyUrl` | `(token: string) => string` | `/auth/verify?token=…` 헬퍼. |
+
+**불변식 (Invariant)**
+- 같은 이메일에 동시에 여러 유효 토큰 존재 금지(가장 최근 1개만).
+- TTL 만료 또는 소비 후엔 토큰을 다시 사용할 수 없다.
+- 토큰 검증은 **서버 측에서 다시 수행**(Phase 2 백엔드)되어야 한다 — 클라이언트 단독 검증은 데모 한정.
+- localStorage 저장 실패(quota·private mode)는 무시(catch). 사용자 경험을 우선해 메모리 폴백 없이 빈 결과 반환.
+
+**연관 화면·정책**
+- 발행: USR-AUT-02b(이메일 로그인) · USR-AUT-03(이메일 가입) — Policy §2.5
+- 소비: USR-AUT-08(`/auth/verify` 콜백) — Policy §2.5
+- 발송 실패·재전송 폴백: Policy §2.5 "발송 실패·지연 폴백" 섹션
+
 **대응 React 훅** (패턴 A 도메인 스토어만): `useWorkStore`, `useDraftStore`, `useProfileStore`, `useAuthStore`, `useInteractionStore`, `useFollowStore`, `useAccountSuspensionStore`. 훅 내부에서 `subscribe` + `useState`로 리렌더 유도. 피처 스토어는 호출 측에서 필요 시 직접 `subscribe` 래핑.
 
 **공통 규칙**
@@ -1257,6 +1381,10 @@ useI18n() => {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.11 | 2026-04-21 | PM × Claude | **§12.5 번들·코드 분할 정책 신설** — 시니어 모바일 초기 로딩 최우선. 라우트·어드민·무거운 컴포넌트·vendor 4단계 분할 가이드. 상한 가이드(루트 LCP chunk ≤250KB / 개별 chunk ≤200KB gzipped). lazy import + Suspense fallback 패턴. ADM-CKL-01 CL-032와 쌍으로 런칭 블로커. CI 빌드 검사 의무화. |
+| v1.10 | 2026-04-21 | PM × Claude | §13.3 **`auditLogStore` 함수형 스토어 계약 신설** — PRD_Admin §0.6 운영자 감사 로그의 단일 기록 진입점. `AuditLogEntry` 12필드(스키마는 PRD §0.6.2와 1:1) · API 3종(`auditLog`·`loadAuditLog`·`clearAuditLogForDemo`) · 불변식 4종(append-only·dedup 위임·실패 처리·quota 폴백). localStorage 키 `artier_admin_audit_log_v1`. 구현 가이드(mutation 직후 1줄 호출, 사용자 의도 단위 1건, enum 외 사용 금지). |
+| v1.9 | 2026-04-21 | PM × Claude | §13.3 **`magicLinkStore` 함수형 스토어 계약 신설** — Policy §2.5 이메일 매직 링크의 로컬 토큰 저장소. `MagicLinkRequest` 엔티티(token·email·intent·createdAt·expiresAt·redirectTo) 필드 정의. API 5종(`issueMagicLink`·`getMagicLink`·`consumeMagicLink`·`latestMagicLinkFor`·`buildVerifyUrl`) 시그니처·동작 명세. localStorage 키 `artier_pending_magic_links`. 불변식(같은 이메일 동시 토큰 1개·일회성 소비·서버 측 재검증 필수·quota 실패 무시) 4종 정의. §10 N-4(소셜 가입 만 14세 빈틈) 해소 표기 — Policy §2.2 v2.11에서 "모든 가입 경로 PASS 본인인증 통과" 정책 확립으로 빈틈 자체가 정책상 존재하지 않음. PASS 연동 완료 시점에 카드 종결. |
+| v1.8 | 2026-04-21 | PM × Claude | §10 N-12 신설 — "어드민 회원 상세의 포인트 표시 (Phase 2 후보)". Phase 1 AP 원장은 비노출이지만 Phase 2 UI 공개 시 운영팀이 회원별 누적·이벤트 이력으로 **과거 활동 소급 반영**을 판단할 필요. ADM-MBR-02 "포인트 이력" 탭 신설 검토, 표시 항목·권한(최고 운영자·에디터 열람, 수동 조정은 최고 운영자) 정의. Policy §7.1 "비노출은 의도" 명시와 쌍으로 연결. |
 | v1.7 | 2026-04-20 | PM × Claude | §10 N-11 신설 — "전시 상태 3중 구조 통합 (Phase 2 검토)". 현 `feedReviewStatus`·`adminStatus`·`isHidden` 3필드를 단일 `visibility` enum으로 통합하는 방향 명시. Policy §23.2 노트와 쌍으로 연결. |
 | v1.6 | 2026-04-20 | PM × Claude | §13.3 스토어 계약 갱신 — `accountSuspensionStore`·`sanctionStore`에 "Phase 2 준비용 · Phase 1 미사용" 주석 추가 (Policy v2.1 연동). |
 | v1.5 | 2026-04-20 | PM × Claude | §13 "공용 컴포넌트·스토어 계약" 신설 — openConfirm·pushDemoNotification·**11개 스토어 전수 API**(8 도메인 + 3 피처 + 2 함수형)·i18n 계약·**공용 컴포넌트 20개 전수 목록**·부트 절차·**환경 플래그 4개 전수**. 기존 §13(다음 문서 연결)은 §14로 리넘버링. 문서 단독 재현성 목표(코드 경로 없음). |

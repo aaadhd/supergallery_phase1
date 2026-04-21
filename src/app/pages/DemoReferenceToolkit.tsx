@@ -32,8 +32,7 @@ function parseEmailMasterRows(raw: string) {
 const EMAIL_PREVIEW_KEYS: readonly { subject: MessageKey; body: MessageKey }[] = [
   { subject: 'refStub.tplWelcomeSubject', body: 'refStub.tplWelcomeBody' },
   { subject: 'refStub.tplVerifySubject', body: 'refStub.tplVerifyBody' },
-  { subject: 'refStub.tplResetSubject', body: 'refStub.tplResetBody' },
-  { subject: 'refStub.tplPwdChangedSubject', body: 'refStub.tplPwdChangedBody' },
+  { subject: 'refStub.tplSignInSubject', body: 'refStub.tplSignInBody' },
   { subject: 'refStub.tplPickSubject', body: 'refStub.tplPickBody' },
   { subject: 'refStub.tplWeeklySubject', body: 'refStub.tplWeeklyBody' },
   { subject: 'refStub.tplPolicySubject', body: 'refStub.tplPolicyBody' },

@@ -16,13 +16,14 @@ import { toast } from 'sonner';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
 
-const CATEGORY_VALUES = ['account', 'upload', 'report', 'suggestion', 'bug', 'other'] as const;
+const CATEGORY_VALUES = ['account', 'upload', 'report', 'privacy', 'suggestion', 'bug', 'other'] as const;
 
 function categoryMessageKey(v: string): MessageKey {
   const map: Record<string, MessageKey> = {
     account: 'contact.categoryAccount',
     upload: 'contact.categoryUpload',
     report: 'contact.categoryReport',
+    privacy: 'contact.categoryPrivacy',
     suggestion: 'contact.categorySuggestion',
     bug: 'contact.categoryBug',
     other: 'contact.categoryOther',

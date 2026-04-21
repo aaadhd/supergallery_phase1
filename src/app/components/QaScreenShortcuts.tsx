@@ -35,6 +35,7 @@ const ADMIN_QA_PATHS: { path: string; labelKey: MessageKey }[] = [
   { path: '/admin/managed-events', labelKey: 'footer.qaAdminManagedEvents' },
   { path: '/admin/reports', labelKey: 'footer.qaAdminReports' },
   { path: '/admin/members', labelKey: 'footer.qaAdminMembers' },
+  { path: '/admin/inquiries', labelKey: 'footer.qaAdminInquiries' },
 ];
 
 function useSampleWorkId(): string {

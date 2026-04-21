@@ -45,6 +45,15 @@ export default function AdminDashboard() {
 
   // 자동 비공개 처리된 전시 수 (Policy §12.2)
   const autoHiddenCount = workStore.getWorks().filter(w => w.isHidden === true).length;
+  // SLA 위반 카운트 (Policy §12.2.1 — 자동 비공개 후 72h 경과 + 미처리)
+  const slaViolatedCount = (() => {
+    const now = Date.now();
+    return workStore.getWorks().filter((w) => {
+      if (!w.isHidden || !w.autoHiddenAt) return false;
+      const hours = (now - new Date(w.autoHiddenAt).getTime()) / (60 * 60 * 1000);
+      return hours >= 72;
+    }).length;
+  })();
 
   // Issue stats
   const issuesByStatus = issues.reduce((acc, i) => {
@@ -151,6 +160,11 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 <p className="text-xs text-muted-foreground">2회 신고 자동 비공개 + 확정 비공개 합계</p>
+                {slaViolatedCount > 0 && (
+                  <p className="mt-1 text-xs font-semibold text-red-700">
+                    ⚠ SLA 위반 {slaViolatedCount}건 (72h 초과)
+                  </p>
+                )}
               </CardContent>
             </Card>
           </Link>

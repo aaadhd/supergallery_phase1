@@ -29,6 +29,8 @@ type ReportRow = {
   status: ReportState;
   workId?: string;
   artistId?: string;
+  /** 자동 비공개 발동 시각 (Policy §12.2.1 SLA 계산 기준). 대상 전시의 autoHiddenAt을 파생. */
+  autoHiddenAt?: string;
 };
 
 function mapUserReportToRow(r: StoredUserReport): ReportRow {
@@ -48,6 +50,11 @@ function mapUserReportToRow(r: StoredUserReport): ReportRow {
     dismissed: '기각',
   };
   const status: ReportState = statusMap[r.adminStatus ?? 'pending'];
+  // 같은 워크로 신고가 2회째 누적되었을 때 work.autoHiddenAt이 존재. 대기 상태인 경우만 SLA 계산 의미 있음.
+  const autoHiddenAt =
+    r.targetType === 'work' && r.targetId
+      ? workStore.getWork(r.targetId)?.autoHiddenAt
+      : undefined;
   return {
     id: r.id,
     target,
@@ -57,11 +64,39 @@ function mapUserReportToRow(r: StoredUserReport): ReportRow {
     status,
     workId: r.targetType === 'work' ? r.targetId : undefined,
     artistId: r.targetArtistId,
+    autoHiddenAt,
   };
 }
 
 function mergeReportRows(): ReportRow[] {
   return loadUserReports().map(mapUserReportToRow);
+}
+
+/** Policy §12.2.1 SLA 4단계 계산. 판정 완료된 건(대기 아님) 또는 autoHiddenAt 없음이면 null. */
+type SlaTier = 'normal' | 'nearing' | 'exceeded' | 'violated';
+function computeSlaTier(row: ReportRow, now: number): SlaTier | null {
+  if (row.status !== '대기') return null;
+  if (!row.autoHiddenAt) return null;
+  const started = new Date(row.autoHiddenAt).getTime();
+  if (!Number.isFinite(started)) return null;
+  const hours = (now - started) / (60 * 60 * 1000);
+  if (hours >= 72) return 'violated';
+  if (hours >= 48) return 'exceeded';
+  if (hours >= 24) return 'nearing';
+  return 'normal';
+}
+
+function slaBadgeStyle(tier: SlaTier): { cls: string; label: string } {
+  switch (tier) {
+    case 'violated':
+      return { cls: 'bg-red-100 text-red-800 border border-red-300', label: 'SLA 위반' };
+    case 'exceeded':
+      return { cls: 'bg-orange-100 text-orange-800 border border-orange-300', label: 'SLA 초과' };
+    case 'nearing':
+      return { cls: 'bg-yellow-50 text-yellow-800 border border-yellow-200', label: 'SLA 임박' };
+    default:
+      return { cls: '', label: '' };
+  }
 }
 
 function stateBadge(s: ReportState) {
@@ -90,6 +125,13 @@ export default function ReportManagement() {
   const [rows, setRows] = useState<ReportRow[]>(mergeReportRows);
   const [statusFilter, setStatusFilter] = useState('전체');
   const [typeFilter, setTypeFilter] = useState('전체');
+  const [slaFilter, setSlaFilter] = useState<'전체' | '임박 이상' | '초과 이상' | '위반'>('전체');
+  // 시계 틱 (1분마다 SLA 재계산)
+  const [, setClockTick] = useState(0);
+  useEffect(() => {
+    const id = window.setInterval(() => setClockTick((n) => n + 1), 60_000);
+    return () => window.clearInterval(id);
+  }, []);
 
   const refreshRows = useCallback(() => setRows(mergeReportRows()), []);
 
@@ -112,12 +154,28 @@ export default function ReportManagement() {
   }, [refreshRows]);
 
   const filtered = useMemo(() => {
-    return rows.filter((r) => {
-      if (statusFilter !== '전체' && r.status !== statusFilter) return false;
-      if (typeFilter !== '전체' && r.kind !== typeFilter) return false;
-      return true;
-    });
-  }, [rows, statusFilter, typeFilter]);
+    const now = Date.now();
+    const tierRank: Record<SlaTier, number> = { normal: 0, nearing: 1, exceeded: 2, violated: 3 };
+    return rows
+      .filter((r) => {
+        if (statusFilter !== '전체' && r.status !== statusFilter) return false;
+        if (typeFilter !== '전체' && r.kind !== typeFilter) return false;
+        if (slaFilter !== '전체') {
+          const tier = computeSlaTier(r, now);
+          if (!tier) return false;
+          if (slaFilter === '임박 이상' && tierRank[tier] < 1) return false;
+          if (slaFilter === '초과 이상' && tierRank[tier] < 2) return false;
+          if (slaFilter === '위반' && tierRank[tier] < 3) return false;
+        }
+        return true;
+      })
+      .sort((a, b) => {
+        // Policy §12.2.1: autoHiddenAt 오름차순 (가장 오래된 미처리 먼저). 없으면 뒤로.
+        const aPending = a.status === '대기' && a.autoHiddenAt ? new Date(a.autoHiddenAt).getTime() : Number.POSITIVE_INFINITY;
+        const bPending = b.status === '대기' && b.autoHiddenAt ? new Date(b.autoHiddenAt).getTime() : Number.POSITIVE_INFINITY;
+        return aPending - bPending;
+      });
+  }, [rows, statusFilter, typeFilter, slaFilter]);
 
   /** 비공개 유지: 자동 비공개(Policy §12.2) 또는 아직 공개 중인 대상을 운영자 확정 비공개로 전환. */
   const keepHidden = (id: string) => {
@@ -243,6 +301,17 @@ export default function ReportManagement() {
           <option value="댓글">댓글</option>
           <option value="프로필">프로필</option>
         </select>
+        <select
+          value={slaFilter}
+          onChange={(e) => setSlaFilter(e.target.value as typeof slaFilter)}
+          className="border border-border rounded-lg px-3 py-2 text-sm bg-white min-w-[170px]"
+          title="자동 비공개 발동 후 판정까지의 경과 시간 기준 (Policy §12.2.1)"
+        >
+          <option value="전체">SLA: 전체</option>
+          <option value="임박 이상">24h 임박 이상</option>
+          <option value="초과 이상">48h 초과 이상</option>
+          <option value="위반">72h 위반</option>
+        </select>
       </div>
 
       {filtered.length === 0 ? (
@@ -263,8 +332,14 @@ export default function ReportManagement() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((r) => (
-                <tr key={r.id} className="border-b border-border/40 lg:hover:bg-muted/50 transition-colors">
+              {filtered.map((r) => {
+                const slaTier = computeSlaTier(r, Date.now());
+                const rowBg =
+                  slaTier === 'violated' ? 'bg-red-50 lg:hover:bg-red-100/60'
+                  : slaTier === 'exceeded' ? 'bg-orange-50/60 lg:hover:bg-orange-100/60'
+                  : 'lg:hover:bg-muted/50';
+                return (
+                <tr key={r.id} className={`border-b border-border/40 transition-colors ${rowBg}`}>
                   <td className="px-4 py-3 text-foreground max-w-[200px]">
                     {r.workId ? (
                       <a
@@ -299,9 +374,22 @@ export default function ReportManagement() {
                   <td className="px-4 py-3 text-muted-foreground">{r.reason}</td>
                   <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{r.reportedAt}</td>
                   <td className="px-4 py-3">
-                    <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${stateBadge(r.status)}`}>
-                      {r.status}
-                    </span>
+                    <div className="flex flex-wrap items-center gap-1.5">
+                      <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${stateBadge(r.status)}`}>
+                        {r.status}
+                      </span>
+                      {slaTier && slaTier !== 'normal' && (() => {
+                        const { cls, label } = slaBadgeStyle(slaTier);
+                        return (
+                          <span
+                            className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold ${cls}`}
+                            title="Policy §12.2.1 — 자동 비공개 발동 후 경과 시간 기준"
+                          >
+                            {label}
+                          </span>
+                        );
+                      })()}
+                    </div>
                   </td>
                   <td className="px-4 py-3 text-right">
                     <div className="flex flex-wrap justify-end gap-2">
@@ -349,7 +437,8 @@ export default function ReportManagement() {
                     </div>
                   </td>
                 </tr>
-              ))}
+                );
+              })}
             </tbody>
           </table>
         </div>

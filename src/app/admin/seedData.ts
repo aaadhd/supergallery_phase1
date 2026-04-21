@@ -130,6 +130,28 @@ export const seedChecklist: ChecklistItem[] = [
   { id: 'CL-015', title: 'SNS 계정 생성 및 사전 홍보', description: '인스타그램, 트위터 공식 계정 운영 시작', category: '마케팅', owner: '마케팅팀', status: '진행 중', dueDate: '2026-04-10', checked: false },
   { id: 'CL-016', title: '런칭 보도자료 작성', description: '미디어 배포용 보도자료', category: '마케팅', owner: '마케팅팀', status: '시작 전', dueDate: '2026-04-22', checked: false },
   { id: 'CL-017', title: 'CBT 참여자 모집 (20명)', description: '4월 3주차 비공개 베타 테스트 참여자', category: '마케팅', owner: '마케팅팀', status: '시작 전', dueDate: '2026-04-14', checked: false },
+  // Legal (Policy §21 · SystemArch N-10)
+  { id: 'CL-018', title: 'DPO(개인정보보호 책임자) 지정·공개', description: '개인정보보호법 30조 준수. 이메일·전화 창구 오픈.', category: '법무', owner: '법무팀', status: '시작 전', dueDate: '2026-04-15', checked: false },
+  { id: 'CL-019', title: '쿠키·분석 동의 확정본 게시 (Policy §29)', description: 'CM-05 쿠키 동의 배너 문구 법무 확정. Essential-only 시 GA4 차단 검증.', category: '법무', owner: '법무팀', status: '시작 전', dueDate: '2026-04-15', checked: false },
+  { id: 'CL-020', title: '마케팅 수신 동의 분리 확정', description: '정보통신망법 50조. 가입 시 동의 분리 UI 검토.', category: '법무', owner: '법무팀', status: '시작 전', dueDate: '2026-04-15', checked: false },
+  { id: 'CL-021', title: '만 14세 미만 가입 차단 고지 (Policy §2.2)', description: '청소년보호법·개인정보보호법 준수 고지 문구·이용약관 반영.', category: '법무', owner: '법무팀', status: '시작 전', dueDate: '2026-04-15', checked: false },
+  { id: 'CL-022', title: '개인정보 열람·정정·삭제 요청 채널', description: '문의하기 카테고리에 개인정보 요청 추가. 수동 처리 SLA 30일 준수(개인정보보호법 35·36·37조).', category: '법무', owner: '운영팀', status: '시작 전', dueDate: '2026-04-18', checked: false },
+  { id: 'CL-023', title: 'GDPR 해외 사용자 대응', description: '해외 사용자 서비스 개시 전 DPA·데이터 국외 이전 고지 필요성 법무 판단.', category: '법무', owner: '법무팀', status: '시작 전', dueDate: '2026-04-20', checked: false },
+  // Backend · Integration (SystemArch §5 · §10 · Policy §1·§2.5·§3.5)
+  { id: 'CL-024', title: '실 OAuth 3종 연동 (카카오·Google·Apple)', description: 'AuthSheet 소셜 버튼 실 인증. 콜백·세션 발급 검증.', category: '연동', owner: '개발팀', status: '시작 전', dueDate: '2026-04-22', checked: false },
+  { id: 'CL-025', title: 'SMTP 이메일 게이트웨이 연동 (매직 링크)', description: 'Policy §2.5 매직 링크 발송. 바운스·스팸 모니터링 채널 구성.', category: '연동', owner: '개발팀', status: '시작 전', dueDate: '2026-04-22', checked: false },
+  { id: 'CL-026', title: 'SMS·카카오 알림톡 게이트웨이 연동', description: 'Policy §1 한국 사용자 알림 채널. 발송 로그·레이트 리밋 설정.', category: '연동', owner: '개발팀', status: '시작 전', dueDate: '2026-04-22', checked: false },
+  { id: 'CL-027', title: 'PASS 본인인증 연동', description: '한국 사용자 만 14세 검증·초대 자동 매칭(§3.5)의 전제. 모든 가입 경로에 적용.', category: '연동', owner: '개발팀', status: '시작 전', dueDate: '2026-04-22', checked: false },
+  { id: 'CL-028', title: '실 DB(Supabase 등) 연동 + localStorage 마이그레이션', description: '사용자·전시·초대·알림 전 엔티티 이관. 스토리지 버전 관리와 연계(SystemArch N-6).', category: '연동', owner: '개발팀', status: '시작 전', dueDate: '2026-04-25', checked: false },
+  // Security
+  { id: 'CL-029', title: '실 JWT·세션 구현', description: 'demo_signature 교체. HTTP-only + Secure 쿠키 전환. 갱신 토큰 엔드포인트.', category: '운영', owner: '개발팀', status: '시작 전', dueDate: '2026-04-22', checked: false },
+  { id: 'CL-030', title: 'CSP·CORS·XSS·CSRF 점검', description: "'unsafe-inline' 제거. 동적 입력 sanitize 감사. 폼 CSRF 토큰 적용.", category: '운영', owner: '개발팀', status: '시작 전', dueDate: '2026-04-24', checked: false },
+  { id: 'CL-031', title: '운영자 감사 로그 기록 연동', description: 'ADMIN_AUDIT_LOG 엔티티에 실제 어드민 액션 훅 연결. 5년 append-only.', category: '운영', owner: '개발팀', status: '시작 전', dueDate: '2026-04-22', checked: false },
+  // Performance · SEO
+  { id: 'CL-032', title: '라우트 단위 코드 분할', description: '1.5MB 단일 chunk를 라우트별 lazy import로 분산. 시니어 모바일 초기 로딩 최적화.', category: '운영', owner: '개발팀', status: '시작 전', dueDate: '2026-04-20', checked: false },
+  { id: 'CL-033', title: '동적 OG 이미지 생성 (SystemArch N-9)', description: '/exhibitions/:id 공유 OG 이미지 서버 측 생성. SNS 유입 대비.', category: '운영', owner: '개발팀', status: '시작 전', dueDate: '2026-04-24', checked: false },
+  // Accessibility (Policy §19)
+  { id: 'CL-034', title: 'WCAG AA 접근성 검증', description: '색대비·키보드 네비·스크린리더 라벨·폰트 스케일 전 화면 적용. 시니어 타깃 필수.', category: 'QA', owner: 'QA팀', status: '시작 전', dueDate: '2026-04-24', checked: false },
 ];
 
 export const seedPartnerArtists: PartnerArtist[] = [

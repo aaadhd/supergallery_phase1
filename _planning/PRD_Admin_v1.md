@@ -187,6 +187,62 @@ Phase 1에서는 뷰어가 없어 해당 규칙은 데이터 모델 단에서만
 
 Phase 1 localStorage 감사 로그는 데모용이라 **런칭 전 백엔드 연동 시점에 이관되지 않는다**(데모 기간 기록은 실사용이 아니므로 폐기). 런칭 후부터의 액션이 감사 로그로 누적된다.
 
+#### 0.6.5 액션 코드 (Action Enum)
+
+각 어드민 액션은 `<domain>.<verb>[.<qualifier>]` 패턴의 코드 문자열로 식별한다. `auditLog()` 호출 시 본 enum을 사용한다.
+
+| 도메인 | 액션 코드 | 트리거 화면 | `targetType` | `targetSnapshot` 필수 | `metadata` 예시 |
+|---|---|---|---|---|---|
+| **검수** | `review.approve` | ADM-REV-02 | `work` | — | `{ pendingDurationMs }` |
+| | `review.reject` | ADM-REV-02 | `work` | — | `{ reasonCategory, reasonText, prevHistoryCount }` |
+| **신고 처리** | `report.delete` | ADM-RPT-02 | `work` | **O** (작품 핵심 필드) | `{ reportCount, reasonText }` |
+| | `report.dismiss` | ADM-RPT-02 | `work` | — | `{ reportCount, restoredHidden: boolean }` |
+| | `report.keep_hidden` | ADM-RPT-02 | `work` | — | `{ reportCount }` |
+| **회원** | `member.delete` | ADM-MBR-02 | `artist` | **O** (회원 프로필) | `{ withdrawReason?, by: 'admin' }` |
+| | `member.note` | ADM-MBR-02 | `artist` | — | `{ noteText }` (Phase 2 권한 분기) |
+| **콘텐츠(작품)** | `work.delete` | ADM-WRK-01 | `work` | **O** | `{ reasonText? }` |
+| | `work.toggle_hidden` | ADM-WRK-01 | `work` | — | `{ next: boolean }` |
+| **큐레이션** | `pick.add` | ADM-PCK-01 | `work` | — | `{ note? }` |
+| | `pick.remove` | ADM-PCK-01 | `work` | — | — |
+| | `curation.create` | ADM-CUR-01 | `theme` | — | `{ workIds: string[] }` |
+| | `curation.update` | ADM-CUR-01 | `theme` | **O** | `{ patch }` |
+| | `curation.delete` | ADM-CUR-01 | `theme` | **O** | — |
+| **배너** | `banner.create` | ADM-BNR-01 | `banner` | — | `{ visiblePeriod }` |
+| | `banner.update` | ADM-BNR-01 | `banner` | **O** | `{ patch }` |
+| | `banner.delete` | ADM-BNR-01 | `banner` | **O** | — |
+| | `banner.reorder` | ADM-BNR-01 | `banner` | — | `{ from, to }` |
+| **이벤트** | `event.create` | ADM-EVT-01 | `event` | — | `{ period }` |
+| | `event.update` | ADM-EVT-01 | `event` | **O** | `{ patch }` |
+| | `event.delete` | ADM-EVT-01 | `event` | **O** | — |
+| | `event.select_winner` | ADM-EVT-02 | `work` | — | `{ eventId }` |
+| | `event.unselect_winner` | ADM-EVT-02 | `work` | — | `{ eventId }` |
+| **공지** | `notice.publish` | ADM-NTC-01 | `notice` | — | — |
+| | `notice.unpublish` | ADM-NTC-01 | `notice` | — | — |
+| | `notice.update` | ADM-NTC-01 | `notice` | **O** | `{ patch }` |
+| **문의** | `inquiry.reply` | ADM-INQ-01 | `inquiry` | — | `{ replyTextLength }` |
+| | `inquiry.status_change` | ADM-INQ-01 | `inquiry` | — | `{ from, to }` |
+| **권한 (Phase 2)** | `auth.role_grant` / `auth.role_revoke` | (Phase 2 ADM-PRM-01) | `artist` | **O** (이전 역할) | `{ role }` |
+
+> **확장 규칙**: 새 액션 추가 시 본 표에 행 추가 + PRD_Admin 문서 이력 행에 명시. 액션 코드는 폐기되더라도 enum에서 제거하지 않고 `(deprecated)` 주석 유지(과거 로그 해석 보장).
+
+#### 0.6.6 호출 계약 (`auditLogStore`)
+
+스토어 API 상세는 [SystemArch §13.3 `auditLogStore`](SystemArchitecture_v1.md#133-스토어-계약). 어드민 화면 코드는 액션 직후 1줄 호출로 기록한다:
+
+```ts
+auditLog({
+  action: 'report.delete',
+  targetType: 'work',
+  targetId: work.id,
+  targetSnapshot: { title: work.title, artistId: work.artistId, /* … */ },
+  reason: '저작권 침해',
+  metadata: { reportCount: 3 }
+});
+```
+
+- 액션 실패 시(예: 스토어 mutation 실패) **로그를 먼저 기록하지 말 것** — 정상 mutation 직후에만 호출.
+- 단, 실패도 추적이 필요한 액션(예: `member.delete` 실패)은 별도 `metadata: { result: 'failed', error }` 와 함께 기록.
+
 ---
 
 ## 1. ADM-DSH · 대시보드
@@ -541,29 +597,51 @@ Phase 1 localStorage 감사 로그는 데모용이라 **런칭 전 백엔드 연
 
 ### ADM-RPT-01 · 신고 큐
 
-**목적**: 사용자 신고를 상태·유형·사유별로 열람하고 상세 처리 진입점 제공.
+**목적**: 사용자 신고를 상태·유형·사유별로 열람하고 상세 처리 진입점 제공. 자동 비공개 건의 SLA(Policy §12.2.1) 준수 가시화.
 **트리거**: 사이드바 → 신고 처리.
 **우선순위**: **P0**
 
 #### 입력
 - 전체 신고 레코드
-- 필터: 상태(전체/대기/비공개/삭제/경고/기각), 대상 유형(전체/작품/작가), 사유(5종)
+- 자동 비공개 발동 시각 (`autoHiddenAt: ISO 8601`, 2회 신고 트리거 시점 — `reportsStore` 또는 전시 메타에서 파생)
+- 현재 시각(SLA 계산 기준)
+- 필터: 상태(전체/대기/비공개/삭제/기각), 대상 유형(전체/작품/작가), 사유(5종), **SLA(전체 / SLA 초과 / 임박)**
 
 #### 구성
-- **필터 바**: 상태 · 대상 유형 · 사유 · 기간
-- **테이블**: 신고 대상(썸네일 또는 작가 아바타) · 유형 · 사유 · 신고일 · 상태 · 행별 상세 진입
+- **필터 바**: 상태 · 대상 유형 · 사유 · 기간 · **SLA**
+- **정렬 기본값**: 자동 비공개 발동 시각 오름차순(가장 오래된 미처리 건 먼저)
+- **테이블**: 신고 대상(썸네일 또는 작가 아바타) · 유형 · 사유 · 신고일 · **자동 비공개 경과 시간** · 상태 · **SLA 배지** · 행별 상세 진입
 - **딥링크**: 신고 대상 셀 → 작품 신고는 전시 상세 새 탭으로, 프로필 신고는 회원 상세 모달(ADM-MBR-01 `?artist=<id>`)로 점프. 신고 큐를 유지한 채 콘텐츠·회원 컨텍스트 확인.
 - **동일 대상 중복**: 집계 카운트 배지("N건 누적")
 - **빈 상태**: "접수된 신고가 없습니다"
+
+#### SLA 배지 규칙 (Policy §12.2.1 연동)
+
+자동 비공개 발동(`autoHiddenAt`) 후 운영 판정 미완료 상태에 한해 행 배지를 표시한다.
+
+| 경과 시간 | 배지 라벨 | 색상 | 동작 |
+|---|---|---|---|
+| 0~24h | (배지 없음) | — | SLA 목표 내 |
+| 24~48h | "SLA 임박" | 노란 | 운영자 주의 환기. 정렬 우선순위 상향. |
+| 48~72h | "**SLA 초과**" | 주황 | 우선 처리 유도. 행 배경 옅은 주황. |
+| **>72h** | "**SLA 위반**" | 빨강 | 행 배경 빨강 강조 + 대시보드(ADM-DSH-01) 블로커 카드에 합산 노출. 운영 슬랙 알림 발송(런칭 후 백엔드 연동). |
+
+- 영업일 기준 계산: 토·일·공휴일은 경과 시간에서 제외. Phase 1은 단순 경과 시간으로 시작, 백엔드 연동 시 영업일 캘린더 적용.
+- 판정(삭제·기각·비공개 유지) 완료 시 배지 제거. 추후 동일 작품 재신고로 자동 비공개 재발동되면 새로 카운트 시작.
 
 #### 수용기준
 - AC-01: Given 상태 "대기" 필터 / When 탭 / Then pending 건만 노출.
 - AC-02: Given 같은 `(신고자, 대상)` 반복 신고 / When 큐 로드 / Then 1건만 노출(중복 방지).
 - AC-03: Given 대상이 삭제된 전시 / When 큐에 노출 / Then 회색 처리 + "삭제된 전시" 배지.
+- AC-04: Given `autoHiddenAt`이 50시간 전 + 미처리 / When 큐 로드 / Then 행에 "SLA 초과" 주황 배지 노출.
+- AC-05: Given `autoHiddenAt`이 80시간 전 + 미처리 / When 큐 로드 / Then 행에 "SLA 위반" 빨강 배지 + 대시보드 블로커 카운트 +1.
+- AC-06: Given SLA 필터 "SLA 초과" / When 탭 / Then 48시간 이상 경과 + 미처리 건만 노출, `autoHiddenAt` 오름차순 정렬.
+- AC-07: Given 운영자가 "기각" 액션 실행 / When 완료 / Then 해당 행의 SLA 배지 즉시 제거 + 작품 `isHidden: false` 복원.
 
 #### 의존
-- 엔티티: REPORT
-- 연결 화면: ADM-RPT-02
+- 엔티티: REPORT (필수 추가 필드: `autoHiddenAt`이 전시(EXHIBITION) 또는 첫 자동 비공개 트리거 신고에 기록)
+- 정책: [Policy §12.2.1 SLA](Policy_v1.md#12-신고모더레이션-정책-phase-1)
+- 연결 화면: ADM-RPT-02 · ADM-DSH-01
 
 ---
 
@@ -796,17 +874,18 @@ Phase 1 localStorage 감사 로그는 데모용이라 **런칭 전 백엔드 연
 
 ### ADM-CKL-01 · 런칭 체크리스트
 
-**목적**: 런칭 준비 17항목 5카테고리(QA·법무·콘텐츠·운영·마케팅)의 진행 관리.
+**목적**: 런칭 준비 항목의 카테고리별 진행 관리. 차단·기한 초과 항목을 대시보드(ADM-DSH-01) 블로커로 자동 노출.
 **트리거**: 사이드바 → 런칭 체크리스트. 대시보드 블로커에서 연계.
 **우선순위**: **P1**
 
 #### 입력
-- 체크리스트 항목(제목·카테고리·담당자·상태·기한·메모)
+- 체크리스트 항목(제목·설명·카테고리·담당자·상태·기한·메모)
 - 상태: 시작 전 / 진행 중 / 완료 / 차단됨
+- 카테고리: **QA · 법무 · 콘텐츠 · 운영 · 연동 · 마케팅** (6종)
 
 #### 처리
 1. 카테고리별 그룹 뷰.
-2. 상태 변경·담당자 지정.
+2. 상태 변경·담당자 지정·기한 수정·메모.
 3. 기한 초과 시 빨간 강조.
 4. 차단됨 상태는 대시보드 블로커에 반영.
 
@@ -818,10 +897,76 @@ Phase 1 localStorage 감사 로그는 데모용이라 **런칭 전 백엔드 연
 - AC-01: Given 기한이 오늘 / When 진행률이 완료 / Then 초록 마감 표시.
 - AC-02: Given 기한 초과 + 미완료 / When 로드 / Then 행 전체 빨간 배경 강조.
 - AC-03: Given "차단됨" 1건 / When 대시보드 로드 / Then 블로커 경고 노출.
+- AC-04: Given 신규 항목 추가 / When 카테고리 미선택 / Then "기타" 자동 분류 + 인라인 경고.
+
+#### 기본 시드 항목 (Phase 1 런칭 기준 34건)
+
+DB·런칭 직전 운영자가 본 표를 기준으로 초기 체크리스트를 시드해야 한다. 각 항목은 ID·제목·설명·카테고리·담당·상태·기한 필드를 갖는다. 기한은 런칭 일정에 맞춰 운영자가 조정한다.
+
+**QA (6건)**
+| ID | 제목 | 핵심 |
+|---|---|---|
+| CL-001 | 작품 업로드 E2E 테스트 | 1~10장 + 메타 + 발행 전체 플로우 |
+| CL-002 | 프로필 편집 기능 테스트 | 이름·소개·위치 변경 후 저장·표시 |
+| CL-003 | 좋아요·저장 기능 테스트 | 로그인·비로그인 토글 |
+| CL-004 | 반응형 레이아웃 검증 | PC·태블릿·모바일 3종 |
+| CL-005 | 이미지 로딩 성능 (3초 이내) | 메인·상세 |
+| CL-034 | WCAG AA 접근성 검증 | 색대비·키보드 네비·스크린리더·폰트 스케일. 시니어 타깃 필수 |
+
+**법무 (8건)** — Policy §21 LP-1~LP-10 연동
+| ID | 제목 | 근거 |
+|---|---|---|
+| CL-006 | 이용약관 작성·게시 | 법적 검토 완료 후 게시 |
+| CL-007 | 개인정보처리방침 게시 | 개인정보보호법·GDPR 준수 |
+| CL-008 | 저작권 보호 고지문 | 작품 도용 시 법적 조치 고지 |
+| CL-018 | DPO(개인정보보호 책임자) 지정·공개 | 개인정보보호법 §30. 이메일·전화 창구 오픈 |
+| CL-019 | 쿠키·분석 동의 확정본 게시 | Policy §29 · CM-05. Essential-only 시 GA4 차단 검증 |
+| CL-020 | 마케팅 수신 동의 분리 확정 | 정보통신망법 §50 |
+| CL-021 | 만 14세 미만 가입 차단 고지 | 청소년보호법·개인정보보호법 |
+| CL-022 | 개인정보 열람·정정·삭제 요청 채널 | Policy §30. 문의하기 카테고리 + 30일 SLA |
+| CL-023 | GDPR 해외 사용자 대응 | DPA·국외 이전 고지 법무 판단 |
+
+**콘텐츠 (3건)**
+| ID | 제목 | 핵심 |
+|---|---|---|
+| CL-009 | 초기 작품 100점 이상 확보 | 파트너 작가 작품 |
+| CL-010 | 이벤트 배너 디자인 완료 | MKT-001·002 2종 |
+| CL-011 | Artier 소개 페이지 콘텐츠 | 서비스 소개·비전 텍스트 |
+
+**연동 (5건)** — SystemArch §5 · Policy §1·§2.5·§3.5 연동
+| ID | 제목 | 핵심 |
+|---|---|---|
+| CL-024 | 실 OAuth 3종 연동(카카오·Google·Apple) | AuthSheet 소셜 인증·콜백·세션 발급 |
+| CL-025 | SMTP 이메일 게이트웨이 | Policy §2.5 매직 링크 발송. 바운스·스팸 모니터링 |
+| CL-026 | SMS·카카오 알림톡 게이트웨이 | Policy §1 한국 알림 채널. 발송 로그·레이트 리밋 |
+| CL-027 | PASS 본인인증 연동 | 한국 사용자 만 14세 검증·초대 자동 매칭(§3.5) 전제 |
+| CL-028 | 실 DB 연동 + localStorage 마이그레이션 | 사용자·전시·초대·알림 전 엔티티. SystemArch N-6 |
+
+**운영 (8건)**
+| ID | 제목 | 핵심 |
+|---|---|---|
+| CL-012 | 모니터링·알림 셋업 | Sentry 등 에러 트래킹·가동 모니터링 |
+| CL-013 | 콘텐츠 검수 프로세스 수립 | 검수 가이드라인·위반 대응 |
+| CL-014 | 고객 문의 채널 개설 | ADM-INQ-01 어드민 + 사용자 USR-INF-07 |
+| CL-029 | 실 JWT·세션 구현 | demo_signature 교체. HTTP-only + Secure 쿠키. 갱신 토큰 엔드포인트 |
+| CL-030 | CSP·CORS·XSS·CSRF 점검 | `'unsafe-inline'` 제거. 입력 sanitize. CSRF 토큰 |
+| CL-031 | 운영자 감사 로그 기록 연동 | `ADMIN_AUDIT_LOG` 엔티티. 5년 append-only. PRD_Admin §0.6 |
+| CL-032 | 라우트 단위 코드 분할 | 1.5MB 단일 chunk → 라우트 lazy import. 시니어 모바일 초기 로딩 |
+| CL-033 | 동적 OG 이미지 생성 | SystemArch N-9. `/exhibitions/:id` 공유 OG |
+
+**마케팅 (3건)**
+| ID | 제목 | 핵심 |
+|---|---|---|
+| CL-015 | SNS 계정 생성·사전 홍보 | 인스타·트위터 공식 |
+| CL-016 | 런칭 보도자료 작성 | 미디어 배포용 |
+| CL-017 | CBT 참여자 모집 (20명) | 비공개 베타 테스트 |
+
+> **운영 원칙**: 위 34건은 **Phase 1 런칭 최소 셋**. 신규 정책·연동 추가 시 새 ID(CL-035~) 부여 후 본 표 갱신. 항목 삭제 시 PRD_Admin 문서 이력에 사유 명시.
 
 #### 의존
-- 엔티티: LAUNCH_CHECK_ITEM
+- 엔티티: LAUNCH_CHECK_ITEM (제목·설명·카테고리·담당자·상태·기한·메모·체크 여부)
 - 연결 화면: ADM-DSH-01
+- 정책: [Policy §21 법무 체크포인트](Policy_v1.md#21-법무-체크포인트) · [SystemArch §10 열린 항목](SystemArchitecture_v1.md)
 
 ---
 
@@ -855,6 +1000,69 @@ Phase 1 localStorage 감사 로그는 데모용이라 **런칭 전 백엔드 연
 #### 의존
 - 엔티티: UNRESOLVED_ISSUE
 - 연결 화면: ADM-DSH-01
+
+---
+
+## 12.5 ADM-INQ · 문의함
+
+### ADM-INQ-01 · 문의함
+
+**목적**: 사용자(USR-INF-07)가 접수한 문의를 카테고리별로 처리. **개인정보 권리 행사 요청(Policy §30)** 우선 처리 큐 겸용.
+**트리거**: 사이드바 → 문의함 / 대시보드 "미답변 문의 N건" 카드.
+**우선순위**: **P0**
+
+#### 입력
+- 전체 `INQUIRY` 레코드
+- 필터: 카테고리(7종 · USR-INF-07 정의), 상태(신규 / 처리 중 / 완료 / 보류), 기간, **개인정보 우선** 토글
+
+#### 구성
+- **상단 KPI 카드 4종**: 신규 N건 · 처리 중 N건 · **개인정보 요청 N건** · SLA 임박/위반 N건
+- **필터 바**: 카테고리·상태·기간·우선 토글
+- **테이블**: 접수 시각 · 카테고리 라벨(개인정보는 보라 강조) · 이름·이메일 · 본문 미리보기(60자) · 상태 · **SLA 배지** · 행 탭 시 상세 패널
+- **정렬 기본값**: 카테고리=`privacy`인 신규 건 우선, 그 외는 접수 시각 오름차순.
+- **검색**: 이메일·이름·본문 키워드.
+- **빈 상태**: "접수된 문의가 없습니다".
+
+#### 상세 패널 (행 클릭)
+- 사용자 정보(이름·이메일·세션 가입 경로 표시 — 로그인 사용자였다면).
+- 카테고리·접수 시각·SLA 잔여 시간.
+- **본문 전문** + **첨부 파일 목록**(이미지 미리보기·PDF/문서 다운로드).
+- **답변 입력 영역**:
+  - 빠른 답변 템플릿 드롭다운(카테고리별 5~10종 — 개인정보·계정·업로드 등 표준 답변 사전 작성).
+  - 자유 텍스트(최대 5000자).
+  - 답변 발송 시 **사용자 이메일로 모의 발송**(Phase 1) → 런칭 후 실 SMTP.
+- **상태 변경**: 신규 → 처리 중 → 완료 / 보류 (드롭다운).
+- **개인정보 카테고리 추가 위젯**: "본인 확인 완료" 체크박스 + "처리 결과(열람·정정·삭제) 데이터 첨부" 업로드 슬롯. 처리 시한(접수+30일) 카운트다운 표시.
+- **운영 메모**(내부 전용): 다른 운영자와 공유하는 메모. 사용자에게 노출 X.
+
+#### SLA 배지 규칙
+
+| 카테고리 | 정상 | 임박 | 초과 | 근거 |
+|---|---|---|---|---|
+| `privacy` | ≤24h 내 접수 확인 / ≤30일 처리 | 25일 경과 | 30일 경과 | Policy §30.3 + 개인정보보호법 §35~37 |
+| 기타 | ≤5영업일 응답 | 4영업일 경과 | 5영업일 경과 | 운영 원칙 |
+
+#### 처리
+1. 사용자가 USR-INF-07에서 제출 → `INQUIRY` 저장.
+2. 신규 건 알림: 운영팀 슬랙·이메일(런칭 후 백엔드 연동).
+3. 운영자 답변 → `inquiry.reply` 감사 로그 기록 + 사용자 이메일 회신.
+4. 상태 변경 → `inquiry.status_change` 감사 로그.
+5. 완료 후에도 90일간 조회 가능, 그 이후 보관함 이동(법무 5년 보관은 백엔드).
+
+#### 수용기준
+- AC-01: Given 카테고리 `privacy` 신규 1건 / When 큐 로드 / Then 첫 행 노출 + KPI "개인정보 요청 1건" 강조.
+- AC-02: Given `privacy` 신규 + 25일 경과 / When 로드 / Then "SLA 임박" 노란 배지.
+- AC-03: Given `privacy` + 30일 경과 / When 로드 / Then "SLA 초과" 빨강 배지 + 대시보드 블로커 카운트 +1.
+- AC-04: Given 기타 카테고리 + 5영업일 경과 / When 로드 / Then "SLA 초과" 배지.
+- AC-05: Given 답변 발송 / When 완료 / Then `inquiry.reply` 감사 로그 1건 + 사용자 이메일 회신 + 상태 자동 "처리 중"으로 전환.
+- AC-06: Given `privacy` 카테고리 답변 시 / When "본인 확인 완료" 미체크 / Then 발송 전 경고 모달 "본인 확인이 완료되지 않았습니다. 진행할까요?".
+- AC-07: Given 첨부 파일 5MB 초과 / When 운영자가 응답 첨부 시도 / Then 에러 "5MB 이하만 가능합니다".
+
+#### 의존
+- 엔티티: INQUIRY (필수 필드: `id`·`name`·`email`·`category`·`message`·`attachments[]`·`status`·`createdAt`·`replies[]`·`assigneeId?`·`internalNotes?`·`privacy.subjectVerified?`·`privacy.responseAttachments?`)
+- 정책: [Policy §30 개인정보 요청](Policy_v1.md#30-개인정보-열람정정삭제-요청-정책) · [Policy §22.6 운영 데이터 보관](Policy_v1.md#22-운영-리스크sla)
+- 연결 화면: ADM-DSH-01 (블로커) · USR-INF-07 (사용자 진입)
+- 감사 로그: `inquiry.reply` · `inquiry.status_change` (PRD §0.6.5)
 
 ---
 
@@ -908,6 +1116,9 @@ Policy §17.3 및 §0.4.1~0.4.3 참조.
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.17 | 2026-04-21 | PM × Claude | **ADM-RPT-01 SLA 배지 전수 명세** + **ADM-INQ-01 문의함 신설** — (RPT) 자동 비공개 발동 시각 기준 4단계 배지(정상/임박 24~48h/초과 48~72h/위반 >72h), 정렬·필터·대시보드 블로커 연동. AC 4종 추가(AC-04~07). (INQ) 문의함 신규 P0 카드: KPI 4종·필터·SLA 배지(개인정보 30일/일반 5영업일)·답변 템플릿·**개인정보 카테고리 본인 확인·처리 결과 첨부 위젯**. 감사 로그 `inquiry.reply`·`inquiry.status_change` 트리거. AC 7종. INQUIRY 엔티티 필드 확장. Policy §30·USR-INF-07·SystemArch §13.3 `auditLogStore`와 정합. |
+| v1.16 | 2026-04-21 | PM × Claude | **§0.6 운영자 감사 로그 — 구현 명세 강화** — §0.6.5 액션 코드 enum 표 신설(검수·신고·회원·작품·큐레이션·배너·이벤트·공지·문의 9개 도메인 27개 코드) + 각 액션의 트리거 화면·`targetType`·`targetSnapshot` 필수 여부·`metadata` 예시 매트릭스 명시. §0.6.6 호출 계약 신설(`auditLog()` 1줄 호출 패턴, 실패 처리 원칙). SystemArch v1.10 `auditLogStore` 함수형 스토어 계약과 쌍으로 구현 가능 수준 확보. 액션 enum 확장·폐기 규칙(`(deprecated)` 주석 유지) 명시. |
+| v1.15 | 2026-04-21 | PM × Claude | **ADM-CKL-01 런칭 체크리스트 기본 시드 34건 전수 명시** — 카테고리를 5종(QA·법무·콘텐츠·운영·마케팅)에서 6종(+연동) 확장. 각 카테고리별 기본 항목 표(QA 6 · 법무 9 · 콘텐츠 3 · 연동 5 · 운영 8 · 마케팅 3)를 PRD에 박아 개발자가 시드 데이터를 본 문서 단독으로 재현 가능하도록 함. 신규 항목 ID 채번 규칙·삭제 시 이력 명시. AC-04 신설(카테고리 미선택 시 "기타" 자동 분류). |
 | v1.14 | 2026-04-20 | PM × Claude | ADM-CUR-01 AC-01 포함 전시 수 "3건" → **"1건 이상"**으로 완화 + "포함 전시 수 제한 없음" 명시 (Policy §15.4 v2.5 연동). 기획전 개수 제한 제거. |
 | v1.13 | 2026-04-19 | PM × Claude | §0.5 공통 비기능 요건을 수치 SLO로 확장 — §0.5.1 응답시간(P50/P95/P99) · §0.5.2 페이지·상한 · §0.5.3 인터랙션 타이밍 · §0.5.4 공통 정책(감사·백업·IP·2FA). |
 | v1.12 | 2026-04-19 | PM × Claude | §0.4 권한 매트릭스 확장(화면×액션 단위, Phase 2 3단계 투영) + §0.4.3 뷰어 READ 마스킹 원칙 + §0.6 감사 로그(Audit Trail) 신설(기록 대상 9분류·스키마 12필드·보존 5년·append-only·Phase 1 폐기). §13.4 권한 관리 구현 순서 구체화. |

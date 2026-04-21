@@ -156,6 +156,7 @@ export default function Profile() {
   const [savedIds, setSavedIds] = useState(() => userInteractionStore.getSaved());
   const [savedProfile, setSavedProfile] = useState(() => profileStore.getProfile());
   const [rejectedModalWork, setRejectedModalWork] = useState<Work | null>(null);
+  const [showRejectionHistory, setShowRejectionHistory] = useState(false);
   const [renamingFlatImage, setRenamingFlatImage] = useState<{ work: Work; imgIndex: number; pieceTitle: string } | null>(null);
   const [renameValue, setRenameValue] = useState('');
 
@@ -1350,16 +1351,22 @@ export default function Profile() {
                               className="w-full h-full object-contain object-center"
                             />
 
-                            {/* 개별 이미지 상태 뱃지 (내 작품 탭) */}
-                            {fi.work.feedReviewStatus && fi.work.feedReviewStatus !== 'approved' && (
+                            {/* 개별 이미지 상태 뱃지 (내 작품 탭) — Policy §12.2.1 hidden 포함 4종 */}
+                            {((fi.work.feedReviewStatus && fi.work.feedReviewStatus !== 'approved') || fi.work.isHidden) && (
                               <div className="absolute left-2 bottom-2 z-10">
-                                <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium backdrop-blur-sm ${
-                                  fi.work.feedReviewStatus === 'pending'
-                                    ? 'bg-muted/90 text-foreground border border-border'
-                                    : 'bg-red-500/90 text-white'
-                                }`}>
-                                  {fi.work.feedReviewStatus === 'pending' ? t('review.badgePending') : t('review.badgeRejected')}
-                                </span>
+                                {fi.work.isHidden ? (
+                                  <span className="inline-flex rounded-full px-2 py-0.5 text-xs font-medium backdrop-blur-sm bg-amber-500/90 text-white">
+                                    {t('review.cardBadgeHidden')}
+                                  </span>
+                                ) : (
+                                  <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium backdrop-blur-sm ${
+                                    fi.work.feedReviewStatus === 'pending'
+                                      ? 'bg-muted/90 text-foreground border border-border'
+                                      : 'bg-red-500/90 text-white'
+                                  }`}>
+                                    {fi.work.feedReviewStatus === 'pending' ? t('review.badgePending') : t('review.badgeRejected')}
+                                  </span>
+                                )}
                               </div>
                             )}
 
@@ -1820,49 +1827,80 @@ export default function Profile() {
         );
       })()}
 
-      {rejectedModalWork && (
-        <div
-          className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
-          onClick={() => setRejectedModalWork(null)}
-        >
+      {rejectedModalWork && (() => {
+        const history = rejectedModalWork.rejectionHistory ?? [];
+        const repeatedCount = history.length;
+        const dateLocale = locale === 'en' ? 'en-US' : 'ko-KR';
+        return (
           <div
-            className="bg-white rounded-xl shadow-lg max-w-md w-full p-5"
-            onClick={(e) => e.stopPropagation()}
+            className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
+            onClick={() => { setRejectedModalWork(null); setShowRejectionHistory(false); }}
           >
-            <h2 className="text-base font-bold text-foreground mb-1">
-              {t('review.rejectedModalTitle')}
-            </h2>
-            <p className="text-sm text-muted-foreground mb-4">
-              {t('review.rejectedModalDesc')}
-            </p>
-            {rejectedModalWork.rejectionReason && (
-              <div className="mb-5 p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-900">
-                {t(REJECTION_REASON_LABEL_KEY[rejectedModalWork.rejectionReason])}
+            <div
+              className="bg-white rounded-xl shadow-lg max-w-md w-full p-5 max-h-[85vh] overflow-y-auto"
+              onClick={(e) => e.stopPropagation()}
+            >
+              <h2 className="text-base font-bold text-foreground mb-1">
+                {t('review.rejectedModalTitle')}
+              </h2>
+              <p className="text-sm text-muted-foreground mb-4">
+                {t('review.rejectedModalDesc')}
+              </p>
+              {rejectedModalWork.rejectionReason && (
+                <div className="mb-3 p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-900">
+                  {t(REJECTION_REASON_LABEL_KEY[rejectedModalWork.rejectionReason])}
+                </div>
+              )}
+              {repeatedCount >= 2 && (
+                <div className="mb-5 rounded-lg border border-amber-200 bg-amber-50">
+                  <button
+                    type="button"
+                    onClick={() => setShowRejectionHistory((v) => !v)}
+                    className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-xs font-semibold text-amber-900 min-h-[44px]"
+                    aria-expanded={showRejectionHistory}
+                  >
+                    <span>{t('review.repeatedRejection').replace('{n}', String(repeatedCount))}</span>
+                    <span className="text-amber-700">{showRejectionHistory ? '−' : '+'}</span>
+                  </button>
+                  {showRejectionHistory && (
+                    <ul className="border-t border-amber-200 px-3 py-2 space-y-1.5 text-xs text-amber-900">
+                      {history.map((entry, idx) => (
+                        <li key={`${entry.rejectedAt}-${idx}`} className="flex items-start gap-2">
+                          <span className="shrink-0 text-amber-700 tabular-nums">
+                            {new Date(entry.rejectedAt).toLocaleDateString(dateLocale, { year: 'numeric', month: 'short', day: 'numeric' })}
+                          </span>
+                          <span className="flex-1">{t(REJECTION_REASON_LABEL_KEY[entry.reason])}</span>
+                        </li>
+                      ))}
+                    </ul>
+                  )}
+                </div>
+              )}
+              <div className="flex gap-2 justify-end">
+                <Button
+                  type="button"
+                  onClick={() => { setRejectedModalWork(null); setShowRejectionHistory(false); }}
+                  className="text-sm px-3 py-1.5 rounded-lg border border-border min-h-[44px]"
+                >
+                  {t('review.rejectedModalClose')}
+                </Button>
+                <Button
+                  type="button"
+                  onClick={() => {
+                    const id = rejectedModalWork.id;
+                    setRejectedModalWork(null);
+                    setShowRejectionHistory(false);
+                    navigate(`/upload?edit=${id}`);
+                  }}
+                  className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90 min-h-[44px]"
+                >
+                  {t('review.rejectedModalEdit')}
+                </Button>
               </div>
-            )}
-            <div className="flex gap-2 justify-end">
-              <Button
-                type="button"
-                onClick={() => setRejectedModalWork(null)}
-                className="text-sm px-3 py-1.5 rounded-lg border border-border"
-              >
-                {t('review.rejectedModalClose')}
-              </Button>
-              <Button
-                type="button"
-                onClick={() => {
-                  const id = rejectedModalWork.id;
-                  setRejectedModalWork(null);
-                  navigate(`/upload?edit=${id}`);
-                }}
-                className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90"
-              >
-                {t('review.rejectedModalEdit')}
-              </Button>
             </div>
           </div>
-        </div>
-      )}
+        );
+      })()}
 
       {renamingFlatImage && (() => {
         const saveTitle = () => {

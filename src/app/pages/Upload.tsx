@@ -3,6 +3,7 @@ import { useNavigate, useSearchParams, useBlocker } from 'react-router-dom';
 import { Image as ImageIcon, Plus, X, Search, GripVertical, ArrowLeft, ChevronLeft, ChevronRight, Trash2, Replace, ArrowUpDown, Monitor, Users, CalendarCheck, Star, Check, CircleHelp, GraduationCap } from 'lucide-react';
 import { artists } from '../data';
 import { workStore, draftStore, useAuthStore } from '../store';
+import { REJECTION_REASON_LABEL_KEY } from '../utils/reviewLabels';
 
 /* ─── @dnd-kit 리오더 아이템 ─── */
 function SortableReorderItem({ item, index, isDragOverlay }: { item: ContentItem; index: number; isDragOverlay?: boolean }) {
@@ -249,7 +250,7 @@ export default function Upload() {
   const [reorderMode, setReorderMode] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
-  const [publishedResult, setPublishedResult] = useState<{ workId: string; autoApproved: boolean; hasNonMemberInvites: boolean } | null>(null);
+  const [publishedResult, setPublishedResult] = useState<{ workId: string; autoApproved: boolean; hasNonMemberInvites: boolean; resubmittedFromRejected?: boolean } | null>(null);
   /* dragIndex 삭제됨 — @dnd-kit이 드래그 상태를 자체 관리 */
   /* hoveredBlockId 삭제됨 — 툴바를 항상 노출하므로 호버 추적 불필요 */
 
@@ -490,6 +491,12 @@ export default function Upload() {
 
   /* ── 기존 작품 수정 모드 ── */
   const [editingWorkId, setEditingWorkId] = useState<string | null>(null);
+  // 반려된 전시를 편집 중인지 (Policy §12.1.2 / IA USR-UPL-03 — 빨강 인라인 배너 + CTA 라벨 변경 트리거)
+  const editingRejectedWork = useMemo(() => {
+    if (!editingWorkId) return null;
+    const w = workStore.getWork(editingWorkId);
+    return w?.feedReviewStatus === 'rejected' ? w : null;
+  }, [editingWorkId]);
   useEffect(() => {
     const editId = searchParams.get('edit');
     if (!editId) return;
@@ -862,13 +869,17 @@ export default function Upload() {
         nextStatus = 'approved';
       } else if (imageFieldsChanged) {
         nextStatus = 'pending';
+      } else if (originalStatus === 'rejected') {
+        // Policy §12.1.2 예외: rejected 메타-only 수정 발행은 사용자 의도가
+        // "재검수 요청"이므로 강제 pending 전이 + rejectionReason 초기화.
+        nextStatus = 'pending';
       } else {
         nextStatus = originalStatus;
       }
 
-      // rejectionReason 처리: 상태가 rejected로 유지될 때만 보존. 그 외 초기화.
-      const nextRejectionReason: Work['rejectionReason'] | undefined =
-        nextStatus === 'rejected' ? original?.rejectionReason : undefined;
+      // rejectionReason 처리: Policy §12.1.2 예외 적용으로 rejected 편집 발행은 항상 pending 전이 →
+      // 모든 편집 발행 결과는 rejected가 아니므로 rejectionReason은 항상 초기화.
+      const nextRejectionReason: Work['rejectionReason'] | undefined = undefined;
 
       editDiff = { imageFieldsChanged, originalStatus };
 
@@ -949,9 +960,10 @@ export default function Upload() {
       } else if (originalStatus === 'approved' && imageFieldsChanged) {
         toastKey = 'upload.editModeToastPendingFromApproved';
       } else if (originalStatus === 'rejected' && !imageFieldsChanged) {
-        toastKey = 'upload.editModeToastRejectedKept';
+        // Policy §12.1.2 예외: rejected 메타-only 수정 발행도 강제 pending 전이.
+        toastKey = 'review.editToastResubmitted';
       } else if (originalStatus === 'rejected' && imageFieldsChanged) {
-        toastKey = 'upload.editModeToastResubmit';
+        toastKey = 'review.editToastResubmitted';
       } else {
         // originalStatus === 'pending' (이미지든 메타든 pending 유지)
         toastKey = 'upload.editModeToast';
@@ -967,14 +979,21 @@ export default function Upload() {
       setIsPublishing(false);
       publishedRef.current = true;
       const autoApproved = import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true';
+      const wasRejectedResubmit = Boolean(editDiff && editDiff.originalStatus === 'rejected');
       // 이벤트 응모면 이벤트 상세로 복귀
       if (linkedEventId) {
         navigate(`/events/${linkedEventId}`);
-      } else if (wasEditingExistingWork) {
+      } else if (wasEditingExistingWork && !wasRejectedResubmit) {
+        // 일반 편집(approved/pending 메타-only)은 기존대로 토스트 + 프로필 복귀
         navigate('/me?tab=exhibition');
       } else {
-        // 전시 완료 확인 화면 표시
-        setPublishedResult({ workId: targetId, autoApproved, hasNonMemberInvites });
+        // 신규 발행 또는 반려 → 재검수: USR-UPL-10 완료 화면 표시
+        setPublishedResult({
+          workId: targetId,
+          autoApproved,
+          hasNonMemberInvites,
+          resubmittedFromRejected: wasRejectedResubmit,
+        });
       }
     }, 600);
   };
@@ -1124,7 +1143,20 @@ export default function Upload() {
 
   // ━━━━━━ 전시 완료 확인 화면 ━━━━━━
   if (publishedResult) {
-    const { workId: pubWorkId, autoApproved: pubAutoApproved, hasNonMemberInvites: pubHasInvites } = publishedResult;
+    const { autoApproved: pubAutoApproved, hasNonMemberInvites: pubHasInvites, resubmittedFromRejected: pubResubmit } = publishedResult;
+    // Policy §12.1.2 / IA USR-UPL-10 — 4종 분기 메시지
+    let titleKey: MessageKey;
+    let descKey: MessageKey;
+    if (pubResubmit) {
+      titleKey = 'upload.publishedConfirmTitleResubmit';
+      descKey = 'upload.publishedConfirmDescResubmit';
+    } else if (pubAutoApproved) {
+      titleKey = 'upload.publishedConfirmTitleApproved';
+      descKey = 'upload.publishedConfirmDescApproved';
+    } else {
+      titleKey = 'upload.publishedConfirmTitle';
+      descKey = 'upload.publishedConfirmDescPending';
+    }
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] px-6 py-16 text-center">
         <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-6">
@@ -1132,15 +1164,16 @@ export default function Upload() {
             <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
           </svg>
         </div>
-        <h2 className="text-xl font-bold text-foreground mb-3">
-          {pubAutoApproved ? t('upload.publishedConfirmTitleApproved') : t('upload.publishedConfirmTitle')}
-        </h2>
-        <p className="text-base text-muted-foreground mb-2 max-w-md">
-          {pubAutoApproved ? t('upload.publishedConfirmDescApproved') : t('upload.publishedConfirmDesc')}
+        <h2 className="text-xl font-bold text-foreground mb-3">{t(titleKey)}</h2>
+        <p className="text-base text-muted-foreground mb-2 max-w-md whitespace-pre-line leading-relaxed">
+          {t(descKey)}
         </p>
         {pubHasInvites && (
-          <p className="text-sm text-primary mb-4">{t('upload.toastInvitePending')}</p>
+          <p className="text-sm text-primary mb-4 max-w-md">{t('upload.publishedConfirmInviteNote')}</p>
         )}
+        <p className="mt-4 text-xs text-muted-foreground max-w-md">
+          {t('upload.publishedConfirmSlaNote')}
+        </p>
         <div className="flex flex-col sm:flex-row gap-3 mt-6">
           <Button onClick={() => navigate('/me?tab=exhibition')} className="min-h-[44px] px-6">
             {t('upload.publishedConfirmGoProfile')}
@@ -1448,7 +1481,9 @@ export default function Upload() {
                       <Button disabled={isPublishing || !isOriginalWork} onClick={handlePublish} className={`px-6 py-2.5 text-sm font-medium rounded-lg transition-colors min-h-[44px] ${isPublishing || !isOriginalWork ? 'bg-muted text-muted-foreground' : 'bg-primary text-white lg:hover:bg-primary/90'}`}>
                         {isPublishing
                           ? (editingWorkId ? t('upload.editModeSaving') : t('upload.publishing'))
-                          : editingWorkId ? t('upload.editModeSave') : t('upload.publish')}
+                          : editingRejectedWork
+                            ? t('review.editCtaResubmit')
+                            : editingWorkId ? t('upload.editModeSave') : t('upload.publish')}
                       </Button>
                     </div>
                   </div>
@@ -1466,6 +1501,23 @@ export default function Upload() {
                 >
                   <div className="w-full max-w-4xl flex flex-col items-center">
                     
+                    {/* 반려 편집 모드 배너 (Policy §12.1.2 / IA USR-UPL-03) */}
+                    {editingRejectedWork && (() => {
+                      const reasonKey = editingRejectedWork.rejectionReason
+                        ? REJECTION_REASON_LABEL_KEY[editingRejectedWork.rejectionReason]
+                        : null;
+                      const reasonLabel = reasonKey ? t(reasonKey) : '';
+                      const repeated = editingRejectedWork.rejectionHistory?.length ?? 0;
+                      const message = repeated >= 2
+                        ? t('review.editBannerRejectedRepeated').replace('{reason}', reasonLabel).replace('{n}', String(repeated))
+                        : t('review.editBannerRejected').replace('{reason}', reasonLabel);
+                      return (
+                        <div className="w-full mb-6 rounded-lg border-2 border-red-300 bg-red-50 px-4 py-3 text-sm text-red-900 leading-relaxed animate-in fade-in duration-500">
+                          <p className="font-medium">{message}</p>
+                        </div>
+                      );
+                    })()}
+
                     {/* 전시 유형 뱃지 */}
                     {uploadType === 'group' && (
                       <div className="w-full mb-4 flex justify-center md:justify-start animate-in fade-in duration-500">
@@ -1956,9 +2008,11 @@ export default function Upload() {
                       >
                         {isPublishing
                           ? (editingWorkId ? t('upload.editModeSaving') : t('upload.publishing'))
-                          : editingWorkId
-                            ? t('upload.editModeSave')
-                            : `${t('upload.nextStep')} →`}
+                          : editingRejectedWork
+                            ? t('review.editCtaResubmit')
+                            : editingWorkId
+                              ? t('upload.editModeSave')
+                              : `${t('upload.nextStep')} →`}
                       </Button>
 
                       <Button
@@ -2028,9 +2082,11 @@ export default function Upload() {
                       >
                         {isPublishing
                           ? (editingWorkId ? t('upload.editModeSaving') : t('upload.publishing'))
-                          : editingWorkId
-                            ? t('upload.editModeSave')
-                            : `${t('upload.nextStep')} →`}
+                          : editingRejectedWork
+                            ? t('review.editCtaResubmit')
+                            : editingWorkId
+                              ? t('upload.editModeSave')
+                              : `${t('upload.nextStep')} →`}
                       </Button>
                     )}
                   </div>
