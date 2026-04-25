@@ -268,7 +268,7 @@ export function Header() {
             variant="ghost"
             type="button"
             onClick={() => navigate('/')}
-            className={`h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 ${location.pathname === '/' ? 'text-primary' : 'text-muted-foreground'}`}
+            className={`h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 min-h-[44px] ${location.pathname === '/' ? 'text-primary' : 'text-muted-foreground'}`}
           >
             <Home className="h-5 w-5" />
             <span className="text-xs font-medium">{t('nav.browse')}</span>
@@ -277,12 +277,12 @@ export function Header() {
             variant="ghost"
             type="button"
             onClick={() => navigate('/events')}
-            className={`h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 ${location.pathname.startsWith('/events') ? 'text-primary' : 'text-muted-foreground'}`}
+            className={`h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 min-h-[44px] ${location.pathname.startsWith('/events') ? 'text-primary' : 'text-muted-foreground'}`}
           >
             <CalendarDays className="h-5 w-5" />
             <span className="text-xs font-medium">{t('nav.events')}</span>
           </Button>
-          <Button variant="ghost" type="button" onClick={() => { if (loggedIn) { if (location.pathname === '/upload') { navigate('/upload?new=' + Date.now()); } else { navigate('/upload'); } } else { setLoginPromptOpen(true); } }} className="h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 text-muted-foreground">
+          <Button variant="ghost" type="button" onClick={() => { if (loggedIn) { if (location.pathname === '/upload') { navigate('/upload?new=' + Date.now()); } else { navigate('/upload'); } } else { setLoginPromptOpen(true); } }} className="h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 min-h-[44px] text-muted-foreground">
             <div className="flex h-8 w-8 items-center justify-center rounded-full bg-primary -mt-3 shadow-lg">
               <Plus className="h-5 w-5 text-white" />
             </div>
@@ -292,7 +292,7 @@ export function Header() {
             variant="ghost"
             type="button"
             onClick={() => navigate('/search')}
-            className={`h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 ${location.pathname === '/search' ? 'text-primary' : 'text-muted-foreground'}`}
+            className={`h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 min-h-[44px] ${location.pathname === '/search' ? 'text-primary' : 'text-muted-foreground'}`}
           >
             <Search className="h-5 w-5" />
             <span className="text-xs font-medium">{t('nav.search')}</span>
@@ -301,7 +301,7 @@ export function Header() {
             variant="ghost"
             type="button"
             onClick={() => { if (loggedIn) { navigate('/me'); } else { setLoginPromptOpen(true); } }}
-            className={`h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 ${
+            className={`h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 min-h-[44px] ${
               location.pathname.startsWith('/profile') || location.pathname.startsWith('/me') ? 'text-primary' : 'text-muted-foreground'
             }`}
           >

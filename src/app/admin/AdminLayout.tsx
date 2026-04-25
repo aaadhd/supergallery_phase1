@@ -1,5 +1,6 @@
+import { useEffect, useState } from 'react';
 import { Outlet, NavLink, Link, Navigate } from 'react-router-dom';
-import { Toaster } from 'sonner';
+import { toast, Toaster } from 'sonner';
 import {
   LayoutDashboard,
   AlertCircle,
@@ -19,7 +20,11 @@ import {
 } from 'lucide-react';
 import { LABELS } from './constants';
 import { authStore } from '../store';
-import { canAccessAdminRoutes } from '../utils/adminGate';
+import {
+  canAccessAdminRoutes,
+  touchOperatorSession,
+  OPERATOR_SESSION_CHANGED_EVENT,
+} from '../utils/adminGate';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
 
@@ -42,8 +47,53 @@ const navItems: { to: string; icon: typeof LayoutDashboard; labelKey: MessageKey
 
 export default function AdminLayout() {
   const { t } = useI18n();
+  // PRD_Admin §0.5.2: 세션 만료·해제를 감지해 자동 리다이렉트. 최초 렌더 값은 함수 평가로 즉시 판정.
+  const [sessionValid, setSessionValid] = useState(() =>
+    canAccessAdminRoutes(authStore.isLoggedIn()),
+  );
 
-  if (!canAccessAdminRoutes(authStore.isLoggedIn())) {
+  // 사용자 활동 감지 → 세션 타임스탬프 갱신 (adminGate가 60s throttle).
+  useEffect(() => {
+    const onActivity = () => touchOperatorSession();
+    window.addEventListener('mousemove', onActivity, { passive: true });
+    window.addEventListener('keydown', onActivity);
+    window.addEventListener('touchstart', onActivity, { passive: true });
+    window.addEventListener('click', onActivity);
+    return () => {
+      window.removeEventListener('mousemove', onActivity);
+      window.removeEventListener('keydown', onActivity);
+      window.removeEventListener('touchstart', onActivity);
+      window.removeEventListener('click', onActivity);
+    };
+  }, []);
+
+  // 주기적·이벤트 기반 세션 유효성 재평가. 만료 감지 시 안내 토스트 + 리다이렉트 트리거.
+  useEffect(() => {
+    let lastValid = sessionValid;
+    const reevaluate = () => {
+      const next = canAccessAdminRoutes(authStore.isLoggedIn());
+      if (next !== lastValid) {
+        lastValid = next;
+        setSessionValid(next);
+        if (!next) {
+          toast.error('세션이 만료되어 로그아웃되었어요. 다시 로그인해 주세요.');
+        }
+      }
+    };
+    const id = window.setInterval(reevaluate, 60_000);
+    window.addEventListener(OPERATOR_SESSION_CHANGED_EVENT, reevaluate);
+    const onStorage = (e: StorageEvent) => {
+      if (e.key === 'artier_admin_session_v1' || e.key === 'artier_auth') reevaluate();
+    };
+    window.addEventListener('storage', onStorage);
+    return () => {
+      window.clearInterval(id);
+      window.removeEventListener(OPERATOR_SESSION_CHANGED_EVENT, reevaluate);
+      window.removeEventListener('storage', onStorage);
+    };
+  }, [sessionValid]);
+
+  if (!sessionValid) {
     return <Navigate to="/" replace />;
   }
 

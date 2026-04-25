@@ -16,6 +16,10 @@ import {
 } from '../utils/reportsStore';
 import { pushDemoNotification } from '../utils/pushDemoNotification';
 import { useI18n } from '../i18n/I18nProvider';
+import { usePagination } from '../hooks/usePagination';
+import { PaginationBar } from './components/PaginationBar';
+
+const ADMIN_TABLE_PAGE_SIZE = 50;
 
 type ReportState = '대기' | '비공개 유지' | '삭제' | '기각' | '처리완료';
 type ReportKind = '작품' | '댓글' | '프로필';
@@ -153,6 +157,17 @@ export default function ReportManagement() {
     };
   }, [refreshRows]);
 
+  /** 같은 대상(targetType+targetId)에 누적된 신고 수. ADM-040 "N건 누적" 배지용. */
+  const reportCountByTarget = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const r of rows) {
+      const key = r.workId ? `work:${r.workId}` : r.artistId ? `artist:${r.artistId}` : '';
+      if (!key) continue;
+      map.set(key, (map.get(key) ?? 0) + 1);
+    }
+    return map;
+  }, [rows]);
+
   const filtered = useMemo(() => {
     const now = Date.now();
     const tierRank: Record<SlaTier, number> = { normal: 0, nearing: 1, exceeded: 2, violated: 3 };
@@ -176,6 +191,12 @@ export default function ReportManagement() {
         return aPending - bPending;
       });
   }, [rows, statusFilter, typeFilter, slaFilter]);
+
+  // PRD_Admin §0.5.2: 어드민 테이블 50건/페이지. 필터 변경 시 1페이지로 리셋.
+  const { page, setPage, pageCount, pageItems, totalCount } = usePagination(filtered, ADMIN_TABLE_PAGE_SIZE);
+  useEffect(() => {
+    setPage(1);
+  }, [statusFilter, typeFilter, slaFilter, setPage]);
 
   /** 비공개 유지: 자동 비공개(Policy §12.2) 또는 아직 공개 중인 대상을 운영자 확정 비공개로 전환. */
   const keepHidden = (id: string) => {
@@ -332,39 +353,51 @@ export default function ReportManagement() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((r) => {
+              {pageItems.map((r) => {
                 const slaTier = computeSlaTier(r, Date.now());
                 const rowBg =
                   slaTier === 'violated' ? 'bg-red-50 lg:hover:bg-red-100/60'
                   : slaTier === 'exceeded' ? 'bg-orange-50/60 lg:hover:bg-orange-100/60'
                   : 'lg:hover:bg-muted/50';
+                const targetKey = r.workId ? `work:${r.workId}` : r.artistId ? `artist:${r.artistId}` : '';
+                const accumulated = targetKey ? reportCountByTarget.get(targetKey) ?? 0 : 0;
                 return (
                 <tr key={r.id} className={`border-b border-border/40 transition-colors ${rowBg}`}>
                   <td className="px-4 py-3 text-foreground max-w-[200px]">
-                    {r.workId ? (
-                      <a
-                        href={`/exhibitions/${r.workId}`}
-                        target="_blank"
-                        rel="noreferrer"
-                        className="inline-flex items-center gap-1 text-primary lg:hover:underline"
-                        title="전시 상세 새 탭으로 열기"
-                      >
-                        {r.target}
-                        <ExternalLink className="w-3 h-3 shrink-0" />
-                      </a>
-                    ) : r.artistId ? (
-                      <button
-                        type="button"
-                        onClick={() => navigate(`/admin/members?artist=${r.artistId}`)}
-                        className="inline-flex items-center gap-1 text-primary lg:hover:underline text-left"
-                        title="회원 상세 모달 열기"
-                      >
-                        {r.target}
-                        <ExternalLink className="w-3 h-3 shrink-0" />
-                      </button>
-                    ) : (
-                      r.target
-                    )}
+                    <div className="flex flex-col gap-1">
+                      {r.workId ? (
+                        <a
+                          href={`/exhibitions/${r.workId}`}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="inline-flex items-center gap-1 text-primary lg:hover:underline"
+                          title="전시 상세 새 탭으로 열기"
+                        >
+                          {r.target}
+                          <ExternalLink className="w-3 h-3 shrink-0" />
+                        </a>
+                      ) : r.artistId ? (
+                        <button
+                          type="button"
+                          onClick={() => navigate(`/admin/members?artist=${r.artistId}`)}
+                          className="inline-flex items-center gap-1 text-primary lg:hover:underline text-left"
+                          title="회원 상세 모달 열기"
+                        >
+                          {r.target}
+                          <ExternalLink className="w-3 h-3 shrink-0" />
+                        </button>
+                      ) : (
+                        r.target
+                      )}
+                      {accumulated >= 2 && (
+                        <span
+                          className="inline-flex w-fit items-center rounded-full bg-rose-50 border border-rose-200 text-rose-700 px-2 py-0.5 text-[10px] font-semibold"
+                          title="같은 대상에 접수된 누적 신고 수 (ADM-040)"
+                        >
+                          {accumulated}건 누적
+                        </span>
+                      )}
+                    </div>
                   </td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${kindBadge(r.kind)}`}>
@@ -441,6 +474,15 @@ export default function ReportManagement() {
               })}
             </tbody>
           </table>
+          <div className="px-4 pb-3">
+            <PaginationBar
+              page={page}
+              pageCount={pageCount}
+              totalCount={totalCount}
+              pageSize={ADMIN_TABLE_PAGE_SIZE}
+              onPageChange={setPage}
+            />
+          </div>
         </div>
       )}
     </div>

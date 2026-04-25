@@ -7,6 +7,7 @@ import type { Work } from '../data';
 import { displayExhibitionTitle } from '../utils/workDisplay';
 import { pushDemoNotification } from '../utils/pushDemoNotification';
 import { useI18n } from '../i18n/I18nProvider';
+import { useDebouncedValue } from '../hooks/useDebouncedValue';
 
 const MAX_PICKS = 10;
 const PICKS_KEY = 'artier_admin_picks_v1';
@@ -123,8 +124,9 @@ export default function PickManagement() {
     return () => window.clearTimeout(t);
   }, []);
 
-  const searchResults = useMemo(() => {
-    const q = search.trim().toLowerCase();
+  const debouncedSearch = useDebouncedValue(search, 300);
+  const searchMatches = useMemo(() => {
+    const q = debouncedSearch.trim().toLowerCase();
     if (!q) return [];
     return works
       .filter((w) => !pickIdSet.has(w.id) && w.feedReviewStatus === 'approved')
@@ -132,9 +134,10 @@ export default function PickManagement() {
         const title = displayExhibitionTitle(w, '').toLowerCase();
         const artist = (w.artist?.name || '').toLowerCase();
         return title.includes(q) || artist.includes(q);
-      })
-      .slice(0, 30);
-  }, [search, pickIdSet, works]);
+      });
+  }, [debouncedSearch, pickIdSet, works]);
+  const searchResults = useMemo(() => searchMatches.slice(0, 30), [searchMatches]);
+  const searchResultsOverflow = searchMatches.length > searchResults.length;
 
   const addPick = (work: Work) => {
     if (pickIds.length >= MAX_PICKS) {
@@ -212,6 +215,12 @@ export default function PickManagement() {
           />
         </div>
       </div>
+
+      {activeTab === 'current' && search && searchResultsOverflow && (
+        <div className="mb-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+          {searchMatches.length}건 매칭 — 상위 {searchResults.length}건만 표시했어요. 조건을 좁혀 주세요.
+        </div>
+      )}
 
       {activeTab === 'current' && search && searchResults.length > 0 && (
         <div className="mb-6 border border-border rounded-lg divide-y divide-[#F0F0F0]">

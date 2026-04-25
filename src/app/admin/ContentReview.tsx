@@ -10,6 +10,10 @@ import { ImageWithFallback } from '../components/figma/ImageWithFallback';
 import { Button } from '../components/ui/button';
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import { REJECTION_REASONS, REJECTION_REASON_LABEL_KEY, type RejectionReason } from '../utils/reviewLabels';
+import { usePagination } from '../hooks/usePagination';
+import { PaginationBar } from './components/PaginationBar';
+
+const REVIEW_PAGE_SIZE = 20;
 
 /** 반려 이력 항목 — 팝오버/모달 공통 서식. */
 function formatHistoryDate(iso: string): string {
@@ -91,6 +95,8 @@ export default function ContentReview() {
   const [to, setTo] = useState('');
   const [rejectTarget, setRejectTarget] = useState<Work | null>(null);
   const [pickedReason, setPickedReason] = useState<RejectionReason>('low_quality');
+  // ADM-030: 운영팀 내부 메모(선택, 최대 500자). rejectionHistory[i].note에 누적 저장.
+  const [internalNote, setInternalNote] = useState('');
 
   useEffect(() => {
     const t = window.setTimeout(() => setLoading(false), 240);
@@ -115,6 +121,13 @@ export default function ContentReview() {
       return true;
     });
   }, [rows, statusFilter, from, to]);
+
+  // PRD_Admin §2 ADM-REV-01: 검수 큐 20건/페이지.
+  const { page, setPage, pageCount, pageItems, totalCount } = usePagination(filtered, REVIEW_PAGE_SIZE);
+  // 필터 변경 시 첫 페이지로. (usePagination은 범위 보정만 하고 명시적 '필터 변경' 시그널은 없으므로 여기서 리셋)
+  useEffect(() => {
+    setPage(1);
+  }, [statusFilter, from, to, setPage]);
 
   const approve = (w: Work) => {
     workStore.updateWork(w.id, { feedReviewStatus: 'approved', rejectionReason: undefined });
@@ -153,15 +166,21 @@ export default function ContentReview() {
   const openReject = (w: Work) => {
     setRejectTarget(w);
     setPickedReason('low_quality');
+    setInternalNote('');
   };
 
   const confirmReject = () => {
     if (!rejectTarget) return;
     const w = rejectTarget;
     // 반려 이력에 누적 append — 작가가 수정 재발행해도 보존됨(감사·재범 추적·사유 트렌드).
+    const trimmedNote = internalNote.trim();
     const nextHistory = [
       ...(w.rejectionHistory ?? []),
-      { reason: pickedReason, rejectedAt: new Date().toISOString() },
+      {
+        reason: pickedReason,
+        rejectedAt: new Date().toISOString(),
+        ...(trimmedNote ? { note: trimmedNote } : {}),
+      },
     ];
     workStore.updateWork(w.id, {
       feedReviewStatus: 'rejected',
@@ -242,7 +261,7 @@ export default function ContentReview() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map(({ work: w, ui, date }) => {
+              {pageItems.map(({ work: w, ui, date }) => {
                 const key = getCoverImage(w.image, w.coverImageIndex);
                 const src = imageUrls[key] || key;
                 return (
@@ -356,6 +375,15 @@ export default function ContentReview() {
               })}
             </tbody>
           </table>
+          <div className="px-4 pb-3">
+            <PaginationBar
+              page={page}
+              pageCount={pageCount}
+              totalCount={totalCount}
+              pageSize={REVIEW_PAGE_SIZE}
+              onPageChange={setPage}
+            />
+          </div>
         </div>
       )}
 
@@ -381,20 +409,25 @@ export default function ContentReview() {
                 <p className="text-xs font-semibold text-amber-900 mb-2">
                   이전 반려 이력 {rejectTarget.rejectionHistory!.length}건 (최신순)
                 </p>
-                <ul className="space-y-1.5 max-h-32 overflow-y-auto">
+                <ul className="space-y-2 max-h-40 overflow-y-auto">
                   {[...(rejectTarget.rejectionHistory ?? [])].reverse().map((entry, idx) => (
-                    <li key={`${entry.rejectedAt}-${idx}`} className="flex items-center gap-2 text-[11px]">
-                      <span className="inline-flex rounded-full px-1.5 py-0.5 font-medium bg-red-100 text-red-700 border border-red-200">
-                        {t(REJECTION_REASON_LABEL_KEY[entry.reason])}
-                      </span>
-                      <span className="text-muted-foreground">{formatHistoryDate(entry.rejectedAt)}</span>
+                    <li key={`${entry.rejectedAt}-${idx}`} className="space-y-1">
+                      <div className="flex items-center gap-2 text-[11px]">
+                        <span className="inline-flex rounded-full px-1.5 py-0.5 font-medium bg-red-100 text-red-700 border border-red-200">
+                          {t(REJECTION_REASON_LABEL_KEY[entry.reason])}
+                        </span>
+                        <span className="text-muted-foreground">{formatHistoryDate(entry.rejectedAt)}</span>
+                      </div>
+                      {entry.note && (
+                        <p className="text-[11px] text-foreground pl-1 whitespace-pre-wrap break-words">{entry.note}</p>
+                      )}
                     </li>
                   ))}
                 </ul>
               </div>
             )}
 
-            <div className="space-y-2 mb-5">
+            <div className="space-y-2 mb-4">
               {REJECTION_REASONS.map((r) => (
                 <label
                   key={r}
@@ -413,6 +446,28 @@ export default function ContentReview() {
                 </label>
               ))}
             </div>
+
+            {/* ADM-030: 운영팀 내부 메모 — 작가에게 노출되지 않음. 재검수 판단용 맥락 보존. */}
+            <div className="mb-5">
+              <label htmlFor="reject-internal-note" className="block text-xs font-semibold text-foreground mb-1.5">
+                내부 메모 <span className="font-normal text-muted-foreground">(선택 · 운영팀만 열람)</span>
+              </label>
+              <textarea
+                id="reject-internal-note"
+                value={internalNote}
+                onChange={(e) => {
+                  if (e.target.value.length <= 500) setInternalNote(e.target.value);
+                }}
+                maxLength={500}
+                rows={3}
+                placeholder="재검수 시 참고할 맥락을 적어주세요. 작가에게는 노출되지 않습니다."
+                className="w-full text-sm border border-border rounded-lg px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
+              />
+              <p className="text-[11px] text-muted-foreground text-right mt-1">
+                {internalNote.length} / 500
+              </p>
+            </div>
+
             <div className="flex gap-2 justify-end">
               <Button
                 type="button"

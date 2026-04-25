@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
 import { MessageSquare, ShieldAlert, ChevronRight, X } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import { openConfirm } from '../components/ConfirmDialog';
 
 /**
  * ADM-INQ-01 · 문의함 (Policy §30 연동 · PRD_Admin §11.5).
@@ -178,7 +179,7 @@ export default function AdminInquiries() {
     });
   };
 
-  const sendReply = () => {
+  const sendReply = async () => {
     if (!selected) return;
     const text = replyText.trim();
     if (!text) {
@@ -190,7 +191,13 @@ export default function AdminInquiries() {
       return;
     }
     if (selected.category === 'privacy' && !subjectVerified) {
-      const proceed = window.confirm('본인 확인이 완료되지 않았습니다. 진행할까요?');
+      const proceed = await openConfirm({
+        title: '본인 확인이 완료되지 않았습니다.',
+        description: '그대로 답변을 전송할까요? 개인정보 요청은 본인 확인 후 처리하는 것을 권장합니다.',
+        confirmLabel: '그대로 전송',
+        cancelLabel: '취소',
+        destructive: true,
+      });
       if (!proceed) return;
     }
     const nextReplies = [

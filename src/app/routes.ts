@@ -48,6 +48,16 @@ function redirectWorksToExhibitions({ params }: LoaderFunctionArgs) {
   return redirect(`/exhibitions/${id}`);
 }
 
+// /demo, /demo/reference는 PM 시연·QA 검수용. 프로덕션 빌드에서는 제거되며 catch-all이 404 처리.
+const demoRoutesEnabled =
+  !import.meta.env.PROD || import.meta.env.VITE_FOOTER_QA_LINKS === 'true';
+const demoRoutes = demoRoutesEnabled
+  ? [
+      { path: 'demo', Component: FlowDemoTools },
+      { path: 'demo/reference', Component: DemoReferenceToolkit },
+    ]
+  : [];
+
 export const router = createBrowserRouter([
   {
     Component: AppRootShell,
@@ -71,8 +81,7 @@ export const router = createBrowserRouter([
           { path: 'settings', Component: Settings },
           { path: 'settings/notifications', loader: () => redirect('/settings#notifications') },
           { path: 'exhibitions/:id', Component: ExhibitionRoute },
-          { path: 'demo', Component: FlowDemoTools },
-          { path: 'demo/reference', Component: DemoReferenceToolkit },
+          ...demoRoutes,
           { path: 'points', loader: () => redirect('/') },
           { path: 'about', Component: About },
           { path: 'faq', Component: Faq },

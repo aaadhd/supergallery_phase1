@@ -1206,7 +1206,7 @@ export default function Upload() {
         <Toaster position="top-center" richColors toastOptions={{ duration: 5000 }} />
         <div className="sticky top-0 z-20 flex items-center justify-between px-4 py-3 bg-white border-b border-border/40">
           <span className="text-sm font-semibold text-foreground">{t('upload.reorderMode')}</span>
-          <Button onClick={() => { setReorderMode(false); toast.success(t('upload.toastOrderSaved')); }} className="px-5 py-2 bg-foreground text-white text-sm rounded-lg lg:hover:bg-black transition-colors">
+          <Button onClick={() => { setReorderMode(false); toast.success(t('upload.toastOrderSaved')); }} className="px-5 py-2 min-h-[44px] bg-foreground text-white text-sm rounded-lg lg:hover:bg-black transition-colors">
             {t('upload.reorderDone')}
           </Button>
         </div>

@@ -4,6 +4,11 @@ import { X, AlertTriangle } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { artists } from '../data';
 import { loadUserReports, type StoredUserReport } from '../utils/reportsStore';
+import { useDebouncedValue } from '../hooks/useDebouncedValue';
+import { usePagination } from '../hooks/usePagination';
+import { PaginationBar } from './components/PaginationBar';
+
+const MEMBERS_PAGE_SIZE = 50;
 
 /**
  * Phase 1 회원 관리 (Policy §12.3).
@@ -92,11 +97,17 @@ export default function MemberManagement() {
     return () => window.clearTimeout(t);
   }, []);
 
+  const debouncedQ = useDebouncedValue(q, 300);
   const filtered = useMemo(() => {
-    const s = q.trim().toLowerCase();
+    const s = debouncedQ.trim().toLowerCase();
     if (!s) return members;
     return members.filter((m) => m.name.toLowerCase().includes(s) || m.email.toLowerCase().includes(s));
-  }, [members, q]);
+  }, [members, debouncedQ]);
+
+  const { page, setPage, pageCount, pageItems, totalCount } = usePagination(filtered, MEMBERS_PAGE_SIZE);
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedQ, setPage]);
 
   if (loading) {
     return (
@@ -124,6 +135,12 @@ export default function MemberManagement() {
         />
       </div>
 
+      {filtered.length > 200 && (
+        <div className="mb-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+          {filtered.length}명이 매칭됐어요. 조건을 좁혀 주세요 — 결과가 많으면 찾기 어렵습니다.
+        </div>
+      )}
+
       {filtered.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
           검색 결과가 없습니다.
@@ -141,7 +158,7 @@ export default function MemberManagement() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((m) => (
+              {pageItems.map((m) => (
                 <tr key={m.id} className="border-b border-border/40 lg:hover:bg-muted/50 transition-colors">
                   <td className="px-4 py-3">
                     <div className="w-10 h-10 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center border border-border">
@@ -174,6 +191,15 @@ export default function MemberManagement() {
               ))}
             </tbody>
           </table>
+          <div className="px-4 pb-3">
+            <PaginationBar
+              page={page}
+              pageCount={pageCount}
+              totalCount={totalCount}
+              pageSize={MEMBERS_PAGE_SIZE}
+              onPageChange={setPage}
+            />
+          </div>
         </div>
       )}
 

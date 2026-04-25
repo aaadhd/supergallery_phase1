@@ -10,6 +10,11 @@ import { getCoverImage } from '../utils/imageHelper';
 import { displayExhibitionTitle } from '../utils/workDisplay';
 import { useI18n } from '../i18n/I18nProvider';
 import { openConfirm } from '../components/ConfirmDialog';
+import { useDebouncedValue } from '../hooks/useDebouncedValue';
+import { usePagination } from '../hooks/usePagination';
+import { PaginationBar } from './components/PaginationBar';
+
+const WORKS_PAGE_SIZE = 50;
 
 type VisibilityFilter = '전체' | '공개' | '비공개';
 
@@ -38,14 +43,20 @@ export default function WorkManagement() {
     return workStore.subscribe(() => setWorks(workStore.getWorks()));
   }, []);
 
+  const debouncedArtistQ = useDebouncedValue(artistQ, 300);
   const filtered = useMemo(() => {
-    const q = artistQ.trim().toLowerCase();
+    const q = debouncedArtistQ.trim().toLowerCase();
     return works.filter((w) => {
       if (visibility !== '전체' && visibilityOf(w) !== visibility) return false;
       if (q && !w.artist.name.toLowerCase().includes(q)) return false;
       return true;
     });
-  }, [works, visibility, artistQ]);
+  }, [works, visibility, debouncedArtistQ]);
+
+  const { page, setPage, pageCount, pageItems, totalCount } = usePagination(filtered, WORKS_PAGE_SIZE);
+  useEffect(() => {
+    setPage(1);
+  }, [visibility, debouncedArtistQ, setPage]);
 
   const toggleHidden = (w: Work) => {
     const next = !w.isHidden;
@@ -100,6 +111,12 @@ export default function WorkManagement() {
         />
       </div>
 
+      {filtered.length > 200 && (
+        <div className="mb-3 rounded-lg border border-amber-200 bg-amber-50 px-3 py-2 text-sm text-amber-800">
+          {filtered.length}건이 매칭됐어요. 조건을 좁혀 주세요 — 결과가 많으면 찾기 어렵습니다.
+        </div>
+      )}
+
       {filtered.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
           조건에 맞는 작품이 없습니다. 신규 작품을 업로드하면 여기에 표시됩니다.
@@ -118,7 +135,7 @@ export default function WorkManagement() {
               </tr>
             </thead>
             <tbody>
-              {filtered.map((w) => {
+              {pageItems.map((w) => {
                 const key = getCoverImage(w.image, w.coverImageIndex);
                 const src = imageUrls[key] || key;
                 const v = visibilityOf(w);
@@ -163,6 +180,15 @@ export default function WorkManagement() {
               })}
             </tbody>
           </table>
+          <div className="px-4 pb-3">
+            <PaginationBar
+              page={page}
+              pageCount={pageCount}
+              totalCount={totalCount}
+              pageSize={WORKS_PAGE_SIZE}
+              onPageChange={setPage}
+            />
+          </div>
         </div>
       )}
     </div>
