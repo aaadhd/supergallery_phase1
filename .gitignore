@@ -29,8 +29,5 @@ node_modules
 # Playwright MCP 캐시 (스크린샷·snapshot yml)
 .playwright-mcp/
 
-# 대용량 이미지 자산 (별도 처리·CDN 또는 git LFS 권장)
-public/images_1/
-
 # 운영팀 검수·QA 스크린샷 (저장소 외부 보관)
 audits/
