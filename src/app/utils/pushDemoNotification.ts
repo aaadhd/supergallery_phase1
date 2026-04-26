@@ -3,7 +3,7 @@ const STORAGE_KEY = 'artier_notifications';
 const MAX = 200;
 
 type DemoNotif = {
-  type: 'like' | 'follow' | 'pick' | 'system' | 'event';
+  type: 'like' | 'follow' | 'pick' | 'system' | 'event' | 'invite';
   message: string;
   fromUser?: { name: string; avatar: string; id: string };
   workId?: string;

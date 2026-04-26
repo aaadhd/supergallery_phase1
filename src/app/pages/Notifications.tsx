@@ -17,7 +17,7 @@ const NOTIF_RETENTION_MS = 90 * 86400000;
 
 interface Notification {
   id: string;
-  type: 'like' | 'follow' | 'pick' | 'system' | 'event';
+  type: 'like' | 'follow' | 'pick' | 'system' | 'event' | 'invite';
   /** 동적 알림은 message 그대로, 시드·시스템은 messageKey + replacements 권장 (i18n 정합). */
   message?: string;
   messageKey?: MessageKey;
@@ -170,6 +170,7 @@ const typeIcons = {
   pick: Star,
   system: Bell,
   event: Calendar,
+  invite: UserPlus,
 } as const;
 
 const typeColors = {
@@ -178,6 +179,7 @@ const typeColors = {
   pick: 'bg-amber-50 text-amber-400',
   system: 'bg-muted/50 text-muted-foreground',
   event: 'bg-emerald-50 text-emerald-500',
+  invite: 'bg-violet-50 text-violet-500',
 } as const;
 
 function passesPrefs(n: Notification, p: NotificationSettingsState): boolean {
@@ -193,6 +195,9 @@ function passesPrefs(n: Notification, p: NotificationSettingsState): boolean {
       return p.groupExhibitionInvite;
     case 'system':
       return p.marketing;
+    case 'invite':
+      // 작가가 직접 보낸 초대 링크의 결과 알림 — 본인 액션의 결과이므로 항상 노출 (Policy §3 v2.14).
+      return true;
     default:
       // Unknown type — 향후 확장 시 사용자 동의 없이 노출되지 않도록 보수적으로 차단.
       return false;
@@ -279,6 +284,7 @@ export default function Notifications() {
     { id: 'follow', label: t('notifications.categoryFollow') },
     { id: 'pick', label: t('notifications.categoryPick') },
     { id: 'event', label: t('notifications.categoryEvent') },
+    { id: 'invite', label: t('notifications.categoryInvite') },
     { id: 'system', label: t('notifications.categorySystem') },
   ];
 

@@ -67,7 +67,6 @@ import { pointsOnWorkPublished } from '../utils/pointsBackground';
 import { pushDemoNotification } from '../utils/pushDemoNotification';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
-// sendInviteToNonMember moved to ContentReview — invites sent after approval
 import { openConfirm } from '../components/ConfirmDialog';
 import { RequiredMark } from '../components/RequiredMark';
 import { containsProfanity } from '../utils/profanityFilter';

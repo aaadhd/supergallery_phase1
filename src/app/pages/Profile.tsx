@@ -44,9 +44,7 @@ import { openConfirm } from '../components/ConfirmDialog';
 import { containsProfanity } from '../utils/profanityFilter';
 import { WorkDetailModal } from '../components/WorkDetailModal';
 import { hydrateGroupWorks } from '../groupData';
-import { demoteSlotToUnknown } from '../utils/inviteMessaging';
 import { isWorkPublic, isWorkHidden } from '../utils/workVisibility';
-import { pushDemoNotification } from '../utils/pushDemoNotification';
 
 function workHasStudentCredits(w: Work, instructorId: string): boolean {
   const ia = w.imageArtists;
@@ -320,7 +318,7 @@ export default function Profile() {
   ), [storeWorks, profileArtist.id]);
 
   // 작품 관리 탭용 — 내 그림만 이미지 단위 flat
-  type FlatImage = { work: Work; imgSrc: string; imgIndex: number; pieceTitle: string; isDisavowable: boolean; isOwnUpload: boolean };
+  type FlatImage = { work: Work; imgSrc: string; imgIndex: number; pieceTitle: string; isOwnUpload: boolean };
   const worksManageFlatImages: FlatImage[] = useMemo(() => {
     const pool = [...artistWorks, ...taggedWorks];
     const allMyWorks = onlyMyUploads
@@ -348,11 +346,6 @@ export default function Profile() {
           imgSrc: imageUrls[imgs[idx]] || imgs[idx],
           imgIndex: idx,
           pieceTitle: displayPieceTitleAtIndex(work, idx, t('work.untitled')),
-          // Disavow 대상: 본인이 업로더가 아니고, 이 이미지의 imageArtists 슬롯이 member(본인)인 경우.
-          // 초대 자동 연결로 참여 슬롯에 붙은 piece만 해당. Policy §3.5.
-          isDisavowable: work.artistId !== myId
-            && ias?.[idx]?.type === 'member'
-            && ias[idx]?.memberId === myId,
           // piece 제목 편집 권한: 본인이 업로드한 전시의 이미지에만 부여 (Policy §9 v2.6).
           isOwnUpload: work.artistId === myId || work.authorId === myId,
         }));
@@ -1325,30 +1318,6 @@ export default function Profile() {
                           setRenameValue(fi.pieceTitle === t('work.untitled') ? '' : fi.pieceTitle);
                           setRenamingFlatImage(fi);
                         };
-                        const handleDisavow = async (e: React.MouseEvent) => {
-                          e.stopPropagation();
-                          const ok = await openConfirm({
-                            title: t('invite.disavowConfirmTitle'),
-                            description: t('invite.disavowConfirmDesc'),
-                          });
-                          if (!ok) return;
-                          const result = demoteSlotToUnknown(fi.work.id, fi.imgIndex, profileArtist.id);
-                          if (!result.ok) {
-                            toast.error(t('invite.disavowFailed'));
-                            return;
-                          }
-                          const pieceLabel = result.pieceTitle && result.pieceTitle.trim()
-                            ? result.pieceTitle
-                            : t('invite.fallbackPieceIndex').replace('{n}', String(fi.imgIndex + 1));
-                          pushDemoNotification({
-                            type: 'system',
-                            message: t('invite.notifDisavowed')
-                              .replace('{workTitle}', result.workTitle || t('work.untitled'))
-                              .replace('{piece}', pieceLabel),
-                            workId: fi.work.id,
-                          });
-                          toast.success(t('invite.disavowDone'));
-                        };
                         return (
                         <div
                           key={`${fi.work.id}-img-${fi.imgIndex}`}
@@ -1383,17 +1352,6 @@ export default function Profile() {
                               </div>
                             )}
 
-                            {/* 초대 자동 연결 piece — "본인 작품 아님" 액션 (업로더가 아닐 때만) */}
-                            {fi.isDisavowable && isOwnProfile && (
-                              <button
-                                type="button"
-                                onClick={handleDisavow}
-                                aria-label={t('invite.disavowAction')}
-                                className="absolute top-2 right-2 z-10 inline-flex items-center rounded-full bg-black/60 backdrop-blur-sm px-3 py-1 text-xs font-semibold text-white hover:bg-black/75 transition-colors min-h-[44px]"
-                              >
-                                {t('invite.disavowAction')}
-                              </button>
-                            )}
                           </div>
                           <div className="pt-2">
                             {/* 작품명: 본인 업로드 전시의 이미지에만 편집 가능 (Policy §9 v2.6) */}

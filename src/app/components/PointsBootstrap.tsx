@@ -10,6 +10,11 @@ const LEGACY_STORAGE_KEYS = [
   'artier_group_canonical_map',     // 그룹명 중복 허용 정책(2026-04-17) 이후 orphan
   'artier_signup_region',           // region 분기 폐기(2026-04-26) 후 orphan
   'artier_pending_signup_realname', // 실명 인풋 폐기(2026-04-26) 후 orphan
+  'artier_pending_sms_invite',      // SMS 초대 폐기(2026-04-27, Policy §3 v2.14) 후 orphan
+  'artier_pending_signup_phone',    // 온보딩 전화 입력 폐기(2026-04-27) 후 orphan
+  'artier_invite_messaging_log',    // 회사 발송 로그 폐기(2026-04-27, Policy §3 v2.14) 후 orphan
+  'artier_invite_match_log',        // 자동 매칭 로그 폐기(2026-04-27) 후 orphan
+  'artier_invite_decline_log',      // "초대 매칭 거부" 큐 폐기(2026-04-27) 후 orphan
 ];
 
 const LEGACY_SESSION_KEYS = [

@@ -25,7 +25,7 @@ function formatHistoryDate(iso: string): string {
 }
 import { useI18n } from '../i18n/I18nProvider';
 import { pushDemoNotification } from '../utils/pushDemoNotification';
-import { sendInviteToNonMember } from '../utils/inviteMessaging';
+import { activateInviteToken, deactivateInviteToken } from '../utils/inviteTokenStore';
 import { buildVisibilityPatch } from '../utils/workVisibility';
 
 type ReviewStatusUi = '대기중' | '승인' | '반려';
@@ -157,22 +157,9 @@ export default function ContentReview() {
       fromUser: { name: w.artist.name, avatar: w.artist.avatar, id: w.artistId },
     });
 
-    // 검수 승인 시점에 비가입자 초대 발송 (Upload에서 보류된 것)
-    const pending = w.imageArtists?.filter((a) => a.type === 'non-member' && a.phoneNumber && a.displayName) ?? [];
-    if (pending.length > 0) {
-      let sent = 0;
-      for (const r of pending) {
-        const exhibitionUrl = `${window.location.origin}/exhibitions/${w.id}?from=credited&invited_phone=${encodeURIComponent(r.phoneNumber!)}&invited_name=${encodeURIComponent(r.displayName!)}`;
-        const result = sendInviteToNonMember({ phoneNumber: r.phoneNumber!, displayName: r.displayName!, workId: w.id, exhibitionUrl, locale: 'ko' });
-        if (result.success) sent++;
-      }
-      // 발송 후 전화번호 scrub
-      const scrubbed = w.imageArtists!.map((a) =>
-        a.type === 'non-member' ? { ...a, phoneNumber: undefined } : a,
-      );
-      workStore.updateWork(w.id, { imageArtists: scrubbed });
-      if (sent > 0) toast.info(`비가입 작가 ${sent}명에게 초대가 발송되었습니다.`);
-    }
+    // Policy §3 v2.14: 비회원 초대 토큰 활성화 (회사가 외부 채널 발송 안 함 — 작가가 본인 채널로 직접 공유).
+    const hasNonMember = w.imageArtists?.some((a) => a.type === 'non-member' && (a.displayName ?? '').trim()) ?? false;
+    if (hasNonMember) activateInviteToken(w.id);
   };
 
   const openReject = (w: Work) => {
@@ -199,6 +186,8 @@ export default function ContentReview() {
       rejectionReason: pickedReason,
       rejectionHistory: nextHistory,
     });
+    // Policy §3 v2.14: 검수 반려 시 토큰 비활성화 (친구 링크 보존, 재승인 시 자동 활성화).
+    deactivateInviteToken(w.id);
     toast.error('반려 처리되었습니다. 피드에는 노출되지 않습니다.');
     const reasonLabel = t(REJECTION_REASON_LABEL_KEY[pickedReason]);
     pushDemoNotification({

@@ -231,7 +231,7 @@ export default function Onboarding() {
     try {
       const { pushDemoNotification } = await import('../utils/pushDemoNotification');
       pushDemoNotification({
-        type: 'system',
+        type: 'invite',
         message: t('invite.notifAutoMatched')
           .replace('{name}', slot.displayName)
           .replace('{title}', claimWork.exhibitionName?.trim() || claimWork.title || t('work.exhibitionFallback')),

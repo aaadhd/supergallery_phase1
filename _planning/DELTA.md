@@ -16,6 +16,13 @@
 - ADM-RPT-01 "초대 매칭 거부" 카테고리 폐기 — 작가 승인 게이트 없으므로 거부 신호 없음.
 - 폐기된 흐름의 잔재 정리: 매직 링크형 식별자 매칭, 마이페이지 사후 보강 배너, 발신자 양방향 알림 매트릭스(정보용 1건만 유지).
 
+**단계 2~5 코드 구현 (5개 푸시 분리)**
+
+- 단계 2 — `inviteTokenStore.ts` 신설(전시 단위 토큰 1개, 90일 TTL, 만료 lazy 평가). 발급·활성화·비활성화·취소 + 가입자 본인 작품 찾기용 `connectMemberToSlot`(type 가드로 동시 선택 race 차단). 공유 URL·메시지 빌더.
+- 단계 3 — 시니어 친화 `InviteShareButton.tsx` 신설(navigator.share + 클립보드 + mailto 폴백 + "검수 통과 후 활성화" 비활성 라벨). Upload 비회원 슬롯 UI를 이름만 받도록 단순화, 발행 시 토큰 발급.
+- 단계 4 — `ExhibitionInviteLanding`을 `?from=invite|credited`에서 `?invite=<token>` 토큰 모델로 재구성(active·inactive·revoked·만료·불일치 5상태 분기 + SPA noindex 메타). `Onboarding` step 2를 폰 매칭 후보 yes/no에서 토큰 기반 비회원 슬롯 카드 그리드 + 명시 클릭 + 확인 1회로 재정의(동시 선택 race 토스트 + "여기 없어요" 스킵).
+- 단계 5 — 가입자 자가 disavow 진입점 삭제(`WorkDetailModal` piece 오버레이 + `Profile` 본인 작품 탭 액션). `Notification.type`에 `'invite'` 추가(작가가 직접 보낸 초대 결과 알림은 본인 액션의 결과이므로 항상 노출). `inviteMessaging.ts`·`InviteClaimCheck.tsx` 삭제 + 미사용 i18n 키 33쌍 일괄 정리. `ContentReview` 승인·반려 시 토큰 활성화·비활성화 호출(회사 SMS·알림톡·이메일 발송 코드 제거). `workStore.removeWork`에 토큰 revoke 동적 import 추가. `LEGACY_STORAGE_KEYS`에 deprecated 키 5종 추가(부팅 시 정리).
+
 ---
 
 ## 2026-04-26 (일) — SystemArchitecture·DesignSystem 폐기, 정책으로 흡수

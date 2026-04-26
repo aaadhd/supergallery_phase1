@@ -25,9 +25,6 @@ import {
   displayPieceTitleAtIndex,
   displayProminentHeadline,
 } from '../utils/workDisplay';
-import { openConfirm } from './ConfirmDialog';
-import { demoteSlotToUnknown } from '../utils/inviteMessaging';
-import { pushDemoNotification } from '../utils/pushDemoNotification';
 
 interface WorkDetailModalProps {
   workId: string;
@@ -523,37 +520,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                       || (totalImages === 1 ? work.artist.name : undefined);
                     const imgArtistAvatar = imgArtist?.avatar || (totalImages === 1 ? work.artist.avatar : undefined);
                     const showFollow = imgArtist && imgArtist.id !== allArtists[0]?.id;
-                    // 초대 자동 연결 piece의 원복 진입점(Policy §3.5): 현재 로그인 사용자가 이 슬롯의 member이면서 업로더가 아닐 때 노출
-                    const viewerId = allArtists[0]?.id;
-                    const isDisavowable = authStore.isLoggedIn()
-                      && ia?.type === 'member'
-                      && ia.memberId === viewerId
-                      && work.artistId !== viewerId;
-                    const handleDisavow = async (e: React.MouseEvent) => {
-                      e.stopPropagation();
-                      const ok = await openConfirm({
-                        title: t('invite.disavowConfirmTitle'),
-                        description: t('invite.disavowConfirmDesc'),
-                      });
-                      if (!ok) return;
-                      const result = demoteSlotToUnknown(work.id, workImageIndex, viewerId!);
-                      if (!result.ok) {
-                        toast.error(t('invite.disavowFailed'));
-                        return;
-                      }
-                      const pieceLabel = result.pieceTitle && result.pieceTitle.trim()
-                        ? result.pieceTitle
-                        : t('invite.fallbackPieceIndex').replace('{n}', String(workImageIndex + 1));
-                      pushDemoNotification({
-                        type: 'system',
-                        message: t('invite.notifDisavowed')
-                          .replace('{workTitle}', result.workTitle || t('work.untitled'))
-                          .replace('{piece}', pieceLabel),
-                        workId: work.id,
-                      });
-                      toast.success(t('invite.disavowDone'));
-                    };
-                    return (imgArtistName || slideLabel !== t('work.untitled') || isDisavowable) ? (
+                    return (imgArtistName || slideLabel !== t('work.untitled')) ? (
                       <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black/70 via-black/35 to-transparent px-4 sm:px-5 pb-3.5 pt-10">
                         {slideLabel !== t('work.untitled') && (
                           <p className="absolute left-0 right-0 bottom-3.5 text-white/90 text-base font-semibold drop-shadow-md text-center pointer-events-none">{slideLabel}</p>
@@ -576,16 +543,6 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                               }`}
                             >
                               {follows.isFollowing(imgArtist.id) ? t('social.following') : t('social.follow')}
-                            </button>
-                          )}
-                          {isDisavowable && (
-                            <button
-                              type="button"
-                              onClick={handleDisavow}
-                              aria-label={t('invite.disavowAction')}
-                              className="ml-auto min-h-[44px] text-xs font-semibold px-3 py-2 rounded-full bg-white/15 text-white/90 hover:bg-white/25 transition-colors shrink-0"
-                            >
-                              {t('invite.disavowAction')}
                             </button>
                           )}
                         </div>

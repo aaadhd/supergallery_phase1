@@ -250,6 +250,12 @@ export const workStore = {
       }
     } catch { /* ignore */ }
 
+    // 비회원 초대 토큰 영구 무효화 (Policy §3.4 — 전시 삭제 시 토큰 revoke)
+    try {
+      // 동적 import로 inviteTokenStore와 store.ts의 순환 의존 차단
+      void import('./utils/inviteTokenStore').then(({ revokeInviteToken }) => revokeInviteToken(id));
+    } catch { /* ignore */ }
+
     emitWorksChanged();
     return schedulePersist();
   },
