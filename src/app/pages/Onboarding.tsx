@@ -1,26 +1,51 @@
-import { useState, useCallback, useRef } from 'react';
+import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Camera } from 'lucide-react';
-import { profileStore } from '../store';
+import { profileStore, workStore } from '../store';
 import { artists } from '../data';
+import type { Work } from '../data';
 import { pointsOnOnboardingStep1Complete } from '../utils/pointsBackground';
 import {
-  findMatchCandidates,
-  applyConfirmedMatches,
-  recordDeclinedMatches,
-  type MatchCandidate,
-  type PromotedInviteDetail,
-} from '../utils/inviteMessaging';
-import { isEmailRegistered, isPhoneRegistered, registerAccount } from '../utils/registeredAccounts';
+  getInviteToken,
+  connectMemberToSlot,
+  type InviteToken,
+} from '../utils/inviteTokenStore';
+import { isEmailRegistered, registerAccount } from '../utils/registeredAccounts';
 import { toast } from 'sonner';
 import { useI18n } from '../i18n/I18nProvider';
 import { containsProfanity } from '../utils/profanityFilter';
 import { Button } from '../components/ui/button';
-import { InviteClaimCheck } from '../components/InviteClaimCheck';
+import { openConfirm } from '../components/ConfirmDialog';
+import { ImageWithFallback } from '../components/ImageWithFallback';
+import { imageUrls } from '../imageUrls';
+import { getAllImages } from '../utils/imageHelper';
 
 const TOTAL_STEPS = 4;
 const ACCENT = '#171717';
+
+type ClaimableSlot = {
+  pieceIndex: number;
+  imageSrc: string;
+  displayName: string;
+  pieceTitle: string;
+};
+
+function buildClaimableSlots(work: Work, t: (k: string) => string): ClaimableSlot[] {
+  const images = getAllImages(work.image);
+  const slots = Array.isArray(work.imageArtists) ? work.imageArtists : [];
+  const titles = Array.isArray(work.imagePieceTitles) ? work.imagePieceTitles : [];
+  const out: ClaimableSlot[] = [];
+  slots.forEach((slot, idx) => {
+    if (!slot || slot.type !== 'non-member') return;
+    const imgKey = images[idx] || images[0] || '';
+    const imageSrc = imageUrls[imgKey] || imgKey;
+    const displayName = (slot.displayName || '').trim() || t('claim.findMyWorksTitle');
+    const pieceTitle = (titles[idx] || '').trim() || t('invite.fallbackPieceIndex').replace('{n}', String(idx + 1));
+    out.push({ pieceIndex: idx, imageSrc, displayName, pieceTitle });
+  });
+  return out;
+}
 
 export default function Onboarding() {
   const navigate = useNavigate();
@@ -33,19 +58,6 @@ export default function Onboarding() {
   })();
   const [nickname, setNickname] = useState(prefilledNickname);
   const [nicknameError, setNicknameError] = useState('');
-  /** SMS 초대로 들어온 경우 초대받은 전화번호(ExhibitionInviteLanding에서 전달) */
-  const prefilledPhone = (() => {
-    if (typeof window === 'undefined') return '';
-    try { return localStorage.getItem('artier_pending_signup_phone') || ''; } catch { return ''; }
-  })();
-  const [phone, setPhone] = useState(prefilledPhone);
-  const [phoneError, setPhoneError] = useState('');
-  /**
-   * 전화번호 입력 노출 여부.
-   * Policy §2.1: 전화번호는 가입 후 Settings에서 추가하는 선택 항목이므로 일반 가입자에겐 묻지 않는다.
-   * 단, SMS 비회원 초대 링크로 들어와 전화번호가 프리필된 경우(USR-EXH-03)에는 본인 확인을 위해 노출 유지.
-   */
-  const collectsPhone = !!prefilledPhone;
   /** 이메일 가입(Signup) 또는 소셜 가입(Login) 직후 provider에서 받은 이메일 */
   const prefilledEmail = (() => {
     if (typeof window === 'undefined') return '';
@@ -57,30 +69,45 @@ export default function Onboarding() {
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   /**
-   * §3.5.1 본인 확인 단계 (조건부).
-   * Step 2(profile) 완료 시 매칭 후보가 있으면 본인 확인 화면을 같은 step 자리에 노출한다.
+   * 초대 토큰 핸드오프 (Policy §3 v2.14).
+   * `ExhibitionInviteLanding` → 가입 CTA 클릭 시 sessionStorage `artier_pending_invite_token`에 저장.
+   * Step 2 닉네임 입력 후 "다음" → 토큰으로 전시 조회 → non-member 슬롯 카드 노출.
    */
-  const [matchCandidates, setMatchCandidates] = useState<MatchCandidate[] | null>(null);
+  const [pendingToken, setPendingToken] = useState<InviteToken | null>(null);
+  const [claimWork, setClaimWork] = useState<Work | null>(null);
+  const [claimableSlots, setClaimableSlots] = useState<ClaimableSlot[]>([]);
+  const [showClaimScreen, setShowClaimScreen] = useState(false);
   const [claimBusy, setClaimBusy] = useState(false);
-  const [matchedCount, setMatchedCount] = useState(0);
+  const [claimedTitle, setClaimedTitle] = useState<string | null>(null);
 
-  /**
-   * SMS 비회원 초대로 들어온 사용자. 배너 문구와 매칭 성공 안내에 사용.
-   * - 플래그 설정: `ExhibitionInviteLanding`의 "가입하기" 클릭 시
-   */
-  const isInviteFlow = (() => {
-    if (typeof window === 'undefined') return false;
-    try { return localStorage.getItem('artier_pending_sms_invite') === '1'; } catch { return false; }
-  })();
+  // workStore 변경 구독: 다른 가입자가 동시에 슬롯을 가져갔을 때 카드 새로고침
+  useEffect(() => {
+    if (!claimWork) return;
+    const unsubscribe = workStore.subscribe(() => {
+      const fresh = workStore.getWork(claimWork.id);
+      if (!fresh) {
+        setClaimableSlots([]);
+        return;
+      }
+      setClaimWork(fresh);
+      setClaimableSlots(buildClaimableSlots(fresh, t));
+    });
+    return unsubscribe;
+  }, [claimWork, t]);
 
   /**
    * 소셜 첫 가입자. 배너 문구 + 이메일 필수 여부에 사용.
-   * - 플래그 설정: `Login`의 `completeFirstSocialSignup`
    */
-  const isSocialSignup = (() => {
+  const isSocialSignup = useMemo(() => {
     if (typeof window === 'undefined') return false;
     try { return !!localStorage.getItem('artier_pending_social_signup'); } catch { return false; }
-  })();
+  }, []);
+
+  /** 초대 토큰으로 들어온 가입자 (배너 문구용) */
+  const isInviteFlow = useMemo(() => {
+    if (typeof window === 'undefined') return false;
+    try { return !!sessionStorage.getItem('artier_pending_invite_token'); } catch { return false; }
+  }, []);
 
   const goNext = useCallback(() => {
     setCurrentStep(s => Math.min(s + 1, TOTAL_STEPS - 1));
@@ -108,35 +135,6 @@ export default function Onboarding() {
     return true;
   };
 
-  const validatePhone = (): boolean => {
-    // 일반 가입자는 전화번호 미수집 — 검증 스킵 (Policy §2.1).
-    // SMS 초대로 프리필된 경우만 검증.
-    if (!collectsPhone) {
-      setPhoneError('');
-      return true;
-    }
-    const trimmed = phone.trim();
-    if (trimmed.length === 0) {
-      setPhoneError(
-        isInviteFlow
-          ? t('onboarding.errPhoneRequiredInvite')
-          : t('onboarding.errPhoneRequiredSocial'),
-      );
-      return false;
-    }
-    const digits = trimmed.replace(/[^0-9]/g, '');
-    if (digits.length < 10) {
-      setPhoneError(t('onboarding.errPhoneInvalid'));
-      return false;
-    }
-    if (isPhoneRegistered(trimmed)) {
-      setPhoneError(t('onboarding.errPhoneRegistered'));
-      return false;
-    }
-    setPhoneError('');
-    return true;
-  };
-
   const validateEmail = (): boolean => {
     const trimmed = email.trim();
     if (trimmed.length === 0) {
@@ -156,21 +154,28 @@ export default function Onboarding() {
   };
 
   const handleNicknameNext = () => {
-    const nickOk = validateNickname();
-    const phoneOk = validatePhone();
-    if (!nickOk || !phoneOk) return;
+    if (!validateNickname()) return;
     pointsOnOnboardingStep1Complete();
 
-    // §3.5.1 본인 확인 단계 — 입력한 전화번호 기준 매칭 후보가 있으면 같은 step에서 본인 확인 화면을 띄운다
-    const phoneTrim = phone.trim();
-    if (phoneTrim) {
-      const candidates = findMatchCandidates(phoneTrim);
-      if (candidates.length > 0) {
-        setMatchCandidates(candidates);
-        return;
+    // 초대 토큰 핸드오프 평가
+    let tokenStr: string | null = null;
+    try { tokenStr = sessionStorage.getItem('artier_pending_invite_token'); } catch { /* ignore */ }
+    if (tokenStr) {
+      const tok = getInviteToken(tokenStr);
+      if (tok && tok.status === 'active') {
+        const work = workStore.getWork(tok.workId);
+        if (work) {
+          const slots = buildClaimableSlots(work, t);
+          if (slots.length > 0) {
+            setPendingToken(tok);
+            setClaimWork(work);
+            setClaimableSlots(slots);
+            setShowClaimScreen(true);
+            return;
+          }
+        }
       }
     }
-    setMatchCandidates([]);
     goNext();
   };
 
@@ -191,55 +196,60 @@ export default function Onboarding() {
     e.target.value = '';
   };
 
-  /** §3.5.1 본인 확인에서 "맞아요" 선택 — 후보 전체를 회원 슬롯으로 승격하고 발신자에게 알림. */
-  const handleClaimYes = async () => {
-    if (!matchCandidates || matchCandidates.length === 0) {
-      goNext();
-      return;
-    }
+  /** 본인 작품 카드 클릭 — 확인 다이얼로그 후 즉시 'member'로 승격 (Policy §3 v2.14). */
+  const handleClaimSlot = async (slot: ClaimableSlot) => {
+    if (!claimWork || claimBusy) return;
+    const ok = await openConfirm({
+      title: t('claim.confirmTitle').replace('{slotDisplayName}', slot.displayName),
+      description: t('claim.confirmBody'),
+      confirmLabel: t('claim.confirmYes'),
+    });
+    if (!ok) return;
+
     setClaimBusy(true);
     const me = artists[0];
-    const promoted: PromotedInviteDetail[] = applyConfirmedMatches(matchCandidates, {
+    const result = connectMemberToSlot(claimWork.id, slot.pieceIndex, {
       id: me.id,
       name: nickname.trim() || me.name,
       avatar: profileImage || me.avatar,
     });
+
+    if (!result.ok) {
+      // race: 다른 가입자가 먼저 가져갔거나 이미 회원 슬롯이 됨 → 카드 새로고침
+      const fresh = workStore.getWork(claimWork.id);
+      if (fresh) {
+        setClaimWork(fresh);
+        setClaimableSlots(buildClaimableSlots(fresh, t));
+      } else {
+        setClaimableSlots([]);
+      }
+      toast.error(t('claim.alreadyTaken'));
+      setClaimBusy(false);
+      return;
+    }
+
     try {
       const { pushDemoNotification } = await import('../utils/pushDemoNotification');
-      for (const detail of promoted) {
-        pushDemoNotification({
-          type: 'system',
-          message: t('invite.notifAutoMatched')
-            .replace('{name}', detail.invitedName)
-            .replace('{title}', detail.workTitle),
-          workId: detail.workId,
-        });
-      }
+      pushDemoNotification({
+        type: 'system',
+        message: t('invite.notifAutoMatched')
+          .replace('{name}', slot.displayName)
+          .replace('{title}', claimWork.exhibitionName?.trim() || claimWork.title || t('work.exhibitionFallback')),
+        workId: claimWork.id,
+      });
     } catch { /* ignore */ }
-    setMatchedCount(promoted.length);
+
+    setClaimedTitle(claimWork.exhibitionName?.trim() || claimWork.title || t('work.exhibitionFallback'));
+    setShowClaimScreen(false);
     setClaimBusy(false);
+    try { sessionStorage.removeItem('artier_pending_invite_token'); } catch { /* ignore */ }
     goNext();
   };
 
-  /** §3.5.1 본인 확인에서 "아니에요" 선택 — 매칭 적용 안 함, 운영팀 신호 + 발신자 알림. */
-  const handleClaimNo = async () => {
-    if (!matchCandidates || matchCandidates.length === 0) {
-      goNext();
-      return;
-    }
-    setClaimBusy(true);
-    const result = recordDeclinedMatches(matchCandidates);
-    try {
-      const { pushDemoNotification } = await import('../utils/pushDemoNotification');
-      for (const inv of result.inviters) {
-        pushDemoNotification({
-          type: 'system',
-          message: t('invite.notifClaimDeclined').replace('{title}', inv.workTitle),
-          workId: inv.workId,
-        });
-      }
-    } catch { /* ignore */ }
-    setClaimBusy(false);
+  /** "여기 없어요" — 가입은 계속 진행, 토큰 정리. */
+  const handleClaimSkip = () => {
+    setShowClaimScreen(false);
+    try { sessionStorage.removeItem('artier_pending_invite_token'); } catch { /* ignore */ }
     goNext();
   };
 
@@ -249,22 +259,22 @@ export default function Onboarding() {
       toast.error(t('onboarding.errProfanityNickname'));
       return;
     }
+    // 이메일은 소셜·이메일 가입에서 prefill된 경우만 검증 (Policy §2.1)
+    if (email.trim() && !validateEmail()) return;
     profileStore.updateProfile({
       name,
       nickname: name,
-      ...(phone.trim() ? { phone: phone.trim() } : {}),
       ...(email.trim() ? { email: email.trim() } : {}),
       ...(profileImage ? { avatarUrl: profileImage } : {}),
     });
-    registerAccount(email.trim(), phone.trim());
+    registerAccount(email.trim(), '');
     localStorage.setItem('artier_onboarding_done', 'true');
     try {
-      localStorage.removeItem('artier_pending_sms_invite');
       localStorage.removeItem('artier_pending_signup_nickname');
       localStorage.removeItem('artier_pending_social_signup');
       localStorage.removeItem('artier_pending_signup_email');
-      localStorage.removeItem('artier_pending_signup_phone');
     } catch { /* ignore */ }
+    try { sessionStorage.removeItem('artier_pending_invite_token'); } catch { /* ignore */ }
     navigate('/');
   };
 
@@ -303,7 +313,7 @@ export default function Onboarding() {
         <div className="w-full max-w-md">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
-              key={currentStep}
+              key={`${currentStep}-${showClaimScreen ? 'claim' : 'main'}`}
               className="w-full"
               initial={{ opacity: 0, x: 18 }}
               animate={{ opacity: 1, x: 0 }}
@@ -333,7 +343,7 @@ export default function Onboarding() {
                 </>
               )}
 
-              {/* Step 1: '전시 단위' 개념 안내 (게시판이 아니라 갤러리) */}
+              {/* Step 1: '전시 단위' 개념 안내 */}
               {currentStep === 1 && (
                 <>
                   <div className="text-center mb-6">
@@ -345,7 +355,6 @@ export default function Onboarding() {
                     </p>
                   </div>
 
-                  {/* 예시 1: 1점짜리 전시도 어엿한 전시 */}
                   <div className="rounded-xl border border-border bg-muted/30 p-3 mb-3">
                     <div className="aspect-[4/3] rounded-lg overflow-hidden mb-2 bg-gradient-to-br from-stone-100 via-amber-50 to-rose-100" />
                     <p className="text-sm font-semibold text-foreground">
@@ -356,7 +365,6 @@ export default function Onboarding() {
                     </p>
                   </div>
 
-                  {/* 예시 2: 여러 점 전시 — 동일한 형식, 같은 무게로 다뤄짐 */}
                   <div className="rounded-xl border border-border bg-muted/30 p-3 mb-6">
                     <div className="grid grid-cols-3 gap-1 aspect-[4/3] rounded-lg overflow-hidden mb-2">
                       <div className="bg-gradient-to-br from-amber-100 to-amber-200" />
@@ -374,7 +382,6 @@ export default function Onboarding() {
                     </p>
                   </div>
 
-                  {/* 보강 메시지 — 한 점도 전시라는 핵심 reframe */}
                   <p className="text-center text-sm text-foreground/80 mb-6 leading-relaxed whitespace-pre-line">
                     {t('onboarding.conceptReinforce')}
                   </p>
@@ -400,16 +407,65 @@ export default function Onboarding() {
                 </>
               )}
 
-              {/* Step 2: 프로필 설정 또는 §3.5.1 본인 확인 (조건부) */}
-              {currentStep === 2 && matchCandidates && matchCandidates.length > 0 && (
-                <InviteClaimCheck
-                  candidates={matchCandidates}
-                  onYes={handleClaimYes}
-                  onNo={handleClaimNo}
-                  busy={claimBusy}
-                />
+              {/* Step 2A: 본인 작품 찾기 (토큰 기반, 조건부) */}
+              {currentStep === 2 && showClaimScreen && pendingToken && (
+                <>
+                  <h2 className="text-lg font-bold text-foreground mb-2">{t('claim.findMyWorksTitle')}</h2>
+                  <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900 leading-relaxed">
+                    {t('claim.findMyWorksWarning')}
+                  </div>
+
+                  {claimableSlots.length === 0 ? (
+                    <p className="text-sm text-muted-foreground py-6 text-center">
+                      {t('claim.alreadyTaken')}
+                    </p>
+                  ) : (
+                    <div className="grid grid-cols-2 gap-3 mb-6">
+                      {claimableSlots.map((slot) => (
+                        <button
+                          key={slot.pieceIndex}
+                          type="button"
+                          disabled={claimBusy}
+                          onClick={() => handleClaimSlot(slot)}
+                          className="group text-left rounded-xl overflow-hidden border border-border lg:hover:border-primary/50 transition disabled:opacity-50"
+                        >
+                          <div className="aspect-square bg-muted/30">
+                            <ImageWithFallback
+                              src={slot.imageSrc}
+                              alt={slot.pieceTitle}
+                              className="h-full w-full object-cover"
+                            />
+                          </div>
+                          <div className="px-3 py-2">
+                            <p className="text-sm font-semibold text-foreground truncate">
+                              {slot.displayName}
+                            </p>
+                            <p className="text-xs text-muted-foreground truncate">
+                              {slot.pieceTitle}
+                            </p>
+                            <p className="mt-1 text-xs text-primary font-medium">
+                              {t('claim.thisIsMine')}
+                            </p>
+                          </div>
+                        </button>
+                      ))}
+                    </div>
+                  )}
+
+                  <Button
+                    variant="ghost"
+                    type="button"
+                    onClick={handleClaimSkip}
+                    disabled={claimBusy}
+                    className="w-full rounded-xl border border-border py-3.5 text-sm font-semibold text-foreground lg:hover:bg-muted/50"
+                  >
+                    {t('claim.notHere')}
+                  </Button>
+                </>
               )}
-              {currentStep === 2 && !(matchCandidates && matchCandidates.length > 0) && (
+
+              {/* Step 2B: 프로필 설정 */}
+              {currentStep === 2 && !showClaimScreen && (
                 <>
                   <h2 className="text-lg font-bold text-foreground mb-1">{t('onboarding.nicknameTitle')}</h2>
                   <p className="text-sm text-muted-foreground mb-4">{t('onboarding.nicknameLead')}</p>
@@ -462,31 +518,6 @@ export default function Onboarding() {
                   <p className="mt-1 text-xs text-muted-foreground">{nickname.trim().length}/20</p>
                   {nicknameError ? <p className="mt-1 text-sm text-destructive">{nicknameError}</p> : null}
 
-                  {/* 전화번호 — SMS 비회원 초대로 들어온 경우만 본인 확인용 노출 (Policy §2.1) */}
-                  {collectsPhone && (
-                    <>
-                      <label className="block text-sm font-medium text-foreground mb-2 mt-5">
-                        {t('onboarding.phoneLabel')}
-                        <span className="ml-1 text-xs font-medium text-red-500">{t('common.required')}</span>
-                      </label>
-                      <input
-                        type="tel"
-                        value={phone}
-                        onChange={e => { setPhone(e.target.value); setPhoneError(''); }}
-                        placeholder={t('onboarding.phonePlaceholder')}
-                        className="w-full rounded-xl border border-border px-4 py-3 text-sm outline-none focus:ring-[3px] focus:ring-primary/30 focus:border-primary"
-                      />
-                      {phoneError ? <p className="mt-1 text-sm text-destructive">{phoneError}</p> : null}
-                      {prefilledPhone ? (
-                        <p className="mt-1 text-xs text-foreground bg-primary/5 border border-primary/20 rounded-md px-2.5 py-2 leading-relaxed">
-                          {t('onboarding.phoneInvitedHint')}
-                        </p>
-                      ) : (
-                        <p className="mt-1 text-xs text-muted-foreground">{t('onboarding.phoneHint')}</p>
-                      )}
-                    </>
-                  )}
-
                   <div className="mt-8 flex gap-3">
                     <Button variant="ghost" type="button" onClick={goBack} className="flex-1 rounded-xl border border-border py-3.5 text-sm font-semibold text-foreground lg:hover:bg-muted/50">
                       {t('onboarding.back')}
@@ -509,17 +540,17 @@ export default function Onboarding() {
                     <p className="text-sm text-muted-foreground mb-4 whitespace-pre-line leading-relaxed">
                       {t('onboarding.doneWelcome').replace('{name}', nickname.trim())}
                     </p>
-                    {matchedCount > 0 && (
+                    {claimedTitle && (
                       <div className="mb-8 rounded-xl border border-primary/30 bg-primary/5 px-4 py-3 text-left">
                         <p className="text-sm font-semibold text-foreground mb-1">
-                          {t('onboarding.doneInviteMatchedHeadline').replace('{n}', String(matchedCount))}
+                          {t('claim.doneTitle')}
                         </p>
                         <p className="text-xs text-muted-foreground leading-relaxed">
-                          {t('onboarding.doneInviteMatchedBody')}
+                          {t('claim.doneBody').replace('{title}', claimedTitle)}
                         </p>
                       </div>
                     )}
-                    {matchedCount === 0 && <div className="mb-8" />}
+                    {!claimedTitle && <div className="mb-8" />}
                     <Button
                       type="button"
                       onClick={() => { finishOnboarding(); navigate('/upload'); }}

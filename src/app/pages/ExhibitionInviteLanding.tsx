@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
 import { Share2 } from 'lucide-react';
 import { toast } from 'sonner';
@@ -10,28 +10,18 @@ import { getCoverImage, getImageCount } from '../utils/imageHelper';
 import { displayExhibitionTitle, displayProminentHeadline } from '../utils/workDisplay';
 import { useI18n } from '../i18n/I18nProvider';
 import { isWorkVisibleOnPublicFeed } from '../utils/feedVisibility';
+import { getInviteToken, type InviteTokenStatus } from '../utils/inviteTokenStore';
 import type { Work } from '../data';
 
 /**
- * 전시 단위 링크 오픈 화면 (`?from=invite` | `?from=credited`).
- * - `invite`: 한 전시(동일 전시명·그룹) 맥락의 작품 그리드 — 링크 하나에 여러 전시를 묶지 않음.
- * - `credited`: 비회원 작가 알림.
- * 작품 한 점만 공유할 때는 `?from=work` → ExhibitionWorkShareLanding.
+ * 전시 단위 초대 링크 오픈 화면 (Policy §3 v2.14).
+ * - `?invite=<token>` : 작가가 직접 친구에게 보낸 초대 링크. 가입 시 본인 작품 카드 노출 트리거.
+ * - 그 외(직접 URL 입력 등): 일반 전시 미리보기로 동작 (가입 CTA만 노출).
+ * 작품 한 점 단위 공유는 `?from=work` → ExhibitionWorkShareLanding.
  */
-function firstNonMemberDisplayName(seed: Work): string | null {
-  const list = seed.imageArtists;
-  if (!list?.length) return null;
-  for (const a of list) {
-    if (a.type === 'non-member' && a.displayName?.trim()) return a.displayName.trim();
-  }
-  return null;
-}
-
 function collectExhibitionWorks(seed: Work, all: Work[]): Work[] {
   const ex = seed.exhibitionName?.trim();
   const gn = seed.groupName?.trim();
-  // seed 작품은 검수 상태와 무관하게 항상 포함 (공유한 본인의 작품이므로).
-  // 같은 전시의 다른 작품은 검수 통과된 것만 공개 노출.
   const pool = all.filter((w) => w.id === seed.id || isWorkVisibleOnPublicFeed(w));
   const matches = pool.filter((w) => {
     if (w.id === seed.id) return true;
@@ -39,7 +29,6 @@ function collectExhibitionWorks(seed: Work, all: Work[]): Work[] {
     if (gn && w.groupName?.trim() === gn && seed.primaryExhibitionType === 'group' && w.primaryExhibitionType === 'group') return true;
     return false;
   });
-  // seed을 맨 앞으로
   const seedIdx = matches.findIndex((w) => w.id === seed.id);
   if (seedIdx > 0) {
     const [first] = matches.splice(seedIdx, 1);
@@ -51,13 +40,42 @@ function collectExhibitionWorks(seed: Work, all: Work[]): Work[] {
 export default function ExhibitionInviteLanding() {
   const { id } = useParams<{ id: string }>();
   const [searchParams] = useSearchParams();
-  const variant = searchParams.get('from') === 'credited' ? 'credited' : 'share';
+  const inviteTokenParam = searchParams.get('invite') ?? '';
   const navigate = useNavigate();
   const { t } = useI18n();
   const auth = useAuthStore();
   const store = useWorkStore();
   const works = store.getWorks();
   const seed = useMemo(() => works.find((w) => w.id === id), [works, id]);
+
+  // SPA 환경의 검색엔진 인덱싱 차단 (Policy §3 v2.14 — 봇 일부는 무시할 수 있음)
+  useEffect(() => {
+    if (typeof document === 'undefined') return;
+    const meta = document.createElement('meta');
+    meta.name = 'robots';
+    meta.content = 'noindex,nofollow';
+    document.head.appendChild(meta);
+    return () => {
+      try { document.head.removeChild(meta); } catch { /* ignore */ }
+    };
+  }, []);
+
+  /** 초대 토큰 상태 평가 (Policy §3.2). */
+  const tokenInfo = useMemo<{ status: InviteTokenStatus | 'none' | 'mismatch' }>(() => {
+    if (!inviteTokenParam) return { status: 'none' };
+    const tok = getInviteToken(inviteTokenParam);
+    if (!tok) return { status: 'mismatch' };
+    if (tok.workId !== id) return { status: 'mismatch' };
+    return { status: tok.status };
+  }, [inviteTokenParam, id]);
+
+  // 가입 CTA 클릭 시 토큰을 sessionStorage에 보관 (Onboarding 본인 작품 찾기 단계로 핸드오프)
+  const stashTokenForSignup = () => {
+    if (typeof window === 'undefined' || !inviteTokenParam) return;
+    try {
+      sessionStorage.setItem('artier_pending_invite_token', inviteTokenParam);
+    } catch { /* ignore */ }
+  };
 
   // 전시 삭제 (Policy §3.3)
   if (!seed) {
@@ -72,7 +90,21 @@ export default function ExhibitionInviteLanding() {
     );
   }
 
-  // 자동·확정 비공개 전시 (Policy §3.3 · §12.2) — 본문 비노출, 가입 CTA 유지
+  // 토큰이 명시되었으나 만료·취소·불일치인 경우: 본문 차단 + 안내 메시지
+  if (inviteTokenParam && (tokenInfo.status === 'mismatch' || tokenInfo.status === 'revoked')) {
+    return (
+      <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 gap-4 text-center">
+        <h1 className="text-lg font-semibold text-foreground">
+          {tokenInfo.status === 'mismatch' ? t('invite.tokenExpired') : t('invite.tokenRevoked')}
+        </h1>
+        <Link to="/" className="inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 rounded-xl border border-border text-sm font-semibold text-foreground lg:hover:bg-muted/50">
+          {t('invite.browse')}
+        </Link>
+      </div>
+    );
+  }
+
+  // 자동·확정 비공개 전시 (Policy §3.3 · §12.2)
   if (seed.isHidden === true) {
     return (
       <div className="min-h-screen bg-white flex flex-col items-center justify-center px-4 gap-4 text-center">
@@ -82,16 +114,10 @@ export default function ExhibitionInviteLanding() {
           {!auth.isLoggedIn() && (
             <Link
               to="/signup?invited=1"
-              onClick={() => {
-                try {
-                  localStorage.setItem('artier_pending_sms_invite', '1');
-                  const invitedPhone = searchParams.get('invited_phone');
-                  if (invitedPhone) localStorage.setItem('artier_pending_signup_phone', invitedPhone);
-                } catch { /* ignore */ }
-              }}
+              onClick={stashTokenForSignup}
               className="inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold lg:hover:bg-primary/90"
             >
-              {t('workDetail.inspireCtaButton')}
+              {t('invite.landingCta')}
             </Link>
           )}
           <Link to="/" className="inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 rounded-xl border border-border text-sm font-semibold text-foreground lg:hover:bg-muted/50">
@@ -106,8 +132,8 @@ export default function ExhibitionInviteLanding() {
   const exhibitionTitle = displayExhibitionTitle(seed, t('work.exhibitionFallback'));
   const coverKey = getCoverImage(seed.image, seed.coverImageIndex);
   const coverSrc = imageUrls[coverKey] || coverKey;
-  const creatorName = seed.artist.name;
-  const creditedName = firstNonMemberDisplayName(seed);
+  const inviterName = seed.artist.name;
+  const isInviteFlow = tokenInfo.status === 'active' || tokenInfo.status === 'inactive';
 
   const share = async () => {
     const url = window.location.href;
@@ -134,37 +160,28 @@ export default function ExhibitionInviteLanding() {
         <ImageWithFallback src={coverSrc} alt="" className="h-full w-full object-cover" loading="eager" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/40 to-black/10" />
         <div className="absolute inset-0 flex flex-col justify-end px-6 sm:px-10 lg:px-16 pb-8 sm:pb-10">
-          {variant === 'share' ? (
-            <>
-              <p className="text-xs font-medium uppercase tracking-[0.14em] text-white/80 mb-2">
-                {t('invite.exhibitionLabel')}
-              </p>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight max-w-3xl">
-                {exhibitionTitle}
-              </h1>
-              <p className="mt-2 text-sm sm:text-base text-white/80">
-                {t('invite.inviteByline').replace('{name}', creatorName)}
-              </p>
-            </>
+          <p className="text-xs font-medium uppercase tracking-[0.14em] text-white/80 mb-2">
+            {t('invite.exhibitionLabel')}
+          </p>
+          <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight max-w-3xl">
+            {exhibitionTitle}
+          </h1>
+          {isInviteFlow ? (
+            <p className="mt-2 text-sm sm:text-base text-white/80">
+              {t('invite.landingHeadline').replace('{inviter}', inviterName)}
+            </p>
           ) : (
-            <>
-              <p className="text-xs font-medium uppercase tracking-[0.14em] text-white/80 mb-2">
-                {t('invite.creditedKicker')}
-              </p>
-              <h1 className="text-2xl sm:text-3xl lg:text-4xl font-bold text-white leading-tight max-w-3xl">
-                {creditedName
-                  ? t('invite.creditedHeadlineNamed').replace('{name}', creditedName)
-                  : t('invite.creditedHeadline')}
-              </h1>
-              <p className="mt-3 text-lg sm:text-xl font-semibold text-white/95 max-w-3xl">
-                {t('invite.creditedExhibitionLine').replace('{title}', exhibitionTitle)}
-              </p>
-              <p className="mt-2 text-sm sm:text-base text-white/80">
-                {t('invite.creditedByline').replace('{uploader}', creatorName)}
-              </p>
-            </>
+            <p className="mt-2 text-sm sm:text-base text-white/80">
+              {t('invite.inviteByline').replace('{name}', inviterName)}
+            </p>
           )}
-          {seed.feedReviewStatus === 'pending' && (
+          {tokenInfo.status === 'inactive' && (
+            <div className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-full bg-amber-400/20 border border-amber-300/50 px-3 py-1 text-xs font-medium text-amber-100">
+              <span className="h-1.5 w-1.5 rounded-full bg-amber-300" />
+              {t('invite.tokenInactive')}
+            </div>
+          )}
+          {tokenInfo.status !== 'inactive' && seed.feedReviewStatus === 'pending' && (
             <div className="mt-3 inline-flex w-fit items-center gap-1.5 rounded-full bg-amber-400/20 border border-amber-300/50 px-3 py-1 text-xs font-medium text-amber-100">
               <span className="h-1.5 w-1.5 rounded-full bg-amber-300" />
               {t('review.badgePending')} · {t('invite.pendingNotice')}
@@ -218,34 +235,24 @@ export default function ExhibitionInviteLanding() {
       {!auth.isLoggedIn() && (
         <section className="max-w-[900px] mx-auto px-4 sm:px-6 pb-10">
           <div className="rounded-2xl border border-border bg-gradient-to-br from-primary/10 via-muted/30 to-muted/10 p-6 sm:p-8 text-center">
-            <p className="text-xs font-semibold uppercase tracking-wider text-primary mb-2">
-              {variant === 'credited' ? t('invite.creditedCtaTitle') : t('workDetail.inspireCtaTitle')}
-            </p>
             <p className="text-base sm:text-lg text-foreground leading-relaxed mb-6 max-w-xl mx-auto">
-              {variant === 'credited'
-                ? t('invite.creditedCtaBody')
-                : t('workDetail.inspireCtaBody').replace('{artist}', creatorName)}
+              {isInviteFlow
+                ? t('invite.landingHeadline').replace('{inviter}', inviterName)
+                : t('workDetail.inspireCtaBody').replace('{artist}', inviterName)}
             </p>
             <div className="flex flex-wrap gap-2 justify-center">
               <Link
                 to="/signup?invited=1"
-                onClick={() => {
-                  try {
-                    localStorage.setItem('artier_pending_sms_invite', '1');
-                    // URL에 실려온 초대 대상 정보 → Onboarding prefill (재입력 방지·매칭 성공률 ↑)
-                    const invitedPhone = searchParams.get('invited_phone');
-                    if (invitedPhone) localStorage.setItem('artier_pending_signup_phone', invitedPhone);
-                  } catch { /* ignore */ }
-                }}
-                className="inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold lg:hover:bg-primary/90"
+                onClick={stashTokenForSignup}
+                className="inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold lg:hover:bg-primary/90"
               >
-                {t('workDetail.inspireCtaButton')}
+                {isInviteFlow ? t('invite.landingCta') : t('workDetail.inspireCtaButton')}
               </Link>
               <Link
                 to="/"
-                className="inline-flex items-center justify-center px-5 py-2.5 rounded-xl border border-border text-sm font-semibold text-foreground lg:hover:bg-muted/50"
+                className="inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 rounded-xl border border-border text-sm font-semibold text-foreground lg:hover:bg-muted/50"
               >
-                {t('invite.browse')}
+                {isInviteFlow ? t('invite.landingBrowse') : t('invite.browse')}
               </Link>
             </div>
           </div>
@@ -261,7 +268,7 @@ export default function ExhibitionInviteLanding() {
           className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium"
         >
           <Share2 className="h-4 w-4" />
-          {variant === 'credited' ? t('invite.creditedShare') : t('invite.share')}
+          {t('invite.share')}
         </Button>
       </div>
     </div>
