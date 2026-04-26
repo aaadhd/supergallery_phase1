@@ -18,7 +18,10 @@ const NOTIF_RETENTION_MS = 90 * 86400000;
 interface Notification {
   id: string;
   type: 'like' | 'follow' | 'pick' | 'system' | 'event';
-  message: string;
+  /** 동적 알림은 message 그대로, 시드·시스템은 messageKey + replacements 권장 (i18n 정합). */
+  message?: string;
+  messageKey?: MessageKey;
+  messageReplacements?: Record<string, string>;
   fromUser?: { name: string; avatar: string; id: string };
   workId?: string;
   read: boolean;
@@ -27,13 +30,30 @@ interface Notification {
   demo?: boolean;
 }
 
+function resolveNotificationMessage(
+  n: Notification,
+  t: (k: MessageKey) => string,
+): string {
+  if (n.messageKey) {
+    let s = t(n.messageKey);
+    if (n.messageReplacements) {
+      for (const [k, v] of Object.entries(n.messageReplacements)) {
+        s = s.replace(new RegExp(`\\{${k}\\}`, 'g'), v);
+      }
+    }
+    return s;
+  }
+  return n.message ?? '';
+}
+
 function generateSeedNotifications(): Notification[] {
   const now = Date.now();
   return [
     {
       id: 'n1',
       type: 'like',
-      message: '님이 회원님의 작품 "빛의 여정"을 좋아합니다',
+      messageKey: 'notifications.seedLikedWork',
+      messageReplacements: { work: '빛의 여정' },
       fromUser: { name: artists[1].name, avatar: artists[1].avatar, id: artists[1].id },
       workId: 'local-img-0',
       read: false,
@@ -42,7 +62,7 @@ function generateSeedNotifications(): Notification[] {
     {
       id: 'n2',
       type: 'follow',
-      message: '님이 회원님을 팔로우합니다',
+      messageKey: 'notifications.seedFollowed',
       fromUser: { name: artists[2].name, avatar: artists[2].avatar, id: artists[2].id },
       read: false,
       createdAt: new Date(now - 1000 * 60 * 60 * 2).toISOString(),
@@ -50,7 +70,8 @@ function generateSeedNotifications(): Notification[] {
     {
       id: 'n3',
       type: 'like',
-      message: '님이 회원님의 작품 "고요한 아침"을 좋아합니다',
+      messageKey: 'notifications.seedLikedWork',
+      messageReplacements: { work: '고요한 아침' },
       fromUser: { name: artists[3].name, avatar: artists[3].avatar, id: artists[3].id },
       workId: 'local-img-1',
       read: true,
@@ -59,14 +80,15 @@ function generateSeedNotifications(): Notification[] {
     {
       id: 'n4',
       type: 'pick',
-      message: '축하합니다! "산길의 봄"이 Artier\'s Pick으로 선정되었습니다',
+      messageKey: 'notifications.seedPickSelected',
+      messageReplacements: { work: '산길의 봄' },
       read: true,
       createdAt: new Date(now - 1000 * 60 * 60 * 48).toISOString(),
     },
     {
       id: 'n5',
       type: 'follow',
-      message: '님이 회원님을 팔로우합니다',
+      messageKey: 'notifications.seedFollowed',
       fromUser: {
         name: artists[4]?.name || '이수연',
         avatar: artists[4]?.avatar || '',
@@ -78,14 +100,15 @@ function generateSeedNotifications(): Notification[] {
     {
       id: 'n6',
       type: 'system',
-      message: 'Artier에 오신 것을 환영합니다! 첫 작품을 업로드해 보세요.',
+      messageKey: 'notifications.seedWelcome',
       read: true,
       createdAt: new Date(now - 1000 * 60 * 60 * 168).toISOString(),
     },
     {
       id: 'n7',
       type: 'event',
-      message: '「나의 첫 디지털 캔버스」 이벤트가 진행 중입니다. 지금 참여해 보세요.',
+      messageKey: 'notifications.seedEventActive',
+      messageReplacements: { event: '나의 첫 디지털 캔버스' },
       read: false,
       createdAt: new Date(now - 1000 * 60 * 45).toISOString(),
     },
@@ -372,7 +395,7 @@ export default function Notifications() {
                     <div className="flex-1 min-w-0">
                       <p className={`text-sm sm:text-sm leading-relaxed ${notif.read ? 'text-muted-foreground' : 'text-foreground'}`}>
                         {notif.fromUser && <span className="font-semibold">{notif.fromUser.name}</span>}
-                        {notif.message}
+                        {resolveNotificationMessage(notif, t)}
                       </p>
                       <div className="flex items-center gap-2 mt-1.5">
                         <span className="text-xs text-muted-foreground/70">
