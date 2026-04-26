@@ -33,13 +33,21 @@ export function CopyrightProtectedImage({
   );
 
   return (
-    <div className="relative inline-block select-none" style={{ userSelect: preventDrag ? 'none' : undefined }}>
+    <div
+      className="relative inline-block select-none"
+      style={{
+        userSelect: preventDrag ? 'none' : undefined,
+        // Policy §26.1: 모바일 길게 누르기 시스템 메뉴(이미지 저장 등) 차단.
+        WebkitTouchCallout: preventDrag ? 'none' : undefined,
+      }}
+    >
       <div
         onContextMenu={handleContextMenu}
         onDragStart={handleDragStart}
         className="relative"
         style={{
           WebkitUserSelect: preventDrag ? 'none' : undefined,
+          WebkitTouchCallout: preventDrag ? 'none' : undefined,
         }}
       >
         <ImageWithFallback className={className} {...imgProps} draggable={!preventDrag} />

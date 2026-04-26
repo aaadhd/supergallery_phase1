@@ -225,8 +225,8 @@ export function findMatchCandidates(phone: string): MatchCandidate[] {
       workId: entry.workId,
       workTitle: work.exhibitionName || work.title || '전시',
       invitedName: entry.displayName,
-      inviterNickname: typeof (work as { artistName?: string }).artistName === 'string' ? (work as { artistName?: string }).artistName! : '',
-      inviterUserId: typeof (work as { artistId?: string }).artistId === 'string' ? (work as { artistId?: string }).artistId : undefined,
+      inviterNickname: work.artist?.name ?? '',
+      inviterUserId: typeof work.artistId === 'string' ? work.artistId : undefined,
       imageUrl: Array.isArray(work.image) ? work.image[0] : undefined,
     });
   }

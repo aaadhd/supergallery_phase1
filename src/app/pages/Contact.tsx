@@ -46,10 +46,24 @@ export default function Contact() {
       toast.error(t('contact.toastRequired'));
       return;
     }
+    // 이메일 형식 검증 — 회신 채널 보장.
+    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email.trim())) {
+      toast.error(t('contact.toastEmailInvalid'));
+      return;
+    }
 
     setSubmitting(true);
 
-    const inquiries = JSON.parse(localStorage.getItem('artier_inquiries') || '[]');
+    let inquiries: unknown[] = [];
+    try {
+      const raw = localStorage.getItem('artier_inquiries');
+      if (raw) {
+        const parsed = JSON.parse(raw);
+        inquiries = Array.isArray(parsed) ? parsed : [];
+      }
+    } catch {
+      inquiries = [];
+    }
     inquiries.push({
       id: `inq-${Date.now()}`,
       name: name.trim(),
