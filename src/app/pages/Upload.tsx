@@ -4,8 +4,9 @@ import { Image as ImageIcon, Plus, X, Search, GripVertical, ArrowLeft, ChevronLe
 import { artists } from '../data';
 import { workStore, draftStore, useAuthStore } from '../store';
 import { eventStore, deriveStatus } from '../utils/eventStore';
+import { issueInviteToken, activateInviteToken } from '../utils/inviteTokenStore';
+import { InviteShareButton } from '../components/InviteShareButton';
 import { REJECTION_REASON_LABEL_KEY } from '../utils/reviewLabels';
-import { isPhoneRegistered } from '../utils/registeredAccounts';
 import { buildVisibilityPatch } from '../utils/workVisibility';
 
 /* ─── @dnd-kit 리오더 아이템 ─── */
@@ -923,6 +924,17 @@ export default function Upload() {
     if (resolvedGroup) setLastUsedGroupName(resolvedGroup);
     if (!editingWorkId) pointsOnWorkPublished(newWork);
 
+    // Policy §3 v2.14: 비회원 슬롯이 1개 이상이면 초대 토큰 발급 (inactive 상태로 시작).
+    // 검수 승인 시점에 activate, 자동 승인 환경(VITE_UPLOAD_AUTO_APPROVE)이면 즉시 active.
+    const targetWorkId = editingWorkId || newWork.id;
+    const hasNonMemberSlots = imageArtists.some((ia) => ia.type === 'non-member' && (ia.displayName ?? '').trim().length > 0);
+    if (hasNonMemberSlots) {
+      issueInviteToken(targetWorkId, newWork.artistId);
+      if (autoApprove) {
+        activateInviteToken(targetWorkId);
+      }
+    }
+
     /**
      * 발행 알림 (그룹 전시 한정 · 신규 발행만):
      * 참여 멤버 작가 각각에게 "내 작품이 공개됐어요" 시스템 알림 push.
@@ -1161,7 +1173,7 @@ export default function Upload() {
 
   // ━━━━━━ 전시 완료 확인 화면 ━━━━━━
   if (publishedResult) {
-    const { autoApproved: pubAutoApproved, hasNonMemberInvites: pubHasInvites, resubmittedFromRejected: pubResubmit } = publishedResult;
+    const { autoApproved: pubAutoApproved, hasNonMemberInvites: pubHasInvites, resubmittedFromRejected: pubResubmit, workId: pubWorkId } = publishedResult;
     // Policy §12.1.2 / IA USR-UPL-10 — 4종 분기 메시지
     let titleKey: MessageKey;
     let descKey: MessageKey;
@@ -1175,6 +1187,7 @@ export default function Upload() {
       titleKey = 'upload.publishedConfirmTitle';
       descKey = 'upload.publishedConfirmDescPending';
     }
+    const publishedWork = workStore.getWork(pubWorkId);
     return (
       <div className="flex flex-col items-center justify-center min-h-[60vh] px-6 py-16 text-center">
         <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center mb-6">
@@ -1192,6 +1205,16 @@ export default function Upload() {
         <p className="mt-4 text-xs text-muted-foreground max-w-md">
           {t('upload.publishedConfirmSlaNote')}
         </p>
+        {pubHasInvites && publishedWork && (
+          <div className="mt-6">
+            <InviteShareButton
+              workId={pubWorkId}
+              workTitle={publishedWork.exhibitionName || publishedWork.title || ''}
+              inviterName={publishedWork.artist?.name || ''}
+              variant="default"
+            />
+          </div>
+        )}
         <div className="flex flex-col sm:flex-row gap-3 mt-6">
           <Button onClick={() => navigate('/me?tab=exhibition')} className="min-h-[44px] px-6">
             {t('upload.publishedConfirmGoProfile')}
@@ -1971,49 +1994,13 @@ export default function Upload() {
                                   <label className="block text-xs font-bold text-amber-800 mb-1.5 px-1">{t('upload.nonMemberNameLabel2')}<RequiredMark /></label>
                                   <input
                                     type="text" value={sc.nonMemberArtist?.displayName || ''}
-                                    onChange={(e) => setContents(contents.map(c => c.id === selectedContentId ? { ...c, artistType: 'non-member', nonMemberArtist: { ...c.nonMemberArtist, displayName: e.target.value, phoneNumber: c.nonMemberArtist?.phoneNumber || '' } } : c))}
+                                    onChange={(e) => setContents(contents.map(c => c.id === selectedContentId ? { ...c, artistType: 'non-member', nonMemberArtist: { ...c.nonMemberArtist, displayName: e.target.value, phoneNumber: '' } } : c))}
                                     placeholder={t('upload.nonMemberNamePh')}
                                     className="w-full px-4 py-3 border border-amber-200 rounded-xl text-sm bg-white focus:ring-[3px] focus:ring-amber-500 outline-none transition-all shadow-sm"
                                   />
-                                </div>
-                                <div>
-                                  <label className="block text-xs font-bold text-amber-800 mb-1.5 px-1">{t('upload.nonMemberPhoneLabel2')}</label>
-                                  <input
-                                    type="tel" value={sc.nonMemberArtist?.phoneNumber || ''}
-                                    onChange={(e) => setContents(contents.map(c => c.id === selectedContentId ? { ...c, artistType: 'non-member', nonMemberArtist: { ...c.nonMemberArtist, displayName: c.nonMemberArtist?.displayName || '', phoneNumber: e.target.value } } : c))}
-                                    placeholder={t('onboarding.phonePlaceholder')}
-                                    className="w-full px-4 py-3 border border-amber-200 rounded-xl text-sm bg-white focus:ring-[3px] focus:ring-amber-500 outline-none transition-all shadow-sm"
-                                  />
                                   <p className="mt-2 text-xs text-amber-700/90 leading-relaxed px-1">
-                                    {t('upload.nonMemberPhoneHelper')}
+                                    {t('upload.nonMemberNameHelper')}
                                   </p>
-                                  {/* §3.4.1 가입자 식별자 입력 시 안내 — Phase 1 인라인 경고. 멀티유저 백엔드 연동 시 모달로 승격. */}
-                                  {(() => {
-                                    const ph = sc.nonMemberArtist?.phoneNumber?.trim() || '';
-                                    if (!ph || !isPhoneRegistered(ph)) return null;
-                                    return (
-                                      <div className="mt-3 rounded-lg border border-emerald-300 bg-emerald-50 p-3">
-                                        <p className="text-xs font-semibold text-emerald-900">{t('invite.memberFoundTitle')}</p>
-                                        <p className="mt-1 text-xs text-emerald-800 leading-relaxed">
-                                          {t('invite.memberFoundInlineBody')}
-                                        </p>
-                                        <button
-                                          type="button"
-                                          onClick={() => {
-                                            setArtistInputTab('member');
-                                            setContents(contents.map(c =>
-                                              c.id === selectedContentId
-                                                ? { ...c, artistType: 'member', artist: undefined, nonMemberArtist: undefined }
-                                                : c,
-                                            ));
-                                          }}
-                                          className="mt-2 inline-flex min-h-[44px] items-center justify-center rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white lg:hover:bg-emerald-700"
-                                        >
-                                          {t('invite.memberFoundInlineCta')}
-                                        </button>
-                                      </div>
-                                    );
-                                  })()}
                                 </div>
                               </div>
                             )}
