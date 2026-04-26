@@ -24,12 +24,17 @@ export function restoreScrollTop(key: string, elementId: string) {
     const raw = sessionStorage.getItem(PREFIX + key);
     if (!raw) return;
     const top = Number(raw);
-    if (!Number.isFinite(top)) return;
+    if (!Number.isFinite(top) || top < 0) return;
     const el = document.getElementById(elementId);
-    // 레이아웃이 그려진 다음 프레임에 적용
+    // 레이아웃이 그려진 다음 프레임에 적용. 피드가 줄어들었을 수 있으므로 scrollHeight로 clamp.
     requestAnimationFrame(() => {
-      if (el) el.scrollTop = top;
-      else window.scrollTo(0, top);
+      if (el) {
+        const max = Math.max(0, el.scrollHeight - el.clientHeight);
+        el.scrollTop = Math.min(top, max);
+      } else {
+        const max = Math.max(0, document.documentElement.scrollHeight - window.innerHeight);
+        window.scrollTo(0, Math.min(top, max));
+      }
     });
   } catch {
     /* ignore */

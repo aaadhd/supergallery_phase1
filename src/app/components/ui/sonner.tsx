@@ -4,7 +4,8 @@ import { useTheme } from "next-themes";
 import { Toaster as Sonner, ToasterProps } from "sonner";
 
 const Toaster = ({ ...props }: ToasterProps) => {
-  const { theme = "system" } = useTheme();
+  // Policy §19.4: 시스템 자동 감지 미사용. ThemeProvider 미마운트 환경 fallback도 light.
+  const { theme = "light" } = useTheme();
 
   return (
     <Sonner

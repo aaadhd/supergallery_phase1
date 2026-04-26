@@ -28,22 +28,51 @@ import {
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
 
-const navItems: { to: string; icon: typeof LayoutDashboard; labelKey: MessageKey; end?: boolean }[] = [
-  { to: '/admin', icon: LayoutDashboard, labelKey: 'admin.nav.dashboard', end: true },
-  { to: '/admin/issues', icon: AlertCircle, labelKey: 'admin.nav.issues' },
-  { to: '/admin/checklist', icon: CheckSquare, labelKey: 'admin.nav.checklist' },
-  { to: '/admin/partners', icon: Users, labelKey: 'admin.nav.partners' },
-  { to: '/admin/events', icon: CalendarDays, labelKey: 'admin.nav.eventParticipants' },
-  { to: '/admin/content-review', icon: FileSearch, labelKey: 'admin.nav.contentReview' },
-  { to: '/admin/works', icon: ImageIcon, labelKey: 'admin.nav.works' },
-  { to: '/admin/picks', icon: Star, labelKey: 'admin.nav.picks' },
-  { to: '/admin/curation', icon: Sparkles, labelKey: 'admin.nav.curation' },
-  { to: '/admin/banners', icon: PanelTop, labelKey: 'admin.nav.banners' },
-  { to: '/admin/managed-events', icon: CalendarRange, labelKey: 'admin.nav.managedEvents' },
-  { to: '/admin/reports', icon: Flag, labelKey: 'admin.nav.reports' },
-  { to: '/admin/members', icon: UserCog, labelKey: 'admin.nav.members' },
-  { to: '/admin/inquiries', icon: MessageSquare, labelKey: 'admin.nav.inquiries' },
+type NavItem = { to: string; icon: typeof LayoutDashboard; labelKey: MessageKey; end?: boolean };
+type NavSection = { sectionLabelKey?: MessageKey; items: NavItem[] };
+
+// PRD_Admin §0.3: 5섹션 그룹화 (시니어 운영자 멘탈 모델 단순화).
+const navSections: NavSection[] = [
+  {
+    items: [
+      { to: '/admin', icon: LayoutDashboard, labelKey: 'admin.nav.dashboard', end: true },
+    ],
+  },
+  {
+    sectionLabelKey: 'admin.section.moderation',
+    items: [
+      { to: '/admin/content-review', icon: FileSearch, labelKey: 'admin.nav.contentReview' },
+      { to: '/admin/reports', icon: Flag, labelKey: 'admin.nav.reports' },
+    ],
+  },
+  {
+    sectionLabelKey: 'admin.section.contentOps',
+    items: [
+      { to: '/admin/picks', icon: Star, labelKey: 'admin.nav.picks' },
+      { to: '/admin/curation', icon: Sparkles, labelKey: 'admin.nav.curation' },
+      { to: '/admin/banners', icon: PanelTop, labelKey: 'admin.nav.banners' },
+      { to: '/admin/managed-events', icon: CalendarRange, labelKey: 'admin.nav.managedEvents' },
+    ],
+  },
+  {
+    sectionLabelKey: 'admin.section.members',
+    items: [
+      { to: '/admin/members', icon: UserCog, labelKey: 'admin.nav.members' },
+    ],
+  },
+  {
+    sectionLabelKey: 'admin.section.operations',
+    items: [
+      { to: '/admin/inquiries', icon: MessageSquare, labelKey: 'admin.nav.inquiries' },
+      { to: '/admin/issues', icon: AlertCircle, labelKey: 'admin.nav.issues' },
+      { to: '/admin/checklist', icon: CheckSquare, labelKey: 'admin.nav.checklist' },
+    ],
+  },
 ];
+
+// 폐기·통합 화면(PRD §9·§10): /admin/works·/admin/partners 라우트는 2026-04-26 제거됨.
+// 운영자는 ADM-RPT-01(신고 큐) / ADM-MBR-01(회원 관리)에서 접근.
+void Users; void ImageIcon; void CalendarDays;
 
 export default function AdminLayout() {
   const { t } = useI18n();
@@ -118,23 +147,32 @@ export default function AdminLayout() {
             {t('admin.sidebarNote')}
           </p>
         </div>
-        <nav className="flex-1 p-3 space-y-1">
-          {navItems.map(({ to, icon: Icon, labelKey, end }) => (
-            <NavLink
-              key={to}
-              to={to}
-              end={end}
-              className={({ isActive }) =>
-                `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                  isActive
-                    ? 'bg-white text-slate-900'
-                    : 'text-slate-300 lg:hover:bg-slate-800 lg:hover:text-white'
-                }`
-              }
-            >
-              <Icon className="w-4 h-4" />
-              {t(labelKey)}
-            </NavLink>
+        <nav className="flex-1 p-3 space-y-3">
+          {navSections.map((section, sectionIdx) => (
+            <div key={sectionIdx} className="space-y-1">
+              {section.sectionLabelKey ? (
+                <p className="px-3 pt-1 pb-1 text-[11px] font-semibold uppercase tracking-wider text-slate-500">
+                  {t(section.sectionLabelKey)}
+                </p>
+              ) : null}
+              {section.items.map(({ to, icon: Icon, labelKey, end }) => (
+                <NavLink
+                  key={to}
+                  to={to}
+                  end={end}
+                  className={({ isActive }) =>
+                    `flex items-center gap-3 px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
+                      isActive
+                        ? 'bg-white text-slate-900'
+                        : 'text-slate-300 lg:hover:bg-slate-800 lg:hover:text-white'
+                    }`
+                  }
+                >
+                  <Icon className="w-4 h-4" />
+                  {t(labelKey)}
+                </NavLink>
+              ))}
+            </div>
           ))}
         </nav>
         <div className="p-4 border-t border-slate-800">

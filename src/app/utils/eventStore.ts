@@ -193,6 +193,32 @@ export const eventStore = {
   },
 
   remove(id: string): void {
+    // Policy §25.6: 이벤트 삭제 시 응모된 전시의 linkedEventId 일괄 정리 — 삭제 전에 cascade 먼저 실행.
+    // race 차단: 비동기 import 결과를 await 하지 않고 즉시 cleanup 동기 실행.
+    if (typeof window !== 'undefined') {
+      try {
+        // store.ts의 workStore는 모듈 최상단에서 export되므로 require/import 모두 동기 가능.
+        // 그러나 ESM에선 dynamic import만 사용 가능 — localStorage를 직접 정리해 race 회피.
+        const raw = localStorage.getItem('artier_works');
+        if (raw) {
+          const list = JSON.parse(raw) as Array<{ id: string; linkedEventId?: string | number }>;
+          if (Array.isArray(list)) {
+            let changed = false;
+            for (const w of list) {
+              if (w.linkedEventId != null && String(w.linkedEventId) === String(id)) {
+                w.linkedEventId = undefined;
+                changed = true;
+              }
+            }
+            if (changed) {
+              localStorage.setItem('artier_works', JSON.stringify(list));
+              // 메모리 상태도 동기화 (다른 탭의 storage 이벤트와 동일 채널).
+              window.dispatchEvent(new Event('artier-works-changed'));
+            }
+          }
+        }
+      } catch { /* ignore */ }
+    }
     writeToStorage(readFromStorage().filter((e) => e.id !== id));
   },
 

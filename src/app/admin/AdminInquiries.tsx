@@ -16,9 +16,19 @@ const CATEGORY_LABELS: Record<string, string> = {
   upload: '업로드/전시',
   report: '신고/저작권',
   privacy: '개인정보 요청',
+  workInquiry: '작품 문의',
   suggestion: '제안/피드백',
   bug: '오류 제보',
   other: '기타',
+};
+
+// Policy §33.1 작품 문의 세부 카테고리 라벨
+const WORK_INQUIRY_DETAIL_LABELS: Record<string, string> = {
+  'workInquiry.catPurchase': '구입·소장',
+  'workInquiry.catLicense': '라이선스·사용',
+  'workInquiry.catCollab': '전시 협업·의뢰',
+  'workInquiry.catInfo': '작품 정보',
+  'workInquiry.catOther': '그 외',
 };
 
 type InquiryStatus = '신규' | '처리 중' | '완료' | '보류';
@@ -31,6 +41,11 @@ interface StoredInquiry {
   message: string;
   attachments?: Array<{ name: string; size: number }>;
   createdAt: string;
+  // 작품 문의(Policy §33) 전용 필드
+  categoryDetail?: string;
+  workId?: string;
+  workTitle?: string;
+  pieceIndex?: number;
   // 어드민 측 누적 필드 (사용자 제출 이후 추가)
   status?: InquiryStatus;
   replies?: Array<{ text: string; repliedAt: string; repliedBy?: string }>;
@@ -331,6 +346,13 @@ export default function AdminInquiries() {
                         <div className="truncate text-xs text-muted-foreground">{i.email}</div>
                       </td>
                       <td className="px-3 py-2 max-w-[220px]">
+                        {i.category === 'workInquiry' && (
+                          <div className="text-xs text-foreground mb-0.5">
+                            {i.workTitle ?? '전시'}
+                            {typeof i.pieceIndex === 'number' ? ` · ${i.pieceIndex + 1}번 작품` : ''}
+                            {i.categoryDetail ? ` · ${WORK_INQUIRY_DETAIL_LABELS[i.categoryDetail] ?? ''}` : ''}
+                          </div>
+                        )}
                         <div className="truncate text-muted-foreground">{i.message.slice(0, 60)}{i.message.length > 60 ? '…' : ''}</div>
                       </td>
                       <td className="px-3 py-2">

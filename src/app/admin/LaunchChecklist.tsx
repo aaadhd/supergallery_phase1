@@ -83,7 +83,7 @@ export default function LaunchChecklist() {
       <div className="space-y-6">
         {Object.entries(grouped).map(([category, categoryItems]) => {
           const catDone = categoryItems.filter(i => i.status === '완료').length;
-          const catRate = Math.round((catDone / categoryItems.length) * 100);
+          const catRate = categoryItems.length > 0 ? Math.round((catDone / categoryItems.length) * 100) : 0;
 
           return (
             <div key={category} className="bg-white rounded-lg border">

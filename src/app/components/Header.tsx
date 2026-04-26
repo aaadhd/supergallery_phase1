@@ -18,7 +18,6 @@ import { LoginPromptModal } from './LoginPromptModal';
 import { artists } from '../data';
 import { useState, useEffect } from 'react';
 import { useAuthStore } from '../store';
-import { persistMockSession } from '../services/sessionTokens';
 import { useI18n } from '../i18n/I18nProvider';
 import type { Locale } from '../i18n/uiStrings';
 
@@ -67,12 +66,8 @@ export function Header() {
   const [loginPromptOpen, setLoginPromptOpen] = useState(false);
 
   const handleLogin = () => {
-    auth.login();
-    persistMockSession('gnb-quick-login');
-    const onboardingDone = localStorage.getItem('artier_onboarding_done');
-    if (!onboardingDone) {
-      navigate('/onboarding');
-    }
+    const redirect = location.pathname + location.search;
+    navigate(`/login?redirect=${encodeURIComponent(redirect)}`);
   };
 
   return (
@@ -210,6 +205,13 @@ export function Header() {
                 </>
               ) : (
                 <>
+                  <button
+                    type="button"
+                    onClick={() => navigate(`/login?redirect=${encodeURIComponent('/upload')}`)}
+                    className="hidden md:inline-flex items-center text-sm font-medium text-muted-foreground lg:hover:text-foreground transition-colors px-2 py-1.5 rounded-md"
+                  >
+                    {t('nav.loginAsArtist')}
+                  </button>
                   <Button
                     size="default"
                     className="hidden md:flex gap-2 text-sm px-6 py-2.5"
@@ -300,7 +302,14 @@ export function Header() {
           <Button
             variant="ghost"
             type="button"
-            onClick={() => { if (loggedIn) { navigate('/me'); } else { setLoginPromptOpen(true); } }}
+            onClick={() => {
+              if (loggedIn) {
+                navigate('/me');
+              } else {
+                const redirect = location.pathname + location.search;
+                navigate(`/login?redirect=${encodeURIComponent(redirect)}`);
+              }
+            }}
             className={`h-auto flex flex-col items-center gap-0.5 px-3 py-1.5 min-h-[44px] ${
               location.pathname.startsWith('/profile') || location.pathname.startsWith('/me') ? 'text-primary' : 'text-muted-foreground'
             }`}

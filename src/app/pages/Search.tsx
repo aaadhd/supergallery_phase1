@@ -4,7 +4,7 @@ import { Search as SearchIcon, X, Clock } from 'lucide-react';
 import { useWorkStore, useAuthStore, useProfileStore, authStore, profileStore } from '../store';
 import { artists } from '../data';
 import { imageUrls } from '../imageUrls';
-import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { ImageWithFallback } from '../components/ImageWithFallback';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { getCoverImage, getThumbCover } from '../utils/imageHelper';
 import { isWorkVisibleOnPublicFeed } from '../utils/feedVisibility';
@@ -160,7 +160,7 @@ export default function Search() {
     const hiddenArtists = getHiddenArtistIdsForReporter();
     const pool = works.filter(
       (w: Work) =>
-        !w.isHidden && !hiddenWorks.has(w.id) && isWorkVisibleOnPublicFeed(w),
+        !hiddenWorks.has(w.id) && isWorkVisibleOnPublicFeed(w),
     );
     const matchedWorks = rankWorksBySearchQuery(pool, searchTerm);
     const matchedArtists = artists
@@ -210,7 +210,7 @@ export default function Search() {
               aria-expanded={suggestOpen && autocompleteSuggestions.length > 0}
               aria-autocomplete="list"
               maxLength={100}
-              className="w-full pl-12 sm:pl-14 pr-12 sm:pr-14 py-4 sm:py-5 text-base sm:text-base border-2 border-border rounded-2xl focus:outline-none focus:border-primary focus:ring-2 focus:ring-primary/10 transition-all bg-white"
+              className="w-full pl-12 sm:pl-14 pr-12 sm:pr-14 py-4 sm:py-5 text-base sm:text-base border-2 border-border rounded-2xl focus:outline-none focus:border-primary focus:ring-[3px] focus:ring-primary/10 transition-all bg-white"
             />
             {query && (
               <Button
@@ -351,7 +351,7 @@ export default function Search() {
                       <div className="flex-1 min-w-0">
                         <div className="flex items-center gap-2">
                           <h3 className="text-sm font-bold text-foreground truncate">{displayProminentHeadline(work, t('work.untitled'))}</h3>
-                          <span className="text-xs font-bold text-zinc-500 bg-zinc-200 px-1.5 py-0.5 rounded">작품</span>
+                          <span className="text-xs font-bold text-zinc-500 bg-zinc-200 px-1.5 py-0.5 rounded">{t('browse.workLabel')}</span>
                         </div>
                         <p className="text-xs text-muted-foreground">{work.artist.name}</p>
                       </div>

@@ -8,10 +8,13 @@ const LEGACY_STORAGE_KEYS = [
   'artier_pin_comments',            // PinCommentLayer 삭제(2026-04-15) 후 orphan
   'artier_upload_guide_seen',       // 업로드 인라인 가이드 제거(2026-04-15) 후 orphan
   'artier_group_canonical_map',     // 그룹명 중복 허용 정책(2026-04-17) 이후 orphan
+  'artier_signup_region',           // region 분기 폐기(2026-04-26) 후 orphan
+  'artier_pending_signup_realname', // 실명 인풋 폐기(2026-04-26) 후 orphan
 ];
 
 const LEGACY_SESSION_KEYS = [
   'artier_pending_invite_claims',   // PendingInviteClaimGate 제거(2026-04-19) 후 orphan
+  'artier_geo_demo_cache',          // GeoIP 폐기(2026-04-26) 후 orphan
 ];
 
 function cleanupLegacyStorage() {

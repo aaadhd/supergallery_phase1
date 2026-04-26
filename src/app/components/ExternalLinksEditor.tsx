@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 import { Instagram, Facebook, Twitter, Youtube } from 'lucide-react';
+import { useI18n } from '../i18n/I18nProvider';
 
 export interface ExternalLink {
   label: string;
@@ -9,30 +10,29 @@ export interface ExternalLink {
 interface PlatformDef {
   key: string;
   label: string;
-  /** 도메인 접두 (placeholder/표시용) */
+  /** 도메인 접두 (표시용) */
   prefix?: string;
   /** YouTube처럼 전체 URL을 받는 플랫폼 */
   fullUrl?: boolean;
-  placeholder: string;
   icon: React.ReactNode;
 }
 
 const PLATFORMS: PlatformDef[] = [
-  { key: 'instagram', label: 'instagram.com/', prefix: 'instagram.com/', placeholder: '나머지 URL을 입력해주세요.',
+  { key: 'instagram', label: 'instagram.com/', prefix: 'instagram.com/',
     icon: <Instagram className="h-5 w-5 text-[#E4405F]" /> },
-  { key: 'youtube', label: 'youtube', fullUrl: true, placeholder: '전체 URL(https 포함)을 입력해주세요.',
+  { key: 'youtube', label: 'youtube', fullUrl: true,
     icon: <Youtube className="h-5 w-5 text-[#FF0000]" /> },
-  { key: 'facebook', label: 'facebook.com/', prefix: 'facebook.com/', placeholder: '나머지 URL을 입력해주세요.',
+  { key: 'facebook', label: 'facebook.com/', prefix: 'facebook.com/',
     icon: <Facebook className="h-5 w-5 text-[#1877F2]" /> },
-  { key: 'twitter', label: 'twitter.com/', prefix: 'twitter.com/', placeholder: '나머지 URL을 입력해주세요.',
+  { key: 'twitter', label: 'twitter.com/', prefix: 'twitter.com/',
     icon: <Twitter className="h-5 w-5 text-[#1DA1F2]" /> },
-  { key: 'pinterest', label: 'pinterest.co.kr/', prefix: 'pinterest.co.kr/', placeholder: '나머지 URL을 입력해주세요.',
+  { key: 'pinterest', label: 'pinterest.co.kr/', prefix: 'pinterest.co.kr/',
     icon: <span className="flex h-5 w-5 items-center justify-center rounded-full bg-[#E60023] text-xs font-bold text-white">P</span> },
-  { key: 'vimeo', label: 'vimeo.com/', prefix: 'vimeo.com/', placeholder: '나머지 URL을 입력해주세요.',
+  { key: 'vimeo', label: 'vimeo.com/', prefix: 'vimeo.com/',
     icon: <span className="flex h-5 w-5 items-center justify-center rounded bg-[#1AB7EA] text-xs font-bold text-white">V</span> },
 ];
 
-const PLATFORM_KEYS = new Set(PLATFORMS.map(p => p.key));
+const PLATFORM_KEYS = new Set(PLATFORMS.map((p) => p.key));
 
 interface Props {
   links: ExternalLink[];
@@ -48,6 +48,7 @@ interface Props {
  *  - 기존 자유 입력 링크는 platform key와 매칭 안 되면 무시 (UI에서 노출 안 함)
  */
 export function ExternalLinksEditor({ links, onChange }: Props) {
+  const { t } = useI18n();
   const valueByKey = useMemo(() => {
     const map: Record<string, string> = {};
     for (const l of links) {
@@ -69,6 +70,9 @@ export function ExternalLinksEditor({ links, onChange }: Props) {
     <div className="space-y-3">
       {PLATFORMS.map((p) => {
         const value = valueByKey[p.key] ?? '';
+        const placeholder = p.fullUrl
+          ? t('profile.linksWebsitePlaceholder')
+          : t('profile.linksUrlPlaceholder');
         return (
           <div key={p.key} className="flex items-center gap-3">
             <span className="shrink-0">{p.icon}</span>
@@ -79,8 +83,8 @@ export function ExternalLinksEditor({ links, onChange }: Props) {
               type="text"
               value={value}
               onChange={(e) => update(p.key, e.target.value)}
-              placeholder={p.placeholder}
-              className="flex-1 min-h-[44px] px-3 py-2 border border-input rounded-lg text-sm bg-white focus:outline-none focus:ring-2 focus:ring-ring"
+              placeholder={placeholder}
+              className="flex-1 min-h-[44px] px-3 py-2 border border-input rounded-lg text-sm bg-white focus:outline-none focus:ring-[3px] focus:ring-ring"
               aria-label={p.label}
             />
           </div>

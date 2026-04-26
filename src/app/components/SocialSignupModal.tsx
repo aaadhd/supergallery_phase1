@@ -1,5 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { X } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { useI18n } from '../i18n/I18nProvider';
 import { Button } from './ui/button';
 import { Input } from './ui/input';
@@ -47,15 +48,13 @@ export function SocialSignupModal({ open, provider, onClose, onComplete }: Props
   if (!open || !provider || !profile) return null;
 
   const allRequired = agreeTerms && agreePrivacy && agreeAge;
-  const allChecked = allRequired && agreeMarketing;
-  const someChecked = agreeTerms || agreePrivacy || agreeAge || agreeMarketing;
+  const someRequired = agreeTerms || agreePrivacy || agreeAge;
 
   const toggleAll = () => {
-    const next = !allChecked;
+    const next = !allRequired;
     setAgreeTerms(next);
     setAgreePrivacy(next);
     setAgreeAge(next);
-    setAgreeMarketing(next);
   };
 
   const canSubmit = allRequired && nickname.trim().length >= 2 && nickname.trim().length <= 20;
@@ -108,14 +107,17 @@ export function SocialSignupModal({ open, provider, onClose, onComplete }: Props
               maxLength={20}
               autoFocus
             />
-            <p className="text-xs text-muted-foreground">{t('socialSignup.nicknameHint')}</p>
+            <div className="flex items-center justify-between gap-2">
+              <p className="text-xs text-muted-foreground">{t('socialSignup.nicknameHint')}</p>
+              <span className="shrink-0 text-xs text-muted-foreground tabular-nums">{nickname.trim().length}/20</span>
+            </div>
           </div>
 
           {/* 약관 동의 */}
           <div className="space-y-2.5 rounded-lg border border-border/40 p-4 bg-muted/30">
             <label className="mb-1 flex items-start gap-3 border-b border-border/40 pb-2 cursor-pointer">
               <Checkbox
-                checked={allChecked ? true : someChecked ? 'indeterminate' : false}
+                checked={allRequired ? true : someRequired ? 'indeterminate' : false}
                 onCheckedChange={toggleAll}
                 className="mt-0.5 border-border/40"
               />
@@ -126,13 +128,19 @@ export function SocialSignupModal({ open, provider, onClose, onComplete }: Props
             <label className="flex items-start gap-3 cursor-pointer">
               <Checkbox checked={agreeTerms} onCheckedChange={(v) => setAgreeTerms(!!v)} className="mt-0.5" />
               <span className="text-sm text-foreground sm:text-sm">
-                <span className="text-red-500">[필수]</span> {t('socialSignup.termsTerms')}
+                <span className="text-red-500">[필수]</span> {t('socialSignup.termsTerms')}{' '}
+                (<Link to="/terms" target="_blank" rel="noopener" className="text-primary underline underline-offset-2" onClick={(e) => e.stopPropagation()}>
+                  {t('signup.view')}
+                </Link>)
               </span>
             </label>
             <label className="flex items-start gap-3 cursor-pointer">
               <Checkbox checked={agreePrivacy} onCheckedChange={(v) => setAgreePrivacy(!!v)} className="mt-0.5" />
               <span className="text-sm text-foreground sm:text-sm">
-                <span className="text-red-500">[필수]</span> {t('socialSignup.termsPrivacy')}
+                <span className="text-red-500">[필수]</span> {t('socialSignup.termsPrivacy')}{' '}
+                (<Link to="/privacy" target="_blank" rel="noopener" className="text-primary underline underline-offset-2" onClick={(e) => e.stopPropagation()}>
+                  {t('signup.view')}
+                </Link>)
               </span>
             </label>
             <label className="flex items-start gap-3 cursor-pointer">
@@ -145,6 +153,7 @@ export function SocialSignupModal({ open, provider, onClose, onComplete }: Props
               <Checkbox checked={agreeMarketing} onCheckedChange={(v) => setAgreeMarketing(!!v)} className="mt-0.5" />
               <span className="text-sm text-muted-foreground sm:text-sm">
                 <span>[선택]</span> {t('socialSignup.termsMarketing')}
+                <span className="block mt-0.5 text-xs text-muted-foreground/80">{t('socialSignup.termsMarketingHint')}</span>
               </span>
             </label>
           </div>

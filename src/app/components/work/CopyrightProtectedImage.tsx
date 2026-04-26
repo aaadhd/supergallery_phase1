@@ -1,5 +1,5 @@
 import React, { useCallback } from 'react';
-import { ImageWithFallback } from '../figma/ImageWithFallback';
+import { ImageWithFallback } from '../ImageWithFallback';
 
 interface CopyrightProtectedImageProps extends React.ImgHTMLAttributes<HTMLImageElement> {
   /** 우클릭 방지 여부 */

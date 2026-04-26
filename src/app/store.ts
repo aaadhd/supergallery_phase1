@@ -12,24 +12,23 @@ import {
 } from './utils/workMediaIdb';
 import { forgetSeenWork } from './utils/seenFeedWorks';
 import { cleanupReportRefsForWork } from './utils/reportStorage';
+import { normalizeWorkVisibility } from './utils/workVisibility';
 
 function cleanupOrphanedWorkId(workId: string) {
   if (typeof window === 'undefined') return;
   try {
     const curRaw = localStorage.getItem('artier_curation_v1');
-    if (curRaw) {
-      const themes = JSON.parse(curRaw);
-      if (Array.isArray(themes)) {
-        let changed = false;
-        for (const theme of themes) {
-          if (Array.isArray(theme.workIds) && theme.workIds.includes(workId)) {
-            theme.workIds = theme.workIds.filter((id: string) => id !== workId);
-            changed = true;
-          }
-        }
-        if (changed) localStorage.setItem('artier_curation_v1', JSON.stringify(themes));
+    if (!curRaw) return;
+    const state = JSON.parse(curRaw);
+    if (!state || typeof state !== 'object' || !Array.isArray(state.themes)) return;
+    let changed = false;
+    for (const theme of state.themes) {
+      if (theme && Array.isArray(theme.workIds) && theme.workIds.includes(workId)) {
+        theme.workIds = theme.workIds.filter((id: string) => id !== workId);
+        changed = true;
       }
     }
+    if (changed) localStorage.setItem('artier_curation_v1', JSON.stringify(state));
   } catch { /* ignore */ }
 }
 
@@ -37,7 +36,7 @@ function cleanupOrphanedWorkId(workId: string) {
  * public/images·manifest가 바뀌면 저장된 work.image 경로가 디스크와 어긋나 썸네일 404가 남.
  * 버전을 올리면 시드(현재 manifest 기반)로 다시 채운 뒤 저장된다.
  */
-const WORKS_STORAGE_VERSION = 'local-gallery-v15';
+const WORKS_STORAGE_VERSION = 'local-gallery-v16';
 
 // 초안 타입 정의
 export interface Draft {
@@ -109,7 +108,7 @@ const loadWorksFromStorage = (): Work[] => {
           });
       }
     } catch { /* ignore corrupt data */ }
-    const merged = [...initialWorks, ...userWorks];
+    const merged = [...initialWorks, ...userWorks].map(normalizeWorkVisibility);
     saveWorksToStoragePlain(merged);
     return merged;
   }
@@ -117,13 +116,14 @@ const loadWorksFromStorage = (): Work[] => {
   const stored = localStorage.getItem('artier_works');
   if (stored) {
     try {
-      return JSON.parse(stored);
+      return (JSON.parse(stored) as Work[]).map(normalizeWorkVisibility);
     } catch {
-      saveWorksToStoragePlain(initialWorks);
-      return initialWorks;
+      const normalizedSeed = initialWorks.map(normalizeWorkVisibility);
+      saveWorksToStoragePlain(normalizedSeed);
+      return normalizedSeed;
     }
   }
-  return initialWorks;
+  return initialWorks.map(normalizeWorkVisibility);
 };
 
 function isQuotaExceeded(e: unknown): boolean {
@@ -296,8 +296,11 @@ const loadDraftsFromStorage = (): Draft[] => {
   const stored = localStorage.getItem('artier_drafts');
   if (stored) {
     try {
-      return JSON.parse(stored);
+      const parsed = JSON.parse(stored);
+      return Array.isArray(parsed) ? parsed : [];
     } catch {
+      // 손상 JSON — 백업 키로 1회 보관 후 빈 배열로 복구.
+      try { localStorage.setItem('artier_drafts__corrupt_backup', stored); } catch { /* ignore */ }
       return [];
     }
   }
@@ -306,8 +309,13 @@ const loadDraftsFromStorage = (): Draft[] => {
 
 // 로컬 스토리지에 초안 저장
 const saveDraftsToStorage = (drafts: Draft[]) => {
-  if (typeof window !== 'undefined') {
+  if (typeof window === 'undefined') return;
+  try {
     localStorage.setItem('artier_drafts', JSON.stringify(drafts));
+  } catch (err) {
+    // quota exceeded 등 — 사용자에게 알릴 방법은 store 레벨에선 제한적.
+    // 브라우저 콘솔에 경고 1회 남기고, 메모리 상태는 유지(다음 저장 시도에서 다시 시도).
+    if (typeof console !== 'undefined') console.warn('[draftStore] save failed:', err);
   }
 };
 
@@ -372,9 +380,7 @@ export const useDraftStore = () => {
 export interface UserProfile {
   name: string;
   nickname: string;
-  /** 실명 (SMS 비회원 작가 매칭용) */
-  realName?: string;
-  /** 전화번호 (SMS 본인인증 후 저장) */
+  /** 전화번호 (Settings에서 추가 가능, 비회원 초대 매칭 키) */
   phone?: string;
   /** 이메일 (소셜 가입 시 제공 확인, 이메일 가입 시 가입 이메일) */
   email?: string;
@@ -758,8 +764,19 @@ export function performAccountWithdrawal(currentArtistId: string, withdrawReason
     }
   }
   withdrawnArtistStore.mark(currentArtistId);
+  // Policy §4.4: 탈퇴 후 같은 이메일·전화로 즉시 재가입 가능 — registry에서 식별자 정리.
+  try {
+    const p = profileStore.getProfile();
+    if (typeof window !== 'undefined') {
+      void import('./utils/registeredAccounts').then(({ unregisterAccount }) => {
+        unregisterAccount(p.email, p.phone);
+      });
+    }
+  } catch { /* ignore */ }
+  const ownWorkIds: string[] = [];
   workStore.getWorks().forEach((w) => {
     if (w.artistId !== currentArtistId) return;
+    ownWorkIds.push(w.id);
     workStore.updateWork(w.id, {
       artist: {
         ...w.artist,
@@ -770,6 +787,17 @@ export function performAccountWithdrawal(currentArtistId: string, withdrawReason
       },
     });
   });
+  // 탈퇴 작가의 작품을 어드민 Pick 목록에서 제거 (Policy §15.3 일관 — 탈퇴 작가 작품은 Pick 자격 없음).
+  try {
+    const pRaw = localStorage.getItem('artier_admin_picks_v1');
+    if (pRaw && ownWorkIds.length > 0) {
+      const picks = JSON.parse(pRaw) as string[];
+      const cleaned = picks.filter((p) => !ownWorkIds.includes(p));
+      if (cleaned.length !== picks.length) {
+        localStorage.setItem('artier_admin_picks_v1', JSON.stringify(cleaned));
+      }
+    }
+  } catch { /* ignore */ }
   currentInteractions = { liked: [], saved: [] };
   localStorage.setItem('artier_interactions', JSON.stringify(currentInteractions));
   interactionListeners.forEach((l) => l());

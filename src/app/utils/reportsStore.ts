@@ -2,6 +2,9 @@
 
 import { workStore } from '../store';
 import { pushDemoNotification } from './pushDemoNotification';
+import { buildVisibilityPatch, isWorkHidden } from './workVisibility';
+import { translate } from '../i18n/messages';
+import { getStoredLocale } from '../i18n/uiStrings';
 
 export const REPORTS_STORAGE_KEY = 'artier_reports';
 
@@ -23,6 +26,8 @@ export type StoredUserReport = {
   reasonKey?: string;
   reasonLabel?: string;
   detail: string;
+  /** 신고 대상 작품(piece) 인덱스. 다중 이미지 전시에서 사용자가 선택. 단일 이미지면 0 또는 undefined. */
+  pieceIndex?: number;
   createdAt: string;
   /**
    * 어드민 처리 결과 (Policy §12.1, Phase 1):
@@ -71,14 +76,14 @@ export function appendUserReport(
     );
     if (sameWorkReports.length >= AUTO_HIDE_REPORT_THRESHOLD) {
       const work = workStore.getWork(workId);
-      if (work && work.isHidden !== true) {
+      if (work && !isWorkHidden(work)) {
         workStore.updateWork(workId, {
-          isHidden: true,
-          autoHiddenAt: new Date().toISOString(),
+          ...buildVisibilityPatch('hidden_auto'),
         });
+        const title = work.exhibitionName || work.title || '';
         pushDemoNotification({
           type: 'system',
-          message: `'${work.exhibitionName || work.title}' 전시가 신고 누적으로 자동 비공개 처리되었습니다. 운영팀 검토 대기 중.`,
+          message: translate(getStoredLocale(), 'report.notifAutoHidden').replace('{title}', title),
           workId,
         });
       }
@@ -99,18 +104,24 @@ export function removeUserReport(id: string): void {
 }
 
 /**
- * 기각 판정 후: 해당 전시의 어떤 신고도 관리자 확정 비공개(`adminStatus: 'hidden'`)가 아니면
- * 자동 비공개였다고 보고 복원(`isHidden: false`). 관리자 확정이 있으면 유지.
+ * 기각 판정 후: 해당 전시의 어떤 신고도 관리자 확정 비공개(`adminStatus: 'hidden'`)가 아니고
+ * 검토 대기 중(`adminStatus: 'pending'`)인 신고도 없으면 자동 비공개였다고 보고
+ * 복원(`isHidden: false`). 관리자 확정 또는 미처리 대기 신고가 있으면 유지.
  * 반환: 복원이 일어났으면 true.
  */
 export function maybeRestoreAfterDismiss(workId: string): boolean {
   const work = workStore.getWork(workId);
-  if (!work || work.isHidden !== true) return false;
+  if (!work || !isWorkHidden(work)) return false;
   const list = loadUserReports();
   const hasAdminHold = list.some(
     (r) => r.targetType === 'work' && r.targetId === workId && r.adminStatus === 'hidden',
   );
   if (hasAdminHold) return false;
-  workStore.updateWork(workId, { isHidden: false });
+  // pending 신고가 남아 있으면 운영팀이 아직 결정 안 한 것 — 임의 복원 차단.
+  const hasPending = list.some(
+    (r) => r.targetType === 'work' && r.targetId === workId && (r.adminStatus ?? 'pending') === 'pending',
+  );
+  if (hasPending) return false;
+  workStore.updateWork(workId, { ...buildVisibilityPatch('public') });
   return true;
 }

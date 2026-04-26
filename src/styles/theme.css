@@ -1,10 +1,8 @@
 @custom-variant dark (&:is(.dark *));
 
 /**
- * DSG_ARTIER — Figma: file Wp7bYMg3uhwJ2QrbYUuEBW, node 42-3898 (Dev Mode)
- * 토큰은 shadcn + Tailwind @theme와 동기화. Figma Variables와 1:1 맞출 때는
- * Dev Mode에서 해당 프레임 선택 후 MCP로 변수를 다시 읽어 이 파일을 갱신하면 됩니다.
- *
+ * DSG_ARTIER 토큰.
+ * shadcn + Tailwind @theme와 동기화하며, 디자인 시스템 변경 시 이 파일을 단일 소스로 갱신한다.
  * 악센트: 차분한 모호/플럼(oklch 328°) — 온라인 갤러리 톤. 로고 A 칩 등 국소 틸은 컴포넌트에서 유지 가능.
  */
 :root {
@@ -41,7 +39,7 @@
   --chart-3: oklch(0.55 0 0);
   --chart-4: oklch(0.65 0 0);
   --chart-5: oklch(0.75 0 0);
-  /* DSG: 12px 기준 코너 (프레임 가이드에 맞춤, 필요 시 Figma radius 토큰으로 조정) */
+  /* DSG: 12px 기준 코너 */
   --radius: 0.5rem;
   --sidebar: oklch(0.985 0 0);
   --sidebar-foreground: oklch(0.145 0 0);

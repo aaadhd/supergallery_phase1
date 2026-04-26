@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { Heart, Share2 } from 'lucide-react';
 import { toast } from 'sonner';
-import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { ImageWithFallback } from '../components/ImageWithFallback';
 import { artists, type Artist, type Work } from '../data';
 import { workStore, userInteractionStore } from '../store';
 import { imageUrls } from '../imageUrls';

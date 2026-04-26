@@ -22,7 +22,6 @@ export const LABELS = {
 
   // 도메인 용어 - 사람
   ARTIST: '작가',
-  PARTNER_ARTIST: '파트너 작가',
   STUDENT: '수강생',
   INSTRUCTOR: '강사',
   GROUP_NAME: '그룹명',

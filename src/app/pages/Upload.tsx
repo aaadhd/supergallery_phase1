@@ -1,9 +1,12 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
-import { useNavigate, useSearchParams, useBlocker } from 'react-router-dom';
+import { Link, useNavigate, useSearchParams, useBlocker } from 'react-router-dom';
 import { Image as ImageIcon, Plus, X, Search, GripVertical, ArrowLeft, ChevronLeft, ChevronRight, Trash2, Replace, ArrowUpDown, Monitor, Users, CalendarCheck, Star, Check, CircleHelp, GraduationCap } from 'lucide-react';
 import { artists } from '../data';
 import { workStore, draftStore, useAuthStore } from '../store';
+import { eventStore, deriveStatus } from '../utils/eventStore';
 import { REJECTION_REASON_LABEL_KEY } from '../utils/reviewLabels';
+import { isPhoneRegistered } from '../utils/registeredAccounts';
+import { buildVisibilityPatch } from '../utils/workVisibility';
 
 /* ─── @dnd-kit 리오더 아이템 ─── */
 function SortableReorderItem({ item, index, isDragOverlay }: { item: ContentItem; index: number; isDragOverlay?: boolean }) {
@@ -47,7 +50,7 @@ function BlurDominantBg({ src }: { src?: string }) {
 import type { Work } from '../data';
 import type { Draft } from '../store';
 import { toast, Toaster } from 'sonner';
-import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { ImageWithFallback } from '../components/ImageWithFallback';
 
 import { shouldBlockCameraPhoto } from '../utils/cameraExifBlock';
 import {
@@ -318,8 +321,21 @@ export default function Upload() {
   const [cameraBlockNotice, setCameraBlockNotice] = useState(false);
 
   /* ── 이벤트 연결 ── */
-  const linkedEventId = searchParams.get('event');
+  const linkedEventIdRaw = searchParams.get('event');
   const linkedEventTitle = searchParams.get('eventTitle') ? decodeURIComponent(searchParams.get('eventTitle')!) : null;
+  // Policy §25.5: 종료된 이벤트는 신규 응모 차단. URL 직접 진입(`/upload?event=<endedId>`)도 가드.
+  const linkedEventId = useMemo(() => {
+    if (!linkedEventIdRaw) return null;
+    const ev = eventStore.get(linkedEventIdRaw);
+    if (ev && deriveStatus(ev) === 'ended') return null;
+    return linkedEventIdRaw;
+  }, [linkedEventIdRaw]);
+  useEffect(() => {
+    if (linkedEventIdRaw && !linkedEventId) {
+      toast.error(t('upload.eventEndedBlocked'));
+      navigate(`/events/${linkedEventIdRaw}`, { replace: true });
+    }
+  }, [linkedEventId, linkedEventIdRaw, navigate, t]);
 
   /* ── 이미지 선택 ── */
   const [selectedContentId, setSelectedContentId] = useState<string | null>(null);
@@ -800,7 +816,7 @@ export default function Upload() {
       isInstructorUpload: uploadType === 'group' ? isInstructor : undefined,
       primaryExhibitionType,
       imageArtists,
-      feedReviewStatus: import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true' ? 'approved' : 'pending',
+      ...buildVisibilityPatch(import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true' ? 'public' : 'pending_review'),
       uploadedAt,
       linkedEventId: linkedEventId || undefined,
       coverImageIndex:
@@ -895,7 +911,9 @@ export default function Upload() {
         linkedEventId: newWork.linkedEventId,
         coverImageIndex: newWork.coverImageIndex,
         customCoverUrl: newWork.customCoverUrl,
-        feedReviewStatus: nextStatus,
+        ...buildVisibilityPatch(
+          nextStatus === 'approved' ? 'public' : nextStatus === 'pending' ? 'pending_review' : 'rejected',
+        ),
         rejectionReason: nextRejectionReason,
       };
       workStore.updateWork(editingWorkId, editingUpdates);
@@ -1135,7 +1153,7 @@ export default function Upload() {
       primaryExhibitionType: uploadType === 'group' ? 'group' : 'solo',
       imageArtists,
       imagePieceTitles: pieceTitles,
-      feedReviewStatus: 'approved',
+      ...buildVisibilityPatch('public'),
       customCoverUrl: customCoverUrl && coverImageIndex === -1 ? customCoverUrl : undefined,
       coverImageIndex: customCoverUrl && coverImageIndex === -1 ? -1 : Math.max(0, coverImageIndex),
     } satisfies Work;
@@ -1514,6 +1532,12 @@ export default function Upload() {
                       return (
                         <div className="w-full mb-6 rounded-lg border-2 border-red-300 bg-red-50 px-4 py-3 text-sm text-red-900 leading-relaxed animate-in fade-in duration-500">
                           <p className="font-medium">{message}</p>
+                          <Link
+                            to="/contact"
+                            className="mt-1 inline-block text-xs font-medium text-red-800 underline underline-offset-2 lg:hover:text-red-900"
+                          >
+                            {t('review.editBannerHelpLink')}
+                          </Link>
                         </div>
                       );
                     })()}
@@ -1839,7 +1863,7 @@ export default function Upload() {
                               setContents(contents.map((c) => c.id === selectedContentId ? { ...c, title: v } : c));
                             }}
                             placeholder={t('upload.pieceTitlePlaceholder')}
-                            className="w-full min-h-[44px] px-4 py-3 bg-muted/20 border border-border/60 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all"
+                            className="w-full min-h-[44px] px-4 py-3 bg-muted/20 border border-border/60 rounded-xl text-sm focus:outline-none focus:ring-[3px] focus:ring-primary focus:border-primary transition-all"
                           />
                         </section>
 
@@ -1917,7 +1941,7 @@ export default function Upload() {
                                     <input
                                       type="text" value={artistSearch} onChange={(e) => setArtistSearch(e.target.value)}
                                       placeholder={t('upload.memberSearchPh')}
-                                      className="w-full pl-11 pr-4 py-3.5 bg-muted/20 border border-border/60 rounded-xl text-sm focus:outline-none focus:ring-1 focus:ring-primary focus:border-primary transition-all"
+                                      className="w-full pl-11 pr-4 py-3.5 bg-muted/20 border border-border/60 rounded-xl text-sm focus:outline-none focus:ring-[3px] focus:ring-primary focus:border-primary transition-all"
                                     />
                                     {artistSearch && (
                                       <div className="absolute z-10 w-full mt-2 bg-white border border-border rounded-xl shadow-xl overflow-hidden max-h-56 overflow-y-auto">
@@ -1949,7 +1973,7 @@ export default function Upload() {
                                     type="text" value={sc.nonMemberArtist?.displayName || ''}
                                     onChange={(e) => setContents(contents.map(c => c.id === selectedContentId ? { ...c, artistType: 'non-member', nonMemberArtist: { ...c.nonMemberArtist, displayName: e.target.value, phoneNumber: c.nonMemberArtist?.phoneNumber || '' } } : c))}
                                     placeholder={t('upload.nonMemberNamePh')}
-                                    className="w-full px-4 py-3 border border-amber-200 rounded-xl text-sm bg-white focus:ring-1 focus:ring-amber-500 outline-none transition-all shadow-sm"
+                                    className="w-full px-4 py-3 border border-amber-200 rounded-xl text-sm bg-white focus:ring-[3px] focus:ring-amber-500 outline-none transition-all shadow-sm"
                                   />
                                 </div>
                                 <div>
@@ -1958,11 +1982,38 @@ export default function Upload() {
                                     type="tel" value={sc.nonMemberArtist?.phoneNumber || ''}
                                     onChange={(e) => setContents(contents.map(c => c.id === selectedContentId ? { ...c, artistType: 'non-member', nonMemberArtist: { ...c.nonMemberArtist, displayName: c.nonMemberArtist?.displayName || '', phoneNumber: e.target.value } } : c))}
                                     placeholder={t('onboarding.phonePlaceholder')}
-                                    className="w-full px-4 py-3 border border-amber-200 rounded-xl text-sm bg-white focus:ring-1 focus:ring-amber-500 outline-none transition-all shadow-sm"
+                                    className="w-full px-4 py-3 border border-amber-200 rounded-xl text-sm bg-white focus:ring-[3px] focus:ring-amber-500 outline-none transition-all shadow-sm"
                                   />
                                   <p className="mt-2 text-xs text-amber-700/90 leading-relaxed px-1">
                                     {t('upload.nonMemberPhoneHelper')}
                                   </p>
+                                  {/* §3.4.1 가입자 식별자 입력 시 안내 — Phase 1 인라인 경고. 멀티유저 백엔드 연동 시 모달로 승격. */}
+                                  {(() => {
+                                    const ph = sc.nonMemberArtist?.phoneNumber?.trim() || '';
+                                    if (!ph || !isPhoneRegistered(ph)) return null;
+                                    return (
+                                      <div className="mt-3 rounded-lg border border-emerald-300 bg-emerald-50 p-3">
+                                        <p className="text-xs font-semibold text-emerald-900">{t('invite.memberFoundTitle')}</p>
+                                        <p className="mt-1 text-xs text-emerald-800 leading-relaxed">
+                                          {t('invite.memberFoundInlineBody')}
+                                        </p>
+                                        <button
+                                          type="button"
+                                          onClick={() => {
+                                            setArtistInputTab('member');
+                                            setContents(contents.map(c =>
+                                              c.id === selectedContentId
+                                                ? { ...c, artistType: 'member', artist: undefined, nonMemberArtist: undefined }
+                                                : c,
+                                            ));
+                                          }}
+                                          className="mt-2 inline-flex min-h-[44px] items-center justify-center rounded-lg bg-emerald-600 px-3 py-2 text-xs font-semibold text-white lg:hover:bg-emerald-700"
+                                        >
+                                          {t('invite.memberFoundInlineCta')}
+                                        </button>
+                                      </div>
+                                    );
+                                  })()}
                                 </div>
                               </div>
                             )}

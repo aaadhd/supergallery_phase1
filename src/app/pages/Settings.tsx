@@ -16,6 +16,7 @@ import { Label } from '../components/ui/label';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
 import { getFontScale, setFontScale, type FontScale } from '../utils/fontScale';
+import { useTheme } from 'next-themes';
 
 const STORAGE_KEY = 'artier_notification_settings';
 
@@ -239,6 +240,10 @@ export default function Settings() {
         </section>
 
 
+        {/* Policy §19.4 다크 모드 — Settings(USR-STG-01) "밝게/어둡게" 2옵션 토글. 시스템 자동 감지 미사용. */}
+        <ThemeToggleSection />
+
+
         <section className="mb-10" id="notifications">
           <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-3">
             {t('settings.sectionNotif')}
@@ -404,5 +409,58 @@ export default function Settings() {
       )}
 
     </div>
+  );
+}
+
+/**
+ * Policy §19.4 다크 모드 — Settings(USR-STG-01) "밝게/어둡게" 2옵션 토글.
+ * 시스템 자동 감지(prefers-color-scheme) 미사용 — 시니어 사용자가 의도치 않게 다크에 노출되어
+ * 작품 색감이 손상되는 것을 막기 위함. 기본값 'light'(App ThemeProvider).
+ * 사용자 선택은 localStorage 'artier_theme'에 영속(next-themes 기본 동작).
+ *
+ * mounted 가드는 SSR/하이드레이션 mismatch 방지용 표준 패턴.
+ */
+function ThemeToggleSection() {
+  const { t } = useI18n();
+  const { theme, setTheme } = useTheme();
+  const [mounted, setMounted] = useState(false);
+  useEffect(() => setMounted(true), []);
+  if (!mounted) return null;
+
+  const current: 'light' | 'dark' = theme === 'dark' ? 'dark' : 'light';
+
+  return (
+    <section className="mb-10" id="theme">
+      <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-3">
+        {t('settings.sectionTheme')}
+      </h2>
+      <p className="text-xs text-muted-foreground mb-3">{t('settings.themeIntro')}</p>
+      <div
+        className="rounded-lg border border-border/40 bg-white p-2 grid grid-cols-2 gap-2"
+        role="radiogroup"
+        aria-label={t('settings.sectionTheme')}
+      >
+        {(['light', 'dark'] as const).map((opt) => {
+          const active = current === opt;
+          const labelKey = `settings.theme_${opt}` as MessageKey;
+          return (
+            <button
+              key={opt}
+              type="button"
+              role="radio"
+              aria-checked={active}
+              onClick={() => setTheme(opt)}
+              className={`min-h-[48px] rounded-md border px-3 py-2 text-base transition-colors ${
+                active
+                  ? 'border-primary bg-primary/10 text-foreground font-medium'
+                  : 'border-border/60 text-muted-foreground hover:bg-muted/50'
+              }`}
+            >
+              {t(labelKey)}
+            </button>
+          );
+        })}
+      </div>
+    </section>
   );
 }

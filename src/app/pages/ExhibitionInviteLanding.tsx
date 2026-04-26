@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom'
 import { Share2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useWorkStore, useAuthStore } from '../store';
-import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { ImageWithFallback } from '../components/ImageWithFallback';
 import { imageUrls } from '../imageUrls';
 import { Button } from '../components/ui/button';
 import { getCoverImage, getImageCount } from '../utils/imageHelper';
@@ -86,9 +86,7 @@ export default function ExhibitionInviteLanding() {
                 try {
                   localStorage.setItem('artier_pending_sms_invite', '1');
                   const invitedPhone = searchParams.get('invited_phone');
-                  const invitedName = searchParams.get('invited_name');
                   if (invitedPhone) localStorage.setItem('artier_pending_signup_phone', invitedPhone);
-                  if (invitedName) localStorage.setItem('artier_pending_signup_realname', invitedName);
                 } catch { /* ignore */ }
               }}
               className="inline-flex items-center justify-center min-h-[44px] px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold lg:hover:bg-primary/90"
@@ -236,9 +234,7 @@ export default function ExhibitionInviteLanding() {
                     localStorage.setItem('artier_pending_sms_invite', '1');
                     // URL에 실려온 초대 대상 정보 → Onboarding prefill (재입력 방지·매칭 성공률 ↑)
                     const invitedPhone = searchParams.get('invited_phone');
-                    const invitedName = searchParams.get('invited_name');
                     if (invitedPhone) localStorage.setItem('artier_pending_signup_phone', invitedPhone);
-                    if (invitedName) localStorage.setItem('artier_pending_signup_realname', invitedName);
                   } catch { /* ignore */ }
                 }}
                 className="inline-flex items-center justify-center px-5 py-2.5 rounded-xl bg-primary text-primary-foreground text-sm font-semibold lg:hover:bg-primary/90"

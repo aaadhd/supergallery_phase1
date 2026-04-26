@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { toast } from 'sonner';
 import { authStore } from '../store';
 import { persistMockSession } from '../services/sessionTokens';
 import { useI18n } from '../i18n/I18nProvider';
@@ -10,24 +9,12 @@ import { cn } from './ui/utils';
 import { Drawer, DrawerContent, DrawerTitle, DrawerDescription } from './ui/drawer';
 import { Dialog, DialogContent, DialogTitle, DialogDescription } from './ui/dialog';
 import { SocialSignupModal, type SocialProvider } from './SocialSignupModal';
-import { fetchGeoDemo } from '../utils/geoIpDemo';
-
-type Region = 'KR' | 'INTL';
-
-function loadRegion(): Region {
-  if (typeof localStorage === 'undefined') return 'INTL';
-  const stored = localStorage.getItem('artier_signup_region');
-  return stored === 'KR' ? 'KR' : stored === 'INTL' ? 'INTL' : 'INTL';
-}
-
-function saveRegion(r: Region) {
-  try { localStorage.setItem('artier_signup_region', r); } catch { /* ignore */ }
-}
 
 /**
  * 로그인·가입 시트 (USR-AUT-02).
  * - 모바일: 하단 바텀시트. 데스크톱: 중앙 모달.
- * - 지역 추정(Policy §2.1.1) 후 `artier_signup_region` 저장. 카카오 선택 시 KR 강제.
+ * - 모든 사용자에게 동일한 4가지 옵션(카카오·구글·애플 + 이메일 인증 링크) 노출.
+ *   region 분기 없음(Policy §2.1).
  * - "이메일로 가입하기" → /signup. "로그인 하기" → /login?mode=email.
  */
 export function AuthSheet({
@@ -44,7 +31,6 @@ export function AuthSheet({
   const [isDesktop, setIsDesktop] = useState(() =>
     typeof window !== 'undefined' ? window.matchMedia('(min-width: 768px)').matches : false,
   );
-  const [region, setRegion] = useState<Region>(loadRegion);
   const [pendingSocial, setPendingSocial] = useState<SocialProvider | null>(null);
   const [loading, setLoading] = useState(false);
 
@@ -56,33 +42,6 @@ export function AuthSheet({
     mql.addEventListener('change', onChange);
     return () => mql.removeEventListener('change', onChange);
   }, []);
-
-  // 시트 열릴 때 지역 추정 (Policy §2.1.1)
-  useEffect(() => {
-    if (!open) return;
-    let cancelled = false;
-    (async () => {
-      try {
-        const r = await fetchGeoDemo();
-        if (cancelled) return;
-        const next: Region = r.countryCode === 'KR' ? 'KR' : 'INTL';
-        setRegion(next);
-        saveRegion(next);
-      } catch {
-        // 폴백: 기존 저장값 또는 INTL
-        const next = loadRegion();
-        setRegion(next);
-        saveRegion(next);
-      }
-    })();
-    return () => { cancelled = true; };
-  }, [open]);
-
-  const toggleRegion = () => {
-    const next: Region = region === 'KR' ? 'INTL' : 'KR';
-    setRegion(next);
-    saveRegion(next);
-  };
 
   const completeReturningSocialLogin = (provider: SocialProvider) => {
     authStore.login();
@@ -103,11 +62,6 @@ export function AuthSheet({
   };
 
   const handleSocialLogin = (provider: SocialProvider) => {
-    // 카카오는 KR 강제 (Policy §2.1.1)
-    if (provider === 'kakao') {
-      setRegion('KR');
-      saveRegion('KR');
-    }
     const alreadySignedUp = localStorage.getItem(`artier_social_signed_up__${provider}`) === '1';
     if (alreadySignedUp) {
       setLoading(true);
@@ -231,7 +185,7 @@ export function AuthSheet({
         {t('login.signupEmail')}
       </Button>
 
-      {/* 하단: 로그인 링크 + 지역 스위치 + 연령 고지 */}
+      {/* 하단: 로그인 링크 + 연령 고지 */}
       <div className="flex flex-col items-center gap-3 pt-2">
         <p className="text-sm text-muted-foreground">
           {t('login.haveAccount')}{' '}
@@ -243,13 +197,6 @@ export function AuthSheet({
             {t('login.signIn')}
           </button>
         </p>
-        <button
-          type="button"
-          onClick={toggleRegion}
-          className="text-xs text-muted-foreground underline-offset-2 lg:hover:underline"
-        >
-          {region === 'KR' ? t('login.regionSwitchToIntl') : t('login.regionSwitchToKr')}
-        </button>
         <p className="text-center text-xs text-muted-foreground leading-relaxed px-2">
           {t('login.ageNotice')}
         </p>

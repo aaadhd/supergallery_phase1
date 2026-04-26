@@ -1,5 +1,6 @@
 import { useMemo, useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
+import { toast } from 'sonner';
 import { X, AlertTriangle } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { artists } from '../data';
@@ -78,10 +79,17 @@ export default function MemberManagement() {
 
   useEffect(() => {
     const artistId = searchParams.get('artist');
-    if (artistId && members.some((m) => m.id === artistId)) {
+    if (!artistId) return;
+    if (members.some((m) => m.id === artistId)) {
       setDetailId(artistId);
+    } else if (members.length > 0) {
+      // 멤버 로드된 후에도 일치 ID 없으면 잘못된 deep link로 간주, URL 정리 + 안내.
+      toast.error('해당 회원을 찾을 수 없습니다.');
+      const next = new URLSearchParams(searchParams);
+      next.delete('artist');
+      setSearchParams(next, { replace: true });
     }
-  }, [searchParams, members]);
+  }, [searchParams, members, setSearchParams]);
 
   const closeDetail = () => {
     setDetailId(null);

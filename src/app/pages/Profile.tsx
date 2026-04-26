@@ -22,11 +22,12 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '../components/ui/dropdown-menu';
-import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { ImageWithFallback } from '../components/ImageWithFallback';
 import { imageUrls } from '../imageUrls';
 import { toast } from 'sonner';
 import { getCoverImage, getImageCount, getThumbCover } from '../utils/imageHelper';
 import { LoginPromptModal } from '../components/LoginPromptModal';
+import { useLoginPrompt } from '../hooks/useLoginPrompt';
 import { ExternalLinksEditor, resolveExternalLinkUrl, getExternalLinkPlatformDisplay } from '../components/ExternalLinksEditor';
 import { getDisplayFollowerCount } from '../utils/artistFollowDelta';
 import type { MessageKey } from '../i18n/messages';
@@ -44,6 +45,7 @@ import { containsProfanity } from '../utils/profanityFilter';
 import { WorkDetailModal } from '../components/WorkDetailModal';
 import { hydrateGroupWorks } from '../groupData';
 import { demoteSlotToUnknown } from '../utils/inviteMessaging';
+import { isWorkPublic, isWorkHidden } from '../utils/workVisibility';
 import { pushDemoNotification } from '../utils/pushDemoNotification';
 
 function workHasStudentCredits(w: Work, instructorId: string): boolean {
@@ -123,7 +125,7 @@ export default function Profile() {
   const [onlyMyUploads, setOnlyMyUploads] = useState(false);
   const [showFollowersModal, setShowFollowersModal] = useState(false);
   const [followModalTab, setFollowModalTab] = useState<'followers' | 'following'>('followers');
-  const [loginPromptOpen, setLoginPromptOpen] = useState(false);
+  const loginPrompt = useLoginPrompt();
   const [detailWorkId, setDetailWorkId] = useState<string | null>(null);
   const [worksViewerIndex, setWorksViewerIndex] = useState<number | null>(null);
   const [profileTab, setProfileTab] = useState<ProfileTabValue>('exhibition');
@@ -249,22 +251,21 @@ export default function Profile() {
     const own = storeWorks
       .filter(w => w.artistId === profileArtist.id)
       .filter(w => !w.isInstructorUpload)
-      .filter(w => isOwnProfile || (!w.isHidden && w.feedReviewStatus !== 'pending' && w.feedReviewStatus !== 'rejected'));
+      .filter(w => isOwnProfile || isWorkPublic(w));
     const ownIds = new Set(own.map(w => w.id));
 
     // 초대 자동 연결(Policy §3.5): 유저 업로드 work의 imageArtists member 슬롯으로 연결된 경우도 참여 작품에 포함.
     const storeParticipating = storeWorks.filter(w => {
       if (ownIds.has(w.id)) return false;
       if (w.artistId === profileArtist.id) return false;
-      if (!isOwnProfile && w.isHidden) return false;
-      if (!isOwnProfile && (w.feedReviewStatus === 'pending' || w.feedReviewStatus === 'rejected')) return false;
+      if (!isOwnProfile && !isWorkPublic(w)) return false;
       return w.imageArtists?.some(ia => ia.type === 'member' && ia.memberId === profileArtist.id) ?? false;
     });
 
     const hydrated = hydrateGroupWorks(artists) as Work[];
     const participating = hydrated.filter(gw => {
       if (ownIds.has(gw.id)) return false;
-      if (!isOwnProfile && gw.isHidden) return false;
+      if (!isOwnProfile && isWorkHidden(gw)) return false;
       if (gw.artistId === profileArtist.id) return true;
       return gw.imageArtists?.some(ia => ia.type === 'member' && ia.memberId === profileArtist.id) ?? false;
     });
@@ -429,10 +430,16 @@ export default function Profile() {
 
   useEffect(() => {
     const q = searchParams.get('tab');
-    if (q && allowedProfileTabs.includes(q as ProfileTabValue)) {
+    if (!q) return;
+    if (allowedProfileTabs.includes(q as ProfileTabValue)) {
       setProfileTab(q as ProfileTabValue);
+    } else {
+      // PRD_User USR-PRF-01 AC-04: 무효한 tab 값으로 진입 시 URL의 ?tab도 정리
+      const next = new URLSearchParams(searchParams);
+      next.delete('tab');
+      setSearchParams(next, { replace: true });
     }
-  }, [searchParams, allowedProfileTabs]);
+  }, [searchParams, allowedProfileTabs, setSearchParams]);
 
   // 전시 생성 직후 도착 시 검수 공개 안내 배너 (dismissible)
   const [publishedBannerDismissed, setPublishedBannerDismissed] = useState(false);
@@ -535,13 +542,16 @@ export default function Profile() {
                         }
                       }}
                       placeholder={t('profile.formDisplayNamePh')}
-                      className="w-full px-4 py-3.5 border border-input rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                      className="w-full px-4 py-3.5 border border-input rounded-lg text-base focus:outline-none focus:ring-[3px] focus:ring-ring focus:border-transparent"
                       maxLength={TITLE_FIELD_MAX_LEN}
                     />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
                       {profileNickname.length}/{TITLE_FIELD_MAX_LEN}
                     </span>
                   </div>
+                  {containsProfanity(profileNickname) && (
+                    <p className="mt-1.5 text-sm text-destructive">{t('profile.errProfanity')}</p>
+                  )}
                 </div>
 
                 {/* 한 줄 프로필 */}
@@ -559,7 +569,7 @@ export default function Profile() {
                         }
                       }}
                       placeholder={t('profile.formHeadlinePh')}
-                      className="w-full px-4 py-3.5 border border-input rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                      className="w-full px-4 py-3.5 border border-input rounded-lg text-base focus:outline-none focus:ring-[3px] focus:ring-ring focus:border-transparent"
                       maxLength={TITLE_FIELD_MAX_LEN}
                     />
                     <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
@@ -580,7 +590,7 @@ export default function Profile() {
                       placeholder={t('profile.formBioPh')}
                       rows={5}
                       maxLength={200}
-                      className="w-full px-4 py-3.5 border border-input rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent resize-none leading-relaxed"
+                      className="w-full px-4 py-3.5 border border-input rounded-lg text-base focus:outline-none focus:ring-[3px] focus:ring-ring focus:border-transparent resize-none leading-relaxed"
                     />
                     <span className="absolute right-3 bottom-2 text-xs text-muted-foreground">{profileBio.length}/200</span>
                   </div>
@@ -596,7 +606,7 @@ export default function Profile() {
                     <select
                       value={profileLocation}
                       onChange={(e) => setProfileLocation(e.target.value)}
-                      className="w-full pl-10 pr-4 py-3.5 border border-input rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent appearance-none bg-white cursor-pointer"
+                      className="w-full pl-10 pr-4 py-3.5 border border-input rounded-lg text-base focus:outline-none focus:ring-[3px] focus:ring-ring focus:border-transparent appearance-none bg-white cursor-pointer"
                       style={{
                         backgroundImage: `url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E")`,
                         backgroundPosition: 'right 0.5rem center',
@@ -792,7 +802,7 @@ export default function Profile() {
                         target="_blank"
                         rel="noopener noreferrer"
                         title={display.name}
-                        aria-label={`${display.name} 프로필 열기`}
+                        aria-label={t('profile.openProfileAria').replace('{name}', display.name)}
                         className="inline-flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-border/60 bg-white lg:hover:border-foreground/40 lg:hover:bg-muted/50 transition-colors"
                       >
                         {display.icon}
@@ -831,7 +841,7 @@ export default function Profile() {
                     variant={follows.isFollowing(profileArtist.id) ? 'outline' : 'default'}
                     className="w-full text-sm py-3"
                     onClick={() => {
-                      if (!auth.isLoggedIn()) { setLoginPromptOpen(true); return; }
+                      if (!loginPrompt.tryProtectedAction('follow')) return;
                       followStore.toggle(profileArtist.id);
                     }}
                   >
@@ -1086,7 +1096,7 @@ export default function Profile() {
                                   <button
                                     type="button"
                                     onClick={(e) => { e.stopPropagation(); setRejectedModalWork(work); }}
-                                    className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium bg-red-500/95 text-white backdrop-blur-sm w-fit lg:hover:bg-red-600 focus-visible:ring-2 focus-visible:ring-white focus-visible:outline-none transition-colors"
+                                    className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium bg-red-500/95 text-white backdrop-blur-sm w-fit lg:hover:bg-red-600 focus-visible:ring-[3px] focus-visible:ring-white focus-visible:outline-none transition-colors"
                                     title={t('review.badgeRejectedHint')}
                                     aria-label={`${t('review.badgeRejected')} — ${t('review.badgeRejectedClickHint')}`}
                                   >
@@ -1292,6 +1302,9 @@ export default function Profile() {
 
                 {/* ===== 내 작품 탭 — 개별 이미지(그림) 단위 ===== */}
                 <TabsContent value="works" className="mt-6">
+                  {isOwnProfile && (
+                    <p className="mb-3 text-xs text-muted-foreground leading-relaxed">{t('profile.tabHelpWorks')}</p>
+                  )}
                   {isOwnProfile && (
                     <div className="mb-4 flex items-center gap-2 flex-wrap">
                       <label className="ml-auto flex items-center gap-2 min-h-[44px] px-2 cursor-pointer select-none text-sm text-foreground">
@@ -1714,7 +1727,7 @@ export default function Profile() {
                           size="sm"
                           className="text-xs shrink-0"
                           onClick={() => {
-                            if (!auth.isLoggedIn()) { setLoginPromptOpen(true); return; }
+                            if (!loginPrompt.tryProtectedAction('follow')) return;
                             followStore.toggle(artist.id);
                           }}
                         >
@@ -1732,7 +1745,7 @@ export default function Profile() {
       )}
 
 
-      <LoginPromptModal open={loginPromptOpen} onClose={() => setLoginPromptOpen(false)} action="follow" />
+      <LoginPromptModal open={loginPrompt.open} onClose={loginPrompt.close} action={loginPrompt.action} />
 
       {detailWorkId && (
         <WorkDetailModal
@@ -1944,7 +1957,7 @@ export default function Profile() {
                 }}
                 maxLength={TITLE_FIELD_MAX_LEN}
                 placeholder={t('work.untitled')}
-                className="w-full px-4 py-3.5 border border-input rounded-lg text-base focus:outline-none focus:ring-2 focus:ring-ring focus:border-transparent"
+                className="w-full px-4 py-3.5 border border-input rounded-lg text-base focus:outline-none focus:ring-[3px] focus:ring-ring focus:border-transparent"
               />
               <span className="absolute right-4 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">
                 {renameValue.length}/{TITLE_FIELD_MAX_LEN}

@@ -1,6 +1,7 @@
 // 더미 데이터 및 타입 정의
 import localGalleryManifest from './data/localGalleryManifest.json';
 import { buildLocalPublicWorks } from './data/localPublicGalleryWorks';
+import { buildImagesV1Artists, buildImagesV1Works } from './data/imagesV1Works';
 
 export interface Artist {
   id: string;
@@ -65,6 +66,11 @@ export interface Work {
   isForSale?: boolean;
   /** 둘러보기 피드 편입 — 미지정·승인 = 피드 노출, 대기·반려 = 피드 제외 (콘텐츠 운영 정책) */
   feedReviewStatus?: 'pending' | 'approved' | 'rejected';
+  /**
+   * N-11(Phase 1): 단일 공개 상태(visibility).
+   * 레거시 호환을 위해 feedReviewStatus/isHidden/autoHiddenAt은 병행 유지한다.
+   */
+  visibilityStatus?: 'public' | 'pending_review' | 'rejected' | 'hidden_auto' | 'hidden_admin';
   /** 반려 사유 카테고리 (명세: 저품질/스팸/부적절/저작권 침해 의심) — 현재 반려 상태의 사유만 의미 있음. 과거 이력은 rejectionHistory 참조. */
   rejectionReason?: 'low_quality' | 'spam' | 'inappropriate' | 'copyright';
   /**
@@ -142,7 +148,13 @@ export const artists: Artist[] = [
   { id: 'local-daily-diary', name: '임지은', avatar: 'https://images.unsplash.com/photo-1542909168-82c3e7fdca5c?w=100&h=100&fit=crop', bio: '일상을 기록하는 드로잉 다이어리', followers: 680, following: 67 },
   { id: 'local-fantasy', name: '한규리', avatar: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=100&h=100&fit=crop', bio: '판타지·신화 테마 일러스트', followers: 1980, following: 142 },
   { id: 'local-character', name: '조성호', avatar: 'https://images.unsplash.com/photo-1492562080023-ab3db95bfbce?w=100&h=100&fit=crop', bio: '오리지널 캐릭터 디자이너', followers: 3210, following: 178 },
+  // Featured — public/images_1 폴더별 작가/전시 (manifest: imagesV1Manifest.json)
+  ...buildImagesV1Artists(),
 ];
 
 // 둘러보기 시드: public/images (localGalleryManifest.json, 갱신: generate-local-gallery-manifest.mjs)
-export const works: Work[] = buildLocalPublicWorks(localGalleryManifest.paths, artists);
+// Featured 레이어: public/images_1 폴더별 전시 → pick: true로 상위 노출
+export const works: Work[] = [
+  ...buildImagesV1Works(artists),
+  ...buildLocalPublicWorks(localGalleryManifest.paths, artists),
+];

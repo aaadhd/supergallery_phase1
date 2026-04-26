@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { authStore } from '../store';
 import { consumeMagicLink } from '../utils/magicLinkStore';
-import { persistMockSession } from '../services/sessionTokens';
+import { persistMockSession, loadMockSession } from '../services/sessionTokens';
 import { useI18n } from '../i18n/I18nProvider';
 import { Button } from '../components/ui/button';
 
@@ -41,6 +41,12 @@ export default function AuthVerify() {
       return;
     }
     if (req.intent === 'login') {
+      // 이미 로그인된 다른 계정 세션이면 silent 전환을 막고 명시 분기로 안내.
+      const existing = loadMockSession();
+      if (authStore.isLoggedIn() && existing && existing.email && existing.email !== req.email) {
+        setState('invalid');
+        return;
+      }
       authStore.login();
       persistMockSession(req.email);
       setState('login-ok');

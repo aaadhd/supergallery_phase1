@@ -1,4 +1,4 @@
-import type { UnresolvedIssue, ChecklistItem, PartnerArtist } from './types';
+import type { UnresolvedIssue, ChecklistItem } from './types';
 
 export const seedIssues: UnresolvedIssue[] = [
   {
@@ -154,17 +154,3 @@ export const seedChecklist: ChecklistItem[] = [
   { id: 'CL-034', title: 'WCAG AA 접근성 검증', description: '색대비·키보드 네비·스크린리더 라벨·폰트 스케일 전 화면 적용. 시니어 타깃 필수.', category: 'QA', owner: 'QA팀', status: '시작 전', dueDate: '2026-04-24', checked: false },
 ];
 
-export const seedPartnerArtists: PartnerArtist[] = [
-  { id: 'PA-001', name: '카테', email: 'cho.gayoung@email.com', stage: '활성', contactStatus: '정기 연락', submissionStatus: '제출 완료', worksCount: 7, notes: '디지털 페인팅 전문. 초기 콘텐츠 핵심 작가.', monthlyRoutine: '월 2회 작품 업로드 약속', joinedAt: '2026-03-01', lastContactAt: '2026-03-28' },
-  { id: 'PA-002', name: '김영자', email: 'kim.youngja@email.com', stage: '활성', contactStatus: '정기 연락', submissionStatus: '제출 완료', worksCount: 5, notes: '30년 경력 동양화 작가. 문화센터 강사.', monthlyRoutine: '월 1회 작품 + 수강생 작품 대리 업로드', joinedAt: '2026-03-01', lastContactAt: '2026-03-25' },
-  { id: 'PA-003', name: '정호아트', email: 'park.jh@email.com', stage: '활성', contactStatus: '정기 연락', submissionStatus: '제출 완료', worksCount: 4, notes: '전통/현대 미술 경계 작업', monthlyRoutine: '월 2회 업로드', joinedAt: '2026-03-05', lastContactAt: '2026-03-27' },
-  { id: 'PA-004', name: '실과바늘', email: 'choi.mk@email.com', stage: '온보딩 중', contactStatus: '초기 안내 완료', submissionStatus: '미제출', worksCount: 0, notes: '섬유/도자기 공예. 작품 촬영 지원 필요.', monthlyRoutine: '미정', joinedAt: '2026-03-20', lastContactAt: '2026-03-22' },
-  { id: 'PA-005', name: '은수워터컬러', email: 'jung.es@email.com', stage: '활성', contactStatus: '정기 연락', submissionStatus: '제출 완료', worksCount: 6, notes: '제품 디자이너 겸 수채화 작가', monthlyRoutine: '월 3회 업로드', joinedAt: '2026-03-03', lastContactAt: '2026-03-29' },
-  { id: 'PA-006', name: '홍순덕', email: 'hong.sd@email.com', stage: '연락 완료', contactStatus: '관심 표명', submissionStatus: '미제출', worksCount: 0, notes: '전통 자수/섬유 예술 25년. 디지털화 지원 필요.', monthlyRoutine: '미정', joinedAt: '2026-03-18', lastContactAt: '2026-03-20' },
-  { id: 'PA-007', name: '내면의풍경', email: 'seo.kh@email.com', stage: '활성', contactStatus: '정기 연락', submissionStatus: '제출 완료', worksCount: 5, notes: '추상화 전문. SNS 팔로워 많음.', monthlyRoutine: '월 2회 업로드', joinedAt: '2026-03-02', lastContactAt: '2026-03-30' },
-  { id: 'PA-008', name: '나무결공방', email: 'yoon.ts@email.com', stage: '온보딩 중', contactStatus: '가이드 전달', submissionStatus: '검토 중', worksCount: 2, notes: '목공예/가구 디자인. 작품 사진 품질 좋음.', monthlyRoutine: '월 1회 업로드 예정', joinedAt: '2026-03-15', lastContactAt: '2026-03-26' },
-  { id: 'PA-009', name: '강미란', email: 'kang.mr@email.com', stage: '활성', contactStatus: '정기 연락', submissionStatus: '제출 완료', worksCount: 4, notes: '도자 공예. 작품 + 제작 과정 타임랩스 제공 가능.', monthlyRoutine: '월 2회 업로드', joinedAt: '2026-03-04', lastContactAt: '2026-03-28' },
-  { id: 'PA-010', name: '이종환', email: 'lee.jh@email.com', stage: '후보', contactStatus: '1차 연락 시도', submissionStatus: '미제출', worksCount: 0, notes: '수채화 35년 경력. 디지털 전환 관심. SNS DM으로 접근.', monthlyRoutine: '미정', joinedAt: '2026-03-28', lastContactAt: '2026-03-28' },
-  { id: 'PA-011', name: '소소한하루', email: 'song.mh@email.com', stage: '연락 완료', contactStatus: '참여 의사 확인 중', submissionStatus: '미제출', worksCount: 0, notes: '일상 디지털 기록 작가. 문화센터 연계 가능.', monthlyRoutine: '미정', joinedAt: '2026-03-22', lastContactAt: '2026-03-24' },
-  { id: 'PA-012', name: '정림수채화', email: 'oh.jl@email.com', stage: '활성', contactStatus: '정기 연락', submissionStatus: '제출 완료', worksCount: 8, notes: '40년 화가. 디지털 수채 작업. 핵심 파트너.', monthlyRoutine: '월 3회 업로드', joinedAt: '2026-03-01', lastContactAt: '2026-03-30' },
-];

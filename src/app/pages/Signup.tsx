@@ -9,7 +9,6 @@ import { isEmailRegistered } from '../utils/registeredAccounts';
 import { requestEmailMagicLink } from '../services/apiClient';
 import { issueMagicLink, buildVerifyUrl, latestMagicLinkFor } from '../utils/magicLinkStore';
 import { useI18n } from '../i18n/I18nProvider';
-import { fetchGeoDemo } from '../utils/geoIpDemo';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -40,31 +39,14 @@ export default function Signup() {
 
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
-  const [agreeMarketingEmail, setAgreeMarketingEmail] = useState(false);
-  const [agreeMarketingPush, setAgreeMarketingPush] = useState(false);
+  const [agreeAge, setAgreeAge] = useState(false);
+  const [agreeMarketing, setAgreeMarketing] = useState(false);
   const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
 
   const [linkSent, setLinkSent] = useState(false);
   const [sending, setSending] = useState(false);
   const [resendSec, setResendSec] = useState(0);
   const resendTimer = useRef<number | null>(null);
-
-  // Signup 진입 시 지역 추정 (Policy §2.1.1) — artier_signup_region에 저장
-  useEffect(() => {
-    let cancelled = false;
-    (async () => {
-      if (typeof localStorage === 'undefined') return;
-      if (localStorage.getItem('artier_signup_region')) return;
-      try {
-        const r = await fetchGeoDemo();
-        if (cancelled) return;
-        localStorage.setItem('artier_signup_region', r.countryCode === 'KR' ? 'KR' : 'INTL');
-      } catch {
-        localStorage.setItem('artier_signup_region', 'INTL');
-      }
-    })();
-    return () => { cancelled = true; };
-  }, []);
 
   // step>=2인데 이메일이 없으면 1단계로 복귀
   useEffect(() => {
@@ -92,15 +74,14 @@ export default function Signup() {
     };
   }, [resendSec]);
 
-  const allAgreed = agreeTerms && agreePrivacy && agreeMarketingEmail && agreeMarketingPush;
-  const someAgreed = agreeTerms || agreePrivacy || agreeMarketingEmail || agreeMarketingPush;
+  const allAgreed = agreeTerms && agreePrivacy && agreeAge;
+  const someAgreed = agreeTerms || agreePrivacy || agreeAge;
 
   const toggleMaster = () => {
     const next = !allAgreed;
     setAgreeTerms(next);
     setAgreePrivacy(next);
-    setAgreeMarketingEmail(next);
-    setAgreeMarketingPush(next);
+    setAgreeAge(next);
   };
 
   const touched = (field: string) => submitted || touchedFields.has(field);
@@ -139,7 +120,7 @@ export default function Signup() {
 
   const emailOk = emailValid(email) && !isEmailRegistered(email);
   const profileOk = nicknameLengthOk && nicknameClean && birthMeetsAge;
-  const agreementsOk = agreeTerms && agreePrivacy;
+  const agreementsOk = agreeTerms && agreePrivacy && agreeAge;
 
   const sendMagicLink = async (): Promise<boolean> => {
     if (!emailOk) {
@@ -204,7 +185,14 @@ export default function Signup() {
           <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
             {t('signup.linkSentBody').replace('{email}', email || 'you@example.com')}
           </p>
-          <p className="text-xs text-muted-foreground">{t('signup.linkSentSpam')}</p>
+          <p className="text-sm text-foreground/80 bg-muted/40 rounded-lg px-3 py-2.5 leading-relaxed">
+            {t('signup.linkSentAutoFlow')}
+          </p>
+          <div className="rounded-lg border border-border/40 bg-background px-3 py-2.5 text-left space-y-1">
+            <p className="text-sm font-semibold text-foreground">{t('signup.linkSentHelpTitle')}</p>
+            <p className="text-sm text-muted-foreground leading-relaxed">{t('signup.linkSentSpam')}</p>
+            <p className="text-sm text-muted-foreground leading-relaxed">{t('signup.linkSentSenderHint')}</p>
+          </div>
         </div>
 
         <div className="space-y-2">
@@ -406,29 +394,32 @@ export default function Signup() {
                   <span className="text-destructive ml-0.5">*</span>
                 </Label>
                 <div className="grid grid-cols-3 gap-2">
-                  <input
-                    type="text"
-                    inputMode="numeric"
-                    pattern="[0-9]*"
-                    autoComplete="bday-year"
-                    aria-label={t('signup.birthYear')}
-                    value={birthYear}
-                    onChange={(e) => {
-                      const v = e.target.value.replace(/[^0-9]/g, '').slice(0, 4);
-                      setBirthYear(v);
-                      if (v.length >= 4) markTouched('birth');
-                    }}
-                    onBlur={() => markTouched('birth')}
-                    placeholder={t('signup.birthYearPlaceholder')}
-                    maxLength={4}
-                    className="min-h-[44px] rounded-lg border border-border/40 px-3 py-2 text-sm sm:text-sm text-foreground bg-white focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:outline-none placeholder:text-muted-foreground/50"
-                  />
+                  <div className="relative">
+                    <input
+                      type="text"
+                      inputMode="numeric"
+                      pattern="[0-9]*"
+                      autoComplete="bday-year"
+                      aria-label={t('signup.birthYear')}
+                      value={birthYear}
+                      onChange={(e) => {
+                        const v = e.target.value.replace(/[^0-9]/g, '').slice(0, 4);
+                        setBirthYear(v);
+                        if (v.length >= 4) markTouched('birth');
+                      }}
+                      onBlur={() => markTouched('birth')}
+                      placeholder={t('signup.birthYearPlaceholder')}
+                      maxLength={4}
+                      className="min-h-[44px] w-full rounded-lg border border-border/40 pl-3 pr-8 py-2 text-sm sm:text-sm text-foreground bg-white focus-visible:ring-[3px] focus-visible:ring-primary/25 focus-visible:outline-none placeholder:text-muted-foreground/50"
+                    />
+                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">{t('signup.birthYear')}</span>
+                  </div>
                   <select
                     aria-label={t('signup.birthMonth')}
                     value={birthMonth}
                     onChange={(e) => { setBirthMonth(e.target.value); markTouched('birth'); }}
                     onBlur={() => markTouched('birth')}
-                    className="min-h-[44px] rounded-lg border border-border/40 px-3 py-2 text-sm sm:text-sm text-foreground bg-white focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:outline-none"
+                    className="min-h-[44px] rounded-lg border border-border/40 px-3 py-2 text-sm sm:text-sm text-foreground bg-white focus-visible:ring-[3px] focus-visible:ring-primary/25 focus-visible:outline-none"
                   >
                     <option value="">{t('signup.birthMonth')}</option>
                     {monthOptions.map((m) => (<option key={m} value={m}>{m}</option>))}
@@ -438,7 +429,7 @@ export default function Signup() {
                     value={birthDay}
                     onChange={(e) => { setBirthDay(e.target.value); markTouched('birth'); }}
                     onBlur={() => markTouched('birth')}
-                    className="min-h-[44px] rounded-lg border border-border/40 px-3 py-2 text-sm sm:text-sm text-foreground bg-white focus-visible:ring-2 focus-visible:ring-primary/25 focus-visible:outline-none"
+                    className="min-h-[44px] rounded-lg border border-border/40 px-3 py-2 text-sm sm:text-sm text-foreground bg-white focus-visible:ring-[3px] focus-visible:ring-primary/25 focus-visible:outline-none"
                   >
                     <option value="">{t('signup.birthDay')}</option>
                     {dayOptions.map((d) => (<option key={d} value={d}>{d}</option>))}
@@ -514,21 +505,22 @@ export default function Signup() {
                     </>
                   )}
                   {checkboxRow(
-                    'signup-mkt-email',
-                    agreeMarketingEmail,
-                    setAgreeMarketingEmail,
+                    'signup-age',
+                    agreeAge,
+                    setAgreeAge,
                     <>
-                      <span className="text-muted-foreground font-medium">{t('signup.optionalTag')}</span>{' '}
-                      {t('signup.agreeMktEmail')}
+                      <span className="text-destructive font-medium">{t('signup.requiredTag')}</span>{' '}
+                      {t('signup.agreeAge')}
                     </>
                   )}
                   {checkboxRow(
-                    'signup-mkt-push',
-                    agreeMarketingPush,
-                    setAgreeMarketingPush,
+                    'signup-marketing',
+                    agreeMarketing,
+                    setAgreeMarketing,
                     <>
                       <span className="text-muted-foreground font-medium">{t('signup.optionalTag')}</span>{' '}
-                      {t('signup.agreeMktPush')}
+                      {t('signup.agreeMarketing')}
+                      <span className="block mt-0.5 text-xs text-muted-foreground">{t('signup.agreeMarketingHint')}</span>
                     </>
                   )}
                 </div>

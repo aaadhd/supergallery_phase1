@@ -1,23 +1,22 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertCircle, CheckSquare, Users, AlertTriangle, TrendingUp, Eye, Flag, RotateCcw, ShieldAlert } from 'lucide-react';
+import { AlertCircle, CheckSquare, AlertTriangle, Eye, Flag, RotateCcw, ShieldAlert } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Progress } from '../components/ui/progress';
-import { useIssueStore, useChecklistStore, usePartnerStore } from './adminStore';
+import { useIssueStore, useChecklistStore } from './adminStore';
 import { STATUS_COLORS } from './constants';
 import { workStore, useWorkStore } from '../store';
 import { loadUserReports, REPORTS_CHANGED_EVENT } from '../utils/reportsStore';
+import { isWorkHidden } from '../utils/workVisibility';
 
 export default function AdminDashboard() {
   const issueStore = useIssueStore();
   const checklistStore = useChecklistStore();
-  const partnerStore = usePartnerStore();
   useWorkStore(); // workStore 구독 — 작품 변화 시 지표 자동 갱신
 
   const issues = issueStore.getAll();
   const checklist = checklistStore.getAll();
-  const partners = partnerStore.getAll();
 
   // 콘텐츠 운영 지표 (Policy §22 SLA 기반)
   const allWorks = workStore.getWorks();
@@ -44,12 +43,12 @@ export default function AdminDashboard() {
   }, []);
 
   // 자동 비공개 처리된 전시 수 (Policy §12.2)
-  const autoHiddenCount = workStore.getWorks().filter(w => w.isHidden === true).length;
+  const autoHiddenCount = workStore.getWorks().filter((w) => isWorkHidden(w)).length;
   // SLA 위반 카운트 (Policy §12.2.1 — 자동 비공개 후 72h 경과 + 미처리)
   const slaViolatedCount = (() => {
     const now = Date.now();
     return workStore.getWorks().filter((w) => {
-      if (!w.isHidden || !w.autoHiddenAt) return false;
+      if (!isWorkHidden(w) || !w.autoHiddenAt) return false;
       const hours = (now - new Date(w.autoHiddenAt).getTime()) / (60 * 60 * 1000);
       return hours >= 72;
     }).length;
@@ -72,14 +71,6 @@ export default function AdminDashboard() {
     if (c.status === '완료') acc[c.category].done++;
     return acc;
   }, {} as Record<string, { total: number; done: number }>);
-
-  // Partner stats
-  const partnersByStage = partners.reduce((acc, p) => {
-    acc[p.stage] = (acc[p.stage] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-
-  const totalWorks = partners.reduce((acc, p) => acc + p.worksCount, 0);
 
   // Urgent blockers
   const blockers = issues.filter(i => i.blocker && i.status !== '해결됨');
@@ -211,40 +202,6 @@ export default function AdminDashboard() {
           </Card>
         </Link>
 
-        <Link to="/admin/partners">
-          <Card className="lg:hover:shadow-md transition-shadow cursor-pointer">
-            <CardHeader className="pb-2">
-              <CardDescription className="flex items-center gap-2">
-                <Users className="w-4 h-4" />
-                파트너 작가
-              </CardDescription>
-              <CardTitle className="text-3xl">{partners.length}명</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="flex gap-2 flex-wrap">
-                {Object.entries(partnersByStage).map(([stage, count]) => (
-                  <Badge key={stage} className={STATUS_COLORS[stage] || 'bg-muted/50 text-muted-foreground'} variant="outline">
-                    {stage} {count}
-                  </Badge>
-                ))}
-              </div>
-            </CardContent>
-          </Card>
-        </Link>
-
-        <Card>
-          <CardHeader className="pb-2">
-            <CardDescription className="flex items-center gap-2">
-              <TrendingUp className="w-4 h-4" />
-              파트너 작품
-            </CardDescription>
-            <CardTitle className="text-3xl">{totalWorks}점</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <p className="text-xs text-muted-foreground">목표: 800~1,000점</p>
-            <Progress value={Math.min((totalWorks / 800) * 100, 100)} className="mt-2" />
-          </CardContent>
-        </Card>
       </div>
 
       {/* Urgent Blockers */}

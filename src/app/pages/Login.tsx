@@ -158,7 +158,11 @@ export default function Login() {
                 <p className="text-sm text-muted-foreground leading-relaxed">
                   {t('login.linkSentBody').replace('{email}', email)}
                 </p>
-                <p className="text-xs text-muted-foreground">{t('login.linkSentSpam')}</p>
+                <div className="rounded-lg border border-border/40 bg-background px-3 py-2.5 text-left space-y-1">
+                  <p className="text-sm font-semibold text-foreground">{t('signup.linkSentHelpTitle')}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{t('login.linkSentSpam')}</p>
+                  <p className="text-sm text-muted-foreground leading-relaxed">{t('signup.linkSentSenderHint')}</p>
+                </div>
               </div>
 
               <div className="space-y-2">

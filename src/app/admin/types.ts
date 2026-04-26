@@ -25,16 +25,3 @@ export interface ChecklistItem {
   checked: boolean;
 }
 
-export interface PartnerArtist {
-  id: string;
-  name: string;
-  email: string;
-  stage: string;
-  contactStatus: string;
-  submissionStatus: string;
-  worksCount: number;
-  notes: string;
-  monthlyRoutine: string;
-  joinedAt: string;
-  lastContactAt: string;
-}

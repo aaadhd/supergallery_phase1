@@ -58,3 +58,20 @@ export function registerAccount(email: string, phone: string) {
     }
   }
 }
+
+/**
+ * Policy §4.4: 탈퇴 후 같은 이메일·전화로 즉시 재가입 가능. 탈퇴 처리 시 호출하여
+ * registry에서 식별자를 제거해 차단을 풀어준다.
+ */
+export function unregisterAccount(email?: string, phone?: string) {
+  const e = email ? normalizeEmail(email) : '';
+  const p = phone ? normalizePhone(phone) : '';
+  if (e) {
+    const list = readList(EMAIL_KEY).filter((x) => normalizeEmail(x) !== e);
+    writeList(EMAIL_KEY, list);
+  }
+  if (p) {
+    const list = readList(PHONE_KEY).filter((x) => normalizePhone(x) !== p);
+    writeList(PHONE_KEY, list);
+  }
+}

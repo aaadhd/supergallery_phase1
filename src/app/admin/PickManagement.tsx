@@ -5,6 +5,7 @@ import { Button } from '../components/ui/button';
 import { workStore } from '../store';
 import type { Work } from '../data';
 import { displayExhibitionTitle } from '../utils/workDisplay';
+import { isWorkPublic } from '../utils/workVisibility';
 import { pushDemoNotification } from '../utils/pushDemoNotification';
 import { useI18n } from '../i18n/I18nProvider';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
@@ -129,7 +130,7 @@ export default function PickManagement() {
     const q = debouncedSearch.trim().toLowerCase();
     if (!q) return [];
     return works
-      .filter((w) => !pickIdSet.has(w.id) && w.feedReviewStatus === 'approved')
+      .filter((w) => !pickIdSet.has(w.id) && isWorkPublic(w))
       .filter((w) => {
         const title = displayExhibitionTitle(w, '').toLowerCase();
         const artist = (w.artist?.name || '').toLowerCase();
@@ -335,7 +336,7 @@ export default function PickManagement() {
                 .map((work) => {
                   const p = toAdminPickItem(work);
                   const isCurrent = pickIdSet.has(work.id);
-                  const canActivate = !isCurrent && pickIds.length < MAX_PICKS && work.feedReviewStatus === 'approved';
+                  const canActivate = !isCurrent && pickIds.length < MAX_PICKS && isWorkPublic(work);
                   return (
                     <div key={p.id} className="border border-border rounded-lg p-4 bg-white">
                       <div className="flex items-start justify-between gap-2 mb-2">

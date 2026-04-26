@@ -1,4 +1,5 @@
 import { workStore } from '../store';
+import { isWorkRejected, isWorkHidden } from './workVisibility';
 
 /**
  * 비가입자 작가 초대 발송 (모의 구현)
@@ -180,50 +181,131 @@ export type PromotedInviteDetail = {
 };
 
 /**
- * 회원가입 시 SMS 초대 자동 매칭 (Policy §3.5).
- * PASS 본인인증 기반 — 전화번호가 일치하는 모든 비회원 슬롯을 회원 슬롯으로 승격한다.
- * 실명 대조는 하지 않음. 잘못 연결된 건은 사용자가 마이페이지에서 사후 원복(disavow).
+ * 가입 후보 매칭 카드용 정보 (Policy §3.5.1 본인 확인 화면).
+ * 가입 흐름에 표시되는 작품 카드(이미지·작품명·전시명·초대한 분).
  */
-export function matchSmsInviteOnSignup(
-  phone: string,
-  _realName: string,
-  currentUser: SignupMatchUser,
-): {
-  matched: number;
-  promotedWorkIds: string[];
-  promotedDetails: PromotedInviteDetail[];
-} {
-  const normalized = phone.replace(/[\s-]/g, '');
-  const log = readLog().filter((e) => e.success);
-  let matched = 0;
-  const promotedWorkIds: string[] = [];
-  const promotedDetails: PromotedInviteDetail[] = [];
+export type MatchCandidate = {
+  inviteId: string;
+  workId: string;
+  workTitle: string;
+  invitedName: string;
+  inviterNickname: string;
+  inviterUserId?: string;
+  imageUrl?: string;
+};
+
+/**
+ * 가입 시점에 사용자가 가진 연락처와 일치하는 비회원 초대 후보를 모은다 (Policy §3.5).
+ * 자동 연결은 하지 않는다. 호출자가 본인 확인 화면을 거쳐 applyConfirmedMatches로 확정하거나,
+ * recordDeclinedMatches로 운영팀 신호를 발송한다.
+ */
+export function findMatchCandidates(phone: string): MatchCandidate[] {
+  const normalized = phone.replace(/\s+/g, '');
+  if (!normalized) return [];
+  const targetHash = simpleHash(normalized);
+  const log = readLog().filter((e) => e.success) as Array<InviteLogEntry & { phoneHash?: string }>;
+  const seen = new Set<string>();
+  const candidates: MatchCandidate[] = [];
 
   for (const entry of log) {
-    const entryPhone = entry.phoneNumber.replace(/[\s-]/g, '');
-    if (entryPhone !== normalized) continue;
+    if (!entry.phoneHash || entry.phoneHash !== targetHash) continue;
 
-    matched++;
-    appendMatchResult({
+    const key = entry.workId + '|' + entry.id;
+    if (seen.has(key)) continue;
+    seen.add(key);
+
+    const work = workStore.getWork(entry.workId);
+    if (!work) continue;
+    // 비공개·반려 상태인 전시는 본인 확인 표본에서 제외 (§3.5.1 EC-04)
+    if (isWorkRejected(work)) continue;
+    if (isWorkHidden(work)) continue;
+
+    candidates.push({
       inviteId: entry.id,
       workId: entry.workId,
-      phone: normalized,
+      workTitle: work.exhibitionName || work.title || '전시',
       invitedName: entry.displayName,
+      inviterNickname: typeof (work as { artistName?: string }).artistName === 'string' ? (work as { artistName?: string }).artistName! : '',
+      inviterUserId: typeof (work as { artistId?: string }).artistId === 'string' ? (work as { artistId?: string }).artistId : undefined,
+      imageUrl: Array.isArray(work.image) ? work.image[0] : undefined,
+    });
+  }
+
+  return candidates;
+}
+
+/**
+ * 사용자가 본인 확인에서 "맞아요"를 선택했을 때 호출.
+ * 후보 전체를 회원 슬롯으로 승격한다.
+ */
+export function applyConfirmedMatches(
+  candidates: MatchCandidate[],
+  currentUser: SignupMatchUser,
+): PromotedInviteDetail[] {
+  const promoted: PromotedInviteDetail[] = [];
+  for (const c of candidates) {
+    appendMatchResult({
+      inviteId: c.inviteId,
+      workId: c.workId,
+      phone: '',
+      invitedName: c.invitedName,
       status: 'matched',
       at: new Date().toISOString(),
     });
-    if (promoteNonMemberSlot(entry.workId, entry.displayName, currentUser)) {
-      promotedWorkIds.push(entry.workId);
-      const promotedWork = workStore.getWork(entry.workId);
-      promotedDetails.push({
-        workId: entry.workId,
-        workTitle: promotedWork?.exhibitionName || promotedWork?.title || '전시',
-        invitedName: entry.displayName,
+    if (promoteNonMemberSlot(c.workId, c.invitedName, currentUser)) {
+      promoted.push({
+        workId: c.workId,
+        workTitle: c.workTitle,
+        invitedName: c.invitedName,
       });
     }
   }
+  return promoted;
+}
 
-  return { matched, promotedWorkIds, promotedDetails };
+/**
+ * 사용자가 본인 확인에서 "아니에요"를 선택했을 때 호출.
+ * 매칭은 적용하지 않고, 운영팀 큐(ADM-RPT-01 "초대 매칭 거부" 카테고리)에 신호 1건을 적재한다.
+ * Policy §3.5.4. 호출자(Onboarding)는 결과의 inviterUserId 목록으로 발신자 알림을 push한다.
+ */
+export function recordDeclinedMatches(candidates: MatchCandidate[]): {
+  inviters: { inviterUserId?: string; workTitle: string; workId: string }[];
+} {
+  for (const c of candidates) {
+    appendMatchResult({
+      inviteId: c.inviteId,
+      workId: c.workId,
+      phone: '',
+      invitedName: c.invitedName,
+      status: 'declined',
+      at: new Date().toISOString(),
+    });
+  }
+  // 운영팀 큐(ADM-RPT-01 "초대 매칭 거부") 적재
+  try {
+    const KEY = 'artier_invite_decline_log';
+    const raw = localStorage.getItem(KEY);
+    const list = raw ? (JSON.parse(raw) as unknown[]) : [];
+    const arr = Array.isArray(list) ? list : [];
+    arr.unshift({
+      at: new Date().toISOString(),
+      candidates: candidates.map((c) => ({
+        workId: c.workId,
+        workTitle: c.workTitle,
+        invitedName: c.invitedName,
+        inviterUserId: c.inviterUserId,
+      })),
+    });
+    localStorage.setItem(KEY, JSON.stringify(arr.slice(0, 200)));
+  } catch { /* ignore */ }
+
+  return {
+    inviters: candidates.map((c) => ({
+      inviterUserId: c.inviterUserId,
+      workTitle: c.workTitle,
+      workId: c.workId,
+    })),
+  };
 }
 
 /**
@@ -276,6 +358,10 @@ export function demoteSlotToUnknown(
   if (!slot || slot.type !== 'member' || slot.memberId !== expectedMemberId) {
     return { ok: false };
   }
+  // 본인이 업로드한 전시의 자기 슬롯은 disavow 차단(자기 작품을 작가 미상으로 만드는 것은 의도와 어긋남).
+  if (work.artistId === expectedMemberId) {
+    return { ok: false };
+  }
   const next = work.imageArtists.map((ia, idx) =>
     idx === pieceIndex ? ({ type: 'unknown' as const }) : ia,
   );
@@ -302,7 +388,7 @@ export type MatchResult = {
   invitedName: string;
   /** 자동 연결 시 signupName 기록은 더 이상 안 함 (실명 대조 폐기) */
   signupName?: string;
-  status: 'matched' | 'disavowed';
+  status: 'matched' | 'disavowed' | 'declined';
   at: string;
 };
 

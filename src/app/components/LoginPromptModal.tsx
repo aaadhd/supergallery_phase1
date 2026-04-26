@@ -7,9 +7,8 @@ import {
   DialogFooter,
 } from './ui/dialog';
 import { Button } from './ui/button';
-import { authStore } from '../store';
 import { LogIn } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
 
@@ -24,31 +23,25 @@ const ACTION_KEYS: Record<LoginPromptAction, MessageKey> = {
   general: 'loginPrompt.general',
 };
 
-/**
- * 둘러보기 맥락의 가벼운 상호작용은 로그인만 시키고 모달만 닫음.
- * 작품 올리기/신고처럼 신원이 필요한 동작은 온보딩을 강제.
- */
-const BROWSE_CONTEXT_ACTIONS: ReadonlySet<LoginPromptAction> = new Set(['like', 'save', 'follow']);
-
 interface LoginPromptModalProps {
   open: boolean;
   onClose: () => void;
   action?: LoginPromptAction;
 }
 
+/**
+ * IA CM-02 / PRD §USR-AUT-02: CTA 클릭 시 `/login?redirect=<현재 경로>`로 이동.
+ * 즉시 로그인 처리는 하지 않는다 — 사용자는 가입·로그인 흐름에서 본인 인증을 거친다.
+ */
 export function LoginPromptModal({ open, onClose, action = 'general' }: LoginPromptModalProps) {
   const navigate = useNavigate();
+  const location = useLocation();
   const { t } = useI18n();
 
   const handleLogin = () => {
-    authStore.login();
-    const onboardingDone = localStorage.getItem('artier_onboarding_done');
-    const isBrowseContext = BROWSE_CONTEXT_ACTIONS.has(action);
-    // 둘러보기 중 좋아요/저장/팔로우에선 온보딩으로 튕기지 않고 흐름 유지
-    if (!onboardingDone && !isBrowseContext) {
-      navigate('/onboarding');
-    }
+    const redirect = location.pathname + location.search;
     onClose();
+    navigate(`/login?redirect=${encodeURIComponent(redirect)}`);
   };
 
   return (

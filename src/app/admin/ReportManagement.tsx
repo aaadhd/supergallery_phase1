@@ -18,6 +18,7 @@ import { pushDemoNotification } from '../utils/pushDemoNotification';
 import { useI18n } from '../i18n/I18nProvider';
 import { usePagination } from '../hooks/usePagination';
 import { PaginationBar } from './components/PaginationBar';
+import { buildVisibilityPatch } from '../utils/workVisibility';
 
 const ADMIN_TABLE_PAGE_SIZE = 50;
 
@@ -35,15 +36,18 @@ type ReportRow = {
   artistId?: string;
   /** 자동 비공개 발동 시각 (Policy §12.2.1 SLA 계산 기준). 대상 전시의 autoHiddenAt을 파생. */
   autoHiddenAt?: string;
+  /** 신고된 작품(piece) 인덱스 — 다중 이미지 전시에서 사용자가 명시 선택한 것. */
+  pieceIndex?: number;
 };
 
 function mapUserReportToRow(r: StoredUserReport): ReportRow {
   const kind: ReportKind = r.targetType === 'work' ? '작품' : '프로필';
   const detail = r.detail?.trim() || '';
+  const pieceTag = typeof r.pieceIndex === 'number' ? ` · ${r.pieceIndex + 1}번 작품` : '';
   const target =
     detail.length > 0
-      ? `${r.targetName} — ${detail.slice(0, 100)}${detail.length > 100 ? '…' : ''}`
-      : r.targetName;
+      ? `${r.targetName}${pieceTag} — ${detail.slice(0, 100)}${detail.length > 100 ? '…' : ''}`
+      : `${r.targetName}${pieceTag}`;
   const reportedAt = r.createdAt ? r.createdAt.slice(0, 10) : '';
   const statusMap: Record<NonNullable<StoredUserReport['adminStatus']>, ReportState> = {
     pending: '대기',
@@ -69,11 +73,47 @@ function mapUserReportToRow(r: StoredUserReport): ReportRow {
     workId: r.targetType === 'work' ? r.targetId : undefined,
     artistId: r.targetArtistId,
     autoHiddenAt,
+    pieceIndex: r.pieceIndex,
   };
 }
 
+// Policy §22.5 에스컬레이션 기준 — 24시간 윈도우 + 임계 (큐 가시성 보강).
+const ESCALATION_WINDOW_MS = 24 * 60 * 60 * 1000;
+const ESCALATION_ARTIST_THRESHOLD = 5;
+const ESCALATION_WORK_THRESHOLD = 10;
+
+/** 24h 누적 (artist, work) 카운트 — 에스컬레이션 배지용. */
+function computeEscalationCounts(reports: ReturnType<typeof loadUserReports>, now: number) {
+  const cutoff = now - ESCALATION_WINDOW_MS;
+  const byArtist = new Map<string, number>();
+  const byWork = new Map<string, number>();
+  for (const r of reports) {
+    const ts = r.createdAt ? new Date(r.createdAt).getTime() : NaN;
+    if (!Number.isFinite(ts) || ts < cutoff) continue;
+    if (r.targetArtistId) byArtist.set(r.targetArtistId, (byArtist.get(r.targetArtistId) ?? 0) + 1);
+    if (r.targetType === 'work' && r.targetId) byWork.set(r.targetId, (byWork.get(r.targetId) ?? 0) + 1);
+  }
+  return { byArtist, byWork };
+}
+
 function mergeReportRows(): ReportRow[] {
-  return loadUserReports().map(mapUserReportToRow);
+  // PRD_Admin §667 ADM-RPT-01 AC-02: 같은 (신고자, 대상) 반복 신고는 큐에 1건만 노출(중복 방지).
+  // 가장 최근 신고를 대표로 보존. reporterId 미상은 dedup 제외(레거시·익명 호환).
+  const all = loadUserReports();
+  const seen = new Set<string>();
+  const unique: typeof all = [];
+  for (const r of all) {
+    const reporter = r.reporterId?.trim();
+    if (!reporter) {
+      unique.push(r);
+      continue;
+    }
+    const key = `${reporter}|${r.targetType}|${r.targetId}`;
+    if (seen.has(key)) continue;
+    seen.add(key);
+    unique.push(r);
+  }
+  return unique.map(mapUserReportToRow);
 }
 
 /** Policy §12.2.1 SLA 4단계 계산. 판정 완료된 건(대기 아님) 또는 autoHiddenAt 없음이면 null. */
@@ -130,8 +170,8 @@ export default function ReportManagement() {
   const [statusFilter, setStatusFilter] = useState('전체');
   const [typeFilter, setTypeFilter] = useState('전체');
   const [slaFilter, setSlaFilter] = useState<'전체' | '임박 이상' | '초과 이상' | '위반'>('전체');
-  // 시계 틱 (1분마다 SLA 재계산)
-  const [, setClockTick] = useState(0);
+  // 시계 틱 (1분마다 SLA·에스컬레이션 재계산)
+  const [clockTick, setClockTick] = useState(0);
   useEffect(() => {
     const id = window.setInterval(() => setClockTick((n) => n + 1), 60_000);
     return () => window.clearInterval(id);
@@ -168,6 +208,13 @@ export default function ReportManagement() {
     return map;
   }, [rows]);
 
+  /** Policy §22.5 24h 에스컬레이션 카운트 — clockTick(1분 주기)으로 자동 갱신. */
+  const escalation = useMemo(
+    () => computeEscalationCounts(loadUserReports(), Date.now()),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [clockTick, rows],
+  );
+
   const filtered = useMemo(() => {
     const now = Date.now();
     const tierRank: Record<SlaTier, number> = { normal: 0, nearing: 1, exceeded: 2, violated: 3 };
@@ -203,7 +250,7 @@ export default function ReportManagement() {
     const raw = loadUserReports().find((r) => r.id === id);
     if (!raw) return;
     if (raw.targetType === 'work' && raw.targetId) {
-      workStore.updateWork(raw.targetId, { isHidden: true });
+      workStore.updateWork(raw.targetId, { ...buildVisibilityPatch('hidden_admin') });
       updateUserReport(id, { adminStatus: 'hidden' });
       pushDemoNotification({
         type: 'system',
@@ -397,6 +444,32 @@ export default function ReportManagement() {
                           {accumulated}건 누적
                         </span>
                       )}
+                      {/* Policy §22.5 — 24h 에스컬레이션: 작품 10+ 또는 작가 5+ */}
+                      {(() => {
+                        const workCount = r.workId ? escalation.byWork.get(r.workId) ?? 0 : 0;
+                        const artistCount = r.artistId ? escalation.byArtist.get(r.artistId) ?? 0 : 0;
+                        if (workCount >= ESCALATION_WORK_THRESHOLD) {
+                          return (
+                            <span
+                              className="inline-flex w-fit items-center rounded-full bg-red-100 border border-red-300 text-red-800 px-2 py-0.5 text-[10px] font-semibold"
+                              title={`Policy §22.5 — 같은 전시에 24시간 내 신고 ${workCount}건 (≥10건 긴급 큐)`}
+                            >
+                              긴급 24h {workCount}건
+                            </span>
+                          );
+                        }
+                        if (artistCount >= ESCALATION_ARTIST_THRESHOLD) {
+                          return (
+                            <span
+                              className="inline-flex w-fit items-center rounded-full bg-amber-50 border border-amber-300 text-amber-800 px-2 py-0.5 text-[10px] font-semibold"
+                              title={`Policy §22.5 — 같은 작가에 24시간 내 신고 ${artistCount}건 (≥5건 검토 큐)`}
+                            >
+                              작가 24h {artistCount}건
+                            </span>
+                          );
+                        }
+                        return null;
+                      })()}
                     </div>
                   </td>
                   <td className="px-4 py-3">

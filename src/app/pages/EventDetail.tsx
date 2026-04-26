@@ -1,10 +1,11 @@
 import { useParams, Link, useNavigate } from 'react-router-dom';
 import { Calendar, ArrowLeft, ArrowRight, Users } from 'lucide-react';
-import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { ImageWithFallback } from '../components/ImageWithFallback';
 import { analytics } from '../utils/analytics';
 import { useEffect, useState, useMemo } from 'react';
 import { useAuthStore, workStore } from '../store';
 import { LoginPromptModal } from '../components/LoginPromptModal';
+import { useLoginPrompt } from '../hooks/useLoginPrompt';
 import { useI18n } from '../i18n/I18nProvider';
 import { Button } from '../components/ui/button';
 import { toast } from 'sonner';
@@ -15,7 +16,7 @@ export default function EventDetail() {
   const navigate = useNavigate();
   const { t } = useI18n();
   const auth = useAuthStore();
-  const [loginPromptOpen, setLoginPromptOpen] = useState(false);
+  const loginPrompt = useLoginPrompt();
 
   // store 구독 (변경 시 재렌더)
   useManagedEvents();
@@ -35,10 +36,7 @@ export default function EventDetail() {
   }, [event, auth]);
 
   const handleParticipate = () => {
-    if (!auth.isLoggedIn()) {
-      setLoginPromptOpen(true);
-      return;
-    }
+    if (!loginPrompt.tryProtectedAction('upload')) return;
     if (alreadySubmitted) {
       toast.error(t('events.alreadySubmitted'));
       return;
@@ -114,6 +112,10 @@ export default function EventDetail() {
             <div className="flex sm:inline-flex items-center justify-center gap-2 px-5 sm:px-8 py-3 sm:py-3.5 bg-muted text-muted-foreground rounded-lg text-sm sm:text-sm font-medium cursor-not-allowed w-full sm:w-auto">
               {t('events.detailEnded')}
             </div>
+          ) : alreadySubmitted ? (
+            <div className="flex sm:inline-flex items-center justify-center gap-2 px-5 sm:px-8 py-3 sm:py-3.5 bg-muted text-muted-foreground rounded-lg text-sm sm:text-sm font-medium cursor-not-allowed w-full sm:w-auto">
+              {t('events.alreadySubmittedShort')}
+            </div>
           ) : (
             <Button
               onClick={handleParticipate}
@@ -126,7 +128,7 @@ export default function EventDetail() {
         </div>
       </div>
 
-      <LoginPromptModal open={loginPromptOpen} onClose={() => setLoginPromptOpen(false)} action="upload" />
+      <LoginPromptModal open={loginPrompt.open} onClose={loginPrompt.close} action={loginPrompt.action} />
     </div>
   );
 }

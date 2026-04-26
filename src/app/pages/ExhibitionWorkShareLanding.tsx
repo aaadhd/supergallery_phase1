@@ -3,7 +3,7 @@ import { useParams, useNavigate, Link } from 'react-router-dom';
 import { Share2 } from 'lucide-react';
 import { toast } from 'sonner';
 import { useWorkStore, useAuthStore } from '../store';
-import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { ImageWithFallback } from '../components/ImageWithFallback';
 import { imageUrls } from '../imageUrls';
 import { Button } from '../components/ui/button';
 import { getCoverImage, getImageCount, getThumbCover } from '../utils/imageHelper';

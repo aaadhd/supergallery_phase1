@@ -25,10 +25,8 @@ const ADMIN_QA_PATHS: { path: string; labelKey: MessageKey }[] = [
   { path: '/admin', labelKey: 'footer.qaAdminDashboard' },
   { path: '/admin/issues', labelKey: 'footer.qaAdminIssues' },
   { path: '/admin/checklist', labelKey: 'footer.qaAdminChecklist' },
-  { path: '/admin/partners', labelKey: 'footer.qaAdminPartners' },
   { path: '/admin/events', labelKey: 'footer.qaAdminEventParticipants' },
   { path: '/admin/content-review', labelKey: 'footer.qaAdminContentReview' },
-  { path: '/admin/works', labelKey: 'footer.qaAdminWorks' },
   { path: '/admin/picks', labelKey: 'footer.qaAdminPicks' },
   { path: '/admin/curation', labelKey: 'footer.qaAdminCuration' },
   { path: '/admin/banners', labelKey: 'footer.qaAdminBanners' },
@@ -91,7 +89,7 @@ export function QaScreenShortcuts() {
             'border border-border bg-background/95 px-3 shadow-lg backdrop-blur-md',
             'text-muted-foreground text-xs sm:text-sm font-medium',
             'lg:hover:border-primary/40 lg:hover:text-primary transition-colors',
-            'focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2',
+            'focus-visible:outline-none focus-visible:ring-[3px] focus-visible:ring-ring focus-visible:ring-offset-2',
           )}
           aria-label={t('footer.qaNavTrigger')}
         >

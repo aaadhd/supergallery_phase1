@@ -5,14 +5,21 @@ import { Camera } from 'lucide-react';
 import { profileStore } from '../store';
 import { artists } from '../data';
 import { pointsOnOnboardingStep1Complete } from '../utils/pointsBackground';
-import { matchSmsInviteOnSignup } from '../utils/inviteMessaging';
+import {
+  findMatchCandidates,
+  applyConfirmedMatches,
+  recordDeclinedMatches,
+  type MatchCandidate,
+  type PromotedInviteDetail,
+} from '../utils/inviteMessaging';
 import { isEmailRegistered, isPhoneRegistered, registerAccount } from '../utils/registeredAccounts';
 import { toast } from 'sonner';
 import { useI18n } from '../i18n/I18nProvider';
 import { containsProfanity } from '../utils/profanityFilter';
 import { Button } from '../components/ui/button';
+import { InviteClaimCheck } from '../components/InviteClaimCheck';
 
-const TOTAL_STEPS = 3;
+const TOTAL_STEPS = 4;
 const ACCENT = '#171717';
 
 export default function Onboarding() {
@@ -26,13 +33,6 @@ export default function Onboarding() {
   })();
   const [nickname, setNickname] = useState(prefilledNickname);
   const [nicknameError, setNicknameError] = useState('');
-  /** SMS 초대로 들어온 경우 초대 시 표시명(ExhibitionInviteLanding에서 전달) */
-  const prefilledRealName = (() => {
-    if (typeof window === 'undefined') return '';
-    try { return localStorage.getItem('artier_pending_signup_realname') || ''; } catch { return ''; }
-  })();
-  const [realName, setRealName] = useState(prefilledRealName);
-  const [realNameError, setRealNameError] = useState('');
   /** SMS 초대로 들어온 경우 초대받은 전화번호(ExhibitionInviteLanding에서 전달) */
   const prefilledPhone = (() => {
     if (typeof window === 'undefined') return '';
@@ -41,18 +41,11 @@ export default function Onboarding() {
   const [phone, setPhone] = useState(prefilledPhone);
   const [phoneError, setPhoneError] = useState('');
   /**
-   * 지역 추정 결과 (Policy §2.1.1)
-   * - KR: 전화번호 필수 (본인인증 전제)
-   * - INTL: 전화번호 미수집, 이메일 필수
-   * - SMS 초대로 전화번호가 프리필됐으면 KR로 강제 (§2.1.1 경로 예외)
+   * 전화번호 입력 노출 여부.
+   * Policy §2.1: 전화번호는 가입 후 Settings에서 추가하는 선택 항목이므로 일반 가입자에겐 묻지 않는다.
+   * 단, SMS 비회원 초대 링크로 들어와 전화번호가 프리필된 경우(USR-EXH-03)에는 본인 확인을 위해 노출 유지.
    */
-  const signupRegion: 'KR' | 'INTL' = (() => {
-    if (typeof localStorage === 'undefined') return 'INTL';
-    if (prefilledPhone) return 'KR';
-    const stored = localStorage.getItem('artier_signup_region');
-    return stored === 'KR' ? 'KR' : 'INTL';
-  })();
-  const collectsPhone = signupRegion === 'KR';
+  const collectsPhone = !!prefilledPhone;
   /** 이메일 가입(Signup) 또는 소셜 가입(Login) 직후 provider에서 받은 이메일 */
   const prefilledEmail = (() => {
     if (typeof window === 'undefined') return '';
@@ -62,6 +55,14 @@ export default function Onboarding() {
   const [emailError, setEmailError] = useState('');
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+
+  /**
+   * §3.5.1 본인 확인 단계 (조건부).
+   * Step 2(profile) 완료 시 매칭 후보가 있으면 본인 확인 화면을 같은 step 자리에 노출한다.
+   */
+  const [matchCandidates, setMatchCandidates] = useState<MatchCandidate[] | null>(null);
+  const [claimBusy, setClaimBusy] = useState(false);
+  const [matchedCount, setMatchedCount] = useState(0);
 
   /**
    * SMS 비회원 초대로 들어온 사용자. 배너 문구와 매칭 성공 안내에 사용.
@@ -99,30 +100,17 @@ export default function Onboarding() {
       setNicknameError(t('onboarding.errNicknameLong'));
       return false;
     }
+    if (containsProfanity(trimmed)) {
+      setNicknameError(t('onboarding.errProfanityNickname'));
+      return false;
+    }
     setNicknameError('');
     return true;
   };
 
-  const validateRealName = (): boolean => {
-    const trimmed = realName.trim();
-    if (trimmed.length === 0) {
-      setRealNameError(
-        isInviteFlow
-          ? t('onboarding.errRealNameRequiredInvite')
-          : t('onboarding.errRealNameRequiredSocial'),
-      );
-      return false;
-    }
-    if (trimmed.length < 2) {
-      setRealNameError(t('onboarding.errRealNameShort'));
-      return false;
-    }
-    setRealNameError('');
-    return true;
-  };
-
   const validatePhone = (): boolean => {
-    // 해외 사용자(INTL)는 전화번호 미수집 — 검증 스킵 (Policy §2.1.1)
+    // 일반 가입자는 전화번호 미수집 — 검증 스킵 (Policy §2.1).
+    // SMS 초대로 프리필된 경우만 검증.
     if (!collectsPhone) {
       setPhoneError('');
       return true;
@@ -169,11 +157,20 @@ export default function Onboarding() {
 
   const handleNicknameNext = () => {
     const nickOk = validateNickname();
-    const realOk = validateRealName();
     const phoneOk = validatePhone();
-    const emailOk = validateEmail();
-    if (!nickOk || !realOk || !phoneOk || !emailOk) return;
+    if (!nickOk || !phoneOk) return;
     pointsOnOnboardingStep1Complete();
+
+    // §3.5.1 본인 확인 단계 — 입력한 전화번호 기준 매칭 후보가 있으면 같은 step에서 본인 확인 화면을 띄운다
+    const phoneTrim = phone.trim();
+    if (phoneTrim) {
+      const candidates = findMatchCandidates(phoneTrim);
+      if (candidates.length > 0) {
+        setMatchCandidates(candidates);
+        return;
+      }
+    }
+    setMatchCandidates([]);
     goNext();
   };
 
@@ -194,47 +191,71 @@ export default function Onboarding() {
     e.target.value = '';
   };
 
-  const finishOnboarding = async () => {
-    const name = nickname.trim();
-    const real = realName.trim();
-    if (name && containsProfanity(name)) {
-      toast.error(t('onboarding.errProfanityNickname'));
+  /** §3.5.1 본인 확인에서 "맞아요" 선택 — 후보 전체를 회원 슬롯으로 승격하고 발신자에게 알림. */
+  const handleClaimYes = async () => {
+    if (!matchCandidates || matchCandidates.length === 0) {
+      goNext();
       return;
     }
-    if (real && containsProfanity(real)) {
-      toast.error(t('onboarding.errProfanityRealName'));
+    setClaimBusy(true);
+    const me = artists[0];
+    const promoted: PromotedInviteDetail[] = applyConfirmedMatches(matchCandidates, {
+      id: me.id,
+      name: nickname.trim() || me.name,
+      avatar: profileImage || me.avatar,
+    });
+    try {
+      const { pushDemoNotification } = await import('../utils/pushDemoNotification');
+      for (const detail of promoted) {
+        pushDemoNotification({
+          type: 'system',
+          message: t('invite.notifAutoMatched')
+            .replace('{name}', detail.invitedName)
+            .replace('{title}', detail.workTitle),
+          workId: detail.workId,
+        });
+      }
+    } catch { /* ignore */ }
+    setMatchedCount(promoted.length);
+    setClaimBusy(false);
+    goNext();
+  };
+
+  /** §3.5.1 본인 확인에서 "아니에요" 선택 — 매칭 적용 안 함, 운영팀 신호 + 발신자 알림. */
+  const handleClaimNo = async () => {
+    if (!matchCandidates || matchCandidates.length === 0) {
+      goNext();
+      return;
+    }
+    setClaimBusy(true);
+    const result = recordDeclinedMatches(matchCandidates);
+    try {
+      const { pushDemoNotification } = await import('../utils/pushDemoNotification');
+      for (const inv of result.inviters) {
+        pushDemoNotification({
+          type: 'system',
+          message: t('invite.notifClaimDeclined').replace('{title}', inv.workTitle),
+          workId: inv.workId,
+        });
+      }
+    } catch { /* ignore */ }
+    setClaimBusy(false);
+    goNext();
+  };
+
+  const finishOnboarding = () => {
+    const name = nickname.trim();
+    if (name && containsProfanity(name)) {
+      toast.error(t('onboarding.errProfanityNickname'));
       return;
     }
     profileStore.updateProfile({
       name,
       nickname: name,
-      ...(real ? { realName: real } : {}),
       ...(phone.trim() ? { phone: phone.trim() } : {}),
       ...(email.trim() ? { email: email.trim() } : {}),
       ...(profileImage ? { avatarUrl: profileImage } : {}),
     });
-    if (phone.trim() && real) {
-      const me = artists[0];
-      const result = matchSmsInviteOnSignup(phone.trim(), real, {
-        id: me.id,
-        name: name || me.name,
-        avatar: profileImage || me.avatar,
-      });
-      // 자동 연결은 조용히 진행 (토스트 없음) — 사용자는 마이페이지 전시 탭에서 확인한다. Policy §3.5.
-      // 발신자에게는 매 건마다 "초대 성공" 시스템 알림 발송.
-      for (const detail of result.promotedDetails) {
-        try {
-          const { pushDemoNotification } = await import('../utils/pushDemoNotification');
-          pushDemoNotification({
-            type: 'system',
-            message: t('invite.notifAutoMatched')
-              .replace('{name}', detail.invitedName)
-              .replace('{title}', detail.workTitle),
-            workId: detail.workId,
-          });
-        } catch { /* ignore */ }
-      }
-    }
     registerAccount(email.trim(), phone.trim());
     localStorage.setItem('artier_onboarding_done', 'true');
     try {
@@ -243,7 +264,6 @@ export default function Onboarding() {
       localStorage.removeItem('artier_pending_social_signup');
       localStorage.removeItem('artier_pending_signup_email');
       localStorage.removeItem('artier_pending_signup_phone');
-      localStorage.removeItem('artier_pending_signup_realname');
     } catch { /* ignore */ }
     navigate('/');
   };
@@ -313,16 +333,100 @@ export default function Onboarding() {
                 </>
               )}
 
-              {/* Step 1: 프로필 설정 (닉네임 + 이미지 + 소개) */}
+              {/* Step 1: '전시 단위' 개념 안내 (게시판이 아니라 갤러리) */}
               {currentStep === 1 && (
+                <>
+                  <div className="text-center mb-6">
+                    <h2 className="text-lg sm:text-xl font-bold text-foreground mb-2">
+                      {t('onboarding.conceptTitle')}
+                    </h2>
+                    <p className="text-sm text-muted-foreground">
+                      {t('onboarding.conceptLead')}
+                    </p>
+                  </div>
+
+                  {/* 예시 1: 1점짜리 전시도 어엿한 전시 */}
+                  <div className="rounded-xl border border-border bg-muted/30 p-3 mb-3">
+                    <div className="aspect-[4/3] rounded-lg overflow-hidden mb-2 bg-gradient-to-br from-stone-100 via-amber-50 to-rose-100" />
+                    <p className="text-sm font-semibold text-foreground">
+                      {t('onboarding.conceptExampleSoloTitle')}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {t('onboarding.conceptExampleSoloMeta')}
+                    </p>
+                  </div>
+
+                  {/* 예시 2: 여러 점 전시 — 동일한 형식, 같은 무게로 다뤄짐 */}
+                  <div className="rounded-xl border border-border bg-muted/30 p-3 mb-6">
+                    <div className="grid grid-cols-3 gap-1 aspect-[4/3] rounded-lg overflow-hidden mb-2">
+                      <div className="bg-gradient-to-br from-amber-100 to-amber-200" />
+                      <div className="bg-gradient-to-br from-rose-100 to-rose-200" />
+                      <div className="bg-gradient-to-br from-emerald-100 to-emerald-200" />
+                      <div className="bg-gradient-to-br from-sky-100 to-sky-200" />
+                      <div className="bg-gradient-to-br from-violet-100 to-violet-200" />
+                      <div className="bg-gradient-to-br from-stone-100 to-stone-300" />
+                    </div>
+                    <p className="text-sm font-semibold text-foreground">
+                      {t('onboarding.conceptExampleMultiTitle')}
+                    </p>
+                    <p className="text-xs text-muted-foreground">
+                      {t('onboarding.conceptExampleMultiMeta')}
+                    </p>
+                  </div>
+
+                  {/* 보강 메시지 — 한 점도 전시라는 핵심 reframe */}
+                  <p className="text-center text-sm text-foreground/80 mb-6 leading-relaxed whitespace-pre-line">
+                    {t('onboarding.conceptReinforce')}
+                  </p>
+
+                  <div className="flex gap-3">
+                    <Button
+                      variant="ghost"
+                      type="button"
+                      onClick={goBack}
+                      className="flex-1 rounded-xl border border-border py-3.5 text-sm font-semibold text-foreground lg:hover:bg-muted/50"
+                    >
+                      {t('onboarding.back')}
+                    </Button>
+                    <Button
+                      type="button"
+                      onClick={goNext}
+                      className="flex-1 rounded-xl py-3.5 text-sm font-semibold text-white transition lg:hover:opacity-90"
+                      style={{ backgroundColor: ACCENT }}
+                    >
+                      {t('onboarding.next')}
+                    </Button>
+                  </div>
+                </>
+              )}
+
+              {/* Step 2: 프로필 설정 또는 §3.5.1 본인 확인 (조건부) */}
+              {currentStep === 2 && matchCandidates && matchCandidates.length > 0 && (
+                <InviteClaimCheck
+                  candidates={matchCandidates}
+                  onYes={handleClaimYes}
+                  onNo={handleClaimNo}
+                  busy={claimBusy}
+                />
+              )}
+              {currentStep === 2 && !(matchCandidates && matchCandidates.length > 0) && (
                 <>
                   <h2 className="text-lg font-bold text-foreground mb-1">{t('onboarding.nicknameTitle')}</h2>
                   <p className="text-sm text-muted-foreground mb-4">{t('onboarding.nicknameLead')}</p>
-                  {(isInviteFlow || isSocialSignup) && (
-                    <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
-                      {isSocialSignup ? t('onboarding.socialNotice') : t('onboarding.inviteNotice')}
-                    </div>
-                  )}
+                  {(() => {
+                    const noticeText = isSocialSignup
+                      ? t('onboarding.socialNotice')
+                      : isInviteFlow
+                        ? t('onboarding.inviteNotice')
+                        : prefilledNickname
+                          ? t('onboarding.emailSignupNotice')
+                          : null;
+                    return noticeText ? (
+                      <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
+                        {noticeText}
+                      </div>
+                    ) : null;
+                  })()}
 
                   {/* 프로필 이미지 */}
                   <input ref={fileInputRef} type="file" accept="image/*" className="sr-only" onChange={handleFileChange} />
@@ -341,36 +445,24 @@ export default function Onboarding() {
                     </button>
                   </div>
 
-                  {/* 실명 */}
+                  {/* 닉네임 */}
                   <label className="block text-sm font-medium text-foreground mb-2">
-                    {t('onboarding.realNameLabel')}
+                    {t('onboarding.nicknameLabel')}
                     <span className="ml-1 text-xs font-medium text-red-500">{t('common.required')}</span>
                   </label>
-                  <input
-                    type="text"
-                    value={realName}
-                    onChange={e => { if (e.target.value.length <= 20) { setRealName(e.target.value); setRealNameError(''); } }}
-                    placeholder={t('onboarding.realNamePlaceholder')}
-                    className="w-full rounded-xl border border-border px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
-                    maxLength={20}
-                    autoFocus
-                  />
-                  {realNameError ? <p className="mt-1 text-sm text-destructive">{realNameError}</p> : null}
-
-                  {/* 닉네임 */}
-                  <label className="block text-sm font-medium text-foreground mb-2 mt-5">{t('onboarding.nicknameLabel')}</label>
                   <input
                     type="text"
                     value={nickname}
                     onChange={e => { if (e.target.value.length <= 20) { setNickname(e.target.value); setNicknameError(''); } }}
                     placeholder={t('onboarding.nicknamePlaceholder')}
-                    className="w-full rounded-xl border border-border px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                    className="w-full rounded-xl border border-border px-4 py-3 text-sm outline-none focus:ring-[3px] focus:ring-primary/30 focus:border-primary"
                     maxLength={20}
+                    autoFocus
                   />
                   <p className="mt-1 text-xs text-muted-foreground">{nickname.trim().length}/20</p>
                   {nicknameError ? <p className="mt-1 text-sm text-destructive">{nicknameError}</p> : null}
 
-                  {/* 전화번호 — 한국 사용자만 (Policy §2.1.1) */}
+                  {/* 전화번호 — SMS 비회원 초대로 들어온 경우만 본인 확인용 노출 (Policy §2.1) */}
                   {collectsPhone && (
                     <>
                       <label className="block text-sm font-medium text-foreground mb-2 mt-5">
@@ -382,27 +474,18 @@ export default function Onboarding() {
                         value={phone}
                         onChange={e => { setPhone(e.target.value); setPhoneError(''); }}
                         placeholder={t('onboarding.phonePlaceholder')}
-                        className="w-full rounded-xl border border-border px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
+                        className="w-full rounded-xl border border-border px-4 py-3 text-sm outline-none focus:ring-[3px] focus:ring-primary/30 focus:border-primary"
                       />
                       {phoneError ? <p className="mt-1 text-sm text-destructive">{phoneError}</p> : null}
-                      <p className="mt-1 text-xs text-muted-foreground">{t('onboarding.phoneHint')}</p>
+                      {prefilledPhone ? (
+                        <p className="mt-1 text-xs text-foreground bg-primary/5 border border-primary/20 rounded-md px-2.5 py-2 leading-relaxed">
+                          {t('onboarding.phoneInvitedHint')}
+                        </p>
+                      ) : (
+                        <p className="mt-1 text-xs text-muted-foreground">{t('onboarding.phoneHint')}</p>
+                      )}
                     </>
                   )}
-
-                  {/* 이메일 */}
-                  <label className="block text-sm font-medium text-foreground mb-2 mt-5">
-                    {t('onboarding.emailLabel')}
-                    <span className="ml-1 text-xs font-medium text-red-500">{t('common.required')}</span>
-                  </label>
-                  <input
-                    type="email"
-                    value={email}
-                    onChange={e => { setEmail(e.target.value); setEmailError(''); }}
-                    placeholder={t('onboarding.emailPlaceholder')}
-                    className="w-full rounded-xl border border-border px-4 py-3 text-sm outline-none focus:ring-2 focus:ring-primary/30 focus:border-primary"
-                  />
-                  {emailError ? <p className="mt-1 text-sm text-destructive">{emailError}</p> : null}
-                  <p className="mt-1 text-xs text-muted-foreground">{t('onboarding.emailHint')}</p>
 
                   <div className="mt-8 flex gap-3">
                     <Button variant="ghost" type="button" onClick={goBack} className="flex-1 rounded-xl border border-border py-3.5 text-sm font-semibold text-foreground lg:hover:bg-muted/50">
@@ -415,17 +498,28 @@ export default function Onboarding() {
                 </>
               )}
 
-              {/* Step 2: 첫 작품 업로드 유도 + 완료 */}
-              {currentStep === 2 && (
+              {/* Step 3: 첫 작품 업로드 유도 + 완료 */}
+              {currentStep === 3 && (
                 <>
                   <div className="text-center">
                     <div className="relative mx-auto mb-6 h-28 w-28">
                       <ConfettiBurst />
                     </div>
                     <h2 className="text-xl font-bold text-foreground mb-2">{t('onboarding.doneTitle')}</h2>
-                    <p className="text-sm text-muted-foreground mb-8">
+                    <p className="text-sm text-muted-foreground mb-4 whitespace-pre-line leading-relaxed">
                       {t('onboarding.doneWelcome').replace('{name}', nickname.trim())}
                     </p>
+                    {matchedCount > 0 && (
+                      <div className="mb-8 rounded-xl border border-primary/30 bg-primary/5 px-4 py-3 text-left">
+                        <p className="text-sm font-semibold text-foreground mb-1">
+                          {t('onboarding.doneInviteMatchedHeadline').replace('{n}', String(matchedCount))}
+                        </p>
+                        <p className="text-xs text-muted-foreground leading-relaxed">
+                          {t('onboarding.doneInviteMatchedBody')}
+                        </p>
+                      </div>
+                    )}
+                    {matchedCount === 0 && <div className="mb-8" />}
                     <Button
                       type="button"
                       onClick={() => { finishOnboarding(); navigate('/upload'); }}

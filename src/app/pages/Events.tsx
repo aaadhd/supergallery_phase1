@@ -1,6 +1,6 @@
 import { useState, useMemo } from 'react';
 import { Calendar, ArrowRight, X, Bell, Check } from 'lucide-react';
-import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { ImageWithFallback } from '../components/ImageWithFallback';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '../store';
 import { LoginPromptModal } from '../components/LoginPromptModal';
@@ -255,7 +255,7 @@ export default function Events() {
                   value={notifyEmail}
                   onChange={(e) => setNotifyEmail(e.target.value)}
                   placeholder={t('events.notifyEmailPlaceholder')}
-                  className="w-full px-4 py-3.5 text-sm border border-border rounded-lg mb-4 focus:outline-none focus:ring-2 focus:ring-primary"
+                  className="w-full px-4 py-3.5 text-sm border border-border rounded-lg mb-4 focus:outline-none focus:ring-[3px] focus:ring-primary"
                   onKeyDown={(e) => e.key === 'Enter' && handleNotifySubmit()}
                 />
                 <Button

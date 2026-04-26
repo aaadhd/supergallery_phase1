@@ -171,7 +171,8 @@ function passesPrefs(n: Notification, p: NotificationSettingsState): boolean {
     case 'system':
       return p.marketing;
     default:
-      return true;
+      // Unknown type — 향후 확장 시 사용자 동의 없이 노출되지 않도록 보수적으로 차단.
+      return false;
   }
 }
 
@@ -306,7 +307,7 @@ export default function Notifications() {
                 {t('notifications.filterUnread')}
                 {unreadCount > 0 && (
                   <span
-                    aria-label={`${unreadCount}개 미확인`}
+                    aria-label={t('nav.notificationsWithCount').replace('{n}', String(unreadCount))}
                     className="inline-flex min-w-[20px] h-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white"
                   >
                     {unreadCount > 99 ? '99+' : unreadCount}

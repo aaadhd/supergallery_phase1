@@ -1,6 +1,6 @@
 import { useCallback, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { KeyRound, Globe, Mail, ListChecks, ArrowLeft } from 'lucide-react';
+import { KeyRound, Mail, ListChecks, ArrowLeft } from 'lucide-react';
 import { toast } from 'sonner';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
@@ -10,7 +10,6 @@ import {
   isAccessExpired,
   type MockJwtSession,
 } from '../services/sessionTokens';
-import { fetchGeoDemo, type GeoDemoResult } from '../utils/geoIpDemo';
 import { Button } from '../components/ui/button';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '../components/ui/table';
 
@@ -66,8 +65,6 @@ function EmailFrame({
 export default function DemoReferenceToolkit() {
   const { t, locale } = useI18n();
   const [, bumpSession] = useState(0);
-  const [geo, setGeo] = useState<GeoDemoResult | null>(null);
-  const [geoLoading, setGeoLoading] = useState(false);
 
   const session: MockJwtSession | null = loadMockSession();
   const accessDead = isAccessExpired(session);
@@ -81,17 +78,6 @@ export default function DemoReferenceToolkit() {
       reloadSession();
     } else {
       toast.error(t('refStub.jwtToastNoSession'));
-    }
-  };
-
-  const runGeo = async (skipCache: boolean) => {
-    setGeoLoading(true);
-    setGeo(null);
-    try {
-      const r = await fetchGeoDemo({ skipCache });
-      setGeo(r);
-    } finally {
-      setGeoLoading(false);
     }
   };
 
@@ -149,45 +135,6 @@ export default function DemoReferenceToolkit() {
             </div>
           )}
           <p className="text-xs text-muted-foreground mt-4 leading-snug">{t('refStub.jwtHint')}</p>
-        </section>
-
-        {/* GeoIP */}
-        <section className="rounded-2xl border border-border bg-white p-5 sm:p-6 shadow-sm mb-8">
-          <div className="flex items-center gap-2 mb-2">
-            <Globe className="h-5 w-5 text-foreground" />
-            <h2 className="text-base font-bold text-foreground">{t('refStub.geoTitle')}</h2>
-          </div>
-          <p className="text-xs text-muted-foreground mb-4 leading-relaxed">{t('refStub.geoLead')}</p>
-          <div className="flex flex-wrap gap-2 mb-4">
-            <Button type="button" size="sm" variant="default" disabled={geoLoading} onClick={() => runGeo(false)}>
-              {geoLoading ? t('refStub.geoLoading') : t('refStub.geoCta')}
-            </Button>
-            <Button type="button" size="sm" variant="outline" disabled={geoLoading} onClick={() => runGeo(true)}>
-              {t('refStub.geoAgain')}
-            </Button>
-          </div>
-          {geo ? (
-            <ul className="text-sm space-y-1.5 text-foreground">
-              <li>
-                <span className="text-muted-foreground">{t('refStub.geoCode')} </span>
-                <strong>{geo.countryCode}</strong>
-              </li>
-              <li>
-                <span className="text-muted-foreground">{t('refStub.geoName')} </span>
-                {geo.countryName}
-              </li>
-              {geo.region ? (
-                <li>
-                  <span className="text-muted-foreground">{t('refStub.geoRegion')} </span>
-                  {geo.region}
-                </li>
-              ) : null}
-              <li>
-                <span className="text-muted-foreground">{t('refStub.geoSource')} </span>
-                {geo.source === 'ipapi' ? t('refStub.geoSourceIpapi') : t('refStub.geoSourceFallback')}
-              </li>
-            </ul>
-          ) : null}
         </section>
 
         {/* Email templates */}

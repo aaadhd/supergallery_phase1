@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useCallback, useRef, type ReactElement, t
 import { ChevronRight, ChevronLeft, Image as ImageIcon, Users, MoreHorizontal, Flag } from 'lucide-react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
-import { ImageWithFallback } from '../components/figma/ImageWithFallback';
+import { ImageWithFallback } from '../components/ImageWithFallback';
 import { Work, Artist, artists as allArtists } from '../data';
 import { HoverCard, HoverCardTrigger, HoverCardContent } from '../components/ui/hover-card';
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
@@ -14,6 +14,7 @@ import { imageUrls } from '../imageUrls';
 import { WorkDetailModal } from '../components/WorkDetailModal';
 import { ReportModal } from '../components/ReportModal';
 import { LoginPromptModal } from '../components/LoginPromptModal';
+import { useLoginPrompt } from '../hooks/useLoginPrompt';
 import { getCoverImage, getImageCount, getThumbCover } from '../utils/imageHelper';
 import { isWorkVisibleOnPublicFeed } from '../utils/feedVisibility';
 import { pointsOnBrowseDailyVisit } from '../utils/pointsBackground';
@@ -105,36 +106,8 @@ export default function Browse() {
   const follows = useFollowStore();
   const profile = useProfileStore();
   const profileSig = `${profile.getProfile().nickname}|${profile.getProfile().name}`;
-  const [loginPromptOpen, setLoginPromptOpen] = useState(false);
-  /**
-   * 비로그인 사용자가 첫 interactive action을 시도하면 모달을 띄우되,
-   * 모달을 dismiss한 이후엔 같은 세션에서 토스트로만 짧게 리마인드한다
-   * (시니어 UX — 같은 모달 반복 차단).
-   */
-  const requestLogin = () => {
-    if (auth.isLoggedIn()) return true;
-    const dismissed = (() => {
-      try { return sessionStorage.getItem('artier_login_prompt_dismissed') === '1'; } catch { return false; }
-    })();
-    if (dismissed) {
-      toast(t('loginPrompt.toastReminder'), {
-        duration: 4000,
-        action: {
-          label: t('loginPrompt.login'),
-          onClick: () => navigate('/login'),
-        },
-      });
-    } else {
-      setLoginPromptOpen(true);
-    }
-    return false;
-  };
-  const handleLoginPromptClose = () => {
-    if (!auth.isLoggedIn()) {
-      try { sessionStorage.setItem('artier_login_prompt_dismissed', '1'); } catch { /* ignore */ }
-    }
-    setLoginPromptOpen(false);
-  };
+  const loginPrompt = useLoginPrompt();
+  const requestLogin = () => loginPrompt.tryProtectedAction('like');
   const [hideRevision, setHideRevision] = useState(0);
   const [reportWorkId, setReportWorkId] = useState<string | null>(null);
 
@@ -320,7 +293,7 @@ export default function Browse() {
 
   const filteredWorks = useMemo(() => {
     const visibleWorks = allWorks.filter(
-      (w) => !w.isHidden && !hiddenWorkIds.has(w.id) && isWorkVisibleOnPublicFeed(w),
+      (w) => !hiddenWorkIds.has(w.id) && isWorkVisibleOnPublicFeed(w),
     );
     if (activeCategory === 'all') return visibleWorks;
 
@@ -463,7 +436,7 @@ export default function Browse() {
               variant="ghost"
               key={cat.id}
               onClick={() => setActiveCategory(cat.id)}
-              className={`relative shrink-0 h-auto rounded-md px-1.5 pb-2.5 pt-1.5 text-xs sm:text-sm transition-colors shadow-none hover:bg-transparent focus-visible:ring-2 focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none ${
+              className={`relative shrink-0 h-auto rounded-md px-1.5 pb-2.5 pt-1.5 text-xs sm:text-sm transition-colors shadow-none hover:bg-transparent focus-visible:ring-[3px] focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none ${
                 activeCategory === cat.id
                   ? 'text-foreground font-bold after:absolute after:left-1.5 after:right-1.5 after:bottom-0 after:h-0.5 after:bg-primary'
                   : 'text-muted-foreground font-medium hover:text-foreground'
@@ -586,7 +559,7 @@ export default function Browse() {
         />
       ) : null}
 
-      <LoginPromptModal open={loginPromptOpen} onClose={handleLoginPromptClose} action="like" />
+      <LoginPromptModal open={loginPrompt.open} onClose={loginPrompt.close} action={loginPrompt.action} />
     </div>
   );
 }

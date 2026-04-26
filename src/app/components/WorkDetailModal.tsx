@@ -1,15 +1,18 @@
 import { motion } from 'framer-motion';
-import { X, Heart, Bookmark, Share2, ChevronLeft, ChevronRight, UserPlus, Users, Flag } from 'lucide-react';
+import { X, Heart, Bookmark, Share2, ChevronLeft, ChevronRight, UserPlus, Users, Flag, MoreHorizontal, MessageSquare } from 'lucide-react';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from './ui/dropdown-menu';
+import { WorkInquiryModal } from './WorkInquiryModal';
 import { useI18n } from '../i18n/I18nProvider';
 import { Work, Artist, works, artists as allArtists } from '../data';
 import { hydrateGroupWorks } from '../groupData';
 import { imageUrls } from '../imageUrls';
-import { ImageWithFallback } from './figma/ImageWithFallback';
+import { ImageWithFallback } from './ImageWithFallback';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getCoverImage } from '../utils/imageHelper';
 import { userInteractionStore, workStore, authStore, followStore, useFollowStore, withdrawnArtistStore } from '../store';
+import { isWorkHidden } from '../utils/workVisibility';
 import { CopyrightProtectedImage } from './work';
 import { toast } from 'sonner';
 import { LoginPromptModal } from './LoginPromptModal';
@@ -51,6 +54,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
   const [deepZoomSrc, setDeepZoomSrc] = useState<string | null>(null);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [showReport, setShowReport] = useState(false);
+  const [showInquiry, setShowInquiry] = useState(false);
 
   const navigate = useNavigate();
   const scrollContainerRef = useRef<HTMLDivElement>(null);
@@ -106,9 +110,14 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
+  // 모달 열린 상태에서 work이 삭제·자동 비공개로 사라지면 부모에 알려 정리하도록 한다.
+  useEffect(() => {
+    if (!work) onClose();
+  }, [work, onClose]);
+
   // Hidden works are only visible to the owning artist
   const isOwnerViewing = authStore.isLoggedIn() && work?.artistId === allArtists[0]?.id;
-  if (!work || (work.isHidden && !isOwnerViewing)) return null;
+  if (!work || (isWorkHidden(work) && !isOwnerViewing)) return null;
   const isWithdrawnArtist = withdrawnArtistStore.isWithdrawn(work.artistId);
 
   const headline = displayExhibitionTitle(work, t('work.untitled'));
@@ -194,6 +203,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
   };
 
   const handleLike = () => {
+    if (isWithdrawnArtist) return; // Policy §4.2: 탈퇴 작가 작품 인터랙션 차단
     const wasLiked = userInteractionStore.isLiked(workId);
     userInteractionStore.toggleLike(workId);
     const nowLiked = userInteractionStore.isLiked(workId);
@@ -215,6 +225,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
   };
 
   const handleSave = () => {
+    if (isWithdrawnArtist) return; // Policy §4.2: 탈퇴 작가 작품 인터랙션 차단
     const wasSaved = userInteractionStore.isSaved(workId);
     userInteractionStore.toggleSave(workId);
     const nowSaved = userInteractionStore.isSaved(workId);
@@ -331,16 +342,48 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
            transition={{ duration: 0.3, ease: [0.22, 1, 0.36, 1] }}
         >
 
-          {/* Mobile close button (desktop close is in sidebar) */}
-          <Button
-            type="button"
-            variant="toolbar"
-            onClick={onClose}
-            className="sm:hidden fixed right-3 top-3 z-50 flex h-9 w-9 items-center justify-center rounded-full bg-black/50 backdrop-blur-sm text-white"
-            aria-label={t('workDetail.close')}
-          >
-            <X className="h-5 w-5" />
-          </Button>
+          {/* Mobile top-right: 더보기 메뉴 + 닫기 (전시 레벨 메뉴) */}
+          <div className="sm:hidden fixed right-3 top-3 z-50 flex items-center gap-2">
+            {work.artistId !== allArtists[0].id && (
+              <DropdownMenu>
+                <DropdownMenuTrigger asChild>
+                  <button
+                    type="button"
+                    className="flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-black/50 backdrop-blur-sm text-white"
+                    aria-label={t('workDetail.more')}
+                  >
+                    <MoreHorizontal className="h-5 w-5" />
+                  </button>
+                </DropdownMenuTrigger>
+                <DropdownMenuContent align="end" sideOffset={6} className="z-[140]">
+                  <DropdownMenuItem
+                    onClick={() => requireAuth(() => setShowInquiry(true))}
+                    className="min-h-[44px]"
+                  >
+                    <MessageSquare className="h-4 w-4 mr-2" />
+                    {t('workDetail.askAboutWork')}
+                  </DropdownMenuItem>
+                  <DropdownMenuSeparator />
+                  <DropdownMenuItem
+                    onClick={() => requireAuth(() => setShowReport(true))}
+                    className="text-destructive focus:text-destructive min-h-[44px]"
+                  >
+                    <Flag className="h-4 w-4 mr-2" />
+                    {t('workDetail.report')}
+                  </DropdownMenuItem>
+                </DropdownMenuContent>
+              </DropdownMenu>
+            )}
+            <Button
+              type="button"
+              variant="toolbar"
+              onClick={onClose}
+              className="flex h-9 w-9 items-center justify-center rounded-full bg-black/50 backdrop-blur-sm text-white"
+              aria-label={t('workDetail.close')}
+            >
+              <X className="h-5 w-5" />
+            </Button>
+          </div>
 
           {/* Header: artist info + follow */}
           <div className="w-full flex items-center justify-between px-4 sm:px-8 lg:px-10 py-5 bg-white border-b border-zinc-200 z-20">
@@ -461,7 +504,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                       />
                     </div>
                   </div>
-                  {/* Image index indicator — 커버는 카운트 제외 */}
+                  {/* Image index indicator — 우상단(원래 자리) */}
                   {workImages.length > 1 && !isCoverSlide && (
                     <div className="absolute top-4 right-4 z-20 bg-black/60 backdrop-blur-sm px-3.5 py-1.5 rounded-full shadow-md">
                       <span className="text-white text-xs font-bold tracking-wider">{workImageIndex + 1} / {workImages.length}</span>
@@ -675,7 +718,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                         e.stopPropagation();
                         onNavigate?.(rw.id);
                       }}
-                      className="group min-w-0 w-full text-left rounded-xl p-0 border-0 bg-transparent cursor-pointer shadow-none focus:outline-none focus-visible:ring-2 focus-visible:ring-zinc-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
+                      className="group min-w-0 w-full text-left rounded-xl p-0 border-0 bg-transparent cursor-pointer shadow-none focus:outline-none focus-visible:ring-[3px] focus-visible:ring-zinc-400 focus-visible:ring-offset-2 focus-visible:ring-offset-white"
                     >
                       <div className="relative mb-2 sm:mb-3 overflow-hidden rounded-xl bg-zinc-100 border border-zinc-200 aspect-square flex items-center justify-center">
                         <ImageWithFallback
@@ -716,15 +759,45 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
         {/* ── Right sidebar (desktop) - Floating over Dim overlay! ── */}
         <div className="hidden sm:flex flex-col items-center w-[72px] shrink-0 justify-center pointer-events-auto">
 
-          {/* Close */}
+          {/* Close + More menu (전시 레벨 메뉴) */}
           <button
             type="button"
             onClick={onClose}
-            className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-zinc-900 border border-white/10 lg:hover:bg-zinc-200 mb-6 transition-colors shadow-lg shadow-black/20"
+            className="flex h-12 w-12 items-center justify-center rounded-full bg-white text-zinc-900 border border-white/10 lg:hover:bg-zinc-200 mb-3 transition-colors shadow-lg shadow-black/20"
             aria-label={t('workDetail.close')}
           >
             <X className="h-6 w-6" />
           </button>
+          {work.artistId !== allArtists[0].id && (
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button
+                  type="button"
+                  className="flex h-12 w-12 items-center justify-center rounded-full bg-[#333] text-white/90 border border-white/10 lg:hover:bg-[#444] mb-6 transition-colors shadow-lg shadow-black/20"
+                  aria-label={t('workDetail.more')}
+                >
+                  <MoreHorizontal className="h-6 w-6" />
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="start" sideOffset={6} className="z-[140]">
+                <DropdownMenuItem
+                  onClick={() => requireAuth(() => setShowInquiry(true))}
+                  className="min-h-[44px]"
+                >
+                  <MessageSquare className="h-4 w-4 mr-2" />
+                  {t('workDetail.askAboutWork')}
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem
+                  onClick={() => requireAuth(() => setShowReport(true))}
+                  className="text-destructive focus:text-destructive min-h-[44px]"
+                >
+                  <Flag className="h-4 w-4 mr-2" />
+                  {t('workDetail.report')}
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+          )}
 
           {/* Action buttons — vertically centered */}
           <div className={`flex-1 flex flex-col items-center justify-start gap-4 pt-10 ${(isPreview || isWithdrawnArtist) ? 'opacity-40 pointer-events-none' : ''}`}>
@@ -816,19 +889,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
               <span className="text-xs font-bold text-white/80 group-hover:text-white transition-colors uppercase drop-shadow-md">{t('workDetail.share')}</span>
             </button>
 
-            {work.artistId !== allArtists[0].id && (
-              <button
-                type="button"
-                onClick={() => requireAuth(() => setShowReport(true))}
-                className="flex h-auto min-h-0 flex-col items-center gap-1.5 py-1 text-white group"
-                aria-label={t('workDetail.report')}
-              >
-                <div className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-[#333333] shadow-lg lg:group-hover:bg-red-500/80 transition-all">
-                  <Flag className="h-[20px] w-[20px] text-white/90 group-hover:text-white transition-colors" />
-                </div>
-                <span className="text-xs font-bold text-white/80 group-hover:text-red-400 uppercase transition-colors drop-shadow-md">{t('workDetail.report')}</span>
-              </button>
-            )}
+            {/* 신고는 작품 이미지 우상단 더보기 메뉴(...)로 이동 */}
           </div>
 
           {/* BELOW Action Buttons — Next Button (Behance Style) */}
@@ -905,16 +966,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
               </span>
             </button>
           )}
-          {work.artistId !== allArtists[0].id && (
-            <button
-              type="button"
-              onClick={() => requireAuth(() => setShowReport(true))}
-              className="flex flex-col items-center gap-1 p-1.5 -m-1 border-0 bg-transparent shadow-none cursor-pointer"
-            >
-              <Flag className="h-6 w-6 text-white" />
-              <span className="text-xs text-white/90">{t('workDetail.report')}</span>
-            </button>
-          )}
+          {/* 신고는 모바일 상단 더보기 메뉴(...)로 분리 (Policy §19, 위험도 차등) */}
         </div>
       </div>
 
@@ -926,9 +978,17 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
         targetType="work"
         targetId={workId}
         targetName={headline}
+        pieceImages={Array.isArray(work.image) ? work.image : work.image ? [work.image] : undefined}
         onReported={() => {
           onWorkReported?.();
         }}
+      />
+      <WorkInquiryModal
+        open={showInquiry}
+        onClose={() => setShowInquiry(false)}
+        workId={workId}
+        workTitle={headline}
+        pieceImages={Array.isArray(work.image) ? work.image : work.image ? [work.image] : undefined}
       />
     </motion.div>
   );

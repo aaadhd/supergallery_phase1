@@ -119,7 +119,7 @@ Artier는 시니어·중장년 순수미술 작가를 주 고객으로 하는 **
 
 ### 4.4 알림 (Notification)
 
-타입별 구조 (상세 [Policy §3.5.1 / §16.3](Policy_v1.md) 참조):
+타입별 구조 (상세 [Policy §3.5.5 / §16.3](Policy_v1.md) 참조):
 
 | 타입 | 구조 예 |
 |---|---|
@@ -179,7 +179,7 @@ const koMessages = {
   'nav.language': '언어 설정',
   'signup.birthYearPlaceholder': '예: 1958',
   'signup.birthYearHint': '4자리 숫자로 입력해 주세요',
-  'nav.login': '로그인',
+  'nav.login': '로그인·가입',
   'nav.logout': '로그아웃',
   'brand.name': 'Artier',
   'app.offlineMessage': '인터넷 연결이 끊어졌습니다. 일부 기능이 제한될 수 있어요.',
@@ -387,11 +387,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'signupDemo.emailExpiredTitle': '인증 링크가 만료되었습니다',
   'signupDemo.emailExpiredBody': '30분이 지난 링크입니다. 아래에서 다시 발송을 요청할 수 있습니다.',
   'signupDemo.backToSignup': '회원가입 화면으로',
-  'signupDemo.regionBanner': '시연: 유저 플로우의 국가별 가입 옵션(한국 / 해외) 레이아웃 참고',
-  'signupDemo.regionKr': '한국',
-  'signupDemo.regionKrOpts': '카카오 · 이메일 (웹 Phase 1. 휴대폰 가입은 Phase 2 앱)',
-  'signupDemo.regionIntl': '해외',
-  'signupDemo.regionIntlOpts': 'Google · Apple · 이메일 (실제 연동은 Phase 2+)',
+  // signupDemo.region* — deprecated. region 분기 폐기(2026-04-26)로 폐기된 시연 키.
   'passwordResetDemo.expiredTitle': '재설정 링크가 만료되었습니다',
   'passwordResetDemo.expiredBody': '1시간이 지난 링크입니다. 이메일을 다시 입력해 재요청해 주세요.',
   'passwordResetDemo.resendCta': '비밀번호 찾기 다시 하기',
@@ -427,8 +423,9 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'socialSignup.agreeAll': '전체 동의 (선택 항목 포함)',
   'socialSignup.termsTerms': '이용약관 동의',
   'socialSignup.termsPrivacy': '개인정보 수집·이용 동의',
-  'socialSignup.termsAge': '만 14세 이상',
+  'socialSignup.termsAge': '만 14세 이상이에요',
   'socialSignup.termsMarketing': '마케팅 정보 수신 동의',
+  'socialSignup.termsMarketingHint': '이메일·알림톡·문자 중 보유한 채널로 보내드려요.',
   'socialSignup.submit': '가입 완료',
   'login.ageNotice': '만 14세 미만은 가입·이용할 수 없습니다.',
   'login.signupPrompt': '계정이 없으신가요?',
@@ -501,7 +498,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'search.clearRecent': '전체 삭제',
   'search.removeRecent': '최근 검색 "{term}" 삭제',
   'search.suggestedKeywords': '추천 키워드',
-  'search.suggestedKeywordsNote': '에디토리얼 추천입니다. (실시간 인기 검색어는 Phase 2)',
+  'search.suggestedKeywordsNote': '에디토리얼 추천입니다. (실시간 인기 검색어는 추후 도입 예정)',
   'search.resultsLine': '"{q}" 검색 결과 {n}건',
   'search.artistsHeading': '작가 ({n})',
   'search.worksHeading': '작품 ({n})',
@@ -573,9 +570,9 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.toastNonMemberInviteSent': '비가입 작가 {n}명에게 초대 메시지가 발송되었어요',
   'upload.toastNonMemberInviteMixed': '초대 메시지 {sent}건 발송 / {failed}건 실패 — 전시는 정상 등록되었어요',
   'upload.toastPublished':
-    '작품이 등록되었어요. 운영팀 검수 후 둘러보기에 노출돼요 (최대 24시간).',
+    '작품이 등록되었어요. 주말·공휴일을 빼고 24시간 안에 공개돼요. 결과는 알림으로 알려드릴게요.',
   'review.badgePending': '확인 중',
-  'review.badgePendingHint': '운영팀이 확인하고 있어요. 보통 24시간 이내 게시돼요.',
+  'review.badgePendingHint': '운영팀이 확인하고 있어요. 주말·공휴일을 빼고 24시간 안에 공개돼요.',
   'review.badgeRejected': '수정 필요',
   'review.badgeRejectedHint': '검수 기준에 맞지 않아 공개되지 않았어요. 수정해서 다시 올려 주세요.',
   'review.badgeRejectedClickHint': '눌러서 사유 보기',
@@ -597,12 +594,26 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   // 신고 처리 결과 알림 — 대상 작가/신고자에게 운영팀 조치를 공지
   'pick.notifSelected': '회원님의 전시 \'{title}\'이 Artier\'s Pick으로 선정되었어요. 축하드려요!',
   'invite.notifAutoMatched': '초대한 \'{name}\' 님이 가입해 전시 \'{title}\'의 참여 작가로 연결되었어요.',
+  'invite.notifClaimDeclined': '\'{title}\'에 초대한 분이 가입은 했지만 본인 작품이 아니라고 알려주셨어요. 전화번호·이메일을 다시 확인해주세요.',
+  'invite.notifMemberLinked': '\'{senderName}\' 님이 전시 \'{title}\'에 참여 작가로 추가했어요. 본인이 아니면 \'내 작품\' 탭에서 해제할 수 있어요.',
+  // §3.4.1 발신자가 가입자 식별자 입력 시 노출되는 모달 (이미 회원인 경우)
+  'invite.memberFoundTitle': '이미 Artier 회원이에요',
+  'invite.memberFoundBody': '\'{nickname}\' 님이 이미 가입되어 있어요. 이 회원으로 참여 작가에 연결할까요?',
+  'invite.memberFoundConfirm': '이 회원으로 연결',
+  'invite.memberFoundCancel': '다른 사람이에요',
+  // §3.5.1 가입 마지막 단계의 매칭 본인 확인 화면
+  'invite.claimCheckTitle': '혹시 이 작품들, 본인 작품 맞나요?',
+  'invite.claimCheckBody': '회원님을 참여 작가로 초대한 작품이 있어요. 정말 본인 작품이면 \'맞아요\'를, 처음 보는 작품이면 \'아니에요\'를 눌러주세요.',
+  'invite.claimCheckCardInviter': '초대한 분: {nickname}',
+  'invite.claimCheckYes': '네, 제 작품이 맞아요',
+  'invite.claimCheckNo': '아니에요, 제 작품이 아니에요',
+  // §3.5.2 마이페이지 사후 보강 배너
+  'invite.linkedReminderBanner': '연결된 작품 중 본인 작품이 아닌 게 있다면 카드에서 \'본인 작품 아님\'으로 해제할 수 있어요.',
+  'invite.linkedReminderClose': '확인',
   'report.notifTargetWorkDeleted': '회원님의 전시 \'{title}\'이 신고 처리로 삭제되었습니다.',
   'report.notifTargetWorkHidden': '회원님의 전시 \'{title}\'이 신고 검토 결과 비공개 처리되었습니다. 피드·검색에서 제외됩니다.',
-  'report.notifTargetWarned': '신고가 접수되어 경고가 적용되었습니다. (누적 {count}/3회)',
-  'report.notifTargetAutoSuspended': '경고 3회 누적으로 7일 정지되었습니다. 이의제기는 문의하기를 이용해주세요.',
+  'report.notifAutoHidden': '회원님 전시 \'{title}\'이 신고 누적으로 잠시 비공개되었어요. 운영팀이 영업일 24시간 안에 확인해드리고, 문제 없으면 다시 공개돼요.',
   'report.notifReporterDismissed': '접수하신 신고가 운영팀 검토 결과 기각되었습니다.',
-  'report.notifReporterAutoBlocked': '허위 신고 3회 누적으로 7일 차단되었습니다.',
   'upload.toastPublishedImmediate': '작품이 등록되었으며 둘러보기 피드에 바로 노출됩니다. (자동 승인 모드)',
   'upload.toastDraftSaved': '초안이 저장되었어요.',
   'upload.toastOrderSaved': '순서가 저장되었어요.',
@@ -685,13 +696,13 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.tabMemberSearch': '멤버 검색',
   'upload.tabDirectInput': '직접 입력',
   'upload.memberSearchPh': '플랫폼에 가입된 작가 검색',
-  'upload.nonMemberNamePh': '작가의 실명을 입력하세요',
-  'upload.nonMemberNameLabel2': '작가 실명',
+  'upload.nonMemberNamePh': '초대 문자에 표시할 이름',
+  'upload.nonMemberNameLabel2': '작가 이름',
   'upload.nonMemberPhoneLabel2': '연락처 (선택)',
   'upload.nonMemberPhoneHelper': '번호를 입력하면 전시 생성 시 자동으로 초대 문자가 발송돼요. 비워 두면 문자는 발송되지 않습니다.',
   'upload.confirmInviteTitle': '초대장을 발송할까요?',
   'upload.confirmInviteListIntro': '다음 분께 SMS/알림톡으로 초대장이 발송됩니다.',
-  'upload.confirmInviteHelper': '⚠️ 입력하신 이름이 그분의 실명(가입 시 입력할 이름)과 정확히 같아야 작품이 자동 연결됩니다. 호칭·별명(예: "민수쌤", "엄마")으로는 연결되지 않아요.',
+  'upload.confirmInviteHelper': '⚠️ 입력하신 전화번호로 초대 문자가 발송되며, 그분이 같은 번호로 가입하면 작품이 자동으로 연결됩니다. 이름은 초대 문자 본문에만 표시돼요.',
   'upload.confirmInviteSend': '발송',
   'upload.contentTools': '콘텐츠 도구',
   'upload.contentToolsDesc1': '캔버스에 표시할 요소를 추가하거나',
@@ -801,27 +812,21 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'eventDetail.statusEnded': '종료',
   'onboarding.errImageTooLarge': '이미지 크기는 5MB 이하여야 합니다.',
   'onboarding.errProfanityNickname': '닉네임에 부적절한 단어가 포함되어 있어요.',
-  'onboarding.errProfanityRealName': '이름에 부적절한 단어가 포함되어 있어요.',
   'onboarding.welcomeTitle': '{brand}에 오신 것을 환영합니다',
   'onboarding.welcomeLead': '나만의 갤러리를 만들어보세요',
   'onboarding.start': '시작하기',
   'onboarding.later': '나중에 설정하기',
   'onboarding.nicknameTitle': '프로필 설정',
   'onboarding.nicknameLead': '기본 정보를 입력해주세요',
-  'onboarding.realNameLabel': '실명',
-  'onboarding.realNamePlaceholder': '실명을 입력하세요',
-  'onboarding.errRealNameShort': '실명은 2자 이상 입력해주세요',
-  'onboarding.errRealNameRequiredInvite': '초대로 오신 경우 실명이 필수예요 (초대 문자에 기재된 이름과 같게)',
   'onboarding.errPhoneRequiredInvite': '초대로 오신 경우 전화번호가 필수예요 (초대 받은 번호와 같게)',
-  'onboarding.errRealNameRequiredSocial': '회원 정보 확인을 위해 실명을 입력해주세요',
   'onboarding.errPhoneRequiredSocial': '회원 정보 확인을 위해 전화번호를 입력해주세요',
   'onboarding.errEmailRequired': '연락 가능한 이메일을 입력해주세요',
   'onboarding.errEmailInvalid': '이메일 형식을 확인해주세요',
   'onboarding.errEmailRegistered': '이미 가입된 이메일이에요. 다른 이메일을 입력해주세요.',
   'onboarding.errPhoneInvalid': '전화번호 형식을 확인해주세요',
   'onboarding.errPhoneRegistered': '이미 가입된 전화번호예요. 다른 번호를 입력해주세요.',
-  'onboarding.inviteNotice': '초대받은 작품을 내 계정과 연결하려면, 초대 문자에 기재된 **실명과 전화번호**를 그대로 입력해주세요.',
-  'onboarding.socialNotice': '소셜 계정으로 빠르게 가입했어요. 회원 정보 보완을 위해 **실명·전화·이메일**을 입력해주세요.',
+  'onboarding.inviteNotice': '초대받은 작품을 내 계정과 연결하려면, 초대 문자에 기재된 **전화번호**를 그대로 입력해주세요.',
+  'onboarding.socialNotice': '소셜 계정으로 빠르게 가입했어요. 닉네임은 방금 적은 그대로 채워뒀어요 — 바꾸고 싶으면 수정해 주세요. 전화번호는 나중에 설정에서 추가할 수 있어요.',
   'onboarding.emailLabel': '이메일',
   'onboarding.emailPlaceholder': 'name@example.com',
   'onboarding.emailHint': '중요 안내와 로그인·가입 인증 링크 수신에 사용돼요.',
@@ -1046,10 +1051,11 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'signup.errBirthUnderAge': '만 14세 미만은 가입할 수 없습니다.',
   'signup.agreeTerms': '이용약관 동의',
   'signup.agreePrivacy': '개인정보 수집·이용 동의',
+  'signup.agreeAge': '만 14세 이상이에요',
   'signup.ageRestrictionLead':
     'Artier는 만 14세 미만 회원 가입을 받지 않습니다. (전자상거래 등에서의 소비자보호에 관한 법률 등 준수)',
-  'signup.agreeMktEmail': '마케팅 정보 수신 동의 (이메일)',
-  'signup.agreeMktPush': '마케팅 정보 수신 동의 (푸시 알림)',
+  'signup.agreeMarketing': '마케팅 정보 수신 동의',
+  'signup.agreeMarketingHint': '이메일·알림톡·문자 중 보유한 채널로 보내드려요.',
   'events.badge': 'EVENT',
   'events.promo1Description':
     '신규 가입 후 첫 작품을 업로드해주신 선착순 100분께 스타벅스 아메리카노 기프티콘을 드립니다. 잠자고 있던 나의 첫 캔버스를 지금 채워보세요!',
@@ -1207,12 +1213,9 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'report.leadWork': '{name}을(를) 신고합니다.',
   'report.leadArtist': '{name}님을 신고합니다.',
   'report.policyNote':
-    '접수 후 운영 정책에 따라 처리합니다. 일반 신고는 7일 이내, 관련 법에 따른 긴급 건은 우선 처리됩니다.',
-  'report.reasonCopyright': '저작권 침해',
-  'report.reasonInappropriate': '부적절한 콘텐츠',
-  'report.reasonSpam': '스팸',
-  'report.reasonMisleading': '허위 작업물',
-  'report.reasonOther': '기타',
+    '접수 후 운영팀이 영업일 24시간 안에 확인해드려요.',
+  'report.reasonHeading': '이 작품은 작가 본인의 그림이 아니에요',
+  'report.reasonHelp': '다른 사람의 작품을 본인 것처럼 올린 것 같아요. 원본 출처가 있다면 메시지에 함께 적어주세요.',
   'report.detailPlaceholder': '추가 설명 (선택, 최대 200자)',
   'report.submit': '신고하기',
   'report.errReason': '신고 사유를 선택해 주세요.',
@@ -1574,11 +1577,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points are Phase
   'signupDemo.resendSuccess': 'Verification email resent.',
   'signupDemo.emailExpiredBody': 'This link is older than 30 minutes. Request a new one below.',
   'signupDemo.backToSignup': 'Back to sign up',
-  'signupDemo.regionBanner': 'Demo: KR vs international sign-up options (user-flow reference)',
-  'signupDemo.regionKr': 'Korea',
-  'signupDemo.regionKrOpts': 'Kakao · email (web Phase 1; phone signup is Phase 2 app)',
-  'signupDemo.regionIntl': 'International',
-  'signupDemo.regionIntlOpts': 'Google · Apple · email (integration in later phases)',
+  // signupDemo.region* — deprecated. Removed when region branching was retired (2026-04-26).
   'passwordResetDemo.expiredTitle': 'Reset link expired',
   'passwordResetDemo.expiredBody': 'This link is older than one hour. Request a new reset email.',
   'passwordResetDemo.resendCta': 'Start password reset again',
@@ -1616,6 +1615,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points are Phase
   'socialSignup.termsPrivacy': 'Agree to Privacy Policy',
   'socialSignup.termsAge': 'I am 14 years or older',
   'socialSignup.termsMarketing': 'Agree to receive marketing',
+  'socialSignup.termsMarketingHint': "We'll use whichever channel you have — email, KakaoTalk, or SMS.",
   'socialSignup.submit': 'Sign up',
   'login.ageNotice': 'Users under 14 cannot sign up or use the service.',
   'login.signupPrompt': "Don't have an account?",
@@ -1688,7 +1688,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points are Phase
   'search.clearRecent': 'Clear all',
   'search.removeRecent': 'Remove recent search "{term}"',
   'search.suggestedKeywords': 'Suggested keywords',
-  'search.suggestedKeywordsNote': 'Editorial picks. (Live trending search is Phase 2.)',
+  'search.suggestedKeywordsNote': 'Editorial picks. (Live trending search coming later.)',
   'search.resultsLine': '{n} results for "{q}"',
   'search.artistsHeading': 'Artists ({n})',
   'search.worksHeading': 'Works ({n})',
@@ -1760,9 +1760,9 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points are Phase
   'upload.toastNonMemberInviteSent': 'Invitation sent to {n} non-member artist(s)',
   'upload.toastNonMemberInviteMixed': '{sent} invitation(s) sent, {failed} failed — exhibition created normally',
   'upload.toastPublished':
-    'Your work has been submitted. It will appear in Browse after review (up to 24 hours).',
+    'Your work has been submitted. It will be published within 24 business hours (excluding weekends and holidays). We will notify you of the result.',
   'review.badgePending': 'Under Review',
-  'review.badgePendingHint': 'Under review. Usually published within 24 hours.',
+  'review.badgePendingHint': 'Under review. Usually published within 24 business hours (excluding weekends and holidays).',
   'review.badgeRejected': 'Needs Edit',
   'review.badgeRejectedHint': 'Did not meet review standards. Edit and re-upload for another review.',
   'review.badgeRejectedClickHint': 'Tap to see reason',
@@ -1782,12 +1782,26 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points are Phase
   'review.notifApproved': 'Your upload was approved and is now shown on Browse.',
   'pick.notifSelected': 'Your exhibition \'{title}\' was selected as Artier\'s Pick. Congrats!',
   'invite.notifAutoMatched': 'Invited \'{name}\' joined and is now linked to your exhibition \'{title}\'.',
+  'invite.notifClaimDeclined': 'The person you invited to \'{title}\' signed up but said the work isn\'t theirs. Please re-check the phone or email.',
+  'invite.notifMemberLinked': '\'{senderName}\' added you as a participating artist on \'{title}\'. If this isn\'t you, remove it from My works.',
+  // §3.4.1 modal shown when sender enters an already-registered identifier
+  'invite.memberFoundTitle': 'Already an Artier member',
+  'invite.memberFoundBody': '\'{nickname}\' is already a member. Link them as a participating artist?',
+  'invite.memberFoundConfirm': 'Link this member',
+  'invite.memberFoundCancel': 'Different person',
+  // §3.5.1 match confirmation screen at the end of signup
+  'invite.claimCheckTitle': 'Are these your works?',
+  'invite.claimCheckBody': 'Someone invited you as a participating artist. Tap \'Yes\' if these are your works, or \'No\' if you don\'t recognize them.',
+  'invite.claimCheckCardInviter': 'Invited by: {nickname}',
+  'invite.claimCheckYes': 'Yes, these are mine',
+  'invite.claimCheckNo': 'No, these aren\'t mine',
+  // §3.5.2 follow-up banner on My works tab
+  'invite.linkedReminderBanner': 'If any linked works aren\'t yours, you can remove them with \'Not my work\' on the card.',
+  'invite.linkedReminderClose': 'Got it',
   'report.notifTargetWorkDeleted': 'Your exhibition \'{title}\' has been removed following a report.',
   'report.notifTargetWorkHidden': 'Your exhibition \'{title}\' has been hidden from Browse/Search after review.',
-  'report.notifTargetWarned': 'A report against you led to a warning. ({count}/3 total)',
-  'report.notifTargetAutoSuspended': '7-day suspension applied after 3 warnings. Contact support to appeal.',
+  'report.notifAutoHidden': 'Your exhibition \'{title}\' is temporarily hidden after multiple reports. Our team will review it within 24 business hours, and it will reappear if there are no issues.',
   'report.notifReporterDismissed': 'Your report was dismissed after review.',
-  'report.notifReporterAutoBlocked': 'Blocked for 7 days after 3 false reports.',
   'review.notifNewWork': 'has posted a new exhibition',
   'upload.toastPublishedImmediate': 'Exhibited and shown on Browse immediately. (auto-approve mode)',
   'upload.toastDraftSaved': 'Draft saved.',
@@ -1871,13 +1885,13 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points are Phase
   'upload.tabMemberSearch': 'Search members',
   'upload.tabDirectInput': 'Enter manually',
   'upload.memberSearchPh': 'Search registered artists',
-  'upload.nonMemberNamePh': 'Enter the artist\'s real name',
-  'upload.nonMemberNameLabel2': 'Artist real name',
+  'upload.nonMemberNamePh': 'Name to show in the invite message',
+  'upload.nonMemberNameLabel2': 'Artist name',
   'upload.nonMemberPhoneLabel2': 'Phone (optional)',
   'upload.nonMemberPhoneHelper': 'If you enter a number, an invitation SMS is sent automatically when you create the exhibition. Leave it blank to skip the SMS.',
   'upload.confirmInviteTitle': 'Send invitations?',
   'upload.confirmInviteListIntro': 'SMS/KakaoTalk invitations will be sent to:',
-  'upload.confirmInviteHelper': '⚠️ The name you entered must exactly match the real name they\'ll use at signup for the work to auto-link. Nicknames or titles (e.g., "Mr. Kim", "Mom") will not match.',
+  'upload.confirmInviteHelper': '⚠️ The invite is sent to the phone number you entered. When they sign up using the same number, the work links automatically. The name only appears in the invite message body.',
   'upload.confirmInviteSend': 'Send',
   'upload.contentTools': 'Content tools',
   'upload.contentToolsDesc1': 'Add elements to show in the canvas or',
@@ -1988,27 +2002,21 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points are Phase
   'eventDetail.statusEnded': 'Ended',
   'onboarding.errImageTooLarge': 'Image must be under 5MB.',
   'onboarding.errProfanityNickname': 'Nickname contains inappropriate language.',
-  'onboarding.errProfanityRealName': 'Name contains inappropriate language.',
   'onboarding.welcomeTitle': 'Welcome to {brand}',
   'onboarding.welcomeLead': 'Create your own gallery',
   'onboarding.start': 'Get started',
   'onboarding.later': 'Set up later',
   'onboarding.nicknameTitle': 'Profile setup',
   'onboarding.nicknameLead': 'Enter your basic information',
-  'onboarding.realNameLabel': 'Real name',
-  'onboarding.realNamePlaceholder': 'Enter your real name',
-  'onboarding.errRealNameShort': 'Please enter at least 2 characters',
-  'onboarding.errRealNameRequiredInvite': 'Real name is required for invited users (match your SMS invitation)',
   'onboarding.errPhoneRequiredInvite': 'Phone is required for invited users (match the number from your SMS invitation)',
-  'onboarding.errRealNameRequiredSocial': 'Please enter your real name to complete your profile',
   'onboarding.errPhoneRequiredSocial': 'Please enter a phone number to complete your profile',
   'onboarding.errEmailRequired': 'Please enter a contact email',
   'onboarding.errEmailInvalid': 'Please check the email format',
   'onboarding.errEmailRegistered': 'This email is already registered. Please use a different email.',
   'onboarding.errPhoneInvalid': 'Please check the phone number format',
   'onboarding.errPhoneRegistered': 'This phone number is already registered. Please use a different number.',
-  'onboarding.inviteNotice': 'To link works invited to you, enter the **real name and phone number** exactly as in the SMS invitation.',
-  'onboarding.socialNotice': 'You signed up with a social account. Please complete your profile with **real name, phone, and email**.',
+  'onboarding.inviteNotice': 'To link works invited to you, enter the **phone number** exactly as in the SMS invitation.',
+  'onboarding.socialNotice': 'You signed up with a social account. The nickname you just chose is filled in — feel free to change it. You can add your phone number later in Settings.',
   'onboarding.emailLabel': 'Email',
   'onboarding.emailPlaceholder': 'name@example.com',
   'onboarding.emailHint': 'Used for important notices and sign-in verification links.',
@@ -2232,10 +2240,11 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points are Phase
   'signup.errBirthUnderAge': 'Users under 14 cannot sign up.',
   'signup.agreeTerms': 'Terms of service',
   'signup.agreePrivacy': 'Privacy policy',
+  'signup.agreeAge': 'I am 14 years or older',
   'signup.ageRestrictionLead':
     'Artier does not allow accounts for users under 14 (consumer protection and related regulations).',
-  'signup.agreeMktEmail': 'Marketing (email)',
-  'signup.agreeMktPush': 'Marketing (push)',
+  'signup.agreeMarketing': 'Receive marketing messages',
+  'signup.agreeMarketingHint': "We'll use whichever channel you have — email, KakaoTalk, or SMS.",
   'events.badge': 'EVENT',
   'events.promo1Description':
     'The first 100 new members who upload their first work get a Starbucks Americano voucher. Fill that canvas waiting in the corner!',
@@ -2396,12 +2405,9 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points are Phase
   'report.leadWork': 'You are reporting {name}.',
   'report.leadArtist': 'You are reporting {name}.',
   'report.policyNote':
-    'We review reports according to our policies. Most reports are handled within about seven days; urgent legal matters are prioritized.',
-  'report.reasonCopyright': 'Copyright infringement',
-  'report.reasonInappropriate': 'Inappropriate content',
-  'report.reasonSpam': 'Spam',
-  'report.reasonMisleading': 'Misleading work',
-  'report.reasonOther': 'Other',
+    'We will review your report within 24 business hours.',
+  'report.reasonHeading': 'This work isn\'t the artist\'s own',
+  'report.reasonHelp': 'Looks like someone else\'s work posted as their own. If you have the original source, please include it in the message.',
   'report.detailPlaceholder': 'Additional details (optional, max 200 characters)',
   'report.submit': 'Submit report',
   'report.errReason': 'Please select a reason.',
@@ -2554,7 +2560,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 ### 7.2 Placeholder 컨벤션
 
 - 중괄호 형식: `{name}`, `{title}`, `{piece}`, `{n}`, `{positions}`.
-- **코드에서 교체**: `t('key').replace('{name}', value)` 패턴. 복수 치환 시 체인. 포맷 라이브러리(intl) 미도입 — Phase 2.
+- **코드에서 교체**: `t('key').replace('{name}', value)` 패턴. 복수 치환 시 체인. 포맷 라이브러리(intl) 미도입 — 추후 도입 검토.
 - Placeholder 내부에 한국어/영어 단어 넣지 말 것. 순수 식별자만.
 
 ### 7.3 Locale 반응성
@@ -2586,7 +2592,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 ## 9. 이 문서가 다루지 않는 것
 
-- 언어 자동 감지·폴백 로직 — [SystemArchitecture §13.4](SystemArchitecture_v1.md) 참조.
+- 언어 자동 감지·폴백 로직 — `useI18n()` 훅이 단일 진입점이며, 구현 세부는 개발팀 코드 단일 소스.
 - 법무 문구(약관·개인정보) — [Policy §21](Policy_v1.md) 법무 체크포인트 이관.
 - 마케팅 외부 문구 — 본 가이드는 **앱 내부 카피** 한정.
 
@@ -2596,6 +2602,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.3 | 2026-04-26 | PM × Claude | Policy v2.13 §3.4.1·§3.5.1~2 연결 제안·본인 확인 단계 i18n 9쌍 추가. 헤더·모바일 가입 진입점 라벨 명시화(`nav.login` "로그인"→"로그인·가입", `nav.my` 비로그인 시 "MY"→"로그인·가입"). 실명 인풋 폐기에 따라 `onboarding.realName*` 6키 제거 + 가입·초대 안내 문구의 실명 언급 정리. 비회원 초대 발송 라벨을 "작가 실명"→"작가 이름"으로 단순화. 소셜 가입 후 온보딩 안내 문구에 "닉네임은 방금 적은 그대로 채워뒀어요" 추가. **매직 링크 발송 후 헬프 안내 격상** — 시니어가 메일함에서 인증 메일을 못 찾고 트랩에 갇히는 위험을 낮추기 위해, 발송 후 화면(가입·로그인 양쪽)의 스팸함 한 줄 안내를 헬프 박스로 시각 위계 격상. 신규 키 `signup.linkSentHelpTitle`("메일이 안 와요?") + `signup.linkSentSenderHint`("보낸 사람에 ‘Artier’가 들어간 메일을 찾으시면 돼요." — 메일함 검색 단서 제공, 발신 도메인은 백엔드 연동 후 확정). `signup.linkSentSpam`/`login.linkSentSpam` 카피를 "받은편지함에 없으면 스팸함과 프로모션 탭도 확인" 톤으로 강화. **게스트 헤더 보조 진입점** — 데스크톱 게스트 헤더 우측 영역에 텍스트 링크 `nav.loginAsArtist`("작가이신가요? 작품 올리기") 신설 → `/login?redirect=/upload`. 비로그인 상태에서 사이트의 창작자 측면 가치가 첫 진입 5초 안에 인지되지 않는 누수를 보강(모바일은 하단 네비 [+업로드]가 이미 진입점 수행). **약관 "전체 동의"에서 마케팅 분리** — `signup.agreeAll`/`socialSignup.agreeAll` 카피를 "전체 동의 (선택 항목 포함)" → "필수 약관 모두 동의"로 교체하고, 토글 동작도 필수 3종(이용약관·개인정보·14세)만 일괄 처리하도록 변경. 마케팅(선택)은 별도 명시 동의로 유지 — 시니어가 마케팅까지 자동 켜지는 다크 패턴 위험 제거. **닉네임 욕설 검사 시점 이동** — 온보딩 step 2 `validateNickname`에 `containsProfanity` 검사 합쳐 즉시 인라인 에러로 표시(이전엔 finish 시점 토스트로만 발견되어 4단계 끝까지 진행 후 좌절). **검수 안내 어휘 통일** — `upload.reviewInfoReject` 한국어 카피의 "다시 발행하면" → "다시 전시하면"으로 통일(코드 전반에 정리됐던 "전시" 어휘 잔재 정리). **비회원 초대 발송 시점 카피 정정** — `upload.nonMemberPhoneHelper`의 "전시 생성 시 자동 발송" → "검수 승인 후 자동 발송"(ko/en). 실제 동작은 `ContentReview` 시점 발송이므로 카피와 일치시켜 시니어가 발행 직후 문자 미수신을 오해하지 않도록 정정. `publishedConfirmInviteNote`("비회원 작가에게는 검수 승인 직후 초대 메시지가 발송돼요")와 톤 일관. **초대 자동 연결 안내 강화** — 온보딩 step 2 폰 입력에 prefill 시 별도 안내(`onboarding.phoneInvitedHint` "초대 받으신 번호로 채워뒀어요. 이 번호 그대로 두셔야 받으신 작품이 자동으로 연결돼요.") 신설(ko/en) — 시니어가 prefill 폰을 무심코 수정해 매칭 실패하는 누수 차단. 본인 확인 후 매칭 성공 시 step 3(완료) 화면에 분기 카피(`onboarding.doneInviteMatchedHeadline`("받으신 작품 {n}점이 내 갤러리로 옮겨졌어요") · `doneInviteMatchedBody`("마이페이지 → 내 작품 탭에서 바로 확인할 수 있어요")) 신설(ko/en) — "내 작품 어디 갔지?" 좌절을 차단. **마이페이지 "내 작품" 탭 안내 한 줄** — 본인 프로필 활성 'works' 탭 상단에 `profile.tabHelpWorks`("내가 그린 작품(1점 단위)이 모이는 곳이에요. 초대로 자동 연결된 작품도 함께 보여요. 내가 올린 전시는 ‘전시’ 탭에서 볼 수 있어요.") 신설(ko/en) — Work=전시 / image[i]=작품 도메인 모델이 시니어 멘탈 모델과 미스매치되는 누수 보강(탭 라벨은 그대로 유지하고 캡션으로만 보강). **신고 사유 단일화 안내** — `report.otherReasonsHint`("다른 종류의 신고(저작권·욕설·음란 등)는 마이페이지 → 1:1 문의로 알려주세요.") 신설(ko/en). Policy §12.0 단일 카테고리 정책상 사유가 하나뿐인 이유를 명시하고 다른 케이스의 진입점을 안내. **검색 결과 작품 라벨 i18n화** — `Search.tsx`의 Top results 카드에 `<span>작품</span>` 한글 하드코딩이 잔존하던 것을 `browse.workLabel` 신설(ko 작품 / en Work)로 정리. 다국어 정책(`useI18n().t()` 사용 의무) 위반 잔재 제거. **알림 미확인 카운터 aria-label i18n화** — `Notifications.tsx`의 `aria-label="{n}개 미확인"` 한글 템플릿 리터럴 하드코딩을 기존 `nav.notificationsWithCount` 키 재사용으로 정리. 시드 알림 메시지 7건의 한글 하드코딩(`generateSeedNotifications` 내부)은 별도 작업 단위로 동적 i18n화 권장. **반려 편집 배너 어휘·도움 진입점** — `review.editBannerRejected`/`editBannerRejectedRepeated`의 "다시 발행" → "다시 전시"(ko) / "re-publish" → "exhibit again"(en) 어휘 통일. `review.editBannerHelpLink`("잘 모르겠어요? 1:1 문의" / "Not sure what to fix? Contact us") 신설하여 빨간 배너 아래에 1:1 문의 진입점 노출 — 시니어가 반려 사유만 보고 무엇을 고칠지 모르겠을 때 좌절·이탈 차단. **이벤트 중복 참여 시각화** — `EventDetail`의 참여 버튼이 `alreadySubmitted` 상태일 때 toast로만 차단하던 것을 비활성 placeholder("이미 참여하셨어요" / "Already participated", `events.alreadySubmittedShort`)로 시각화. 시니어가 다시 누르며 혼란하는 누수 차단. **프로필 편집 닉네임 욕설 인라인 검사** — 저장 시점 toast로만 검출하던 것을 입력 시점 인라인 에러로 즉시 노출(`profile.errProfanity` 재사용). **정합성 정리 (`_planning` ↔ 코드)** — IA §828·§832, PRD_Admin §840·§846 폐기 표기 반영하여 `routes.ts`에서 `/admin/works`(ADM-WRK)·`/admin/partners`(ADM-PTN) 라우트 + import 제거, `WorkManagement.tsx`·`PartnerArtists.tsx` 파일 삭제. AdminLayout 폐기 코멘트 갱신. PRD_User USR-PRF-01 AC-04(타인 프로필 무효 `?tab=` URL 정리) 코드에 반영(replace navigation). Policy §8 "자동 저장 없음" 정책에 맞춰 dead i18n key `upload.autoSavedAt`·`upload.autosavedJustNow` 4종(ko/en) 제거. Handoff_Signup_Consent_v1.md에 누락됐던 `socialSignup.termsMarketingHint` 키 명시(코드는 이미 사용 중). **이벤트 정합성 보강** — Policy §25.5(종료된 이벤트 신규 응모 차단)을 코드에 반영: `Upload.tsx`에서 `?event=<endedId>` URL 직접 진입 시 `deriveStatus==='ended'` 가드 + 토스트(`upload.eventEndedBlocked` 신설 ko/en) + `/events/:id`로 redirect. Policy §25.6(이벤트 삭제 시 응모 cascade)을 `eventStore.remove`에 추가하여 `linkedEventId === id`인 모든 work를 `linkedEventId: undefined`로 일괄 정리. **신고 큐 dedup** — PRD_Admin §667 ADM-RPT-01 AC-02((신고자, 대상) 중복 1건만 노출)을 `ReportManagement.mergeReportRows`에 추가, `reporterId`가 있는 동일 (reporter, targetType, targetId) 조합은 가장 최근 1건만 큐에 노출. **검수 SLA 배지** — PRD_Admin §349 ADM-REV-01 AC-09(검수 대기 24h 경과 시 "시한 초과" 빨강 배지) 신설 — `ContentReview.tsx`에 1분 tick + `uploadedAt` 비교 + `review.slaOverdue` 신규 키(ko "시한 초과" / en "Overdue"). 영업일 정확 산정은 백엔드 도입 후 정정(현재 캘린더 24h, ReportManagement SLA와 일관). **파트너 트래킹 폐기** (2026-04-26 재결정) — Phase 1에서는 파트너 작가 영입을 운영팀 외부 도구(스프레드시트·CRM)로 처리. PRD_Admin / IA / DELTA에서 ADM-PTN(통합 흔적 포함)·ADM-MBR-01 파트너 필터·ADM-MBR-02 "파트너 트래킹 섹션"·진행률 카드·PARTNER_ARTIST 엔티티·ADM-PTN-01 권한 행을 제거. 사이드바 트리·대시보드 입력 카드도 정리. 카피 영향 없음(파트너 관련 i18n 키 미사용). **기획전 다수화** — Policy §15.1·§15.4("개수 제한 없음, 주제·맥락 단위") 코드 반영. `curationStore`를 `theme: ThemeExhibition \| null` → `themes: ThemeExhibition[]`로 리팩토링, `ThemeExhibition`에 `id` 추가. 메서드 `addTheme`/`updateTheme`/`removeTheme`/`getThemes`로 교체. localStorage 마이그레이션(legacy 단일 theme → 배열 1건). `feedOrdering.ts`는 모든 themes의 `workIds` union을 themed 버킷에 할당. `CurationManagement.tsx`를 다수 운영 UI(리스트 + 인라인 수정 + 삭제 + 추가 폼)로 재작성. 카피 영향 없음(어드민 한국어 단일 운영). **파트너 트래킹·ADM-WRK 잔재 일괄 정리** — 이전 폐기 결정 후 코드·문서에 흩어진 잔재를 일괄 제거. (i18n) `admin.nav.partners`·`footer.qaAdminPartners`·`admin.nav.works`·`footer.qaAdminWorks` 4쌍(ko/en) 제거. (코드) `QaScreenShortcuts.tsx`의 `/admin/partners`·`/admin/works` 단축키, `AdminDashboard.tsx`의 파트너 카드·작품 카드·`partnersByStage`·`totalWorks` 계산, `usePartnerStore`·`partnerStore`·`seedPartnerArtists`·`PartnerArtist` 타입·`PARTNER_ARTIST` 상수 제거. (문서) `CLAUDE.md` localStorage 키 목록의 `artier_admin_partners` 제거, `_planning/README.md` 화면ID 표의 `WRK`·`PTN` 행 제거, `_planning/IA_ScreenList_v1.md` USR-EXH-06 경로의 `USR-EXH-04` 제거(deprecated 일관), `_planning/PRD_Admin_v1.md` §0.4.2 권한 매트릭스 ADM-WRK-01 행 + §177·226·227 cross-ref·§409·475 연결 화면을 ADM-RPT-01로 정정. **i18n 잔재 정리** — `Profile.tsx:805` 한글 aria-label `프로필 열기` → `profile.openProfileAria` 키 신설(ko/en) 사용. `ExternalLinksEditor.tsx`의 한글 placeholder 6건(나머지 URL/전체 URL) → `profile.linksUrlPlaceholder`·`profile.linksWebsitePlaceholder` 키 신설(ko/en) + 컴포넌트 내부 `useI18n` 훅으로 동적 변환. **§32.1 cascade 마이그레이션 잔재 정정** — `cleanupOrphanedWorkId`가 다수 themes 구조 갱신 후 `Array.isArray(themes)` 가드로 stale state object를 받아도 정리 못 하던 문제 수정. 새 `{ themes: [...], featuredArtistIds: [...] }` 형태에서 `state.themes` 배열을 직접 정리. **§22.5 신고 에스컬레이션 배지** — `ReportManagement.tsx`에 24h 윈도우 카운트 추가: 같은 작품에 24h 신고 ≥10건이면 빨강 "긴급 24h N건" 배지, 같은 작가에 ≥5건이면 황색 "작가 24h N건" 배지. Phase 1 정책 톤상 자동 처리·정지는 없고 큐 가시성 보강 목적. 1분 tick과 동기. 카피는 어드민 한국어 단일이라 i18n 키 미신설. **엣지 케이스 일괄 보강** — (1) `ReportManagement` 에스컬레이션 useMemo가 `now` 정의 전 참조하던 ReferenceError 핫픽스(`clockTick` state value destructure). (2) Policy §4.4 "탈퇴 후 즉시 재가입 가능" 정합 — `unregisterAccount` 신설 + `performAccountWithdrawal`에서 호출. (3) 매직링크: 다른 계정으로 silent 전환 차단(`AuthVerify`에서 `loadMockSession` 비교). (4) `ReportModal` `pieceIndex` bounds 검증 + 본인 작품 신고 차단(`report.errOwnWork` ko/en 신설). (5) `maybeRestoreAfterDismiss`가 pending 신고 남아 있으면 자동 복원 차단. (6) `Notifications.passesPrefs` unknown type을 보수적으로 차단. (7) 생년월일 year 1900~현재 범위 가드(`ageCheck.ts`). (8) `CurationManagement` 중복 title·빈 workIds 차단. (9) Profile disavow 자기 업로드 슬롯 차단(`demoteSlotToUnknown`). (10) `WorkDetailModal` work 사라진 경우 자동 onClose. (11) 탈퇴 작가 작품 like/save 인터랙션 차단. (12) `eventStore.remove` cascade를 동기 localStorage 직접 정리로 race 차단. (13) `scrollRestore` clamp(피드 축소 후 OOB 방지). (14) Draft localStorage 손상·quota 안전 처리(백업 키 + 콘솔 경고). **Minor 보강** — (i) `imageHelper.getFirstImage`·`getCoverImage`가 image undefined/빈 배열일 때 빈 문자열 fallback. (ii) `LaunchChecklist` 카테고리 0건 시 0% (NaN 방지). (iii) 탈퇴 처리 시 Pick 목록에서 본인 작품 일괄 제거 (Policy §15.3 일관). (iv) `MemberManagement` 잘못된 `?artist=<id>` deep link 시 토스트 안내 + URL 정리. (v) 알림 mark-all-read race·신고 dedup empty·Pick max disable·DST·Follow self·검색 1글자·approve 후 edit·worksPublic flip·BannerDnD 1개 edge·외부 링크 https 강제 등 9건은 검증 결과 결함 아님으로 정정. **이메일 가입 약관 정리** — `signup.agreeMktEmail`/`signup.agreeMktPush` 폐기(웹 푸시 미사용·법무 채널 분리 불필요), 단일 `signup.agreeMarketing` + `agreeMarketingHint`("이메일·알림톡·문자 중 보유한 채널") 신설. `signup.agreeAge`("만 14세 이상이에요") 신설하여 이메일·소셜 가입 양쪽 동일 4종 약관(이용약관·개인정보·14세 자기 명시·마케팅) 정합. 매직 링크 발송 화면에 자동 흐름 안내(`signup.linkSentAutoFlow`) 신설. 온보딩 안내에 이메일 가입자용 키(`onboarding.emailSignupNotice`) 신설 — 닉네임 중복 입력 인지 부담을 소셜·이메일 양쪽 모두 동일하게 해소. |
 | v1.2 | 2026-04-21 | PM × Claude | **§6 사전 부분 동기화 — 매직 링크 관련 키 정렬** — `refStub.tplResetSubject/Body`·`tplPwdChangedSubject/Body` 4키 제거(§2.5 매직 링크 도입으로 비번 개념 폐기) → `tplSignInSubject/Body`로 대체(가입 인증은 기존 `tplVerify` 그대로 유지). `refStub.tplTitle/Lead`의 PRD 10종 → 9종으로 갱신, "비밀번호 재설정·변경 템플릿은 §2.5 매직 링크 전환으로 폐기되었습니다" 명시(ko/en). 신규 카테고리 키 `contact.categoryPrivacy`("개인정보 열람·정정·삭제 요청") 추가 — Policy §30·USR-INF-07 연동(ko/en). |
 | v1.1 | 2026-04-21 | PM × Claude | 이메일 인증 매직 링크 전환 반영(Policy §2.5 v2.8) — `onboarding.emailHint` 문구를 "비밀번호 재설정" → "로그인·가입 인증 링크" 수신으로 교체(ko/en). `faq.q2/a2`를 "비밀번호 찾기" → "로그인 링크 메일이 오지 않을 때"(스팸함·재전송·30분 TTL 안내)로 재작성(ko/en). §6 한국어·영어 사전의 비번 관련 블록(`login.password*`·`signup.password*`·`passwordReset.*`·`passwordResetDemo.*`·`settings.changePassword*`·`settings.withdrawPw*`·`signupDemo.region*`·`signupDemo.email*`·`signupDemo.demoBanner`·`refStub.tplReset*`·`refStub.tplPwdChanged*`·`footer.qaResetDemo*`)과 신규 매직 링크 키(`signup.linkSent*`·`signup.openMockLink*`·`login.sendMagicLink`·`login.linkSent*`·`verify.*`·`settings.withdrawConsent*`·`footer.qaAuthVerifyDemo*` 등)는 실제 구현 기준 `src/app/i18n/messages.ts`와 ongoing sync(본 문서 §6 사전은 후속 일괄 스냅샷 갱신 예정). |
 | v1.0 | 2026-04-20 | PM × Claude | Copy_v1.md 신설 — Voice·Tone, 용어, 카피 구조 규칙, 패턴별 템플릿(확인·에러·빈상태·알림·토스트·로딩), 시니어 친화 6원칙, 전체 i18n 사전(ko/en 2,170 키), i18n 기술 규칙, 변경 워크플로우. |

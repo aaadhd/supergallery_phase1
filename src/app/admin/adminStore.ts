@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
-import type { UnresolvedIssue, ChecklistItem, PartnerArtist } from './types';
-import { seedIssues, seedChecklist, seedPartnerArtists } from './seedData';
+import type { UnresolvedIssue, ChecklistItem } from './types';
+import { seedIssues, seedChecklist } from './seedData';
 
 // Generic localStorage store factory (follows existing store.ts pattern)
 function createStore<T>(key: string, seed: T[]) {
@@ -53,7 +53,6 @@ function createStore<T>(key: string, seed: T[]) {
 
 export const issueStore = createStore<UnresolvedIssue>('artier_admin_issues', seedIssues);
 export const checklistStore = createStore<ChecklistItem>('artier_admin_checklist', seedChecklist);
-export const partnerStore = createStore<PartnerArtist>('artier_admin_partners', seedPartnerArtists);
 
 // React hooks
 function useStore<T>(store: ReturnType<typeof createStore<T>>) {
@@ -64,4 +63,3 @@ function useStore<T>(store: ReturnType<typeof createStore<T>>) {
 
 export const useIssueStore = () => useStore(issueStore);
 export const useChecklistStore = () => useStore(checklistStore);
-export const usePartnerStore = () => useStore(partnerStore);

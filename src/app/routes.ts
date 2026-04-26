@@ -25,10 +25,8 @@ import AdminLayout from './admin/AdminLayout';
 import AdminDashboard from './admin/AdminDashboard';
 import UnresolvedIssues from './admin/UnresolvedIssues';
 import LaunchChecklist from './admin/LaunchChecklist';
-import PartnerArtists from './admin/PartnerArtists';
 import EventParticipants from './admin/EventParticipants';
 import ContentReview from './admin/ContentReview';
-import WorkManagement from './admin/WorkManagement';
 import PickManagement from './admin/PickManagement';
 import CurationManagement from './admin/CurationManagement';
 import BannerManagement from './admin/BannerManagement';
@@ -108,10 +106,8 @@ export const router = createBrowserRouter([
           { index: true, Component: AdminDashboard },
           { path: 'issues', Component: UnresolvedIssues },
           { path: 'checklist', Component: LaunchChecklist },
-          { path: 'partners', Component: PartnerArtists },
           { path: 'events', Component: EventParticipants },
           { path: 'content-review', Component: ContentReview },
-          { path: 'works', Component: WorkManagement },
           { path: 'picks', Component: PickManagement },
           { path: 'curation', Component: CurationManagement },
           { path: 'banners', Component: BannerManagement },
