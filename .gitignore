@@ -31,3 +31,6 @@ node_modules
 
 # 운영팀 검수·QA 스크린샷 (저장소 외부 보관)
 audits/
+
+# PM 변경 제안서 (개발자에게 전달하지 않는 PM 내부 작업본 — 확정된 결정만 _planning/*.md로 흡수)
+_planning/_change_proposals/
