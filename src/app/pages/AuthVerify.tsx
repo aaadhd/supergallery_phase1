@@ -43,7 +43,7 @@ export default function AuthVerify() {
     if (req.intent === 'login') {
       // 이미 로그인된 다른 계정 세션이면 silent 전환을 막고 명시 분기로 안내.
       const existing = loadMockSession();
-      if (authStore.isLoggedIn() && existing && existing.email && existing.email !== req.email) {
+      if (authStore.isLoggedIn() && existing && existing.sub && existing.sub !== req.email) {
         setState('invalid');
         return;
       }

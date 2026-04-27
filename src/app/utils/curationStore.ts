@@ -49,13 +49,13 @@ function readFromStorage(): CurationState {
         .filter((t: unknown): t is { id?: unknown; title?: unknown; subtitle?: unknown; workIds?: unknown } =>
           !!t && typeof t === 'object',
         )
-        .map((t) => ({
+        .map((t: { id?: unknown; title?: unknown; subtitle?: unknown; workIds?: unknown }) => ({
           id: typeof t.id === 'string' && t.id ? t.id : newThemeId(),
           title: typeof t.title === 'string' ? t.title : '',
           subtitle: typeof t.subtitle === 'string' ? t.subtitle : undefined,
-          workIds: Array.isArray(t.workIds) ? (t.workIds.filter((x) => typeof x === 'string') as string[]) : [],
+          workIds: Array.isArray(t.workIds) ? (t.workIds.filter((x: unknown) => typeof x === 'string') as string[]) : [],
         }))
-        .filter((t) => t.title.trim().length > 0);
+        .filter((t: ThemeExhibition) => t.title.trim().length > 0);
     } else if (parsed?.theme && typeof parsed.theme.title === 'string') {
       themes = [
         {

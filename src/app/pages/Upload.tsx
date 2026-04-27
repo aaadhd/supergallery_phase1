@@ -781,24 +781,6 @@ export default function Upload() {
       return { type: 'member' as const, memberId: currentUser.id, memberName: currentUser.name, memberAvatar: currentUser.avatar };
     });
 
-    /**
-     * 비회원 초대 발송 직전 확인 모달 (실명 정확성 고지).
-     * - 라벨로만 안내하면 "민수쌤" 같은 호칭 입력이 걸러지지 않아 가입 후 매칭 실패.
-     * - 발송 시점에 한 번 더 실명임을 상기 + 수락/취소 선택지 제공.
-     */
-    const invitePreview = imageArtists
-      .map((a) => (a.type === 'non-member' && a.displayName && a.phoneNumber ? a.displayName : null))
-      .filter((v): v is string => !!v);
-    if (invitePreview.length > 0) {
-      const list = invitePreview.map((n) => `• ${n}`).join('\n');
-      const ok = await openConfirm({
-        title: t('upload.confirmInviteTitle'),
-        description: `${t('upload.confirmInviteListIntro')}\n${list}\n\n${t('upload.confirmInviteHelper')}`,
-        confirmLabel: t('upload.confirmInviteSend'),
-      });
-      if (!ok) return;
-    }
-
     const uploadedAt = todayLocalIso();
     const newWork: Work = {
       id: `user-${crypto.randomUUID()}`,
@@ -842,6 +824,7 @@ export default function Upload() {
     setIsPublishing(true);
     const targetId = editingWorkId || newWork.id;
     const wasEditingExistingWork = Boolean(editingWorkId);
+    const autoApprove = import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true';
 
     // 편집 모드 차별 재검수: 이미지 계열 변경 여부를 먼저 판정해 둔다(토스트 분기에도 사용).
     // Policy §12.1.2 / PRD_User USR-UPL-02 D.
@@ -864,7 +847,6 @@ export default function Upload() {
       //  - 상태가 rejected에서 바뀌면 초기화(빈 값). 같은 rejected로 유지되면 원본 사유 보존.
       //
       // rejectionHistory: 명시적으로 전달하지 않아 updateWork 머지 규칙상 원본 이력 그대로 보존됨.
-      const autoApprove = import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true';
       const original = workStore.getWork(editingWorkId);
       const originalStatus: 'pending' | 'approved' | 'rejected' = original?.feedReviewStatus ?? 'pending';
 

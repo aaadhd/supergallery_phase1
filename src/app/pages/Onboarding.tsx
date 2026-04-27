@@ -5,6 +5,7 @@ import { Camera } from 'lucide-react';
 import { profileStore, workStore } from '../store';
 import { artists } from '../data';
 import type { Work } from '../data';
+import type { MessageKey } from '../i18n/messages';
 import { pointsOnOnboardingStep1Complete } from '../utils/pointsBackground';
 import {
   getInviteToken,
@@ -31,7 +32,7 @@ type ClaimableSlot = {
   pieceTitle: string;
 };
 
-function buildClaimableSlots(work: Work, t: (k: string) => string): ClaimableSlot[] {
+function buildClaimableSlots(work: Work, t: (k: MessageKey) => string): ClaimableSlot[] {
   const images = getAllImages(work.image);
   const slots = Array.isArray(work.imageArtists) ? work.imageArtists : [];
   const titles = Array.isArray(work.imagePieceTitles) ? work.imagePieceTitles : [];
