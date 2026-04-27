@@ -793,6 +793,12 @@ export function performAccountWithdrawal(currentArtistId: string, withdrawReason
       },
     });
   });
+  // Policy §3.4: 작가 탈퇴 시 본인 업로드 전시의 비회원 초대 토큰을 영구 무효(`revoked`)로 전환.
+  if (ownWorkIds.length > 0) {
+    void import('./utils/inviteTokenStore').then(({ revokeInviteToken }) => {
+      ownWorkIds.forEach((id) => revokeInviteToken(id));
+    });
+  }
   // 탈퇴 작가의 작품을 어드민 Pick 목록에서 제거 (Policy §15.3 일관 — 탈퇴 작가 작품은 Pick 자격 없음).
   try {
     const pRaw = localStorage.getItem('artier_admin_picks_v1');
