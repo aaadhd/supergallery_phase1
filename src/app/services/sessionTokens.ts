@@ -66,7 +66,9 @@ export function loadMockSession(): MockJwtSession | null {
       typeof p.accessToken === 'string' &&
       typeof p.refreshToken === 'string' &&
       typeof p.accessExpiresAt === 'number' &&
-      typeof p.refreshExpiresAt === 'number'
+      typeof p.refreshExpiresAt === 'number' &&
+      typeof p.sub === 'string' &&
+      p.sub.length > 0
     ) {
       return p;
     }

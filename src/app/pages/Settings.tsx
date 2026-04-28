@@ -188,25 +188,21 @@ export default function Settings() {
       <div className="mx-auto max-w-lg px-5 sm:px-6 py-10 sm:py-12">
         <h1 className="text-2xl font-semibold text-foreground tracking-tight mb-10">{t('settings.title')}</h1>
 
-        <section className="mb-10">
-          <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-1">
-            {t('settings.sectionAccount')}
-          </h2>
-          <div className="rounded-lg border border-border/40 overflow-hidden bg-white px-4 py-4">
-            <p className="text-xs text-muted-foreground mb-1">
-              {isEmailShape ? t('settings.emailLabel') : t('settings.accountDemoIdLabel')}
-            </p>
-            {sessionSub ? (
-              <p
-                className={`text-base text-foreground break-all ${isEmailShape ? '' : 'font-mono'}`}
-              >
+        {isEmailShape && sessionSub ? (
+          <section className="mb-10">
+            <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-1">
+              {t('settings.sectionAccount')}
+            </h2>
+            <div className="rounded-lg border border-border/40 overflow-hidden bg-white px-4 py-4">
+              <p className="text-xs text-muted-foreground mb-1">
+                {t('settings.emailLabel')}
+              </p>
+              <p className="text-base text-foreground break-all">
                 {sessionSub}
               </p>
-            ) : (
-              <p className="text-base text-muted-foreground">{t('settings.accountEmailUnavailable')}</p>
-            )}
-          </div>
-        </section>
+            </div>
+          </section>
+        ) : null}
 
 
         <section className="mb-10" id="font-scale">
