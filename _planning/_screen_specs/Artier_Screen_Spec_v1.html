@@ -436,6 +436,7 @@
         <div class="group">🖼️ 전시·작품</div>
         <ul>
           <li><a href="#USR-EXH-01"><code>EXH-01</code><span>전시 상세 ⭐</span></a></li>
+          <li><a href="#USR-EXH-01b"><code>EXH-01b</code><span>본인 시점 + 배지 ⭐</span></a></li>
           <li><a href="#USR-EXH-02"><code>EXH-02</code><span>큐레이션</span></a></li>
           <li><a href="#USR-EXH-03"><code>EXH-03</code><span>초대장 랜딩 ⭐</span></a></li>
           <li><a href="#USR-EXH-04"><code>EXH-04</code><span>작품 공유 (Deprecated)</span></a></li>
@@ -450,6 +451,7 @@
           <li><a href="#USR-UPL-01"><code>UPL-01</code><span>유형 선택</span></a></li>
           <li><a href="#USR-UPL-02"><code>UPL-02</code><span>역할 선택</span></a></li>
           <li><a href="#USR-UPL-03"><code>UPL-03</code><span>업로드 메인 ⭐</span></a></li>
+          <li><a href="#USR-UPL-03b"><code>UPL-03b</code><span>반려 편집 모드 ⭐</span></a></li>
           <li><a href="#USR-UPL-04"><code>UPL-04</code><span>세부정보</span></a></li>
           <li><a href="#USR-UPL-05"><code>UPL-05</code><span>이미지 재정렬</span></a></li>
           <li><a href="#USR-UPL-06"><code>UPL-06</code><span>작가 지정</span></a></li>
@@ -571,6 +573,13 @@
           <li><a href="#ADM-CKL-01"><code>CKL-01</code><span>체크리스트</span></a></li>
           <li><a href="#ADM-ISU-01"><code>ISU-01</code><span>미결 이슈</span></a></li>
           <li><a href="#ADM-INQ-01"><code>INQ-01</code><span>문의함</span></a></li>
+        </ul>
+      </li>
+
+      <li>
+        <div class="group">🔁 공통 다이얼로그 (CM)</div>
+        <ul>
+          <li><a href="#CM-02"><code>CM-02</code><span>로그인 유도 모달 ⭐</span></a></li>
         </ul>
       </li>
     </ul>
@@ -2616,6 +2625,96 @@
     <div class="slide-foot"><span>Artier 화면 설계서 v1.4 (PC)</span><span>USR-EXH-01 · 전시 상세</span></div>
   </section>
 
+  <!-- ───────── 화면: 전시 상세 — 본인·배지 변형 (PC) ───────── -->
+  <section class="slide" id="USR-EXH-01b">
+    <div class="slide-pad">
+      <div class="slide-head">
+        <div><div class="crumb">10 · 전시</div><h2>전시 상세 · 본인 시점 + 배지 ⭐ 변형</h2></div>
+        <div class="meta"><span class="role">USR</span><span class="id">USR-EXH-01</span><span class="device">PC</span><span class="ver">v1.4 변형</span></div>
+      </div>
+
+      <div class="screen">
+        <div class="mock">
+          <div class="pc-frame">
+            <div class="chrome">
+              <span class="dots"><span></span><span></span><span></span></span>
+              <span class="url">artier.com/exhibitions/exh-009</span>
+            </div>
+            <div class="viewport" style="background: rgba(0,0,0,.4);">
+              <div class="pc-modal" style="inset: 4% 8%; display: flex; flex-direction: column;">
+                <!-- 본인 한정 검수 안내 배너 (상단) -->
+                <div style="background: var(--line); padding: 9px 18px; font-size: 11.5px; color: var(--ink-2); border-bottom: 1px solid var(--line-2); position: relative;">
+                  ⏳ 검수 중 — 1~24시간 내 결과를 알림으로 알려드려요. 검수 통과 후 둘러보기·검색에 노출됩니다.
+                  <span class="bub" style="position: absolute; top: -10px; right: 16px;">1</span>
+                </div>
+
+                <div class="pc-modal-head">
+                  <span style="display: flex; align-items: center; gap: 6px;">
+                    봄날의 풍경 · ○○○ 작가
+                    <!-- Pick 배지 (공개) -->
+                    <span style="background: #fef3c7; color: #78350f; padding: 2px 8px; border-radius: 10px; font-size: 9.5px; font-weight: 700; border: 1px solid #f59e0b; position: relative;">⭐ Pick<span class="bub" style="position: absolute; top: -10px; right: -10px;">2</span></span>
+                    <!-- 강사 배지 (공개) -->
+                    <span style="background: #ecfdf5; color: #047857; padding: 2px 8px; border-radius: 10px; font-size: 9.5px; font-weight: 700; border: 1px solid #059669; position: relative;">📚 강사<span class="bub" style="position: absolute; top: -10px; right: -10px;">3</span></span>
+                    <!-- 검수 상태 배지 (본인 한정) -->
+                    <span style="background: var(--line); color: var(--ink-2); padding: 2px 8px; border-radius: 10px; font-size: 9.5px; font-weight: 700; border: 1px solid var(--line-2); position: relative;">검수 중<span class="bub" style="position: absolute; top: -10px; right: -10px;">4</span></span>
+                  </span>
+                  <span style="font-size: 11px; color: var(--ink-3);">✕</span>
+                </div>
+                <div class="pc-modal-body" style="display: grid; grid-template-columns: 1.4fr 1fr; gap: 18px; padding: 0;">
+                  <div style="background: linear-gradient(135deg, #fef3c7, #fecaca, #ddd6fe); position: relative; border-radius: 0 0 0 12px;">
+                    <div style="position: absolute; top: 12px; right: 12px; background: rgba(0,0,0,.6); color: white; padding: 4px 10px; font-size: 11px; border-radius: 4px;">1 / 6</div>
+                  </div>
+                  <div style="padding: 18px 22px 14px; display: flex; flex-direction: column; gap: 14px;">
+                    <div>
+                      <div style="font-size: 16px; font-weight: 700;">봄날의 풍경</div>
+                      <div style="font-size: 11px; color: var(--ink-3);">○○○ 작가 · 그룹전 · 작품 5점</div>
+                    </div>
+                    <div style="display: flex; gap: 8px;">
+                      <div style="padding: 8px 14px; border: 1px solid var(--line); border-radius: 6px; font-size: 11px;">♡ 좋아요</div>
+                      <div style="padding: 8px 14px; border: 1px solid var(--line); border-radius: 6px; font-size: 11px;">📌 저장</div>
+                      <div style="padding: 8px 14px; border: 1px solid var(--line); border-radius: 6px; font-size: 11px;">📤 공유</div>
+                    </div>
+                    <div style="font-size: 11px; color: var(--ink-3); padding: 8px 10px; background: #fafafa; border-radius: 6px;">📍 본인 전시 — 수정·삭제는 마이페이지 점점점 메뉴에서</div>
+                    <div style="font-size: 11px; color: var(--ink-3); border-top: 1px solid var(--line); padding-top: 10px; margin-top: auto;">🚩 신고 (본인엔 비노출)</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="placeholder-note">본인 시점 — 검수 중 배너 + Pick·강사·검수 배지 동시 노출</div>
+        </div>
+
+        <div class="desc">
+          <h3>화면 정보</h3>
+          <dl>
+            <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> USR-EXH-01과 동일. 본인 업로더이거나 배지 부착된 전시일 때 추가 요소 노출</dd>
+            <dt></dt><dd><strong>표시 분기</strong> 검수 상태 배지·"본인 전시" 안내·신고 비노출 = <strong>본인 한정</strong>. Pick·강사 배지 = 공개</dd>
+          </dl>
+
+          <h3>구성 요소</h3>
+          <dl>
+            <dt><span class="bub">1</span></dt><dd>본인 한정 상단 배너 — 상태별(<code>pending</code>: 회색 / <code>rejected</code>: 빨강 / <code>hidden</code>: 주황). 외부엔 모달 진입 차단 또는 정상 노출</dd>
+            <dt><span class="bub">2</span></dt><dd>Pick 배지 — 공개. ADM-PCK-01에서 운영자가 부여. 영구 이력</dd>
+            <dt><span class="bub">3</span></dt><dd>강사 배지 — 공개. <code>isInstructorUpload === true</code> 자동 파생</dd>
+            <dt><span class="bub">4</span></dt><dd>검수 상태 배지 — 본인 한정. 4종(pending·approved·rejected·hidden)</dd>
+          </dl>
+
+          <div class="callout info">검수 중 / 반려됨 / 비공개 상태에서 본인이 모달 열면 위 배너가 자동 노출. 일반 외부 사용자는 비공개 전시 자체에 접근 불가.</div>
+
+          <div class="ac"><h4>완성 기준</h4><ol>
+            <li>본인 = <code>work.artistId === currentUser.id</code> 일 때만 검수 배지·안내 배너 노출</li>
+            <li>Pick·강사 배지는 공개. 모든 사용자에게 동일 표시</li>
+            <li><code>rejected</code> 상태는 외부 모달 진입 자체를 차단(USR-PRF-12로 우회)</li>
+            <li>본인엔 신고 진입점 비노출, 외부엔 노출</li>
+          </ol></div>
+
+          <div class="pol"><h4>관련 정책</h4>검수 SLA (Policy §22.1) · Pick (§15.3) · 강사 (07-4)</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-foot"><span>Artier 화면 설계서 v1.4 (PC)</span><span>USR-EXH-01 · 본인·배지 변형</span></div>
+  </section>
+
 
   <!-- ───────── 화면: 큐레이션 전시 상세 (PC) ───────── -->
   <section class="slide" id="USR-EXH-02">
@@ -3224,6 +3323,99 @@
       </div>
     </div>
     <div class="slide-foot"><span>Artier 화면 설계서 v1.4 (PC)</span><span>USR-UPL-03 · 업로드 메인</span></div>
+  </section>
+
+  <!-- ───────── 화면: 업로드 메인 — 반려 편집 모드 변형 (PC) ───────── -->
+  <section class="slide" id="USR-UPL-03b">
+    <div class="slide-pad">
+      <div class="slide-head">
+        <div><div class="crumb">11 · 업로드</div><h2>업로드 메인 · 반려 편집 모드 ⭐ 변형</h2></div>
+        <div class="meta"><span class="role">USR</span><span class="id">USR-UPL-03</span><span class="device">PC</span><span class="ver">v1.4 변형</span></div>
+      </div>
+
+      <div class="screen">
+        <div class="mock">
+          <div class="pc-frame">
+            <div class="chrome">
+              <span class="dots"><span></span><span></span><span></span></span>
+              <span class="url">artier.com/upload?edit=exh-009</span>
+            </div>
+            <div class="viewport" style="background: white; padding: 0; display: flex; flex-direction: column;">
+              <!-- 빨강 인라인 배너 -->
+              <div style="background: #fef2f2; border-bottom: 2px solid #dc2626; padding: 14px 24px; display: flex; gap: 12px; align-items: flex-start; position: relative;">
+                <div style="font-size: 18px;">⚠️</div>
+                <div style="flex: 1;">
+                  <div style="font-size: 13px; font-weight: 700; color: #7f1d1d; margin-bottom: 4px;">이 전시는 '저작권 의심' 사유로 반려되었어요</div>
+                  <div style="font-size: 11.5px; color: #7f1d1d; line-height: 1.6;">위 안내를 참고해 수정 후 다시 발행해 주세요. <strong>(반복 반려: 2회)</strong> · 운영자 메모: "본인 원작임을 입증할 수 있는 작업 과정 자료를 함께 첨부해주시면 좋겠습니다."</div>
+                </div>
+                <span class="bub" style="position: absolute; top: -10px; right: 16px;">1</span>
+              </div>
+
+              <!-- 헤더 -->
+              <div style="padding: 14px 24px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 12px;">
+                <span style="background: #fef2f2; color: #991b1b; padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 700;">수정 중 · 반려됨</span>
+                <div style="font-size: 13px; font-weight: 700;">미완성 풍경</div>
+                <div style="margin-left: auto; font-size: 11px; color: var(--ink-3);">3 / 10 이미지</div>
+              </div>
+
+              <!-- 이미지 변경 안내 -->
+              <div style="background: #fff7ed; border-left: 3px solid #f97316; padding: 10px 14px; margin: 14px 24px 10px; border-radius: 0 4px 4px 0; font-size: 11.5px; color: #7c2d12; position: relative;">
+                💡 이미지를 바꾸셨어요 — 발행하면 검수가 다시 진행돼요
+                <span class="bub" style="position: absolute; top: -10px; right: -10px;">2</span>
+              </div>
+
+              <!-- 이미지 그리드 -->
+              <div style="padding: 8px 24px 18px; display: grid; grid-template-columns: repeat(5, 1fr); gap: 10px;">
+                <div style="aspect-ratio: 1; background: linear-gradient(135deg, #fef3c7, #fecaca); border-radius: 6px; position: relative;"><span style="position: absolute; top: 4px; left: 4px; background: white; font-size: 10px; padding: 2px 6px; border-radius: 8px;">1</span></div>
+                <div style="aspect-ratio: 1; background: linear-gradient(135deg, #d1fae5, #dbeafe); border-radius: 6px; position: relative;"><span style="position: absolute; top: 4px; left: 4px; background: white; font-size: 10px; padding: 2px 6px; border-radius: 8px;">2</span><span style="position: absolute; top: 4px; right: 4px; background: #f97316; color: white; font-size: 9px; padding: 1px 5px; border-radius: 3px;">교체</span></div>
+                <div style="aspect-ratio: 1; background: linear-gradient(135deg, #ddd6fe, #fef3c7); border-radius: 6px;"></div>
+                <div style="aspect-ratio: 1; border: 2px dashed var(--line-2); border-radius: 6px; display: flex; align-items: center; justify-content: center; color: var(--ink-3); font-size: 16px;">+</div>
+              </div>
+
+              <!-- 하단 CTA — 라벨 변경됨 -->
+              <div style="margin-top: auto; padding: 14px 24px; border-top: 1px solid var(--line); display: flex; gap: 10px; align-items: center; position: relative;">
+                <div style="border: 1px solid var(--line-2); padding: 11px 22px; border-radius: 8px; font-size: 13px; color: var(--ink-2);">초안 저장</div>
+                <div style="margin-left: auto; background: var(--ink); color: white; padding: 11px 28px; border-radius: 8px; font-size: 13.5px; font-weight: 700;">다시 검수 요청하기</div>
+                <span class="bub" style="position: absolute; top: -10px; right: 24px;">3</span>
+              </div>
+            </div>
+          </div>
+          <div class="placeholder-note">반려된 전시 편집 진입 시 — 빨강 배너 + 재검수 트리거 안내 + CTA 라벨 변경</div>
+        </div>
+
+        <div class="desc">
+          <h3>화면 정보</h3>
+          <dl>
+            <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> USR-PRF-12 반려 사유 모달 → "수정하기" → `/upload?edit=&lt;workId&gt;` (feedReviewStatus='rejected')</dd>
+            <dt></dt><dd><strong>차이점</strong> 일반 USR-UPL-03과 같은 화면이지만 반려 컨텍스트 진입 시 인라인 배너·라벨이 자동 분기</dd>
+          </dl>
+
+          <h3>구성 요소</h3>
+          <dl>
+            <dt><span class="bub">1</span></dt><dd>빨강 인라인 사유 배너 — 닫기 없음(편집 끝까지 유지). 사유 라벨 + 운영자 메모 + 반복 반려 N회</dd>
+            <dt><span class="bub">2</span></dt><dd>이미지 변경 안내 — 이미지를 바꾸면 재검수가 트리거됨(Policy §12.1.2 매트릭스)</dd>
+            <dt><span class="bub">3</span></dt><dd>CTA 라벨 변경 — "전시하기" → "다시 검수 요청하기"</dd>
+          </dl>
+
+          <div class="copy"><h4>주요 카피</h4>
+            <span class="copy-line">"이 전시는 '{사유 라벨}' 사유로 반려되었어요"</span>
+            <span class="copy-line">"위 안내를 참고해 수정 후 다시 발행해 주세요. (반복 반려: N회)"</span>
+            <span class="copy-line">"이미지를 바꾸셨어요 — 발행하면 검수가 다시 진행돼요"</span>
+            <span class="copy-line">CTA: "다시 검수 요청하기"</span>
+          </div>
+
+          <div class="ac"><h4>완성 기준 (재발행 시 동작)</h4><ol>
+            <li><code>rejectionReason</code>을 <code>null</code>로 초기화 (현재 사유 사라짐)</li>
+            <li><code>rejectionHistory</code>는 <strong>보존</strong> (Policy §12.1.1 누적 이력)</li>
+            <li>이미지 변경 여부에 따라 <code>feedReviewStatus</code> 전이(<code>pending</code> 복귀 또는 <code>approved</code> 즉시)</li>
+            <li>"다시 검수가 시작되었어요" 인앱 토스트</li>
+          </ol></div>
+
+          <div class="pol"><h4>관련 정책</h4>반려 사유 이력 (Policy §12.1.1) · 검수 트리거 매트릭스 (§12.1.2)</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-foot"><span>Artier 화면 설계서 v1.4 (PC)</span><span>USR-UPL-03 · 반려 편집 변형</span></div>
   </section>
 
 
@@ -3835,8 +4027,12 @@
                     <span class="bub" style="position: absolute; top: -10px; right: -10px;">1</span>
                   </div>
                   <div style="flex: 1;">
-                    <div style="font-size: 22px; font-weight: 700;">○○○ 작가</div>
-                    <div style="font-size: 12px; color: var(--ink-3);">@artist123 · 📍 대한민국 · 서울</div>
+                    <div style="display: flex; align-items: center; gap: 8px; flex-wrap: wrap; position: relative;">
+                      <div style="font-size: 22px; font-weight: 700;">○○○ 작가</div>
+                      <span style="background: #ecfdf5; color: #047857; padding: 3px 9px; border-radius: 12px; font-size: 10.5px; font-weight: 700; border: 1px solid #059669;">📚 강사</span>
+                      <span class="bub" style="position: absolute; top: -10px; right: -10px;">5</span>
+                    </div>
+                    <div style="font-size: 12px; color: var(--ink-3);">@artist123 · 📍 대한민국 · 서울 · 수채화로 봄을 그립니다</div>
                     <div style="font-size: 12px; color: var(--ink-2); margin-top: 8px; max-width: 480px; line-height: 1.5;">
                       매일 그림을 그리는 70대 작가입니다. 손주들에게 보여주려고 시작했어요.
                     </div>
@@ -3881,6 +4077,7 @@
             <dt><span class="bub">2</span></dt><dd>지표 — 전시·팔로워·팔로잉. 클릭 시 모달</dd>
             <dt><span class="bub">3</span></dt><dd>액션 — 본인은 편집·설정. 타인은 팔로우·메시지 (메시지는 Phase 2)</dd>
             <dt><span class="bub">4</span></dt><dd>탭 — 전시·내 작품·수강생 작품·좋아요·저장·초안. 가로로 펼쳐짐</dd>
+            <dt><span class="bub">5</span></dt><dd>강사 배지 — <strong>자동 파생</strong>. <code>workStore.some(w =&gt; w.artistId === id &amp;&amp; w.isInstructorUpload === true)</code>. 한 번이라도 강사 ON 작품 발행하면 자동 노출, 모두 삭제 시 자동 비노출. 별도 토글 UI 없음 (정책 07-4)</dd>
           </dl>
 
           <h3>탭별 가시성</h3>
@@ -4888,7 +5085,7 @@
     <div class="slide-pad">
       <div class="slide-head">
         <div><div class="crumb">15 · 이벤트</div><h2>이벤트 목록</h2></div>
-        <div class="meta"><span class="role">USR</span><span class="id">USR-EVT-01</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
+        <div class="meta"><span class="role">USR</span><span class="id">USR-EVT-01</span><span class="device">PC</span><span class="ver">v1.4</span></div>
       </div>
 
       <div class="screen">
@@ -4898,25 +5095,32 @@
               <span class="dots"><span></span><span></span><span></span></span>
               <span class="url">artier.com/events</span>
             </div>
-            <div style="background: white; height: 100%; display: flex; flex-direction: column;">
-                            <span class="url">artier.com</span>
-            </div>
-            <div style="padding: 11px 22px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 18px; background: white;">
-              <div style="font-weight: 800; font-size: 14px;">Artier</div>
-              <div style="display: flex; gap: 16px; flex: 1;"><span class="" style="font-size: 11.5px; color: var(--ink-3); font-weight: 400;">둘러보기</span><span class="" style="font-size: 11.5px; color: var(--ink-3); font-weight: 400;">검색</span><span class="active" style="font-size: 11.5px; color: var(--ink); font-weight: 600;">이벤트</span><span class="" style="font-size: 11.5px; color: var(--ink-3); font-weight: 400;">알림</span><span class="" style="font-size: 11.5px; color: var(--ink-3); font-weight: 400;">프로필</span></div>
-              <div style="display: flex; gap: 8px; align-items: center;">
+            <div class="viewport" style="background: white; display: flex; flex-direction: column; padding: 0;">
+              <div style="padding: 11px 22px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 18px;">
+                <div style="font-weight: 800; font-size: 14px;">Artier</div>
+                <div style="display: flex; gap: 16px; flex: 1; font-size: 11.5px;">
+                  <span style="color: var(--ink-3);">둘러보기</span>
+                  <span style="color: var(--ink-3);">검색</span>
+                  <span style="color: var(--ink); font-weight: 600;">이벤트</span>
+                  <span style="color: var(--ink-3);">알림</span>
+                  <span style="color: var(--ink-3);">프로필</span>
+                </div>
                 <div style="width: 26px; height: 26px; border-radius: 50%; background: linear-gradient(135deg, #fef3c7, #fecaca);"></div>
               </div>
-            </div>
               <div style="padding: 18px 24px; flex: 1; overflow-y: auto;">
                 <div style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">이벤트</div>
                 <div style="font-size: 12px; color: var(--ink-3); margin-bottom: 16px;">진행 중인 공모전·기획전을 만나보세요</div>
                 <div style="aspect-ratio: 16/5; background: linear-gradient(135deg, #fef3c7, #fecaca, #ddd6fe); border-radius: 10px; padding: 24px; display: flex; flex-direction: column; justify-content: flex-end; position: relative; margin-bottom: 24px;">
                   <span style="display: inline-block; background: var(--ink); color: white; padding: 3px 10px; border-radius: 12px; font-size: 10.5px; font-weight: 700; align-self: flex-start; margin-bottom: 6px;">진행 중 · D-12</span>
                   <div style="font-size: 18px; font-weight: 800;">2026 봄 시니어 작가 공모전</div>
-                  <div style="font-size: 11px; color: var(--ink-2); margin-top: 2px;">2026.04.01 — 2026.04.30</div>
+                  <div style="font-size: 11px; color: var(--ink-2); margin-top: 2px; margin-bottom: 14px;">2026.04.01 — 2026.04.30</div>
+                  <div style="display: flex; gap: 8px; align-items: center; position: relative;">
+                    <span style="background: var(--ink); color: white; padding: 9px 20px; border-radius: 8px; font-size: 12.5px; font-weight: 700;">참여하기 →</span>
+                    <span style="background: white; color: var(--ink); padding: 9px 16px; border: 1px solid var(--line-2); border-radius: 8px; font-size: 12.5px;">자세히 보기</span>
+                    <span class="bub" style="position: absolute; top: -10px; right: -10px;">3</span>
+                  </div>
                   <div style="position: absolute; bottom: 12px; right: 16px; display: flex; gap: 4px;"><span style="width: 8px; height: 2px; background: white; border-radius: 1px;"></span><span style="width: 8px; height: 2px; background: rgba(255,255,255,.5); border-radius: 1px;"></span></div>
-                  <span class="bub" style="position: absolute; top: -10px; right: -10px;">1</span>
+                  <span class="bub" style="position: absolute; top: -10px; left: -10px;">1</span>
                 </div>
                 <div style="font-size: 12px; color: var(--ink-3); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 8px;">예정</div>
                 <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; position: relative;">
@@ -4937,7 +5141,7 @@
               </div>
             </div>
           </div>
-          <div class="placeholder-note">히어로 캐러셀 + 진행/예정/종료 섹션</div>
+          <div class="placeholder-note">PC 헤더 + 히어로 캐러셀 + 진행/예정/종료</div>
         </div>
 
         <div class="desc">
@@ -4951,10 +5155,11 @@
           <dl>
             <dt><span class="bub">1</span></dt><dd>히어로 캐러셀 — embla, 닷 인디케이터. 활성 이벤트만</dd>
             <dt><span class="bub">2</span></dt><dd>예정 카드 — "알림 받기"(USR-EVT-03 모달)</dd>
+            <dt><span class="bub">3</span></dt><dd>참여 CTA — 1차 "참여하기" → USR-UPL-03 `?event=&lt;id&gt;` / 2차 "자세히 보기" → USR-EVT-02</dd>
           </dl>
 
           <div class="ac"><h4>완성 기준</h4><ol>
-            <li>"참여하기" → USR-UPL-03 `?event=<id>`</li>
+            <li>"참여하기" → USR-UPL-03 `?event=&lt;id&gt;`</li>
             <li>"알림 받기" → USR-EVT-03 모달</li>
             <li>종료 이벤트는 회색 + 클릭 시 결과 페이지 (Phase 2)</li>
           </ol></div>
@@ -7586,6 +7791,91 @@
       </div>
     </div>
     <div class="slide-foot"><span>Artier 화면 설계서 v1.4 (PC)</span><span>ADM-INQ-01 · 문의함</span></div>
+  </section>
+
+  <!-- ───────── 화면: CM-02 로그인 유도 모달 (PC) ───────── -->
+  <section class="slide" id="CM-02">
+    <div class="slide-pad">
+      <div class="slide-head">
+        <div><div class="crumb">28 · 공통 다이얼로그</div><h2>CM-02 · 로그인 유도 모달</h2></div>
+        <div class="meta"><span class="role">CM</span><span class="id">CM-02</span><span class="device">PC</span><span class="ver">v1.4</span></div>
+      </div>
+
+      <div class="screen">
+        <div class="mock">
+          <div class="pc-frame">
+            <div class="chrome">
+              <span class="dots"><span></span><span></span><span></span></span>
+              <span class="url">artier.com/exhibitions/exh-001</span>
+            </div>
+            <div class="viewport" style="background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; gap: 24px; padding: 24px;">
+              <!-- 상태 A: 첫 시도 → 모달 -->
+              <div style="background: white; width: 360px; border-radius: 12px; padding: 26px 28px; box-shadow: 0 20px 50px rgba(0,0,0,.3); position: relative;">
+                <div style="font-size: 11px; color: var(--ink-3); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 6px;">상태 A · 첫 시도</div>
+                <div style="font-size: 36px; margin-bottom: 12px;">♡</div>
+                <div style="font-size: 16px; font-weight: 700; margin-bottom: 8px; position: relative;">로그인하면 좋아요를 누를 수 있어요
+                  <span class="bub" style="position: absolute; top: -8px; right: -10px;">1</span>
+                </div>
+                <div style="font-size: 12px; color: var(--ink-2); line-height: 1.7; margin-bottom: 18px;">작가에게 좋아요를 보내주세요. 가입 1분이면 끝나요.</div>
+                <div style="display: flex; flex-direction: column; gap: 8px; position: relative;">
+                  <div style="background: var(--ink); color: white; padding: 11px; border-radius: 8px; font-size: 13px; font-weight: 600; text-align: center;">로그인 · 가입하기</div>
+                  <div style="font-size: 12px; color: var(--ink-3); text-align: center; padding: 8px;">나중에</div>
+                  <span class="bub" style="position: absolute; top: -10px; right: -10px;">2</span>
+                </div>
+              </div>
+              <!-- 상태 B: 재시도 → 토스트 -->
+              <div style="background: white; width: 360px; border-radius: 12px; padding: 22px 26px; box-shadow: 0 20px 50px rgba(0,0,0,.3); position: relative; align-self: flex-start; margin-top: 60px;">
+                <div style="font-size: 11px; color: var(--ink-3); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 6px;">상태 B · 재시도(같은 세션)</div>
+                <div style="display: flex; gap: 12px; align-items: center; padding: 12px 14px; background: var(--ink); color: white; border-radius: 8px; position: relative;">
+                  <span style="font-size: 16px;">💡</span>
+                  <div style="flex: 1; font-size: 12px; line-height: 1.5;">로그인하면 좋아요·저장·팔로우를 사용할 수 있어요</div>
+                  <span style="background: white; color: var(--ink); padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 700;">로그인</span>
+                  <span class="bub" style="position: absolute; top: -10px; right: -10px;">3</span>
+                </div>
+                <div style="font-size: 11px; color: var(--ink-3); margin-top: 14px; line-height: 1.6;">시니어 친화 — 같은 세션에서 모달 반복 차단. 토스트로만 리마인드.</div>
+              </div>
+            </div>
+          </div>
+          <div class="placeholder-note">A: 첫 시도 풀 모달 / B: 재시도 토스트만</div>
+        </div>
+
+        <div class="desc">
+          <h3>화면 정보</h3>
+          <dl>
+            <dt><span class="bub outline">i</span></dt><dd><strong>호출</strong> 비로그인 보호 액션 — 좋아요·저장·팔로우·신고·신작 업로드</dd>
+            <dt></dt><dd><strong>리다이렉트</strong> "로그인" 버튼 → `/login?redirect=&lt;현재 경로&gt;`</dd>
+            <dt></dt><dd><strong>시니어 UX 규칙</strong> 같은 세션 내 모달은 1회만. 두 번째부턴 토스트로만 리마인드</dd>
+          </dl>
+
+          <h3>구성 요소</h3>
+          <dl>
+            <dt><span class="bub">1</span></dt><dd>맥락 카피 — 어떤 액션을 시도했는지 호명 ("좋아요" "저장" "팔로우" 등 자동 분기)</dd>
+            <dt><span class="bub">2</span></dt><dd>1차 CTA "로그인 · 가입하기" / 2차 "나중에"</dd>
+            <dt><span class="bub">3</span></dt><dd>재시도 토스트 — 짧게, 인라인 로그인 액션만</dd>
+          </dl>
+
+          <div class="copy"><h4>주요 카피 (액션별 분기)</h4>
+            <span class="copy-line">좋아요: "로그인하면 좋아요를 누를 수 있어요"</span>
+            <span class="copy-line">저장: "로그인하면 마음에 드는 작품을 저장할 수 있어요"</span>
+            <span class="copy-line">팔로우: "로그인하면 작가를 팔로우할 수 있어요"</span>
+            <span class="copy-line">신고: "로그인하면 신고를 보낼 수 있어요"</span>
+            <span class="copy-line">업로드: "로그인하면 작품을 올릴 수 있어요"</span>
+            <span class="copy-line">토스트: "로그인하면 좋아요·저장·팔로우를 사용할 수 있어요"</span>
+          </div>
+
+          <div class="ac"><h4>완성 기준</h4><ol>
+            <li>같은 세션 내 1회만 모달, 그 다음부터 토스트</li>
+            <li>호출 시점의 액션을 카피에 자동 반영</li>
+            <li>"나중에" 닫아도 redirect 파라미터 보존</li>
+            <li>로그인 후 원래 페이지로 자동 복귀</li>
+            <li>최소 클릭 영역 44×44</li>
+          </ol></div>
+
+          <div class="pol"><h4>관련 정책</h4>가입·인증 (07-2) · 시니어 친화 (07-3)</div>
+        </div>
+      </div>
+    </div>
+    <div class="slide-foot"><span>Artier 화면 설계서 v1.4 (PC)</span><span>CM-02 · 로그인 유도</span></div>
   </section>
 
 
