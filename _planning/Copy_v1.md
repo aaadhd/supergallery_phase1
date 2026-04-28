@@ -1169,6 +1169,10 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'settings.fontScale_small': '작게',
   'settings.fontScale_medium': '보통',
   'settings.fontScale_large': '크게',
+  'settings.sectionTheme': '화면 테마',
+  'settings.themeIntro': '화면을 밝게 또는 어둡게 표시합니다. 변경 사항은 즉시 적용됩니다.',
+  'settings.theme_light': '밝게',
+  'settings.theme_dark': '어둡게',
   'settings.sectionNotif': '알림 설정',
   'settings.notifIntro': '선택 알림은 끄거나 켤 수 있습니다. 변경 사항은 즉시 저장됩니다.',
   'settings.notifOptionalGroup': '선택 알림',
@@ -2361,6 +2365,10 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points are Phase
   'settings.fontScale_small': 'Small',
   'settings.fontScale_medium': 'Default',
   'settings.fontScale_large': 'Large',
+  'settings.sectionTheme': 'Theme',
+  'settings.themeIntro': 'Display the app in light or dark mode. Changes apply immediately.',
+  'settings.theme_light': 'Light',
+  'settings.theme_dark': 'Dark',
   'settings.sectionNotif': 'Notifications',
   'settings.notifIntro': 'Optional alerts can be turned on or off. Changes save immediately.',
   'settings.notifOptionalGroup': 'Optional',
@@ -2602,6 +2610,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.8 | 2026-04-28 | PM × Claude | **설정 화면 i18n 누락 보강** — 글자 크기 토글 라벨 3쌍(작게·보통·크게 / Small·Default·Large)과 화면 테마 섹션 4쌍(섹션 헤더·인트로·밝게·어둡게 / Theme·Light·Dark) 추가. 사용자 모집 직전 발견된 i18n 키 노출 결함 정합. |
 | v1.7 | 2026-04-28 | PM × Claude | **데드코드 일괄 청소** — (1) 미사용 i18n 키 116쌍(ko+en 232 entries) 제거 — `upload.*` UI 폐기 흔적 47개(cancelConfirm·contentTools·cover·disclaimer·editMode·errPublish·eventLinked·toolbarPadding·hintEmpty·linkPiece·preview·groupHint·workDetail 등), `workDetail.*` 8개(copyInviteCard·groupLine·kakaoShare·participantCount·instructorUpload·toastInvite 등), `workInquiry.*` 5개 카테고리 hint, `settings.*` 14개(fontScale·langKo·theme·sectionLang·socialDemoNote 등), `search.*` 9개(suggest1~6·suggestedKeywords), `signup.*` 2개, `report.*` 3개, `review.*` 2개, `login.*` 4개, `invite.expiredBody`·`sharePublishedToast`, `onboarding.email*`·`later`, `profile.share`·`tagged`·`addLink`·`linkLabelPh`, `events.promo*`·`viewDetail`, `browse.*` 4개, `admin.nav.eventParticipants`, `footer.demoLink`, `workCard.collectible`. (2) shadcn/ui 미사용 26개 컴포넌트 파일 삭제 (accordion·alert·aspect-ratio·breadcrumb·calendar·carousel·collapsible·command·context-menu·form·input-otp·menubar·navigation-menu·pagination·radio-group·resizable·scroll-area·sheet·sidebar·skeleton·slider·sonner·switch·toggle·toggle-group·use-mobile). (3) `sanctionStore.ts` 폐기(Phase 2 준비용 0 호출부 — 메모리 규칙 정합). (4) `useDraftStore`·`useAccountSuspensionStore` 미사용 hook 제거. (5) `AdminGuard.tsx` 미사용 컴포넌트 제거. (6) `ImageArtistAssignment.phoneNumber` 필드 + Upload·Profile의 항상 false 분기 일괄 정리(Policy §3 v2.14 토큰 모델 정합). (7) `ExhibitionWorkShareLanding`의 미사용 `getCoverImage` import 정리. |
 | v1.6 | 2026-04-27 | PM × Claude | **시니어 친화 카피 7건 톤 정리** (서비스 논리 감사 후속) — (1) `claim.findMyWorksWarning` 위협 톤("잘못 선택하면 알림이 갑니다") → 안심 + 회복 경로 명시("잘못 고르셔도 작가님이 풀어주실 수 있어요. 편하게 골라보세요"). (2) `claim.confirmBody` 알리는 방법 모호 → 구체화("카톡·문자 등으로 작가님께 말씀해 주세요"). (3) `invite.shareNotReady` 기술 용어("검수 통과 후 활성화") → 평이("공개되면 알릴 수 있어요"). (4) `invite.tokenExpired` "다시 받으세요" → "새 링크를 부탁해 주세요". (5) `claim.alreadyTaken` 피해자 톤("이미 다른 분이 가져갔어요") → 액션 유도("이 자리는 이미 다른 분이 연결됐어요. 본인 작품이 맞다면 작가님께 말씀해 주세요"). (6) `invite.notifAutoMatched` 수동태("연결되었어요") → 능동·축하 + 슬롯 풀기 진입점 안내("'{name}' 님이 본인 작품을 골라 '{title}'에 들어왔어요. 잘못 연결됐다면 전시 편집에서 풀 수 있어요"). (7) `onboarding.inviteNotice` "작가님이 보내주신" → "친구가 보내주신" (가입자 입장 일관). (8) `invite.shareDialogTitle` "초대 링크 공유" → "초대 링크 보내기" (CTA 톤 일관). 모두 ko/en 양측 동일 톤 정합. **시스템 정합** — `reportsStore.appendUserReport`에서 신고 2회 누적으로 자동 비공개될 때 `deactivateInviteToken` 동시 호출, `maybeRestoreAfterDismiss`에서 기각 복원 시 `activateInviteToken` 동시 호출 (Policy §3.4 정합 누수 보강). **Nielsen 휴리스틱 후속 신규 i18n 키 9쌍(ko/en)** — (1) `review.notifSubmitted` 검수 시작 알림(작가에게 발행 직후 1건). (2) `invite.shareLinkExpiresIn` 토큰 만료 D-N 노출(InviteShareButton 다이얼로그). (3) `claim.singleCardSafetyNote` 카드 1개일 때만 안전 신호 ("아래 작품이 정말 본인이 그린 그림이 맞으면 눌러주세요"). (4) `claim.skipReassured` 스킵 후 안심 토스트("마음 바뀌시면 작가님께 카톡 등으로 말씀해 주세요. 새 초대 링크를 다시 받으실 수 있어요"). (5) `profile.nonMemberSlotsLabel/More/Unnamed` 마이페이지 전시 카드 비회원 슬롯 인디케이터 3쌍. (6) `faq.q11~q14`+`faq.a11~a14` 토큰 모델 FAQ 4쌍 신설(친구 초대·자동 연결 안 됨·잘못 연결·만료) + `faq.q7/a7` 옛 SMS 발송 톤 → 토큰 톤 정정. **잔재 카피 정정** — `flowMap.section12`(?from=invite)·`footer.qaExhibitionInvite`·`footer.qaExhibitionCredited` 옛 `?from=*` URL 흔적을 토큰 모델로 정정 또는 폐기 표기. |
 | v1.5 | 2026-04-27 | PM × Claude | **비회원 초대 토큰 모델 카피 정리** (Policy v2.14 / 단계 4 연동) — 초대 랜딩 신규 카피 6키(`invite.landingHeadline`·`landingCta`·`landingBrowse`·`tokenInactive`·`tokenRevoked`·`tokenExpired`, ko/en) 신설하여 작가 직접 공유 톤·토큰 상태별 안내·재요청 안내를 통일. 본인 작품 찾기 신규 카피 9키(`claim.findMyWorksTitle`·`findMyWorksWarning`·`thisIsMine`·`notHere`·`confirmTitle`·`confirmBody`·`confirmYes`·`alreadyTaken`·`doneTitle`·`doneBody`, ko/en) 신설 — 시니어가 잘못 클릭해도 작가가 풀어줄 수 있다는 안전 신호 + 동시 선택 race 안내. Onboarding step 2의 매칭 후보 yes/no 게이트(InviteClaimCheck 카피)는 토큰 기반 카드 그리드로 교체되어 미사용. **단계 5 미사용 키 일괄 제거** — 한국어/영어 양측에서 33쌍 정리: `invite.notifClaimDeclined`·`notifMemberLinked`·`memberFound*`(6키)·`claimCheck*`(5키)·`linkedReminder*`(2키)·`disavow*`(5키)·`notifDisavowed`·`credited*`(8키)·`onboarding.errPhone*`(4키)·`phoneLabel`·`phoneHint`·`phoneInvitedHint`·`phonePlaceholder`·`doneInviteMatched*`(2키). 신규 1쌍 추가: `notifications.categoryInvite`(ko "초대" / en "Invite") — 알림 카테고리 칩에 'invite' 타입 추가. `onboarding.inviteNotice` 카피 재작성("초대 문자에 기재된 전화번호 그대로 입력" → "작가님이 보내주신 초대 링크로 오셨어요. 프로필 설정을 마치면 본인 작품을 직접 골라 연결할 수 있어요"). |
