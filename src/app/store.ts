@@ -61,7 +61,7 @@ export interface Draft {
     url?: string;
     title?: string;
     artist?: { id: string; name: string; avatar: string };
-    nonMemberArtist?: { displayName: string; phoneNumber: string };
+    nonMemberArtist?: { displayName: string };
     artistType?: 'member' | 'non-member' | 'self' | 'unknown';
     fullWidth?: boolean;
   }>;
@@ -366,19 +366,6 @@ export const draftStore = {
       }
     };
   }
-};
-
-// React Hook으로 사용하기 위한 헬퍼
-export const useDraftStore = () => {
-  const [, forceUpdate] = useState({});
-
-  useEffect(() => {
-    return draftStore.subscribe(() => {
-      forceUpdate({});
-    });
-  }, []);
-
-  return draftStore;
 };
 
 // ===== 프로필 데이터 관리 =====
@@ -722,14 +709,6 @@ export const accountSuspensionStore = {
       if (i > -1) suspensionListeners.splice(i, 1);
     };
   },
-};
-
-export const useAccountSuspensionStore = () => {
-  const [, forceUpdate] = useState({});
-  useEffect(() => {
-    return accountSuspensionStore.subscribe(() => forceUpdate({}));
-  }, []);
-  return accountSuspensionStore;
 };
 
 // ===== 탈퇴 후 작가 익명화 (정책: 회원 탈퇴 처리) =====

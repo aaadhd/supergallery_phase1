@@ -6,14 +6,14 @@ import { useWorkStore, useAuthStore } from '../store';
 import { ImageWithFallback } from '../components/ImageWithFallback';
 import { imageUrls } from '../imageUrls';
 import { Button } from '../components/ui/button';
-import { getCoverImage, getImageCount, getThumbCover } from '../utils/imageHelper';
+import { getImageCount, getThumbCover } from '../utils/imageHelper';
 import { displayExhibitionTitle, displayProminentHeadline } from '../utils/workDisplay';
 import { useI18n } from '../i18n/I18nProvider';
 
 /**
- * 작품 단위 공유 링크 (`/exhibitions/:workId?from=work`).
- * 한 링크 = 이 작품(Work) 한 점만 — 같은 전시의 다른 작품은 노출하지 않음.
- * (전시 단위 `?from=invite` 와 구분)
+ * 작품 단위 공유 랜딩 (`/exhibitions/:workId?from=work`) — 레거시 호환.
+ * Policy §10.3 v2.6에서 deprecated. 새 공유 흐름은 전시 단위 (쿼리 없는 URL) 또는
+ * 비회원 초대 토큰(`?invite=<token>`, Policy §3 v2.14)으로 이원화.
  */
 export default function ExhibitionWorkShareLanding() {
   const { id } = useParams<{ id: string }>();

@@ -247,10 +247,11 @@ export default function Onboarding() {
     goNext();
   };
 
-  /** "여기 없어요" — 가입은 계속 진행, 토큰 정리. */
+  /** "여기 없어요" — 가입은 계속 진행, 토큰 정리. 시니어 안심 토스트 1건. */
   const handleClaimSkip = () => {
     setShowClaimScreen(false);
     try { sessionStorage.removeItem('artier_pending_invite_token'); } catch { /* ignore */ }
+    toast.info(t('claim.skipReassured'));
     goNext();
   };
 
@@ -421,6 +422,12 @@ export default function Onboarding() {
                       {t('claim.alreadyTaken')}
                     </p>
                   ) : (
+                    <>
+                    {claimableSlots.length === 1 && (
+                      <p className="mb-3 text-sm text-foreground/80 leading-relaxed">
+                        {t('claim.singleCardSafetyNote')}
+                      </p>
+                    )}
                     <div className="grid grid-cols-2 gap-3 mb-6">
                       {claimableSlots.map((slot) => (
                         <button
@@ -451,6 +458,7 @@ export default function Onboarding() {
                         </button>
                       ))}
                     </div>
+                    </>
                   )}
 
                   <Button

@@ -56,7 +56,7 @@
 ### 페이지
 - `src/app/pages/Upload.tsx` — 작품 업로드 전체 플로우
 - `src/app/pages/ExhibitionDetail.tsx` — 전시 상세
-- `src/app/pages/ExhibitionRoute.tsx` — `?from=invite` 분기 처리
+- `src/app/pages/ExhibitionRoute.tsx` — `?invite=<token>` (Policy §3 v2.14 비회원 초대 토큰) → ExhibitionInviteLanding · `?from=work` (레거시 작품 공유) → ExhibitionWorkShareLanding · 그 외 → Browse + 작품 모달 자동 오픈
 - `src/app/pages/ExhibitionInviteLanding.tsx` — 전시 초대장 오픈 화면 (2026-04-13 신설)
 - `src/app/pages/ExhibitionWorkShareLanding.tsx` — `?from=work` 작품 공유 랜딩
 - `src/app/pages/Profile.tsx` — 강사 표시 자동 파생 (`instructorVisible`)
@@ -66,7 +66,7 @@
 
 ### 컴포넌트
 - `src/app/components/ConfirmDialog.tsx` — 커스텀 확인 다이얼로그 (Radix AlertDialog 기반, Promise API)
-- `src/app/components/WorkDetailModal.tsx` — 공유 URL에 `?from=invite` 자동 부여
+- `src/app/components/WorkDetailModal.tsx` — 일반 공유 URL에 `?from=invite` 흔적 부여 (라우팅상 Browse fallthrough라 작동은 모달 오픈으로 동일. 비회원 초대 토큰 모델은 별도 `InviteShareButton`이 `?invite=<token>` 생성)
 - `src/app/components/PointsBootstrap.tsx` — 부트스트랩 포인트 동기화
 - `src/app/components/WorksStorageSync.tsx` — works 스토리지 버전 동기화
 - `src/app/components/work/CopyrightProtectedImage.tsx` — 우클릭/드래그 차단 이미지 컴포넌트
@@ -78,7 +78,6 @@
 - `src/app/store.ts` — `WORKS_STORAGE_VERSION` 스토리지 버전 관리 (현재 값 `local-gallery-v16`, 키 `artier_works_version`)
 - `src/app/store/workStore.ts`, `draftStore.ts` — 작품/초안 상태
 - `src/app/utils/inviteTokenStore.ts` — 비회원 초대 토큰 스토어 (Policy §3 v2.14). `issueInviteToken`(전시 발행 직후, status `'inactive'`) · `activateInviteToken`(검수 승인) · `deactivateInviteToken`(검수 반려·대기 회귀) · `revokeInviteToken`(전시 삭제·만료, 영구 무효) · `getInviteToken` lazy 만료 평가 · `connectMemberToSlot`(가입자가 본인 작품 카드 클릭 시 type 가드로 `'non-member'` → `'member'` 승격, 동시 선택 race 차단). 90일 TTL.
-- `src/app/utils/sanctionStore.ts` — (Phase 2 준비용) 경고·허위신고 카운터 + 정지 단계. Phase 1 정책(§12.3)상 호출부 없음. Phase 2 사용자 제재 재설계 시 활용.
 - `src/app/utils/adminGate.ts` — 운영팀 역할 토글
 - `src/app/utils/feedOrdering.ts` — 둘러보기 피드 랭킹
 - `src/app/utils/feedVisibility.ts` — 피드 공개 여부 필터
@@ -203,7 +202,7 @@ Phase 1은 **작품 단위 모더레이션만** 다룬다. 사용자 계정 차�
 
 ### 폐기된 것 (2026-04-20 기준)
 
-- `sanctionStore.addWarning` / `addFalseReport` 호출부 — 제거됨(스토어 자체는 Phase 2 준비용으로 남음)
+- `sanctionStore.ts` 전체 폐기 (2026-04-28). Phase 1 정책(§12.3) 상 호출부 0건이었고, 메모리 규칙(런칭 전 백엔드 연동 후 자연 흡수 결함은 별도 작업 안 함) 정합.
 - `accountSuspensionStore` 호출부 — 제거됨(데모용 Login.tsx 쿼리 플래그만 남음)
 - `ADM-MBR-03` 정지 모달 UI — Phase 2 이관
 - 경고·자동 승격·이의제기 SLA 관련 모든 로직

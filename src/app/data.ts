@@ -19,11 +19,10 @@ export interface ImageArtistAssignment {
   memberId?: string;
   memberName?: string;
   memberAvatar?: string;
-  // non-member인 경우 (향후 초대/가입 연동용)
+  // non-member인 경우 — Policy §3 v2.14 토큰 모델: 표시명만 받음 (전화·이메일 사전 수집 X)
   displayName?: string;
-  phoneNumber?: string;
   // 'unknown' 슬롯은 부가 필드 없음.
-  // 초대 자동 연결 후 disavow로 원복된 슬롯(작가 미상 표시). Policy §3.5 / §4.1.
+  // 작가가 마이페이지 슬롯 편집으로 잘못 연결을 풀면 'unknown'으로 전환. Policy §3.5 / §4.1.
 }
 
 export interface Work {

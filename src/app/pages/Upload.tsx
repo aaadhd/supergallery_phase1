@@ -103,7 +103,7 @@ type ContentItem = {
   url?: string;
   title?: string;
   artist?: { id: string; name: string; avatar: string };
-  nonMemberArtist?: { displayName: string; phoneNumber: string };
+  nonMemberArtist?: { displayName: string };
   artistType?: 'member' | 'non-member' | 'self' | 'unknown';
   fullWidth?: boolean; // default false (padded), true = 전폭 확장
 };
@@ -538,7 +538,7 @@ export default function Upload() {
         item.artist = { id: ia.memberId, name: ia.memberName || '', avatar: ia.memberAvatar || '' };
         item.artistType = 'member';
       } else if (ia?.type === 'non-member' && ia.displayName) {
-        item.nonMemberArtist = { displayName: ia.displayName, phoneNumber: ia.phoneNumber || '' };
+        item.nonMemberArtist = { displayName: ia.displayName };
         item.artistType = 'non-member';
       } else if (ia?.type === 'unknown') {
         // 초대 자동 연결 후 disavow된 슬롯(Policy §3.5) — 'unknown' 유지. 편집 시 사용자가 수동으로 재지정 가능.
@@ -773,7 +773,7 @@ export default function Upload() {
         return { type: 'unknown' as const };
       }
       if (c.artistType === 'non-member' && c.nonMemberArtist) {
-        return { type: 'non-member' as const, displayName: c.nonMemberArtist.displayName, phoneNumber: c.nonMemberArtist.phoneNumber };
+        return { type: 'non-member' as const, displayName: c.nonMemberArtist.displayName };
       }
       if (c.artist) {
         return { type: 'member' as const, memberId: c.artist.id, memberName: c.artist.name, memberAvatar: c.artist.avatar };
@@ -957,12 +957,10 @@ export default function Upload() {
       draftStore.deleteDraft(loadedDraftId);
     }
 
-    // 비가입자 초대는 검수 승인 시점에 발송 (전화번호는 Work.imageArtists에 보관)
-    const hasNonMemberInvites = imageArtists.some((a) => a.type === 'non-member' && a.phoneNumber);
+    // 비회원 슬롯이 있으면 발행 완료 화면에서 InviteShareButton 노출 (Policy §3 v2.14 토큰 모델)
+    const hasNonMemberInvites = imageArtists.some((a) => a.type === 'non-member' && (a.displayName ?? '').trim().length > 0);
 
-    if (hasNonMemberInvites && !editingWorkId) {
-      toast.info(t('upload.toastInvitePending'));
-    } else if (editingWorkId && editDiff) {
+    if (editingWorkId && editDiff) {
       // 편집 저장 후 5 시나리오 분기 (Policy §12.1.2 토스트 문구).
       const { originalStatus, imageFieldsChanged } = editDiff;
       let toastKey: string;
@@ -991,6 +989,15 @@ export default function Upload() {
       publishedRef.current = true;
       const autoApproved = import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true';
       const wasRejectedResubmit = Boolean(editDiff && editDiff.originalStatus === 'rejected');
+      // 검수 진행 가시성 — 발행 즉시 본인 알림 1건 (auto-approve 환경은 별도 검수 단계가 없으므로 제외).
+      // Policy §12.2.1 SLA 24시간(영업일) 안내는 Profile 검수 대기 배지 tooltip + publishedConfirmDesc 카피로 보강.
+      if (!autoApproved && !wasEditingExistingWork) {
+        pushDemoNotification({
+          type: 'system',
+          message: t('review.notifSubmitted').replace('{title}', newWork.exhibitionName || newWork.title || ''),
+          workId: targetId,
+        });
+      }
       // 이벤트 응모면 이벤트 상세로 복귀
       if (linkedEventId) {
         navigate(`/events/${linkedEventId}`);
@@ -1921,7 +1928,7 @@ export default function Upload() {
                                 onClick={() => {
                                   setArtistInputTab('non-member');
                                   if (sc.artistType !== 'non-member') {
-                                    setContents(contents.map(c => c.id === selectedContentId ? { ...c, artistType: 'non-member', artist: undefined, nonMemberArtist: { displayName: '', phoneNumber: '' } } : c));
+                                    setContents(contents.map(c => c.id === selectedContentId ? { ...c, artistType: 'non-member', artist: undefined, nonMemberArtist: { displayName: '' } } : c));
                                   }
                                 }}
                                 className={`flex-1 py-2 text-xs font-bold rounded-lg transition-all ${artistInputTab === 'non-member' ? 'bg-white shadow border border-border/40 text-foreground' : 'text-muted-foreground'}`}
@@ -1975,7 +1982,7 @@ export default function Upload() {
                                   <label className="block text-xs font-bold text-amber-800 mb-1.5 px-1">{t('upload.nonMemberNameLabel2')}<RequiredMark /></label>
                                   <input
                                     type="text" value={sc.nonMemberArtist?.displayName || ''}
-                                    onChange={(e) => setContents(contents.map(c => c.id === selectedContentId ? { ...c, artistType: 'non-member', nonMemberArtist: { ...c.nonMemberArtist, displayName: e.target.value, phoneNumber: '' } } : c))}
+                                    onChange={(e) => setContents(contents.map(c => c.id === selectedContentId ? { ...c, artistType: 'non-member', nonMemberArtist: { displayName: e.target.value } } : c))}
                                     placeholder={t('upload.nonMemberNamePh')}
                                     className="w-full px-4 py-3 border border-amber-200 rounded-xl text-sm bg-white focus:ring-[3px] focus:ring-amber-500 outline-none transition-all shadow-sm"
                                   />

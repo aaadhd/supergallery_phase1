@@ -80,6 +80,11 @@ export function appendUserReport(
         workStore.updateWork(workId, {
           ...buildVisibilityPatch('hidden_auto'),
         });
+        // Policy §3.4 v2.14: 자동 비공개 발동 시 초대 토큰도 inactive 회귀.
+        // 친구가 받은 링크는 보존되고, 운영팀 기각 판정으로 복원될 때 다시 active.
+        void import('./inviteTokenStore').then(({ deactivateInviteToken }) => {
+          deactivateInviteToken(workId);
+        });
         const title = work.exhibitionName || work.title || '';
         pushDemoNotification({
           type: 'system',
@@ -123,5 +128,10 @@ export function maybeRestoreAfterDismiss(workId: string): boolean {
   );
   if (hasPending) return false;
   workStore.updateWork(workId, { ...buildVisibilityPatch('public') });
+  // Policy §3.4 v2.14: 신고 기각으로 자동 비공개에서 복원되면 토큰도 다시 active.
+  // 검수 승인 상태 (feedReviewStatus: 'approved')였을 때만 의미 있음 — deactivate→activate 호출은 idempotent라 안전.
+  void import('./inviteTokenStore').then(({ activateInviteToken }) => {
+    if (work.feedReviewStatus === 'approved') activateInviteToken(workId);
+  });
   return true;
 }

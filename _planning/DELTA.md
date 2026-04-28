@@ -4,6 +4,22 @@
 
 ---
 
+## 2026-04-28 (화) — 데드코드 일괄 청소
+
+토큰 모델 마이그레이션 + Nielsen fix 완료 후 누적된 미사용 코드·자산을 일괄 청산.
+
+- **i18n 키 116쌍(ko+en 232 entries) 제거** — `upload.*` UI 폐기 흔적 47, `workDetail.*` 8, `workInquiry.*` 5, `settings.*` 14, `search.*` 9, `report.*` 3, `review.*` 2, `login.*` 4, `signup.*` 2, `invite.*` 2, `onboarding.*` 4, `profile.*` 4, `events.*` 3, `browse.*` 4, 기타 4건. 명시 미사용(grep 0건 + 동적 prefix 매치 X)만 정리.
+- **shadcn/ui 미사용 컴포넌트 26개 삭제** — accordion·alert·aspect-ratio·breadcrumb·calendar·carousel·collapsible·command·context-menu·form·input-otp·menubar·navigation-menu·pagination·radio-group·resizable·scroll-area·sheet·sidebar·skeleton·slider·sonner·switch·toggle·toggle-group·use-mobile. 사용 0건 검증 후 일괄 삭제. 향후 필요시 `npx shadcn-ui add <name>` 재설치 가능.
+- **`sanctionStore.ts` 폐기** — Phase 1 정책(§12.3 사용자 제재 Phase 2 이관)상 호출부 0건 + 메모리 규칙 정합.
+- **`AdminGuard.tsx` 폐기** — import 0건.
+- **`useDraftStore`·`useAccountSuspensionStore` hook export 제거** — 대응 store는 활발히 사용중이나 hook은 0건.
+- **`ImageArtistAssignment.phoneNumber` 필드 + 죽은 분기 정리** — Policy §3 v2.14 토큰 모델 정합. data.ts 타입에서 `phoneNumber` 제거, Upload·Profile의 항상 false 분기 단순화, Draft 타입의 nonMemberArtist도 displayName만.
+- **`ExhibitionWorkShareLanding`의 미사용 `getCoverImage` import 정리.**
+
+검증: tsc --noEmit 0 errors, npm run build 통과.
+
+---
+
 ## 2026-04-27 (월) — 비가입자 초대 정책 전면 재설계 (회사 발송 폐기 → 작가 직접 공유 + 가입자 본인 선택)
 
 회사가 외부 채널(카카오 알림톡·SMS·이메일)로 비회원에게 직접 발송하는 흐름을 폐기. 비회원의 전화·이메일을 사전 수집하지 않고 이름만 받는다. 작가는 검수 통과 후 마이페이지에서 초대 링크 1개를 받아 본인 채널(카톡·문자·이메일·단톡방)로 직접 친구에게 공유한다. 친구가 가입하면 "본인 작품 찾기" 화면에서 본인 작품 카드를 명시 클릭 + 확인 1회 → 즉시 자동 연결. 작가 승인 게이트·가입자 자가 해제 진입점 모두 폐기 — 잘못 연결되면 가입자가 작가에게 직접 알리고 작가가 마이페이지에서 자리를 작가 미상으로 풀어준다.
@@ -22,6 +38,14 @@
 - 단계 3 — 시니어 친화 `InviteShareButton.tsx` 신설(navigator.share + 클립보드 + mailto 폴백 + "검수 통과 후 활성화" 비활성 라벨). Upload 비회원 슬롯 UI를 이름만 받도록 단순화, 발행 시 토큰 발급.
 - 단계 4 — `ExhibitionInviteLanding`을 `?from=invite|credited`에서 `?invite=<token>` 토큰 모델로 재구성(active·inactive·revoked·만료·불일치 5상태 분기 + SPA noindex 메타). `Onboarding` step 2를 폰 매칭 후보 yes/no에서 토큰 기반 비회원 슬롯 카드 그리드 + 명시 클릭 + 확인 1회로 재정의(동시 선택 race 토스트 + "여기 없어요" 스킵).
 - 단계 5 — 가입자 자가 disavow 진입점 삭제(`WorkDetailModal` piece 오버레이 + `Profile` 본인 작품 탭 액션). `Notification.type`에 `'invite'` 추가(작가가 직접 보낸 초대 결과 알림은 본인 액션의 결과이므로 항상 노출). `inviteMessaging.ts`·`InviteClaimCheck.tsx` 삭제 + 미사용 i18n 키 33쌍 일괄 정리. `ContentReview` 승인·반려 시 토큰 활성화·비활성화 호출(회사 SMS·알림톡·이메일 발송 코드 제거). `workStore.removeWork`에 토큰 revoke 동적 import 추가. `LEGACY_STORAGE_KEYS`에 deprecated 키 5종 추가(부팅 시 정리).
+
+**후속 정합 + 실행 검증 + Nielsen 휴리스틱 fix (단일 푸시 사이클)**
+
+- 정합성 감사 후속(`13b4f6e`) — 작가 탈퇴 시 토큰 revoke 누락 보강(`performAccountWithdrawal`), Policy §32 cascade 표 11번 항목 추가, CLAUDE.md sessionStorage 키 `artier_pending_invite_token` 명시 + `artier_geo_demo_cache` 활성/폐기 중복 정정.
+- 실행 검증 후속(`aa71ece`) — Playwright 직접 클릭 검증 중 발견된 라우팅 버그 fix(`ExhibitionRoute`가 `?invite=<token>` 인식 안하던 회귀, Browse fallthrough 상태였음). `tsc --noEmit` 9 errors → 0 (Onboarding `buildClaimableSlots` 시그니처·Upload `autoApprove` 스코프·AuthVerify `existing.email`→`existing.sub`·orphan i18n 키·curationStore implicit any). 죽은 SMS 발송 확인 모달 + i18n 키 4쌍 일괄 제거.
+- Nielsen 휴리스틱 fix — 시니어 친화 카피 8건 톤 정리 (위협→안심·"활성화"→"공개되면 알림"·"다시 받아주세요"→"새 링크 부탁"·피해자톤→액션 유도·수동→능동·"작가님"→"친구"·"공유"→"보내기"). Nielsen P3 신규 i18n 키 9쌍(`review.notifSubmitted` 검수 시작 알림 / `invite.shareLinkExpiresIn` 토큰 만료 D-N / `claim.singleCardSafetyNote` 카드 1개 안전 신호 / `claim.skipReassured` 스킵 안심 토스트 / `profile.nonMemberSlotsLabel/More/Unnamed` 마이페이지 비회원 슬롯 인디케이터 / `faq.q11~q14` 토큰 모델 FAQ 4건 + `faq.q7` 옛 SMS 톤 정정). 시스템 정합 — `reportsStore.appendUserReport`에서 자동 비공개 시 `deactivateInviteToken`, `maybeRestoreAfterDismiss`에서 기각 복원 시 `activateInviteToken` 자동 호출 (Policy §3.4 / §32 정합).
+- 잔재 정리 — `flowMap.section12`·`footer.qaExhibitionInvite`·`footer.qaExhibitionCredited` 옛 `?from=*` URL 흔적 정정 또는 폐기. QaScreenShortcuts에서 `?from=credited` 단축키 제거. ExhibitionWorkShareLanding 코멘트 정합 보정.
+- HTML 화면 스펙 v1.3 갱신(`_planning/_screen_specs/Artier_Screen_Spec_v1.html`) — USR-AUT-10b·USR-EXH-03 카피 동기화, USR-UPL-08 deprecated 표기, 04-B 자동 비공개 분기 추가, History v1.3 행 신설.
 
 ---
 

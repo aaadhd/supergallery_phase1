@@ -60,6 +60,11 @@ export function InviteShareButton({
   const shareUrl = buildInviteShareUrl(workId, token.token);
   const shareText = buildInviteShareText(workTitle, inviterName, locale === 'en' ? 'en' : 'ko');
   const fullMessage = `${shareText}\n${shareUrl}`;
+  // Phase 1 한계: 토큰은 클라이언트 localStorage. 작가 본인 기기 기준 남은 일수 산정.
+  const expiresInDays = (() => {
+    const ms = new Date(token.expiresAt).getTime() - Date.now();
+    return Number.isFinite(ms) ? Math.max(0, Math.ceil(ms / 86_400_000)) : null;
+  })();
 
   const handleClick = async () => {
     if (!isActive) return;
@@ -124,6 +129,11 @@ export function InviteShareButton({
             <p className="text-xs text-muted-foreground break-all bg-muted/40 rounded-md px-3 py-2">
               {shareUrl}
             </p>
+            {isActive && expiresInDays !== null && (
+              <p className="text-xs text-muted-foreground">
+                {t('invite.shareLinkExpiresIn').replace('{n}', String(expiresInDays))}
+              </p>
+            )}
           </div>
           <DialogFooter className="flex flex-col gap-2 sm:flex-col mt-2">
             <Button

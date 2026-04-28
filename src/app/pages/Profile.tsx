@@ -68,7 +68,7 @@ function allLinkedImageArtistLabels(w: Work, instructorId: string): string[] {
   const out: string[] = [];
   for (const a of ia) {
     if (a.type === 'non-member') {
-      const label = (a.displayName?.trim() || a.phoneNumber?.trim() || '');
+      const label = (a.displayName?.trim() || '');
       if (!label) continue;
       const key = `n:${label}`;
       if (seen.has(key)) continue;
@@ -1039,8 +1039,9 @@ export default function Profile() {
                                       className="text-destructive focus:text-destructive text-sm"
                                       onSelect={(e) => e.preventDefault()}
                                       onClick={async () => {
-                                        const hasPendingInvites = work.imageArtists?.some((a) => a.type === 'non-member' && a.phoneNumber);
-                                        const desc = hasPendingInvites
+                                        // Policy §32 cascade: 전시 삭제 시 비회원 초대 토큰도 자동 revoke됨 (workStore.removeWork에서 처리)
+                                        const hasNonMemberSlots = work.imageArtists?.some((a) => a.type === 'non-member');
+                                        const desc = hasNonMemberSlots
                                           ? t('profile.deleteWorkPermanent') + '\n' + t('profile.deleteWorkHasPendingInvites')
                                           : t('profile.deleteWorkPermanent');
                                         const ok = await openConfirm({
@@ -1128,6 +1129,18 @@ export default function Profile() {
                                 </p>
                               )
                             )}
+                            {isMyUpload && (() => {
+                              // 비회원 슬롯 가시성 (Policy §3 v2.14 — 작가 운영 가시성)
+                              const nonMembers = (work.imageArtists ?? []).filter((ia) => ia?.type === 'non-member');
+                              if (nonMembers.length === 0) return null;
+                              const firstName = (nonMembers[0] as { displayName?: string }).displayName?.trim();
+                              const more = nonMembers.length > 1 ? t('profile.nonMemberSlotsMore').replace('{n}', String(nonMembers.length - 1)) : '';
+                              return (
+                                <p className="text-xs text-muted-foreground mt-0.5 truncate">
+                                  {t('profile.nonMemberSlotsLabel').replace('{name}', firstName || t('profile.nonMemberSlotsUnnamed'))}{more}
+                                </p>
+                              );
+                            })()}
                           </div>
                         </div>
                         );

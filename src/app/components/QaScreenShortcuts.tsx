@@ -69,8 +69,8 @@ export function QaScreenShortcuts() {
   };
 
   const linkCls = 'cursor-pointer';
+  // 일반 전시 공유 URL (Browse fallthrough → 작품 모달 오픈)
   const shareInvitePath = `/exhibitions/${sampleWorkId}?from=invite`;
-  const creditedPath = `/exhibitions/${sampleWorkId}?from=credited`;
 
   return (
     <div
@@ -110,11 +110,6 @@ export function QaScreenShortcuts() {
           <DropdownMenuItem asChild>
             <Link to={shareInvitePath} className={linkCls}>
               {t('footer.qaExhibitionInvite')}
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link to={creditedPath} className={linkCls}>
-              {t('footer.qaExhibitionCredited')}
             </Link>
           </DropdownMenuItem>
 

@@ -22,6 +22,10 @@ const FAQ_ROWS: FaqRowDef[] = [
   { cat: 'upload', q: 'faq.q6', a: 'faq.a6' },
   { cat: 'exhibition', q: 'faq.q7', a: 'faq.a7' },
   { cat: 'exhibition', q: 'faq.q8', a: 'faq.a8' },
+  { cat: 'exhibition', q: 'faq.q11', a: 'faq.a11' },
+  { cat: 'exhibition', q: 'faq.q12', a: 'faq.a12' },
+  { cat: 'exhibition', q: 'faq.q13', a: 'faq.a13' },
+  { cat: 'exhibition', q: 'faq.q14', a: 'faq.a14' },
   { cat: 'other', q: 'faq.q9', a: 'faq.a9' },
   { cat: 'other', q: 'faq.q10', a: 'faq.a10' },
 ];
