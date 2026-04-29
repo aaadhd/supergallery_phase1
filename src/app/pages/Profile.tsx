@@ -997,7 +997,7 @@ export default function Profile() {
                         return (
                         <div
                           key={work.id}
-                          className="cursor-pointer relative"
+                          className="cursor-pointer relative transition-all duration-300 ease-out lg:hover:-translate-y-1"
                           onClick={() => {
                             if (isMyUpload && work.feedReviewStatus === 'rejected') {
                               setRejectedModalWork(work);
@@ -1183,7 +1183,7 @@ export default function Profile() {
                         return (
                           <div
                             key={work.id}
-                            className="cursor-pointer relative"
+                            className="cursor-pointer relative transition-all duration-300 ease-out lg:hover:-translate-y-1"
                             onClick={() => setDetailWorkId(work.id)}
                           >
                             <div className="relative aspect-square rounded-sm overflow-hidden bg-white border border-border/40">
@@ -1428,7 +1428,7 @@ export default function Profile() {
                       {likedWorks.map((work) => (
                         <div
                           key={work.id}
-                          className="group cursor-pointer"
+                          className="group cursor-pointer transition-all duration-300 ease-out lg:hover:-translate-y-1"
                           onClick={() => setDetailWorkId(work.id)}
                         >
                           <div className="relative aspect-square rounded-sm overflow-hidden bg-white border border-border/40">
@@ -1487,7 +1487,7 @@ export default function Profile() {
                       {savedWorks.map((work) => (
                         <div
                           key={work.id}
-                          className="group cursor-pointer"
+                          className="group cursor-pointer transition-all duration-300 ease-out lg:hover:-translate-y-1"
                           onClick={() => setDetailWorkId(work.id)}
                         >
                           <div className="relative aspect-square rounded-sm overflow-hidden bg-white border border-border/40">

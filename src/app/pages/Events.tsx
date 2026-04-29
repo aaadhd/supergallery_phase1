@@ -174,7 +174,7 @@ export default function Events() {
               <div
                 key={event.id}
                 onClick={() => navigate(`/events/${event.id}`)}
-                className="group cursor-pointer overflow-hidden rounded-xl border border-border lg:hover:shadow-md transition-shadow"
+                className="group cursor-pointer overflow-hidden rounded-xl border border-border transition-all duration-300 ease-out lg:hover:-translate-y-1 lg:hover:shadow-md"
               >
                 <div className="relative h-[160px] sm:h-[180px] overflow-hidden">
                   <ImageWithFallback

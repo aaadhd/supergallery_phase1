@@ -290,7 +290,17 @@ export default function Search() {
               </div>
             )}
 
-            {/* 추천 키워드 제거됨 — 태깅 기능 미구현으로 데이터 근거 없음 */}
+            {/* 검색 안내 — 시니어 친화 빈 상태 보강 */}
+            <div className="rounded-xl border border-border/40 bg-muted/30 p-5 sm:p-6">
+              <h2 className="text-base sm:text-lg font-semibold text-foreground mb-3">
+                {t('search.helpTitle')}
+              </h2>
+              <ul className="space-y-2 text-sm sm:text-base text-muted-foreground leading-relaxed list-disc pl-5">
+                <li>{t('search.helpItem1')}</li>
+                <li>{t('search.helpItem2')}</li>
+                <li>{t('search.helpItem3')}</li>
+              </ul>
+            </div>
           </div>
         )}
 

@@ -6,6 +6,8 @@ import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
 import {
@@ -128,20 +130,6 @@ export function Header() {
                     {t('nav.upload')}
                   </Button>
 
-                  {/* 프로필 아바타 — 데스크톱 */}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="hidden md:flex rounded-full h-10 w-10"
-                    onClick={() => navigate('/me')}
-                    aria-label={t('nav.profile')}
-                  >
-                    <Avatar className="h-9 w-9">
-                      <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
-                      <AvatarFallback>{currentUser.name[0]}</AvatarFallback>
-                    </Avatar>
-                  </Button>
-
                   {/* 검색 — 데스크톱만 */}
                   <Tooltip>
                     <TooltipTrigger asChild>
@@ -187,21 +175,45 @@ export function Header() {
                     </TooltipContent>
                   </Tooltip>
 
-                  {/* 설정 */}
-                  <Tooltip>
-                    <TooltipTrigger asChild>
+                  {/* 프로필 아바타 (드롭다운) — 프로필 / 설정 / 언어 흡수 */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
                       <Button
                         variant="ghost"
                         size="icon"
-                        aria-label={t('nav.settings')}
-                        className="h-9 w-9 sm:h-10 sm:w-10 rounded-full text-muted-foreground lg:hover:text-foreground"
-                        onClick={() => navigate('/settings')}
+                        className="hidden md:flex rounded-full h-10 w-10"
+                        aria-label={t('nav.profile')}
                       >
-                        <Settings className="h-5 w-5" />
+                        <Avatar className="h-9 w-9">
+                          <AvatarImage src={currentUser.avatar} alt={currentUser.name} />
+                          <AvatarFallback>{currentUser.name[0]}</AvatarFallback>
+                        </Avatar>
                       </Button>
-                    </TooltipTrigger>
-                    <TooltipContent side="bottom">{t('nav.settings')}</TooltipContent>
-                  </Tooltip>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-44">
+                      <DropdownMenuItem onClick={() => navigate('/me')}>
+                        <User className="h-4 w-4" />
+                        <span>{t('nav.profile')}</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => navigate('/settings')}>
+                        <Settings className="h-4 w-4" />
+                        <span>{t('nav.settings')}</span>
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuLabel className="flex items-center gap-2 text-xs uppercase text-muted-foreground">
+                        <Globe className="h-3.5 w-3.5" />
+                        {t('nav.language')}
+                      </DropdownMenuLabel>
+                      <DropdownMenuItem onClick={() => pickLocale('ko')} className="flex items-center justify-between">
+                        <span>{t('nav.langKo')}</span>
+                        {locale === 'ko' && <Check className="h-4 w-4" />}
+                      </DropdownMenuItem>
+                      <DropdownMenuItem onClick={() => pickLocale('en')} className="flex items-center justify-between">
+                        <span>{t('nav.langEn')}</span>
+                        {locale === 'en' && <Check className="h-4 w-4" />}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
                 </>
               ) : (
                 <>
@@ -236,29 +248,32 @@ export function Header() {
                 </>
               )}
 
-              <DropdownMenu>
-                <DropdownMenuTrigger asChild>
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    aria-label={t('nav.language')}
-                    title={t('nav.language')}
-                    className="hidden sm:flex h-9 w-9 rounded-full text-muted-foreground lg:hover:text-foreground"
-                  >
-                    <Globe className="h-5 w-5" />
-                  </Button>
-                </DropdownMenuTrigger>
-                <DropdownMenuContent align="end" className="w-32">
-                  <DropdownMenuItem onClick={() => pickLocale('ko')} className="flex items-center justify-between">
-                    <span>{t('nav.langKo')}</span>
-                    {locale === 'ko' && <Check className="h-4 w-4" />}
-                  </DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => pickLocale('en')} className="flex items-center justify-between">
-                    <span>{t('nav.langEn')}</span>
-                    {locale === 'en' && <Check className="h-4 w-4" />}
-                  </DropdownMenuItem>
-                </DropdownMenuContent>
-              </DropdownMenu>
+              {/* 게스트 전용 언어 토글 — 로그인 사용자는 아바타 드롭다운에 흡수 */}
+              {!loggedIn && (
+                <DropdownMenu>
+                  <DropdownMenuTrigger asChild>
+                    <Button
+                      variant="ghost"
+                      size="icon"
+                      aria-label={t('nav.language')}
+                      title={t('nav.language')}
+                      className="hidden sm:flex h-9 w-9 rounded-full text-muted-foreground lg:hover:text-foreground"
+                    >
+                      <Globe className="h-5 w-5" />
+                    </Button>
+                  </DropdownMenuTrigger>
+                  <DropdownMenuContent align="end" className="w-32">
+                    <DropdownMenuItem onClick={() => pickLocale('ko')} className="flex items-center justify-between">
+                      <span>{t('nav.langKo')}</span>
+                      {locale === 'ko' && <Check className="h-4 w-4" />}
+                    </DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => pickLocale('en')} className="flex items-center justify-between">
+                      <span>{t('nav.langEn')}</span>
+                      {locale === 'en' && <Check className="h-4 w-4" />}
+                    </DropdownMenuItem>
+                  </DropdownMenuContent>
+                </DropdownMenu>
+              )}
             </div>
           </div>
         </div>

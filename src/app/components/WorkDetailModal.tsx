@@ -796,7 +796,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
               className="flex h-auto min-h-0 flex-col items-center gap-1.5 py-1 text-white group"
               aria-label={t('workDetail.like')}
             >
-              <div className={`flex h-[52px] w-[52px] items-center justify-center rounded-full transition-all shadow-lg ${
+              <div className={`flex h-[52px] w-[52px] items-center justify-center rounded-full transition-all duration-200 shadow-lg active:scale-90 ${
                 isLiked ? 'bg-[#FF2E63] scale-105' : 'bg-[#333333] lg:group-hover:bg-[#444] border-white/5'
               }`}>
                 <Heart className={`h-[22px] w-[22px] transition-colors ${isLiked ? 'text-white fill-white' : 'text-white'}`} />
@@ -818,7 +818,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
               className="flex h-auto min-h-0 flex-col items-center gap-1.5 py-1 text-white group"
               aria-label={t('workDetail.save')}
             >
-              <div className={`flex h-[52px] w-[52px] items-center justify-center rounded-full transition-all shadow-lg ${
+              <div className={`flex h-[52px] w-[52px] items-center justify-center rounded-full transition-all duration-200 shadow-lg active:scale-90 ${
                 isSaved ? 'bg-primary scale-105' : 'bg-[#333333] lg:group-hover:bg-[#444] border-white/5'
               }`}>
                 <Bookmark className={`h-[22px] w-[22px] transition-colors gap-1 text-white ${isSaved ? 'fill-white' : ''}`} />

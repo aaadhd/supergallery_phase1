@@ -718,7 +718,7 @@ function WorkCard({ work, index, onSelect, onArtistClick, isFollowing, onToggleF
 
   return (
     <article
-      className="group cursor-pointer overflow-hidden rounded-sm bg-card ring-1 ring-foreground/[0.07] shadow-[0_2px_24px_-12px_rgba(35,32,40,0.2)] transition-shadow duration-300 lg:hover:shadow-[0_20px_48px_-28px_rgba(35,32,40,0.28)]"
+      className="group cursor-pointer overflow-hidden rounded-sm bg-card ring-1 ring-foreground/[0.07] shadow-[0_2px_24px_-12px_rgba(35,32,40,0.2)] transition-all duration-300 ease-out lg:hover:-translate-y-1 lg:hover:shadow-[0_20px_48px_-28px_rgba(35,32,40,0.28)]"
       style={{ animationDelay: `${(index % 12) * 40}ms` }}
       onClick={onSelect}
     >
@@ -744,7 +744,7 @@ function WorkCard({ work, index, onSelect, onArtistClick, isFollowing, onToggleF
         {/* Artier's Pick badge */}
         {isPick && (
           <div className="absolute left-3 bottom-3 z-10">
-            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500 text-white text-xs font-bold shadow-md backdrop-blur-sm">
+            <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#B8862F] text-white text-xs font-bold shadow-md backdrop-blur-sm">
               ★ Artier&apos;s Pick
             </span>
           </div>

@@ -798,7 +798,7 @@ export default function Upload() {
       isInstructorUpload: uploadType === 'group' ? isInstructor : undefined,
       primaryExhibitionType,
       imageArtists,
-      ...buildVisibilityPatch(import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true' ? 'public' : 'pending_review'),
+      ...buildVisibilityPatch(!import.meta.env.PROD && import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true' ? 'public' : 'pending_review'),
       uploadedAt,
       linkedEventId: linkedEventId || undefined,
       coverImageIndex:
@@ -824,7 +824,9 @@ export default function Upload() {
     setIsPublishing(true);
     const targetId = editingWorkId || newWork.id;
     const wasEditingExistingWork = Boolean(editingWorkId);
-    const autoApprove = import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true';
+    // PROD 빌드에선 자동 승인 비활성 (CLAUDE.md 환경 변수 가드 정합).
+    // env 켜져 있어도 실서비스 빌드에서 사용자에게 검수 우회되지 않도록 강제.
+    const autoApprove = !import.meta.env.PROD && import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true';
 
     // 편집 모드 차별 재검수: 이미지 계열 변경 여부를 먼저 판정해 둔다(토스트 분기에도 사용).
     // Policy §12.1.2 / PRD_User USR-UPL-02 D.
@@ -978,7 +980,7 @@ export default function Upload() {
         toastKey = 'upload.editModeToast';
       }
       toast.success(t(toastKey as MessageKey));
-    } else if (import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true') {
+    } else if (!import.meta.env.PROD && import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true') {
       toast.success(t('upload.toastPublishedImmediate'));
     } else {
       toast.success(t('upload.toastPublished'));
@@ -987,7 +989,7 @@ export default function Upload() {
     setTimeout(() => {
       setIsPublishing(false);
       publishedRef.current = true;
-      const autoApproved = import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true';
+      const autoApproved = !import.meta.env.PROD && import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true';
       const wasRejectedResubmit = Boolean(editDiff && editDiff.originalStatus === 'rejected');
       // 검수 진행 가시성 — 발행 즉시 본인 알림 1건 (auto-approve 환경은 별도 검수 단계가 없으므로 제외).
       // Policy §12.2.1 SLA 24시간(영업일) 안내는 Profile 검수 대기 배지 tooltip + publishedConfirmDesc 카피로 보강.
@@ -1266,7 +1268,7 @@ export default function Upload() {
               onClick={() => setUploadType('solo')}
               className="flex flex-col items-center text-center p-10 bg-white border-2 border-border/60 hover:border-foreground transition-all rounded-2xl group shadow-sm hover:shadow-md"
             >
-              <div className="w-16 h-16 rounded-full bg-foreground text-white flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <ImageIcon className="w-8 h-8" />
               </div>
               <h2 className="text-xl font-bold text-foreground mb-3">{t('upload.typeSolo')}</h2>
@@ -1276,7 +1278,7 @@ export default function Upload() {
               onClick={() => setGroupSubStep('askRole')}
               className="flex flex-col items-center text-center p-10 bg-white border-2 border-border/60 hover:border-foreground transition-all rounded-2xl group shadow-sm hover:shadow-md"
             >
-              <div className="w-16 h-16 rounded-full bg-foreground text-white flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
                 <Users className="w-8 h-8" />
               </div>
               <h2 className="text-xl font-bold text-foreground mb-3">{t('upload.typeGroup')}</h2>

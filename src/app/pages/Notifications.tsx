@@ -399,7 +399,7 @@ export default function Notifications() {
                       </div>
                     )}
                     <div className="flex-1 min-w-0">
-                      <p className={`text-sm sm:text-sm leading-relaxed ${notif.read ? 'text-muted-foreground' : 'text-foreground'}`}>
+                      <p className={`text-sm sm:text-sm leading-relaxed break-keep ${notif.read ? 'text-muted-foreground' : 'text-foreground'}`}>
                         {notif.fromUser && <span className="font-semibold">{notif.fromUser.name}</span>}
                         {resolveNotificationMessage(notif, t)}
                       </p>
