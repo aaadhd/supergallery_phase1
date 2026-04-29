@@ -362,7 +362,7 @@ const koMessages = {
 /events|이벤트 목록
 /events/1|이벤트 상세 예시`,
   'flowMap.section14': `14. 포인트 적립 · 조회
-Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 는 Phase 2. 로컬 적립 로직은 가입·온보딩·둘러보기·업로드 등에서 계속 동작.`,
+Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 는 런칭 전 백엔드 연동 후. 로컬 적립 로직은 가입·온보딩·둘러보기·업로드 등에서 계속 동작.`,
   'flowMap.section15': `15. 기획 검수 — reference ❌ 데모
 /demo/reference|모의 JWT·GeoIP·이메일 템플릿·발송 조건 표`,
   'points.title': '포인트',
@@ -588,9 +588,9 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'review.rejectedModalDesc': '아래 사유로 아직 둘러보기에 공개되지 않았어요. 수정해서 다시 올리면 검수를 받을 수 있어요.',
   'review.rejectedModalEdit': '수정하기',
   'review.rejectedModalClose': '닫기',
-  'review.notifRejected': '업로드한 작품이 반려되었어요. 사유: {reason}',
-  'review.notifApproved': '업로드하신 작품이 승인되어 둘러보기에 노출됩니다.',
-  'review.notifNewWork': '님이 새 작품을 전시했습니다',
+  'review.notifRejected': '올리신 작품이 검수를 통과하지 못했어요. 사유: {reason}',
+  'review.notifApproved': '올리신 작품이 승인됐어요. 둘러보기에서 다른 분들이 볼 수 있어요.',
+  'review.notifNewWork': '님이 새 작품을 올렸어요',
   // 신고 처리 결과 알림 — 대상 작가/신고자에게 운영팀 조치를 공지
   'pick.notifSelected': '회원님의 전시 \'{title}\'이 Artier\'s Pick으로 선정되었어요. 축하드려요!',
   'invite.notifAutoMatched': '초대한 \'{name}\' 님이 가입해 전시 \'{title}\'의 참여 작가로 연결되었어요.',
@@ -610,11 +610,11 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   // §3.5.2 마이페이지 사후 보강 배너
   'invite.linkedReminderBanner': '연결된 작품 중 본인 작품이 아닌 게 있다면 카드에서 \'본인 작품 아님\'으로 해제할 수 있어요.',
   'invite.linkedReminderClose': '확인',
-  'report.notifTargetWorkDeleted': '회원님의 전시 \'{title}\'이 신고 처리로 삭제되었습니다.',
-  'report.notifTargetWorkHidden': '회원님의 전시 \'{title}\'이 신고 검토 결과 비공개 처리되었습니다. 피드·검색에서 제외됩니다.',
+  'report.notifTargetWorkDeleted': '회원님의 전시 \'{title}\'이 신고 처리로 삭제됐어요.',
+  'report.notifTargetWorkHidden': '회원님의 전시 \'{title}\'이 신고 검토 결과 비공개로 전환됐어요. 피드와 검색에서 제외돼요.',
   'report.notifAutoHidden': '회원님 전시 \'{title}\'이 신고 누적으로 잠시 비공개되었어요. 운영팀이 영업일 24시간 안에 확인해드리고, 문제 없으면 다시 공개돼요.',
-  'report.notifReporterDismissed': '접수하신 신고가 운영팀 검토 결과 기각되었습니다.',
-  'upload.toastPublishedImmediate': '작품이 등록되었으며 둘러보기 피드에 바로 노출됩니다. (자동 승인 모드)',
+  'report.notifReporterDismissed': '접수하신 신고는 운영팀 검토 결과 받아들여지지 않았어요.',
+  'upload.toastPublishedImmediate': '작품이 등록됐어요. 둘러보기 피드에서 바로 보여요. (자동 승인 모드)',
   'upload.toastDraftSaved': '초안이 저장되었어요.',
   'upload.toastOrderSaved': '순서가 저장되었어요.',
   'upload.confirmStudent': '업로드하는 작품들에 대한 작가의 동의를 받았습니다',
@@ -1263,7 +1263,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'exhibition.participantsHeading': '참여 작가',
   'exhibition.worksHeading': '전시 작품',
   'exhibition.otherHeading': '다른 전시',
-  'exhibition.likeAdded': '좋아요를 눌렀습니다.',
+  'exhibition.likeAdded': '좋아요',
   'exhibition.ogDesc': '의 전시 — Artier 디지털 갤러리',
   'exhibition.shareManual': '링크를 수동으로 복사해 주세요.',
   'exhibition.shareFail': '공유를 완료하지 못했습니다.',
@@ -1554,7 +1554,7 @@ Use the buttons above to push demo notifications`,
 /events|Event list
 /events/1|Sample event detail`,
   'flowMap.section14': `14. Points earn / view
-Phase 1: background earn only (PRD & user flow). Points UI and /points are Phase 2. Local earn hooks still run on signup, onboarding, browse, upload, etc.`,
+Phase 1: background earn only (PRD & user flow). Points UI and /points come after backend integration. Local earn hooks still run on signup, onboarding, browse, upload, etc.`,
   'flowMap.section15': `15. PM review — reference ❌ demo
 /demo/reference|Mock JWT, GeoIP, email templates, send-rule table`,
   'points.title': 'Points',
@@ -2606,6 +2606,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.10 | 2026-04-29 | PM × Claude | **UX 카피 톤 위반 14건 일괄 정리** — UX Writing audit 후속. 사용자 노출 알림·토스트·배너의 격식체·행정 어휘를 시니어 친화 친근체로 정합. (1) 검수·신고 알림 7건 — `review.notifApproved`(노출됩니다 → 다른 분들이 볼 수 있어요), `review.notifRejected`(반려되었어요 → 검수를 통과하지 못했어요), `review.editBannerRejected/Repeated`("반려" 행정 어휘 정정), `review.notifNewWork`(전시했습니다 → 올렸어요), `report.notifTargetWorkDeleted/Hidden`(되었습니다 → 됐어요), `report.notifReporterDismissed`(기각 → 받아들여지지 않았어요). (2) 업로드·시스템 토스트 4건 — `upload.toastPublishedImmediate`·`publishedConfirmDescPending`(노출 → 보여요), `invite.deletedTitle`(되었습니다 → 됐어요), `notifications.seedPickSelected`(선정 → 뽑혔어요). (3) 좋아요 토스트 — `exhibition.likeAdded` 격식체 폐기, "좋아요" 단어로 간결화. (4) 메모리 규칙 정합 — `flowMap.section14`(ko/en) "Phase 2" 표현 → "런칭 전 백엔드 연동 후"로 정정(메모리: Phase 2 작업 표현 금지). 모두 사용자 노출 카피로 디지털 드로잉 시니어 페르소나 톤(친근체) 일관 적용. |
 | v1.9 | 2026-04-28 | PM × Claude | **설정 계정 섹션 데모 잔재 정리** — 사용자 모집 직전 노출된 "데모 세션 식별자"·"세션에서 계정을 읽을 수 없습니다" 카피를 폐기. 설정 계정 섹션은 이메일 형식 sub일 때만 노출(이메일 라벨 + 값), email-shape 아니거나 sub 없으면 row 자체 숨김. accountDemoIdLabel·accountEmailUnavailable 2쌍(ko/en) 제거. 모의 세션 검증에 sub 필수 가드 추가. |
 | v1.8 | 2026-04-28 | PM × Claude | **설정 화면 i18n 누락 보강** — 글자 크기 토글 라벨 3쌍(작게·보통·크게 / Small·Default·Large)과 화면 테마 섹션 4쌍(섹션 헤더·인트로·밝게·어둡게 / Theme·Light·Dark) 추가. 사용자 모집 직전 발견된 i18n 키 노출 결함 정합. |
 | v1.7 | 2026-04-28 | PM × Claude | **데드코드 일괄 청소** — (1) 미사용 i18n 키 116쌍(ko+en 232 entries) 제거 — `upload.*` UI 폐기 흔적 47개(cancelConfirm·contentTools·cover·disclaimer·editMode·errPublish·eventLinked·toolbarPadding·hintEmpty·linkPiece·preview·groupHint·workDetail 등), `workDetail.*` 8개(copyInviteCard·groupLine·kakaoShare·participantCount·instructorUpload·toastInvite 등), `workInquiry.*` 5개 카테고리 hint, `settings.*` 14개(fontScale·langKo·theme·sectionLang·socialDemoNote 등), `search.*` 9개(suggest1~6·suggestedKeywords), `signup.*` 2개, `report.*` 3개, `review.*` 2개, `login.*` 4개, `invite.expiredBody`·`sharePublishedToast`, `onboarding.email*`·`later`, `profile.share`·`tagged`·`addLink`·`linkLabelPh`, `events.promo*`·`viewDetail`, `browse.*` 4개, `admin.nav.eventParticipants`, `footer.demoLink`, `workCard.collectible`. (2) shadcn/ui 미사용 26개 컴포넌트 파일 삭제 (accordion·alert·aspect-ratio·breadcrumb·calendar·carousel·collapsible·command·context-menu·form·input-otp·menubar·navigation-menu·pagination·radio-group·resizable·scroll-area·sheet·sidebar·skeleton·slider·sonner·switch·toggle·toggle-group·use-mobile). (3) `sanctionStore.ts` 폐기(Phase 2 준비용 0 호출부 — 메모리 규칙 정합). (4) `useDraftStore`·`useAccountSuspensionStore` 미사용 hook 제거. (5) `AdminGuard.tsx` 미사용 컴포넌트 제거. (6) `ImageArtistAssignment.phoneNumber` 필드 + Upload·Profile의 항상 false 분기 일괄 정리(Policy §3 v2.14 토큰 모델 정합). (7) `ExhibitionWorkShareLanding`의 미사용 `getCoverImage` import 정리. |
