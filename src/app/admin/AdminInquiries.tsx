@@ -249,7 +249,7 @@ export default function AdminInquiries() {
         <h1 className="text-xl font-bold text-foreground">문의함</h1>
       </div>
       <p className="text-sm text-muted-foreground mb-6">
-        사용자 `/contact` 제출 문의 (localStorage `artier_inquiries`). 개인정보 권리 행사 요청(Policy §30)은 상단 우선 표시.
+        사용자가 보낸 문의를 처리합니다. 개인정보 권리 행사 요청은 상단에 우선 표시돼요.
       </p>
 
       {/* KPI 4종 */}

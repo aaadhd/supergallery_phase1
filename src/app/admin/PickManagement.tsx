@@ -2,9 +2,11 @@ import { useMemo, useState, useEffect } from 'react';
 import { toast } from 'sonner';
 import { GripVertical, Search, X } from 'lucide-react';
 import { Button } from '../components/ui/button';
+import { ImageWithFallback } from '../components/ImageWithFallback';
 import { workStore } from '../store';
 import type { Work } from '../data';
 import { displayExhibitionTitle } from '../utils/workDisplay';
+import { getThumbCover } from '../utils/imageHelper';
 import { isWorkPublic } from '../utils/workVisibility';
 import { pushDemoNotification } from '../utils/pushDemoNotification';
 import { useI18n } from '../i18n/I18nProvider';
@@ -196,11 +198,11 @@ export default function PickManagement() {
       </div>
       <div className="mb-6 space-y-1.5">
         <p className="text-sm text-muted-foreground">
-          현재 {pickIds.length} / {MAX_PICKS} · 드래그로 순서 변경은 추후 연동 예정(번호만 표시)
+          현재 {pickIds.length} / {MAX_PICKS} · 드래그로 순서 변경은 백엔드 연동 후 활성화됩니다(번호만 표시)
         </p>
         <p className="inline-flex items-center gap-1.5 text-xs text-amber-700 bg-amber-50 border border-amber-200 rounded-md px-2.5 py-1">
           <span aria-hidden>↻</span>
-          현재 Pick은 주간 운영(최대 10개), 선정 이력 배지는 유지됩니다.
+          현재 Pick은 매주 바뀌어요(최대 10개). 한 번 뽑힌 작품의 Pick 배지는 그대로 남아요.
         </p>
       </div>
 
@@ -227,11 +229,12 @@ export default function PickManagement() {
         <div className="mb-6 border border-border rounded-lg divide-y divide-[#F0F0F0]">
           {searchResults.map((work) => {
             const c = toAdminPickItem(work);
+            const thumbSrc = getThumbCover(work);
             return (
             <div key={c.id} className="flex items-center justify-between px-4 py-3 lg:hover:bg-muted/50">
               <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded bg-primary/10 text-primary text-xs font-bold flex items-center justify-center border border-border">
-                  {c.thumb}
+                <div className="w-10 h-10 rounded overflow-hidden bg-muted/40 border border-border shrink-0">
+                  <ImageWithFallback src={thumbSrc} alt={c.title} className="h-full w-full object-cover" />
                 </div>
                 <div>
                   <p className="text-sm font-medium text-foreground">{c.title}</p>
@@ -261,13 +264,18 @@ export default function PickManagement() {
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-4 mb-10">
               {picks.map((work) => {
                 const p = toAdminPickItem(work);
+                const thumbSrc = getThumbCover(work);
                 return (
                   <div
                     key={p.id}
                     className="border border-border rounded-lg p-3 lg:hover:bg-muted/50 transition-colors relative group"
                   >
-                    <div className="aspect-square rounded-md bg-gradient-to-br from-gray-50 to-gray-100 flex items-center justify-center text-sm font-semibold text-primary border border-border/40 mb-2">
-                      {p.thumb}
+                    <div className="aspect-square rounded-md overflow-hidden bg-muted/40 border border-border/40 mb-2">
+                      <ImageWithFallback
+                        src={thumbSrc}
+                        alt={p.title}
+                        className="h-full w-full object-cover"
+                      />
                     </div>
                     <p className="text-xs font-medium text-foreground truncate">{p.title}</p>
                     <p className="text-xs text-muted-foreground truncate">{p.artist}</p>

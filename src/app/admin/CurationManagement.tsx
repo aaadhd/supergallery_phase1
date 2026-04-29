@@ -119,7 +119,7 @@ export default function CurationManagement() {
     <div className="min-h-full">
       <h1 className="text-xl font-bold text-foreground mb-1">피드 큐레이션</h1>
       <p className="text-sm text-muted-foreground mb-6">
-        둘러보기 피드 노출 순서: <strong>Pick → 기획전 → 추천 작가 → 신규(14일) → 일반</strong>. 여기서 기획전·추천 작가 레이어를 관리합니다. 기획전은 주제·맥락 단위로 다수 운영 가능 (Policy §15.1·15.4).
+        둘러보기 피드 노출 순서: <strong>Pick → 기획전 → 추천 작가 → 신규(14일) → 일반</strong>. 여기서 기획전·추천 작가 레이어를 관리합니다. 기획전은 주제·맥락 단위로 개수 제한 없이 운영할 수 있어요.
       </p>
 
       {/* 기획전 — 다수 운영 */}

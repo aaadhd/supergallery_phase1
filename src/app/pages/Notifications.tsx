@@ -176,7 +176,7 @@ const typeIcons = {
 const typeColors = {
   like: 'bg-red-50 text-red-400',
   follow: 'bg-blue-50 text-blue-400',
-  pick: 'bg-amber-50 text-amber-400',
+  pick: 'bg-[#B8862F]/10 text-[#B8862F]',
   system: 'bg-muted/50 text-muted-foreground',
   event: 'bg-emerald-50 text-emerald-500',
   invite: 'bg-violet-50 text-violet-500',

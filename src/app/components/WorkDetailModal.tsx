@@ -428,7 +428,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
             </div>
             <div className="flex items-center gap-2 shrink-0">
               {isPick && (
-                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-amber-500/10 text-amber-600 text-xs font-bold whitespace-nowrap">
+                <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#B8862F]/10 text-[#B8862F] text-xs font-bold whitespace-nowrap">
                   <svg className="h-3 w-3" fill="currentColor" viewBox="0 0 20 20">
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.957c.3.921-.755 1.688-1.54 1.118l-3.37-2.448a1 1 0 00-1.176 0l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.287-3.957a1 1 0 00-.364-1.118L2.063 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.957z" />
                   </svg>
@@ -871,15 +871,15 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
         {(prevWork || nextWork) && (
           <div className="flex items-center justify-between px-4 py-2 border-b border-white/5">
             {prevWork ? (
-              <button type="button" onClick={() => onNavigate?.(prevWork.id)} className="flex items-center gap-1.5 p-0 m-0 border-0 bg-transparent shadow-none cursor-pointer">
-                <ChevronLeft className="h-4 w-4 text-white/80" />
+              <button type="button" onClick={() => onNavigate?.(prevWork.id)} className="flex items-center gap-1.5 min-h-[44px] px-3 py-2 -ml-3 border-0 bg-transparent shadow-none cursor-pointer">
+                <ChevronLeft className="h-5 w-5 text-white/80" />
                 <span className="text-xs text-white/80">{t('workDetail.prev')}</span>
               </button>
             ) : <div />}
             {nextWork ? (
-              <button type="button" onClick={() => onNavigate?.(nextWork.id)} className="flex items-center gap-1.5 p-0 m-0 border-0 bg-transparent shadow-none cursor-pointer">
+              <button type="button" onClick={() => onNavigate?.(nextWork.id)} className="flex items-center gap-1.5 min-h-[44px] px-3 py-2 -mr-3 border-0 bg-transparent shadow-none cursor-pointer">
                 <span className="text-xs text-white/80">{t('workDetail.next')}</span>
-                <ChevronRight className="h-4 w-4 text-white/80" />
+                <ChevronRight className="h-5 w-5 text-white/80" />
               </button>
             ) : <div />}
           </div>

@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Outlet, NavLink, Link, Navigate } from 'react-router-dom';
+import { Outlet, NavLink, Link, Navigate, useLocation } from 'react-router-dom';
 import { toast, Toaster } from 'sonner';
 import {
   LayoutDashboard,
@@ -76,6 +76,7 @@ void Users; void ImageIcon; void CalendarDays;
 
 export default function AdminLayout() {
   const { t } = useI18n();
+  const location = useLocation();
   // PRD_Admin §0.5.2: 세션 만료·해제를 감지해 자동 리다이렉트. 최초 렌더 값은 함수 평가로 즉시 판정.
   const [sessionValid, setSessionValid] = useState(() =>
     canAccessAdminRoutes(authStore.isLoggedIn()),
@@ -181,7 +182,7 @@ export default function AdminLayout() {
       </aside>
 
       <main className="flex-1 overflow-auto bg-slate-50/80">
-        <div className="max-w-[1200px] mx-auto p-6">
+        <div key={location.pathname} className="max-w-[1200px] mx-auto p-6 animate-in fade-in duration-150">
           <Outlet />
         </div>
         <Toaster position="top-center" richColors toastOptions={{ duration: 5000 }} />

@@ -337,13 +337,8 @@ export default function ReportManagement() {
   return (
     <div className="min-h-full">
       <h1 className="text-xl font-bold text-foreground">신고 관리</h1>
-      <p className="text-sm text-muted-foreground mt-1 mb-2">
-        Artier에서 접수한 신고는 이 브라우저의 <code className="text-xs bg-slate-100 px-1 rounded">localStorage (artier_reports)</code>와
-        공유됩니다. 신고 직후 이 탭을 열어 두면 목록이 곧바로 갱신됩니다.
-      </p>
-      <p className="text-sm text-muted-foreground mb-6">
-        「비공개」는 <strong>작품 신고</strong>일 때 해당 작품에 비공개 플래그를 저장해 둘러보기·검색에서 숨깁니다. 운영 콘솔 진입: 주소창에{' '}
-        <code className="text-xs bg-slate-100 px-1 rounded">/admin/reports</code>
+      <p className="text-sm text-muted-foreground mt-1 mb-6">
+        사용자가 접수한 신고를 처리합니다. 작품 신고를 비공개 처리하면 둘러보기·검색에서 숨겨져요. 신고 직후 이 탭을 열어 두면 목록이 곧바로 갱신됩니다.
       </p>
 
       <div className="flex flex-wrap gap-3 mb-6">

@@ -151,7 +151,7 @@ export default function MemberManagement() {
 
       {filtered.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
-          검색 결과가 없습니다.
+          조건에 맞는 회원이 없어요. 검색어나 필터를 바꿔 주세요.
         </div>
       ) : (
         <div className="border border-border rounded-lg overflow-hidden overflow-x-auto">

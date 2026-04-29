@@ -116,6 +116,16 @@ export default function ContentReview() {
     return workStore.subscribe(() => setWorks(workStore.getWorks()));
   }, []);
 
+  // 반려 모달 ESC 닫기 (다른 모달과 동작 일관)
+  useEffect(() => {
+    if (!rejectTarget) return;
+    const onKey = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') setRejectTarget(null);
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, [rejectTarget]);
+
   const rows = useMemo(() => {
     return works
       .map((w) => ({ work: w, ui: toUiStatus(w), date: w.uploadedAt || '' }))
@@ -211,9 +221,7 @@ export default function ContentReview() {
     <div className="min-h-full">
       <h1 className="text-xl font-bold mb-1 text-foreground">콘텐츠 검수</h1>
       <p className="text-sm text-muted-foreground mb-6">
-        업로드된 전시는 검수 전까지 둘러보기 피드에 나오지 않습니다. 본인 프로필에는 즉시 노출됩니다. 로컬 개발에서 관리자 화면은{' '}
-        <code className="text-xs bg-muted/50 px-1 rounded">/admin/content-review</code> · 먼저 일반 로그인이 필요합니다(
-        <code className="text-xs bg-muted/50 px-1 rounded">npm run dev</code> 기준).
+        검수 통과 전 전시는 둘러보기 피드에 노출되지 않아요. 본인 프로필에선 바로 보여요. 검수 SLA는 1~24시간.
       </p>
 
       <div className="flex flex-wrap gap-3 mb-6">
@@ -339,7 +347,7 @@ export default function ContentReview() {
                         <ExternalLink className="w-3 h-3 shrink-0" />
                       </button>
                     </td>
-                    <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{date || '—'}</td>
+                    <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{date ? formatHistoryDate(date) : '—'}</td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${statusBadgeClass(ui)}`}>
                         {ui}
