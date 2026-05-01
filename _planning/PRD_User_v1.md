@@ -199,19 +199,19 @@
 - 소셜 로그인 버튼 3종(카카오·구글·애플) — i18n 사전에서 **"[제공자]로 계속하기"** 문구(가입·로그인 통합). 사용자 언어(KO/EN)에 따라 순서 변경 — KO: 카카오·구글·애플 / EN: 구글·애플·카카오
 - "이메일로 가입하기" CTA (이메일 매직 링크 가입)
 - "이미 계정이 있으신가요? **로그인 하기**" 링크 (→ USR-AUT-02b 이메일 로그인)
-- `redirect` 쿼리 파라미터 (선택)
+- 로그인 후 돌아갈 경로 정보(선택)
 
 #### 처리
-1. 이미 로그인 상태라면 `/` 또는 `redirect` 경로로 자동 이동(시트 열지 않음).
+1. 이미 로그인 상태라면 홈 또는 지정된 경로로 자동 이동(시트 열지 않음).
 2. **소셜 버튼 탭**:
-   - 기가입자 → 세션 생성 후 `redirect` 경로(없으면 `/`)로 이동.
+   - 기가입자 → 세션 생성 후 지정된 경로(없으면 홈)로 이동.
    - 신규 → USR-AUT-05(소셜 최초 가입 모달).
 3. **"이메일로 가입하기" 탭** → USR-AUT-03(회원가입 Step 1, 이메일 매직 링크).
 4. **하단 "로그인 하기" 링크** → USR-AUT-02b(이메일 로그인 전용 화면).
-5. `redirect` 파라미터는 **내부 경로(`/`로 시작)** 만 허용. 외부 URL은 무시.
+5. 지정된 경로는 **서비스 내부 경로만** 허용. 외부 URL은 무시.
 
 #### 출력
-- 로그인 성공 → 세션 생성, `redirect` 경로 또는 `/`로 이동
+- 로그인 성공 → 세션 생성, 지정된 경로 또는 홈으로 이동
 - 신규 가입 → USR-AUT-03·USR-AUT-05·USR-AUT-09 흐름
 - 만 14세 이상 고지 문구 상시 표시
 
@@ -222,7 +222,7 @@
 - AC-04: Given 모든 사용자 / When 시트 오픈 / Then 4가지 가입 옵션(카카오·구글·애플·이메일 매직 링크)이 region 분기 없이 동일하게 노출.
 - AC-05: Given 시트 안의 "이메일로 가입하기" 탭 / When 클릭 / Then `/signup?step=1`로 이동.
 - AC-06: Given 시트 안의 "로그인 하기" 링크 탭 / When 클릭 / Then USR-AUT-02b(이메일 로그인 화면)으로 이동.
-- AC-07: Given `redirect=https://evil.com` / When 로그인 성공 / Then `redirect` 무시하고 `/`로 이동.
+- AC-07: Given 외부 도메인 URL이 지정된 경로 파라미터로 전달 / When 로그인 성공 / Then 외부 URL 무시하고 홈으로 이동.
 - AC-08: Given 시트 바깥 탭·ESC·스와이프 다운 / When 입력 / Then 시트 닫힘. `/login` 직접 진입이었다면 `/`로 이동.
 
 #### 엣지케이스
@@ -593,7 +593,7 @@ total = base + following_bonus + bucket_boost + noise
 
 **비로그인·인터랙션**
 - AC-14: Given 비로그인 + 좋아요 아이콘 탭 / When 탭 / Then CM-02(로그인 유도) 모달 오픈 1회, 같은 세션 재시도 시 토스트.
-- AC-15: Given 로그인 완료 후 피드 복귀 / When 복귀 / Then `redirect` 파라미터 경로로 이동.
+- AC-15: Given 로그인 완료 후 피드 복귀 / When 복귀 / Then 보호 액션 진입 시 지정된 경로로 이동.
 
 **배너**
 - AC-16: Given 활성 배너 3 + 활성 이벤트 1 / When 피드 로드 / Then 캐러셀 4 슬라이드 + 5초 자동 회전.
@@ -1017,7 +1017,7 @@ total = base + following_bonus + bucket_boost + noise
 #### 처리
 1. 확인 화면 표시.
 2. 비회원 초대가 포함됐으면 "검수 승인 후 초대가 발송됩니다" 안내.
-3. CTA 2개: "내 전시 보기"(USR-PRF-01의 `exhibition` 탭) / "둘러보기"(USR-BRW-01).
+3. CTA 2개: "내 전시 보기"(USR-PRF-01의 전시 탭) / "둘러보기"(USR-BRW-01).
 
 #### 출력
 - "전시가 등록되었습니다" 타이틀
@@ -1071,9 +1071,9 @@ total = base + following_bonus + bucket_boost + noise
   - 팔로우·신고 비활성(opacity 40% + `pointer-events-none`)
 
 **3) 탭 가시성**
-- 본인: `exhibition` / `works` / `likes` / `saved` / `drafts` + 강사면 `student-works`
-- 타인: `exhibition` 단독. 다른 탭 URL 직접 진입 → `exhibition`으로 리다이렉트.
-- 본인 탭에서 `?tab=student-works` 요청 + 강사 아님 → 기본 탭으로.
+- 본인: 전시 / 내 작품 / 좋아요 / 저장 / 초안 + 강사면 수강생 작품
+- 타인: 전시 탭 단독. 다른 탭 URL 직접 진입 → 전시 탭으로 리다이렉트.
+- 본인 탭에서 수강생 작품 탭 요청 + 강사 아님 → 기본 탭으로.
 
 **4) 탭 상세 (§§5.1.1~5.1.6 참조)**
 
@@ -1091,17 +1091,17 @@ total = base + following_bonus + bucket_boost + noise
 | 팔로워·팔로잉 숫자 탭 | USR-PRF-04 모달(두 탭 전환) |
 | 타인 프로필 팔로우 버튼 | 팔로우 토글(비로그인 → CM-02) |
 | 외부 링크 탭 | 해당 URL 새 탭 |
-| 탭 전환 | URL `?tab=<value>` 즉시 동기화(`exhibition`은 쿼리 생략) + `replace` 모드로 히스토리 누적 방지 |
-| 직접 URL(`/me?tab=works`) 또는 뒤로가기 | 해당 탭으로 상태 복원. 본인이 아닌데 본인 전용 탭(works·drafts·likes·saved·student-works) 요청 시 `exhibition`으로 리다이렉트 |
+| 탭 전환 | URL의 탭 파라미터 즉시 동기화(전시 탭은 기본값이라 쿼리 생략) + 히스토리 누적 방지 |
+| 직접 URL(예: `/me?tab=works`) 또는 뒤로가기 | 해당 탭으로 상태 복원. 본인이 아닌데 본인 전용 탭(내 작품·초안·좋아요·저장·수강생 작품) 요청 시 전시 탭으로 리다이렉트 |
 
 #### 수용기준
-- AC-01: Given 본인 업로드 중 `isInstructorUpload === true` 1건 이상 / When 프로필 로드 / Then 헤더에 강사 배지 + `student-works` 탭 노출.
+- AC-01: Given 본인 업로드 중 강사 업로드 1건 이상 / When 프로필 로드 / Then 헤더에 강사 배지 + 수강생 작품 탭 노출.
 - AC-02: Given 강사 업로드 **전부 삭제** / When 프로필 재로드 / Then 배지·탭 모두 자동 비노출.
 - AC-03: Given 탈퇴 작가 프로필 / When 로드 / Then 이름 "작가 미상" + 팔로우·신고 액션 비활성.
-- AC-04: Given 타인 프로필에서 `?tab=drafts` URL / When 진입 / Then `exhibition` 탭으로 리다이렉트 + URL도 `?tab=` 제거.
+- AC-04: Given 타인 프로필에서 초안 탭 URL 직접 진입 / When 진입 / Then 전시 탭으로 리다이렉트 + URL의 탭 파라미터도 제거.
 - AC-05: Given 본인 헤더 편집 완료 / When 저장 / Then 헤더에 즉시 반영(리로드 없이).
 - AC-06: Given 비로그인 + 타인 프로필 팔로우 버튼 / When 탭 / Then CM-02.
-- AC-07: Given 본인 프로필 + `drafts` 탭 선택 / When 탭 클릭 / Then URL `/me?tab=drafts`로 갱신(히스토리 추가 없음). 해당 링크를 공유하면 다른 기기에서도 drafts 탭으로 오픈.
+- AC-07: Given 본인 프로필 + 초안 탭 선택 / When 탭 클릭 / Then URL의 탭 파라미터가 초안으로 갱신(히스토리 추가 없음). 해당 링크를 공유하면 다른 기기에서도 초안 탭으로 오픈.
 
 #### 엣지케이스
 - EC-01: 존재하지 않는 사용자 ID → "사용자를 찾을 수 없습니다" + 피드로 복귀 CTA.
@@ -1113,7 +1113,7 @@ total = base + following_bonus + bucket_boost + noise
 - 정책: [Policy §4 탈퇴 작가](Policy_v1.md#4-탈퇴-작가-정책) · [Policy §13.4 강사 파생](Policy_v1.md#13-업로드-유형역할-정책)
 - 연결 화면: USR-EXH-01, USR-UPL-02, USR-PRF-02~04, USR-AUT-02, CM-02
 
-#### 5.1.1 전시 탭 (`exhibition`)
+#### 5.1.1 전시 탭
 
 **데이터**
 - 소스: 본인이 직접 올린 전시(강사 업로드 제외) + **참여 작가로 연결된 전시**(타인이 올린 그룹 전시의 참여 작가로 본인이 등록된 경우)
@@ -1412,7 +1412,7 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 수용기준
 - AC-01: Given 이벤트 종료 / When 상세 로드 / Then "참여하기" 버튼 비활성 + "이벤트가 종료되었습니다" 문구.
-- AC-02: Given `worksPublic: true` + 참여 전시 5건 / When 상세 로드 / Then 작품 섹션에 5건 표시.
+- AC-02: Given 참여작 공개 토글 ON + 참여 전시 5건 / When 상세 로드 / Then 작품 섹션에 5건 표시.
 - AC-03: Given 이미 참여 / When "참여하기" 탭 / Then 에러 안내.
 
 #### 의존
@@ -1517,11 +1517,11 @@ total = base + following_bonus + bucket_boost + noise
 - 필터 조합 결과는 최신순 정렬.
 
 **3) 일괄 액션**
-- "모두 읽음": 확인 다이얼로그 → 모든 `read: true` 갱신 + 헤더 배지 감소.
-- "읽은 알림 삭제": 확인 다이얼로그 → `read: true` 항목 영구 제거.
+- "모두 읽음": 확인 다이얼로그 → 모든 알림을 읽음 상태로 갱신 + 헤더 배지 감소.
+- "읽은 알림 삭제": 확인 다이얼로그 → 읽음 상태 알림을 영구 제거.
 
 **4) 개별 액션**
-- 알림 카드 본체 탭 → 원본으로 이동 + 해당 알림 `read: true` 자동 갱신.
+- 알림 카드 본체 탭 → 원본으로 이동 + 해당 알림이 읽음 상태로 자동 갱신.
 - 우측 X 버튼 탭 → 해당 알림 즉시 삭제(undo 없음).
 
 **5) 자동 정리**
