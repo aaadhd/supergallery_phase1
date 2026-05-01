@@ -573,6 +573,8 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
     '작품이 등록되었어요. 주말·공휴일을 빼고 24시간 안에 공개돼요. 결과는 알림으로 알려드릴게요.',
   'review.badgePending': '확인 중',
   'review.badgePendingHint': '운영팀이 확인하고 있어요. 주말·공휴일을 빼고 24시간 안에 공개돼요.',
+  'review.badgePendingHintForParticipant': '이 전시는 운영팀 확인 중이에요. 통과되면 다른 분들도 볼 수 있어요.',
+  'review.notifApprovedForParticipant': "함께 올라간 '{title}' 전시가 공개됐어요. 둘러보기 피드에서 확인하실 수 있어요.",
   'review.badgeRejected': '수정 필요',
   'review.badgeRejectedHint': '검수 기준에 맞지 않아 공개되지 않았어요. 수정해서 다시 올려 주세요.',
   'review.badgeRejectedClickHint': '눌러서 사유 보기',
@@ -593,7 +595,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'review.notifNewWork': '님이 새 작품을 올렸어요',
   // 신고 처리 결과 알림 — 대상 작가/신고자에게 운영팀 조치를 공지
   'pick.notifSelected': '회원님의 전시 \'{title}\'이 Artier\'s Pick으로 선정되었어요. 축하드려요!',
-  'invite.notifAutoMatched': '초대한 \'{name}\' 님이 가입해 전시 \'{title}\'의 참여 작가로 연결되었어요.',
+  'invite.notifAutoMatched': "'{name}' 님이 '{title}' 전시에 본인 자리를 등록했어요. 잘못 연결됐다면 전시 편집에서 풀 수 있어요.",
   'invite.notifClaimDeclined': '\'{title}\'에 초대한 분이 가입은 했지만 본인 작품이 아니라고 알려주셨어요. 전화번호·이메일을 다시 확인해주세요.',
   'invite.notifMemberLinked': '\'{senderName}\' 님이 전시 \'{title}\'에 참여 작가로 추가했어요. 본인이 아니면 \'내 작품\' 탭에서 해제할 수 있어요.',
   // §3.4.1 발신자가 가입자 식별자 입력 시 노출되는 모달 (이미 회원인 경우)
@@ -2606,6 +2608,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.11 | 2026-04-30 | PM × Claude | **Policy v2.16 v2.15 검수 신청 단계 공유 모델 정합** (코드 동시 갱신) — Policy §3 v2.14 → v2.15 라이프사이클 변경에 따른 카피 정정·신규. (1) v2.14 정책 위반 카피 4건 정정 — `upload.nonMemberNamePh`("초대 문자" → "초대 메시지"), `upload.nonMemberNameHelper`("자동으로 연결됩니다" 약속 폐기 → "Artier가 자동으로 알리지 않아요. 작가님이 직접 카톡·문자로"), `upload.publishedConfirmInviteNote`("검수 승인 직후 발송돼요" → "작가님이 직접 보내주세요. 지금 바로"), `invite.shareNotReady`("공개되면 알릴 수 있어요" → "검수 통과 후 친구가 가입할 수 있어요"). (2) `invite.tokenInactive` 카피 — 수동 톤("잠시 후 다시 확인해주세요") → 능동 톤("곧 공개될 전시예요. 지금 가입해두시면 통과 즉시 본인 작품을 골라보실 수 있어요"). (3) `invite.notifAutoMatched` 톤 정정 — "들어왔어요" 공개 가정 → "본인 자리를 등록했어요" 중립 톤. (4) 신규 키 3쌍(ko/en) — `claim.pendingHeader`(검수 신청 단계 클레임 안내), `review.badgePendingHintForParticipant`(친구용 배지 hint), `review.notifApprovedForParticipant`(검수 통과 시 친구 알림). (5) `buildInviteShareText` 시그니처 변경 — 토큰 상태(`InviteTokenStatus`) 인자 추가 → inactive 메시지 분기("{작가}님이 '{전시}' 전시를 신청했어요"). 모두 ko/en 양측 동일 톤 정합. 메모리 규칙(Phase 2 표현 금지 / 디지털 드로잉 시니어) 유지. |
 | v1.10 | 2026-04-29 | PM × Claude | **UX 카피 톤 위반 14건 일괄 정리** — UX Writing audit 후속. 사용자 노출 알림·토스트·배너의 격식체·행정 어휘를 시니어 친화 친근체로 정합. (1) 검수·신고 알림 7건 — `review.notifApproved`(노출됩니다 → 다른 분들이 볼 수 있어요), `review.notifRejected`(반려되었어요 → 검수를 통과하지 못했어요), `review.editBannerRejected/Repeated`("반려" 행정 어휘 정정), `review.notifNewWork`(전시했습니다 → 올렸어요), `report.notifTargetWorkDeleted/Hidden`(되었습니다 → 됐어요), `report.notifReporterDismissed`(기각 → 받아들여지지 않았어요). (2) 업로드·시스템 토스트 4건 — `upload.toastPublishedImmediate`·`publishedConfirmDescPending`(노출 → 보여요), `invite.deletedTitle`(되었습니다 → 됐어요), `notifications.seedPickSelected`(선정 → 뽑혔어요). (3) 좋아요 토스트 — `exhibition.likeAdded` 격식체 폐기, "좋아요" 단어로 간결화. (4) 메모리 규칙 정합 — `flowMap.section14`(ko/en) "Phase 2" 표현 → "런칭 전 백엔드 연동 후"로 정정(메모리: Phase 2 작업 표현 금지). 모두 사용자 노출 카피로 디지털 드로잉 시니어 페르소나 톤(친근체) 일관 적용. |
 | v1.9 | 2026-04-28 | PM × Claude | **설정 계정 섹션 데모 잔재 정리** — 사용자 모집 직전 노출된 "데모 세션 식별자"·"세션에서 계정을 읽을 수 없습니다" 카피를 폐기. 설정 계정 섹션은 이메일 형식 sub일 때만 노출(이메일 라벨 + 값), email-shape 아니거나 sub 없으면 row 자체 숨김. accountDemoIdLabel·accountEmailUnavailable 2쌍(ko/en) 제거. 모의 세션 검증에 sub 필수 가드 추가. |
 | v1.8 | 2026-04-28 | PM × Claude | **설정 화면 i18n 누락 보강** — 글자 크기 토글 라벨 3쌍(작게·보통·크게 / Small·Default·Large)과 화면 테마 섹션 4쌍(섹션 헤더·인트로·밝게·어둡게 / Theme·Light·Dark) 추가. 사용자 모집 직전 발견된 i18n 키 노출 결함 정합. |

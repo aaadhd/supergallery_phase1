@@ -616,6 +616,11 @@
         <thead><tr><th class="ver">버전</th><th class="date">날짜</th><th>주요 변경</th></tr></thead>
         <tbody>
           <tr>
+            <td class="ver">v1.5</td>
+            <td class="date">2026-04-30</td>
+            <td><strong>검수 신청 단계 공유 모델 반영 (Policy v2.16 / PRD_User v2.8).</strong> (1) USR-EXH-03 초대장 랜딩 inactive 분기 본문 갱신 — 같은 전시의 pending 작품 미리보기 그리드 노출(invite flow 한정), 카피 능동톤("곧 공개될 전시예요. 지금 가입해두시면 통과 즉시 본인 작품을 골라보실 수 있어요"). (2) USR-AUT-10b 본인 작품 찾기 진입 조건 확장 — 활성 토큰 → 활성 또는 inactive 토큰. inactive 단계엔 헤더 한 줄 안내 추가("검수 신청 중이에요. 미리 골라두시면 공개 시 자동 노출돼요"). (3) USR-UPL-10 발행 완료 모달의 비회원 안내 카피 정정 — "검수 승인 직후 발송돼요" → "작가님이 직접 카톡·문자로 보내주세요. 지금 바로". (4) USR-PRF-05 마이페이지 검수 배지를 클레임 슬롯 보유자(member co-creator)에게도 노출, hint 카피 분기. (5) ADM-REV-01 approve 시점에 클레임된 회원 참여자 알림 1건 추가 발송. (6) `buildInviteShareText` 토큰 상태별 메시지 분기, `InviteShareButton` 잠금 해제(active+inactive 공유), 편집으로 pending 회귀 시 토큰 자동 deactivate(work feedReviewStatus 정합).</td>
+          </tr>
+          <tr>
             <td class="ver">v1.4</td>
             <td class="date">2026-04-28</td>
             <td><strong>데드코드 일괄 청소.</strong> i18n 미사용 키 116쌍(ko+en 232 entries) 제거 — `upload.*` UI 폐기 47개·`workDetail.*` 8개·`workInquiry.*` 5개·`settings.*` 14개·`search.*` 9개 등. shadcn/ui 미사용 컴포넌트 26개(accordion·alert·calendar·carousel·command·form·sheet·sidebar·skeleton·sonner 등) 일괄 삭제. `sanctionStore.ts` 폐기(Phase 2 이관 메모리 규칙 정합). `AdminGuard.tsx`·`useDraftStore`·`useAccountSuspensionStore` hook 미사용 export 제거. `ImageArtistAssignment.phoneNumber` 필드 + Upload·Profile의 항상 false 분기 정리(Policy §3 v2.14 토큰 모델 정합). 화면 자체 변경 없음 — 본 업데이트는 코드 정합 작업이며 mockup·플로우엔 영향 없음.</td>
