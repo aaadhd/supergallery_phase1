@@ -22,7 +22,7 @@ import type { Work } from '../data';
 function collectExhibitionWorks(seed: Work, all: Work[], includePending = false): Work[] {
   const ex = seed.exhibitionName?.trim();
   const gn = seed.groupName?.trim();
-  // Policy §3 v2.15: 토큰이 검증된 invite flow면 검수 중(pending) 작품도 함께 미리보기.
+  // Policy v2.16 §3: 토큰이 검증된 invite flow면 검수 중(pending) 작품도 함께 미리보기.
   // 그래야 친구가 빈 페이지가 아니라 같은 전시의 다른 작품을 둘러볼 수 있음.
   // 외부 둘러보기·검색은 그대로 차단됨(이 함수는 invite landing 전용).
   const pool = all.filter((w) => {

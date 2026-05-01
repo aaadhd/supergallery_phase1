@@ -163,7 +163,7 @@ export default function Onboarding() {
     try { tokenStr = sessionStorage.getItem('artier_pending_invite_token'); } catch { /* ignore */ }
     if (tokenStr) {
       const tok = getInviteToken(tokenStr);
-      // Policy §3 v2.15: inactive(검수 신청 중) 토큰도 클레임 허용.
+      // Policy v2.16 §3: inactive(검수 신청 중) 토큰도 클레임 허용.
       // 친구가 가입 직후 본인 작품을 골라두면 검수 통과 시 자동 노출.
       if (tok && (tok.status === 'active' || tok.status === 'inactive')) {
         const work = workStore.getWork(tok.workId);

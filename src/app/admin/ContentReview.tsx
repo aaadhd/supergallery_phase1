@@ -171,7 +171,7 @@ export default function ContentReview() {
     const hasNonMember = w.imageArtists?.some((a) => a.type === 'non-member' && (a.displayName ?? '').trim()) ?? false;
     if (hasNonMember) activateInviteToken(w.id);
 
-    // Policy §3 v2.15: 클레임된 회원 참여자(작가 본인 제외)에게도 공개 알림 1건.
+    // Policy v2.16 §3: 클레임된 회원 참여자(작가 본인 제외)에게도 공개 알림 1건.
     // 검수 대기 중 미리 클레임한 친구는 배지가 사라지는 것 외에 알 길이 없어서 별도 푸시.
     const exhibitionTitle = w.exhibitionName?.trim() || w.title || '';
     const claimedMemberIds = new Set<string>();

@@ -994,7 +994,7 @@ export default function Profile() {
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-[1.625rem] sm:gap-[2.275rem] lg:gap-[2.6rem]">
                       {filteredWorks.map((work) => {
                         const isMyUpload = isOwnProfile && (work.artistId === profileArtist.id || work.authorId === profileArtist.id);
-                        // Policy §3 v2.15: 친구가 클레임한 슬롯 보유자도 본인 프로필에서 검수 상태 확인 가능.
+                        // Policy v2.16 §3: 친구가 클레임한 슬롯 보유자도 본인 프로필에서 검수 상태 확인 가능.
                         const isMyClaimedSlot = isOwnProfile && !isMyUpload &&
                           (work.imageArtists?.some(ia => ia.type === 'member' && ia.memberId === profileArtist.id) ?? false);
                         return (

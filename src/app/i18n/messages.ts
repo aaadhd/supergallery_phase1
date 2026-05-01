@@ -1578,7 +1578,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'upload.tabDirectInput': 'Enter manually',
   'upload.memberSearchPh': 'Search registered artists',
   'upload.nonMemberNamePh': 'Name to show in the invite message',
-  // (kept) Helper updated to reflect Policy §3 v2.15 — Artier does not auto-notify, artist sends directly
+  // (kept) Helper updated to reflect Policy v2.16 §3 — Artier does not auto-notify, artist sends directly
   'upload.nonMemberNameLabel2': 'Artist name',
   'upload.nonMemberNameHelper': "Just the name. Artier won't auto-notify them — after publishing, you can send them the link directly via your own channel.",
   'invite.shareCta': 'Tell a friend',

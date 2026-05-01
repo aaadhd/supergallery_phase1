@@ -57,7 +57,7 @@ export function InviteShareButton({
   if (!token || token.status === 'revoked') return null;
 
   const isActive = token.status === 'active';
-  // Policy §3 v2.15: 검수 신청 단계(inactive)에서도 작가가 직접 공유 가능. revoked만 차단.
+  // Policy v2.16 §3: 검수 신청 단계(inactive)에서도 작가가 직접 공유 가능. revoked만 차단.
   const isShareable = token.status === 'active' || token.status === 'inactive';
   const shareUrl = buildInviteShareUrl(workId, token.token);
   const shareText = buildInviteShareText(workTitle, inviterName, locale === 'en' ? 'en' : 'ko', token.status);

@@ -178,7 +178,7 @@ export function buildInviteShareText(
   locale: 'ko' | 'en',
   tokenStatus: InviteTokenStatus = 'active',
 ): string {
-  // Policy §3 v2.15: 검수 신청 단계(inactive)에서도 작가가 직접 공유 가능.
+  // Policy v2.16 §3: 검수 신청 단계(inactive)에서도 작가가 직접 공유 가능.
   // 친구는 가입 후 본인 작품을 직접 골라 연결하므로 "자동 연결" 약속을 피한다.
   if (tokenStatus === 'inactive') {
     if (locale === 'en') {
