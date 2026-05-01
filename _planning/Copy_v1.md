@@ -880,7 +880,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
     '프로필 > 작품 탭에서 작품 우측 상단 메뉴(⋯)를 통해 수정 및 삭제가 가능합니다. 비공개로 전환하면 피드에서만 숨길 수 있습니다.',
   'faq.q7': '그룹 전시는 어떻게 만드나요?',
   'faq.a7':
-    '업로드 시 "강사 대리 업로드"를 활성화하면 그룹명을 설정하고 수강생을 초대할 수 있습니다. 이메일로 참여 안내가 자동 발송됩니다.',
+    '업로드할 때 "함께 올리기"를 선택하면 그룹명을 입력하고 참여 작가를 한 자리씩 추가할 수 있어요. Artier 회원이면 이름을 검색해 바로 연결되고, 회원이 아닌 분은 이름만 입력해 자리를 만들어 두면 검수 통과 후 초대 링크로 직접 알릴 수 있어요.',
   'faq.q8': "Artier's Pick은 무엇인가요?",
   'faq.a8':
     '운영팀이 매주 우수 작품을 선정하여 배지를 부여합니다. 선정된 작품은 피드 상단에 노출되며, 작가에게 알림이 발송됩니다.',
@@ -889,6 +889,18 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
     '전시 상세 화면에서 신고 버튼(깃발 아이콘)을 눌러 신고할 수 있습니다. 운영팀이 7일 이내에 처리합니다.',
   'faq.q10': '서비스 이용료가 있나요?',
   'faq.a10': '현재 {brand}의 모든 기능은 무료로 이용하실 수 있습니다.',
+  'faq.q11': '함께 올린 비회원 친구는 어떻게 초대하나요?',
+  'faq.a11':
+    '검수가 통과되면 마이페이지의 전시 카드에 "친구에게 알리기" 버튼이 활성화돼요. 카카오톡·문자·이메일 등 평소 쓰시던 방법으로 친구에게 링크를 직접 보내주시면 됩니다. 회사가 자동으로 발송하지는 않아요.',
+  'faq.q12': '친구가 가입했는데 작품이 자동으로 연결 안 됐어요.',
+  'faq.a12':
+    '가입 직후 "본인 작품 찾기" 화면에서 친구분이 본인 그림 카드를 직접 눌러야 연결돼요. "여기 없어요"를 눌러 건너뛰셨거나 다른 분 자리를 잘못 눌렀을 수 있어요. 친구분께 다시 한번 확인해 주세요.',
+  'faq.q13': '친구가 잘못된 자리에 연결됐어요. 어떻게 풀어요?',
+  'faq.a13':
+    '마이페이지에서 해당 전시 카드를 누르고 "수정"으로 들어가시면 각 자리의 작가를 다시 지정할 수 있어요. 자리를 풀면 "작가 미상"으로 표시되고, 친구분께 카톡 등으로 새 초대 링크를 다시 보내실 수 있어요.',
+  'faq.q14': '초대 링크는 언제까지 유효해요?',
+  'faq.a14':
+    '초대 링크는 발급일로부터 90일 동안 유효해요. 그 안에 친구가 가입하지 않으면 만료되고, 작가님이 마이페이지에서 새 링크를 다시 만들 수 있어요. 검수 대기·반려 중에는 링크가 일시 비활성 상태가 되고, 재승인되면 자동으로 다시 활성화돼요.',
   'meta.ogDescription':
     '디지털 드로잉·아트 작품을 전시하고 발견하는 온라인 갤러리. 그룹 전시, Artier\'s Pick, 이벤트를 한곳에서.',
   'contact.title': '문의하기',
@@ -2062,7 +2074,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
     'Open Profile → Works and use the ⋯ menu on a work to edit or delete. Setting a work to private hides it from the feed only.',
   'faq.q7': 'How do I create a group exhibition?',
   'faq.a7':
-    'On upload, enable instructor proxy upload to set a group name and invite students. They receive an email invitation automatically.',
+    "When uploading, choose 'Group exhibition' to enter a group name and add participating artists one by one. Members are linked instantly by name search; for non-members, just type their name to reserve a spot — once review passes, you can send them an invite link directly through your own channels.",
   'faq.q8': "What is Artier's Pick?",
   'faq.a8':
     'Our team selects outstanding works each week and awards a badge. Picked works appear higher in the feed and artists get a notification.',
@@ -2071,6 +2083,18 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
     'Use the report button (flag) on the work detail screen. We review reports within about seven business days.',
   'faq.q10': 'Is there a fee?',
   'faq.a10': 'All features of {brand} are currently free to use.',
+  'faq.q11': 'How do I invite non-member friends to my group exhibition?',
+  'faq.a11':
+    "Once your exhibition passes review, the 'Tell a friend' button on your My page becomes active. Send the link to friends through KakaoTalk, SMS, email, or any channel you usually use — we don't send it for you.",
+  'faq.q12': "My friend signed up but their work isn't linked.",
+  'faq.a12':
+    "Right after signup, your friend has to tap their own work card on the 'Find my work' screen for the link to happen. They may have skipped it, or tapped someone else's spot by mistake. Please ask them to check.",
+  'faq.q13': 'A friend got linked to the wrong spot. How do I fix it?',
+  'faq.a13':
+    "On My page, open the exhibition card and tap 'Edit'. You can re-assign the artist for each spot. Unlinking shows the spot as 'Unknown artist', and you can send a new invite link to your friend.",
+  'faq.q14': 'How long is an invite link valid?',
+  'faq.a14':
+    "Invite links are valid for 90 days from issue. If your friend hasn't signed up by then, the link expires and you can create a new one from My page. While the exhibition is under review or rejected, the link is temporarily inactive — once re-approved, it becomes active again automatically.",
   'meta.ogDescription':
     'Discover and exhibit digital drawing and art online. Group shows, Artier\'s Pick, and events in one place.',
   'contact.title': 'Contact us',
@@ -2588,7 +2612,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.11 | 2026-04-30 | PM × Claude | **Policy v2.16 검수 신청 단계 공유 모델 정합** (코드 동시 갱신) — Policy §3 v2.14 → v2.16 라이프사이클 변경에 따른 카피 정정·신규. (1) v2.14 정책 위반 카피 4건 정정 — `upload.nonMemberNamePh`("초대 문자" → "초대 메시지"), `upload.nonMemberNameHelper`("자동으로 연결됩니다" 약속 폐기 → "Artier가 자동으로 알리지 않아요. 작가님이 직접 카톡·문자로"), `upload.publishedConfirmInviteNote`("검수 승인 직후 발송돼요" → "작가님이 직접 보내주세요. 지금 바로"), `invite.shareNotReady`("공개되면 알릴 수 있어요" → "검수 통과 후 친구가 가입할 수 있어요"). (2) `invite.tokenInactive` 카피 — 수동 톤("잠시 후 다시 확인해주세요") → 능동 톤("곧 공개될 전시예요. 지금 가입해두시면 통과 즉시 본인 작품을 골라보실 수 있어요"). (3) `invite.notifAutoMatched` 톤 정정 — "들어왔어요" 공개 가정 → "본인 자리를 등록했어요" 중립 톤. (4) 신규 키 3쌍(ko/en) — `claim.pendingHeader`(검수 신청 단계 클레임 안내), `review.badgePendingHintForParticipant`(친구용 배지 hint), `review.notifApprovedForParticipant`(검수 통과 시 친구 알림). (5) `buildInviteShareText` 시그니처 변경 — 토큰 상태(`InviteTokenStatus`) 인자 추가 → inactive 메시지 분기("{작가}님이 '{전시}' 전시를 신청했어요"). 모두 ko/en 양측 동일 톤 정합. 메모리 규칙(Phase 2 표현 금지 / 디지털 드로잉 시니어) 유지. **본 사이클 후속 정합** — Policy §3 v2.14 토큰 모델로 폐기된 전화 기반 초대 카피 키 9쌍(ko/en 18 entries) 일괄 제거 (`upload.nonMemberPhoneLabel2`·`upload.nonMemberPhoneHelper`·`upload.confirmInviteTitle`·`upload.confirmInviteListIntro`·`upload.confirmInviteHelper`·`upload.confirmInviteSend`·`onboarding.phoneLabel`·`onboarding.phoneHint`·`onboarding.phonePlaceholder`). `onboarding.inviteNotice`를 토큰 모델 톤으로 정정("초대 문자에 기재된 전화번호를 그대로 입력해주세요" → "친구가 보내주신 초대 링크로 오셨어요. 프로필 설정을 마치면 본인 작품을 직접 골라 연결할 수 있어요"). 코드(`src/app/i18n/messages.ts`)와 정합. |
+| v1.11 | 2026-04-30 | PM × Claude | **Policy v2.16 검수 신청 단계 공유 모델 정합** (코드 동시 갱신) — Policy §3 v2.14 → v2.16 라이프사이클 변경에 따른 카피 정정·신규. (1) v2.14 정책 위반 카피 4건 정정 — `upload.nonMemberNamePh`("초대 문자" → "초대 메시지"), `upload.nonMemberNameHelper`("자동으로 연결됩니다" 약속 폐기 → "Artier가 자동으로 알리지 않아요. 작가님이 직접 카톡·문자로"), `upload.publishedConfirmInviteNote`("검수 승인 직후 발송돼요" → "작가님이 직접 보내주세요. 지금 바로"), `invite.shareNotReady`("공개되면 알릴 수 있어요" → "검수 통과 후 친구가 가입할 수 있어요"). (2) `invite.tokenInactive` 카피 — 수동 톤("잠시 후 다시 확인해주세요") → 능동 톤("곧 공개될 전시예요. 지금 가입해두시면 통과 즉시 본인 작품을 골라보실 수 있어요"). (3) `invite.notifAutoMatched` 톤 정정 — "들어왔어요" 공개 가정 → "본인 자리를 등록했어요" 중립 톤. (4) 신규 키 3쌍(ko/en) — `claim.pendingHeader`(검수 신청 단계 클레임 안내), `review.badgePendingHintForParticipant`(친구용 배지 hint), `review.notifApprovedForParticipant`(검수 통과 시 친구 알림). (5) `buildInviteShareText` 시그니처 변경 — 토큰 상태(`InviteTokenStatus`) 인자 추가 → inactive 메시지 분기("{작가}님이 '{전시}' 전시를 신청했어요"). 모두 ko/en 양측 동일 톤 정합. 메모리 규칙(Phase 2 표현 금지 / 디지털 드로잉 시니어) 유지. **본 사이클 후속 정합** — Policy §3 v2.14 토큰 모델로 폐기된 전화 기반 초대 카피 키 9쌍(ko/en 18 entries) 일괄 제거 (`upload.nonMemberPhoneLabel2`·`upload.nonMemberPhoneHelper`·`upload.confirmInviteTitle`·`upload.confirmInviteListIntro`·`upload.confirmInviteHelper`·`upload.confirmInviteSend`·`onboarding.phoneLabel`·`onboarding.phoneHint`·`onboarding.phonePlaceholder`). `onboarding.inviteNotice`를 토큰 모델 톤으로 정정("초대 문자에 기재된 전화번호를 그대로 입력해주세요" → "친구가 보내주신 초대 링크로 오셨어요. 프로필 설정을 마치면 본인 작품을 직접 골라 연결할 수 있어요"). 코드(`src/app/i18n/messages.ts`)와 정합. **본 사이클 후속 — FAQ Copy ↔ 코드 동기화 누락 보강**: Copy v1.6 이력에 기록되었으나 본문에 누락된 `faq.q11`~`faq.q14` + `faq.a11`~`faq.a14` 8 entries(ko/en 16 entries) 일괄 추가 — Policy §3 v2.14 토큰 모델 정합 FAQ 4문항(친구 초대·자동 연결 안 됨·잘못 연결·만료). 동시에 `faq.a7` 옛 문구("이메일로 참여 안내가 자동 발송") → 토큰 모델 신문구("Artier 회원이면 이름을 검색해 바로 연결되고, 회원이 아닌 분은 이름만 입력해 자리를 만들어 두면 검수 통과 후 초대 링크로 직접 알릴 수 있어요")로 ko/en 양측 정정. 코드(messages.ts)가 SSoT 역할을 하며 Copy_v1.md를 따라잡은 형태. |
 | v1.10 | 2026-04-29 | PM × Claude | **UX 카피 톤 위반 14건 일괄 정리** — UX Writing audit 후속. 사용자 노출 알림·토스트·배너의 격식체·행정 어휘를 시니어 친화 친근체로 정합. (1) 검수·신고 알림 7건 — `review.notifApproved`(노출됩니다 → 다른 분들이 볼 수 있어요), `review.notifRejected`(반려되었어요 → 검수를 통과하지 못했어요), `review.editBannerRejected/Repeated`("반려" 행정 어휘 정정), `review.notifNewWork`(전시했습니다 → 올렸어요), `report.notifTargetWorkDeleted/Hidden`(되었습니다 → 됐어요), `report.notifReporterDismissed`(기각 → 받아들여지지 않았어요). (2) 업로드·시스템 토스트 4건 — `upload.toastPublishedImmediate`·`publishedConfirmDescPending`(노출 → 보여요), `invite.deletedTitle`(되었습니다 → 됐어요), `notifications.seedPickSelected`(선정 → 뽑혔어요). (3) 좋아요 토스트 — `exhibition.likeAdded` 격식체 폐기, "좋아요" 단어로 간결화. (4) 메모리 규칙 정합 — `flowMap.section14`(ko/en) "Phase 2" 표현 → "런칭 전 백엔드 연동 후"로 정정(메모리: Phase 2 작업 표현 금지). 모두 사용자 노출 카피로 디지털 드로잉 시니어 페르소나 톤(친근체) 일관 적용. |
 | v1.9 | 2026-04-28 | PM × Claude | **설정 계정 섹션 데모 잔재 정리** — 사용자 모집 직전 노출된 "데모 세션 식별자"·"세션에서 계정을 읽을 수 없습니다" 카피를 폐기. 설정 계정 섹션은 이메일 형식 sub일 때만 노출(이메일 라벨 + 값), email-shape 아니거나 sub 없으면 row 자체 숨김. accountDemoIdLabel·accountEmailUnavailable 2쌍(ko/en) 제거. 모의 세션 검증에 sub 필수 가드 추가. |
 | v1.8 | 2026-04-28 | PM × Claude | **설정 화면 i18n 누락 보강** — 글자 크기 토글 라벨 3쌍(작게·보통·크게 / Small·Default·Large)과 화면 테마 섹션 4쌍(섹션 헤더·인트로·밝게·어둡게 / Theme·Light·Dark) 추가. 사용자 모집 직전 발견된 i18n 키 노출 결함 정합. |
