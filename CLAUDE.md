@@ -84,8 +84,7 @@ PM 결정이 영향을 받는 작업(카피 작성·정책 정정·기획 변경
 - `src/app/components/RequiredMark.tsx` — 필수 입력 표시 (빨간 별 + sr-only 라벨)
 
 ### 유틸 / Store
-- `src/app/store.ts` — `WORKS_STORAGE_VERSION` 스토리지 버전 관리 (현재 값 `local-gallery-v16`, 키 `artier_works_version`)
-- `src/app/store/workStore.ts`, `draftStore.ts` — 작품/초안 상태
+- `src/app/store.ts` — `WORKS_STORAGE_VERSION` 스토리지 버전 관리 (현재 값 `local-gallery-v16`, 키 `artier_works_version`). `workStore`·`draftStore`·`profileStore` 등 핵심 스토어가 본 파일 안에 함께 정의됨.
 - `src/app/utils/inviteTokenStore.ts` — 비회원 초대 토큰 스토어 (Policy §3 v2.14). `issueInviteToken`(전시 발행 직후, status `'inactive'`) · `activateInviteToken`(검수 승인) · `deactivateInviteToken`(검수 반려·대기 회귀) · `revokeInviteToken`(전시 삭제·만료, 영구 무효) · `getInviteToken` lazy 만료 평가 · `connectMemberToSlot`(가입자가 본인 작품 카드 클릭 시 type 가드로 `'non-member'` → `'member'` 승격, 동시 선택 race 차단). 90일 TTL.
 - `src/app/utils/adminGate.ts` — 운영팀 역할 토글
 - `src/app/utils/feedOrdering.ts` — 둘러보기 피드 랭킹
