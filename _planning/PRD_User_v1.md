@@ -992,7 +992,14 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 의존
 - 엔티티: EXHIBITION, DRAFT, INVITE, EVENT, POINT_LEDGER
-- 정책: [Policy §3](Policy_v1.md#3-비회원-초대-정책) · [Policy §7.2](Policy_v1.md#7-포인트ap-정책) · [Policy §8](Policy_v1.md#8-초안-저장-정책) · [Policy §9](Policy_v1.md#9-작품명전시명그룹명-정책) · [Policy §11](Policy_v1.md#11-카메라-사진-차단-정책) · [Policy §13](Policy_v1.md#13-업로드-유형역할-정책) · [Policy §14](Policy_v1.md#14-커버-이미지-정책)
+- 정책:
+  - [§3 비회원 초대](Policy_v1.md#3-비회원-초대-정책)
+  - [§7.2 포인트 적립](Policy_v1.md#7-포인트ap-정책)
+  - [§8 초안 저장](Policy_v1.md#8-초안-저장-정책)
+  - [§9 작품명·전시명·그룹명](Policy_v1.md#9-작품명전시명그룹명-정책)
+  - [§11 카메라 사진 차단](Policy_v1.md#11-카메라-사진-차단-정책)
+  - [§13 업로드 유형·역할](Policy_v1.md#13-업로드-유형역할-정책)
+  - [§14 커버 이미지](Policy_v1.md#14-커버-이미지-정책)
 - 연결 화면: USR-UPL-01·04·05·06·07·08·09·10, USR-PRF-01·10
 
 ---

@@ -970,7 +970,7 @@ DB·런칭 직전 운영자가 본 표를 기준으로 초기 체크리스트를
 - AC-07: Given 첨부 파일 5MB 초과 / When 운영자가 응답 첨부 시도 / Then 에러 "5MB 이하만 가능합니다".
 
 #### 의존
-- 엔티티: INQUIRY (필수 필드: `id`·`name`·`email`·`category`·`message`·`attachments[]`·`status`·`createdAt`·`replies[]`·`assigneeId?`·`internalNotes?`·`privacy.subjectVerified?`·`privacy.responseAttachments?`)
+- 엔티티: INQUIRY — 사용자 제출 정보(이름·이메일·카테고리·본문·첨부 파일·접수 시각)와 운영 처리 정보(상태·답변 이력·담당자·내부 메모·개인정보 카테고리 본인 확인 여부·처리 결과 첨부)로 구성. 세부 필드는 §14 엔티티 부록 참조.
 - 정책: [Policy §30 개인정보 요청](Policy_v1.md#30-개인정보-열람정정삭제-요청-정책) · [Policy §22.6 운영 데이터 보관](Policy_v1.md#22-운영-리스크모더레이션-sla)
 - 연결 화면: ADM-DSH-01 (블로커) · USR-INF-07 (사용자 진입)
 - 감사 로그: 답변 발송·상태 변경 시 운영자 감사 로그 1건 (§0.6 정책 적용)
