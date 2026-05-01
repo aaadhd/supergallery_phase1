@@ -14,7 +14,7 @@
 
 | 항목 | 결정 | 근거 |
 |---|---|---|
-| 일반 문의 SLA | **3영업일** 이내 답변 | 운영 원칙 |
+| 일반 문의 SLA | **영업일 5일** 이내 응답 | [Policy §30.0](Policy_v1.md#30-개인정보-열람정정삭제-요청-정책) |
 | 개인정보 권리 행사 SLA | 접수 5영업일 + 처리 30일 (1회 연장) | [Policy §30.3](Policy_v1.md#303-처리-기한-sla) |
 | 첨부 파일 | 최대 3개, 각 5MB 이하 | 운영 보안 정책 |
 | 본인 확인 | 로그인 상태는 세션 1차 확인. 비로그인·탈퇴자는 가입 이메일에서 회신 | [Policy §30.4](Policy_v1.md#304-본인-확인) |
@@ -33,7 +33,7 @@
   [문의 유형 ▼]           (7개 카테고리)
   [문의 내용 textarea]    {n}/1,000 글자
   [📎 파일 첨부]          최대 3개, 각 5MB 이하
-  3영업일 이내에 답변 드리겠습니다.
+  영업일 5일 안에 답변 드릴게요.
   [문의 보내기]
 ─────────────────────────────────────────────
 ```
@@ -66,20 +66,20 @@
 
 | # | 라벨 | 처리 기한·연결 |
 |---|---|---|
-| 1 | 계정 관련 | 일반 SLA 3영업일 |
-| 2 | 업로드/전시 관련 | 일반 SLA 3영업일 |
+| 1 | 계정 관련 | 영업일 5일 이내 응답 (Policy §30.0) |
+| 2 | 업로드/전시 관련 | 영업일 5일 이내 응답 (Policy §30.0) |
 | 3 | 신고/저작권 관련 | [Policy §22.2](Policy_v1.md#222-신고-sla) 영업일 24시간 (위급) |
-| 4 | **개인정보 열람·정정·삭제 요청** | [Policy §30.3](Policy_v1.md#303-처리-기한-sla) 접수 5영업일 + 처리 30일 |
-| 5 | 제안/피드백 | 일반 SLA 3영업일 |
-| 6 | 오류 제보 | 일반 SLA 3영업일 (재현 자료 첨부 권장) |
-| 7 | 기타 | 일반 SLA 3영업일 |
+| 4 | **개인정보 열람·정정·삭제 요청** | [Policy §30.3](Policy_v1.md#303-처리-기한-sla) 접수 영업일 5일 + 처리 30일 |
+| 5 | 제안/피드백 | 영업일 5일 이내 응답 (Policy §30.0) |
+| 6 | 오류 제보 | 영업일 5일 이내 응답 (재현 자료 첨부 권장) |
+| 7 | 기타 | 영업일 5일 이내 응답 |
 
 ### 2.4 첨부·안내·제출
 
 - **첨부 라벨**: 파일 첨부 (`contact.attachments`)
 - **첨부 안내**: 최대 3개, 각 5MB 이하 (`contact.attachHint`)
 - **첨부 오류**: 파일 크기는 5MB 이하만 가능합니다. (`contact.fileTooLarge`)
-- **답변 기한 안내**: 3영업일 이내에 답변 드리겠습니다. (`contact.autoResponse`)
+- **답변 기한 안내**: 영업일 5일 안에 답변 드릴게요. (`contact.autoResponse`)
 - **제출 버튼**: 문의 보내기 / 전송 중... (`contact.submit` / `contact.submitting`)
 
 ### 2.5 토스트
@@ -113,20 +113,20 @@
 
 | # | Label | SLA / Linked policy |
 |---|---|---|
-| 1 | Account | General 3 business days |
-| 2 | Upload / exhibition | General 3 business days |
+| 1 | Account | 5 business days (Policy §30.0) |
+| 2 | Upload / exhibition | 5 business days (Policy §30.0) |
 | 3 | Report / copyright | [Policy §22.2](Policy_v1.md#222-신고-sla) 24 business hours (urgent) |
 | 4 | **Personal data access / correction / deletion** | [Policy §30.3](Policy_v1.md#303-처리-기한-sla) 5 business days + 30 days resolve |
-| 5 | Feedback | General 3 business days |
-| 6 | Bug report | General 3 business days (please attach repro) |
-| 7 | Other | General 3 business days |
+| 5 | Feedback | 5 business days (Policy §30.0) |
+| 6 | Bug report | 5 business days (Policy §30.0) (please attach repro) |
+| 7 | Other | 5 business days (Policy §30.0) |
 
 ### 3.4 Attachments, response time, submit
 
 - **Attachments label**: Attachments (`contact.attachments`)
 - **Attach hint**: Max 3 files, 5MB each (`contact.attachHint`)
 - **File error**: File size must be 5MB or less. (`contact.fileTooLarge`)
-- **Response notice**: We will respond within 3 business days. (`contact.autoResponse`)
+- **Response notice**: We will respond within 5 business days. (`contact.autoResponse`)
 - **Submit**: Send message / Sending... (`contact.submit` / `contact.submitting`)
 
 ### 3.5 Toasts
@@ -160,7 +160,7 @@
 - [ ] 첨부 안내 문구 노출 (최대 3개, 각 5MB)
 - [ ] 글자 수 카운터 1,000자 상한
 - [ ] FAQ 인라인 링크 `/faq` 이동
-- [ ] 답변 SLA 안내 노출 (Phase 1은 일반 3영업일 일률 적용)
+- [ ] 답변 SLA 안내 노출 (일반 카테고리 영업일 5일 일률 적용, Policy §30.0)
 - [ ] 카테고리별 어드민 라우팅 (개인정보 카테고리는 ADM-INQ-01 개인정보 우선 큐로 분류, [PRD_Admin §3.13](PRD_Admin_v1.md))
 - [ ] ko/en 양측 동일 카테고리 수·동일 SLA 안내 일관성
 

@@ -1427,7 +1427,11 @@ total = base + following_bonus + bucket_boost + noise
 - 형식 검증 후 구독 추가.
 
 #### 수용기준
-- AC-01: Given 유효 이메일 입력 / When 제출 / Then 구독 완료 토스트.
+- AC-01: Given 유효 이메일 입력 / When 제출 / Then 구독 완료 토스트 + 모달 닫힘.
+- AC-02: Given 잘못된 형식의 이메일 / When 제출 / Then 인라인 에러 노출 + 제출 차단.
+- AC-03: Given 빈 입력 / When 제출 시도 / Then "이메일을 입력해주세요" 인라인 에러.
+- AC-04: Given 이미 구독된 이메일 / When 동일 이메일 재제출 / Then "이미 구독 중이에요" 안내 토스트(중복 구독 차단).
+- AC-05: Given 모달 외부 클릭 또는 닫기 버튼 / When 클릭 / Then 모달 닫힘 (입력값 보존 안 함).
 
 #### 알려진 제약
 - **해지 UI 없음**(런칭 전 필수 구현 — [Policy §31 N-5](Policy_v1.md#31-런칭-전-미해결-항목)).
