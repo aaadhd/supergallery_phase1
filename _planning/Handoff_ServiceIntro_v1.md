@@ -3,7 +3,7 @@
 `USR-INF-01` 서비스 소개(About) 화면 본문 전문.
 
 > **단일 소스 안내**
-> - 코드(i18n) 단일 소스: [`Copy_v1.md`](Copy_v1.md) `about.*` 키
+> - 코드(i18n) 단일 소스: [`Copy_v1.md`](Copy_v1.md) About 카피 영역 키
 > - 본 문서는 동일 내용을 prose 형태로 정리한 **핸드오프 보조본**이다.
 > - 카피 변경은 [`Copy_v1.md`](Copy_v1.md)와 본 문서를 같은 작업 범위에서 동시 갱신한다.
 
@@ -35,7 +35,7 @@
 
 **CTA 버튼 2종**
 - 갤러리 둘러보기 → `/`
-- 작품 올리기 → `/upload`
+- 작품 올리기 → 경로 /upload
 
 ### 2) 기능 4종 ("Artier에서 할 수 있는 것")
 
@@ -61,7 +61,7 @@
 
 **리드**: 가입은 무료이며, 첫 작품 업로드까지 1분이면 됩니다.
 
-**CTA 버튼**: 첫 작품 올리기 → `/upload`
+**CTA 버튼**: 첫 작품 올리기 → 경로 /upload
 
 ---
 
@@ -78,7 +78,7 @@
 
 **CTA buttons (2)**
 - Browse the gallery → `/`
-- Upload work → `/upload`
+- Upload work → 경로 /upload
 
 ### 2) Features ("What you can do on Artier")
 
@@ -104,24 +104,24 @@
 
 **Lead**: Sign-up is free, and you can upload your first work in about a minute.
 
-**CTA button**: Upload your first work → `/upload`
+**CTA button**: Upload your first work → 경로 /upload
 
 ---
 
 ## 적용 키 (코드 동기화 매핑)
 
-- **히어로**: `about.heroTitle`, `about.heroLead`, `about.ctaBrowse`, `about.ctaUpload`
-- **기능 섹션**: `about.featuresHeading`, `about.feat1Title`~`about.feat4Title`, `about.feat1Desc`~`about.feat4Desc`
-- **미션**: `about.missionTitle`, `about.missionBody`
-- **하단 CTA**: `about.bottomTitle`, `about.bottomLead`, `about.bottomCta`
+- **히어로**: About 카피 키, About 카피 키, About 카피 키, About 카피 키
+- **기능 섹션**: About 카피 키, About 카피 키~About 카피 키, About 카피 키~About 카피 키
+- **미션**: About 카피 키, About 카피 키
+- **하단 CTA**: About 카피 키, About 카피 키, About 카피 키
 
 ---
 
 ## 구현 체크
 
 - [ ] 4구간(히어로·기능·미션·하단 CTA) 모두 반영
-- [ ] CTA 링크 동작 확인 — 갤러리 둘러보기(`/`)·작품 올리기(`/upload`)·첫 작품 올리기(`/upload`)
-- [ ] 히어로 제목·미션 본문에서 줄바꿈(`\n`) 정확 렌더
+- [ ] CTA 링크 동작 확인 — 갤러리 둘러보기(`/`)·작품 올리기(경로 /upload)·첫 작품 올리기(경로 /upload)
+- [ ] 히어로 제목·미션 본문에서 줄바꿈(줄바꿈) 정확 렌더
 - [ ] ko/en 양측 동일 카드 수·동일 미션 본문 길이 일치
 
 ---

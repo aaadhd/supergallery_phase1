@@ -1,9 +1,9 @@
 # 사용자 문의 원고 v2 (개발·운영·법무 전달용)
 
-`USR-INF-07` 문의하기 화면(`/contact`)의 양식·카테고리·안내 문구 전문.
+`USR-INF-07` 문의하기 화면(경로 /contact)의 양식·카테고리·안내 문구 전문.
 
 > **단일 소스 안내**
-> - 코드(i18n) 단일 소스: [`Copy_v1.md`](Copy_v1.md) `contact.*` 키
+> - 코드(i18n) 단일 소스: [`Copy_v1.md`](Copy_v1.md) 문의 카피 영역 키
 > - 본 문서는 동일 내용을 prose 형태로 정리한 **핸드오프 보조본**이다.
 > - 카피 변경은 [`Copy_v1.md`](Copy_v1.md)와 본 문서를 같은 작업 범위에서 동시 갱신한다.
 > - 카테고리 7종은 [Policy §30](Policy_v1.md#30-개인정보-열람정정삭제-요청-정책)·[§33](Policy_v1.md#33-작품-단위-운영팀-문의-정책) 정합. 특히 "개인정보 열람·정정·삭제 요청"은 법령 권리 행사 채널이므로 운영팀 SLA가 별도 적용.
@@ -44,17 +44,17 @@
 
 ### 2.1 제목·리드
 
-**제목** (`contact.title`)
+**제목** (문의 카피 키)
 > 문의하기
 
-**리드 (`contact.leadBeforeFaq` + `[FAQ]` 링크 + `contact.leadAfterFaq`)**
+**리드 (문의 카피 키 + `[FAQ]` 링크 + 문의 카피 키)**
 > 궁금한 점이 있으시면 아래 양식으로 보내주세요. 먼저 **FAQ**를 확인해 보시면 빠르게 답을 찾을 수 있습니다.
 
-→ "FAQ" 부분이 `/faq`로 이동하는 인라인 링크.
+→ "FAQ" 부분이 경로 /faq로 이동하는 인라인 링크.
 
 ### 2.2 입력 필드
 
-| 필드 | 라벨 (`contact.*`) | 플레이스홀더 |
+| 필드 | 라벨 (문의 카피 영역) | 플레이스홀더 |
 |---|---|---|
 | 이름 | 이름 | 이름을 입력하세요 |
 | 이메일 | 이메일 | 답변 받을 이메일 |
@@ -76,16 +76,16 @@
 
 ### 2.4 첨부·안내·제출
 
-- **첨부 라벨**: 파일 첨부 (`contact.attachments`)
-- **첨부 안내**: 최대 3개, 각 5MB 이하 (`contact.attachHint`)
-- **첨부 오류**: 파일 크기는 5MB 이하만 가능합니다. (`contact.fileTooLarge`)
-- **답변 기한 안내**: 영업일 5일 안에 답변 드릴게요. (`contact.autoResponse`)
-- **제출 버튼**: 문의 보내기 / 전송 중... (`contact.submit` / `contact.submitting`)
+- **첨부 라벨**: 파일 첨부 (문의 카피 키)
+- **첨부 안내**: 최대 3개, 각 5MB 이하 (문의 카피 키)
+- **첨부 오류**: 파일 크기는 5MB 이하만 가능합니다. (문의 카피 키)
+- **답변 기한 안내**: 영업일 5일 안에 답변 드릴게요. (문의 카피 키)
+- **제출 버튼**: 문의 보내기 / 전송 중... (문의 카피 키 / 문의 카피 키)
 
 ### 2.5 토스트
 
-- **필수 누락 토스트**: 모든 필수 항목을 입력해 주세요. (`contact.toastRequired`)
-- **성공 토스트**: 문의가 접수되었어요. 빠른 시일 내에 답변 드릴게요. (`contact.toastSuccess`)
+- **필수 누락 토스트**: 모든 필수 항목을 입력해 주세요. (문의 카피 키)
+- **성공 토스트**: 문의가 접수되었어요. 빠른 시일 내에 답변 드릴게요. (문의 카피 키)
 
 ---
 
@@ -93,10 +93,10 @@
 
 ### 3.1 Title & lead
 
-**Title** (`contact.title`)
+**Title** (문의 카피 키)
 > Contact us
 
-**Lead** (`contact.leadBeforeFaq` + `[FAQ]` link + `contact.leadAfterFaq`)
+**Lead** (문의 카피 키 + `[FAQ]` link + 문의 카피 키)
 > If you have questions, send them using the form below. Check the **FAQ** first for faster answers.
 
 ### 3.2 Input fields
@@ -123,34 +123,34 @@
 
 ### 3.4 Attachments, response time, submit
 
-- **Attachments label**: Attachments (`contact.attachments`)
-- **Attach hint**: Max 3 files, 5MB each (`contact.attachHint`)
-- **File error**: File size must be 5MB or less. (`contact.fileTooLarge`)
-- **Response notice**: We will respond within 5 business days. (`contact.autoResponse`)
-- **Submit**: Send message / Sending... (`contact.submit` / `contact.submitting`)
+- **Attachments label**: Attachments (문의 카피 키)
+- **Attach hint**: Max 3 files, 5MB each (문의 카피 키)
+- **File error**: File size must be 5MB or less. (문의 카피 키)
+- **Response notice**: We will respond within 5 business days. (문의 카피 키)
+- **Submit**: Send message / Sending... (문의 카피 키 / 문의 카피 키)
 
 ### 3.5 Toasts
 
-- **Missing fields**: Please fill in all required fields. (`contact.toastRequired`)
-- **Success**: Thanks — we received your message and will reply soon. (`contact.toastSuccess`)
+- **Missing fields**: Please fill in all required fields. (문의 카피 키)
+- **Success**: Thanks — we received your message and will reply soon. (문의 카피 키)
 
 ---
 
 ## 4) 적용 키 일람 (코드 동기화 매핑)
 
 ### 4.1 본 문서 적용 (USR-INF-07)
-- 제목·리드: `contact.title`, `contact.leadBeforeFaq`, `contact.leadAfterFaq`
-- 필드 라벨: `contact.name`, `contact.email`, `contact.category`, `contact.message`
-- 플레이스홀더: `contact.placeholderName`, `contact.placeholderEmail`, `contact.categoryPlaceholder`, `contact.placeholderMessage`
-- 카테고리 7종: `contact.categoryAccount`, `categoryUpload`, `categoryReport`, `categoryPrivacy`, `categorySuggestion`, `categoryBug`, `categoryOther`
-- 첨부: `contact.attachments`, `contact.attachHint`, `contact.fileTooLarge`
-- 안내·버튼: `contact.autoResponse`, `contact.submit`, `contact.submitting`
-- 토스트: `contact.toastRequired`, `contact.toastSuccess`
-- 글자 수: `contact.charCount`
+- 제목·리드: 문의 카피 키, 문의 카피 키, 문의 카피 키
+- 필드 라벨: 문의 카피 키, 문의 카피 키, 문의 카피 키, 문의 카피 키
+- 플레이스홀더: 문의 카피 키, 문의 카피 키, 문의 카피 키, 문의 카피 키
+- 카테고리 7종: 문의 카피 키, 내부 식별자, 내부 식별자, 내부 식별자, 내부 식별자, 내부 식별자, 내부 식별자
+- 첨부: 문의 카피 키, 문의 카피 키, 문의 카피 키
+- 안내·버튼: 문의 카피 키, 문의 카피 키, 문의 카피 키
+- 토스트: 문의 카피 키, 문의 카피 키
+- 글자 수: 문의 카피 키
 
 ### 4.2 본 문서가 다루지 않는 영역 (별도 Handoff·Copy 위임)
-- **설정 화면 (USR-STG-01)** — `settings.*` 키. 라벨 위주로 분산 → Copy_v1.md + PRD_User v1 §15 참조
-- **프로필 편집 (USR-PRF-02)** — `profile.*`·`profile.edit*` 키. 화면별 라벨이라 화면 단위 PRD에서 다룸 → PRD_User v1 §6.2 참조
+- **설정 화면 (USR-STG-01)** — 설정 카피 키 키. 라벨 위주로 분산 → Copy_v1.md + PRD_User v1 §15 참조
+- **프로필 편집 (USR-PRF-02)** — 프로필 카피 키·프로필 카피 키 키. 화면별 라벨이라 화면 단위 PRD에서 다룸 → PRD_User v1 §6.2 참조
 
 ---
 
@@ -159,7 +159,7 @@
 - [ ] 카테고리 7종 모두 반영 (4번 "개인정보 열람·정정·삭제 요청"은 §30 권리 행사 채널)
 - [ ] 첨부 안내 문구 노출 (최대 3개, 각 5MB)
 - [ ] 글자 수 카운터 1,000자 상한
-- [ ] FAQ 인라인 링크 `/faq` 이동
+- [ ] FAQ 인라인 링크 경로 /faq 이동
 - [ ] 답변 SLA 안내 노출 (일반 카테고리 영업일 5일 일률 적용, Policy §30.0)
 - [ ] 카테고리별 어드민 라우팅 (개인정보 카테고리는 ADM-INQ-01 개인정보 우선 큐로 분류, [PRD_Admin §3.13](PRD_Admin_v1.md))
 - [ ] ko/en 양측 동일 카테고리 수·동일 SLA 안내 일관성

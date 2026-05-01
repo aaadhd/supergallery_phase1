@@ -3,7 +3,7 @@
 전 화면 하단에 노출되는 글로벌 푸터의 메뉴·사업자 정보·법정 고지 전문.
 
 > **단일 소스 안내**
-> - 코드(i18n) 단일 소스: [`Copy_v1.md`](Copy_v1.md) `footer.*` 키
+> - 코드(i18n) 단일 소스: [`Copy_v1.md`](Copy_v1.md) 푸터 카피 영역 키
 > - 본 문서는 동일 내용을 prose 형태로 정리한 **핸드오프 보조본**이다.
 > - 카피 변경은 [`Copy_v1.md`](Copy_v1.md)와 본 문서를 같은 작업 범위에서 동시 갱신한다.
 > - **사업자 정보 값은 placeholder다**. 회사 확정 시 [`Handoff_LegalReview_Checklist_v1.md`](Handoff_LegalReview_Checklist_v1.md) §2와 함께 일괄 갱신.
@@ -26,12 +26,12 @@
 
 | 한국어 | English | 링크 |
 |---|---|---|
-| 소개 | About | `/about` (USR-INF-01) |
-| 공지사항 | Notices | `/notices` (USR-INF-04) |
-| FAQ | FAQ | `/faq` (USR-INF-02) |
-| 문의 | Contact | `/contact` (USR-INF-07) |
-| 이용약관 | Terms | `/terms` (USR-INF-05) |
-| 개인정보처리방침 | Privacy | `/privacy` (USR-INF-06) |
+| 소개 | About | 경로 /about (USR-INF-01) |
+| 공지사항 | Notices | 경로 /notices (USR-INF-04) |
+| FAQ | FAQ | 경로 /faq (USR-INF-02) |
+| 문의 | Contact | 경로 /contact (USR-INF-07) |
+| 이용약관 | Terms | 경로 /terms (USR-INF-05) |
+| 개인정보처리방침 | Privacy | 경로 /privacy (USR-INF-06) |
 | 쿠키 설정 | Cookie settings | 쿠키 동의 모달 재진입 (CM-05) |
 
 **사업자 정보 토글**:
@@ -42,7 +42,7 @@
 
 ## 2) 사업자 정보 (placeholder — 회사 확정 후 채움)
 
-> ⚠️ 아래 모든 `Value` 항목은 **placeholder**다. 회사 확정 후 본 문서와 [`Copy_v1.md`](Copy_v1.md)를 양측 동시 갱신. 변호사 검토 단계에선 [`Handoff_LegalReview_Checklist_v1.md`](Handoff_LegalReview_Checklist_v1.md) §2의 11종 정보로 일괄 채움.
+> ⚠️ 아래 모든 값 컬럼 항목은 **placeholder**다. 회사 확정 후 본 문서와 [`Copy_v1.md`](Copy_v1.md)를 양측 동시 갱신. 변호사 검토 단계에선 [`Handoff_LegalReview_Checklist_v1.md`](Handoff_LegalReview_Checklist_v1.md) §2의 11종 정보로 일괄 채움.
 
 ### 한국어 표
 
@@ -78,10 +78,10 @@
 
 전자우편 수집 프로그램에 의한 자동 수집을 거부한다는 정보통신망법상 표기. 푸터 하단에 항상 노출.
 
-**한국어** (`footer.emailCollectionNotice`)
+**한국어** (푸터 카피 키)
 > 본 사이트에 게시된 이메일 주소가 전자우편 수집 프로그램이나 그 밖의 기술적 장치를 이용하여 무단으로 수집되는 것을 거부합니다. (정보통신망법)
 
-**English** (`footer.emailCollectionNotice`)
+**English** (푸터 카피 키)
 > We prohibit the unauthorized collection of email addresses posted on this site using harvesting software or other automated or technical means. (Act on Promotion of Information and Communications Network Utilization and Information Protection, etc.)
 
 ---
@@ -89,20 +89,20 @@
 ## 4) 적용 키 일람 (코드 동기화 매핑)
 
 ### 4.1 메뉴
-- `footer.about`, `footer.notices`, `footer.faq`, `footer.contact`, `footer.terms`, `footer.privacy`, `footer.cookieSettings`, `footer.businessInfo`
-- 토글 라벨: `footer.businessInfoOpen`, `footer.businessInfoClose`
+- 푸터 카피 키, 푸터 카피 키, 푸터 카피 키, 푸터 카피 키, 푸터 카피 키, 푸터 카피 키, 푸터 카피 키, 푸터 카피 키
+- 토글 라벨: 푸터 카피 키, 푸터 카피 키
 
 ### 4.2 사업자 정보 라벨
-- `footer.labelCompany`, `footer.labelRepresentative`, `footer.labelBizReg`, `footer.labelMailOrder`, `footer.labelPrivacyOfficer`, `footer.labelAddress`, `footer.labelEmail`, `footer.labelPhone`, `footer.labelJurisdiction`
+- 푸터 카피 키, 푸터 카피 키, 푸터 카피 키, 푸터 카피 키, 푸터 카피 키, 푸터 카피 키, 푸터 카피 키, 푸터 카피 키, 푸터 카피 키
 
 ### 4.3 사업자 정보 값 (placeholder)
-- `footer.bizCompanyValue`, `footer.bizRepValue`, `footer.bizRegValue`, `footer.mailOrderValue`, `footer.privacyOfficerValue`, `footer.addressValue`, `footer.contactEmailValue`, `footer.phoneValue`, `footer.jurisdictionValue`
+- 푸터 카피 키, 푸터 카피 키, 푸터 카피 키, 푸터 카피 키, 푸터 카피 키, 푸터 카피 키, 푸터 카피 키, 푸터 카피 키, 푸터 카피 키
 
 ### 4.4 법정 고지
-- `footer.emailCollectionNotice`
+- 푸터 카피 키
 
 ### 4.5 QA·데모 진입점 (Phase 1 데모 환경 전용 — 사용자 노출 카피 아님)
-- `footer.qa*` 일군 — 검수·플로우 데모용 바로가기. `VITE_FOOTER_QA_LINKS` 활성 시에만 노출. 본 문서 본문엔 미게재(사용자 운영 카피 아님).
+- QA 푸터 카피 일군 — 검수·플로우 데모용 바로가기. 운영 상수 활성 시에만 노출. 본 문서 본문엔 미게재(사용자 운영 카피 아님).
 
 ---
 

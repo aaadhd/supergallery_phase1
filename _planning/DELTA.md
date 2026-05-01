@@ -14,22 +14,22 @@ PM 문서의 코드 변수·구현 세부 인라인 백틱 표기 일괄 정정.
 (문서 이력 행, i18n 사전 §6, 상위 요약 박스는 traceability 목적상 보존).
 
 **일괄 정정 카테고리** (총 ~140건 정정, 누적 4라운드):
-- 라운드 1 (79건): 상태 enum (`'rejected'`·`'approved'`·`'pending'`), 필드명
-  (`feedReviewStatus`·`rejectionReason`·`rejectionHistory`·`isHidden`·
-  `imageArtists`), 스토어·함수명(`magicLinkStore`·`reportsStore`·`auditLog`).
-- 라운드 2 (18건): TS 비교 연산자(`=== 'approved'`), 객체 할당 표현식
-  (`feedReviewStatus: 'rejected'`), 특정값(`coverImageIndex: -1`).
+- 라운드 1 (79건): 상태 enum (반려 상태·검수 통과 상태·검수 대기 상태), 필드명
+  (검수 상태·반려 사유·반려 이력·비공개 플래그·
+  내부 식별자), 스토어·함수명(매직 링크 토큰 스토어·신고 스토어·내부 식별자).
+- 라운드 2 (18건): TS 비교 연산자(검수 통과 비교), 객체 할당 표현식
+  (검수 상태 반려 할당), 특정값(사용자 직접 업로드 커버 표기).
 - 라운드 3 (35건): URL 파라미터(라우트는 보존), 감사 로그 필드명
-  (`actorId`·`targetSnapshot`), HTML/JS API(`oncontextmenu`·`preventDefault`),
-  엔티티 상수(`INQUIRY`·`ADMIN_AUDIT_LOG`·`REPORTS_CHANGED_EVENT`),
-  카테고리 enum(`privacy`·`report`·`account`).
+  (행위자 ID·대상 스냅샷), HTML/JS API(우클릭 이벤트·이벤트 차단),
+  엔티티 상수(문의 엔티티·운영자 감사 로그·신고 변경 이벤트),
+  카테고리 enum(개인정보·신고·계정 카테고리).
 - 라운드 4 (8건): 상위 요약 박스의 i18n 키 일부, Locale 반응성 가이드
-  (`useI18n()`·`getStoredLocale()`), i18n 매핑 가이드
-  (`koMessages`·`enMessages`), `redirectTo`·`worksPublic`·`artistWorks`·
-  `pickBadge`·`worksPublic` 등 잔재.
+  (i18n 컨텍스트·저장된 언어 스냅샷 함수), i18n 매핑 가이드
+  (내부 식별자·내부 식별자), 지정 경로·참여작 공개 토글·내부 식별자·
+  Pick 배지·참여작 공개 토글 등 잔재.
 
 **보존 결정** (PM 결정·표준):
-- 라우트 정의(`/auth/verify`·`?invite=<token>`·`?status=rejected`):
+- 라우트 정의(경로 /auth/verify·초대 토큰 URL·반려 필터 URL):
   사용자 가시 URL은 PM 결정.
 - 카테고리·알림 enum 표(USR-INF-07 7종·USR-NTF-01 7종): PM 정의 enum 명세표.
 - 검수 상태 배지 매트릭스(IA USR-PRF-05): 상태 코드 ↔ UX 매핑 명세.
@@ -55,7 +55,7 @@ final audit 15건 잔재 (모두 file 참조·history·spec table 형식 — 의
 - 검수 3상태(§23.2)·토큰 4상태(§3.4)·슬롯 3상태(§23.3) 모두 명시적 정의 + 다문서 정합.
 
 **4. CLAUDE.md 파일 인덱스** ⚠ 1건 정정
-- L88 `src/app/store/workStore.ts·draftStore.ts` 잘못된 경로 → `src/app/store.ts` 내부 정의로 정정 (실제 구조와 일치).
+- 잘못된 스토어 파일 경로 표기 → 실제 코드 구조에 맞춰 정정 (CLAUDE.md 파일 인덱스).
 
 **5. Edge case 시나리오** ✅
 - PRD에 56건 EC 명시 + 코드 안전장치(JSON.parse 가드 12·quota 9·race 5)와 정합.
@@ -87,7 +87,7 @@ final audit 15건 잔재 (모두 file 참조·history·spec table 형식 — 의
 - USR-EXH-01b·USR-UPL-03b는 같은 화면의 변형 슬라이드라 IA 통합 표기 OK(별도 결함 아님).
 
 **🔥 사용자 행동 권한 매트릭스** ✅
-- Policy §4·§24 + 코드(`store.ts` L500·516·620 좋아요·저장·팔로우 가드, `ReportModal.tsx` L95-96 신고 차단) + Copy(`report.errWithdrawnArtist`) 3계층 모두 정합.
+- Policy §4·§24 + 코드(store.ts 모듈 L500·516·620 좋아요·저장·팔로우 가드, ReportModal.tsx 화면 L95-96 신고 차단) + Copy(신고 카피 키) 3계층 모두 정합.
 
 **⚠ Lifecycle 시나리오 추적** ✅
 - 가입(카카오)→발행(함께 올리기)→검수(영업일 24h)→공유(토큰)→친구 클레임→신고 2회 자동 비공개→운영 기각 복원→탈퇴 8단계 모두 4계층(Policy/PRD/Copy/코드) 일관.
@@ -96,7 +96,7 @@ final audit 15건 잔재 (모두 file 참조·history·spec table 형식 — 의
 - 8개 룰 모두 본문 반영(푸시·기획전·PM 결정·문서 먼저·HTML 동기·Phase 2·디지털 드로잉 시니어·자연 흡수).
 
 **⚠ 알림 라우팅 매트릭스** ✅
-- Handoff_Notifications §7 표 11종 알림(`review.notif*` 5·`report.notif*` 4·`pick.notif*` 1·`invite.notif*` 1) 모두 코드 트리거 존재.
+- Handoff_Notifications §7 표 11종 알림(검수 카피 키 5·신고 카피 키 4·카피 키 1·초대 카피 키 1) 모두 코드 트리거 존재.
 
 검증: vite build 통과. 표면 정합·세부 정책·HTML·행동 매트릭스·Lifecycle·메모리룰·알림 라우팅 모두 정합.
 
@@ -108,10 +108,10 @@ final audit 15건 잔재 (모두 file 참조·history·spec table 형식 — 의
 정합을 마지막으로 검증.
 
 **A. Cascade 정책 정합 (Policy §32)** ✅
-- 11종 cascade(전시 본체·포인트·인터랙션·알림·신고·신고 서명·신고자 숨김·Pick·기획전·이미 본 기록·이벤트 연결·초대 토큰)이 코드 `removeWork()`에 정확 반영. 작가 탈퇴(`performAccountWithdrawal`)·이벤트 삭제(`eventStore.remove`) cascade도 정합.
+- 11종 cascade(전시 본체·포인트·인터랙션·알림·신고·신고 서명·신고자 숨김·Pick·기획전·이미 본 기록·이벤트 연결·초대 토큰)이 코드 전시 제거 처리에 정확 반영. 작가 탈퇴(계정 탈퇴 처리)·이벤트 삭제(이벤트 제거 처리) cascade도 정합.
 
 **B. 모더레이션 다단계 흐름** ✅
-- 신고→자동 비공개→운영팀 판정→토큰 sync 흐름이 `reportsStore.appendUserReport`/`maybeRestoreAfterDismiss`와 Policy §3.4·§12.2·§22.2와 정합.
+- 신고→자동 비공개→운영팀 판정→토큰 sync 흐름이 신고 누적 처리/기각 후 복원 처리와 Policy §3.4·§12.2·§22.2와 정합.
 
 **C. 권한 매트릭스 (PRD_Admin §0.4.2)** ✅
 - 12 영역 코드 모두 행 등록(DSH·REV·PCK·CUR·BNR·EVT·RPT·MBR·NTC·INQ·CKL·ISU) + (전 화면) 권한 부여·박탈 행.
@@ -139,7 +139,7 @@ final audit 15건 잔재 (모두 file 참조·history·spec table 형식 — 의
 **LP-7 개인정보 권리 흐름 (큰 모순 3건)**
 - Policy §30.0 신설 — 문의 채널 SLA 통합 표(개인정보 5영업일+30일·신고 24시간·작품 문의 5영업일·일반 5영업일).
 - PRD_Admin ADM-INQ-01 SLA 매트릭스 정정: privacy "≤24h 접수 확인" → "영업일 5일 접수 확인" (Policy §30.3 정합). 일반 "≤5영업일" 근거 표기 정정.
-- Copy `contact.autoResponse` ko/en: "3영업일" → "5영업일"로 통일 (Policy §30.0 표준).
+- Copy 문의 카피 키 ko/en: "3영업일" → "5영업일"로 통일 (Policy §30.0 표준).
 - Handoff_UserInfo_Contact 카테고리 7종 매트릭스 + 본문 일괄 5영업일로 정합.
 
 **카피 톤 일관성 (95건 격식체 + 7건 행정 어휘)**
@@ -151,8 +151,8 @@ final audit 15건 잔재 (모두 file 참조·history·spec table 형식 — 의
 - 어드민·flowMap·demo·refStub·footer.qa 등 운영자 영역은 면제.
 
 **i18n ko/en 의미 일치 (2건)**
-- `refStub.tplWeeklyBody` ko: 두 번째 `{nickname}님의` → `회원님의` (placeholder 비대칭 해소).
-- `upload.errMustIncludeSelf` ko에 회복 경로 안내 추가 (en과 정합) — `'본인 작품 없이 전시하려면 "저는 강사예요" 체크박스를 켜 주세요.'`.
+- 참조 스텁 카피 키 ko: 두 번째 `{nickname}님의` → `회원님의` (placeholder 비대칭 해소).
+- 업로드 카피 키 ko에 회복 경로 안내 추가 (en과 정합) — `'본인 작품 없이 전시하려면 "저는 강사예요" 체크박스를 켜 주세요.'`.
 
 **PRD_Admin §14 엔티티 부록 보강 (1건)**
 - NOTICE 엔티티 추가 (ADM-NTC-01 카드 신설 시 §14에 누락된 정합 보강).
@@ -185,7 +185,7 @@ final audit 15건 잔재 (모두 file 참조·history·spec table 형식 — 의
 **🔴 큰 모순 (Policy vs 다른 문서) 3건**
 - **신고 처리 SLA**: Policy §22.2 "영업일 24시간" vs FAQ 카피 "7일 이내" → 카피·코드 모두 24시간으로 정정 (faq.a9 ko/en, report.replyPolicy ko/en, Handoff_FAQ)
 - **검수 5상태 5번째 명칭**: Policy "비공개 유지" vs PRD_Admin·PRD_User "운영 비공개" → "비공개 유지"로 통일
-- **초대 모델 표현**: Policy §3 v2.14 토큰 모델 전환됐지만 PRD_User 6건·Policy §10.3 표·IA 1건에 옛 `?from=invite` 잔재 → `?invite=<token>` 토큰 링크로 일괄 정정. USR-EXH-03 카드 + Policy §10.3 표 + USR-EXH-06·CM-04 영향 본문 재서술. PRD_User §12.2 "SMS 초대 → 가입 플로우" 섹션을 "작가가 보낸 초대 링크 → 가입 → 본인 작품 클레임 플로우"로 재명명·재서술
+- **초대 모델 표현**: Policy §3 v2.14 토큰 모델 전환됐지만 PRD_User 6건·Policy §10.3 표·IA 1건에 옛 옛 초대 URL 잔재 → 초대 토큰 URL 토큰 링크로 일괄 정정. USR-EXH-03 카드 + Policy §10.3 표 + USR-EXH-06·CM-04 영향 본문 재서술. PRD_User §12.2 "SMS 초대 → 가입 플로우" 섹션을 "작가가 보낸 초대 링크 → 가입 → 본인 작품 클레임 플로우"로 재명명·재서술
 
 **🟡 작은 결함 3건**
 - Policy §13.1 "그룹 업로드" 잔재 → "함께 올리기" (다른 14건과 통일)
@@ -201,18 +201,18 @@ final audit 15건 잔재 (모두 file 참조·history·spec table 형식 — 의
 원칙: **표현만 바꾸지 말고, PM이 결정할 내용이 아니면 아예 안 쓴다.** 17개 PM-only 결정 문서(Policy/IA/PRD_User/PRD_Admin/README)를 대상으로 코드 변수·파일 경로·구현 명세·어려운 기술 용어를 일괄 제거·추상화.
 
 **제거된 내용 (개발팀 영역)**
-- PRD_Admin §0.6.5 액션 식별자 코드명 표(27행) 통째 제거 — `review.approve`·`report.delete` 같은 코드명 식별자는 개발팀 결정
+- PRD_Admin §0.6.5 액션 식별자 코드명 표(27행) 통째 제거 — 검수 카피 키·신고 카피 키 같은 코드명 식별자는 개발팀 결정
 - PRD_Admin §0.6.6 호출 계약 + TS 코드 블록 통째 제거
-- PRD_Admin §13.4 권한 관리 구현 절차(`operator_role` enum 추가·API 가드·마스킹 적용 단계) 제거
-- PRD_Admin §0.6.2 `actorId`·`actorRole`·`targetType` 등 필드명 표 → "누가·무엇에·왜·언제" PM 결정 5항목으로 단순화
+- PRD_Admin §13.4 권한 관리 구현 절차(운영자 역할 enum 추가·API 가드·마스킹 적용 단계) 제거
+- PRD_Admin §0.6.2 행위자 ID·행위자 역할·대상 종류 등 필드명 표 → "누가·무엇에·왜·언제" PM 결정 5항목으로 단순화
 
 **추상화된 내용**
-- localStorage 키(`artier_xxx`) → "단말 보관"
-- 파일 경로(`src/app/...`) → "사용자 앱 측 화면·컴포넌트"
-- 코드 함수 호출(`magicLinkStore.issueMagicLink({...})`·`auth.login()`·`useBlocker`·`useI18n().setLocale()`·`auditLog()`) → 동작 설명
-- TypeScript 타입(`: boolean`·`: string[]`) → 한국어 설명
+- localStorage 키(단말 보관 키) → "단말 보관"
+- 파일 경로 직접 참조 → "사용자 앱 측 화면·컴포넌트"
+- 코드 함수 호출(매직 링크 발급 처리·인증 로그인 처리·이탈 차단 hook·i18n 언어 설정 함수·감사 로그 기록) → 동작 설명
+- TypeScript 타입(불린 타입·문자열 배열 타입) → 한국어 설명
 - 외부 서비스명("Supabase 같은"·"GA4 차단") → "클라우드 BaaS"·"분석 도구 차단"
-- 브라우저 API(`window.confirm()`·`dangerouslySetInnerHTML`) → 일반 표현
+- 브라우저 API(브라우저 기본 확인 창·직접 HTML 삽입) → 일반 표현
 
 **영향 문서**: Policy_v1, IA_ScreenList_v1, PRD_User_v1, PRD_Admin_v1, README, Artier_Screen_Spec_v1.html
 
@@ -247,13 +247,13 @@ final audit 15건 잔재 (모두 file 참조·history·spec table 형식 — 의
 
 토큰 모델 마이그레이션 + Nielsen fix 완료 후 누적된 미사용 코드·자산을 일괄 청산.
 
-- **i18n 키 116쌍(ko+en 232 entries) 제거** — `upload.*` UI 폐기 흔적 47, `workDetail.*` 8, `workInquiry.*` 5, `settings.*` 14, `search.*` 9, `report.*` 3, `review.*` 2, `login.*` 4, `signup.*` 2, `invite.*` 2, `onboarding.*` 4, `profile.*` 4, `events.*` 3, `browse.*` 4, 기타 4건. 명시 미사용(grep 0건 + 동적 prefix 매치 X)만 정리.
-- **shadcn/ui 미사용 컴포넌트 26개 삭제** — accordion·alert·aspect-ratio·breadcrumb·calendar·carousel·collapsible·command·context-menu·form·input-otp·menubar·navigation-menu·pagination·radio-group·resizable·scroll-area·sheet·sidebar·skeleton·slider·sonner·switch·toggle·toggle-group·use-mobile. 사용 0건 검증 후 일괄 삭제. 향후 필요시 `npx shadcn-ui add <name>` 재설치 가능.
-- **`sanctionStore.ts` 폐기** — Phase 1 정책(§12.3 사용자 제재 Phase 2 이관)상 호출부 0건 + 메모리 규칙 정합.
-- **`AdminGuard.tsx` 폐기** — import 0건.
-- **`useDraftStore`·`useAccountSuspensionStore` hook export 제거** — 대응 store는 활발히 사용중이나 hook은 0건.
-- **`ImageArtistAssignment.phoneNumber` 필드 + 죽은 분기 정리** — Policy §3 v2.14 토큰 모델 정합. data.ts 타입에서 `phoneNumber` 제거, Upload·Profile의 항상 false 분기 단순화, Draft 타입의 nonMemberArtist도 displayName만.
-- **`ExhibitionWorkShareLanding`의 미사용 `getCoverImage` import 정리.**
+- **i18n 키 116쌍(ko+en 232 entries) 제거** — 업로드 카피 키 UI 폐기 흔적 47, 작품 상세 카피 키 8, 작품 문의 카피 키 5, 설정 카피 키 14, 검색 카피 키 9, 신고 카피 키 3, 검수 카피 키 2, 로그인 카피 키 4, 가입 카피 키 2, 초대 카피 키 2, 온보딩 카피 키 4, 프로필 카피 키 4, 이벤트 카피 키 3, 둘러보기 카피 키 4, 기타 4건. 명시 미사용(grep 0건 + 동적 prefix 매치 X)만 정리.
+- **shadcn/ui 미사용 컴포넌트 26개 삭제** — accordion·alert·aspect-ratio·breadcrumb·calendar·carousel·collapsible·command·context-menu·form·input-otp·menubar·navigation-menu·pagination·radio-group·resizable·scroll-area·sheet·sidebar·skeleton·slider·sonner·switch·toggle·toggle-group·use-mobile. 사용 0건 검증 후 일괄 삭제. 향후 필요시 컴포넌트 추가 명령 재설치 가능.
+- **sanctionStore.ts 모듈 폐기** — Phase 1 정책(§12.3 사용자 제재 Phase 2 이관)상 호출부 0건 + 메모리 규칙 정합.
+- **AdminGuard.tsx 화면 폐기** — import 0건.
+- **초안 스토어 hook·정지 스토어 hook hook export 제거** — 대응 store는 활발히 사용중이나 hook은 0건.
+- **비회원 슬롯 전화번호 필드 필드 + 죽은 분기 정리** — Policy §3 v2.14 토큰 모델 정합. data.ts 타입에서 내부 식별자 제거, Upload·Profile의 항상 false 분기 단순화, Draft 타입의 nonMemberArtist도 displayName만.
+- **작품 공유 랜딩의 미사용 커버 이미지 추출 함수 import 정리.**
 
 검증: tsc --noEmit 0 errors, npm run build 통과.
 
@@ -273,17 +273,17 @@ final audit 15건 잔재 (모두 file 참조·history·spec table 형식 — 의
 
 **단계 2~5 코드 구현 (5개 푸시 분리)**
 
-- 단계 2 — `inviteTokenStore.ts` 신설(전시 단위 토큰 1개, 90일 TTL, 만료 lazy 평가). 발급·활성화·비활성화·취소 + 가입자 본인 작품 찾기용 `connectMemberToSlot`(type 가드로 동시 선택 race 차단). 공유 URL·메시지 빌더.
-- 단계 3 — 시니어 친화 `InviteShareButton.tsx` 신설(navigator.share + 클립보드 + mailto 폴백 + "검수 통과 후 활성화" 비활성 라벨). Upload 비회원 슬롯 UI를 이름만 받도록 단순화, 발행 시 토큰 발급.
-- 단계 4 — `ExhibitionInviteLanding`을 `?from=invite|credited`에서 `?invite=<token>` 토큰 모델로 재구성(active·inactive·revoked·만료·불일치 5상태 분기 + SPA noindex 메타). `Onboarding` step 2를 폰 매칭 후보 yes/no에서 토큰 기반 비회원 슬롯 카드 그리드 + 명시 클릭 + 확인 1회로 재정의(동시 선택 race 토스트 + "여기 없어요" 스킵).
-- 단계 5 — 가입자 자가 disavow 진입점 삭제(`WorkDetailModal` piece 오버레이 + `Profile` 본인 작품 탭 액션). `Notification.type`에 `'invite'` 추가(작가가 직접 보낸 초대 결과 알림은 본인 액션의 결과이므로 항상 노출). `inviteMessaging.ts`·`InviteClaimCheck.tsx` 삭제 + 미사용 i18n 키 33쌍 일괄 정리. `ContentReview` 승인·반려 시 토큰 활성화·비활성화 호출(회사 SMS·알림톡·이메일 발송 코드 제거). `workStore.removeWork`에 토큰 revoke 동적 import 추가. `LEGACY_STORAGE_KEYS`에 deprecated 키 5종 추가(부팅 시 정리).
+- 단계 2 — inviteTokenStore.ts 모듈 신설(전시 단위 토큰 1개, 90일 TTL, 만료 lazy 평가). 발급·활성화·비활성화·취소 + 가입자 본인 작품 찾기용 슬롯 연결 처리(type 가드로 동시 선택 race 차단). 공유 URL·메시지 빌더.
+- 단계 3 — 시니어 친화 InviteShareButton.tsx 화면 신설(navigator.share + 클립보드 + mailto 폴백 + "검수 통과 후 활성화" 비활성 라벨). Upload 비회원 슬롯 UI를 이름만 받도록 단순화, 발행 시 토큰 발급.
+- 단계 4 — 초대장 랜딩 화면을 옛 초대·참여 URL에서 초대 토큰 URL 토큰 모델로 재구성(활성·비활성·취소·만료·불일치 5상태 분기 + 검색엔진 색인 차단). 온보딩 step 2를 폰 매칭 후보 yes/no에서 토큰 기반 비회원 슬롯 카드 그리드 + 명시 클릭 + 확인 1회로 재정의(동시 선택 race 토스트 + "여기 없어요" 스킵).
+- 단계 5 — 가입자 자가 disavow 진입점 삭제(작품 상세 모달 작품별 오버레이 + 프로필 화면 본인 작품 탭 액션). 알림 타입에 초대 종류 추가(작가가 직접 보낸 초대 결과 알림은 본인 액션의 결과이므로 항상 노출). 초대 메시지 유틸·본인 확인 컴포넌트 삭제 + 미사용 i18n 키 33쌍 일괄 정리. 검수 화면 승인·반려 시 토큰 활성화·비활성화 호출(회사 SMS·알림톡·이메일 발송 코드 제거). 전시 제거 처리에 토큰 취소 동적 import 추가. 레거시 키 목록에 폐기 키 5종 추가(부팅 시 정리).
 
 **후속 정합 + 실행 검증 + Nielsen 휴리스틱 fix (단일 푸시 사이클)**
 
-- 정합성 감사 후속(`13b4f6e`) — 작가 탈퇴 시 토큰 revoke 누락 보강(`performAccountWithdrawal`), Policy §32 cascade 표 11번 항목 추가, CLAUDE.md sessionStorage 키 `artier_pending_invite_token` 명시 + `artier_geo_demo_cache` 활성/폐기 중복 정정.
-- 실행 검증 후속(`aa71ece`) — Playwright 직접 클릭 검증 중 발견된 라우팅 버그 fix(`ExhibitionRoute`가 `?invite=<token>` 인식 안하던 회귀, Browse fallthrough 상태였음). `tsc --noEmit` 9 errors → 0 (Onboarding `buildClaimableSlots` 시그니처·Upload `autoApprove` 스코프·AuthVerify `existing.email`→`existing.sub`·orphan i18n 키·curationStore implicit any). 죽은 SMS 발송 확인 모달 + i18n 키 4쌍 일괄 제거.
-- Nielsen 휴리스틱 fix — 시니어 친화 카피 8건 톤 정리 (위협→안심·"활성화"→"공개되면 알림"·"다시 받아주세요"→"새 링크 부탁"·피해자톤→액션 유도·수동→능동·"작가님"→"친구"·"공유"→"보내기"). Nielsen P3 신규 i18n 키 9쌍(`review.notifSubmitted` 검수 시작 알림 / `invite.shareLinkExpiresIn` 토큰 만료 D-N / `claim.singleCardSafetyNote` 카드 1개 안전 신호 / `claim.skipReassured` 스킵 안심 토스트 / `profile.nonMemberSlotsLabel/More/Unnamed` 마이페이지 비회원 슬롯 인디케이터 / `faq.q11~q14` 토큰 모델 FAQ 4건 + `faq.q7` 옛 SMS 톤 정정). 시스템 정합 — `reportsStore.appendUserReport`에서 자동 비공개 시 `deactivateInviteToken`, `maybeRestoreAfterDismiss`에서 기각 복원 시 `activateInviteToken` 자동 호출 (Policy §3.4 / §32 정합).
-- 잔재 정리 — `flowMap.section12`·`footer.qaExhibitionInvite`·`footer.qaExhibitionCredited` 옛 `?from=*` URL 흔적 정정 또는 폐기. QaScreenShortcuts에서 `?from=credited` 단축키 제거. ExhibitionWorkShareLanding 코멘트 정합 보정.
+- 정합성 감사 후속(직전 사이클 커밋) — 작가 탈퇴 시 토큰 revoke 누락 보강(계정 탈퇴 처리), Policy §32 cascade 표 11번 항목 추가, CLAUDE.md sessionStorage 키 단말 보관 키 명시 + 단말 보관 키 활성/폐기 중복 정정.
+- 실행 검증 후속(직전 사이클 커밋) — Playwright 직접 클릭 검증 중 발견된 라우팅 버그 fix(전시 라우트 컴포넌트가 초대 토큰 URL 인식 안하던 회귀, Browse fallthrough 상태였음). 타입 검증 명령 9 errors → 0 (Onboarding 내부 식별자 시그니처·Upload 내부 식별자 스코프·AuthVerify 카피 키→카피 키·orphan i18n 키·curationStore implicit any). 죽은 SMS 발송 확인 모달 + i18n 키 4쌍 일괄 제거.
+- Nielsen 휴리스틱 fix — 시니어 친화 카피 8건 톤 정리 (위협→안심·"활성화"→"공개되면 알림"·"다시 받아주세요"→"새 링크 부탁"·피해자톤→액션 유도·수동→능동·"작가님"→"친구"·"공유"→"보내기"). Nielsen P3 신규 i18n 키 9쌍(검수 카피 키 검수 시작 알림 / 초대 카피 키 토큰 만료 D-N / 본인 작품 찾기 카피 키 카드 1개 안전 신호 / 본인 작품 찾기 카피 키 스킵 안심 토스트 / 비회원 슬롯 라벨 카피 키 마이페이지 비회원 슬롯 인디케이터 / FAQ 카피 키 토큰 모델 FAQ 4건 + FAQ 카피 키 옛 SMS 톤 정정). 시스템 정합 — 신고 누적 처리에서 자동 비공개 시 토큰 비활성 처리, 기각 후 복원 처리에서 기각 복원 시 토큰 활성 처리 자동 호출 (Policy §3.4 / §32 정합).
+- 잔재 정리 — 플로우 맵 카피 키·푸터 카피 키·푸터 카피 키 옛 옛 라우트 패턴 URL 흔적 정정 또는 폐기. QaScreenShortcuts에서 옛 참여 URL 단축키 제거. ExhibitionWorkShareLanding 코멘트 정합 보정.
 - HTML 화면 스펙 v1.3 갱신(`_planning/_screen_specs/Artier_Screen_Spec_v1.html`) — USR-AUT-10b·USR-EXH-03 카피 동기화, USR-UPL-08 deprecated 표기, 04-B 자동 비공개 분기 추가, History v1.3 행 신설.
 
 ---
@@ -297,11 +297,11 @@ final audit 15건 잔재 (모두 file 참조·history·spec table 형식 — 의
   - **Policy §31 "런칭 전 미해결 항목"** 신설 — 알림 구독 해지(N-5)·스토리지 마이그레이션(N-6)·어드민 권한 계층(N-7)·OG 동적 생성(N-9)·약관 법무 확정(N-10)·전시 상태 통합(N-11)·어드민 포인트 표시(N-12) 보존. 해소·폐기된 N-1·N-2·N-3·N-4·N-8은 §31.1에 사유 명시.
   - **Policy §32 "데이터 연쇄 정리"** 신설 — 전시 삭제 시 정리 대상 10항목과 운영 원칙. (구현 방식은 정책 범위 밖)
   - **Policy §19.1 8번 "포커스 링 시각화"** 추가 — 가시성 임계 3px만 정책으로 명시.
-- **PRD_Admin §14 어드민 엔티티 부록 보완** — `MEMBER_RECORD`·`INQUIRY 어드민 측 확장 필드` 추가, `ADMIN_AUDIT_LOG`를 12필드(§0.6.2와 정합)로 정정.
-- **다른 문서 cross-reference 50+곳 정리** — 본문에서 SystemArch/DesignSystem 참조 0건으로 정리, 코드 경로 참조(`*.ts`·`*.tsx`) 0건으로 정리.
+- **PRD_Admin §14 어드민 엔티티 부록 보완** — 운영 상수·문의 엔티티 어드민 확장 필드 추가, 운영자 감사 로그를 12필드(§0.6.2와 정합)로 정정.
+- **다른 문서 cross-reference 50+곳 정리** — 본문에서 SystemArch/DesignSystem 참조 0건으로 정리, 코드 경로 참조(TS 파일·TSX 파일) 0건으로 정리.
 - README 트리·독자표·읽기 순서·"디자인 시스템" 섹션 정리 + "본 폴더에서 다루지 않는 것" 박스 신설.
 - **시각 자산 운영 모델 명시** (README) — 컬러·타이포·간격 등 시각 토큰은 **개발팀 보유 디자인 시스템으로 1차 구현 → PM·디자이너가 결과물을 검토·보완**. 본 폴더는 시니어 친화 접근성 임계값(Policy §19)만 강제.
-- **다크 모드 정책 확정** (Policy §19.4 신설) — Phase 1 지원. 기본값 "밝게", Settings(USR-STG-01)에 "밝게/어둡게" 2옵션 토글, 시스템 자동 감지(`prefers-color-scheme`) 미사용. USR-STG-01 처리·AC-03 추가.
+- **다크 모드 정책 확정** (Policy §19.4 신설) — Phase 1 지원. 기본값 "밝게", Settings(USR-STG-01)에 "밝게/어둡게" 2옵션 토글, 시스템 자동 감지(시스템 다크 모드 설정) 미사용. USR-STG-01 처리·AC-03 추가.
 - **작품명 정책 두 곳 수정** (시니어 사용성 정렬):
   - **빈값 표시 (Policy §9.2)**: 시스템이 "무제"로 자동 채우지 않는다. 빈값일 때 카드·상세에 **"(제목 없음)"** 회색 텍스트로 표시. 작가가 직접 입력한 "무제"는 일반 작품명으로 그대로 표시. (미술계에서 "무제"는 의도된 정식 작품명이므로 자동 채움 시 작가 의도와 입력 누락이 구분 불가했던 문제 해소. 시니어 친화: 작품명 자리는 항상 명시적 한국어 텍스트로 채워져 안정감)
   - **편집 진입점 단일화 (Policy §9.2.1, USR-PRF-05/06/11)**: 작품명 편집은 **USR-PRF-05(전시 탭) 단일 진입점**. USR-PRF-06(내 작품 탭)은 보기·Disavow 전용. 같은 외형 카드(본인 업로드 piece와 그룹전 참여 piece)가 한 화면에 섞여 어떤 것은 편집되고 어떤 것은 안 되는 비대칭이 시니어에게 가장 큰 혼동 원천이라는 판단.
@@ -328,16 +328,16 @@ final audit 15건 잔재 (모두 file 참조·history·spec table 형식 — 의
   - **Policy §27.2 고정 필드 표 PASS 표현 정리** — 실명·전화 "PASS 본인인증 결과"였던 사유를 OAuth 결과·매칭 키·검증 근거 기준으로 갱신.
   - **Policy §31 추적 항목 정리** — N-13(법정대리인 동의 14세 미만 가입 검토)은 이후 **폐기**(만 14세 미만 영구 차단 유지), N-14(OAuth 실연동·카카오 동의 항목 매핑: **런칭 전 필수**).
   - **IA §0.2 다국어 전제 재서술** — "한국 사용자/해외 사용자" 분기 표현 폐기, 가입 폼은 region 분기 없이 4가지 옵션 동일 노출 + 알림 채널은 보유 식별자 기준 자동 라우팅으로 명시.
-  - **IA USR-AUT-02 시트** — "지역 스위치 미세 링크"(`artier_signup_region` 토글) 카드에서 제거.
+  - **IA USR-AUT-02 시트** — "지역 스위치 미세 링크"(단말 보관 키 토글) 카드에서 제거.
   - **IA USR-AUT-10 온보딩 Step 1** — region 분기 폐기, 닉네임·생년월일·프로필 이미지 공통 단일 폼. 전화번호·실명은 Settings 추가 항목으로 본 단계에서 묻지 않음. **USR-AUT-10b 매칭 본인 확인 단계 신설**(조건부, 매칭 후보 1건 이상 시 진입). USR-AUT-11이 Step 2 → Step 3로 번호 조정.
-  - **PRD_User 엔티티 부록** — USER_PROFILE에 `country`(ISO 3166-1) 필드, 닉네임·이메일·생년월일을 필수, 전화번호·실명을 선택으로 명시. AUTH_SESSION에 매직 링크 제공자 추가. **MAGIC_LINK_TOKEN** 신규 엔티티 행. INVITE에 식별자 종류(전화번호/이메일) 필드 추가.
+  - **PRD_User 엔티티 부록** — USER_PROFILE에 국가 필드(ISO 3166-1) 필드, 닉네임·이메일·생년월일을 필수, 전화번호·실명을 선택으로 명시. AUTH_SESSION에 매직 링크 제공자 추가. **MAGIC_LINK_TOKEN** 신규 엔티티 행. INVITE에 식별자 종류(전화번호/이메일) 필드 추가.
   - **PRD_User USR-AUT-02 시트 region 분기 잔재 제거** — 입력·처리·AC-04~06 재작성. GeoIP는 백그라운드 country 추정으로만 사용(UI 분기 없음). 카카오 OAuth 시 country='KR' 정정.
   - **PRD_Admin CL-027 PASS 본인인증 항목 폐기** + CL-024 카카오 OAuth 동의 항목 명세 보강(전화번호·생년월일 필수, §31 N-14 연동). 연동 카테고리 5건 → 4건.
-  - **코드 반영 완료** — region 분기·자동 country 추정 코드 일괄 제거(`AuthSheet`·`Signup`·`Onboarding`·`DemoReferenceToolkit`), GeoIP 유틸 파일 삭제, 레거시 localStorage·sessionStorage 키 부트 정리에 추가. **§3.5.1 본인 확인 단계** 신규 컴포넌트(`InviteClaimCheck`) + 매칭 후보 수집/확정/거절 함수 분리(`findMatchCandidates`·`applyConfirmedMatches`·`recordDeclinedMatches`)로 묵시적 자동 매칭 폐기. **§3.4.1은 Phase 1에서 인라인 경고로 우선 구현**(이미 가입된 전화번호 입력 시 회원 탭으로 유도) — 풀 모달은 닉네임 표시를 위해 **런칭 전 백엔드 연동 시점**에 승격. 신규 i18n 키 11쌍(ko/en) 추가, 사용 중지된 region 토글·GeoIP 키 제거. tsc + vite build 통과.
-  - **Policy 본문 PM 톤 후속 정리** — §11(검수)·§12.1.2(편집/상태 전이)·§13.6(사후 강등)·§22.1(SLA)·§23.1~6(자동 파생·슬롯 전환·이미지 파이프라인)·§24(인터랙션)·§25(이벤트)·§26.7(API/크롤링)에 박혀 있던 코드 표기 일괄 PM 톤으로 다듬음. 검수 상태 enum(pending/approved/rejected/hidden) → 한국어(검수 대기/승인/반려/비공개), 슬롯 상태(`imageArtists[i]`·`type: 'member'/'non-member'/'unknown'`) → "참여 작가 자리"·"회원 자리/비회원 초대 자리/작가 미상 자리", 카운트 필드·로컬 키 노출 제거, 이미지 처리 파이프라인을 "정책으로 강제하는 항목"만 남기고 변환·인코딩 방식은 개발자 결정으로 위임. "Phase 2 백엔드 연동" 같은 마일스톤·개발 작업 혼동 표현은 "런칭 전 백엔드 연동"으로 분리.
+  - **코드 반영 완료** — 지역 분기·자동 국가 추정 코드 일괄 제거(인증 시트·가입·온보딩·검수 데모 화면), 위치 추정 유틸 파일 삭제, 레거시 단말 보관 키 부트 정리에 추가. **§3.5.1 본인 확인 단계** 신규 컴포넌트(본인 확인 컴포넌트) + 매칭 후보 수집/확정/거절 함수 분리로 묵시적 자동 매칭 폐기. **§3.4.1은 Phase 1에서 인라인 경고로 우선 구현**(이미 가입된 전화번호 입력 시 회원 탭으로 유도) — 풀 모달은 닉네임 표시를 위해 **런칭 전 백엔드 연동 시점**에 승격. 신규 i18n 키 11쌍(ko/en) 추가, 사용 중지된 region 토글·GeoIP 키 제거. tsc + vite build 통과.
+  - **Policy 본문 PM 톤 후속 정리** — §11(검수)·§12.1.2(편집/상태 전이)·§13.6(사후 강등)·§22.1(SLA)·§23.1~6(자동 파생·슬롯 전환·이미지 파이프라인)·§24(인터랙션)·§25(이벤트)·§26.7(API/크롤링)에 박혀 있던 코드 표기 일괄 PM 톤으로 다듬음. 검수 상태 enum(pending/approved/rejected/hidden) → 한국어(검수 대기/승인/반려/비공개), 슬롯 상태(이미지별 작가 슬롯·슬롯 종류(회원·비회원·작가 미상)) → "참여 작가 자리"·"회원 자리/비회원 초대 자리/작가 미상 자리", 카운트 필드·로컬 키 노출 제거, 이미지 처리 파이프라인을 "정책으로 강제하는 항목"만 남기고 변환·인코딩 방식은 개발자 결정으로 위임. "Phase 2 백엔드 연동" 같은 마일스톤·개발 작업 혼동 표현은 "런칭 전 백엔드 연동"으로 분리.
   - **N-11 단일 공개 상태 5종 통합** (Policy §23·§31 N-11 연동): 전시의 공개 여부를 검수·신고 처리·자동 비공개 3개 분리 상태에서 **단일 공개 상태 5종**(공개 / 검수 대기 / 반려 / 자동 비공개 / 비공개 유지)으로 통합. 운영팀이 작품의 비공개 사유를 한눈에 인지할 수 있고, 둘러보기·검색·프로필·초대 매칭·Pick 후보 등 모든 노출 판정이 동일한 기준으로 일관됨. 코드 정합 처리 완료, 빌드 통과.
   - **검수·신고 SLA 현실성 + 신고 사유 시니어 친화 정리** (Policy §12·§22): 검수 SLA를 영업일 기준 24시간으로 명문화 + 작가 안내 문구 "주말·공휴일을 빼고 24시간 안에 공개돼요" 도입 + 검수 큐 SLA 배지 **2단계**(정상 / 시한 초과)로 단순화. **신고 SLA는 사유 무관 영업일 24시간 단일 적용**(자동 비공개로 노출은 즉시 차단되므로 운영 판정 timing은 영업일이면 충분). **신고 사유 5종 시니어 친화 라벨** 신설 — "다른 사람의 그림이에요"·"보기 불편한 내용이에요"·"광고·도배 같아요"·"그림이 아니에요"·"그 외" + 한 줄 설명. 종래 "저품질" 사유 폐기. **자동 비공개 작가 알림 톤 부드럽게** — "잠시 비공개되었어요·문제 없으면 다시 공개돼요". Phase 1엔 사용자 경고 개념이 없으므로 i18n dead 키 3종 제거(경고·자동 정지·허위 신고 차단), Policy §3.5.4의 "경고 검토" 표현도 "재안내 검토"로 정정. PRD_Admin·Copy·i18n·ReportModal 정합 동시 갱신.
-  - **QA 점검 4건 코드 정합** (Policy v2.15 연동) — ① 로그인 유도 모달 CTA가 즉시 로그인 처리하던 동작을 `/login?redirect=<현재 경로>` 이동으로 정정(IA CM-02 / PRD §0.5 정합). ② 온보딩 Step 1에서 실명·이메일 강제 검증 폼을 제거(정책 §2.1: 전화·실명은 Settings 추가 항목, 이메일은 가입 경로에서 prefill). 닉네임만 필수 + SMS 초대 prefill 시 전화번호 노출. ③ 보호 액션(좋아요·저장·팔로우·업로드 등)의 "세션당 1회 모달 + 토스트 리마인드" 패턴을 공용 훅으로 추출하여 Browse·Profile·EventDetail이 동일 동작. IA CM-02에 공통 규칙 명시. ④ 어드민 사이드바를 PRD §0.3대로 5섹션 그룹화(대시보드 / 모더레이션 / 콘텐츠 운영 / 회원 / 운영). 폐기·통합 화면은 사이드바에서 미노출, 라우트만 호환.
+  - **QA 점검 4건 코드 정합** (Policy v2.15 연동) — ① 로그인 유도 모달 CTA가 즉시 로그인 처리하던 동작을 경로 /login?redirect=<현재 경로> 이동으로 정정(IA CM-02 / PRD §0.5 정합). ② 온보딩 Step 1에서 실명·이메일 강제 검증 폼을 제거(정책 §2.1: 전화·실명은 Settings 추가 항목, 이메일은 가입 경로에서 prefill). 닉네임만 필수 + SMS 초대 prefill 시 전화번호 노출. ③ 보호 액션(좋아요·저장·팔로우·업로드 등)의 "세션당 1회 모달 + 토스트 리마인드" 패턴을 공용 훅으로 추출하여 Browse·Profile·EventDetail이 동일 동작. IA CM-02에 공통 규칙 명시. ④ 어드민 사이드바를 PRD §0.3대로 5섹션 그룹화(대시보드 / 모더레이션 / 콘텐츠 운영 / 회원 / 운영). 폐기·통합 화면은 사이드바에서 미노출, 라우트만 호환.
   - **§33 작품 단위 운영팀 문의 정책 신설 + 신고 분리 UI** (Policy v2.16): 사용자가 특정 작품에 대해 운영팀에 문의를 보낼 수 있는 채널 신설. 카테고리 5종(작품 구입·소장 / 라이선스·사용 / 전시 협업·의뢰 / 작품 정보 / 그 외) — 분포가 곧 Phase 2 BM 인사이트. 작가에게 자동 전달되지 않음(시니어 작가 부담 보호). SLA 영업일 5일. 진입점은 WorkDetailModal **더보기 메뉴(...)** 안에 "이 작품에 대한 문의" + 구분선 + "신고하기"(위험 톤). 메인 액션 줄(좋아요·저장·공유·팔로우)에서 신고 분리 — 위험도 차등으로 우발 클릭 방지. 모바일·데스크톱 양쪽 동일 패턴.
   - **신고 사유 단일 카테고리로 단순화** (Policy §12.0): 5종 카테고리를 **단일 카테고리**("이 작품은 작가 본인의 그림이 아니에요")로 축소. 운영팀이 모든 신고를 검토하므로 사전 분류 가치 약함. 부적절·스팸 등은 검수 + 운영팀 직권 등록 채널로 처리. 자유 메시지(200자) + **허위 신고 책임 안내** 추가.
   - **신고·문의 모달 작품 선택 단계** (Policy §12.0·§33): 더보기 메뉴 위치를 작품 우상단 → 모달 close 영역(전시 레벨)으로 환원하여 자동 비공개·운영 처리(전시 단위)와 인지 일관성 확보. 다중 이미지 전시는 모달 안에서 사용자가 신고/문의 대상 작품을 썸네일 그리드로 선택. 단일 이미지는 자동 0번 선택. pieceIndex 적재로 운영팀 정확도↑(자동 비공개 흐름은 전시 단위 그대로). **운영자 측 표시**: ADM-RPT-01 신고 대상 컬럼에 "전시명 · N번 작품" 표기, ADM-INQ-01 작품 문의 행에 "전시명 · N번 작품 · 세부 카테고리" 한 줄 표시. PRD_Admin·StoredUserReport·INQUIRY 인터페이스에 pieceIndex 필드.
@@ -357,11 +357,11 @@ final audit 15건 잔재 (모두 file 참조·history·spec table 형식 — 의
 플래닝 7개 문서 ↔ 코드 대조로 추출한 약 330개 규칙 중 어긋난 지점만 정렬. 정책 변경 없음, 코드만 수정.
 
 - **가시성·보안 (P0)**:
-  - `feedVisibility`에 `isHidden` 흡수 — 자동·확정 비공개 전시가 공개 피드로 새는 취약점 차단.
-  - `VITE_ADMIN_OPEN`을 `!import.meta.env.PROD`로 이중 가드.
-  - `/demo`, `/demo/reference` 경로를 DEV 또는 `VITE_FOOTER_QA_LINKS`에서만 등록.
+  - 내부 식별자에 비공개 플래그 흡수 — 자동·확정 비공개 전시가 공개 피드로 새는 취약점 차단.
+  - 운영 상수을 비프로덕션 환경로 이중 가드.
+  - 경로 /demo, 경로 /demo/reference 경로를 DEV 또는 QA 단축키 환경 플래그에서만 등록.
 - **규칙 정합 (P1)**:
-  - `window.confirm` → `openConfirm` (코딩 규칙 위반 1건).
+  - 카피 키 → 내부 식별자 (코딩 규칙 위반 1건).
   - 신고 큐에 "N건 누적" 배지 (ADM-040).
 - **어드민 SLO (P2 · PRD_Admin §0.5)**:
   - 검색 입력 300ms 디바운스 (ADM-012) — Work·Member·Pick.
@@ -371,7 +371,7 @@ final audit 15건 잔재 (모두 file 참조·history·spec table 형식 — 의
   - 검수 큐 20건/페이지, 작품·신고·회원 50건/페이지 (ADM-007 / ADM-REV-01).
 - **시니어 친화**:
   - 글꼴 스케일을 작게 100% / 보통 110% / 크게 120%로 정렬 (Policy §19.1).
-  - Header 모바일 하단탭 5개 + Upload 재정렬 완료 버튼에 `min-h-[44px]` (POL-120).
+  - Header 모바일 하단탭 5개 + Upload 재정렬 완료 버튼에 최소 터치 영역 44px (POL-120).
 - 빌드·Playwright 9개 시나리오 통과.
 
 ---
@@ -401,4 +401,4 @@ final audit 15건 잔재 (모두 file 참조·history·spec table 형식 — 의
 
 - 핸드오프 단위로 갱신. 새 핸드오프 직후 본 파일 상단에 새 일자 단락을 추가하고, 일정 기간 지난 단락은 정리하거나 보존(필요시 git 이력 참조).
 - 한 단락은 의미 단위(주제 묶음)로. 모든 커밋을 1:1로 기록할 필요는 없음.
-- 자세한 변경 이력은 각 기획 문서 끝 `## 문서 이력` 섹션 또는 `git log`.
+- 자세한 변경 이력은 각 기획 문서 끝 `## 문서 이력` 섹션 또는 커밋 이력 조회.

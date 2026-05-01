@@ -3,7 +3,7 @@
 `USR-INF-02` FAQ 화면에 노출되는 자주 묻는 질문 14문항 전문.
 
 > **단일 소스 안내**
-> - 코드(i18n) 단일 소스: [`Copy_v1.md`](Copy_v1.md) `faq.*` 키
+> - 코드(i18n) 단일 소스: [`Copy_v1.md`](Copy_v1.md) FAQ 카피 영역 키
 > - 본 문서는 동일 내용을 prose 형태로 정리한 **핸드오프 보조본**이다(개발사·운영팀·UX Writer가 화면을 보지 않고도 전체 흐름을 파악하도록).
 > - 카피 변경은 [`Copy_v1.md`](Copy_v1.md)와 본 문서를 같은 작업 범위에서 동시 갱신한다.
 
@@ -11,10 +11,10 @@
 
 ## 화면 구성 (USR-INF-02)
 
-- **상단 제목**: 자주 묻는 질문 / Frequently asked questions (`faq.title`)
-- **카테고리 필터**: 전체 / 계정 / 업로드 / 전시 / 기타 (`faq.cat*`)
+- **상단 제목**: 자주 묻는 질문 / Frequently asked questions (FAQ 카피 키)
+- **카테고리 필터**: 전체 / 계정 / 업로드 / 전시 / 기타 (FAQ 카테고리 카피)
 - **본문**: 14문항 아코디언 형태 (Q 클릭 시 A 펼침)
-- **하단 문의 유도**: "원하는 답변을 찾지 못하셨나요? [문의하기]" → `/contact` 이동 (`faq.contactLead` + `faq.contactLink`)
+- **하단 문의 유도**: "원하는 답변을 찾지 못하셨나요? [문의하기]" → 경로 /contact 이동 (FAQ 카피 키 + FAQ 카피 키)
 
 ---
 
@@ -132,10 +132,10 @@ Invite links are valid for 90 days from issue. If your friend hasn't signed up b
 
 ## 적용 키 (코드 동기화 매핑)
 
-- **카테고리**: `faq.catAll`, `faq.catAccount`, `faq.catUpload`, `faq.catExhibition`, `faq.catOther`
-- **제목**: `faq.title`
-- **문항·답변**: `faq.q1`~`faq.q14` / `faq.a1`~`faq.a14`
-- **문의 유도**: `faq.contactLead`, `faq.contactLink`
+- **카테고리**: FAQ 카피 키, FAQ 카피 키, FAQ 카피 키, FAQ 카피 키, FAQ 카피 키
+- **제목**: FAQ 카피 키
+- **문항·답변**: FAQ 카피 키~FAQ 카피 키 / FAQ 카피 키~FAQ 카피 키
+- **문의 유도**: FAQ 카피 키, FAQ 카피 키
 
 ---
 
@@ -143,7 +143,7 @@ Invite links are valid for 90 days from issue. If your friend hasn't signed up b
 
 - [ ] FAQ 14문항 전부 키로 렌더링 (q11~q14는 Policy §3 v2.14 토큰 모델 정합)
 - [ ] 카테고리 필터 5종 동작 (전체·계정·업로드·전시·기타)
-- [ ] 하단 문의 링크 `/contact` 이동
+- [ ] 하단 문의 링크 경로 /contact 이동
 - [ ] ko/en 양측 동일 문항 수·동일 카테고리 노출 (i18n 누락 검사)
 
 ---
