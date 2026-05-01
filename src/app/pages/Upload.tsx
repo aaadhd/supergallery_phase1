@@ -4,7 +4,7 @@ import { Image as ImageIcon, Plus, X, Search, GripVertical, ArrowLeft, ChevronLe
 import { artists } from '../data';
 import { workStore, draftStore, useAuthStore } from '../store';
 import { eventStore, deriveStatus } from '../utils/eventStore';
-import { issueInviteToken, activateInviteToken } from '../utils/inviteTokenStore';
+import { issueInviteToken, activateInviteToken, deactivateInviteToken } from '../utils/inviteTokenStore';
 import { InviteShareButton } from '../components/InviteShareButton';
 import { REJECTION_REASON_LABEL_KEY } from '../utils/reviewLabels';
 import { buildVisibilityPatch } from '../utils/workVisibility';
@@ -901,6 +901,11 @@ export default function Upload() {
         rejectionReason: nextRejectionReason,
       };
       workStore.updateWork(editingWorkId, editingUpdates);
+      // G14: 편집으로 pending 회귀 시 토큰 deactivate (work feedReviewStatus와 정합).
+      // 친구 측 invite 흐름에서 active 토큰이 pending work를 가리키는 모순 방지.
+      if (nextStatus === 'pending') {
+        deactivateInviteToken(editingWorkId);
+      }
     } else {
       workStore.addWork(newWork);
     }

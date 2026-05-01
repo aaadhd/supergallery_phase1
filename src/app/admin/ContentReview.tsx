@@ -170,6 +170,23 @@ export default function ContentReview() {
     // Policy §3 v2.14: 비회원 초대 토큰 활성화 (회사가 외부 채널 발송 안 함 — 작가가 본인 채널로 직접 공유).
     const hasNonMember = w.imageArtists?.some((a) => a.type === 'non-member' && (a.displayName ?? '').trim()) ?? false;
     if (hasNonMember) activateInviteToken(w.id);
+
+    // Policy §3 v2.15: 클레임된 회원 참여자(작가 본인 제외)에게도 공개 알림 1건.
+    // 검수 대기 중 미리 클레임한 친구는 배지가 사라지는 것 외에 알 길이 없어서 별도 푸시.
+    const exhibitionTitle = w.exhibitionName?.trim() || w.title || '';
+    const claimedMemberIds = new Set<string>();
+    w.imageArtists?.forEach((ia) => {
+      if (ia.type === 'member' && ia.memberId && ia.memberId !== w.artistId) {
+        claimedMemberIds.add(ia.memberId);
+      }
+    });
+    claimedMemberIds.forEach(() => {
+      pushDemoNotification({
+        type: 'system',
+        message: t('review.notifApprovedForParticipant').replace('{title}', exhibitionTitle),
+        workId: w.id,
+      });
+    });
   };
 
   const openReject = (w: Work) => {

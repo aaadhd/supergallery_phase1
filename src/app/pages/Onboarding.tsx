@@ -163,7 +163,9 @@ export default function Onboarding() {
     try { tokenStr = sessionStorage.getItem('artier_pending_invite_token'); } catch { /* ignore */ }
     if (tokenStr) {
       const tok = getInviteToken(tokenStr);
-      if (tok && tok.status === 'active') {
+      // Policy §3 v2.15: inactive(검수 신청 중) 토큰도 클레임 허용.
+      // 친구가 가입 직후 본인 작품을 골라두면 검수 통과 시 자동 노출.
+      if (tok && (tok.status === 'active' || tok.status === 'inactive')) {
         const work = workStore.getWork(tok.workId);
         if (work) {
           const slots = buildClaimableSlots(work, t);
@@ -413,6 +415,11 @@ export default function Onboarding() {
               {currentStep === 2 && showClaimScreen && pendingToken && (
                 <>
                   <h2 className="text-lg font-bold text-foreground mb-2">{t('claim.findMyWorksTitle')}</h2>
+                  {pendingToken.status === 'inactive' && (
+                    <p className="mb-3 text-xs text-muted-foreground leading-relaxed">
+                      {t('claim.pendingHeader')}
+                    </p>
+                  )}
                   <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900 leading-relaxed">
                     {t('claim.findMyWorksWarning')}
                   </div>

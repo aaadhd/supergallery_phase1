@@ -19,10 +19,18 @@ import type { Work } from '../data';
  * - 그 외(직접 URL 입력 등): 일반 전시 미리보기로 동작 (가입 CTA만 노출).
  * 작품 한 점 단위 공유는 `?from=work` → ExhibitionWorkShareLanding.
  */
-function collectExhibitionWorks(seed: Work, all: Work[]): Work[] {
+function collectExhibitionWorks(seed: Work, all: Work[], includePending = false): Work[] {
   const ex = seed.exhibitionName?.trim();
   const gn = seed.groupName?.trim();
-  const pool = all.filter((w) => w.id === seed.id || isWorkVisibleOnPublicFeed(w));
+  // Policy §3 v2.15: 토큰이 검증된 invite flow면 검수 중(pending) 작품도 함께 미리보기.
+  // 그래야 친구가 빈 페이지가 아니라 같은 전시의 다른 작품을 둘러볼 수 있음.
+  // 외부 둘러보기·검색은 그대로 차단됨(이 함수는 invite landing 전용).
+  const pool = all.filter((w) => {
+    if (w.id === seed.id) return true;
+    if (isWorkVisibleOnPublicFeed(w)) return true;
+    if (includePending && w.feedReviewStatus === 'pending' && w.isHidden !== true) return true;
+    return false;
+  });
   const matches = pool.filter((w) => {
     if (w.id === seed.id) return true;
     if (ex && w.exhibitionName?.trim() === ex) return true;
@@ -128,12 +136,12 @@ export default function ExhibitionInviteLanding() {
     );
   }
 
-  const exhibitionWorks = collectExhibitionWorks(seed, works);
+  const isInviteFlow = tokenInfo.status === 'active' || tokenInfo.status === 'inactive';
+  const exhibitionWorks = collectExhibitionWorks(seed, works, isInviteFlow);
   const exhibitionTitle = displayExhibitionTitle(seed, t('work.exhibitionFallback'));
   const coverKey = getCoverImage(seed.image, seed.coverImageIndex);
   const coverSrc = imageUrls[coverKey] || coverKey;
   const inviterName = seed.artist.name;
-  const isInviteFlow = tokenInfo.status === 'active' || tokenInfo.status === 'inactive';
 
   const share = async () => {
     const url = window.location.href;

@@ -176,11 +176,20 @@ export function buildInviteShareText(
   workTitle: string,
   inviterName: string,
   locale: 'ko' | 'en',
+  tokenStatus: InviteTokenStatus = 'active',
 ): string {
-  if (locale === 'en') {
-    return `${inviterName} invited you to "${workTitle}". Sign up and link your work.`;
+  // Policy §3 v2.15: 검수 신청 단계(inactive)에서도 작가가 직접 공유 가능.
+  // 친구는 가입 후 본인 작품을 직접 골라 연결하므로 "자동 연결" 약속을 피한다.
+  if (tokenStatus === 'inactive') {
+    if (locale === 'en') {
+      return `${inviterName} just submitted "${workTitle}" for review. Sign up now and you can pick your work as soon as it goes public.`;
+    }
+    return `${inviterName}님이 '${workTitle}' 전시를 신청했어요. 지금 가입해두시면 공개 즉시 본인 작품을 골라보실 수 있어요.`;
   }
-  return `${inviterName}님이 '${workTitle}'에 회원님을 초대했어요. 가입하시면 작품이 자동으로 연결돼요.`;
+  if (locale === 'en') {
+    return `${inviterName} invited you to "${workTitle}". Sign up and pick your work.`;
+  }
+  return `${inviterName}님이 '${workTitle}'에 회원님을 초대했어요. 가입하시면 본인 작품을 골라 연결할 수 있어요.`;
 }
 
 export type ConnectMemberResult =

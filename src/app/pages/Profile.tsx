@@ -994,6 +994,9 @@ export default function Profile() {
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-[1.625rem] sm:gap-[2.275rem] lg:gap-[2.6rem]">
                       {filteredWorks.map((work) => {
                         const isMyUpload = isOwnProfile && (work.artistId === profileArtist.id || work.authorId === profileArtist.id);
+                        // Policy §3 v2.15: 친구가 클레임한 슬롯 보유자도 본인 프로필에서 검수 상태 확인 가능.
+                        const isMyClaimedSlot = isOwnProfile && !isMyUpload &&
+                          (work.imageArtists?.some(ia => ia.type === 'member' && ia.memberId === profileArtist.id) ?? false);
                         return (
                         <div
                           key={work.id}
@@ -1075,13 +1078,14 @@ export default function Profile() {
                             )}
 
                             {/* 하단 배지 (검수 상태) */}
-                            {isMyUpload && (work.feedReviewStatus === 'pending' || work.feedReviewStatus === 'rejected') && (
+                            {((isMyUpload || isMyClaimedSlot) && work.feedReviewStatus === 'pending') ||
+                              (isMyUpload && work.feedReviewStatus === 'rejected') ? (
                               <div className="absolute left-2 bottom-2 z-10 flex flex-col gap-1">
-                                {isMyUpload && work.feedReviewStatus === 'pending' && (
+                                {(isMyUpload || isMyClaimedSlot) && work.feedReviewStatus === 'pending' && (
                                   <span
                                     className="inline-flex rounded-full px-2 py-0.5 text-xs font-medium bg-muted/95 text-foreground border border-border backdrop-blur-sm w-fit"
-                                    title={t('review.badgePendingHint')}
-                                    aria-label={`${t('review.badgePending')} · ${t('review.badgePendingHint')}`}
+                                    title={isMyUpload ? t('review.badgePendingHint') : t('review.badgePendingHintForParticipant')}
+                                    aria-label={`${t('review.badgePending')} · ${isMyUpload ? t('review.badgePendingHint') : t('review.badgePendingHintForParticipant')}`}
                                   >
                                     {t('review.badgePending')}
                                   </span>
@@ -1099,7 +1103,7 @@ export default function Profile() {
                                   </button>
                                 )}
                               </div>
-                            )}
+                            ) : null}
                           </div>
 
                           {/* 이미지 하단 정보 */}

@@ -57,8 +57,10 @@ export function InviteShareButton({
   if (!token || token.status === 'revoked') return null;
 
   const isActive = token.status === 'active';
+  // Policy §3 v2.15: 검수 신청 단계(inactive)에서도 작가가 직접 공유 가능. revoked만 차단.
+  const isShareable = token.status === 'active' || token.status === 'inactive';
   const shareUrl = buildInviteShareUrl(workId, token.token);
-  const shareText = buildInviteShareText(workTitle, inviterName, locale === 'en' ? 'en' : 'ko');
+  const shareText = buildInviteShareText(workTitle, inviterName, locale === 'en' ? 'en' : 'ko', token.status);
   const fullMessage = `${shareText}\n${shareUrl}`;
   // Phase 1 한계: 토큰은 클라이언트 localStorage. 작가 본인 기기 기준 남은 일수 산정.
   const expiresInDays = (() => {
@@ -67,7 +69,7 @@ export function InviteShareButton({
   })();
 
   const handleClick = async () => {
-    if (!isActive) return;
+    if (!isShareable) return;
     if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
       try {
         await navigator.share({ title: workTitle, text: shareText, url: shareUrl });
@@ -107,16 +109,13 @@ export function InviteShareButton({
       <Button
         type="button"
         onClick={handleClick}
-        disabled={!isActive}
+        disabled={!isShareable}
         variant={variant}
         className={`${className ?? ''} min-h-[44px] gap-2`}
         aria-label={t('invite.shareCta')}
       >
         <Share2 className="h-4 w-4" />
         {t('invite.shareCta')}
-        {!isActive && (
-          <span className="ml-1 text-xs text-muted-foreground">({t('invite.shareNotReady')})</span>
-        )}
       </Button>
 
       <Dialog open={open} onOpenChange={setOpen}>
