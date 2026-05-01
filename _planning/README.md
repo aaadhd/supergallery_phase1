@@ -38,6 +38,8 @@ _planning/
 ├── Handoff_FAQ_v1.md              # FAQ 10문항 원고
 ├── Handoff_ServiceIntro_v1.md     # 서비스 소개(About) 원고
 ├── Handoff_UserInfo_Contact_v1.md # 사용자 정보/문의 입력 문구
+├── Handoff_Onboarding_v1.md       # 가입 후 온보딩 다단 흐름 + 본인 작품 찾기(claim) 카피
+├── Handoff_Notifications_v1.md    # 인박스 + 검수·신고·Pick·초대 알림 통합 + 채널 라우팅 매트릭스
 ├── Handoff_LegalReview_Checklist_v1.md # 변호사 전달용 검토 체크리스트(약관·처리방침 검토 포인트 일람)
 ├── PRD_User_v1.md            # 사용자 앱 화면별 카드(목적·입력·처리·출력·수용기준)
 ├── PRD_Admin_v1.md           # 어드민 화면별 카드(목적·입력·처리·출력·수용기준)
@@ -62,6 +64,8 @@ _planning/
 | [Handoff_FAQ_v1.md](Handoff_FAQ_v1.md) | PM · CS · 외주 개발사 |
 | [Handoff_ServiceIntro_v1.md](Handoff_ServiceIntro_v1.md) | PM · 브랜드 · 외주 개발사 |
 | [Handoff_UserInfo_Contact_v1.md](Handoff_UserInfo_Contact_v1.md) | PM · CS · 외주 개발사 |
+| [Handoff_Onboarding_v1.md](Handoff_Onboarding_v1.md) | PM · UX Writer · 외주 개발사 (가입 후 흐름 prose) |
+| [Handoff_Notifications_v1.md](Handoff_Notifications_v1.md) | PM · 운영 · UX Writer · 외주 개발사 (사용자 도달 알림 통합) |
 | [Handoff_LegalReview_Checklist_v1.md](Handoff_LegalReview_Checklist_v1.md) | PM · 법무 · DPO (변호사 검토 의뢰 시 동봉) |
 | [PRD_User_v1.md](PRD_User_v1.md) | 개발사 · QA |
 | [PRD_Admin_v1.md](PRD_Admin_v1.md) | 개발사 · QA · 운영팀 |
@@ -133,7 +137,7 @@ _planning/
 | 화면 구조/라우트 | `IA_ScreenList_v1.md` | PRD는 화면별 처리/AC 상세 |
 | 사용자/어드민 화면 명세 | `PRD_User_v1.md`, `PRD_Admin_v1.md` | Policy/IA를 구현 단위로 풀어쓴 문서 |
 | 일반 UI 카피 (i18n 키) | `Copy_v1.md` | 코드 동기화의 단일 소스 |
-| 사용자 노출 카피 prose 핸드오프본 | `Handoff_FAQ_v1.md`, `Handoff_ServiceIntro_v1.md`, `Handoff_Signup_Consent_v1.md` | Copy_v1.md 동일 키의 prose 정리본. 변경 시 양측 동시 갱신 |
+| 사용자 노출 카피 prose 핸드오프본 | `Handoff_FAQ_v1.md`, `Handoff_ServiceIntro_v1.md`, `Handoff_Signup_Consent_v1.md`, `Handoff_Footer_v1.md`, `Handoff_UserInfo_Contact_v1.md`, `Handoff_Onboarding_v1.md`, `Handoff_Notifications_v1.md` | Copy_v1.md 동일 키의 prose 정리본. 변경 시 양측 동시 갱신 |
 | 법무 전문 원문 | `Handoff_Terms_v1.md`, `Handoff_Privacy_v1.md` | Policy/PRD는 반영 위치와 요구사항만 기록 |
 
 운영 원칙:
@@ -348,7 +352,7 @@ CM-<번호>          공통 팝업·다이얼로그
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.5 | 2026-05-01 | PM × Claude | **화면 스펙 HTML 등록 + 문서 트리 정합** — `_screen_specs/Artier_Screen_Spec_v1.html`을 「기획 문서 목록」 트리·주요 독자 표에 추가. PC 와이어프레임·플로우 시각 자료로서 정책 원문은 `Policy_v1.md`가 우선임을 명시. 메모리 규칙(코드·_planning 변경 시 화면 스펙 HTML 동기화 의무)과 정합. **본 사이클 후속 — 법무 검토용 체크리스트 등록**: `Handoff_LegalReview_Checklist_v1.md` 신규 파일을 「기획 문서 목록」 트리·주요 독자 표에 추가. Policy §21.2 LP-1~LP-10 + 약관·처리방침 `[변호사 확인]` 마커 22곳을 한 곳에 모아 변호사 검토 의뢰 시 동봉용으로 사용. **본 사이클 후속 — 충돌 방지 구조 표 갱신**: `Handoff_FAQ`·`Handoff_ServiceIntro`·`Handoff_Signup_Consent` 3종이 prose 본문을 포함하게 됨에 따라 「충돌 방지 구조」 표에 **사용자 노출 카피 prose 핸드오프본** 행 신설. `Copy_v1.md`(i18n 키)와 dual 관계로 명시 — 카피 변경 시 양측 동시 갱신 운영 원칙 추가. |
+| v1.5 | 2026-05-01 | PM × Claude | **화면 스펙 HTML 등록 + 문서 트리 정합** — `_screen_specs/Artier_Screen_Spec_v1.html`을 「기획 문서 목록」 트리·주요 독자 표에 추가. PC 와이어프레임·플로우 시각 자료로서 정책 원문은 `Policy_v1.md`가 우선임을 명시. 메모리 규칙(코드·_planning 변경 시 화면 스펙 HTML 동기화 의무)과 정합. **본 사이클 후속 — 법무 검토용 체크리스트 등록**: `Handoff_LegalReview_Checklist_v1.md` 신규 파일을 「기획 문서 목록」 트리·주요 독자 표에 추가. Policy §21.2 LP-1~LP-10 + 약관·처리방침 `[변호사 확인]` 마커 22곳을 한 곳에 모아 변호사 검토 의뢰 시 동봉용으로 사용. **본 사이클 후속 — 충돌 방지 구조 표 갱신**: `Handoff_FAQ`·`Handoff_ServiceIntro`·`Handoff_Signup_Consent` 3종이 prose 본문을 포함하게 됨에 따라 「충돌 방지 구조」 표에 **사용자 노출 카피 prose 핸드오프본** 행 신설. `Copy_v1.md`(i18n 키)와 dual 관계로 명시 — 카피 변경 시 양측 동시 갱신 운영 원칙 추가. **본 사이클 후속 2 — 핸드오프 prose 보강 + 신규 2종**: 기존 키 목록 패턴이던 `Handoff_Footer_v1.md`·`Handoff_UserInfo_Contact_v1.md` 본문 보강(메뉴·사업자 정보·법정 고지·문의 양식 ko/en prose). 신규 2종 — `Handoff_Onboarding_v1.md`(가입 후 4단계 + claim 흐름) · `Handoff_Notifications_v1.md`(인박스 + 검수·신고·Pick·초대 알림 통합 + 채널 라우팅 매트릭스). 「충돌 방지 구조」 표의 prose 핸드오프본 군을 7종으로 확장. 작업 중 Copy ↔ 코드 정합 누락 추가 발견·보강(claim.* 13쌍 신설, review.notifSubmitted 추가, 폐기 키 invite.notifClaimDeclined·notifMemberLinked·notifDisavowed 3쌍 제거). |
 | v1.4 | 2026-04-26 | PM × Claude | 핸드오프 문서 체계 보강 — `Handoff_*` 7종(가입 동의/약관/개인정보/푸터/FAQ/서비스 소개/사용자정보·문의) 추가 및 README 목록·독자표 반영. 카피 중복 정리를 위해 일반 UI 원고의 단일 소스를 `Copy_v1.md`로 고정하고, 약관·개인정보는 별도 전문 문서(`Handoff_Terms_v1.md`, `Handoff_Privacy_v1.md`)로 분리. `Content_Handoff_v1.md`는 삭제해 전달 구조 단순화. |
 | v1.3 | 2026-04-20 | PM × Claude | `CLAUDE.md` 와 정합 — 문서 버전 규칙에서 "마이너마다 파일명 변경" 제거, `_v1` 파일명 유지·푸시 단위 이력은 `CLAUDE.md` 위임. "주요 기능" 초대 줄에 USR-EXH-03·`from=invite`/`credited`·Policy §3.5 표현 정렬. README 동기화 조항을 신규 파일·파일명 변경 시로 한정. |
 | v1.2 | 2026-04-20 | PM × Claude | 오늘 Policy 대규모 개정 반영 정합 갱신 — (a) 기획 문서 목록 트리·주요 독자 표에 `Copy_v1.md` 등록, (b) Policy 설명 문구를 최신 섹션(인터랙션·이벤트·저작권·계정편집·다국어·쿠키) 반영으로 갱신, (c) "주요 기능" 의 신고·제재 라인을 Phase 1 단순화(3액션+2회 자동 비공개)로 수정 · 이벤트 선정은 Phase 2 명시 · 인터랙션·저작권 보호 항목 추가, (d) 문서 버전 규칙 예시 및 변경 요약 예시를 Phase 1 단순화 내용으로 교체, (e) 최종 갱신일을 2026-04-20으로. |
