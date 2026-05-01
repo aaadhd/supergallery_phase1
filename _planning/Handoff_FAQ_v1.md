@@ -53,7 +53,7 @@ JPG, PNG, WEBP, GIF 형식을 지원하며, 파일당 최대 10MB까지 업로�
 ### 기타 카테고리
 
 #### Q9. 부적절한 작품을 발견했어요.
-전시 상세 화면에서 신고 버튼(깃발 아이콘)을 눌러 신고할 수 있습니다. 운영팀이 7일 이내에 처리합니다.
+전시 상세 화면에서 신고 버튼(깃발 아이콘)을 눌러 신고할 수 있습니다. 운영팀이 영업일 24시간 안에 확인해드려요.
 
 #### Q10. 서비스 이용료가 있나요?
 현재 Artier의 모든 기능은 무료로 이용하실 수 있습니다.
@@ -109,7 +109,7 @@ Our team selects outstanding works each week and awards a badge. Picked works ap
 ### Other category
 
 #### Q9. I found inappropriate content.
-Use the report button (flag) on the work detail screen. We review reports within about seven business days.
+Use the report button (flag) on the work detail screen. We review reports within 24 business hours.
 
 #### Q10. Is there a fee?
 All features of Artier are currently free to use.

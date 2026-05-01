@@ -6,7 +6,7 @@
 > - 코드(i18n) 단일 소스: [`Copy_v1.md`](Copy_v1.md) `onboarding.*` · `claim.*` 키
 > - 본 문서는 동일 내용을 prose 형태로 정리한 **핸드오프 보조본**이다.
 > - 카피 변경은 [`Copy_v1.md`](Copy_v1.md)와 본 문서를 같은 작업 범위에서 동시 갱신한다.
-> - "본인 작품 찾기" 단계는 [Policy §3 v2.16 토큰 모델](Policy_v1.md#3-비가입자-초대-정책)과 직결되어 변호사 검토 시 [Handoff_LegalReview_Checklist_v1.md §3 LP-3](Handoff_LegalReview_Checklist_v1.md) 함께 참조 권장.
+> - "본인 작품 찾기" 단계는 [Policy §3 v2.16 토큰 모델](Policy_v1.md#3-비회원-초대-정책)과 직결되어 변호사 검토 시 [Handoff_LegalReview_Checklist_v1.md §3 LP-3](Handoff_LegalReview_Checklist_v1.md) 함께 참조 권장.
 
 ---
 
@@ -14,7 +14,7 @@
 
 | 항목 | 결정 | 근거 |
 |---|---|---|
-| 진입 분기 | 일반 가입 / 소셜 가입 / 초대 링크 가입 3종 | [Policy §2.1](Policy_v1.md#21-가입-옵션과-필수-수집-정보-region-분기-폐기)·[§3](Policy_v1.md#3-비가입자-초대-정책) |
+| 진입 분기 | 일반 가입 / 소셜 가입 / 초대 링크 가입 3종 | [Policy §2.1](Policy_v1.md#21-가입-옵션과-필수-수집-정보-region-분기-폐기)·[§3](Policy_v1.md#3-비회원-초대-정책) |
 | Step 2 (claim) 진입 조건 | 활성 또는 inactive 토큰 보유 시 | [Policy §3.2](Policy_v1.md#32-본인-작품-찾기-가입자-본인-선택)·[Policy v2.16](Policy_v1.md#문서-이력) |
 | 자동 연결 | 없음. 가입자 명시 클릭 + 확인 다이얼로그 1회 필요 | [Policy §3.2](Policy_v1.md#32-본인-작품-찾기-가입자-본인-선택) |
 | 동시 선택 race | type 가드(`'non-member'`만 승격)로 두 번째 선택 자동 차단 | [CLAUDE.md 초대 자동 연결 정책](../CLAUDE.md) |

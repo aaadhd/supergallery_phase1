@@ -809,7 +809,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
     '운영팀이 매주 우수 작품을 선정하여 배지를 부여합니다. 선정된 작품은 피드 상단에 노출되며, 작가에게 알림이 발송됩니다.',
   'faq.q9': '부적절한 작품을 발견했어요.',
   'faq.a9':
-    '전시 상세 화면에서 신고 버튼(깃발 아이콘)을 눌러 신고할 수 있습니다. 운영팀이 7일 이내에 처리합니다.',
+    '전시 상세 화면에서 신고 버튼(깃발 아이콘)을 눌러 신고할 수 있습니다. 운영팀이 영업일 24시간 안에 확인해드려요.',
   'faq.q10': '서비스 이용료가 있나요?',
   'faq.a10': '현재 {brand}의 모든 기능은 무료로 이용하실 수 있습니다.',
   'faq.q11': '함께 올린 비회원 친구는 어떻게 초대하나요?',
@@ -1140,7 +1140,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'report.errWithdrawnArtist': '탈퇴한 작가의 작품에는 신고할 수 없어요.',
   'report.step2Title': '신고가 접수되었어요',
   'report.step2Body':
-    '운영팀이 7일 이내 처리합니다. 관련 법에 따른 긴급 건은 우선 처리됩니다. 허위 신고는 제재될 수 있습니다.',
+    '운영팀이 영업일 24시간 안에 확인해드려요. 관련 법에 따른 긴급 건은 우선 처리됩니다. 허위 신고는 제재될 수 있습니다.',
   'report.okClose': '확인',
   'cookie.title': '쿠키 사용 안내',
   'cookie.body':
@@ -1937,7 +1937,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
     'Our team selects outstanding works each week and awards a badge. Picked works appear higher in the feed and artists get a notification.',
   'faq.q9': 'I found inappropriate content.',
   'faq.a9':
-    'Use the report button (flag) on the work detail screen. We review reports within about seven business days.',
+    'Use the report button (flag) on the work detail screen. We review reports within 24 business hours.',
   'faq.q10': 'Is there a fee?',
   'faq.a10': 'All features of {brand} are currently free to use.',
   'faq.q11': 'How do I invite non-member friends to my group exhibition?',
@@ -2270,7 +2270,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'report.errWithdrawnArtist': 'This artist has left the service — reports are not accepted.',
   'report.step2Title': 'Report received',
   'report.step2Body':
-    'Our team will review within 7 business days. Urgent cases required by law are prioritized. False reports may be penalized.',
+    'Our team will review within 24 business hours. Urgent cases required by law are prioritized. False reports may be penalized.',
   'report.okClose': 'OK',
   'cookie.title': 'Cookies',
   'cookie.body':
