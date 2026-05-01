@@ -4,6 +4,31 @@
 
 ---
 
+## 2026-05-01 (금) — 전체 _planning 풀스캔 정합 감사
+
+17개 .md + 1개 HTML + Copy_v1.md ↔ 코드 i18n 사전을 대상으로 풀스캔 정합 감사를 수행. 누적된 드리프트·정의 누락·메모리 규칙 위반·앵커 깨짐을 일괄 정리.
+
+**1차 — Handoff prose 7종 정비**
+- 5종 prose 보강(Footer·UserInfo_Contact·기존 FAQ·ServiceIntro·Signup_Consent의 키 목록 → ko/en 전문)
+- 2종 신규(Onboarding 가입 후 4단계 + claim, Notifications 인박스 + 알림 통합 + 채널 라우팅 매트릭스)
+- 「충돌 방지 구조」 표의 prose 핸드오프본 군을 7종으로 확장
+
+**2차 — Copy_v1.md ↔ 코드 풀스캔 동기화**
+- 누락 추가 ko 147 / en 149쌍, 폐기 잔재 제거 205쌍, 값 불일치 ko 28 / en 25쌍 정정
+- 매직링크 전환·토큰 모델·workInquiry·verify 콜백·admin.section 등 누적 드리프트 일괄 해소
+- 결과: ko/en 1039 키 양측 100% 정합
+
+**3차 — 전체 _planning 풀스캔 5종 결함 정정**
+- 헤더 라벨 정체 (Copy v1 → v1.11)
+- 화면 ID 정합 — IA 영역 코드에 NTC·INQ 추가, ADM-NTC-01 카드 신설, ADM-LOG-01·PRM-01 "Phase 2" 표현 정정
+- 마크다운 앵커 깨짐 10건 (em-dash 슬러그 처리)
+- PM 문서에 코드 변수 노출 — PRD_User useBlocker · Policy useI18n() 추상화
+- 외부 서비스명 단순화 — Policy "Supabase 같은" · PRD_Admin "GA4 차단" 추상화
+
+검증: 마크다운 링크 무결성 100%, IA 정의 ID와 다른 문서 참조 ID 100% 일치, 메모리 규칙 위반 0건, vite build 통과.
+
+---
+
 ## 2026-04-28 (화) — 데드코드 일괄 청소
 
 토큰 모델 마이그레이션 + Nielsen fix 완료 후 누적된 미사용 코드·자산을 일괄 청산.
