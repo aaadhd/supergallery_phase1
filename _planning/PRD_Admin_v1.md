@@ -25,7 +25,7 @@
 | 항목 | 전제 |
 |---|---|
 | 기준 해상도 | 데스크톱 1280px(1024px 이하는 제한적 지원) |
-| 다국어 | **한국어 단일 운영** (2026-04-27 결정). 운영팀 한국어 사용 전제로 어드민 콘솔은 i18n 키 적용 대상 외. 사용자 화면(`src/app/pages/`·`src/app/components/`)은 ko/en 양면 i18n 의무 유지. |
+| 다국어 | **한국어 단일 운영** (2026-04-27 결정). 운영팀 한국어 사용 전제로 어드민 콘솔은 다국어 사전 적용 대상 외. 사용자 앱 측 화면·컴포넌트는 한국어·영어 양면 다국어 의무 유지. |
 | 상호작용 | 마우스·키보드 중심. 터치 타깃 44px 규칙은 어드민에도 적용 |
 | 인증 | 로그인 + `Operator` 역할 필수 |
 | 접근 제어 | [Policy §17 어드민 접근·역할](Policy_v1.md#17-어드민-접근역할-정책) |
@@ -167,108 +167,49 @@ Phase 1에서는 뷰어가 없어 해당 규칙은 데이터 모델 단에서만
 | IP 제한 | Phase 2 확장: 사무실 IP 화이트리스트(VPN 경유). Phase 1은 제한 없음 |
 | 2FA | Phase 2 확장: 최고 운영자 필수·에디터 권장. Phase 1은 미적용 |
 
-### 0.6 감사 로그 (Audit Trail)
+### 0.6 운영자 감사 로그
 
-#### 0.6.1 기록 대상 액션
+운영팀이 콘텐츠·회원·정책에 영향을 주는 동작을 했을 때 사후에 "누가·언제·왜" 했는지 재구성할 수 있도록 감사 로그를 남긴다. 분쟁 대응·내부 통제·법적 감사 대비 목적이다.
 
-아래 액션은 수행 즉시 `admin_audit_log` 레코드를 생성한다. Phase 1은 클라이언트 기반이라 localStorage(`artier_admin_audit_log_v1`)에 기록하고, 런칭 전 백엔드 연동 후 서버 테이블로 이관한다.
+#### 0.6.1 기록 대상 운영 활동
 
-| 분류 | 액션 | 기록 트리거 |
-|---|---|---|
-| **검수** | 승인·반려 | ADM-REV-02 판정 확정 |
-| **신고 처리** | 삭제·기각·비공개 유지 | ADM-RPT-02 3 액션 각각 |
-| **회원 제재** | (보류) | Phase 1 미사용 |
-| **회원 계정** | 회원 영구 삭제(말소) | ADM-MBR-02 복구 불가 액션 |
-| **콘텐츠** | 작품 영구 삭제 · 공개/비공개 토글 | ADM-RPT-01 (단일 모더레이션 큐) |
-| **큐레이션** | Pick 선정·해제 · 기획전 생성·수정·삭제 | ADM-PCK-01 · ADM-CUR-01 |
-| **배너·이벤트** | 배너 CRUD · 이벤트 CRUD · 선정작 지정·취소 | ADM-BNR-01 · ADM-EVT-01·02 |
-| **공지·문의** | 공지 게시·게시중단 · 문의 답변·상태 변경 | ADM-NTC-01 · ADM-INQ-01 |
-| **권한(Phase 2)** | 운영자 역할 부여·박탈 | (Phase 2 진입 시) |
+아래 카테고리의 운영팀 동작은 모두 감사 로그에 남긴다.
 
-#### 0.6.2 레코드 스키마
+| 분류 | 추적되는 활동 |
+|---|---|
+| 검수 | 작품 검수 승인·반려 |
+| 신고 처리 | 작품 삭제·기각·비공개 유지 |
+| 콘텐츠 | 작품 영구 삭제·공개/비공개 토글 |
+| 회원 | 회원 영구 삭제(말소) |
+| 큐레이션 | Pick 선정·해제 / 기획전 생성·수정·삭제 |
+| 배너·이벤트 | 배너·이벤트 등록·수정·삭제, 이벤트 선정작 지정·취소 |
+| 공지·문의 | 공지 게시·게시 중단·수정 / 문의 답변·상태 변경 |
+| 권한 | 운영자 역할 부여·박탈 (권한 3단계 분리는 2차 그랜드 오픈 범위) |
 
-| 필드 | 타입 | 설명 |
-|---|---|---|
-| `id` | string | 로그 ID (ULID 권장) |
-| `actorId` | string | 액션 수행 운영자 ID |
-| `actorRole` | string | 행위 시점의 역할 (Phase 1=`operator`, Phase 2=`super`/`editor`/`viewer`) |
-| `action` | string | 액션 코드 (`review.approve`·`report.delete`·`member.suspend.perm` 등) |
-| `targetType` | string | 대상 유형 (`work`·`artist`·`event`·`banner`·`pick`·`theme`·`notice`·`inquiry`) |
-| `targetId` | string | 대상 고유 ID |
-| `targetSnapshot` | object? | 액션 전 대상의 핵심 필드 스냅샷(복원 가능성 확보, 복구 불가 액션만) |
-| `reason` | string? | 사유 메모(반려 사유·신고 처리 메모 등) |
-| `metadata` | object? | 액션별 부가 데이터(예: 반려 사유 분류, 정지 기간 일수) |
-| `ip` | string? | 운영자 IP (런칭 전 백엔드 연동 후 기록) |
-| `userAgent` | string? | 운영자 브라우저 |
-| `createdAt` | string | ISO 8601 타임스탬프 |
+세부 식별자·기록 형식은 개발팀이 결정한다.
+
+#### 0.6.2 함께 보관할 정보
+
+각 운영 동작 1건마다 PM이 보관을 요구하는 정보 항목.
+
+- 누가 했는가 — 운영자 식별 정보 + 접속 환경(접속 위치·브라우저 등 사후 추적 단서)
+- 무엇에 했는가 — 대상 종류(작품·회원·이벤트 등)와 대상의 식별 정보
+- 직전 상태 — 복구 불가능한 동작(영구 삭제·역할 박탈 등)은 동작 직전의 대상 핵심 정보를 함께 스냅샷 보관(사후 복원 근거)
+- 왜 했는가 — 운영자가 입력한 사유 메모(반려 사유·신고 처리 메모 등). 동작에 따라 선택
+- 언제 했는가 — 동작 시각
+
+개인정보(이메일·전화 등)가 직전 상태에 포함되는 경우 §0.4.3 마스킹 규칙을 적용한 채로 보관한다.
 
 #### 0.6.3 보존·조회 정책
 
 - **보존 기간**: 5년 (법정 감사 대응 상한 참고)
-- **조회 권한**: Phase 1은 Operator 전체 조회. Phase 2는 **최고 운영자**만(에디터·뷰어 불가).
-- **개인정보 포함 처리**: `targetSnapshot`에 이메일·전화가 들어가면 §0.4.3 마스킹 규칙 적용한 상태로 저장.
-- **삭제·변조 불가**: append-only. 수정·삭제 API 제공하지 않음.
-- **열람 화면**: 운영팀이 백엔드 DB 직접 조회로 대응. 별도 어드민 화면 도입은 백엔드 연동 후 운영 부하·요청 빈도를 보고 검토.
+- **조회 권한**: Phase 1은 운영자 전체 조회. 권한 3단계 분리 이후엔 최고 운영자만(에디터·뷰어는 조회 불가).
+- **수정·삭제 불가**: 한 번 기록된 감사 로그는 변경할 수 없다(추가만 가능). 운영자 본인의 로그도 본인이 지울 수 없다.
+- **열람 화면**: 운영팀이 백엔드 DB를 직접 조회해 대응. 별도 어드민 화면 도입은 운영 부하·요청 빈도를 보고 백엔드 연동 후 검토.
 
 #### 0.6.4 Phase 1 → 백엔드 이관
 
-Phase 1 localStorage 감사 로그는 데모용이라 **런칭 전 백엔드 연동 시점에 이관되지 않는다**(데모 기간 기록은 실사용이 아니므로 폐기). 런칭 후부터의 액션이 감사 로그로 누적된다.
-
-#### 0.6.5 액션 코드 (Action Enum)
-
-각 어드민 액션은 `<domain>.<verb>[.<qualifier>]` 패턴의 코드 문자열로 식별한다. `auditLog()` 호출 시 본 enum을 사용한다.
-
-| 도메인 | 액션 코드 | 트리거 화면 | `targetType` | `targetSnapshot` 필수 | `metadata` 예시 |
-|---|---|---|---|---|---|
-| **검수** | `review.approve` | ADM-REV-02 | `work` | — | `{ pendingDurationMs }` |
-| | `review.reject` | ADM-REV-02 | `work` | — | `{ reasonCategory, reasonText, prevHistoryCount }` |
-| **신고 처리** | `report.delete` | ADM-RPT-02 | `work` | **O** (작품 핵심 필드) | `{ reportCount, reasonText }` |
-| | `report.dismiss` | ADM-RPT-02 | `work` | — | `{ reportCount, restoredHidden: boolean }` |
-| | `report.keep_hidden` | ADM-RPT-02 | `work` | — | `{ reportCount }` |
-| **회원** | `member.delete` | ADM-MBR-02 | `artist` | **O** (회원 프로필) | `{ withdrawReason?, by: 'admin' }` |
-| | `member.note` | ADM-MBR-02 | `artist` | — | `{ noteText }` (Phase 2 권한 분기) |
-| **콘텐츠(작품)** | `work.delete` | ADM-RPT-01 | `work` | **O** | `{ reasonText? }` |
-| | `work.toggle_hidden` | ADM-RPT-01 | `work` | — | `{ next: boolean }` |
-| **큐레이션** | `pick.add` | ADM-PCK-01 | `work` | — | `{ note? }` |
-| | `pick.remove` | ADM-PCK-01 | `work` | — | — |
-| | `curation.create` | ADM-CUR-01 | `theme` | — | `{ workIds: string[] }` |
-| | `curation.update` | ADM-CUR-01 | `theme` | **O** | `{ patch }` |
-| | `curation.delete` | ADM-CUR-01 | `theme` | **O** | — |
-| **배너** | `banner.create` | ADM-BNR-01 | `banner` | — | `{ visiblePeriod }` |
-| | `banner.update` | ADM-BNR-01 | `banner` | **O** | `{ patch }` |
-| | `banner.delete` | ADM-BNR-01 | `banner` | **O** | — |
-| | `banner.reorder` | ADM-BNR-01 | `banner` | — | `{ from, to }` |
-| **이벤트** | `event.create` | ADM-EVT-01 | `event` | — | `{ period }` |
-| | `event.update` | ADM-EVT-01 | `event` | **O** | `{ patch }` |
-| | `event.delete` | ADM-EVT-01 | `event` | **O** | — |
-| | `event.select_winner` | ADM-EVT-02 | `work` | — | `{ eventId }` |
-| | `event.unselect_winner` | ADM-EVT-02 | `work` | — | `{ eventId }` |
-| **공지** | `notice.publish` | ADM-NTC-01 | `notice` | — | — |
-| | `notice.unpublish` | ADM-NTC-01 | `notice` | — | — |
-| | `notice.update` | ADM-NTC-01 | `notice` | **O** | `{ patch }` |
-| **문의** | `inquiry.reply` | ADM-INQ-01 | `inquiry` | — | `{ replyTextLength }` |
-| | `inquiry.status_change` | ADM-INQ-01 | `inquiry` | — | `{ from, to }` |
-| **권한** | `auth.role_grant` / `auth.role_revoke` | (권한 변경 액션 — 권한 3단계 분리는 2차 그랜드 오픈 범위) | `artist` | **O** (이전 역할) | `{ role }` |
-
-> **확장 규칙**: 새 액션 추가 시 본 표에 행 추가 + PRD_Admin 문서 이력 행에 명시. 액션 코드는 폐기되더라도 enum에서 제거하지 않고 `(deprecated)` 주석 유지(과거 로그 해석 보장).
-
-#### 0.6.6 호출 계약 (`auditLogStore`)
-
-스토어 API 시그니처·구현은 개발팀 영역(코드의 `auditLogStore`). 어드민 화면 코드는 액션 직후 1줄 호출로 기록한다:
-
-```ts
-auditLog({
-  action: 'report.delete',
-  targetType: 'work',
-  targetId: work.id,
-  targetSnapshot: { title: work.title, artistId: work.artistId, /* … */ },
-  reason: '저작권 침해',
-  metadata: { reportCount: 3 }
-});
-```
-
-- 액션 실패 시(예: 스토어 mutation 실패) **로그를 먼저 기록하지 말 것** — 정상 mutation 직후에만 호출.
-- 단, 실패도 추적이 필요한 액션(예: `member.delete` 실패)은 별도 `metadata: { result: 'failed', error }` 와 함께 기록.
+Phase 1의 감사 로그는 데모용이라 백엔드 연동 시점에 이관되지 않는다(데모 기간 기록은 실사용이 아니므로 폐기). 런칭 이후부터의 동작이 감사 로그로 누적된다.
 
 ---
 
@@ -1032,7 +973,7 @@ DB·런칭 직전 운영자가 본 표를 기준으로 초기 체크리스트를
 - 엔티티: INQUIRY (필수 필드: `id`·`name`·`email`·`category`·`message`·`attachments[]`·`status`·`createdAt`·`replies[]`·`assigneeId?`·`internalNotes?`·`privacy.subjectVerified?`·`privacy.responseAttachments?`)
 - 정책: [Policy §30 개인정보 요청](Policy_v1.md#30-개인정보-열람정정삭제-요청-정책) · [Policy §22.6 운영 데이터 보관](Policy_v1.md#22-운영-리스크모더레이션-sla)
 - 연결 화면: ADM-DSH-01 (블로커) · USR-INF-07 (사용자 진입)
-- 감사 로그: `inquiry.reply` · `inquiry.status_change` (PRD §0.6.5)
+- 감사 로그: 답변 발송·상태 변경 시 운영자 감사 로그 1건 (§0.6 정책 적용)
 
 ---
 
@@ -1062,7 +1003,7 @@ DB·런칭 직전 운영자가 본 표를 기준으로 초기 체크리스트를
 **연결**: USR-INF-03 공지 목록 / USR-INF-04 공지 상세 / ADM-DSH-01 운영 일감 카운트
 
 **엔티티**: NOTICE
-**감사 로그**: `notice.publish` · `notice.unpublish` · `notice.update` (PRD §0.6.5)
+**감사 로그**: 공지 게시·게시 중단·수정 시 운영자 감사 로그 1건 (§0.6 정책 적용)
 
 **구현 상태**: Phase 1 미구현. 런칭 전 백엔드 연동 후 운영팀 콘솔에서 사용 시작.
 
@@ -1072,7 +1013,7 @@ DB·런칭 직전 운영자가 본 표를 기준으로 초기 체크리스트를
 
 ### 13.1 감사·이력
 
-모든 복구 불가 액션(삭제·영구 정지)과 상태 변경(정지 단계 상승·기획전 비공개 전환)은 **이력에 기록**한다. 현재는 각 엔티티 내부의 `history` 필드에 스냅샷 저장. **런칭 전 백엔드 이관 시** 통합 감사 로그 테이블로 이관.
+모든 복구 불가 동작(삭제·영구 정지)과 상태 변경(정지 단계 상승·기획전 비공개 전환)은 **이력에 기록**한다. 백엔드 연동 후 통합 감사 로그(§0.6)로 이관된다.
 
 ### 13.2 CSV 내보내기
 
@@ -1080,17 +1021,16 @@ DB·런칭 직전 운영자가 본 표를 기준으로 초기 체크리스트를
 
 ### 13.3 운영 데이터 일괄 초기화
 
-데모 환경에서 운영 데이터(배너·이벤트·Pick·기획전·체크리스트)를 스토리지 버전이 바뀌면 부팅 시 기본값으로 다시 설정한다. 운영 빌드에서는 수동 초기화가 필요하며, **런칭 전 백엔드 연동 후** 관리자 도구로 이관한다.
+데모 환경에서는 운영 데이터(배너·이벤트·Pick·기획전·체크리스트)가 데모 시드 값으로 자동 재설정된다. 실서비스 빌드에서는 수동 초기화가 필요하며, 백엔드 연동 후엔 운영팀용 관리자 도구로 옮겨간다.
 
-### 13.4 권한 관리 (Phase 2)
+### 13.4 권한 관리 (2차 그랜드 오픈 범위)
 
-Phase 2 권한 3단계 분리 시 §0.4.2 표의 ● 분포가 그대로 활성화된다. 구현 순서:
-1. 백엔드에 `operator_role` 필드 추가(enum: `super`/`editor`/`viewer`)
-2. 모든 어드민 API가 역할 기반 가드 적용
-3. 프론트에서 뷰어 역할일 때 §0.4.3 마스킹 규칙 적용
-4. 감사 로그(§0.6)와 함께 권한 변경 이력을 별도 테이블에 기록
+권한 3단계 분리(최고 운영자·에디터·뷰어) 도입 시 §0.4.2 권한 매트릭스의 ● 분포가 그대로 활성화된다. 적용 영역:
 
-Policy §17.3 및 §0.4.1~0.4.3 참조.
+- 운영자 역할 부여·박탈 자체가 감사 로그 기록 대상(§0.6)
+- 뷰어 역할은 §0.4.3 개인정보 마스킹 규칙이 그대로 적용된다
+
+상세 정책은 [Policy §17.3 권한 3단계 분리](Policy_v1.md#17-어드민-접근역할-정책)·§0.4 참조.
 
 ---
 
@@ -1110,7 +1050,7 @@ Policy §17.3 및 §0.4.1~0.4.3 참조.
 | **SANCTION** | 제재 상태 (보류) | 대상, 단계, 사유, 해제일, 이력, 누적 카운터(경고·허위 신고) |
 | **MEMBER_RECORD** | 어드민 회원 관리 데이터 | 회원 ID, 이름, 이메일, 가입일, 아바타. 받은 신고 이력은 REPORT 참조 |
 | **INQUIRY** (어드민 측 확장 필드) | 문의 처리 부가 정보 | 운영팀 답변 이력(작성자·시각·내용), 처리 상태(신규/처리 중/완료/보류), 내부 메모, 개인정보 카테고리 본인 확인 여부, 처리 결과 첨부. 사용자가 제출한 기본 필드는 [PRD_User §부록 INQUIRY](PRD_User_v1.md#부록--사용자-앱-엔티티-요약-사용-범위) 참조 |
-| **ADMIN_AUDIT_LOG** (런칭 전 필수) | 운영자 감사 로그 (5년 append-only) | id, actorId, actorRole, action(§0.6.5 enum), targetType, targetId, targetSnapshot(개인정보 마스킹), reason, metadata, ip, userAgent, createdAt |
+| **ADMIN_AUDIT_LOG** (런칭 전 필수) | 운영자 감사 로그 (5년 보존, 수정·삭제 불가) | §0.6 정책 참조 — 행위자·대상·동작·시각·사유 등을 함께 보관 (개인정보는 마스킹) |
 | **ADMIN_OPERATOR** (런칭 전 필수) | 운영자 계정 | 이메일, 이름, 권한 단계(Phase 2: 최고 운영자/에디터/뷰어), 최종 로그인 |
 
 ---
@@ -1119,7 +1059,7 @@ Policy §17.3 및 §0.4.1~0.4.3 참조.
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.22 | 2026-04-30 | PM × Claude | **ADM-REV-01 approve 알림 cascade 보강** (Policy v2.16 연동) — 검수 승인 시 기존에 작가에게만 발송되던 `review.notifApproved` 외에, **클레임된 회원 참여자(작가 본인 제외) 각각에게 정보용 알림 1건** 추가 발송. 카피 키 신규: `review.notifApprovedForParticipant`("함께 올라간 '{title}' 전시가 공개됐어요. 둘러보기 피드에서 확인하실 수 있어요"). 검수 신청 단계에서 미리 클레임한 친구가 마이페이지 카드 배지 사라지는 것 외에 알 수단이 없던 갭 해소. 비회원 토큰 활성화는 기존 동작 유지. 친구 측 InviteShareButton/Onboarding 클레임 흐름은 PRD_User v2.8 / Policy v2.16 §3 참조. **본 사이클 후속 정합** — 헤더 라벨 v1.0 → v1.22 동기화(제목·요약 블록·버전 필드·최종 갱신 필드 추가). **본 사이클 후속 2 — 풀스캔 정합 후속**: §12.7 ADM-NTC-01 공지 관리 카드 신설(IA §3.14 정합). §0.6.3 감사 로그 열람 화면 표현 정정("Phase 2에 ADM-LOG-01 신설 예정" → "백엔드 DB 직접 조회 + 운영 부하 보고 검토" 추상화, 메모리 규칙 정합). §0.6.5 권한 액션 행 표현 정정("(Phase 2 ADM-PRM-01)" → "(권한 변경 액션 — 권한 3단계 분리는 2차 그랜드 오픈 범위)"). CL-019 "GA4 차단 검증" → "분석 도구 발화 차단 검증" (외부 서비스명 추상화). |
+| v1.22 | 2026-04-30 | PM × Claude | **ADM-REV-01 approve 알림 cascade 보강** (Policy v2.16 연동) — 검수 승인 시 기존에 작가에게만 발송되던 `review.notifApproved` 외에, **클레임된 회원 참여자(작가 본인 제외) 각각에게 정보용 알림 1건** 추가 발송. 카피 키 신규: `review.notifApprovedForParticipant`("함께 올라간 '{title}' 전시가 공개됐어요. 둘러보기 피드에서 확인하실 수 있어요"). 검수 신청 단계에서 미리 클레임한 친구가 마이페이지 카드 배지 사라지는 것 외에 알 수단이 없던 갭 해소. 비회원 토큰 활성화는 기존 동작 유지. 친구 측 InviteShareButton/Onboarding 클레임 흐름은 PRD_User v2.8 / Policy v2.16 §3 참조. **본 사이클 후속 정합** — 헤더 라벨 v1.0 → v1.22 동기화(제목·요약 블록·버전 필드·최종 갱신 필드 추가). **본 사이클 후속 2 — 풀스캔 정합 후속**: §12.7 ADM-NTC-01 공지 관리 카드 신설(IA §3.14 정합). §0.6.3 감사 로그 열람 화면 표현 정정("Phase 2에 ADM-LOG-01 신설 예정" → "백엔드 DB 직접 조회 + 운영 부하 보고 검토" 추상화, 메모리 규칙 정합). §0.6.5 권한 액션 행 표현 정정("(Phase 2 ADM-PRM-01)" → "(권한 변경 액션 — 권한 3단계 분리는 2차 그랜드 오픈 범위)"). CL-019 "GA4 차단 검증" → "분석 도구 발화 차단 검증" (외부 서비스명 추상화). **본 사이클 후속 3 — PM 결정 아닌 내용 일괄 제거**: §0.6 감사 로그 섹션 재구성 — §0.6.5(액션 식별자 코드명 표 27행) + §0.6.6(기록 시점 호출 계약·코드 블록) 통째 제거. §0.6.2 함께 보관할 정보를 PM 결정 수준(누가·무엇에·직전 상태·왜·언제) 5개 항목으로 단순화. §13.1 `history` 필드명 박힘·§13.4 권한 관리 구현 절차(`operator_role` enum·API 가드·마스킹 적용 단계) 제거. §14 ADMIN_AUDIT_LOG 엔티티 행을 §0.6 정책 참조로 단순화. 다국어 항목 `src/app/pages·components` 파일 경로 → "사용자 앱 측 화면·컴포넌트" 추상화. 메모리 규칙(PM 문서엔 PM 결정만) 정합. |
 | v1.21 | 2026-04-27 | PM × Claude | **ADM-RPT-02 액션·토큰 cascade 명시** (Policy v2.15 / 정합성 누수 보강) — 권한 매트릭스의 "기각" 행에 "자동 비공개였다면 복원, 비회원 초대 토큰도 자동 active 복귀", "작품 영구 삭제" 행에 "비회원 초대 토큰 동시 revoke" 명시. 코드(`reportsStore.maybeRestoreAfterDismiss`·`store.removeWork`)에 이미 구현된 동작을 PRD 본문에 명시화. |
 | v1.20 | 2026-04-27 | PM × Claude | **비회원 초대 토큰 모델 정합** (Policy v2.14 / 단계 4~5 연동) — ADM-REV-01 승인 액션 처리 절차 정정: 보류된 SMS·알림톡·이메일 발송 큐 추가를 토큰 활성화로 교체(회사가 외부 채널 발송 안 함). 반려 액션 처리 절차에 토큰 비활성화 추가. ADM-RPT-01 "초대 매칭 거부" 카테고리 폐기 처리 — 토큰 모델로 매칭 후보 yes/no 게이트 자체가 사라졌고, 잘못 연결 시 작가가 슬롯 편집에서 해제하는 방식. CL-026 SMS·카카오 알림톡 게이트웨이 항목 폐기 처리. |
 | v1.19 | 2026-04-27 | PM × Claude | **어드민 한국어 단일 운영 정책 명시** — §0.2 공통 전제 다국어 항목 "KO/EN 공통" → "한국어 단일 운영(어드민 콘솔의 한글 하드코딩은 정책상 허용, 사용자 화면은 ko/en i18n 의무 유지)"로 정정. **이전 푸시(e5c5a79)에서 누락된 변경 행 정리** — 파트너 트래킹·ADM-WRK·ADM-PTN 폐기 영향 절(§0.4.2 권한 매트릭스 ADM-WRK-01 행 제거, §177·§226·§227·§409·§475 cross-ref 정정, §285·§297 대시보드 입력 카드, §786·§809 파트너 트래킹 섹션, §848 ADM-PTN 폐기 명시, §1075 PARTNER_ARTIST 엔티티 제거, §900 CL-009 카피 정정, §1043·§1047·§1051 운영 정책 본문)는 모두 e5c5a79 commit에 반영되었으나 본 이력 행에 미기록 — 본 v1.19 행에서 누락분 함께 정리. |

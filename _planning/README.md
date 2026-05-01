@@ -148,7 +148,7 @@ _planning/
 
 ## 카피 정합 체크 규칙 (배포 전 필수)
 
-- `Copy_v1.md` 수정 시, 런타임 i18n 사전(`src/app/i18n/messages.ts`)의 동일 키를 같은 PR/커밋에서 함께 반영한다.
+- `Copy_v1.md` 수정 시, 코드의 다국어 사전과 동일 키를 같은 작업 단위에서 함께 반영한다(개발팀이 운영하는 i18n 파일).
 - 특히 `footer.*`, `faq.*`, `about.*`, `contact.*`, `socialSignup.*`, `login.*`는 사용자 노출 빈도가 높아 우선 점검한다.
 - 충돌 발견 시 `Copy_v1.md`를 기준으로 문구를 맞춘다(법무 전문은 `Handoff_Terms_v1.md`, `Handoff_Privacy_v1.md` 우선).
 

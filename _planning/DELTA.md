@@ -4,6 +4,28 @@
 
 ---
 
+## 2026-05-01 (금) — PM-only 5문서 언어 품질 감사 (PM 결정 아닌 내용 제거)
+
+원칙: **표현만 바꾸지 말고, PM이 결정할 내용이 아니면 아예 안 쓴다.** 17개 PM-only 결정 문서(Policy/IA/PRD_User/PRD_Admin/README)를 대상으로 코드 변수·파일 경로·구현 명세·어려운 기술 용어를 일괄 제거·추상화.
+
+**제거된 내용 (개발팀 영역)**
+- PRD_Admin §0.6.5 액션 식별자 코드명 표(27행) 통째 제거 — `review.approve`·`report.delete` 같은 코드명 식별자는 개발팀 결정
+- PRD_Admin §0.6.6 호출 계약 + TS 코드 블록 통째 제거
+- PRD_Admin §13.4 권한 관리 구현 절차(`operator_role` enum 추가·API 가드·마스킹 적용 단계) 제거
+- PRD_Admin §0.6.2 `actorId`·`actorRole`·`targetType` 등 필드명 표 → "누가·무엇에·왜·언제" PM 결정 5항목으로 단순화
+
+**추상화된 내용**
+- localStorage 키(`artier_xxx`) → "단말 보관"
+- 파일 경로(`src/app/...`) → "사용자 앱 측 화면·컴포넌트"
+- 코드 함수 호출(`magicLinkStore.issueMagicLink({...})`·`auth.login()`·`useBlocker`·`useI18n().setLocale()`·`auditLog()`) → 동작 설명
+- TypeScript 타입(`: boolean`·`: string[]`) → 한국어 설명
+- 외부 서비스명("Supabase 같은"·"GA4 차단") → "클라우드 BaaS"·"분석 도구 차단"
+- 브라우저 API(`window.confirm()`·`dangerouslySetInnerHTML`) → 일반 표현
+
+**영향 문서**: Policy_v1, IA_ScreenList_v1, PRD_User_v1, PRD_Admin_v1, README, Artier_Screen_Spec_v1.html
+
+---
+
 ## 2026-05-01 (금) — 전체 _planning 풀스캔 정합 감사
 
 17개 .md + 1개 HTML + Copy_v1.md ↔ 코드 i18n 사전을 대상으로 풀스캔 정합 감사를 수행. 누적된 드리프트·정의 누락·메모리 규칙 위반·앵커 깨짐을 일괄 정리.

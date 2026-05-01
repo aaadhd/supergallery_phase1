@@ -249,9 +249,9 @@
 
 #### 처리
 1. 이메일 형식 검증. 계정 정지 상태면 발송하지 않고 정지 안내 문구만 노출(Policy §12.3).
-2. `magicLinkStore.issueMagicLink({email, intent:'login', redirectTo})` — 30분 유효 토큰 발행. 동일 이메일의 기존 미사용 토큰은 즉시 무효화.
-3. 발송 모의(`requestEmailMagicLink`) 성공 시 동일 화면에서 **발송 완료 상태**로 전환.
-4. 링크 클릭 시 USR-AUT-08 콜백에서 세션 발급 → `redirect` 경로(없으면 `/`)로 이동.
+2. 30분 동안만 유효한 일회용 로그인 링크를 새로 발행. 동일 이메일에 미사용 링크가 있었다면 그것은 즉시 무효화.
+3. 발송 처리(Phase 1은 모의)가 성공하면 동일 화면에서 **발송 완료 상태**로 전환.
+4. 사용자가 메일에서 링크를 누르면 USR-AUT-08 콜백 화면에서 로그인 세션을 만들고, 원래 가려고 했던 경로(없으면 둘러보기 홈)로 이동.
 
 #### 출력(발송 완료 상태)
 - "{email}으로 로그인 링크를 보냈어요. 30분 내 열어주세요." 안내
@@ -286,11 +286,11 @@
 - 뒤로가기로 USR-AUT-02 복귀
 
 #### 처리
-1. 이메일 형식 검증 + 중복 검사(`isEmailRegistered`).
-2. `issueMagicLink({email, intent:'signup'})` — 30분 토큰 발행.
-3. `artier_pending_signup_email`을 localStorage에 보존(링크 클릭 후 Step 2에서 프리필용).
-4. 발송 모의 성공 시 동일 화면에서 **발송 완료 상태**로 전환.
-5. 링크 클릭 → USR-AUT-08 콜백 → USR-AUT-04로 자동 이동.
+1. 이메일 형식 검증 + 이미 가입된 이메일인지 중복 검사.
+2. 30분 동안만 유효한 가입 인증 링크를 발행.
+3. 입력한 이메일을 단말에 임시 보관(링크 클릭 후 Step 2에서 자동 채우기 용도).
+4. 발송 처리가 성공하면 동일 화면에서 **발송 완료 상태**로 전환.
+5. 사용자가 메일에서 링크를 누르면 USR-AUT-08 콜백 화면을 거쳐 USR-AUT-04로 자동 이동.
 
 #### 출력(발송 완료 상태)
 - "{email}으로 가입 인증 링크를 보냈어요. 30분 내 열어주세요."
@@ -301,7 +301,7 @@
 
 #### 수용기준
 - AC-01: Given 이미 등록된 이메일 / When 제출 / Then 인라인 에러 "이미 가입된 이메일이에요. 로그인해 주세요".
-- AC-02: Given 유효·미등록 이메일 / When 제출 / Then 30분 토큰 발행 + 발송 완료 화면 + `artier_pending_signup_email` 저장.
+- AC-02: Given 유효·미등록 이메일 / When 제출 / Then 30분 인증 링크 발행 + 발송 완료 화면 + 입력 이메일을 단말에 임시 보관.
 - AC-03: Given 발송 완료 화면 / When 30초 내 재전송 / Then 쿨다운 카운터 노출 + 버튼 비활성.
 - AC-04: Given 발송 완료 화면 / When "이메일 주소 수정" / Then 입력 단계로 복귀 + 입력 보존.
 
@@ -323,10 +323,10 @@
 - **Step 3**: 약관 동의(필수 2: 이용약관·개인정보처리방침 / 선택 2: 마케팅 이메일·푸시)
 
 #### 처리
-1. `/signup?step=2`·`?step=3` 직접 진입 시 `artier_pending_signup_email`이 없으면 Step 1로 리다이렉트(미인증 상태 방지).
+1. `/signup?step=2`·`?step=3` 직접 진입 시 단말에 임시 보관한 이메일이 없으면 Step 1로 되돌림(미인증 상태 방지).
 2. Step 2: 닉네임 실시간 카운터·비속어 필터, 생년월일 3필드 + 만 14세 검증.
-3. Step 3: 전체 동의(indeterminate 지원) · 필수 2종 미체크 시 "가입 완료" 비활성.
-4. "가입 완료" → `auth.login()` + `persistMockSession(email)` + `pointsOnSignupComplete()` + 온보딩 이동(USR-AUT-06).
+3. Step 3: 전체 동의 토글(부분 선택 시 중간 상태로 표시) · 필수 2종 미체크 시 "가입 완료" 비활성.
+4. "가입 완료"를 누르면 로그인 세션 생성 + 가입 보너스 포인트 적립 후 온보딩(USR-AUT-06)으로 이동.
 
 #### 수용기준
 - AC-01: Given `/signup?step=2` 직접 진입 + 프리필 없음 / When 로드 / Then Step 1로 리다이렉트.
@@ -363,14 +363,14 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 - `demo` 쿼리(선택, 시연용)
 
 #### 처리
-1. 토큰 존재·유효 여부 확인. 일회용 소비(consume) — 성공 시 동일 토큰 재사용 불가.
-2. `intent='login'` → `authStore.login()` + `persistMockSession(email)` + `redirectTo`(화이트리스트 체크) 이동.
-3. `intent='signup'` → `artier_pending_signup_email` 보존 후 `/signup?step=2`로 이동.
-4. 만료·무효 상태는 각각 전용 화면으로 분기(재시작 CTA 제공).
+1. 링크의 유효 여부 확인 후 일회용으로 소비 — 성공한 링크는 다시 못 쓴다.
+2. 로그인 링크인 경우: 로그인 세션 생성 + 원래 가려고 했던 경로(허용 목록 안에 있는 경우만)로 이동.
+3. 가입 링크인 경우: 입력한 이메일을 단말에 임시 보관한 채 `/signup?step=2`로 이동.
+4. 만료·무효 링크는 각각 전용 안내 화면으로 분기 (가입·로그인 다시 시작 CTA 제공).
 
 #### 수용기준
-- AC-01: Given 유효한 로그인 토큰 / When 진입 / Then 세션 발급 + `redirectTo`로 이동(기본 `/`).
-- AC-02: Given 유효한 가입 토큰 / When 진입 / Then `/signup?step=2`로 이동 + 이메일 프리필.
+- AC-01: Given 유효한 로그인 링크 / When 진입 / Then 세션 발급 + 원래 가려던 경로로 이동(기본 둘러보기 홈).
+- AC-02: Given 유효한 가입 링크 / When 진입 / Then `/signup?step=2`로 이동 + 이메일 자동 채움.
 - AC-03: Given 만료 토큰 / When 진입 / Then 만료 안내 + "가입/로그인 다시 시작" CTA 2종.
 - AC-04: Given 존재하지 않는 토큰 / When 진입 / Then "유효하지 않은 링크" 안내 + 로그인 화면 CTA.
 - AC-05: Given 동일 토큰 재사용 / When 진입 / Then 만료 화면과 동일(일회성 소비).
@@ -1169,14 +1169,14 @@ total = base + following_bonus + bucket_boost + noise
   - "이 전시는 ‘**{사유 라벨}**’ 사유로 반려되었어요. 위 안내를 참고해 수정 후 다시 발행해 주세요. (반복 반려: N회)" + 운영자 부가 메모(있는 경우).
   - 닫기 버튼 없음(편집 끝까지 유지).
 - 발행 CTA 라벨이 **"다시 검수 요청하기"** 로 변경(반려 모드 한정).
-- 발행 시: `rejectionReason: null` 초기화, `rejectionHistory` 보존, 이미지 변경 여부에 따라 상태 전이(§12.1.2). 작가에게 "다시 검수가 시작되었어요" 토스트.
+- 발행 시: 반려 사유는 초기화하고 반려 이력은 보존, 이미지 변경 여부에 따라 검수 상태가 전이(§12.1.2). 작가에게 "다시 검수가 시작되었어요" 토스트.
 
 #### 수용기준 (반려 재발행)
-- AC-R1: Given `rejected` 전시 카드 탭 / When 탭 / Then USR-EXH-01 대신 USR-PRF-12 반려 사유 모달 오픈.
-- AC-R2: Given `rejectionHistory.length >= 2` / When 모달 오픈 / Then "반복 반려: N회" 접기 패널 노출.
+- AC-R1: Given 반려 상태 전시 카드 탭 / When 탭 / Then USR-EXH-01 대신 USR-PRF-12 반려 사유 모달 오픈.
+- AC-R2: Given 반려 이력이 2회 이상 / When 모달 오픈 / Then "반복 반려: N회" 접기 패널 노출.
 - AC-R3: Given USR-PRF-12 "수정하기" 클릭 / When 진입 / Then USR-UPL-03 상단에 빨강 인라인 사유 배너 노출 + 발행 CTA "다시 검수 요청하기" 라벨.
-- AC-R4: Given 반려 편집 후 이미지 변경 없이 발행 / When 제출 / Then `rejectionReason` 초기화 + `feedReviewStatus: pending`으로 전이(재검수 요청으로 간주, Policy §12.1.2).
-- AC-R5: Given 반려 편집 후 이미지 변경 + 발행 / When 제출 / Then `feedReviewStatus: pending` + `rejectionReason: null` + `rejectionHistory` 보존 + 토스트 "다시 검수가 시작되었어요".
+- AC-R4: Given 반려 편집 후 이미지 변경 없이 발행 / When 제출 / Then 반려 사유 초기화 + 검수 대기 상태로 전이(재검수 요청으로 간주, Policy §12.1.2).
+- AC-R5: Given 반려 편집 후 이미지 변경 + 발행 / When 제출 / Then 검수 대기 상태로 전이 + 반려 사유 초기화 + 반려 이력 보존 + 토스트 "다시 검수가 시작되었어요".
 
 #### 5.1.2 내 작품 탭 (`works`) — 본인만
 
@@ -1893,7 +1893,7 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 
 ### CM-05 · 쿠키 동의
 - 최초 방문 시 하단 배너. 옵션: "모두 동의" / "필수만" / 개인정보처리방침 링크.
-- 선택 결과는 `artier_cookie_consent` localStorage에 저장. 배너 즉시 사라짐.
+- 선택 결과는 사용자 단말에 보관. 배너 즉시 사라짐.
 - 필수/분석 쿠키 구분 및 3자 처리자 목록은 [Policy §29](Policy_v1.md#29-쿠키분석-동의-정책).
 
 ### CM-06 · 오프라인 배너
@@ -1993,7 +1993,7 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v2.8 | 2026-04-30 | PM × Claude | **검수 신청 단계 공유 모델 정합** (Policy v2.16 연동) — 작가가 검수 통과를 기다리지 않고 친구에게 초대 링크를 보낼 수 있는 흐름. (1) USR-AUT-06 Step 2 진입 조건을 "활성 토큰" → "활성 또는 inactive 토큰"으로 확장. inactive 단계에선 헤더 한 줄 안내 추가(`claim.pendingHeader`). 가입과 동시에 본인 작품을 클레임하면 검수 통과 시 자동 노출. (2) USR-EXH-03 invite landing: inactive 단계에서도 같은 전시의 pending 작품 미리보기 그리드 노출(외부 둘러보기·검색은 그대로 차단). 카피 능동톤("곧 공개될 전시예요. 지금 가입해두시면 통과 즉시 본인 작품을 골라보실 수 있어요"). (3) USR-UPL-10 발행 완료 모달: 비회원 슬롯 보유 시 안내 카피를 v2.14 정책 정합으로 정정("Artier 자동 발송 안 함 → 작가 직접 카톡·문자"). (4) USR-PRF-05 마이페이지 검수 배지: 본인 업로드 외에도 클레임 슬롯 보유자(member co-creator)에게도 노출. hint 카피 분기 — 작가용 `review.badgePendingHint`("24시간 내 공개돼요") vs 친구용 `review.badgePendingHintForParticipant`("운영팀 확인 중이에요. 통과되면 다른 분들도 볼 수 있어요"). (5) 검수 통과 시점 알림 흐름 보강 — 작가용 기존 알림 외에 클레임된 회원 참여자에게 정보용 알림 1건 추가(`review.notifApprovedForParticipant`). (6) `buildInviteShareText` 시그니처에 토큰 상태 인자 추가, inactive면 메시지 본문 분기("신청했어요. 가입해두시면 통과 즉시 본인 작품을 골라보실 수 있어요"). (7) 작가 측 InviteShareButton 잠금 해제 — `disabled={!isActive}` → revoked만 차단. (8) 편집으로 pending 회귀 시 토큰 자동 deactivate(work feedReviewStatus와 정합). 메모리 규칙(Phase 2 표현 금지 / 디지털 드로잉 시니어) 유지. **본 사이클 후속 정합** — 헤더 라벨 v1.0/v1.1 → v2.8 동기화(제목·요약 블록·버전 필드·최종 갱신 필드 추가). **본 사이클 후속 2 — 풀스캔 정합 후속**: USR-UPL "이탈 방지" 절의 `useBlocker` 코드 hook 노출 → "미저장 작업 감지" 추상 표현으로 정정 (메모리 규칙 정합). Policy §2.5 앵커 링크 정정. |
+| v2.8 | 2026-04-30 | PM × Claude | **검수 신청 단계 공유 모델 정합** (Policy v2.16 연동) — 작가가 검수 통과를 기다리지 않고 친구에게 초대 링크를 보낼 수 있는 흐름. (1) USR-AUT-06 Step 2 진입 조건을 "활성 토큰" → "활성 또는 inactive 토큰"으로 확장. inactive 단계에선 헤더 한 줄 안내 추가(`claim.pendingHeader`). 가입과 동시에 본인 작품을 클레임하면 검수 통과 시 자동 노출. (2) USR-EXH-03 invite landing: inactive 단계에서도 같은 전시의 pending 작품 미리보기 그리드 노출(외부 둘러보기·검색은 그대로 차단). 카피 능동톤("곧 공개될 전시예요. 지금 가입해두시면 통과 즉시 본인 작품을 골라보실 수 있어요"). (3) USR-UPL-10 발행 완료 모달: 비회원 슬롯 보유 시 안내 카피를 v2.14 정책 정합으로 정정("Artier 자동 발송 안 함 → 작가 직접 카톡·문자"). (4) USR-PRF-05 마이페이지 검수 배지: 본인 업로드 외에도 클레임 슬롯 보유자(member co-creator)에게도 노출. hint 카피 분기 — 작가용 `review.badgePendingHint`("24시간 내 공개돼요") vs 친구용 `review.badgePendingHintForParticipant`("운영팀 확인 중이에요. 통과되면 다른 분들도 볼 수 있어요"). (5) 검수 통과 시점 알림 흐름 보강 — 작가용 기존 알림 외에 클레임된 회원 참여자에게 정보용 알림 1건 추가(`review.notifApprovedForParticipant`). (6) `buildInviteShareText` 시그니처에 토큰 상태 인자 추가, inactive면 메시지 본문 분기("신청했어요. 가입해두시면 통과 즉시 본인 작품을 골라보실 수 있어요"). (7) 작가 측 InviteShareButton 잠금 해제 — `disabled={!isActive}` → revoked만 차단. (8) 편집으로 pending 회귀 시 토큰 자동 deactivate(work feedReviewStatus와 정합). 메모리 규칙(Phase 2 표현 금지 / 디지털 드로잉 시니어) 유지. **본 사이클 후속 정합** — 헤더 라벨 v1.0/v1.1 → v2.8 동기화(제목·요약 블록·버전 필드·최종 갱신 필드 추가). **본 사이클 후속 2 — 풀스캔 정합 후속**: USR-UPL "이탈 방지" 절의 `useBlocker` 코드 hook 노출 → "미저장 작업 감지" 추상 표현으로 정정 (메모리 규칙 정합). Policy §2.5 앵커 링크 정정. **본 사이클 후속 3 — PM 결정 아닌 내용 일괄 제거**: USR-AUT-02b·03·04·08의 매직 링크 처리 코드 함수(`magicLinkStore.issueMagicLink({email, intent, redirectTo})`·`auth.login()`·`persistMockSession()`·`pointsOnSignupComplete()`) 동작 설명으로 추상화. localStorage 키(`artier_pending_signup_email`·`artier_cookie_consent`) "단말 임시 보관" 표현으로 추상화. AC-R4·R5의 `feedReviewStatus: pending`·`rejectionReason: null` TS 표기 한국어 설명("검수 대기 상태로 전이"·"반려 사유 초기화")으로 정정. 메모리 규칙(PM 문서엔 PM 결정만) 정합. |
 | v2.7 | 2026-04-27 | PM × Claude | **비회원 초대 토큰 모델 + 본인 작품 찾기 흐름 정합 (+ Nielsen 휴리스틱 후속)** (Policy v2.14 / 단계 4~5 연동) — USR-AUT-06 Step 2를 매칭 후보 yes/no 게이트에서 토큰 기반 "본인 작품 찾기" 카드 그리드 + 명시 클릭 + 확인 다이얼로그 1회로 재정의. 진입 조건: 활성 토큰 보유. 토큰 없거나 비활성·만료·취소면 자동 스킵. 동시 선택 race(`connectMemberToSlot` type 가드)에 따른 카드 자동 새로고침 AC 신설. 가입자 자가 해제 진입점 전면 폐기 — USR-PRF-06 본 탭은 보기 전용으로 단순화, "본인 작품 아님" piece 액션·CM-04·USR-EXH-01 piece 오버레이 disavow 액션 모두 제거. 잘못 연결 시 가입자가 작가에게 직접 알리고 작가가 USR-PRF-05 슬롯 편집에서 해제(슬롯이 `'unknown'`으로 전환). USR-EXH-01 공유 탭 설명을 토큰 모델 기반으로 정정(`?invite=<token>`은 마이페이지 "친구에게 알리기" 버튼이 별도 생성). §12.3 업로드 플로우 5단계 카피 정정(회사 발송 → 토큰 활성화 + 작가 본인 채널 공유). **Nielsen 휴리스틱 P3 후속 보강** — USR-AUT-10b에 카드 1개 안전 신호(`claim.singleCardSafetyNote`)·스킵 안심 토스트(`claim.skipReassured`) 추가. USR-EXH-03 4상태 분기(active·inactive·revoked·만료/불일치) 카피 시니어 친화 정정. USR-PRF-05 본인 전시 카드에 비회원 슬롯 가시성 인디케이터 추가(`profile.nonMemberSlotsLabel`). USR-UPL-10 발행 직후 InviteShareButton 다이얼로그에 토큰 만료 D-N 노출(`invite.shareLinkExpiresIn`). 신규 발행 시 작가에게 검수 시작 알림 1건(`review.notifSubmitted`). USR-INF-02 FAQ에 토큰 모델 q11~q14 4건 신설(친구 초대·자동 연결 안 됨·잘못 연결·만료) + q7 옛 SMS 발송 톤 카피 정정. 시니어 친화 카피 정합(`claim.findMyWorksWarning` 위협 톤 → 안심, `claim.confirmBody` 카톡·문자 안내, `claim.alreadyTaken` 액션 유도 등). |
 | v2.6 | 2026-04-26 | PM × Claude | **USR-AUT-06 온보딩 매칭 본인 확인 단계 신설** (Policy v2.13 §3.5.1 연동) — 한국·해외 분기·전화번호 필수 입력 폐기. Step 1을 닉네임·생년월일·프로필 이미지 공통 단일 폼으로 단순화(전화번호·실명은 Settings 추가 항목). **Step 2 조건부 매칭 본인 확인** 신설: 매칭 후보 1건 이상이면 무작위 최대 3건 카드 + 단일 yes/no, "맞아요" → 참여 작가로 연결 + 초대자 알림, "아니에요" → 운영팀 ADM-RPT-01 "초대 매칭 거부" 큐에 알림 + 초대자에게도 안내 알림, 두 경우 모두 가입 정상 완료. AC 8종(AC-01~08) 재작성, EC 4종(이탈·이미지 실패·14세 미만·검수 비공개 표본 제외). **USR-AUT-02 시트 분기 제거** — "지역 스위치 링크" 입력·처리·자동 국가 추정 호출·관련 AC·EC 모두 제거. **엔티티 부록**: 자동 country 필드 두지 않음(작가 출신국 공개는 기존 위치 필드로 충족). 닉네임·이메일·생년월일 필수 + 전화번호·실명 선택. MAGIC_LINK_TOKEN 신규 행. INVITE 식별자 종류(전화번호/이메일) 추가. + 앵커 정합 보정(Policy §12 링크를 `신고·모더레이션` 섹션으로 통일) + USR-PRF-12 AC-R4를 단일 동작(`pending` 전이)으로 확정해 "결정 필요" 문구 제거. **실명 인풋 폐기** (Policy v2.13 후속 정합) — USR-AUT-06 입력·§11 가입 플로우·USR-PRF-04 고정 필드 표·USER_PROFILE 엔티티에서 실명 항목 일괄 삭제. |
 | v2.5 | 2026-04-21 | PM × Claude | **검수 흐름·문의·개인정보 권리 — 사용자측 명세 강화** — §5.1.2 검수 상태 배지 4종 매트릭스 + USR-PRF-12 반려 사유 모달 반복 반려 이력 패널 + USR-UPL-03 반려 편집 모드 인라인 배너·CTA 라벨 변경. AC-R1~R5 5종 추가(반려 재발행 흐름). USR-INF-07 카테고리 7종으로 확장(`privacy` 추가, Policy §30 권리 행사 채널) + 본인 확인 안내 + 정지 계정 프리필 AC. PRD_Admin v1.17 ADM-INQ-01·ADM-RPT-01 SLA·SystemArch v1.11 코드 분할과 정합. |
