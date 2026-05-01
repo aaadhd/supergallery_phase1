@@ -3,7 +3,7 @@
 `USR-INF-02` FAQ 화면에 노출되는 자주 묻는 질문 14문항 전문.
 
 > **단일 소스 안내**
-> - 코드(i18n) 단일 소스: [`Copy_v1.md`](Copy_v1.md) FAQ 카피 영역 키
+> - 카피 단일 소스: [`Copy_v1.md`](Copy_v1.md) FAQ 카피 영역 키
 > - 본 문서는 동일 내용을 prose 형태로 정리한 **핸드오프 보조본**이다(개발사·운영팀·UX Writer가 화면을 보지 않고도 전체 흐름을 파악하도록).
 > - 카피 변경은 [`Copy_v1.md`](Copy_v1.md)와 본 문서를 같은 작업 범위에서 동시 갱신한다.
 
@@ -144,7 +144,7 @@ Invite links are valid for 90 days from issue. If your friend hasn't signed up b
 - [ ] FAQ 14문항 전부 키로 렌더링 (q11~q14는 Policy §3 v2.14 토큰 모델 정합)
 - [ ] 카테고리 필터 5종 동작 (전체·계정·업로드·전시·기타)
 - [ ] 하단 문의 링크 경로 /contact 이동
-- [ ] ko/en 양측 동일 문항 수·동일 카테고리 노출 (i18n 누락 검사)
+- [ ] ko/en 양측 동일 문항 수·동일 카테고리 노출 (누락 검사)
 
 ---
 

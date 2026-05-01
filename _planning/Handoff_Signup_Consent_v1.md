@@ -3,7 +3,7 @@
 이메일 가입(`USR-AUT-03 Step 3`)과 소셜 최초 가입 모달(`USR-AUT-05` SocialSignupModal)에서 노출하는 약관 동의 문구 전문.
 
 > **단일 소스 안내**
-> - 코드(i18n) 단일 소스: [`Copy_v1.md`](Copy_v1.md) 가입 카피 키 · 소셜 가입 카피 키 · 로그인 카피 키 키
+> - 카피 단일 소스: [`Copy_v1.md`](Copy_v1.md) 가입 카피 키 · 소셜 가입 카피 키 · 로그인 카피 키 키
 > - 본 문서는 동일 내용을 prose 형태로 정리한 **핸드오프 보조본**이다.
 > - 카피 변경은 [`Copy_v1.md`](Copy_v1.md)와 본 문서를 같은 작업 범위에서 동시 갱신한다.
 > - 약관·개인정보처리방침 본문은 별도 [`Handoff_Terms_v1.md`](Handoff_Terms_v1.md) · [`Handoff_Privacy_v1.md`](Handoff_Privacy_v1.md) 참조.
@@ -105,7 +105,7 @@
 
 **버튼**:
 - 가입 완료 (소셜 가입 카피 키) — 필수 3종 체크 + 닉네임 유효 시 활성화
-- 닫기 (소셜 가입 카피 키) — 가입 취소 (소셜 OAuth 동의는 별도 처리)
+- 닫기 (소셜 가입 카피 키) — 가입 취소 (소셜 로그인 동의는 별도 처리)
 
 ### 2.2 English copy
 
@@ -135,7 +135,7 @@
 
 **Buttons**:
 - Sign up (소셜 가입 카피 키) — enabled when 3 required checks + valid nickname
-- Close (소셜 가입 카피 키) — cancel signup (social OAuth consent handled separately)
+- Close (소셜 가입 카피 키) — cancel signup (social login consent handled separately)
 
 ### 2.3 화면 동작
 

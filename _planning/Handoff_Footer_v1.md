@@ -3,7 +3,7 @@
 전 화면 하단에 노출되는 글로벌 푸터의 메뉴·사업자 정보·법정 고지 전문.
 
 > **단일 소스 안내**
-> - 코드(i18n) 단일 소스: [`Copy_v1.md`](Copy_v1.md) 푸터 카피 영역 키
+> - 카피 단일 소스: [`Copy_v1.md`](Copy_v1.md) 푸터 카피 영역 키
 > - 본 문서는 동일 내용을 prose 형태로 정리한 **핸드오프 보조본**이다.
 > - 카피 변경은 [`Copy_v1.md`](Copy_v1.md)와 본 문서를 같은 작업 범위에서 동시 갱신한다.
 > - **사업자 정보 값은 placeholder다**. 회사 확정 시 [`Handoff_LegalReview_Checklist_v1.md`](Handoff_LegalReview_Checklist_v1.md) §2와 함께 일괄 갱신.
@@ -113,7 +113,7 @@
 - [ ] 법정 고지 ko/en 양측 노출
 - [ ] 쿠키 설정 클릭 시 CM-05 배너 재진입
 - [ ] 사업자 정보 11종 placeholder는 회사 확정 후 일괄 갱신([Handoff_LegalReview_Checklist_v1.md](Handoff_LegalReview_Checklist_v1.md) §2 정합)
-- [ ] 데모 QA 진입점은 빌드 환경 변수로 가드되어 프로덕션 미노출
+- [ ] 데모 QA 진입점은 프로덕션에서 노출되지 않아야 함
 
 ---
 
