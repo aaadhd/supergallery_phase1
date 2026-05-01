@@ -4,6 +4,43 @@
 
 ---
 
+## 2026-05-01 (금) — 인라인 코드 정정 풀스캔 (메모리 규칙 정합)
+
+8번째 풀스캔. 사용자 지적("인라인 코드 다수인데 괜찮다고?")에 따라
+PM 문서의 코드 변수·구현 세부 인라인 백틱 표기 일괄 정정.
+메모리 규칙: "기획 문서엔 PM 결정만 — 코드 변수·구현 세부 박지 말 것".
+
+**스코프**: Policy / IA / PRD_User / PRD_Admin / Copy 5문서 본문
+(문서 이력 행, i18n 사전 §6, 상위 요약 박스는 traceability 목적상 보존).
+
+**일괄 정정 카테고리** (총 ~140건 정정, 누적 4라운드):
+- 라운드 1 (79건): 상태 enum (`'rejected'`·`'approved'`·`'pending'`), 필드명
+  (`feedReviewStatus`·`rejectionReason`·`rejectionHistory`·`isHidden`·
+  `imageArtists`), 스토어·함수명(`magicLinkStore`·`reportsStore`·`auditLog`).
+- 라운드 2 (18건): TS 비교 연산자(`=== 'approved'`), 객체 할당 표현식
+  (`feedReviewStatus: 'rejected'`), 특정값(`coverImageIndex: -1`).
+- 라운드 3 (35건): URL 파라미터(라우트는 보존), 감사 로그 필드명
+  (`actorId`·`targetSnapshot`), HTML/JS API(`oncontextmenu`·`preventDefault`),
+  엔티티 상수(`INQUIRY`·`ADMIN_AUDIT_LOG`·`REPORTS_CHANGED_EVENT`),
+  카테고리 enum(`privacy`·`report`·`account`).
+- 라운드 4 (8건): 상위 요약 박스의 i18n 키 일부, Locale 반응성 가이드
+  (`useI18n()`·`getStoredLocale()`), i18n 매핑 가이드
+  (`koMessages`·`enMessages`), `redirectTo`·`worksPublic`·`artistWorks`·
+  `pickBadge`·`worksPublic` 등 잔재.
+
+**보존 결정** (PM 결정·표준):
+- 라우트 정의(`/auth/verify`·`?invite=<token>`·`?status=rejected`):
+  사용자 가시 URL은 PM 결정.
+- 카테고리·알림 enum 표(USR-INF-07 7종·USR-NTF-01 7종): PM 정의 enum 명세표.
+- 검수 상태 배지 매트릭스(IA USR-PRF-05): 상태 코드 ↔ UX 매핑 명세.
+- 문서 이력 테이블: 과거 변경 traceability 목적상 코드명 보존(컨벤션).
+- 상위 요약 박스: 최근 사이클 변경 추적용(history 행 미러).
+
+검증: vite build 통과. 본문 인라인 백틱 코드 → Korean 평문 일괄 변환 후
+final audit 15건 잔재 (모두 file 참조·history·spec table 형식 — 의도적).
+
+---
+
 ## 2026-05-01 (금) — 마지막 5개 영역 풀스캔 (i18n·AC·상태·인덱스·Edge case)
 
 7번째 풀스캔. 점근선에 가까워짐 (전체 발견 결함 2건).

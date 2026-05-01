@@ -94,7 +94,7 @@
 | 최근 검색어 | 10건 (계정별/게스트 분리) |
 | 이벤트 구독 중복 방지 | 동일 이메일 × 이벤트 1회 |
 | 업로드 이미지 | 1~10장, 장당 원본 10MB 상한(클라이언트 5MB 자동 리사이즈) |
-| 전시명·작품명·그룹명 | 20자 (`TITLE_FIELD_MAX_LEN`) |
+| 전시명·작품명·그룹명 | 20자 |
 | 바이오·한 줄 프로필 | 바이오 200자, 한 줄 40자 |
 | 신고 사유 본문 | 500자 |
 | 문의 본문 | 2000자 |
@@ -139,7 +139,7 @@
 
 **검수 상태 노출**
 - 본인 프로필에서만 본인 전시에 검수 배지 노출. 타인 프로필·피드에서는 승인 완료 전시만 표시.
-- 배지: `pending`(확인 중), `rejected`(게시 불가). 상세는 각 화면 카드 참조.
+- 배지: 검수 대기(확인 중), 반려(게시 불가). 상세는 각 화면 카드 참조.
 
 **로컬 자정 기준**
 - 배너 노출 기간·이벤트 상태·업로드 기록일은 모두 **사용자 로컬 시간대 YYYY-MM-DD** 기준.
@@ -196,7 +196,7 @@
 - **데스크톱**: 중앙 모달 다이얼로그 (동일 콘텐츠, max-w-md)
 
 #### 입력
-- 소셜 로그인 버튼 3종(카카오·구글·애플) — `t()`에서 **"[제공자]로 계속하기"** 문구(가입·로그인 통합). 사용자 언어(KO/EN)에 따라 순서 변경 — KO: 카카오·구글·애플 / EN: 구글·애플·카카오
+- 소셜 로그인 버튼 3종(카카오·구글·애플) — i18n 사전에서 **"[제공자]로 계속하기"** 문구(가입·로그인 통합). 사용자 언어(KO/EN)에 따라 순서 변경 — KO: 카카오·구글·애플 / EN: 구글·애플·카카오
 - "이메일로 가입하기" CTA (이메일 매직 링크 가입)
 - "이미 계정이 있으신가요? **로그인 하기**" 링크 (→ USR-AUT-02b 이메일 로그인)
 - `redirect` 쿼리 파라미터 (선택)
@@ -355,11 +355,11 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 ### USR-AUT-08 · 이메일 매직 링크 콜백
 
 **목적**: 메일 링크(`/auth/verify?token=…`)를 검증해 로그인 세션 발급 또는 가입 이어가기를 처리.
-**트리거**: 이메일에 첨부된 매직 링크 클릭 · QA 데모: `?demo=expired` · `?demo=invalid`.
+**트리거**: 이메일에 첨부된 매직 링크 클릭 · QA 데모: `?demo=...` (QA용 만료·잘못된 링크 시뮬레이션).
 **우선순위**: **P0**
 
 #### 입력
-- `token` 쿼리(필수, Phase 1은 `magicLinkStore`에서 검증)
+- `token` 쿼리(필수, Phase 1은 매직 링크 토큰 스토어에서 검증)
 - `demo` 쿼리(선택, 시연용)
 
 #### 처리
@@ -436,8 +436,8 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
    - 프로필 이미지: 5MB 이하, 미입력 시 기본 이미지.
 2. Step 1 완료 시 AP +30 적립(백그라운드, UI 미노출).
 3. Step 2 본인 작품 찾기 (Policy §3.2~3.3):
-   - 카드 클릭 → 확인 다이얼로그 1회 → 즉시 회원 슬롯(`imageArtists[i].type = 'member'`)으로 승격 + 작가에게 정보용 알림 1건.
-   - 동시 선택 race: 다른 가입자가 먼저 선택 시 type 가드(`'non-member'`만 승격)로 두 번째 가입자 자동 차단 + "이미 다른 분이 본인 작품으로 연결했어요" 토스트 + 카드 자동 새로고침.
+   - 카드 클릭 → 확인 다이얼로그 1회 → 즉시 회원 슬롯(해당 슬롯이 회원 자리로 승격)으로 승격 + 작가에게 정보용 알림 1건.
+   - 동시 선택 race: 다른 가입자가 먼저 선택 시 type 가드(비회원만 승격)로 두 번째 가입자 자동 차단 + "이미 다른 분이 본인 작품으로 연결했어요" 토스트 + 카드 자동 새로고침.
    - "여기 없어요. 그냥 둘러볼게요" → 가입은 정상 완료, 카드 미선택 상태로 진행.
    - 본 단계는 가입 차단 기능이 아니다. 가입 종료 시 토큰 sessionStorage 정리.
 4. Step 3에서 "첫 작품 올리기" CTA → USR-UPL-02 또는 "둘러보기" → USR-BRW-01.
@@ -453,9 +453,9 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 - AC-03: Given 초대 토큰 없음 또는 토큰 비활성·만료·취소 / When Step 1 완료 / Then Step 2 자동 스킵 후 Step 3 진입.
 - AC-04: Given 활성 토큰 + 비회원 슬롯 1건 이상 / When Step 2 진입 / Then 슬롯 카드 그리드(이미지 + 작가가 적어둔 표시명 + 작품명) 표시.
 - AC-05: Given Step 2 진입 / When 카드 클릭 / Then 확인 다이얼로그(잘못 클릭 시 작가가 풀어줄 수 있다는 안전 안내) 노출 → "네" 선택 시 회원 슬롯 승격 + 작가에게 정보용 알림 + Step 3 진입.
-- AC-06: Given 동시에 다른 가입자가 같은 슬롯 선택 / When 두 번째 가입자가 "네" 선택 / Then `connectMemberToSlot`이 `slot_not_non_member` 반환 + 토스트 안내 + 카드 자동 새로고침 + 가입자는 다른 슬롯 선택 또는 스킵 가능.
+- AC-06: Given 동시에 다른 가입자가 같은 슬롯 선택 / When 두 번째 가입자가 "네" 선택 / Then 슬롯 승격 처리에서 "이미 다른 분이 가져간 자리" 결과 반환 + 토스트 안내 + 카드 자동 새로고침 + 가입자는 다른 슬롯 선택 또는 스킵 가능.
 - AC-07: Given Step 2 진입 / When "여기 없어요" 선택 / Then 가입 정상 완료 + 토큰 정리 + Step 3 진입.
-- AC-08: Given 가입자가 잘못 연결됐다고 작가에게 알림 / When 작가가 마이페이지 USR-PRF-06 슬롯 편집에서 해제 / Then `imageArtists[i]` 슬롯이 `'unknown'`(작가 미상)으로 전환 (작가 단독 작업, 가입자 자가 해제 진입점 없음).
+- AC-08: Given 가입자가 잘못 연결됐다고 작가에게 알림 / When 작가가 마이페이지 USR-PRF-06 슬롯 편집에서 해제 / Then 해당 작품 슬롯 슬롯이 작가 미상(작가 미상)으로 전환 (작가 단독 작업, 가입자 자가 해제 진입점 없음).
 
 #### 엣지케이스
 - EC-01: 온보딩 중 이탈 → 다음 로그인 시 처음부터 재진입(토큰 sessionStorage 보존, Step 2 다시 평가).
@@ -490,7 +490,7 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 **우선순위**: **P0**
 
 #### 입력
-- 전체 전시 중 **승인(`approved`) + 미숨김(`!isHidden`)** 만 후보
+- 전체 전시 중 **검수 통과 + 비공개 아님**인 전시만 후보
 - 현재 Pick 목록(최대 10), 기획전 포함 전시, 추천 작가 목록
 - 활성 배너(최대 5), 오늘 기준 활성 이벤트
 - 사용자의 팔로잉 작가 ID, 좋아요·저장·숨김(신고자 필터) 상태
@@ -527,13 +527,13 @@ total = base + following_bonus + bucket_boost + noise
 
 **5) 탭 필터**
 - `전체`: 모든 전시.
-- `혼자 올리기`: `primaryExhibitionType === 'solo'`.
-- `함께 올리기`: `primaryExhibitionType === 'group'`.
-- 레거시 전시(`primaryExhibitionType` 미설정)는 `imageArtists` 수로 fallback 분류.
+- `혼자 올리기`: 혼자 올리기.
+- `함께 올리기`: 함께 올리기.
+- 레거시 전시(전시 유형 미설정)는 참여 작가 슬롯 수로 fallback 분류.
 
 **6) 공개 가시성 필터**
-- `feedReviewStatus === 'approved'` 인 것만 노출.
-- `isHidden === true` 는 전체 비노출(본인 프로필만 예외).
+- 검수 승인 상태 인 것만 노출.
+- 비공개 상태 는 전체 비노출(본인 프로필만 예외).
 - 본인이 신고한 전시·작가는 본인 한정 자동 숨김(신고자 숨김).
 
 **7) 무한 스크롤**
@@ -575,9 +575,9 @@ total = base + following_bonus + bucket_boost + noise
 - AC-04: Given 추천 작가 3명 · 팔로잉 작가 2명 / When 피드 로드 / Then Featured / Personalized 버킷 각각 별도 소스에서 구성.
 
 **공개 가시성**
-- AC-05: Given 전시 `feedReviewStatus: pending` / When 피드 로드 / Then 비노출.
-- AC-06: Given 전시 `isHidden: true` + 본인 프로필 / When 본인 프로필 로드 / Then 노출.
-- AC-07: Given 전시 `isHidden: true` + 피드 / When 피드 로드 / Then 비노출.
+- AC-05: Given 전시 검수 대기 상태로 전이 / When 피드 로드 / Then 비노출.
+- AC-06: Given 전시 비공개 처리 + 본인 프로필 / When 본인 프로필 로드 / Then 노출.
+- AC-07: Given 전시 비공개 처리 + 피드 / When 피드 로드 / Then 비노출.
 - AC-08: Given 사용자가 신고한 전시 / When 피드 로드 / Then 해당 사용자에게만 숨김(다른 사용자에겐 정상 노출).
 
 **인터리빙**
@@ -586,7 +586,7 @@ total = base + following_bonus + bucket_boost + noise
 
 **무한 스크롤·탭**
 - AC-11: Given 승인된 전시 80건 / When 스크롤 끝 도달 / Then 24 → 24 → 24 → 8 순으로 페이지네이션.
-- AC-12: Given 탭 "함께 올리기" 선택 / When 탭 / Then `primaryExhibitionType === 'group'` 만 노출 + URL `?tab=group` 즉시 갱신(`replace` 모드).
+- AC-12: Given 탭 "함께 올리기" 선택 / When 탭 / Then 함께 올리기 만 노출 + URL `?tab=group` 즉시 갱신(`replace` 모드).
 - AC-13: Given 탭 전환 / When 탭 / Then 스크롤이 최상단으로 복귀.
 - AC-13.1: Given `/?tab=individual` 직접 진입 또는 북마크 / When 로드 / Then 혼자 올리기 탭 상태로 시작.
 - AC-13.2: Given `?tab=xxx` 알 수 없는 값 / When 로드 / Then `all` 탭으로 복원(URL `?tab=` 생략).
@@ -675,11 +675,11 @@ total = base + following_bonus + bucket_boost + noise
 - AC-02: Given 사용자가 좋아요 안 한 전시 / When 좋아요 탭 / Then 하트 채워짐 + 알림 1건(작가에게) 생성.
 - AC-03: Given 탈퇴 작가 전시 / When 좋아요·팔로우·신고 시도 / Then 아무 동작 안 함(UI 비활성).
 - AC-04: Given 공유 탭 (PC) / When 클릭 / Then 클립보드에 "[작가명] 님이 [전시명]…" 멘트 + 전시 단위 링크 복사 + 토스트.
-- AC-05: Given 본인 전시 + `rejected` / When 썸네일 탭(피드·프로필에서) / Then 상세 모달 대신 **반려 사유 모달** 오픈(수정하기·닫기).
+- AC-05: Given 본인 전시 + 반려 / When 썸네일 탭(피드·프로필에서) / Then 상세 모달 대신 **반려 사유 모달** 오픈(수정하기·닫기).
 
 #### 엣지케이스
 - EC-01: 이미 삭제된 전시 ID로 직접 URL 진입 → "삭제된 전시입니다" 안내 + 피드로 리다이렉트.
-- EC-02: `isHidden` 전시를 비소유자가 URL 진입 → 접근 불가 안내.
+- EC-02: 비공개 여부 전시를 비소유자가 URL 진입 → 접근 불가 안내.
 
 #### 의존
 - 엔티티: EXHIBITION, INTERACTION, FOLLOW, NOTIFICATION
@@ -754,7 +754,7 @@ total = base + following_bonus + bucket_boost + noise
 - AC-01: Given 비로그인 + 초대 링크 / When 진입 / Then 상단 가입 CTA + 전화번호·이름 프리필 임시값 저장.
 - AC-02: Given 가입 직후(프리필 일치) / When 온보딩 완료 / Then 초대된 전시에 자동 매칭 + 알림 생성.
 - AC-03: Given 전시가 이미 삭제 / When 진입 / Then "이 전시는 삭제되었습니다" 안내 + 일반 피드 유도.
-- AC-04: Given 전시가 `isHidden: true` (자동·확정 비공개) / When 진입 / Then "운영팀 검토 중" 안내 + 작품 본문 비노출 + Artier 가입 CTA 유지.
+- AC-04: Given 전시가 비공개 처리 (자동·확정 비공개) / When 진입 / Then "운영팀 검토 중" 안내 + 작품 본문 비노출 + Artier 가입 CTA 유지.
 
 #### 엣지케이스
 - EC-01: 초대 파라미터가 있지만 해당 전시의 참여 작가 정보와 불일치 → 일반 상세 모달로 대체.
@@ -881,7 +881,7 @@ total = base + following_bonus + bucket_boost + noise
 - **전시명 (필수)**: 20자 카운터 + 비속어 검증
 - **그룹명 (그룹 전시 필수)**: 20자 + 자동완성(내 최근 1 + 작품 기반 최대 30) + 중복 허용
 - **개별 작품명 (선택)**: 각 20자 · 미입력 시 자동 생성 (혼자: exFinal 또는 "무제" · 그룹: `[작가명] - N`)
-- **커스텀 커버**: 이미지 중 인덱스 선택 또는 로컬 파일(data URL, `coverImageIndex: -1`)
+- **커스텀 커버**: 이미지 중 인덱스 선택 또는 로컬 파일(직접 업로드 데이터)
 - **이벤트 연결 배너**: `?event=` 진입 시 녹색 배너 + 이벤트명
 - **원작 확인**: 혼자 = "원작임을 확인합니다" / 함께 = "수강생들의 동의를 얻었습니다". 필수 체크
 
@@ -902,16 +902,16 @@ total = base + following_bonus + bucket_boost + noise
 - 기존 전시 프리필(유형·전시명·이미지·작가·커버·역할·이벤트 연결)
 - 상단 "수정 중" 뱃지 + CTA 라벨 "수정 저장"
 - 저장 시 **편집 가능 필드만 갱신**한다. 아래 불변 필드는 **보존**:
-  - `id`(참조 무결성), `likes`·`saves`(인터랙션 카운터), `uploadedAt`(업로드 시각·피드 정렬 기준), `artistId`·`artist`(업로더 정체성), **`rejectionHistory`(반려 이력 — 감사·재범 추적용)**
-- **`feedReviewStatus`는 항상 `pending`으로 재설정**(auto-approve 환경만 `approved`). 재검수 대상.
-- **`rejectionReason`은 빈 값으로 초기화**(재발행 시 "현재" 반려 사유만 제거. 이력 배열 `rejectionHistory`는 별도로 보존).
+  - 전시 ID(참조 무결성), 좋아요·저장 카운터, 업로드 시각(피드 정렬 기준), 작가 ID·작가 정체성(업로더), **반려 이력(감사·재범 추적용)**
+- **검수 상태는 항상 검수 대기로 재설정**(auto-approve 환경만 즉시 통과). 재검수 대상.
+- **반려 사유는 빈 값으로 초기화**(재발행 시 "현재" 반려 사유만 제거. 누적 반려 이력은 별도로 보존).
 - AP 적립 없음, 중복 이벤트 검증 스킵, 비회원 초대 미발송.
 - 저장 성공 시: 완료 화면(USR-UPL-10)으로 가지 않고 **프로필 전시 탭**(USR-PRF-05)으로 복귀 + 아래 5 시나리오 중 해당 토스트 표시([Policy §12.1.2](Policy_v1.md#1212-검수-상태별-수정삭제-정책)):
-  - `approved` 유지(메타만): "수정 사항이 바로 반영되었어요."
-  - `approved` → `pending`(이미지 변경): "이미지가 바뀌어 잠시 검수 대기예요. 공개되면 알려드릴게요."
-  - `pending` 유지: "수정 사항이 검수 대기에 반영됐어요."
-  - `rejected` → `pending`(이미지 변경): "수정한 작품이 재검수 대기에 들어갔어요."
-  - `rejected` 유지(메타만): "수정 사항이 반영됐어요. 공개되려면 반려 사유를 해결해주세요."
+  - 검수 통과 유지(메타만): "수정 사항이 바로 반영되었어요."
+  - 검수 통과 → 검수 대기(이미지 변경): "이미지가 바뀌어 잠시 검수 대기예요. 공개되면 알려드릴게요."
+  - 검수 대기 유지: "수정 사항이 검수 대기에 반영됐어요."
+  - 반려 → 검수 대기(이미지 변경): "수정한 작품이 재검수 대기에 들어갔어요."
+  - 반려 유지(메타만): "수정 사항이 반영됐어요. 공개되려면 반려 사유를 해결해주세요."
 - 삭제된 전시 수정 시도 → 에러 토스트 "수정하려는 작품을 찾을 수 없습니다" + `/upload` 리다이렉트.
 
 #### E. 발행 검증 순서 (에러 메시지 10종, 순차 중단)
@@ -933,8 +933,8 @@ total = base + following_bonus + bucket_boost + noise
 
 #### F. 발행 성공 처리
 
-- Work 저장: id UUID · `feedReviewStatus: pending`(auto-approve 시 approved) · `uploadedAt` 로컬 ISO · `linkedEventId`(해당 시)
-- 비회원 초대 정보는 `imageArtists[]`에 보존(검수 승인 시 발송)
+- 전시 저장: 전시 ID 신규 생성 · 검수 대기 상태로 전이(auto-approve 시 즉시 통과) · 업로드 시각 기록 · 연결 이벤트 ID(해당 시)
+- 비회원 초대 정보는 참여 작가 슬롯 목록에 보존(검수 승인 시 발송)
 - **AP 적립** 분기([Policy §7.2](Policy_v1.md#7-포인트ap-정책)):
   - 첫 업로드 +100 (최초 1회)
   - 일반 업로드 +20 (일 2회 상한, 첫 업로드 당일 제외)
@@ -969,7 +969,7 @@ total = base + following_bonus + bucket_boost + noise
 - AC-08: Given 당일 일반 업로드 2회 후 3번째 / When 발행 / Then AP 적립 없음(상한).
 - AC-09: Given 24시간 이내 삭제 / When 확정 / Then AP -20 회수(잔액 음수 방지).
 - AC-10: Given `?edit=<id>` + 전시 존재 / When 로드 / Then 전 필드 프리필 + "수정 중" 뱃지.
-- AC-11: Given `?edit=<id>` 저장 / When 완료 / Then `feedReviewStatus: pending` 재설정(auto-approve 시 `approved`) + `rejectionReason` 제거 + `id`·`likes`·`saves`·`uploadedAt`·`rejectionHistory` 보존 + AP 적립 없음.
+- AC-11: Given 전시 편집 모드(`?edit=<id>`) 저장 / When 완료 / Then 검수 대기 상태로 재설정(auto-approve 시 즉시 통과) + 반려 사유 제거 + 전시 ID·좋아요·저장·업로드 시각·반려 이력 보존 + AP 적립 없음.
 - AC-12: Given 비회원 포함 발행 / When "전시하기" / Then USR-UPL-08 프리뷰 → 확인 후 발행.
 - AC-13: Given `?event=<id>` 중복 참여 / When 발행 / Then 에러 "이미 참여한 이벤트입니다".
 - AC-14: Given 내용 입력 + 다른 경로 이동 시도 / When 이탈 / Then USR-UPL-09 모달.
@@ -1116,9 +1116,9 @@ total = base + following_bonus + bucket_boost + noise
 #### 5.1.1 전시 탭 (`exhibition`)
 
 **데이터**
-- 소스: 본인이 올린 전시(`artistId === 본인 && !isInstructorUpload`) + **참여 작가로 연결된 전시**(타인이 올린 그룹 전시의 참여 작가로 본인이 등록된 경우)
+- 소스: 본인이 직접 올린 전시(강사 업로드 제외) + **참여 작가로 연결된 전시**(타인이 올린 그룹 전시의 참여 작가로 본인이 등록된 경우)
 - 강사 업로드는 여기서 제외(§5.1.3 수강생 작품 탭에서 별도).
-- 타인 프로필에서 볼 때는 승인 완료(`approved`) + 공개(`!isHidden`)만.
+- 타인 프로필에서 볼 때는 검수 통과 + 비공개 아님인 전시만.
 
 **뷰**
 - 필터: 전체 / 혼자 / 함께 (각 개수 표시).
@@ -1126,7 +1126,7 @@ total = base + following_bonus + bucket_boost + noise
 - 전시 단위 카드(썸네일 + 전시명 + 그룹명(그룹) 또는 작가명(혼자) + 이미지 개수 배지).
 
 **수정·삭제 권한**
-- **본인이 직접 올린 전시만** 점점점 메뉴 노출(`artistId === 본인 || authorId === 본인`).
+- **본인이 직접 올린 전시만** 점점점 메뉴 노출(전시의 작가 또는 업로더가 본인일 때).
 - 참여 작가로만 연결된 전시는 메뉴 없음(수정·삭제 불가. 업로더를 통해 수정 안내).
 
 **작품명(piece) 편집 — 본 탭이 단일 진입점**
@@ -1136,7 +1136,7 @@ total = base + following_bonus + bucket_boost + noise
 
 **점점점 메뉴**
 - **전시 수정** → `/upload?edit=<id>`
-  - `pending` 상태의 전시일 때는 진입 전 확인 모달 노출([Policy §12.1.2](Policy_v1.md#1212-검수-상태별-수정삭제-정책)):
+  - 검수 대기 상태의 전시일 때는 진입 전 확인 모달 노출([Policy §12.1.2](Policy_v1.md#1212-검수-상태별-수정삭제-정책)):
     - 제목: "검수 중인 전시를 수정할까요?"
     - 설명: "지금 수정하면 검수 대기에 변경 사항이 반영되고, 검수 대기 시간이 다시 시작됩니다."
     - [취소] / [수정하기]
@@ -1144,12 +1144,12 @@ total = base + following_bonus + bucket_boost + noise
 
 **전시 수정 동작** (Policy §12.1.2 차별 재검수 규칙)
 - 기존 정보 전부 프리필.
-- 저장 시 **이미지 변경 여부에 따라** `feedReviewStatus` 결정:
-  - 이미지·작가·커스텀 커버 변경 → `pending` 전환(재검수)
-  - 메타만 변경(전시명·그룹명·작품명·커버 인덱스·이벤트 연결) → **원본 상태 유지**(approved는 approved 유지, 즉시 반영 / rejected는 rejected 유지)
+- 저장 시 **이미지 변경 여부에 따라** 검수 상태 결정:
+  - 이미지·작가·커스텀 커버 변경 → 검수 대기 전환(재검수)
+  - 메타만 변경(전시명·그룹명·작품명·커버 인덱스·이벤트 연결) → **원본 상태 유지**(검수 통과는 통과 유지, 즉시 반영 / 반려는 반려 유지)
 - AP 적립 없음.
-- 반려 사유(`rejectionReason`)는 상태가 rejected에서 벗어나면 초기화, rejected 유지 시 보존.
-- 반려 이력(`rejectionHistory`)은 항상 보존.
+- 반려 사유는 상태가 반려에서 벗어나면 초기화, 반려 유지 시 보존.
+- 반려 이력(반려 이력)은 항상 보존.
 - 비회원 초대 미발송(수정 모드).
 
 **전시 삭제 동작**
@@ -1159,20 +1159,20 @@ total = base + following_bonus + bucket_boost + noise
 - 24시간 내 삭제 시 AP -20.
 
 **검수 상태 배지 (본인에게만)** — IA USR-PRF-05 명세와 1:1 대응
-- `pending` → "검수 중"(회색·중립). 카드 탭 시 USR-EXH-01 진입(본인엔 노출) + 상단 안내 배너 "검수 중 — 1~24시간 내 결과를 알려드릴게요".
-- `rejected` → "**반려됨**"(빨강 강조 + 화살표 아이콘). 카드 탭 시 **USR-PRF-12 반려 사유 모달** 오픈(USR-EXH-01 차단).
-- `approved`는 배지 없음. 정상 USR-EXH-01 진입.
-- `isHidden=true` (자동·확정 비공개) → "비공개"(주황). 카드 탭 시 USR-EXH-01 진입 + 상단 배너 "운영팀 검토 중. 24시간 내 판정 예정"(Policy §12.2.1 SLA).
+- 검수 대기 → "검수 중"(회색·중립). 카드 탭 시 USR-EXH-01 진입(본인엔 노출) + 상단 안내 배너 "검수 중 — 1~24시간 내 결과를 알려드릴게요".
+- 반려 → "**반려됨**"(빨강 강조 + 화살표 아이콘). 카드 탭 시 **USR-PRF-12 반려 사유 모달** 오픈(USR-EXH-01 차단).
+- 검수 통과는 배지 없음. 정상 USR-EXH-01 진입.
+- 비공개 상태 (자동·확정 비공개) → "비공개"(주황). 카드 탭 시 USR-EXH-01 진입 + 상단 배너 "운영팀 검토 중. 24시간 내 판정 예정"(Policy §12.2.1 SLA).
 
 **반려 전시 진입 동작 (USR-PRF-12 반려 사유 모달)**
-- 본인이 rejected 전시 탭 → 상세 모달 대신 **반려 사유 모달** 오픈
+- 본인이 반려 전시 탭 → 상세 모달 대신 **반려 사유 모달** 오픈
   - 제목 "게시 불가 안내" + 현재 사유(저품질/스팸/부적절/저작권 4종 중 1개) + (있다면) 운영자 부가 메모.
-  - **반복 반려 표시**: `rejectionHistory.length >= 2`이면 "반복 반려: N회 (이력 보기)" 접기식 패널 — 클릭 시 과거 사유 시간순 노출(Policy §12.1.1).
+  - **반복 반려 표시**: 반려 이력 2회 이상이면 "반복 반려: N회 (이력 보기)" 접기식 패널 — 클릭 시 과거 사유 시간순 노출(Policy §12.1.1).
   - 안내문 "수정 후 재업로드하면 재검수를 받을 수 있습니다".
   - CTA: **"수정하기"**(USR-UPL-03 `?edit=<id>` 진입, 반려 사유를 컨텍스트로 전달) / "닫기".
 
 **반려 사유의 편집 화면 인라인 노출** (USR-UPL-03)
-- `?edit=<id>` 진입 + `feedReviewStatus='rejected'` 상태일 때, 편집 화면 상단에 **빨강 인라인 배너** 항상 노출:
+- `?edit=<id>` 진입 + 검수 상태가 '반려' 상태일 때, 편집 화면 상단에 **빨강 인라인 배너** 항상 노출:
   - "이 전시는 ‘**{사유 라벨}**’ 사유로 반려되었어요. 위 안내를 참고해 수정 후 다시 발행해 주세요. (반복 반려: N회)" + 운영자 부가 메모(있는 경우).
   - 닫기 버튼 없음(편집 끝까지 유지).
 - 발행 CTA 라벨이 **"다시 검수 요청하기"** 로 변경(반려 모드 한정).
@@ -1193,8 +1193,8 @@ total = base + following_bonus + bucket_boost + noise
 - **"내가 올린 전시만"** 체크박스 (전시 탭과 동일 패턴). 체크 시 본인이 업로더인 전시의 이미지만 표시.
 
 **데이터**
-- 본인 `artistWorks`(내가 올린 전시 + 참여 작가 연결 전시) + 태그된 작품(본인이 참여 작가로 등록된 전시)을 이미지 단위로 평탄화.
-- `imageArtists` 있으면 → 본인 인덱스만 표시. 없으면 → 전 이미지.
+- 본인 작가 작품 모음(내가 올린 전시 + 참여 작가 연결 전시) + 태그된 작품(본인이 참여 작가로 등록된 전시)을 이미지 단위로 평탄화.
+- 참여 작가 슬롯 있으면 → 본인 인덱스만 표시. 없으면 → 전 이미지.
 
 **뷰**
 - 이미지 단위 썸네일 그리드
@@ -1206,7 +1206,7 @@ total = base + following_bonus + bucket_boost + noise
 본 탭(USR-PRF-06)에서는 작품명·전시명·기타 어떤 메타도 편집하지 않는다(보기 전용).
 
 - **작품명 편집은 USR-PRF-05(전시 탭)에서 단일 진입점**으로 제공([Policy §9.2.1](Policy_v1.md#921-작품명piece-title-편집-권한진입점)). 본인 업로드 전시 카드 → 인라인 편집 모달(USR-PRF-11).
-- **그룹 전시 참여 슬롯**(다른 사람이 올린 전시의 내 이미지)에 대한 가입자 자가 해제 진입점은 없다(Policy §3.5 v2.14). 잘못 연결된 경우 가입자가 작가에게 직접 알리고, 작가가 본인 마이페이지의 슬롯 편집(USR-PRF-05)에서 해제하면 슬롯이 `'unknown'`(작가 미상)으로 전환된다.
+- **그룹 전시 참여 슬롯**(다른 사람이 올린 전시의 내 이미지)에 대한 가입자 자가 해제 진입점은 없다(Policy §3.5 v2.14). 잘못 연결된 경우 가입자가 작가에게 직접 알리고, 작가가 본인 마이페이지의 슬롯 편집(USR-PRF-05)에서 해제하면 슬롯이 작가 미상(작가 미상)으로 전환된다.
 - **시니어 사용성 근거**: 같은 외형 카드(본인 업로드 piece와 그룹전 참여 piece)가 한 화면에 섞이면 어떤 카드가 편집되는지 시니어가 헷갈린다. 내 작품 탭은 "본 작품 모음 갤러리"로 단순화하고 수정은 전시 탭으로 일원화. 클릭 1회 추가의 비용보다 두 진입점이 만드는 헷갈림 비용이 더 크다.
 
 **이미지 썸네일 탭 → 전용 뷰어 (USR-PRF-14)**
@@ -1256,8 +1256,8 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 5.1.6 탭 공통 규칙
 
-- `pending`·`rejected` 전시는 소유자 외에게 비노출.
-- `isHidden` 전시는 타인 프로필에서 비노출.
+- 검수 대기·반려 전시는 소유자 외에게 비노출.
+- 비공개 여부 전시는 타인 프로필에서 비노출.
 - 탈퇴 작가는 전체 인터랙션 차단.
 - 점점점 메뉴 터치 타깃 44×44px 준수.
 
@@ -1399,7 +1399,7 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 입력
 - 이벤트 ID
-- 이벤트의 `worksPublic` 플래그
+- 이벤트의 참여작 공개 플래그
 
 #### 처리
 1. 이벤트 배너·기간·대상·설명 렌더.
@@ -1529,12 +1529,12 @@ total = base + following_bonus + bucket_boost + noise
 - 200건 상한 시 가장 오래된 것부터 FIFO.
 
 **6) 알림 생성 조건**
-- `like` 생성: 다른 사용자가 내 전시에 좋아요, 내 알림 설정 "좋아요" ON 시.
-- `follow` 생성: 다른 사용자가 나를 팔로우, 내 알림 설정 "팔로우" ON 시.
-- `pick` 생성: 내 전시가 Pick 선정될 때.
-- `event` 생성: 참여한 이벤트 공지·종료 알림.
-- `system.review_approved` / `rejected`: 내 전시 검수 판정 시.
-- `system.invite_accepted`: 내가 초대한 비회원이 가입 + 자동 매칭 성공 시.
+- 좋아요 알림: 다른 사용자가 내 전시에 좋아요, 내 알림 설정 "좋아요" ON 시.
+- 팔로우 알림: 다른 사용자가 나를 팔로우, 내 알림 설정 "팔로우" ON 시.
+- Pick 알림: 내 전시가 Pick 선정될 때.
+- 이벤트 알림: 참여한 이벤트 공지·종료 알림.
+- 검수 결과 알림(통과/반려): 내 전시 검수 판정 시.
+- 초대 수락 알림: 내가 초대한 비회원이 가입 + 자동 매칭 성공 시.
 
 #### 출력
 - 필터 바 · 일괄 액션 버튼
@@ -1545,7 +1545,7 @@ total = base + following_bonus + bucket_boost + noise
 - AC-01: Given 비로그인 / When `/notifications` 접근 / Then `/login?redirect=/notifications`로 리다이렉트.
 - AC-02: Given 안읽은 알림 15건 / When "모두 읽음" 확인 / Then 모두 `read: true` + 헤더 unread 배지 사라짐.
 - AC-03: Given `like` 알림 탭 / When 클릭 / Then USR-EXH-01로 이동 + 해당 알림 `read: true`.
-- AC-04: Given `system.review_rejected` 알림 탭 / When 클릭 / Then 프로필 전시 탭 + 반려 사유 모달(USR-PRF-12) 자동 오픈.
+- AC-04: Given 검수 반려 알림 탭 / When 클릭 / Then 프로필 전시 탭 + 반려 사유 모달(USR-PRF-12) 자동 오픈.
 - AC-05: Given 92일 전 알림 / When 로드 / Then 비노출(자동 정리됨).
 - AC-06: Given 알림 설정 "좋아요" OFF / When 누군가 내 전시에 좋아요 / Then 알림 미생성.
 - AC-07: Given 201번째 알림 생성 / When 저장 / Then 가장 오래된 1건 자동 삭제.
@@ -1862,9 +1862,9 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 - 내용 (최대 1000자)
 - 첨부 파일 (5MB/개, 최대 3개 — 이미지/PDF/문서)
 #### 처리
-1. 형식·용량 검증 후 문의 큐(`INQUIRY`)에 저장. 어드민 ADM-INQ-01에서 처리.
-2. 정지 계정(USR-AUT-12) 진입 시 카테고리 `report` 프리필.
-3. **`privacy` 카테고리 선택 시**:
+1. 형식·용량 검증 후 문의 큐에 저장. 어드민 ADM-INQ-01에서 처리.
+2. 정지 계정(USR-AUT-12) 진입 시 신고/저작권 관련 카테고리 프리필.
+3. **개인정보 열람·정정·삭제 요청 카테고리 선택 시**:
    - 본인 확인 안내 문구 인라인 노출 ("회신은 가입 이메일과 동일한 주소로만 발송됩니다").
    - 운영팀에 **개인정보 권리 행사 요청** 라벨로 큐에 표시 (ADM-INQ-01 우선 처리 대상).
    - 처리 SLA: 접수 5영업일 내 확인 회신 + 30일 내 처리 완료 (Policy §30.3).
@@ -1872,8 +1872,8 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 - AC-01: Given 내용 1001자 / When 제출 / Then 에러 "1000자 이하로 입력해 주세요".
 - AC-02: Given 첨부 4개 시도 / When 업로드 / Then 에러 "첨부는 최대 3개입니다".
 - AC-03: Given 파일 6MB / When 업로드 / Then 에러 "5MB 이하 파일만 첨부할 수 있습니다".
-- AC-04: Given 카테고리 `privacy` 선택 / When 폼 로드 / Then 본인 확인 안내 문구 노출.
-- AC-05: Given 정지 계정 사용자 진입 / When 폼 로드 / Then 카테고리 `report` 프리필.
+- AC-04: Given 개인정보 요청 카테고리 선택 / When 폼 로드 / Then 본인 확인 안내 문구 노출.
+- AC-05: Given 정지 계정 사용자 진입 / When 폼 로드 / Then 신고/저작권 관련 카테고리 프리필.
 #### 의존
 - 엔티티: INQUIRY
 - 정책: [Policy §30 개인정보 열람·정정·삭제](Policy_v1.md#30-개인정보-열람정정삭제-요청-정책)
@@ -1944,7 +1944,7 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 
 1. USR-UPL-01 유형·역할 선택
 2. USR-UPL-02 입력(이미지·작가·메타)
-3. 발행 → `feedReviewStatus: pending`
+3. 발행 → 검수 대기 상태로 전이
 4. USR-UPL-03 완료 확인 → USR-PRF-01 or USR-BRW-01
 5. 검수 승인 시 피드 노출 + 팔로워 알림 + (비회원 슬롯이 있으면) 초대 토큰 활성화 → 작가가 마이페이지의 "친구에게 알리기" 버튼으로 본인 채널에 직접 공유
 
@@ -2004,8 +2004,8 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v2.8 | 2026-04-30 | PM × Claude | **검수 신청 단계 공유 모델 정합** (Policy v2.16 연동) — 작가가 검수 통과를 기다리지 않고 친구에게 초대 링크를 보낼 수 있는 흐름. (1) USR-AUT-06 Step 2 진입 조건을 "활성 토큰" → "활성 또는 inactive 토큰"으로 확장. inactive 단계에선 헤더 한 줄 안내 추가(`claim.pendingHeader`). 가입과 동시에 본인 작품을 클레임하면 검수 통과 시 자동 노출. (2) USR-EXH-03 invite landing: inactive 단계에서도 같은 전시의 pending 작품 미리보기 그리드 노출(외부 둘러보기·검색은 그대로 차단). 카피 능동톤("곧 공개될 전시예요. 지금 가입해두시면 통과 즉시 본인 작품을 골라보실 수 있어요"). (3) USR-UPL-10 발행 완료 모달: 비회원 슬롯 보유 시 안내 카피를 v2.14 정책 정합으로 정정("Artier 자동 발송 안 함 → 작가 직접 카톡·문자"). (4) USR-PRF-05 마이페이지 검수 배지: 본인 업로드 외에도 클레임 슬롯 보유자(member co-creator)에게도 노출. hint 카피 분기 — 작가용 `review.badgePendingHint`("24시간 내 공개돼요") vs 친구용 `review.badgePendingHintForParticipant`("운영팀 확인 중이에요. 통과되면 다른 분들도 볼 수 있어요"). (5) 검수 통과 시점 알림 흐름 보강 — 작가용 기존 알림 외에 클레임된 회원 참여자에게 정보용 알림 1건 추가(`review.notifApprovedForParticipant`). (6) `buildInviteShareText` 시그니처에 토큰 상태 인자 추가, inactive면 메시지 본문 분기("신청했어요. 가입해두시면 통과 즉시 본인 작품을 골라보실 수 있어요"). (7) 작가 측 InviteShareButton 잠금 해제 — `disabled={!isActive}` → revoked만 차단. (8) 편집으로 pending 회귀 시 토큰 자동 deactivate(work feedReviewStatus와 정합). 메모리 규칙(Phase 2 표현 금지 / 디지털 드로잉 시니어) 유지. **본 사이클 후속 정합** — 헤더 라벨 v1.0/v1.1 → v2.8 동기화(제목·요약 블록·버전 필드·최종 갱신 필드 추가). **본 사이클 후속 2 — 풀스캔 정합 후속**: USR-UPL "이탈 방지" 절의 `useBlocker` 코드 hook 노출 → "미저장 작업 감지" 추상 표현으로 정정 (메모리 규칙 정합). Policy §2.5 앵커 링크 정정. **본 사이클 후속 3 — PM 결정 아닌 내용 일괄 제거**: USR-AUT-02b·03·04·08의 매직 링크 처리 코드 함수(`magicLinkStore.issueMagicLink({email, intent, redirectTo})`·`auth.login()`·`persistMockSession()`·`pointsOnSignupComplete()`) 동작 설명으로 추상화. localStorage 키(`artier_pending_signup_email`·`artier_cookie_consent`) "단말 임시 보관" 표현으로 추상화. AC-R4·R5의 `feedReviewStatus: pending`·`rejectionReason: null` TS 표기 한국어 설명("검수 대기 상태로 전이"·"반려 사유 초기화")으로 정정. 메모리 규칙(PM 문서엔 PM 결정만) 정합. |
-| v2.7 | 2026-04-27 | PM × Claude | **비회원 초대 토큰 모델 + 본인 작품 찾기 흐름 정합 (+ Nielsen 휴리스틱 후속)** (Policy v2.14 / 단계 4~5 연동) — USR-AUT-06 Step 2를 매칭 후보 yes/no 게이트에서 토큰 기반 "본인 작품 찾기" 카드 그리드 + 명시 클릭 + 확인 다이얼로그 1회로 재정의. 진입 조건: 활성 토큰 보유. 토큰 없거나 비활성·만료·취소면 자동 스킵. 동시 선택 race(`connectMemberToSlot` type 가드)에 따른 카드 자동 새로고침 AC 신설. 가입자 자가 해제 진입점 전면 폐기 — USR-PRF-06 본 탭은 보기 전용으로 단순화, "본인 작품 아님" piece 액션·CM-04·USR-EXH-01 piece 오버레이 disavow 액션 모두 제거. 잘못 연결 시 가입자가 작가에게 직접 알리고 작가가 USR-PRF-05 슬롯 편집에서 해제(슬롯이 `'unknown'`으로 전환). USR-EXH-01 공유 탭 설명을 토큰 모델 기반으로 정정(`?invite=<token>`은 마이페이지 "친구에게 알리기" 버튼이 별도 생성). §12.3 업로드 플로우 5단계 카피 정정(회사 발송 → 토큰 활성화 + 작가 본인 채널 공유). **Nielsen 휴리스틱 P3 후속 보강** — USR-AUT-10b에 카드 1개 안전 신호(`claim.singleCardSafetyNote`)·스킵 안심 토스트(`claim.skipReassured`) 추가. USR-EXH-03 4상태 분기(active·inactive·revoked·만료/불일치) 카피 시니어 친화 정정. USR-PRF-05 본인 전시 카드에 비회원 슬롯 가시성 인디케이터 추가(`profile.nonMemberSlotsLabel`). USR-UPL-10 발행 직후 InviteShareButton 다이얼로그에 토큰 만료 D-N 노출(`invite.shareLinkExpiresIn`). 신규 발행 시 작가에게 검수 시작 알림 1건(`review.notifSubmitted`). USR-INF-02 FAQ에 토큰 모델 q11~q14 4건 신설(친구 초대·자동 연결 안 됨·잘못 연결·만료) + q7 옛 SMS 발송 톤 카피 정정. 시니어 친화 카피 정합(`claim.findMyWorksWarning` 위협 톤 → 안심, `claim.confirmBody` 카톡·문자 안내, `claim.alreadyTaken` 액션 유도 등). |
+| v2.8 | 2026-04-30 | PM × Claude | **검수 신청 단계 공유 모델 정합** (Policy v2.16 연동) — 작가가 검수 통과를 기다리지 않고 친구에게 초대 링크를 보낼 수 있는 흐름. (1) USR-AUT-06 Step 2 진입 조건을 "활성 토큰" → "활성 또는 inactive 토큰"으로 확장. inactive 단계에선 헤더 한 줄 안내 추가(`claim.pendingHeader`). 가입과 동시에 본인 작품을 클레임하면 검수 통과 시 자동 노출. (2) USR-EXH-03 invite landing: inactive 단계에서도 같은 전시의 pending 작품 미리보기 그리드 노출(외부 둘러보기·검색은 그대로 차단). 카피 능동톤("곧 공개될 전시예요. 지금 가입해두시면 통과 즉시 본인 작품을 골라보실 수 있어요"). (3) USR-UPL-10 발행 완료 모달: 비회원 슬롯 보유 시 안내 카피를 v2.14 정책 정합으로 정정("Artier 자동 발송 안 함 → 작가 직접 카톡·문자"). (4) USR-PRF-05 마이페이지 검수 배지: 본인 업로드 외에도 클레임 슬롯 보유자(member co-creator)에게도 노출. hint 카피 분기 — 작가용 `review.badgePendingHint`("24시간 내 공개돼요") vs 친구용 `review.badgePendingHintForParticipant`("운영팀 확인 중이에요. 통과되면 다른 분들도 볼 수 있어요"). (5) 검수 통과 시점 알림 흐름 보강 — 작가용 기존 알림 외에 클레임된 회원 참여자에게 정보용 알림 1건 추가(`review.notifApprovedForParticipant`). (6) `buildInviteShareText` 시그니처에 토큰 상태 인자 추가, inactive면 메시지 본문 분기("신청했어요. 가입해두시면 통과 즉시 본인 작품을 골라보실 수 있어요"). (7) 작가 측 InviteShareButton 잠금 해제 — `disabled={!isActive}` → revoked만 차단. (8) 편집으로 pending 회귀 시 토큰 자동 deactivate(work feedReviewStatus와 정합). 메모리 규칙(Phase 2 표현 금지 / 디지털 드로잉 시니어) 유지. **본 사이클 후속 정합** — 헤더 라벨 v1.0/v1.1 → v2.8 동기화(제목·요약 블록·버전 필드·최종 갱신 필드 추가). **본 사이클 후속 2 — 풀스캔 정합 후속**: USR-UPL "이탈 방지" 절의 `useBlocker` 코드 hook 노출 → "미저장 작업 감지" 추상 표현으로 정정 (메모리 규칙 정합). Policy §2.5 앵커 링크 정정. **본 사이클 후속 3 — PM 결정 아닌 내용 일괄 제거**: USR-AUT-02b·03·04·08의 매직 링크 처리 코드 함수(`magicLinkStore.issueMagicLink({email, intent, redirectTo})`·`auth.login()`·`persistMockSession()`·`pointsOnSignupComplete()`) 동작 설명으로 추상화. localStorage 키(`artier_pending_signup_email`·`artier_cookie_consent`) "단말 임시 보관" 표현으로 추상화. AC-R4·R5의 검수 대기 상태로 전이·`rejectionReason: null` TS 표기 한국어 설명("검수 대기 상태로 전이"·"반려 사유 초기화")으로 정정. 메모리 규칙(PM 문서엔 PM 결정만) 정합. **본 사이클 후속 4 — 인라인 코드 정정 풀스캔**: 잔재 코드 식별자 일괄 정정. 전시 편집 모드 불변 필드 표기(`id`·`likes`·`saves`·`uploadedAt`·`artist`·`artistId`)를 한국어 평문으로, 검수 상태 enum (`pending`·`approved`·`rejected`)를 "검수 대기·검수 통과·반려"로, 슬롯 승격 가드 함수명(`connectMemberToSlot`·`slot_not_non_member`)을 "슬롯 승격 처리에서 '이미 다른 분이 가져간 자리' 결과 반환"으로, 알림 enum 표 `system.review_*`·`system.invite_*` AC 노출 → 한국어 알림 종류명, 문의 카테고리 코드 enum (`privacy`·`report`) AC 표기 → "개인정보 요청 카테고리"·"신고/저작권 관련 카테고리", 0.4.2 글자 상한 표의 코드 상수명(`TITLE_FIELD_MAX_LEN`) 박힘 → 단순 "20자" 표기, soc 로그인 i18n 함수명(`t()`) → "i18n 사전" 추상화. PRD_User §5.1 본인 전시 탭 소스 식별자(`artistId === 본인`·`isInstructorUpload`) → "본인이 직접 올린 전시(강사 업로드 제외)" 평문화. 메모리 규칙 본문 정합. |
+| v2.7 | 2026-04-27 | PM × Claude | **비회원 초대 토큰 모델 + 본인 작품 찾기 흐름 정합 (+ Nielsen 휴리스틱 후속)** (Policy v2.14 / 단계 4~5 연동) — USR-AUT-06 Step 2를 매칭 후보 yes/no 게이트에서 토큰 기반 "본인 작품 찾기" 카드 그리드 + 명시 클릭 + 확인 다이얼로그 1회로 재정의. 진입 조건: 활성 토큰 보유. 토큰 없거나 비활성·만료·취소면 자동 스킵. 동시 선택 race(`connectMemberToSlot` type 가드)에 따른 카드 자동 새로고침 AC 신설. 가입자 자가 해제 진입점 전면 폐기 — USR-PRF-06 본 탭은 보기 전용으로 단순화, "본인 작품 아님" piece 액션·CM-04·USR-EXH-01 piece 오버레이 disavow 액션 모두 제거. 잘못 연결 시 가입자가 작가에게 직접 알리고 작가가 USR-PRF-05 슬롯 편집에서 해제(슬롯이 작가 미상으로 전환). USR-EXH-01 공유 탭 설명을 토큰 모델 기반으로 정정(`?invite=<token>`은 마이페이지 "친구에게 알리기" 버튼이 별도 생성). §12.3 업로드 플로우 5단계 카피 정정(회사 발송 → 토큰 활성화 + 작가 본인 채널 공유). **Nielsen 휴리스틱 P3 후속 보강** — USR-AUT-10b에 카드 1개 안전 신호(`claim.singleCardSafetyNote`)·스킵 안심 토스트(`claim.skipReassured`) 추가. USR-EXH-03 4상태 분기(active·inactive·revoked·만료/불일치) 카피 시니어 친화 정정. USR-PRF-05 본인 전시 카드에 비회원 슬롯 가시성 인디케이터 추가(`profile.nonMemberSlotsLabel`). USR-UPL-10 발행 직후 InviteShareButton 다이얼로그에 토큰 만료 D-N 노출(`invite.shareLinkExpiresIn`). 신규 발행 시 작가에게 검수 시작 알림 1건(`review.notifSubmitted`). USR-INF-02 FAQ에 토큰 모델 q11~q14 4건 신설(친구 초대·자동 연결 안 됨·잘못 연결·만료) + q7 옛 SMS 발송 톤 카피 정정. 시니어 친화 카피 정합(`claim.findMyWorksWarning` 위협 톤 → 안심, `claim.confirmBody` 카톡·문자 안내, `claim.alreadyTaken` 액션 유도 등). |
 | v2.6 | 2026-04-26 | PM × Claude | **USR-AUT-06 온보딩 매칭 본인 확인 단계 신설** (Policy v2.13 §3.5.1 연동) — 한국·해외 분기·전화번호 필수 입력 폐기. Step 1을 닉네임·생년월일·프로필 이미지 공통 단일 폼으로 단순화(전화번호·실명은 Settings 추가 항목). **Step 2 조건부 매칭 본인 확인** 신설: 매칭 후보 1건 이상이면 무작위 최대 3건 카드 + 단일 yes/no, "맞아요" → 참여 작가로 연결 + 초대자 알림, "아니에요" → 운영팀 ADM-RPT-01 "초대 매칭 거부" 큐에 알림 + 초대자에게도 안내 알림, 두 경우 모두 가입 정상 완료. AC 8종(AC-01~08) 재작성, EC 4종(이탈·이미지 실패·14세 미만·검수 비공개 표본 제외). **USR-AUT-02 시트 분기 제거** — "지역 스위치 링크" 입력·처리·자동 국가 추정 호출·관련 AC·EC 모두 제거. **엔티티 부록**: 자동 country 필드 두지 않음(작가 출신국 공개는 기존 위치 필드로 충족). 닉네임·이메일·생년월일 필수 + 전화번호·실명 선택. MAGIC_LINK_TOKEN 신규 행. INVITE 식별자 종류(전화번호/이메일) 추가. + 앵커 정합 보정(Policy §12 링크를 `신고·모더레이션` 섹션으로 통일) + USR-PRF-12 AC-R4를 단일 동작(`pending` 전이)으로 확정해 "결정 필요" 문구 제거. **실명 인풋 폐기** (Policy v2.13 후속 정합) — USR-AUT-06 입력·§11 가입 플로우·USR-PRF-04 고정 필드 표·USER_PROFILE 엔티티에서 실명 항목 일괄 삭제. |
 | v2.5 | 2026-04-21 | PM × Claude | **검수 흐름·문의·개인정보 권리 — 사용자측 명세 강화** — §5.1.2 검수 상태 배지 4종 매트릭스 + USR-PRF-12 반려 사유 모달 반복 반려 이력 패널 + USR-UPL-03 반려 편집 모드 인라인 배너·CTA 라벨 변경. AC-R1~R5 5종 추가(반려 재발행 흐름). USR-INF-07 카테고리 7종으로 확장(`privacy` 추가, Policy §30 권리 행사 채널) + 본인 확인 안내 + 정지 계정 프리필 AC. PRD_Admin v1.17 ADM-INQ-01·ADM-RPT-01 SLA·SystemArch v1.11 코드 분할과 정합. |
 | v2.4 | 2026-04-21 | PM × Claude | **카드 ID 정정** — 계정 정지 안내 카드가 USR-AUT-07로 잘못 번호 매겨져 USR-AUT-07 "폐기(매직 링크 도입)" 카드와 충돌. IA v1.2 이력과 정합 맞춰 **USR-AUT-12**로 리넘버링(L477 헤딩·L1827 본문 참조·v2.0 이력 행의 USR-AUT-07 표기 교정). USR-AUT-07은 이제 오직 "폐기 (매직 링크 도입)" 단일 용도. |
@@ -2020,6 +2020,6 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 | v1.5 | 2026-04-19 | PM × Claude | USR-PRF-03 프로필 사진 모달 — 포맷(JPG/PNG/WebP/GIF)·크기(5MB) 검증 추가. AC 4종·EC 2종 보강. 코드 구현 동기화. |
 | v1.4 | 2026-04-19 | PM × Claude | USR-UPL-02 F / USR-PRF-05·06·07 편집 정책 차별 재검수 반영(Policy §12.1.2) — 이미지 변경 여부로만 상태 전이 · pending 중 수정 경고 · 5 시나리오 토스트 · 탭별 편집 범위 차이. |
 | v1.3 | 2026-04-19 | PM × Claude | USR-UPL-02 D 편집 저장 성공 시 UX 명시 — "수정한 작품이 재검수 대기에 들어갔어요" 토스트 + 프로필 전시 탭 복귀. i18n `upload.editModeToast` 문구 개선. |
-| v1.2 | 2026-04-19 | PM × Claude | USR-UPL-02 D에 `rejectionHistory` 보존 추가 · AC-11 갱신. 반려 이력을 별도 누적 보존(Policy §12.1.1). |
-| v1.1 | 2026-04-19 | PM × Claude | USR-UPL-02 D `?edit=` 동작 정정 — 편집 시 불변 필드(`id`·`likes`·`saves`·`uploadedAt`·`artistId`) 보존 명시, `rejectionReason` 초기화 명시. 코드 동작(편집 시 전체 객체 덮어쓰기) 정정과 함께 반영. |
+| v1.2 | 2026-04-19 | PM × Claude | USR-UPL-02 D에 반려 이력 보존 추가 · AC-11 갱신. 반려 이력을 별도 누적 보존(Policy §12.1.1). |
+| v1.1 | 2026-04-19 | PM × Claude | USR-UPL-02 D `?edit=` 동작 정정 — 편집 시 불변 필드(`id`·`likes`·`saves`·`uploadedAt`·작가 ID) 보존 명시, 반려 사유 초기화 명시. 코드 동작(편집 시 전체 객체 덮어쓰기) 정정과 함께 반영. |
 | v1.0 | 2026-04-19 | PM × Claude | 최초 작성. 사용자 앱 28개 P0 화면 + 공통(CM) 10개 + 사용자 플로우 요약 + 엔티티 부록. 수용기준(AC)·엣지케이스(EC) 포함. |
