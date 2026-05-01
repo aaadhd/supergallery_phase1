@@ -3,7 +3,7 @@
 **서비스명**: Artier (SuperGallery Phase 1)
 **대상 사용자**: 시니어·중장년 순수미술 작가와 감상자
 **성격**: 시니어 친화 UX 중심의 웹 기반 디지털 아트 갤러리 플랫폼
-**최종 갱신**: 2026-04-26
+**최종 갱신**: 2026-05-01
 
 ---
 
@@ -39,7 +39,9 @@ _planning/
 ├── Handoff_ServiceIntro_v1.md     # 서비스 소개(About) 원고
 ├── Handoff_UserInfo_Contact_v1.md # 사용자 정보/문의 입력 문구
 ├── PRD_User_v1.md            # 사용자 앱 화면별 카드(목적·입력·처리·출력·수용기준)
-└── PRD_Admin_v1.md           # 어드민 화면별 카드(목적·입력·처리·출력·수용기준)
+├── PRD_Admin_v1.md           # 어드민 화면별 카드(목적·입력·처리·출력·수용기준)
+└── _screen_specs/
+    └── Artier_Screen_Spec_v1.html  # PC 기준 화면 와이어프레임·플로우 설계서(시각 자료. 정책 원문은 Policy_v1.md 우선)
 ```
 
 > **본 폴더에서 다루지 않는 것**:
@@ -61,6 +63,7 @@ _planning/
 | [Handoff_UserInfo_Contact_v1.md](Handoff_UserInfo_Contact_v1.md) | PM · CS · 외주 개발사 |
 | [PRD_User_v1.md](PRD_User_v1.md) | 개발사 · QA |
 | [PRD_Admin_v1.md](PRD_Admin_v1.md) | 개발사 · QA · 운영팀 |
+| [_screen_specs/Artier_Screen_Spec_v1.html](_screen_specs/Artier_Screen_Spec_v1.html) | PM · 디자이너 · 외주 개발사 (PC 와이어프레임·플로우) |
 
 ---
 
@@ -342,6 +345,7 @@ CM-<번호>          공통 팝업·다이얼로그
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.5 | 2026-05-01 | PM × Claude | **화면 스펙 HTML 등록 + 문서 트리 정합** — `_screen_specs/Artier_Screen_Spec_v1.html`을 「기획 문서 목록」 트리·주요 독자 표에 추가. PC 와이어프레임·플로우 시각 자료로서 정책 원문은 `Policy_v1.md`가 우선임을 명시. 메모리 규칙(코드·_planning 변경 시 화면 스펙 HTML 동기화 의무)과 정합. |
 | v1.4 | 2026-04-26 | PM × Claude | 핸드오프 문서 체계 보강 — `Handoff_*` 7종(가입 동의/약관/개인정보/푸터/FAQ/서비스 소개/사용자정보·문의) 추가 및 README 목록·독자표 반영. 카피 중복 정리를 위해 일반 UI 원고의 단일 소스를 `Copy_v1.md`로 고정하고, 약관·개인정보는 별도 전문 문서(`Handoff_Terms_v1.md`, `Handoff_Privacy_v1.md`)로 분리. `Content_Handoff_v1.md`는 삭제해 전달 구조 단순화. |
 | v1.3 | 2026-04-20 | PM × Claude | `CLAUDE.md` 와 정합 — 문서 버전 규칙에서 "마이너마다 파일명 변경" 제거, `_v1` 파일명 유지·푸시 단위 이력은 `CLAUDE.md` 위임. "주요 기능" 초대 줄에 USR-EXH-03·`from=invite`/`credited`·Policy §3.5 표현 정렬. README 동기화 조항을 신규 파일·파일명 변경 시로 한정. |
 | v1.2 | 2026-04-20 | PM × Claude | 오늘 Policy 대규모 개정 반영 정합 갱신 — (a) 기획 문서 목록 트리·주요 독자 표에 `Copy_v1.md` 등록, (b) Policy 설명 문구를 최신 섹션(인터랙션·이벤트·저작권·계정편집·다국어·쿠키) 반영으로 갱신, (c) "주요 기능" 의 신고·제재 라인을 Phase 1 단순화(3액션+2회 자동 비공개)로 수정 · 이벤트 선정은 Phase 2 명시 · 인터랙션·저작권 보호 항목 추가, (d) 문서 버전 규칙 예시 및 변경 요약 예시를 Phase 1 단순화 내용으로 교체, (e) 최종 갱신일을 2026-04-20으로. |

@@ -698,14 +698,8 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.tabMemberSearch': '멤버 검색',
   'upload.tabDirectInput': '직접 입력',
   'upload.memberSearchPh': '플랫폼에 가입된 작가 검색',
-  'upload.nonMemberNamePh': '초대 문자에 표시할 이름',
+  'upload.nonMemberNamePh': '초대 메시지에 표시할 이름',
   'upload.nonMemberNameLabel2': '작가 이름',
-  'upload.nonMemberPhoneLabel2': '연락처 (선택)',
-  'upload.nonMemberPhoneHelper': '번호를 입력하면 전시 생성 시 자동으로 초대 문자가 발송돼요. 비워 두면 문자는 발송되지 않습니다.',
-  'upload.confirmInviteTitle': '초대장을 발송할까요?',
-  'upload.confirmInviteListIntro': '다음 분께 SMS/알림톡으로 초대장이 발송됩니다.',
-  'upload.confirmInviteHelper': '⚠️ 입력하신 전화번호로 초대 문자가 발송되며, 그분이 같은 번호로 가입하면 작품이 자동으로 연결됩니다. 이름은 초대 문자 본문에만 표시돼요.',
-  'upload.confirmInviteSend': '발송',
   'upload.contentTools': '콘텐츠 도구',
   'upload.contentToolsDesc1': '캔버스에 표시할 요소를 추가하거나',
   'upload.contentToolsDesc2': '전체 화면을 관리할 수 있습니다.',
@@ -827,7 +821,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'onboarding.errEmailRegistered': '이미 가입된 이메일이에요. 다른 이메일을 입력해주세요.',
   'onboarding.errPhoneInvalid': '전화번호 형식을 확인해주세요',
   'onboarding.errPhoneRegistered': '이미 가입된 전화번호예요. 다른 번호를 입력해주세요.',
-  'onboarding.inviteNotice': '초대받은 작품을 내 계정과 연결하려면, 초대 문자에 기재된 **전화번호**를 그대로 입력해주세요.',
+  'onboarding.inviteNotice': '친구가 보내주신 초대 링크로 오셨어요. 프로필 설정을 마치면 본인 작품을 직접 골라 연결할 수 있어요.',
   'onboarding.socialNotice': '소셜 계정으로 빠르게 가입했어요. 닉네임은 방금 적은 그대로 채워뒀어요 — 바꾸고 싶으면 수정해 주세요. 전화번호는 나중에 설정에서 추가할 수 있어요.',
   'onboarding.emailLabel': '이메일',
   'onboarding.emailPlaceholder': 'name@example.com',
@@ -836,10 +830,6 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'onboarding.nicknamePlaceholder': '활동할 닉네임을 입력하세요',
   'onboarding.errNicknameShort': '작가명은 2자 이상 입력해주세요',
   'onboarding.errNicknameLong': '작가명은 20자 이하로 입력해주세요',
-  'onboarding.phoneLabel': '전화번호',
-  'onboarding.phoneHint':
-    '그룹 전시 등에서 초대 문자를 받을 때 적었던 번호와 같으면, 전시된 작품을 내 계정과 자동으로 연결해 드려요',
-  'onboarding.phonePlaceholder': '010-0000-0000',
   'onboarding.back': '이전',
   'onboarding.next': '다음',
   'onboarding.uploadPhoto': '사진 올리기',
@@ -1891,12 +1881,6 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'upload.memberSearchPh': 'Search registered artists',
   'upload.nonMemberNamePh': 'Name to show in the invite message',
   'upload.nonMemberNameLabel2': 'Artist name',
-  'upload.nonMemberPhoneLabel2': 'Phone (optional)',
-  'upload.nonMemberPhoneHelper': 'If you enter a number, an invitation SMS is sent automatically when you create the exhibition. Leave it blank to skip the SMS.',
-  'upload.confirmInviteTitle': 'Send invitations?',
-  'upload.confirmInviteListIntro': 'SMS/KakaoTalk invitations will be sent to:',
-  'upload.confirmInviteHelper': '⚠️ The invite is sent to the phone number you entered. When they sign up using the same number, the work links automatically. The name only appears in the invite message body.',
-  'upload.confirmInviteSend': 'Send',
   'upload.contentTools': 'Content tools',
   'upload.contentToolsDesc1': 'Add elements to show in the canvas or',
   'upload.contentToolsDesc2': 'manage the full screen view.',
@@ -2019,7 +2003,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'onboarding.errEmailRegistered': 'This email is already registered. Please use a different email.',
   'onboarding.errPhoneInvalid': 'Please check the phone number format',
   'onboarding.errPhoneRegistered': 'This phone number is already registered. Please use a different number.',
-  'onboarding.inviteNotice': 'To link works invited to you, enter the **phone number** exactly as in the SMS invitation.',
+  'onboarding.inviteNotice': 'You arrived via an invite from a friend. After you finish profile setup, you can pick the artwork that belongs to you.',
   'onboarding.socialNotice': 'You signed up with a social account. The nickname you just chose is filled in — feel free to change it. You can add your phone number later in Settings.',
   'onboarding.emailLabel': 'Email',
   'onboarding.emailPlaceholder': 'name@example.com',
@@ -2028,10 +2012,6 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'onboarding.nicknamePlaceholder': 'Enter a nickname',
   'onboarding.errNicknameShort': 'Please enter at least 2 characters',
   'onboarding.errNicknameLong': 'Please keep it to 20 characters or fewer',
-  'onboarding.phoneLabel': 'Phone number',
-  'onboarding.phoneHint':
-    'If this matches the number you gave for a group exhibition SMS invite, we link those displayed works to your account',
-  'onboarding.phonePlaceholder': '010-0000-0000',
   'onboarding.back': 'Back',
   'onboarding.next': 'Next',
   'onboarding.uploadPhoto': 'Upload photo',
@@ -2608,7 +2588,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.11 | 2026-04-30 | PM × Claude | **Policy v2.16 검수 신청 단계 공유 모델 정합** (코드 동시 갱신) — Policy §3 v2.14 → v2.16 라이프사이클 변경에 따른 카피 정정·신규. (1) v2.14 정책 위반 카피 4건 정정 — `upload.nonMemberNamePh`("초대 문자" → "초대 메시지"), `upload.nonMemberNameHelper`("자동으로 연결됩니다" 약속 폐기 → "Artier가 자동으로 알리지 않아요. 작가님이 직접 카톡·문자로"), `upload.publishedConfirmInviteNote`("검수 승인 직후 발송돼요" → "작가님이 직접 보내주세요. 지금 바로"), `invite.shareNotReady`("공개되면 알릴 수 있어요" → "검수 통과 후 친구가 가입할 수 있어요"). (2) `invite.tokenInactive` 카피 — 수동 톤("잠시 후 다시 확인해주세요") → 능동 톤("곧 공개될 전시예요. 지금 가입해두시면 통과 즉시 본인 작품을 골라보실 수 있어요"). (3) `invite.notifAutoMatched` 톤 정정 — "들어왔어요" 공개 가정 → "본인 자리를 등록했어요" 중립 톤. (4) 신규 키 3쌍(ko/en) — `claim.pendingHeader`(검수 신청 단계 클레임 안내), `review.badgePendingHintForParticipant`(친구용 배지 hint), `review.notifApprovedForParticipant`(검수 통과 시 친구 알림). (5) `buildInviteShareText` 시그니처 변경 — 토큰 상태(`InviteTokenStatus`) 인자 추가 → inactive 메시지 분기("{작가}님이 '{전시}' 전시를 신청했어요"). 모두 ko/en 양측 동일 톤 정합. 메모리 규칙(Phase 2 표현 금지 / 디지털 드로잉 시니어) 유지. |
+| v1.11 | 2026-04-30 | PM × Claude | **Policy v2.16 검수 신청 단계 공유 모델 정합** (코드 동시 갱신) — Policy §3 v2.14 → v2.16 라이프사이클 변경에 따른 카피 정정·신규. (1) v2.14 정책 위반 카피 4건 정정 — `upload.nonMemberNamePh`("초대 문자" → "초대 메시지"), `upload.nonMemberNameHelper`("자동으로 연결됩니다" 약속 폐기 → "Artier가 자동으로 알리지 않아요. 작가님이 직접 카톡·문자로"), `upload.publishedConfirmInviteNote`("검수 승인 직후 발송돼요" → "작가님이 직접 보내주세요. 지금 바로"), `invite.shareNotReady`("공개되면 알릴 수 있어요" → "검수 통과 후 친구가 가입할 수 있어요"). (2) `invite.tokenInactive` 카피 — 수동 톤("잠시 후 다시 확인해주세요") → 능동 톤("곧 공개될 전시예요. 지금 가입해두시면 통과 즉시 본인 작품을 골라보실 수 있어요"). (3) `invite.notifAutoMatched` 톤 정정 — "들어왔어요" 공개 가정 → "본인 자리를 등록했어요" 중립 톤. (4) 신규 키 3쌍(ko/en) — `claim.pendingHeader`(검수 신청 단계 클레임 안내), `review.badgePendingHintForParticipant`(친구용 배지 hint), `review.notifApprovedForParticipant`(검수 통과 시 친구 알림). (5) `buildInviteShareText` 시그니처 변경 — 토큰 상태(`InviteTokenStatus`) 인자 추가 → inactive 메시지 분기("{작가}님이 '{전시}' 전시를 신청했어요"). 모두 ko/en 양측 동일 톤 정합. 메모리 규칙(Phase 2 표현 금지 / 디지털 드로잉 시니어) 유지. **본 사이클 후속 정합** — Policy §3 v2.14 토큰 모델로 폐기된 전화 기반 초대 카피 키 9쌍(ko/en 18 entries) 일괄 제거 (`upload.nonMemberPhoneLabel2`·`upload.nonMemberPhoneHelper`·`upload.confirmInviteTitle`·`upload.confirmInviteListIntro`·`upload.confirmInviteHelper`·`upload.confirmInviteSend`·`onboarding.phoneLabel`·`onboarding.phoneHint`·`onboarding.phonePlaceholder`). `onboarding.inviteNotice`를 토큰 모델 톤으로 정정("초대 문자에 기재된 전화번호를 그대로 입력해주세요" → "친구가 보내주신 초대 링크로 오셨어요. 프로필 설정을 마치면 본인 작품을 직접 골라 연결할 수 있어요"). 코드(`src/app/i18n/messages.ts`)와 정합. |
 | v1.10 | 2026-04-29 | PM × Claude | **UX 카피 톤 위반 14건 일괄 정리** — UX Writing audit 후속. 사용자 노출 알림·토스트·배너의 격식체·행정 어휘를 시니어 친화 친근체로 정합. (1) 검수·신고 알림 7건 — `review.notifApproved`(노출됩니다 → 다른 분들이 볼 수 있어요), `review.notifRejected`(반려되었어요 → 검수를 통과하지 못했어요), `review.editBannerRejected/Repeated`("반려" 행정 어휘 정정), `review.notifNewWork`(전시했습니다 → 올렸어요), `report.notifTargetWorkDeleted/Hidden`(되었습니다 → 됐어요), `report.notifReporterDismissed`(기각 → 받아들여지지 않았어요). (2) 업로드·시스템 토스트 4건 — `upload.toastPublishedImmediate`·`publishedConfirmDescPending`(노출 → 보여요), `invite.deletedTitle`(되었습니다 → 됐어요), `notifications.seedPickSelected`(선정 → 뽑혔어요). (3) 좋아요 토스트 — `exhibition.likeAdded` 격식체 폐기, "좋아요" 단어로 간결화. (4) 메모리 규칙 정합 — `flowMap.section14`(ko/en) "Phase 2" 표현 → "런칭 전 백엔드 연동 후"로 정정(메모리: Phase 2 작업 표현 금지). 모두 사용자 노출 카피로 디지털 드로잉 시니어 페르소나 톤(친근체) 일관 적용. |
 | v1.9 | 2026-04-28 | PM × Claude | **설정 계정 섹션 데모 잔재 정리** — 사용자 모집 직전 노출된 "데모 세션 식별자"·"세션에서 계정을 읽을 수 없습니다" 카피를 폐기. 설정 계정 섹션은 이메일 형식 sub일 때만 노출(이메일 라벨 + 값), email-shape 아니거나 sub 없으면 row 자체 숨김. accountDemoIdLabel·accountEmailUnavailable 2쌍(ko/en) 제거. 모의 세션 검증에 sub 필수 가드 추가. |
 | v1.8 | 2026-04-28 | PM × Claude | **설정 화면 i18n 누락 보강** — 글자 크기 토글 라벨 3쌍(작게·보통·크게 / Small·Default·Large)과 화면 테마 섹션 4쌍(섹션 헤더·인트로·밝게·어둡게 / Theme·Light·Dark) 추가. 사용자 모집 직전 발견된 i18n 키 노출 결함 정합. |
