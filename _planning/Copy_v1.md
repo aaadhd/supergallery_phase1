@@ -36,7 +36,7 @@ Artier는 시니어·중장년 순수미술 작가를 주 고객으로 하는 **
 
 ## 2. 용어 정책
 
-상세는 [Policy §5](Policy_v1.md#5-용어-정책) — 여기선 카피 작성 시 가장 자주 걸리는 5개만.
+상세는 [§5] — 여기선 카피 작성 시 가장 자주 걸리는 5개만.
 
 | 개념 | 쓰는 말 | 쓰지 말 말 |
 |---|---|---|
@@ -62,7 +62,7 @@ Artier는 시니어·중장년 순수미술 작가를 주 고객으로 하는 **
 | 토스트 본문 | 한 문장, **20자 전후** | 5초 내 읽힘 |
 | 알림 본문 | 한 문장 + 대상 인용, 최대 **40자** | 알림 센터에서 2줄 상한 |
 | 에러 메시지 | "원인 + 해결책" 한 문장 | 사용자가 바로 행동할 수 있어야 |
-| 작품명·전시명·그룹명 | **20자** | [Policy §9](Policy_v1.md) |
+| 작품명·전시명·그룹명 | **20자** | [§9] |
 
 ### 3.2 시제·인칭
 
@@ -123,7 +123,7 @@ Artier는 시니어·중장년 순수미술 작가를 주 고객으로 하는 **
 
 ### 4.4 알림 (Notification)
 
-타입별 구조 (상세 [Policy §3.5.5 / §16.3](Policy_v1.md) 참조):
+타입별 구조 (상세 [§3.5]·[§16.3] 참조):
 
 | 타입 | 구조 예 |
 |---|---|
@@ -212,7 +212,7 @@ const koMessages = {
   'footer.bizRepValue': '홍길동',
   'footer.bizRegValue': '000-00-00000',
   'footer.mailOrderValue': '제2026-서울강남-00000호',
-  'footer.privacyOfficerValue': '카테',
+  'footer.privacyOfficerValue': '조가영',
   'footer.addressValue': '서울특별시 강남구 테헤란로 000, 0층',
   'footer.contactEmailValue': 'contact@artier.kr',
   'footer.phoneValue': '02-0000-0000',
@@ -232,7 +232,7 @@ const koMessages = {
   'demo.sectionWithdrawHint': '설정에서 사유 선택 후 탈퇴 확인까지 진행할 수 있어요.',
   'demo.sectionAdminGate': '운영팀 역할 (어드민 접근)',
   'demo.sectionAdminGateHint':
-    '명세상 /admin은 "운영팀" 역할만 접근 가능합니다. 아래 버튼으로 이 브라우저의 운영팀 역할을 활성화/해제하세요. 로그인 + 운영팀 활성 시에만 어드민 화면이 열립니다. 환경 변수 VITE_ADMIN_OPEN=true 를 쓰면 전체 우회돼요.',
+    '명세상 /admin은 "운영팀" 역할만 접근 가능합니다. 아래 버튼으로 이 브라우저의 운영팀 역할을 활성화/해제하세요. 로그인 + 운영팀 활성 시에만 어드민 화면이 열립니다. CI·프리뷰 환경 플래그를 쓰면 전체 우회돼요.',
   'demo.btnAdminUnlock': '운영팀 역할 활성화',
   'demo.btnAdminLock': '운영팀 역할 해제',
   'demo.toastAdminUnlocked': '운영팀 역할이 활성화됐어요. /admin 접근이 허용돼요.',
@@ -241,13 +241,13 @@ const koMessages = {
   'demo.linkSettings': '설정으로 이동',
   'demo.toastNotifPushed': '알림함에 추가했어요.',
   'demo.sampleWorkTitle': '데모 작품',
-  'demo.notifNewWorkMsg': '팔로우한 작가의 신작이 등록되었습니다: {title}',
+  'demo.notifNewWorkMsg': '팔로우한 작가의 신작이 등록됐어요: {title}',
   'demo.notifFollowMsg': '누군가 당신을 팔로우하기 시작했어요.',
   'demo.notifGroupInviteMsg': '그룹 초대가 도착했어요.',
   'demo.linkReferenceToolkit': '기획 검수: JWT·이메일 데모',
   'refStub.title': 'Reference 도구 — 로컬 검수',
   'refStub.lead':
-    'JWT 세션(모의), 이메일 템플릿 미리보기, 이메일 발송 조건 표를 한 화면에서 확인합니다. 실서비스 토큰 검증·메일 발송은 포함되지 않어요.',
+    'JWT 세션(모의), 이메일 템플릿 미리보기, 이메일 발송 조건 표를 한 화면에서 확인합니다. 실서비스 토큰 검증·메일 발송은 포함되지 않아요.',
   'refStub.backDemo': '← 플로우 데모로',
   'refStub.jwtTitle': '1. 세션 / JWT (모의)',
   'refStub.jwtLead':
@@ -302,19 +302,16 @@ const koMessages = {
   'refStub.rulesColTrigger': '발송 트리거',
   'refStub.rulesColReq': '필수/선택',
   'refStub.emailMasterBlock':
-    '1|회원가입 환영|회원가입 완료 시|필수\n2|이메일 인증|이메일 가입 후 인증 요청 시|필수\n3|비밀번호 재설정|비밀번호 찾기 요청 시|필수\n4|비밀번호 변경 완료|비밀번호 변경 성공 시|권장\n5|Artier\'s Pick 선정|어드민이 Pick 배지 부여 시|필수\n6|위클리 베스트 선정|어드민이 위클리 베스트 배지 부여 시|필수\n7|공지사항 (정책 변경)|이용약관/개인정보처리방침 변경 시|법적 의무\n8|마케팅 이메일|이벤트/캠페인 (수신 동의자만)|선택 동의자\n9|계정 정지 안내|어드민이 계정 정지 처리 시|필수\n10|회원 탈퇴 완료|탈퇴 처리 완료 시|권장',
+    '1|회원가입 환영|회원가입 완료 시|필수\n2|가입 인증 링크|이메일 가입 직후|필수 (매직 링크 30분)\n3|로그인 인증 링크|이메일 로그인 요청 시|필수 (매직 링크 30분)\n4|Artier\'s Pick 선정|어드민이 Pick 배지 부여 시|필수\n5|위클리 베스트 선정|어드민이 위클리 베스트 배지 부여 시|필수\n6|공지사항 (정책 변경)|이용약관/개인정보처리방침 변경 시|법적 의무\n7|마케팅 이메일|이벤트/캠페인 (수신 동의자만)|선택 동의자\n8|계정 정지 안내|어드민이 계정 정지 처리 시|필수\n9|회원 탈퇴 완료|탈퇴 처리 완료 시|권장',
   'flowMap.heading': 'Phase 1 유저 플로우 — 화면 바로가기',
   'flowMap.intro':
     '아래는 `SuperGallery Phase 1 유저 플로우` 문서 흐름과 대응하는 URL입니다(15번 블록은 기획 검수용 데모). 로그인이 필요한 화면은 GNB에서 로그인한 뒤 이용하세요.',
   'flowMap.section01': `1. 회원가입 / 로그인
-/login|이메일·비밀번호 로그인
-/signup|이메일 회원가입
-/signup?demo=email_sent|이메일 인증 발송 안내(시연)
+/login|이메일 매직 링크 로그인
+/signup|이메일 회원가입(매직 링크)
+/signup?demo=email_sent|인증 링크 발송 안내(시연)
 /signup?demo=email_expired|인증 링크 만료(시연)
 /signup?demo=region|국가별 가입 옵션 레이아웃(시연)
-/reset-password|비밀번호 찾기
-/reset-password?demo=link_expired|재설정 링크 만료(시연)
-/reset-password?demo=new_password|새 비밀번호 입력(시연)
 /login?demo=suspended|계정 정지 적용(시연) — 이후 로그인 시 차단 메시지
 /login?demo=clear_suspension|정지 해제(시연)`,
   'flowMap.section02': `2. 작품 업로드 → 전시
@@ -329,7 +326,7 @@ const koMessages = {
 /profile|내 프로필 (동일 화면, 예전 경로)
 /profile/2|타인 프로필 예시
 /me/edit|프로필 편집 → 설정으로 연결(PRD)
-/settings|계정 설정 · 탈퇴(사유·비밀번호 확인)
+/settings|계정 설정 · 탈퇴(사유·동의 체크박스)
 /settings/notifications|푸시·알림 종류 설정`,
   'flowMap.section06': `6. 검색
 /search|통합 검색(작품명·작가명·전시명·그룹명, PRD P1)`,
@@ -348,7 +345,7 @@ const koMessages = {
 /onboarding|가입 직후 온보딩(동일 경로)`,
   'flowMap.section12': `12. 비회원 초대 (Policy §3 v2.14 토큰 모델)
 /exhibitions/{workId}?invite={token}|작가가 보낸 초대 링크의 랜딩 화면 (4상태 분기: 활성·검수 중·취소·만료)
-(토큰은 InviteShareButton에서 생성. 친구가 가입하면 본인 작품 찾기 화면으로 자동 진입)`,
+(토큰은 마이페이지 "친구에게 알리기" 버튼에서 생성. 친구가 가입하면 본인 작품 찾기 화면으로 자동 진입)`,
   'flowMap.section13': `13. 이벤트 참여
 /events|이벤트 목록
 /events/1|이벤트 상세 예시`,
@@ -364,7 +361,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'points.filterAll': '전체',
   'points.filterEarn': '적립',
   'points.filterUse': '사용·차감',
-  'points.empty': '내역이 없어요. 둘러보기·가입·업로드 등을 하면 AP가 쌓이에요.',
+  'points.empty': '내역이 없어요. 둘러보기·가입·업로드 등을 하면 AP가 쌓여요.',
   'points.demoNote': '표시 데이터는 브라우저 로컬 저장소 기준이에요. 실서비스와 다를 수 있어요.',
   'points.demoToolbarTitle': '시연: PP 샘플 적립',
   'points.demoPpButton': 'PP +50 (데모)',
@@ -407,8 +404,6 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'login.signIn': '로그인 하기',
   'login.tagline': 'Live Artfully',
   'settings.title': '설정',
-  'settings.notifWeeklyTheme': '기획전 · Pick 알림',
-  'settings.notifWeeklyThemeHint': "Artier's Pick 선정, 기획전 등 하이라이트 알림을 받어요.",
   'social.follow': '팔로우',
   'social.following': '팔로잉',
   'about.heroTitle': '모든 작가를 위한\n온라인 갤러리',
@@ -496,7 +491,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'events.detailPeriod': '기간',
   'events.detailTarget': '참여 대상',
   'events.detailGuide': '이벤트 안내',
-  'events.detailEnded': '참여가 마감된 이벤트이에요',
+  'events.detailEnded': '참여가 마감된 이벤트예요',
   'events.detailBackLink': '이벤트 목록으로 돌아가기',
   'upload.errExhibitionNameRequired': '전시명을 입력해야 전시할 수 있어요.',
   'upload.errGroupNameRequired': '그룹 전시는 소속 그룹명을 입력해야 전시할 수 있어요.',
@@ -508,7 +503,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.toastDraftLoaded': '초안을 불러왔어요.',
   'upload.errMaxImages': '이미지는 최대 10장까지 업로드할 수 있어요.',
   'upload.errFileTooBig': '파일이 너무 커요. 더 작은 이미지를 선택해 주세요. ({name}, 10MB 이하)',
-  'upload.errFileType': '이 파일은 올릴 수 없어요. 이미지 파일만 가능합니다. ({name}, JPG·PNG·WEBP·GIF)',
+  'upload.errFileType': '이 파일은 올릴 수 없어요. 이미지 파일만 가능해요. ({name}, JPG·PNG·WEBP·GIF)',
   'upload.errFileRead': '{name}: 파일을 읽지 못했어요.',
   'upload.errMinOneImage': '이미지를 최소 1장 추가해주세요.',
   'upload.errCheckStudentConsent': '수강생 업로드 동의에 체크해주세요.',
@@ -545,9 +540,14 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'review.notifSubmitted': '\'{title}\' 전시가 검수에 들어갔어요. 보통 1영업일 안에 알림으로 결과를 알려드릴게요.',
   'review.notifRejected': '올리신 작품이 검수를 통과하지 못했어요. 사유: {reason}',
   'review.notifApproved': '올리신 작품이 승인됐어요. 둘러보기에서 다른 분들이 볼 수 있어요.',
-  'review.notifNewWork': '님이 새 작품을 올렸어요',
+  'review.notifNewWork': '님이 새 전시를 올렸어요',
   // 신고 처리 결과 알림 — 대상 작가/신고자에게 운영팀 조치를 공지
   'pick.notifSelected': '회원님의 전시 \'{title}\'이 Artier\'s Pick으로 뽑혔어요. 축하드려요!',
+  'social.notifLiked': '{artist}님이 회원님의 작품 \'{title}\'을 좋아했어요',
+  'social.notifFollowed': '{artist}님이 회원님을 팔로우하기 시작했어요',
+  'social.notifGroupInvited': '{artist}님이 회원님을 \'{title}\' 그룹 전시에 초대했어요',
+  'event.notifSelected': '축하해요! \'{title}\'이(가) \'{eventName}\' 선정작으로 뽑혔어요',
+  'event.notifAnnouncement': '{message}',
   'invite.notifAutoMatched': '\'{name}\' 님이 \'{title}\' 전시에 본인 자리를 등록했어요. 잘못 연결됐다면 전시 편집에서 풀 수 있어요.',
   'report.notifTargetWorkDeleted': '회원님의 전시 \'{title}\'이 신고 처리로 삭제됐어요.',
   'report.notifTargetWorkHidden': '회원님의 전시 \'{title}\'이 신고 검토 결과 비공개로 전환됐어요. 피드와 검색에서 제외돼요.',
@@ -565,7 +565,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.publish': '전시하기',
   'upload.hintCheckOriginal': '위의 원작 확인을 체크해 주세요',
   'upload.leaveConfirmTitle': '페이지를 떠나시겠어요?',
-  'upload.leaveConfirmDesc': '작성 중인 내용이 저장되지 않고 사라집니다. 나가기 전에 "초안 저장" 버튼으로 저장할 수 있어요.',
+  'upload.leaveConfirmDesc': '작성 중인 내용이 저장되지 않고 사라져요. 나가기 전에 "초안 저장" 버튼으로 저장할 수 있어요.',
   'upload.reorderMode': '재정렬 모드',
   'upload.reorderDone': '완료',
   'upload.imageFallback': '이미지 {n}',
@@ -602,7 +602,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.groupRoleSubtitle': '강사인 경우 본인 작품 없이 수강생 작품만 올릴 수 있어요',
   'upload.groupRoleParticipant': '네, 포함돼요',
   'upload.groupRoleParticipantDesc': '내 작품이 최소 1점 포함된 그룹 전시예요',
-  'upload.groupRoleInstructor': '아니요, 강사이에요',
+  'upload.groupRoleInstructor': '아니요, 강사예요',
   'upload.groupRoleInstructorDesc': '수강생 작품만 대신 올려요. 본인 작품은 포함되지 않아요',
   'upload.groupRoleDisplayParticipant': '그룹 전시',
   'upload.groupRoleDisplayInstructor': '그룹 전시 (강사)',
@@ -672,11 +672,11 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.publishedConfirmTitle': '전시가 등록되었어요',
   'upload.publishedConfirmTitleApproved': '전시가 공개되었어요',
   'upload.publishedConfirmTitleResubmit': '다시 검수 요청이 도착했어요',
-  'upload.publishedConfirmDescPending': '지금 검수 중이에요. 1~24시간 안에 결과를 알림으로 알려드려요. 검수를 통과하면 둘러보기·검색에서 보여요.',
+  'upload.publishedConfirmDescPending': '지금 검수 중이에요. 주말·공휴일을 빼고 24시간 안에 결과를 알림으로 알려드려요. 검수를 통과하면 둘러보기·검색에서 보여요.',
   'upload.publishedConfirmDescApproved': '전시가 즉시 공개되었어요. 둘러보기에서 확인할 수 있어요.',
   'upload.publishedConfirmDescResubmit': '수정 사항이 반영되어 다시 검수가 시작됐어요. 결과는 알림으로 알려드려요.',
   'upload.publishedConfirmInviteNote': '비회원 작가에게는 작가님이 직접 카톡·문자로 링크를 보내주세요. 지금 바로 알릴 수 있어요.',
-  'upload.publishedConfirmSlaNote': '검수는 보통 1~24시간 내 처리되며, 결과(승인·반려)는 알림 센터와 가입 시 등록한 채널로 전달돼요.',
+  'upload.publishedConfirmSlaNote': '검수는 보통 영업일 기준 24시간 안에 처리되며, 결과(승인·반려)는 알림 센터와 가입 시 등록한 채널로 전달돼요.',
   'upload.publishedConfirmGoProfile': '내 전시 보기',
   'upload.publishedConfirmGoBrowse': '둘러보기',
   'upload.existingDraftNotice': '저장된 초안이 있어요.',
@@ -711,8 +711,11 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'profile.formInterests': '관심 화풍',
   'profile.formLinks': '웹사이트 설정',
   'profile.formLinksHint': '회원님이 활동하시는 웹사이트의 URL을 입력해주세요.',
+  'profile.nicknameLockedLabel': '닉네임 (변경 불가)',
+  'profile.nicknameLockedHint': '닉네임은 작품과 연결돼 다른 분이 사용할 수 없어요. 변경하시려면 1:1 문의로 신청해 주세요.',
+  'profile.nicknameContactCta': '닉네임 변경 문의하기',
   'profile.studentWorksEmpty': '아직 수강생 크레딧이 있는 그룹 작품이 없어요.',
-  'profile.studentWorksHint': '강사 업로드로 그룹 전시를 올리고 이미지에 수강생을 표기하면 여기에 모이에요.',
+  'profile.studentWorksHint': '강사 업로드로 그룹 전시를 올리고 이미지에 수강생을 표기하면 여기에 모여요.',
   'notifications.categoryAll': '유형 전체',
   'notifications.categoryLike': '좋아요',
   'notifications.categoryFollow': '팔로우',
@@ -728,7 +731,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'eventDetail.statusActive': '진행중',
   'eventDetail.statusScheduled': '예정',
   'eventDetail.statusEnded': '종료',
-  'onboarding.errImageTooLarge': '이미지 크기는 5MB 이하여야 합니다.',
+  'onboarding.errImageTooLarge': '이미지 크기는 5MB 이하여야 해요.',
   'onboarding.errProfanityNickname': '닉네임에 부적절한 단어가 포함되어 있어요.',
   'onboarding.welcomeTitle': '{brand}에 오신 것을 환영합니다',
   'onboarding.welcomeLead': '그림 한 점만 올려도 나만의 전시가 열려요',
@@ -740,7 +743,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'onboarding.conceptExampleSoloMeta': '작품 1점',
   'onboarding.conceptExampleMultiTitle': '△△△ 작가의 봄 전시',
   'onboarding.conceptExampleMultiMeta': '작품 6점',
-  'onboarding.conceptReinforce': '한 점이어도 어엿한 전시예요.\n작품을 올리시면 자동으로 나만의 전시가 열립니다.',
+  'onboarding.conceptReinforce': '한 점이어도 어엿한 전시예요.\n작품을 올리시면 자동으로 나만의 전시가 열려요.',
   'onboarding.nicknameTitle': '프로필 설정',
   'onboarding.nicknameLead': '기본 정보를 입력해주세요',
   'onboarding.errEmailRequired': '연락 가능한 이메일을 입력해주세요',
@@ -753,6 +756,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'onboarding.nicknamePlaceholder': '활동할 닉네임을 입력하세요',
   'onboarding.errNicknameShort': '작가명은 2자 이상 입력해주세요',
   'onboarding.errNicknameLong': '작가명은 20자 이하로 입력해주세요',
+  'onboarding.errNicknameDuplicate': '이미 사용 중인 닉네임이에요',
   'onboarding.back': '이전',
   'onboarding.next': '다음',
   'onboarding.uploadPhoto': '사진 올리기',
@@ -783,12 +787,13 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'faq.catUpload': '업로드',
   'faq.catExhibition': '전시',
   'faq.catOther': '기타',
+  'faq.catNonMemberInvite': '비회원 초대',
   'faq.q1': '가입은 어떻게 하나요?',
   'faq.a1':
-    '홈 화면에서 로그인 버튼을 클릭하면 간편하게 가입할 수 있어요. 소셜 로그인(카카오, 구글, 애플)과 이메일 가입을 지원합니다.',
+    '홈 화면에서 로그인 버튼을 클릭하면 간편하게 가입할 수 있어요. 소셜 로그인(카카오, 구글, 애플)과 이메일 가입을 지원해요.',
   'faq.q2': '로그인 링크 메일이 오지 않아요.',
   'faq.a2':
-    'Artier는 비밀번호 대신 이메일 인증 링크로 로그인합니다. 이메일을 받지 못했다면 스팸함을 먼저 확인해 주시고, 로그인 화면에서 "로그인 링크 다시 보내기"를 눌러 주세요. 30초 쿨다운 후 재발송이 가능합니다. 링크는 30분 동안 유효합니다.',
+    'Artier는 비밀번호 대신 이메일 인증 링크로 로그인해요. 이메일을 받지 못했다면 스팸함을 먼저 확인해 주시고, 로그인 화면에서 "로그인 링크 다시 보내기"를 눌러 주세요. 30초 쿨다운 후 다시 보낼 수 있어요. 링크는 30분 동안 유효해요.',
   'faq.q3': '탈퇴하면 작품은 어떻게 되나요?',
   'faq.a3':
     '탈퇴 후에도 업로드한 작품은 "작가 미상"으로 갤러리에 유지돼요. 탈퇴 전 작품 삭제를 원하시면 먼저 작품을 개별 삭제해 주세요.',
@@ -800,13 +805,13 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
     '저작권 보호를 위해 카메라 촬영 사진(EXIF에 카메라 정보가 포함된 파일)은 업로드가 제한될 수 있어요. 직접 창작한 작품만 올려주세요.',
   'faq.q6': '작품을 수정하거나 삭제할 수 있나요?',
   'faq.a6':
-    '프로필 > 작품 탭에서 작품 우측 상단 메뉴(⋯)를 통해 수정 및 삭제가 가능합니다. 비공개로 전환하면 피드에서만 숨길 수 있어요.',
+    '프로필 > 작품 탭에서 작품 우측 상단 메뉴(⋯)를 눌러 수정·삭제할 수 있어요.',
   'faq.q7': '그룹 전시는 어떻게 만드나요?',
   'faq.a7':
     '업로드할 때 "함께 올리기"를 선택하면 그룹명을 입력하고 참여 작가를 한 자리씩 추가할 수 있어요. Artier 회원이면 이름을 검색해 바로 연결되고, 회원이 아닌 분은 이름만 입력해 자리를 만들어 두면 검수 통과 후 초대 링크로 직접 알릴 수 있어요.',
   'faq.q8': "Artier's Pick은 무엇인가요?",
   'faq.a8':
-    '운영팀이 매주 우수 작품을 선정하여 배지를 부여합니다. 선정된 작품은 피드 상단에 노출되며, 작가에게 알림이 발송돼요.',
+    '운영팀이 매주 우수 작품을 선정해 배지를 부여해요. 선정된 작품은 피드 상단에 노출되며, 작가에게 알림이 발송돼요.',
   'faq.q9': '부적절한 작품을 발견했어요.',
   'faq.a9':
     '전시 상세 화면에서 신고 버튼(깃발 아이콘)을 눌러 신고할 수 있어요. 운영팀이 영업일 24시간 안에 확인해드려요.',
@@ -814,7 +819,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'faq.a10': '현재 {brand}의 모든 기능은 무료로 이용하실 수 있어요.',
   'faq.q11': '함께 올린 비회원 친구는 어떻게 초대하나요?',
   'faq.a11':
-    '검수가 통과되면 마이페이지의 전시 카드에 "친구에게 알리기" 버튼이 활성화돼요. 카카오톡·문자·이메일 등 평소 쓰시던 방법으로 친구에게 링크를 직접 보내주시면 돼요. 회사가 자동으로 발송하지는 않아요.',
+    '전시를 발행하면 마이페이지의 전시 카드에 "친구에게 알리기" 버튼이 바로 생겨요. 검수 신청 단계부터 카카오톡·문자·이메일 등 평소 쓰시던 방법으로 친구에게 링크를 직접 보내주시면 돼요. 친구는 가입한 뒤 본인 작품 카드를 골라 연결할 수 있고, 검수가 통과되면 자동으로 공개돼요. 회사가 자동으로 발송하지는 않아요.',
   'faq.q12': '친구가 가입했는데 작품이 자동으로 연결 안 됐어요.',
   'faq.a12':
     '가입 직후 "본인 작품 찾기" 화면에서 친구분이 본인 그림 카드를 직접 눌러야 연결돼요. "여기 없어요"를 눌러 건너뛰셨거나 다른 분 자리를 잘못 눌렀을 수 있어요. 친구분께 다시 한번 확인해 주세요.',
@@ -838,14 +843,22 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'contact.categoryPlaceholder': '문의 유형을 선택하세요',
   'contact.placeholderMessage': '문의 내용을 자세히 적어주세요',
   'contact.categoryAccount': '계정 관련',
+  'contact.categoryNicknameChange': '닉네임 변경 신청',
   'contact.categoryUpload': '업로드/전시 관련',
   'contact.categoryReport': '신고/저작권 관련',
   'contact.categoryPrivacy': '개인정보 열람·정정·삭제 요청',
   'contact.categorySuggestion': '제안/피드백',
   'contact.categoryBug': '오류 제보',
   'contact.categoryOther': '기타',
+  'contact.nicknameChangeNoticeTitle': '닉네임 변경 신청 안내',
+  'contact.nicknameChangeNoticeBody': '회신은 가입 이메일과 동일한 주소로만 발송돼요. 새 닉네임을 적어주시면 운영팀이 확인 후 변경해 드려요.',
+  'contact.nicknameNewLabel': '새 닉네임',
+  'contact.nicknameNewPlaceholder': '2~20자, 다른 분이 쓰지 않는 이름',
+  'contact.nicknameReasonLabel': '변경 사유 (선택)',
+  'contact.nicknameReasonPlaceholder': '오타·작명 변경 등 알려주세요',
+  'contact.errNicknameDuplicate': '이미 사용 중인 닉네임이에요',
   'contact.attachments': '파일 첨부',
-  'contact.fileTooLarge': '파일 크기는 5MB 이하만 가능합니다.',
+  'contact.fileTooLarge': '파일 크기는 5MB 이하만 가능해요.',
   'contact.attachHint': '최대 3개, 각 5MB 이하',
   'contact.autoResponse': '영업일 5일 안에 답변 드릴게요.',
   'contact.submit': '문의 보내기',
@@ -922,13 +935,13 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'workDetail.inspireCtaButton': 'Artier 바로가기',
   'workDetail.coWork': '공동 작업',
   'workDetail.participants': '참여',
-  'invite.invalid': '유효하지 않은 초대 링크이에요.',
+  'invite.invalid': '유효하지 않은 초대 링크예요.',
   'invite.browse': '둘러보기',
   'invite.deletedTitle': '이 전시는 삭제됐어요',
   'invite.deletedBody': '게시자가 전시를 삭제했어요. Artier에서 다른 전시를 둘러보거나 계정을 만들어 내 그림을 올려볼 수 있어요.',
   'invite.hiddenTitle': '이 전시는 운영팀 검토 중이에요',
   'invite.hiddenBody': '검토가 완료되면 다시 확인할 수 있어요. 잠시 후 다시 방문해주세요.',
-  'invite.pendingNotice': '공개 승인 전 링크이에요',
+  'invite.pendingNotice': '공개 승인 전 링크예요',
   'invite.clipboardOk': '링크가 복사되었어요',
   'invite.clipboardFail': '링크를 복사할 수 없어요',
   'invite.inviteByline': '{name}님의 초대',
@@ -969,7 +982,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'signup.errNickname': '닉네임은 2~20자로 입력해 주세요.',
   'signup.errProfanity': '부적절한 단어가 포함되어 있어요. 다른 표현으로 바꿔 주세요.',
   'signup.birthLabel': '생년월일',
-  'signup.birthHint': '만 14세 이상만 가입할 수 있어요. 입력한 날짜는 나이 확인 외 용도로 사용되지 않어요.',
+  'signup.birthHint': '만 14세 이상만 가입할 수 있어요. 입력한 날짜는 나이 확인 외 용도로 사용되지 않아요.',
   'signup.birthYear': '년',
   'signup.birthMonth': '월',
   'signup.birthDay': '일',
@@ -979,13 +992,13 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'signup.agreePrivacy': '개인정보 수집·이용 동의',
   'signup.agreeAge': '만 14세 이상이에요',
   'signup.ageRestrictionLead':
-    'Artier는 만 14세 미만 회원 가입을 받지 않어요. (전자상거래 등에서의 소비자보호에 관한 법률 등 준수)',
+    'Artier는 만 14세 미만 회원 가입을 받지 않아요. (관련 법령 등 준수)',
   'signup.agreeMarketing': '마케팅 정보 수신 동의',
   'signup.agreeMarketingHint': '이메일·알림톡·문자 중 보유한 채널로 보내드려요.',
   'events.badge': 'EVENT',
   'profile.deletedUser': '작가 미상',
   'profile.notFound': '존재하지 않는 프로필이에요.',
-  'profile.withdrawnTitle': '탈퇴한 작가이에요',
+  'profile.withdrawnTitle': '탈퇴한 작가예요',
   'profile.withdrawnDesc': '이 작가는 Artier를 떠났어요. 이전에 공개한 작품은 둘러보기에서 "작가 미상"으로 감상할 수 있어요.',
   'profile.formDisplayName': '사용자 이름',
   'profile.formDisplayNamePh': '이름을 입력해주세요',
@@ -1013,8 +1026,8 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'profile.bioPlaceholderEmpty': '아직 소개가 없어요.',
   'profile.tabWorkManage': '내 작품',
   'profile.tabHelpWorks': '내가 그린 작품(1점 단위)이 모이는 곳이에요. 초대로 자동 연결된 작품도 함께 보여요. 내가 올린 전시는 ‘전시’ 탭에서 볼 수 있어요.',
-  'notifications.seedLikedWork': '님이 회원님의 작품 "{work}"을 좋아합니다',
-  'notifications.seedFollowed': '님이 회원님을 팔로우합니다',
+  'notifications.seedLikedWork': '님이 회원님의 작품 "{work}"을 좋아했어요',
+  'notifications.seedFollowed': '님이 회원님을 팔로우하기 시작했어요',
   'notifications.seedPickSelected': '축하해요! "{work}"이(가) Artier’s Pick으로 뽑혔어요',
   'notifications.seedWelcome': 'Artier에 오신 것을 환영합니다! 첫 작품을 업로드해 보세요.',
   'notifications.seedEventActive': '「{event}」 이벤트가 진행 중이에요. 지금 참여해 보세요.',
@@ -1044,7 +1057,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'profile.filterGroup': '그룹',
   'profile.filterOnlyMine': '내가 올린 전시만',
   'profile.publishedBannerTitle': '전시가 등록되었어요! 지금은 나만 볼 수 있어요',
-  'profile.publishedBannerDesc': '운영팀이 24시간 이내에 검수한 뒤 둘러보기에 공개돼요. 검수 중에는 배지로 상태를 확인할 수 있고, 공개되면 알림으로 알려드려요.',
+  'profile.publishedBannerDesc': '운영팀이 주말·공휴일을 빼고 24시간 안에 검수한 뒤 둘러보기에 공개돼요. 검수 중에는 배지로 상태를 확인할 수 있고, 공개되면 알림으로 알려드려요.',
   'profile.publishedBannerDismiss': '닫기',
   'profile.uploaderLabel': '게시자',
   'profile.deleteWorkConfirm': '"{title}" 작품을 삭제할까요?',
@@ -1083,12 +1096,12 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'settings.sectionAccount': '계정 정보',
   'settings.emailLabel': '이메일',
   'settings.sectionFontScale': '글자 크기',
-  'settings.fontScaleIntro': '화면 전체 글자 크기를 조정합니다. 변경 사항은 즉시 적용돼요.',
+  'settings.fontScaleIntro': '화면 전체 글자 크기를 조정해요. 변경 사항은 즉시 적용돼요.',
   'settings.fontScale_small': '작게',
   'settings.fontScale_medium': '보통',
   'settings.fontScale_large': '크게',
   'settings.sectionTheme': '화면 테마',
-  'settings.themeIntro': '화면을 밝게 또는 어둡게 표시합니다. 변경 사항은 즉시 적용돼요.',
+  'settings.themeIntro': '화면을 밝게 또는 어둡게 표시해요. 변경 사항은 즉시 적용돼요.',
   'settings.theme_light': '밝게',
   'settings.theme_dark': '어둡게',
   'settings.sectionNotif': '알림 설정',
@@ -1108,7 +1121,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'settings.withdraw': '회원 탈퇴',
   'settings.withdrawTitle': '정말 탈퇴하시겠어요?',
   'settings.withdrawBody':
-    '탈퇴하면 작성하신 데이터는 복구가 불가합니다. 올리신 작품은 작가명 없이(익명) 서비스에 남으며, 계정·좋아요·팔로우 기록은 삭제돼요.',
+    '탈퇴하면 작성하신 데이터는 복구할 수 없어요. 올리신 작품은 작가명 없이(익명) 서비스에 남으며, 계정·좋아요·팔로우 기록은 삭제돼요.',
   'settings.withdrawSubmit': '탈퇴하기',
   'settings.withdrawBusy': '처리 중…',
   'settings.withdrawReasonSection': '탈퇴 사유를 선택해 주세요',
@@ -1122,14 +1135,14 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'settings.toastLogout': '로그아웃되었어요.',
   'settings.toastWithdrawDone': '탈퇴가 완료되었어요.',
   'report.titleWork': '작품 신고',
-  'report.leadWork': '{name}을(를) 신고합니다.',
+  'report.leadWork': '{name}을(를) 신고해요.',
   'report.policyNote':
     '접수 후 운영팀이 영업일 24시간 안에 확인해드려요.',
   'report.reasonHeading': '이 작품은 작가 본인의 그림이 아니에요',
   'report.reasonHelp': '다른 사람의 작품을 본인 것처럼 올린 것 같아요. 원본 출처가 있다면 메시지에 함께 적어주세요.',
   'report.otherReasonsHint': '다른 종류의 신고(저작권·욕설·음란 등)는 마이페이지 → 1:1 문의로 알려주세요.',
   'report.errOwnWork': '본인의 전시는 신고할 수 없어요.',
-  'report.falseReportNotice': '허위 신고가 확인되면 운영팀이 별도 조치할 수 있어요. 사실에 근거해 신고해주세요.',
+  'report.falseReportNotice': '사실에 근거해 신고해주세요. 운영팀이 모든 신고를 검토해요.',
   'report.piecePickerLabel': '신고할 작품을 선택해주세요',
   'report.piecePickerAria': '{n}번 작품 선택',
   'report.errPieceRequired': '신고할 작품을 선택해주세요.',
@@ -1140,7 +1153,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'report.errWithdrawnArtist': '탈퇴한 작가의 작품에는 신고할 수 없어요.',
   'report.step2Title': '신고가 도착했어요',
   'report.step2Body':
-    '운영팀이 영업일 24시간 안에 확인해드려요. 관련 법에 따른 긴급 건은 우선 처리돼요. 허위 신고는 제재될 수 있어요.',
+    '운영팀이 영업일 24시간 안에 확인해드려요. 관련 법에 따른 긴급 건은 우선 처리돼요. 사실에 근거해 신고해주세요.',
   'report.okClose': '확인',
   'cookie.title': '쿠키 사용 안내',
   'cookie.body':
@@ -1151,7 +1164,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'cookie.essentialOnly': '필수만 동의',
   'cookie.close': '닫기',
   'profilePhoto.title': '프로필 사진',
-  'profilePhoto.lead': '갤러리에서 보이는 프로필 이미지를 변경합니다',
+  'profilePhoto.lead': '갤러리에서 보이는 프로필 이미지를 변경해요',
   'profilePhoto.change': '사진 변경',
   'profilePhoto.reset': '기본 이미지로 변경',
   'profilePhoto.save': '저장',
@@ -1185,10 +1198,10 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
     '일상 속 빛과 그림자의 순간을 모은 카테 작가의 개인전이에요. 디지털 회화로 기록한 창가, 계절, 그리고 도시의 아침을 한 공간에서 만나 보실 수 있어요.',
   'exhibition.groupNatureTitle': '자연의 결 — 연합전',
   'exhibition.groupNatureDesc':
-    '동양화, 수묵, 섬유·도자, 패션 일러스트를 아우르는 여섯 명의 작가가 자연의 질감과 리듬을 각자의 언어로 풀어냅니다. 전통과 현대가 만나는 갤러리형 연합 전시이에요.',
+    '동양화, 수묵, 섬유·도자, 패션 일러스트를 아우르는 여섯 명의 작가가 자연의 질감과 리듬을 각자의 언어로 풀어냅니다. 전통과 현대가 만나는 갤러리형 연합 전시예요.',
   'exhibition.soloCeramicTitle': '도자, 빛을 담다',
   'exhibition.soloCeramicDesc':
-    '강미란 작가의 도자 시리즈를 중심으로 한 소규모 전시이에요. 유약과 형태가 만들어내는 은은한 반사와 공간감을 강조합니다.',
+    '강미란 작가의 도자 시리즈를 중심으로 한 소규모 전시예요. 유약과 형태가 만들어내는 은은한 반사와 공간감을 강조합니다.',
   'error.title': '문제가 발생했어요',
   'error.description': '일시적인 오류가 발생했어요.\n다시 시도하거나 홈으로 돌아가 주세요.',
   'error.retry': '다시 시도',
@@ -1198,12 +1211,12 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'confirm.ok': '확인',
   'invite.fallbackPieceIndex': '{n}번 작품',
   'work.unknownArtist': '작가 미상',
-  'upload.unknownSlotHint': '초대받은 작가가 연결을 끊어 작가 미상으로 표시돼요. 이 상태로 두거나, 아래 버튼으로 다시 지정할 수 있어요.',
+  'upload.unknownSlotHint': '연결이 풀려 작가 미상으로 표시돼요. 이 상태로 두거나, 아래 버튼으로 다시 지정할 수 있어요.',
   'upload.unknownSlotReassign': '작가 다시 지정하기',
   'admin.backToApp': '사용자 앱으로',
   'admin.consoleLabel': '운영 콘솔',
   'admin.roleBadge': '운영팀 역할',
-  'admin.sidebarNote': '명세상 이 화면은 운영팀 전용이에요. 로컬 storage와 동기화.',
+  'admin.sidebarNote': '명세상 이 화면은 운영팀 전용이에요. 단말 저장소와 동기화.',
   'admin.footerNote': 'Phase 1 · 사용자 메뉴에 링크 없음',
   'admin.nav.dashboard': '대시보드',
   'admin.nav.issues': '미결 이슈',
@@ -1266,7 +1279,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'signup.openMockLink': '데모: 받은 링크 열기',
   'signup.openMockLinkHint': '실서비스에선 이메일로 받은 링크를 눌러 주세요.',
   'signup.linkExpiredTitle': '인증 링크가 만료됐어요',
-  'signup.linkExpiredBody': '30분이 지난 링크이에요. 아래에서 다시 발송을 요청할 수 있어요.',
+  'signup.linkExpiredBody': '30분이 지난 링크예요. 아래에서 다시 발송을 요청할 수 있어요.',
   'signup.emailStepTitle': '이메일로 가입',
   'signup.emailStepDesc': '이메일 주소를 입력하시면 인증 링크를 보내드려요. 비밀번호는 따로 만들 필요 없어요.',
   'login.emailHeading': '이메일로 로그인',
@@ -1281,11 +1294,11 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'login.openMockLink': '데모: 받은 로그인 링크 열기',
   'verify.checkingTitle': '인증 중이에요…',
   'verify.successLoginTitle': '로그인이 완료되었어요',
-  'verify.successLoginBody': '잠시 후 이동합니다.',
+  'verify.successLoginBody': '잠시 후 이동해요.',
   'verify.successSignupTitle': '이메일 인증이 완료되었어요',
   'verify.successSignupBody': '프로필 정보를 입력해 가입을 마쳐주세요.',
   'verify.expiredTitle': '링크가 만료됐어요',
-  'verify.expiredBody': '30분이 지난 링크이에요.\n가입 또는 로그인을 다시 시도해 주세요.',
+  'verify.expiredBody': '30분이 지난 링크예요.\n가입 또는 로그인을 다시 시도해 주세요.',
   'verify.invalidTitle': '유효하지 않은 링크예요',
   'verify.invalidBody': '링크가 올바르지 않아요. 메일에서 다시 열어봐 주세요.',
   'verify.retrySignup': '가입 다시 시작',
@@ -1360,7 +1373,7 @@ const enMessages: Record<MessageKey, string> = {
   'demo.operatorRoleActive': 'Operator role is active for this browser.',
   'demo.sectionAdminGate': 'Operator role (admin access)',
   'demo.sectionAdminGateHint':
-    'Per spec, /admin is only accessible to the Operator role. Activate it for this browser below — admin pages open only when logged in AND operator is active. Set VITE_ADMIN_OPEN=true to bypass entirely.',
+    'Per spec, /admin is only accessible to the Operator role. Activate it for this browser below — admin pages open only when logged in AND operator is active. The CI / preview environment flag bypasses this entirely.',
   'demo.btnAdminUnlock': 'Activate operator role',
   'demo.btnAdminLock': 'Deactivate operator role',
   'demo.toastAdminUnlocked': 'Operator role activated. /admin is now accessible.',
@@ -1372,7 +1385,7 @@ const enMessages: Record<MessageKey, string> = {
   'demo.notifFollowMsg': 'Someone started following you.',
   'demo.notifGroupInviteMsg': 'You received a group invitation.',
   'demo.linkReferenceToolkit': 'PM review: JWT, email demo',
-  'refStub.title': 'Reference ❌ items — local review toolkit',
+  'refStub.title': 'Reference toolkit — local review',
   'refStub.lead':
     'Mock JWT session, email template previews, and an email trigger matrix in one place. No real token verification or mail delivery.',
   'refStub.backDemo': '← Back to flow demo',
@@ -1429,19 +1442,16 @@ const enMessages: Record<MessageKey, string> = {
   'refStub.rulesColTrigger': 'Trigger',
   'refStub.rulesColReq': 'Required / optional',
   'refStub.emailMasterBlock':
-    '1|Welcome email|After signup completes|Required\n2|Email verification|After email signup requests verification|Required\n3|Password reset|Forgot-password request|Required\n4|Password changed|After password change succeeds|Recommended\n5|Artier\'s Pick selected|Admin assigns Pick badge|Required\n6|Weekly Best selected|Admin assigns Weekly Best badge|Required\n7|Policy change notice|Terms/Privacy policy change|Legal obligation\n8|Marketing email|Events/campaigns (marketing opt-in only)|Opt-in\n9|Account suspension notice|Admin suspends account|Required\n10|Account deletion complete|After withdrawal completes|Recommended',
+    '1|Welcome email|After signup completes|Required\n2|Sign-up magic link|Right after email sign-up|Required (30-min link)\n3|Login magic link|On email login request|Required (30-min link)\n4|Artier\'s Pick selected|Admin assigns Pick badge|Required\n5|Weekly Best selected|Admin assigns Weekly Best badge|Required\n6|Policy change notice|Terms/Privacy policy change|Legal obligation\n7|Marketing email|Events/campaigns (marketing opt-in only)|Opt-in\n8|Account suspension notice|Admin suspends account|Required\n9|Account deletion complete|After withdrawal completes|Recommended',
   'flowMap.heading': 'Phase 1 user flows — screen index',
   'flowMap.intro':
     'Each block maps to the Phase 1 user-flow doc (block 15 is a PM review demo). Log in from the header for pages that require auth.',
   'flowMap.section01': `1. Sign up / login
-/login|Email & password login
-/signup|Email sign-up form
-/signup?demo=email_sent|Email verification sent (demo)
-/signup?demo=email_expired|Verification link expired (demo)
+/login|Email magic-link login
+/signup|Email sign-up (magic link)
+/signup?demo=email_sent|Magic-link sent (demo)
+/signup?demo=email_expired|Magic-link expired (demo)
 /signup?demo=region|KR vs intl options layout (demo)
-/reset-password|Forgot password
-/reset-password?demo=link_expired|Reset link expired (demo)
-/reset-password?demo=new_password|Set new password (demo)
 /login?demo=suspended|Apply suspension (demo) — then try login
 /login?demo=clear_suspension|Clear suspension (demo)`,
   'flowMap.section02': `2. Upload → exhibition
@@ -1475,7 +1485,7 @@ Use the buttons above to push demo notifications`,
 /onboarding|Post sign-up onboarding`,
   'flowMap.section12': `12. Non-member invite (Policy §3 v2.14 token model)
 /exhibitions/{workId}?invite={token}|Invite landing for the recipient (4 states: active / under review / revoked / expired)
-(Tokens are generated by InviteShareButton. After signup, the recipient lands on Find my work.)`,
+(Tokens are generated by the My-page "Tell a friend" button. After signup, the recipient lands on Find my work.)`,
   'flowMap.section13': `13. Events
 /events|Event list
 /events/1|Sample event detail`,
@@ -1534,8 +1544,6 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'login.signIn': 'Sign in',
   'login.tagline': 'Live Artfully',
   'settings.title': 'Settings',
-  'settings.notifWeeklyTheme': 'Curated show & Pick alerts',
-  'settings.notifWeeklyThemeHint': "Includes Artier's Pick, curated shows, and other highlight notifications.",
   'social.follow': 'Follow',
   'social.following': 'Following',
   'about.heroTitle': 'An online gallery\nfor every artist',
@@ -1673,6 +1681,11 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'review.notifRejected': 'Your upload was not approved. Reason: {reason}',
   'review.notifApproved': 'Your upload was approved and is now shown on Browse.',
   'pick.notifSelected': 'Your exhibition \'{title}\' was selected as Artier\'s Pick. Congrats!',
+  'social.notifLiked': '{artist} liked your work \'{title}\'',
+  'social.notifFollowed': '{artist} started following you',
+  'social.notifGroupInvited': "{artist} invited you to the group exhibition '{title}'",
+  'event.notifSelected': "Congrats! '{title}' was selected for '{eventName}'",
+  'event.notifAnnouncement': '{message}',
   'invite.notifAutoMatched': "'{name}' claimed their slot in '{title}'. If it's the wrong link, you can unlink it from the exhibition editor.",
   'report.notifTargetWorkDeleted': 'Your exhibition \'{title}\' has been removed following a report.',
   'report.notifTargetWorkHidden': 'Your exhibition \'{title}\' has been hidden from Browse/Search after review.',
@@ -1745,7 +1758,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'upload.tabDirectInput': 'Enter manually',
   'upload.memberSearchPh': 'Search registered artists',
   'upload.nonMemberNamePh': 'Name to show in the invite message',
-  // (kept) Helper updated to reflect Policy v2.16 §3 — Artier does not auto-notify, artist sends directly
+  // (kept) Helper updated to reflect Policy §3 — Artier does not auto-notify, artist sends directly
   'upload.nonMemberNameLabel2': 'Artist name',
   'upload.nonMemberNameHelper': "Just the name. Artier won't auto-notify them — after publishing, you can send them the link directly via your own channel.",
   'invite.shareCta': 'Tell a friend',
@@ -1799,11 +1812,11 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'upload.publishedConfirmTitle': 'Your exhibition has been submitted',
   'upload.publishedConfirmTitleApproved': 'Your exhibition is live',
   'upload.publishedConfirmTitleResubmit': 'Resubmitted for review',
-  'upload.publishedConfirmDescPending': 'Under review. We\'ll notify you of the result within 1~24 hours. Once approved, it appears on Browse and Search.',
+  'upload.publishedConfirmDescPending': 'Under review. We\'ll notify you of the result within 24 business hours (excluding weekends and holidays). Once approved, it appears on Browse and Search.',
   'upload.publishedConfirmDescApproved': 'Your exhibition is now live on Browse.',
   'upload.publishedConfirmDescResubmit': 'Your edits have been submitted for review. We\'ll notify you of the result.',
   'upload.publishedConfirmInviteNote': 'Send the link to non-member artists yourself via KakaoTalk or text. You can do it right now.',
-  'upload.publishedConfirmSlaNote': 'Review usually takes 1~24 hours. Results (approval or rejection) are delivered via the Notifications center and your registered channel.',
+  'upload.publishedConfirmSlaNote': 'Review usually completes within 24 business hours. Results (approval or rejection) are delivered via the Notifications center and your registered channel.',
   'upload.publishedConfirmGoProfile': 'View my exhibitions',
   'upload.publishedConfirmGoBrowse': 'Browse',
   'upload.existingDraftNotice': 'You have a saved draft.',
@@ -1838,6 +1851,9 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'profile.formInterests': 'Art interests',
   'profile.formLinks': 'Website settings',
   'profile.formLinksHint': 'Enter the URLs of websites where you are active.',
+  'profile.nicknameLockedLabel': 'Nickname (locked)',
+  'profile.nicknameLockedHint': 'Your nickname is tied to your works and cannot be used by others. To change it, please contact us.',
+  'profile.nicknameContactCta': 'Request a nickname change',
   'profile.studentWorksEmpty': 'No group works with student credits yet.',
   'profile.studentWorksHint':
     'Upload as instructor with a group exhibition and credit students on images to list them here.',
@@ -1881,6 +1897,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'onboarding.nicknamePlaceholder': 'Enter a nickname',
   'onboarding.errNicknameShort': 'Please enter at least 2 characters',
   'onboarding.errNicknameLong': 'Please keep it to 20 characters or fewer',
+  'onboarding.errNicknameDuplicate': 'This nickname is already in use',
   'onboarding.back': 'Back',
   'onboarding.next': 'Next',
   'onboarding.uploadPhoto': 'Upload photo',
@@ -1911,6 +1928,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'faq.catUpload': 'Upload',
   'faq.catExhibition': 'Exhibitions',
   'faq.catOther': 'Other',
+  'faq.catNonMemberInvite': 'Non-member invite',
   'faq.q1': 'How do I sign up?',
   'faq.a1':
     'Tap Log in on the home screen to sign up. We support social sign-in (Kakao, Google, Apple) and email sign-up.',
@@ -1928,7 +1946,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
     'To protect copyright, camera photos (with camera metadata in EXIF) may be blocked. Please upload work you created digitally.',
   'faq.q6': 'Can I edit or delete a work?',
   'faq.a6':
-    'Open Profile → Works and use the ⋯ menu on a work to edit or delete. Setting a work to private hides it from the feed only.',
+    'Open Profile → Works and use the ⋯ menu on a work to edit or delete it.',
   'faq.q7': 'How do I create a group exhibition?',
   'faq.a7':
     "When uploading, choose 'Together' to set a group name and add participating artists one by one. Search by name for existing members; for non-members, just enter their name to reserve a spot — once your exhibition is approved, you can send them an invite link directly.",
@@ -1942,7 +1960,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'faq.a10': 'All features of {brand} are currently free to use.',
   'faq.q11': 'How do I invite non-member friends to my group exhibition?',
   'faq.a11':
-    "Once your exhibition passes review, the 'Tell a friend' button on your My page becomes active. Send the link to friends through KakaoTalk, SMS, email, or any channel you usually use — we don't send it for you.",
+    "As soon as you publish, the 'Tell a friend' button appears on your exhibition card. From the review-pending stage, share the link with your friends through KakaoTalk, SMS, email, or any channel you usually use. After signing up, friends can claim their own slot, and the exhibition becomes public automatically once review passes — we don't send the link for you.",
   'faq.q12': "My friend signed up but their work isn't linked.",
   'faq.a12':
     "Right after signup, your friend has to tap their own work card on the 'Find my work' screen for the link to happen. They may have skipped it, or tapped someone else's spot by mistake. Please ask them to check.",
@@ -1966,12 +1984,20 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'contact.categoryPlaceholder': 'Select a topic',
   'contact.placeholderMessage': 'Describe your inquiry',
   'contact.categoryAccount': 'Account',
+  'contact.categoryNicknameChange': 'Nickname change request',
   'contact.categoryUpload': 'Upload / exhibition',
   'contact.categoryReport': 'Report / copyright',
   'contact.categoryPrivacy': 'Personal data access / correction / deletion',
   'contact.categorySuggestion': 'Feedback',
   'contact.categoryBug': 'Bug report',
   'contact.categoryOther': 'Other',
+  'contact.nicknameChangeNoticeTitle': 'Nickname change request',
+  'contact.nicknameChangeNoticeBody': 'We will reply only to the email used at signup. Tell us your new nickname and our team will review and apply the change.',
+  'contact.nicknameNewLabel': 'New nickname',
+  'contact.nicknameNewPlaceholder': '2–20 chars, not in use by others',
+  'contact.nicknameReasonLabel': 'Reason (optional)',
+  'contact.nicknameReasonPlaceholder': 'Typo, name change, etc.',
+  'contact.errNicknameDuplicate': 'This nickname is already in use',
   'contact.attachments': 'Attachments',
   'contact.fileTooLarge': 'File size must be 5MB or less.',
   'contact.attachHint': 'Max 3 files, 5MB each',
@@ -2106,7 +2132,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'signup.agreePrivacy': 'Privacy policy',
   'signup.agreeAge': 'I am 14 years or older',
   'signup.ageRestrictionLead':
-    'Artier does not allow accounts for users under 14 (consumer protection and related regulations).',
+    'Artier does not allow accounts for users under 14 (in compliance with related regulations).',
   'signup.agreeMarketing': 'Receive marketing messages',
   'signup.agreeMarketingHint': "We'll use whichever channel you have — email, KakaoTalk, or SMS.",
   'events.badge': 'EVENT',
@@ -2174,7 +2200,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'profile.filterGroup': 'Group',
   'profile.filterOnlyMine': 'Uploaded by me only',
   'profile.publishedBannerTitle': 'Your exhibition is published — visible only to you for now',
-  'profile.publishedBannerDesc': 'Our team reviews within 24 hours before it appears on Browse. Watch the status badge; you\u2019ll get a notification when it goes public.',
+  'profile.publishedBannerDesc': 'Our team reviews within 24 business hours (excluding weekends and holidays) before it appears on Browse. Watch the status badge; you\u2019ll get a notification when it goes public.',
   'profile.publishedBannerDismiss': 'Dismiss',
   'profile.uploaderLabel': 'Publisher',
   'profile.deleteWorkConfirm': 'Delete “{title}”?',
@@ -2259,7 +2285,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'report.reasonHelp': 'Looks like someone else\'s work posted as their own. If you have the original source, please include it in the message.',
   'report.otherReasonsHint': "For other concerns (copyright, abuse, explicit content, etc.), please contact us via My page → Help.",
   'report.errOwnWork': "You can't report your own exhibition.",
-  'report.falseReportNotice': 'False reports may result in administrative action. Please report based on facts.',
+  'report.falseReportNotice': 'Please report based on facts. Our team reviews every report.',
   'report.piecePickerLabel': 'Select the work to report',
   'report.piecePickerAria': 'Select work {n}',
   'report.errPieceRequired': 'Please select the work to report.',
@@ -2270,7 +2296,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'report.errWithdrawnArtist': 'This artist has left the service — reports are not accepted.',
   'report.step2Title': 'Report received',
   'report.step2Body':
-    'Our team will review within 24 business hours. Urgent cases required by law are prioritized. False reports may be penalized.',
+    'Our team will review within 24 business hours. Urgent cases required by law are prioritized. Please report based on facts.',
   'report.okClose': 'OK',
   'cookie.title': 'Cookies',
   'cookie.body':
@@ -2328,7 +2354,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'confirm.ok': 'OK',
   'invite.fallbackPieceIndex': 'Piece #{n}',
   'work.unknownArtist': 'Unknown artist',
-  'upload.unknownSlotHint': 'The invited artist disavowed this slot, so it\'s shown as Unknown artist. Keep as-is, or re-assign below.',
+  'upload.unknownSlotHint': 'This slot has been unlinked, so it\'s shown as Unknown artist. Keep as-is, or re-assign below.',
   'upload.unknownSlotReassign': 'Reassign artist',
   'admin.backToApp': 'Back to app',
   'admin.consoleLabel': 'Operations Console',
@@ -2477,7 +2503,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 ## 9. 이 문서가 다루지 않는 것
 
 - 언어 자동 감지·폴백 로직 — `useI18n()` 훅이 단일 진입점이며, 구현 세부는 개발팀 코드 단일 소스.
-- 법무 문구(약관·개인정보) — [Policy §21](Policy_v1.md) 법무 체크포인트 이관.
+- 법무 문구(약관·개인정보) — [§21] 법무 체크포인트 이관.
 - 마케팅 외부 문구 — 본 가이드는 **앱 내부 카피** 한정.
 
 ---
@@ -2486,15 +2512,21 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.11 | 2026-04-30 | PM × Claude | **Policy v2.16 검수 신청 단계 공유 모델 정합** (코드 동시 갱신) — Policy §3 v2.14 → v2.16 라이프사이클 변경에 따른 카피 정정·신규. (1) v2.14 정책 위반 카피 4건 정정 — 업로드 카피 키("초대 문자" → "초대 메시지"), 업로드 카피 키("자동으로 연결됩니다" 약속 폐기 → "Artier가 자동으로 알리지 않아요. 작가님이 직접 카톡·문자로"), 업로드 카피 키("검수 승인 직후 발송돼요" → "작가님이 직접 보내주세요. 지금 바로"), 초대 카피 키("공개되면 알릴 수 있어요" → "검수 통과 후 친구가 가입할 수 있어요"). (2) 초대 카피 키 카피 — 수동 톤("잠시 후 다시 확인해주세요") → 능동 톤("곧 공개될 전시예요. 지금 가입해두시면 통과 즉시 본인 작품을 골라보실 수 있어요"). (3) 초대 카피 키 톤 정정 — "들어왔어요" 공개 가정 → "본인 자리를 등록했어요" 중립 톤. (4) 신규 키 3쌍(ko/en) — 본인 작품 찾기 카피 키(검수 신청 단계 클레임 안내), 검수 카피 키(친구용 배지 hint), 검수 카피 키(검수 통과 시 친구 알림). (5) 초대 공유 메시지 빌더 시그니처 변경 — 토큰 상태(초대 토큰 상태 타입) 인자 추가 → inactive 메시지 분기("{작가}님이 '{전시}' 전시를 신청했어요"). 모두 ko/en 양측 동일 톤 정합. 메모리 규칙(Phase 2 표현 금지 / 디지털 드로잉 시니어) 유지. **본 사이클 후속 정합** — Policy §3 v2.14 토큰 모델로 폐기된 전화 기반 초대 카피 키 9쌍(ko/en 18 entries) 일괄 제거 (카피 키·업로드 카피 키·업로드 카피 키·업로드 카피 키·업로드 카피 키·업로드 카피 키·온보딩 카피 키·온보딩 카피 키·온보딩 카피 키). 온보딩 카피 키를 토큰 모델 톤으로 정정("초대 문자에 기재된 전화번호를 그대로 입력해주세요" → "친구가 보내주신 초대 링크로 오셨어요. 프로필 설정을 마치면 본인 작품을 직접 골라 연결할 수 있어요"). 코드(i18n 사전 모듈)와 정합. **본 사이클 후속 — FAQ Copy ↔ 코드 동기화 누락 보강**: Copy v1.6 이력에 기록되었으나 본문에 누락된 FAQ 카피 키~FAQ 카피 키 + FAQ 카피 키~FAQ 카피 키 8 entries(ko/en 16 entries) 일괄 추가 — Policy §3 v2.14 토큰 모델 정합 FAQ 4문항(친구 초대·자동 연결 안 됨·잘못 연결·만료). 동시에 FAQ 카피 키 옛 문구("이메일로 참여 안내가 자동 발송") → 토큰 모델 신문구("Artier 회원이면 이름을 검색해 바로 연결되고, 회원이 아닌 분은 이름만 입력해 자리를 만들어 두면 검수 통과 후 초대 링크로 직접 알릴 수 있어요")로 ko/en 양측 정정. 코드(messages.ts)가 SSoT 역할을 하며 Copy_v1.md를 따라잡은 형태. **본 사이클 후속 2 — claim.* + 알림 키 동기화 누락 보강**: Copy v1.5 이력에 기록되었으나 본문에 미반영된 본인 작품 찾기 카피 키 키 13쌍(ko/en 26 entries) 일괄 신설 (Policy §3 v2.14 본인 작품 찾기 흐름). 검수 카피 키 ko/en 추가(Copy v1.6에 기록됐던 키, Copy 본문에서 누락). 폐기 키 3종 ko/en 잔재 일괄 제거(초대 카피 키·초대 카피 키·초대 카피 키 — v1.5 사이클에서 코드는 이미 제거됐지만 Copy 잔재). 모두 코드(messages.ts)와 정합. **본 사이클 후속 3 — 풀스캔 정합 감사 일괄 동기화**: 코드(messages.ts)를 SSoT로 Copy_v1.md i18n 사전(§6 ko/en) 전체 재생성. 누적 드리프트(매직링크 전환·토큰 모델·작품 단위 문의·verify 콜백·workInquiry 등)가 일괄 해소됨 — 누락 추가 147+149쌍, 폐기 잔재 제거 205쌍, 값 불일치 28+25쌍 정정. 결과: ko/en 1039 키 양측 모두 코드와 100% 키·값 일치. 파일 -5,441 bytes. **본 사이클 후속 4 — 헤더 라벨 정합**: 제목 "· v1" → "· v1.11" (다른 5문서와 형식 일관). 작성일·최종 갱신·버전 필드 신설 (Policy/IA/PRD 형식과 정합). **본 사이클 후속 5 — 인라인 코드 정정**: 본문 코드 변수 박힘 정리. §3.1 글자 상한 표의 코드 상수명(제목 글자 상한) 제거(단순 "20자" 표기). §4.1 확인 다이얼로그 섹션 헤더의 함수명("openConfirm") 제거. §6 i18n 사전 진입 안내의 매핑 가이드("koMessages"·"enMessages") → "한국어·영어 i18n 사전 2개"로 평문화. §7.3 Locale 반응성 안내의 hook 함수명(i18n 컨텍스트·저장된 언어 스냅샷 함수) → "i18n 컨텍스트 API"·"스냅샷 함수"로 추상화. 헤더 요약 박스의 매핑 표기("TypeScript") → "코드 i18n 사전" 추상화. 메모리 규칙 본문 정합. |
-| v1.10 | 2026-04-29 | PM × Claude | **UX 카피 톤 위반 14건 일괄 정리** — UX Writing audit 후속. 사용자 노출 알림·토스트·배너의 격식체·행정 어휘를 시니어 친화 친근체로 정합. (1) 검수·신고 알림 7건 — 검수 카피 키(노출됩니다 → 다른 분들이 볼 수 있어요), 검수 카피 키(반려되었어요 → 검수를 통과하지 못했어요), "review.editBannerRejected/Repeated"("반려" 행정 어휘 정정), 검수 카피 키(전시했습니다 → 올렸어요), "report.notifTargetWorkDeleted/Hidden"(되었습니다 → 됐어요), 신고 카피 키(기각 → 받아들여지지 않았어요). (2) 업로드·시스템 토스트 4건 — 업로드 카피 키·"publishedConfirmDescPending"(노출 → 보여요), 초대 카피 키(되었습니다 → 됐어요), 알림 카피 키(선정 → 뽑혔어요). (3) 좋아요 토스트 — 전시 카피 키 격식체 폐기, "좋아요" 단어로 간결화. (4) 메모리 규칙 정합 — 플로우 맵 카피 키(ko/en) "Phase 2" 표현 → "런칭 전 백엔드 연동 후"로 정정(메모리: Phase 2 작업 표현 금지). 모두 사용자 노출 카피로 디지털 드로잉 시니어 페르소나 톤(친근체) 일관 적용. |
-| v1.9 | 2026-04-28 | PM × Claude | **설정 계정 섹션 데모 잔재 정리** — 사용자 모집 직전 노출된 "데모 세션 식별자"·"세션에서 계정을 읽을 수 없습니다" 카피를 폐기. 설정 계정 섹션은 이메일 형식 sub일 때만 노출(이메일 라벨 + 값), email-shape 아니거나 sub 없으면 row 자체 숨김. accountDemoIdLabel·accountEmailUnavailable 2쌍(ko/en) 제거. 모의 세션 검증에 sub 필수 가드 추가. |
-| v1.8 | 2026-04-28 | PM × Claude | **설정 화면 i18n 누락 보강** — 글자 크기 토글 라벨 3쌍(작게·보통·크게 / Small·Default·Large)과 화면 테마 섹션 4쌍(섹션 헤더·인트로·밝게·어둡게 / Theme·Light·Dark) 추가. 사용자 모집 직전 발견된 i18n 키 노출 결함 정합. |
-| v1.7 | 2026-04-28 | PM × Claude | **데드코드 일괄 청소** — (1) 미사용 i18n 키 116쌍(ko+en 232 entries) 제거 — 업로드 카피 키 UI 폐기 흔적 47개(cancelConfirm·contentTools·cover·disclaimer·editMode·errPublish·eventLinked·toolbarPadding·hintEmpty·linkPiece·preview·groupHint·workDetail 등), 작품 상세 카피 키 8개(copyInviteCard·groupLine·kakaoShare·participantCount·instructorUpload·toastInvite 등), 작품 문의 카피 키 5개 카테고리 hint, 설정 카피 키 14개(fontScale·langKo·theme·sectionLang·socialDemoNote 등), 검색 카피 키 9개(suggest1~6·suggestedKeywords), 가입 카피 키 2개, 신고 카피 키 3개, 검수 카피 키 2개, 로그인 카피 키 4개, 초대 카피 키·"sharePublishedToast", 온보딩 카피 키·나중에 카피, 프로필 카피 키·태그된 카피·링크 추가 카피·링크 라벨 placeholder, 이벤트 카피 키·상세 보기 카피, 둘러보기 카피 키 4개, 어드민 카피 키, 푸터 카피 키, 작품 카드 카피 키. (2) shadcn/ui 미사용 26개 컴포넌트 파일 삭제 (accordion·alert·aspect-ratio·breadcrumb·calendar·carousel·collapsible·command·context-menu·form·input-otp·menubar·navigation-menu·pagination·radio-group·resizable·scroll-area·sheet·sidebar·skeleton·slider·sonner·switch·toggle·toggle-group·use-mobile). (3) sanctionStore.ts 모듈 폐기(Phase 2 준비용 0 호출부 — 메모리 규칙 정합). (4) 초안 스토어 hook·정지 스토어 hook 미사용 hook 제거. (5) AdminGuard.tsx 화면 미사용 컴포넌트 제거. (6) 비회원 슬롯 전화번호 필드 필드 + Upload·Profile의 항상 false 분기 일괄 정리(Policy §3 v2.14 토큰 모델 정합). (7) 작품 공유 랜딩의 미사용 커버 이미지 추출 함수 import 정리. |
-| v1.6 | 2026-04-27 | PM × Claude | **시니어 친화 카피 7건 톤 정리** (서비스 논리 감사 후속) — (1) 본인 작품 찾기 카피 키 위협 톤("잘못 선택하면 알림이 갑니다") → 안심 + 회복 경로 명시("잘못 고르셔도 작가님이 풀어주실 수 있어요. 편하게 골라보세요"). (2) 본인 작품 찾기 카피 키 알리는 방법 모호 → 구체화("카톡·문자 등으로 작가님께 말씀해 주세요"). (3) 초대 카피 키 기술 용어("검수 통과 후 활성화") → 평이("공개되면 알릴 수 있어요"). (4) 초대 카피 키 "다시 받으세요" → "새 링크를 부탁해 주세요". (5) 본인 작품 찾기 카피 키 피해자 톤("이미 다른 분이 가져갔어요") → 액션 유도("이 자리는 이미 다른 분이 연결됐어요. 본인 작품이 맞다면 작가님께 말씀해 주세요"). (6) 초대 카피 키 수동태("연결되었어요") → 능동·축하 + 슬롯 풀기 진입점 안내("'{name}' 님이 본인 작품을 골라 '{title}'에 들어왔어요. 잘못 연결됐다면 전시 편집에서 풀 수 있어요"). (7) 온보딩 카피 키 "작가님이 보내주신" → "친구가 보내주신" (가입자 입장 일관). (8) 초대 카피 키 "초대 링크 공유" → "초대 링크 보내기" (CTA 톤 일관). 모두 ko/en 양측 동일 톤 정합. **시스템 정합** — 신고 누적 처리에서 신고 2회 누적으로 자동 비공개될 때 토큰 비활성 처리 동시 호출, 기각 후 복원 처리에서 기각 복원 시 토큰 활성 처리 동시 호출 (Policy §3.4 정합 누수 보강). **Nielsen 휴리스틱 후속 신규 i18n 키 9쌍(ko/en)** — (1) 검수 카피 키 검수 시작 알림(작가에게 발행 직후 1건). (2) 초대 카피 키 토큰 만료 D-N 노출(InviteShareButton 다이얼로그). (3) 본인 작품 찾기 카피 키 카드 1개일 때만 안전 신호 ("아래 작품이 정말 본인이 그린 그림이 맞으면 눌러주세요"). (4) 본인 작품 찾기 카피 키 스킵 후 안심 토스트("마음 바뀌시면 작가님께 카톡 등으로 말씀해 주세요. 새 초대 링크를 다시 받으실 수 있어요"). (5) "profile.nonMemberSlotsLabel/More/Unnamed" 마이페이지 전시 카드 비회원 슬롯 인디케이터 3쌍. (6) FAQ 카피 키+FAQ 카피 키 토큰 모델 FAQ 4쌍 신설(친구 초대·자동 연결 안 됨·잘못 연결·만료) + "faq.q7/a7" 옛 SMS 발송 톤 → 토큰 톤 정정. **잔재 카피 정정** — 플로우 맵 카피 키(?from=invite)·푸터 카피 키·푸터 카피 키 옛 옛 라우트 패턴 URL 흔적을 토큰 모델로 정정 또는 폐기 표기. |
-| v1.5 | 2026-04-27 | PM × Claude | **비회원 초대 토큰 모델 카피 정리** (Policy v2.14 / 단계 4 연동) — 초대 랜딩 신규 카피 6키(초대 카피 키·"landingCta"·"landingBrowse"·"tokenInactive"·"tokenRevoked"·"tokenExpired", ko/en) 신설하여 작가 직접 공유 톤·토큰 상태별 안내·재요청 안내를 통일. 본인 작품 찾기 신규 카피 9키(본인 작품 찾기 카피 키·"findMyWorksWarning"·"thisIsMine"·"notHere"·"confirmTitle"·"confirmBody"·"confirmYes"·"alreadyTaken"·"doneTitle"·"doneBody", ko/en) 신설 — 시니어가 잘못 클릭해도 작가가 풀어줄 수 있다는 안전 신호 + 동시 선택 race 안내. Onboarding step 2의 매칭 후보 yes/no 게이트(InviteClaimCheck 카피)는 토큰 기반 카드 그리드로 교체되어 미사용. **단계 5 미사용 키 일괄 제거** — 한국어/영어 양측에서 33쌍 정리: 초대 카피 키·"notifMemberLinked"·"memberFound*"(6키)·"claimCheck*"(5키)·"linkedReminder*"(2키)·"disavow*"(5키)·"notifDisavowed"·"credited*"(8키)·온보딩 카피 키(4키)·"phoneLabel"·"phoneHint"·"phoneInvitedHint"·"phonePlaceholder"·"doneInviteMatched*"(2키). 신규 1쌍 추가: 알림 카피 키(ko "초대" / en "Invite") — 알림 카테고리 칩에 'invite' 타입 추가. 온보딩 카피 키 카피 재작성("초대 문자에 기재된 전화번호 그대로 입력" → "작가님이 보내주신 초대 링크로 오셨어요. 프로필 설정을 마치면 본인 작품을 직접 골라 연결할 수 있어요"). |
-| v1.4 | 2026-04-27 | PM × Claude | **3 에이전트 풀스캔 후속 결함 정리 (회귀·정책·덜 본 페이지)** — (1) 초대 메시지 유틸 매칭 후보 닉네임 필드 채울 때 존재하지 않는 작품 카피 키 필드 참조 → 실제 전시 작가명 필드으로 정정(이전엔 항상 빈 문자열로 매칭 결과 표시 누수). (2) Policy §26.1 모바일 길게 누르기 시스템 메뉴 차단을 위해 저작권 보호 이미지 컴포넌트에 iOS 콜아웃 비활성 추가(이전엔 텍스트 선택 차단만 박혀 있어 iOS 길게 누르기 저장 메뉴 노출 위험). (3) 1:1 문의(Contact.tsx 화면) 제출 시 이메일 형식 검증 누락 정정(문의 카피 키 ko/en 신설) + JSON 파싱 try/catch 가드 추가(이전엔 손상 JSON에 silent throw). **시드 알림 i18n화** — "Notifications.tsx generateSeedNotifications"의 한글 하드코딩 7건을 신규 키 5종(알림 카피 키·팔로우 시드 알림·Pick 선정 시드 알림·환영 시드 알림·이벤트 활성 시드 알림, ko/en)으로 교체. 알림 타입 타입에 메시지 키 + 메시지 변수 필드 추가, 렌더 시 알림 메시지 변환 함수로 동적 변환. 다국어 정책 위반 잔재 해소. **어드민 한국어 단일 운영 명시** — PRD_Admin §0.2 다국어 항목을 "한국어 단일 운영"으로 정정. 어드민 콘솔의 한글 하드코딩은 정책상 허용. 사용자 화면은 ko/en i18n 의무 유지. |
-| v1.3 | 2026-04-26 | PM × Claude | Policy v2.13 §3.4.1·§3.5.1~2 연결 제안·본인 확인 단계 i18n 9쌍 추가. 헤더·모바일 가입 진입점 라벨 명시화(네비 카피 키 "로그인"→"로그인·가입", 네비 카피 키 비로그인 시 "MY"→"로그인·가입"). 실명 인풋 폐기에 따라 온보딩 카피 키 6키 제거 + 가입·초대 안내 문구의 실명 언급 정리. 비회원 초대 발송 라벨을 "작가 실명"→"작가 이름"으로 단순화. 소셜 가입 후 온보딩 안내 문구에 "닉네임은 방금 적은 그대로 채워뒀어요" 추가. **매직 링크 발송 후 헬프 안내 격상** — 시니어가 메일함에서 인증 메일을 못 찾고 트랩에 갇히는 위험을 낮추기 위해, 발송 후 화면(가입·로그인 양쪽)의 스팸함 한 줄 안내를 헬프 박스로 시각 위계 격상. 신규 키 가입 카피 키("메일이 안 와요?") + 가입 카피 키("보낸 사람에 ‘Artier’가 들어간 메일을 찾으시면 돼요." — 메일함 검색 단서 제공, 발신 도메인은 백엔드 연동 후 확정). 가입 카피 키/로그인 카피 키 카피를 "받은편지함에 없으면 스팸함과 프로모션 탭도 확인" 톤으로 강화. **게스트 헤더 보조 진입점** — 데스크톱 게스트 헤더 우측 영역에 텍스트 링크 네비 카피 키("작가이신가요? 작품 올리기") 신설 → 경로 /login?redirect=/upload. 비로그인 상태에서 사이트의 창작자 측면 가치가 첫 진입 5초 안에 인지되지 않는 누수를 보강(모바일은 하단 네비 [+업로드]가 이미 진입점 수행). **약관 "전체 동의"에서 마케팅 분리** — 가입 카피 키/소셜 가입 카피 키 카피를 "전체 동의 (선택 항목 포함)" → "필수 약관 모두 동의"로 교체하고, 토글 동작도 필수 3종(이용약관·개인정보·14세)만 일괄 처리하도록 변경. 마케팅(선택)은 별도 명시 동의로 유지 — 시니어가 마케팅까지 자동 켜지는 다크 패턴 위험 제거. **닉네임 욕설 검사 시점 이동** — 온보딩 step 2 닉네임 검증에 비속어 검사 검사 합쳐 즉시 인라인 에러로 표시(이전엔 finish 시점 토스트로만 발견되어 4단계 끝까지 진행 후 좌절). **검수 안내 어휘 통일** — 업로드 카피 키 한국어 카피의 "다시 발행하면" → "다시 전시하면"으로 통일(코드 전반에 정리됐던 "전시" 어휘 잔재 정리). **비회원 초대 발송 시점 카피 정정** — 업로드 카피 키의 "전시 생성 시 자동 발송" → "검수 승인 후 자동 발송"(ko/en). 실제 동작은 검수 화면 시점 발송이므로 카피와 일치시켜 시니어가 발행 직후 문자 미수신을 오해하지 않도록 정정. "publishedConfirmInviteNote"("비회원 작가에게는 검수 승인 직후 초대 메시지가 발송돼요")와 톤 일관. **초대 자동 연결 안내 강화** — 온보딩 step 2 폰 입력에 prefill 시 별도 안내(온보딩 카피 키 "초대 받으신 번호로 채워뒀어요. 이 번호 그대로 두셔야 받으신 작품이 자동으로 연결돼요.") 신설(ko/en) — 시니어가 prefill 폰을 무심코 수정해 매칭 실패하는 누수 차단. 본인 확인 후 매칭 성공 시 step 3(완료) 화면에 분기 카피(온보딩 카피 키("받으신 작품 {n}점이 내 갤러리로 옮겨졌어요") · "doneInviteMatchedBody"("마이페이지 → 내 작품 탭에서 바로 확인할 수 있어요")) 신설(ko/en) — "내 작품 어디 갔지?" 좌절을 차단. **마이페이지 "내 작품" 탭 안내 한 줄** — 본인 프로필 활성 'works' 탭 상단에 프로필 카피 키("내가 그린 작품(1점 단위)이 모이는 곳이에요. 초대로 자동 연결된 작품도 함께 보여요. 내가 올린 전시는 ‘전시’ 탭에서 볼 수 있어요.") 신설(ko/en) — Work=전시 / image[i]=작품 도메인 모델이 시니어 멘탈 모델과 미스매치되는 누수 보강(탭 라벨은 그대로 유지하고 캡션으로만 보강). **신고 사유 단일화 안내** — 신고 카피 키("다른 종류의 신고(저작권·욕설·음란 등)는 마이페이지 → 1:1 문의로 알려주세요.") 신설(ko/en). Policy §12.0 단일 카테고리 정책상 사유가 하나뿐인 이유를 명시하고 다른 케이스의 진입점을 안내. **검색 결과 작품 라벨 i18n화** — Search.tsx 화면의 Top results 카드에 "<span>작품</span>" 한글 하드코딩이 잔존하던 것을 둘러보기 카피 키 신설(ko 작품 / en Work)로 정리. 다국어 정책("useI18n().t()" 사용 의무) 위반 잔재 제거. **알림 미확인 카운터 aria-label i18n화** — Notifications.tsx 화면의 "aria-label="{n}개 미확인"" 한글 템플릿 리터럴 하드코딩을 기존 네비 카피 키 키 재사용으로 정리. 시드 알림 메시지 7건의 한글 하드코딩(시드 알림 생성 내부)은 별도 작업 단위로 동적 i18n화 권장. **반려 편집 배너 어휘·도움 진입점** — 검수 카피 키/"editBannerRejectedRepeated"의 "다시 발행" → "다시 전시"(ko) / "re-publish" → "exhibit again"(en) 어휘 통일. 검수 카피 키("잘 모르겠어요? 1:1 문의" / "Not sure what to fix? Contact us") 신설하여 빨간 배너 아래에 1:1 문의 진입점 노출 — 시니어가 반려 사유만 보고 무엇을 고칠지 모르겠을 때 좌절·이탈 차단. **이벤트 중복 참여 시각화** — 이벤트 상세 화면의 참여 버튼이 이미 참여 상태 상태일 때 toast로만 차단하던 것을 비활성 placeholder("이미 참여하셨어요" / "Already participated", 이벤트 카피 키)로 시각화. 시니어가 다시 누르며 혼란하는 누수 차단. **프로필 편집 닉네임 욕설 인라인 검사** — 저장 시점 toast로만 검출하던 것을 입력 시점 인라인 에러로 즉시 노출(프로필 카피 키 재사용). **정합성 정리 ("_planning" ↔ 코드)** — IA §828·§832, PRD_Admin §840·§846 폐기 표기 반영하여 routes.ts 모듈에서 경로 /admin/works(ADM-WRK)·경로 /admin/partners(ADM-PTN) 라우트 + import 제거, WorkManagement.tsx 화면·PartnerArtists.tsx 화면 파일 삭제. AdminLayout 폐기 코멘트 갱신. PRD_User USR-PRF-01 AC-04(타인 프로필 무효 "?tab=" URL 정리) 코드에 반영(replace navigation). Policy §8 "자동 저장 없음" 정책에 맞춰 dead i18n key 업로드 카피 키·업로드 카피 키 4종(ko/en) 제거. Handoff_Signup_Consent_v1.md에 누락됐던 소셜 가입 카피 키 키 명시(코드는 이미 사용 중). **이벤트 정합성 보강** — Policy §25.5(종료된 이벤트 신규 응모 차단)을 코드에 반영: Upload.tsx 화면에서 종료된 이벤트 URL URL 직접 진입 시 "deriveStatus==='ended'" 가드 + 토스트(업로드 카피 키 신설 ko/en) + 경로 /events/:id로 redirect. Policy §25.6(이벤트 삭제 시 응모 cascade)을 이벤트 제거 처리에 추가하여 연결 이벤트 일치인 모든 work를 연결 이벤트 해제로 일괄 정리. **신고 큐 dedup** — PRD_Admin §667 ADM-RPT-01 AC-02((신고자, 대상) 중복 1건만 노출)을 "ReportManagement.mergeReportRows"에 추가, 신고자 ID가 있는 동일 (reporter, targetType, targetId) 조합은 가장 최근 1건만 큐에 노출. **검수 SLA 배지** — PRD_Admin §349 ADM-REV-01 AC-09(검수 대기 24h 경과 시 "시한 초과" 빨강 배지) 신설 — ContentReview.tsx 화면에 1분 tick + 업로드 시각 비교 + 검수 카피 키 신규 키(ko "시한 초과" / en "Overdue"). 영업일 정확 산정은 백엔드 도입 후 정정(현재 캘린더 24h, ReportManagement SLA와 일관). **파트너 트래킹 폐기** (2026-04-26 재결정) — Phase 1에서는 파트너 작가 영입을 운영팀 외부 도구(스프레드시트·CRM)로 처리. PRD_Admin / IA / DELTA에서 ADM-PTN(통합 흔적 포함)·ADM-MBR-01 파트너 필터·ADM-MBR-02 "파트너 트래킹 섹션"·진행률 카드·PARTNER_ARTIST 엔티티·ADM-PTN-01 권한 행을 제거. 사이드바 트리·대시보드 입력 카드도 정리. 카피 영향 없음(파트너 관련 i18n 키 미사용). **기획전 다수화** — Policy §15.1·§15.4("개수 제한 없음, 주제·맥락 단위") 코드 반영. 큐레이션 스토어를 "theme: ThemeExhibition \| null" → "themes: ThemeExhibition[]"로 리팩토링, 기획전 타입에 ID 추가. 메서드 기획전 추가/기획전 수정/기획전 제거/기획전 조회로 교체. localStorage 마이그레이션(legacy 단일 theme → 배열 1건). feedOrdering.ts 모듈는 모든 themes의 작품 ID 목록 union을 themed 버킷에 할당. CurationManagement.tsx 화면를 다수 운영 UI(리스트 + 인라인 수정 + 삭제 + 추가 폼)로 재작성. 카피 영향 없음(어드민 한국어 단일 운영). **파트너 트래킹·ADM-WRK 잔재 일괄 정리** — 이전 폐기 결정 후 코드·문서에 흩어진 잔재를 일괄 제거. (i18n) 어드민 카피 키·푸터 카피 키·어드민 카피 키·푸터 카피 키 4쌍(ko/en) 제거. (코드) QaScreenShortcuts.tsx 화면의 경로 /admin/partners·경로 /admin/works 단축키, AdminDashboard.tsx 화면의 파트너 카드·작품 카드·단계별 파트너 카운트·총 작품 수 계산, 파트너 스토어 hook·파트너 스토어·파트너 작가 시드·파트너 작가 타입 타입·파트너 작가 엔티티 상수 제거. (문서) "CLAUDE.md" localStorage 키 목록의 단말 보관 키 제거, "_planning/README.md" 화면ID 표의 작품 화면 코드·파트너 화면 코드 행 제거, "_planning/IA_ScreenList_v1.md" USR-EXH-06 경로의 USR-EXH-04 화면 제거(deprecated 일관), "_planning/PRD_Admin_v1.md" §0.4.2 권한 매트릭스 ADM-WRK-01 행 + §177·226·227 cross-ref·§409·475 연결 화면을 ADM-RPT-01로 정정. **i18n 잔재 정리** — "Profile.tsx:805" 한글 aria-label "프로필 열기" → 프로필 카피 키 키 신설(ko/en) 사용. ExternalLinksEditor.tsx 화면의 한글 placeholder 6건(나머지 URL/전체 URL) → 프로필 카피 키·프로필 카피 키 키 신설(ko/en) + 컴포넌트 내부 "useI18n" 훅으로 동적 변환. **§32.1 cascade 마이그레이션 잔재 정정** — 미연결 전시 ID 정리가 다수 themes 구조 갱신 후 기획전 배열 가드 가드로 stale state object를 받아도 정리 못 하던 문제 수정. 새 "{ themes: [...], featuredArtistIds: [...] }" 형태에서 기획전 상태 배열을 직접 정리. **§22.5 신고 에스컬레이션 배지** — ReportManagement.tsx 화면에 24h 윈도우 카운트 추가: 같은 작품에 24h 신고 ≥10건이면 빨강 "긴급 24h N건" 배지, 같은 작가에 ≥5건이면 황색 "작가 24h N건" 배지. Phase 1 정책 톤상 자동 처리·정지는 없고 큐 가시성 보강 목적. 1분 tick과 동기. 카피는 어드민 한국어 단일이라 i18n 키 미신설. **엣지 케이스 일괄 보강** — (1) 신고 관리 화면 에스컬레이션 useMemo가 현재 시각 정의 전 참조하던 ReferenceError 핫픽스(시간 tick 상태 state value destructure). (2) Policy §4.4 "탈퇴 후 즉시 재가입 가능" 정합 — 계정 해제 처리 신설 + 계정 탈퇴 처리에서 호출. (3) 매직링크: 다른 계정으로 silent 전환 차단(인증 검증 화면에서 모의 세션 로드 비교). (4) 신고 모달 작품 인덱스 bounds 검증 + 본인 작품 신고 차단(신고 카피 키 ko/en 신설). (5) 기각 후 복원 처리가 pending 신고 남아 있으면 자동 복원 차단. (6) "Notifications.passesPrefs" unknown type을 보수적으로 차단. (7) 생년월일 year 1900~현재 범위 가드(ageCheck.ts 모듈). (8) 큐레이션 화면 중복 title·빈 workIds 차단. (9) Profile disavow 자기 업로드 슬롯 차단(슬롯을 작가 미상으로 강등). (10) 작품 상세 모달 work 사라진 경우 자동 onClose. (11) 탈퇴 작가 작품 like/save 인터랙션 차단. (12) 이벤트 제거 처리 cascade를 동기 localStorage 직접 정리로 race 차단. (13) 스크롤 복원 유틸 clamp(피드 축소 후 OOB 방지). (14) Draft localStorage 손상·quota 안전 처리(백업 키 + 콘솔 경고). **Minor 보강** — (i) 이미지 추출 유틸·커버 이미지 추출 함수가 image undefined/빈 배열일 때 빈 문자열 fallback. (ii) 런칭 체크리스트 카테고리 0건 시 0% (NaN 방지). (iii) 탈퇴 처리 시 Pick 목록에서 본인 작품 일괄 제거 (Policy §15.3 일관). (iv) 회원 관리 화면 잘못된 작가 필터 URL deep link 시 토스트 안내 + URL 정리. (v) 알림 mark-all-read race·신고 dedup empty·Pick max disable·DST·Follow self·검색 1글자·approve 후 edit·worksPublic flip·BannerDnD 1개 edge·외부 링크 https 강제 등 9건은 검증 결과 결함 아님으로 정정. **시드 알림 i18n화** — Notifications.tsx 화면 시드 알림 생성의 한글 하드코딩 7건을 신규 i18n 키 5종(알림 카피 키·팔로우 시드 알림·Pick 선정 시드 알림·환영 시드 알림·이벤트 활성 시드 알림, ko/en)으로 교체. 알림 타입 타입에 메시지 키 + 메시지 변수 필드 추가, 렌더 시 알림 메시지 변환 함수로 동적 변환. 다국어 정책 위반 잔재 해소. **어드민 한국어 단일 운영 명시** — PRD_Admin §0.2 다국어 항목 "KO/EN 공통" → "한국어 단일 운영" 정정(2026-04-27 결정). 어드민 콘솔의 한글 하드코딩은 정책상 허용. 사용자 화면은 ko/en i18n 의무 유지. **이메일 가입 약관 정리** — 가입 카피 키/가입 카피 키 폐기(웹 푸시 미사용·법무 채널 분리 불필요), 단일 가입 카피 키 + "agreeMarketingHint"("이메일·알림톡·문자 중 보유한 채널") 신설. 가입 카피 키("만 14세 이상이에요") 신설하여 이메일·소셜 가입 양쪽 동일 4종 약관(이용약관·개인정보·14세 자기 명시·마케팅) 정합. 매직 링크 발송 화면에 자동 흐름 안내(가입 카피 키) 신설. 온보딩 안내에 이메일 가입자용 키(온보딩 카피 키) 신설 — 닉네임 중복 입력 인지 부담을 소셜·이메일 양쪽 모두 동일하게 해소. |
-| v1.2 | 2026-04-21 | PM × Claude | **§6 사전 부분 동기화 — 매직 링크 관련 키 정렬** — "refStub.tplResetSubject/Body"·비밀번호 변경 메일 템플릿 4키 제거(§2.5 매직 링크 도입으로 비번 개념 폐기) → 로그인 링크 메일 템플릿로 대체(가입 인증은 기존 인증 링크 메일 템플릿 그대로 유지). "refStub.tplTitle/Lead"의 PRD 10종 → 9종으로 갱신, "비밀번호 재설정·변경 템플릿은 §2.5 매직 링크 전환으로 폐기되었습니다" 명시(ko/en). 신규 카테고리 키 문의 카피 키("개인정보 열람·정정·삭제 요청") 추가 — Policy §30·USR-INF-07 연동(ko/en). |
-| v1.1 | 2026-04-21 | PM × Claude | 이메일 인증 매직 링크 전환 반영(Policy §2.5 v2.8) — 온보딩 카피 키 문구를 "비밀번호 재설정" → "로그인·가입 인증 링크" 수신으로 교체(ko/en). "faq.q2/a2"를 "비밀번호 찾기" → "로그인 링크 메일이 오지 않을 때"(스팸함·재전송·30분 TTL 안내)로 재작성(ko/en). §6 한국어·영어 사전의 비번 관련 블록(로그인 카피 키·가입 카피 키·"passwordReset.*"·"passwordResetDemo.*"·설정 카피 키·설정 카피 키·카피 키·카피 키·카피 키·참조 스텁 카피 키·참조 스텁 카피 키·카피 키)과 신규 매직 링크 키(가입 카피 키·가입 카피 키·로그인 카피 키·로그인 카피 키·인증 카피 키·설정 카피 키·카피 키 등)는 실제 구현 기준 i18n 사전 모듈와 ongoing sync(본 문서 §6 사전은 후속 일괄 스냅샷 갱신 예정). |
+| v1.11 | 2026-04-30 | PM × Claude | **검수 SLA 표현 정확화** — "주말·공휴일을 빼고 24시간 안에" / "within 24 business hours". **매직 링크 전환 잔재 정정** — 옛 비밀번호 재설정·변경 템플릿 2건 제거, 매직 링크 가입/로그인 템플릿 신설. 탈퇴 "비밀번호 확인" → "동의 체크박스". **검수 신청 단계 공유 모델 정합** (Policy §3) — 옛 자동 발송 약속 카피 정정(작가 직접 발송 안내). inactive 단계 능동 톤 카피("곧 공개될 전시예요. 지금 가입해두시면 통과 즉시 본인 작품을 골라보실 수 있어요"). 친구 클레임 톤 정정 — "들어왔어요" → "본인 자리를 등록했어요". 신규 카피 3쌍 ko/en (검수 신청 단계 클레임 안내·친구용 배지 hint·검수 통과 시 친구 알림). 초대 공유 메시지에 inactive 분기. **토큰 모델 정합** — 옛 전화 기반 초대 카피 9쌍 제거. 온보딩 카피 톤 정정. FAQ 4문항(친구 초대·자동 연결 안 됨·잘못 연결·만료) ko/en 신설. 본인 작품 찾기 흐름 신규 카피 13쌍 추가. **닉네임 정책 카피 정합** — Settings 닉네임 readonly 라벨·안내·1:1 문의 진입 CTA, 가입 단계 중복 에러, 1:1 문의 "닉네임 변경 신청" 카테고리 안내 ko/en 신설. Policy 교차 링크 `[§n](Policy_v1.md#…)` 단축·§9·§21 앵커 보강·알림 타입 절 참조 §3.5.5(폐기)→§3.5·§16.3 정정. **FAQ Q6 콘텐츠 결함 정정** — Phase 1엔 없는 회원용 비공개 토글을 약속하던 "비공개로 전환하면 피드에서만 숨길 수 있어요" / "Setting a work to private hides it from the feed only" ko/en 삭제. **Footer DPO ko/en SSoT 정합** — `footer.privacyOfficerValue` ko/en이 서로 다른 인물(카테 vs Jo Ga-young)을 가리키던 결함 → ko를 영문과 동일 인물(조가영)로 정정. |
+| v1.10 | 2026-04-29 | PM × Claude | **UX 카피 톤 일괄 정리** — 사용자 노출 알림·토스트·배너의 격식체·행정 어휘를 시니어 친화 친근체로 정합. 검수·신고 알림(노출됩니다 → 다른 분들이 볼 수 있어요·반려되었어요 → 검수를 통과하지 못했어요·전시했습니다 → 올렸어요·기각 → 받아들여지지 않았어요), 업로드·시스템 토스트(되었습니다 → 됐어요·선정 → 뽑혔어요), 좋아요 토스트 간결화. |
+| v1.9 | 2026-04-28 | PM × Claude | **설정 계정 섹션 데모 잔재 정리** — "데모 세션 식별자"·"세션에서 계정을 읽을 수 없습니다" 카피 폐기. 설정 계정 섹션은 이메일 형식일 때만 노출, 아니면 행 자체 숨김. |
+| v1.8 | 2026-04-28 | PM × Claude | **설정 화면 i18n 누락 보강** — 글자 크기 토글 라벨 3쌍(작게·보통·크게)과 화면 테마 섹션 4쌍(섹션 헤더·인트로·밝게·어둡게) ko/en 추가. |
+| v1.6 | 2026-04-27 | PM × Claude | **시니어 친화 카피 톤 정리** — 본인 작품 찾기 카피 위협 톤 → 안심 + 회복 경로 안내, 알리는 방법 구체화(카톡·문자 등), 기술 용어 평이화("검수 통과 후 활성화" → "공개되면 알릴 수 있어요"), 피해자 톤 → 액션 유도, 수동태 → 능동, 가입자 입장 일관(작가님 → 친구), CTA 일관("공유" → "보내기"). **신규 i18n 키 9쌍(ko/en)** — 검수 시작 알림·토큰 만료 D-N 노출·본인 작품 찾기 안전 신호·스킵 후 안심 토스트·마이페이지 비회원 슬롯 인디케이터·토큰 모델 FAQ 4쌍 + 옛 SMS 발송 톤 정정. |
+| v1.5 | 2026-04-27 | PM × Claude | **비회원 초대 토큰 모델 카피** — 초대 랜딩 신규 카피 6키 ko/en(작가 직접 공유 톤·토큰 상태별 안내·재요청 안내). 본인 작품 찾기 신규 카피 9키 ko/en(잘못 클릭해도 작가가 풀어줄 수 있다는 안전 신호·동시 선택 race 안내). 알림 카테고리 칩에 "초대" 타입 추가. |
+| v1.4 | 2026-04-27 | PM × Claude | **매직 링크 발송 헬프 안내 격상** — 스팸함 안내를 헬프 박스로, 신규 키 "메일이 안 와요?" + 검색 단서. **게스트 헤더 보조 진입점** — 데스크톱 게스트 헤더 우측에 "작가이신가요? 작품 올리기" 텍스트 링크 신설. **약관 마케팅 분리** — "전체 동의" → "필수 약관 모두 동의", 마케팅은 별도 명시 동의. **닉네임 욕설 검사 시점** — 온보딩 step 2에 즉시 인라인 에러. **검수 안내 어휘 통일** — "다시 발행" → "다시 전시". **비회원 초대 발송 시점 카피** — "전시 생성 시 자동 발송" → "검수 승인 후 자동 발송"(ko/en). **신고 사유 단일화 안내** — "다른 종류 신고는 1:1 문의로" 가이드 신설(Policy §12.0). **이벤트 중복 참여 시각화** — 비활성 placeholder. **반려 편집 배너 도움 진입점** — "잘 모르겠어요? 1:1 문의" 신설. **이벤트 정합성** — Policy §25.5·§25.6 코드 반영. **신고 큐 dedup** — (신고자, 대상) 동일 조합 1건만 노출(ADM-RPT-01 AC-02). **검수 SLA 배지** — 검수 대기 24h 경과 시 "시한 초과" 빨강 배지(ADM-REV-01 AC-09). **신고 에스컬레이션 배지** — 24h 같은 작품 ≥10건 빨강·같은 작가 ≥5건 황색 배지(Policy §22.5). **파트너 트래킹 폐기** — Phase 1 파트너 작가 영입은 운영팀 외부 도구로 처리. **기획전 다수화** — 개수 제한 없음·주제·맥락 단위(Policy §15.1·§15.4). **이메일 가입 약관 정리** — 이메일·푸시 분리 폐기 → 단일 마케팅 동의. "만 14세 이상이에요" 신설하여 이메일·소셜 양쪽 동일 4종 정합. **시드 알림 i18n화** — 신규 키 5종(팔로우·Pick 선정·환영·이벤트 활성, ko/en). **어드민 한국어 단일 운영 명시**. |
+| v1.3 | 2026-04-26 | PM × Claude | 연결 제안·본인 확인 단계 카피 9쌍 ko/en 추가(Policy §3.4.1·§3.5.1). 헤더·모바일 가입 진입점 라벨 "로그인" → "로그인·가입"으로 통일. 실명 입력 폐기에 따라 온보딩 안내 6쌍 제거 + 가입·초대 안내의 실명 언급 정리. 비회원 초대 발송 라벨 "작가 실명" → "작가 이름". 소셜 가입 후 온보딩 안내에 "닉네임은 방금 적은 그대로 채워뒀어요" 추가. **마이페이지 "내 작품" 탭 안내 한 줄** — 본인 프로필 활성 'works' 탭 상단에 "내가 그린 작품(1점 단위)이 모이는 곳이에요. 초대로 자동 연결된 작품도 함께 보여요. 내가 올린 전시는 '전시' 탭에서 볼 수 있어요." 신설(ko/en). **초대 자동 연결 안내 강화** — 온보딩 step 2 폰 prefill 시 별도 안내 + step 3(완료) 화면에 매칭 성공 분기 카피 신설(ko/en). |
+| v1.2 | 2026-04-21 | PM × Claude | 매직 링크 전환 정합 — 비밀번호 재설정·변경 메일 템플릿 4키 ko/en 제거, 로그인 링크 메일 템플릿로 대체. 1:1 문의 카테고리에 "개인정보 열람·정정·삭제 요청" 추가 ko/en (Policy §30 연동). |
+| v1.1 | 2026-04-21 | PM × Claude | 이메일 인증 매직 링크 전환 카피 정합 — 온보딩 안내 "비밀번호 재설정" → "로그인·가입 인증 링크" 수신으로 교체 ko/en. FAQ "비밀번호 찾기" → "로그인 링크 메일이 오지 않을 때"(스팸함·재전송·30분 TTL 안내)로 재작성 ko/en. |
 | v1.0 | 2026-04-20 | PM × Claude | Copy_v1.md 신설 — Voice·Tone, 용어, 카피 구조 규칙, 패턴별 템플릿(확인·에러·빈상태·알림·토스트·로딩), 시니어 친화 6원칙, 전체 i18n 사전(ko/en 2,170 키), i18n 기술 규칙, 변경 워크플로우. |
+
+<!-- 인용 정의 -->
+[§5]: Policy_v1.md#5-용어-정책
+[§9]: Policy_v1.md#9-작품명전시명그룹명-정책
+[§3.5]: Policy_v1.md#35-잘못-연결됐을-때
+[§16.3]: Policy_v1.md#163-검색-스코어링-usr-src-01
+[§21]: Policy_v1.md#21-법무-체크포인트

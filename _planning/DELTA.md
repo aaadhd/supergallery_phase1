@@ -31,7 +31,7 @@ PM 문서의 코드 변수·구현 세부 인라인 백틱 표기 일괄 정정.
 **보존 결정** (PM 결정·표준):
 - 라우트 정의(경로 /auth/verify·초대 토큰 URL·반려 필터 URL):
   사용자 가시 URL은 PM 결정.
-- 카테고리·알림 enum 표(USR-INF-07 7종·USR-NTF-01 7종): PM 정의 enum 명세표.
+- 카테고리·알림 enum 표(USR-INF-07 8종·USR-NTF-01 7종): PM 정의 enum 명세표.
 - 검수 상태 배지 매트릭스(IA USR-PRF-05): 상태 코드 ↔ UX 매핑 명세.
 - 문서 이력 테이블: 과거 변경 traceability 목적상 코드명 보존(컨벤션).
 - 상위 요약 박스: 최근 사이클 변경 추적용(history 행 미러).
@@ -252,7 +252,7 @@ final audit 15건 잔재 (모두 file 참조·history·spec table 형식 — 의
 - **sanctionStore.ts 모듈 폐기** — Phase 1 정책(§12.3 사용자 제재 Phase 2 이관)상 호출부 0건 + 메모리 규칙 정합.
 - **AdminGuard.tsx 화면 폐기** — import 0건.
 - **초안 스토어 hook·정지 스토어 hook hook export 제거** — 대응 store는 활발히 사용중이나 hook은 0건.
-- **비회원 슬롯 전화번호 필드 필드 + 죽은 분기 정리** — Policy §3 v2.14 토큰 모델 정합. data.ts 타입에서 내부 식별자 제거, Upload·Profile의 항상 false 분기 단순화, Draft 타입의 nonMemberArtist도 displayName만.
+- **비회원 슬롯 전화번호 필드 + 죽은 분기 정리** — Policy §3 v2.14 토큰 모델 정합. 내부 식별자 제거, Upload·Profile의 항상 false 분기 단순화, Draft 타입의 비회원 슬롯도 표시명만.
 - **작품 공유 랜딩의 미사용 커버 이미지 추출 함수 import 정리.**
 
 검증: tsc --noEmit 0 errors, npm run build 통과.
@@ -283,7 +283,7 @@ final audit 15건 잔재 (모두 file 참조·history·spec table 형식 — 의
 - 정합성 감사 후속(직전 사이클 커밋) — 작가 탈퇴 시 토큰 revoke 누락 보강(계정 탈퇴 처리), Policy §32 cascade 표 11번 항목 추가, CLAUDE.md sessionStorage 키 단말 보관 키 명시 + 단말 보관 키 활성/폐기 중복 정정.
 - 실행 검증 후속(직전 사이클 커밋) — Playwright 직접 클릭 검증 중 발견된 라우팅 버그 fix(전시 라우트 컴포넌트가 초대 토큰 URL 인식 안하던 회귀, Browse fallthrough 상태였음). 타입 검증 명령 9 errors → 0 (Onboarding 내부 식별자 시그니처·Upload 내부 식별자 스코프·AuthVerify 카피 키→카피 키·orphan 다국어 키·curationStore implicit any). 죽은 SMS 발송 확인 모달 + 다국어 키 4쌍 일괄 제거.
 - Nielsen 휴리스틱 fix — 시니어 친화 카피 8건 톤 정리 (위협→안심·"활성화"→"공개되면 알림"·"다시 받아주세요"→"새 링크 부탁"·피해자톤→액션 유도·수동→능동·"작가님"→"친구"·"공유"→"보내기"). Nielsen P3 신규 다국어 키 9쌍(검수 카피 키 검수 시작 알림 / 초대 카피 키 토큰 만료 D-N / 본인 작품 찾기 카피 키 카드 1개 안전 신호 / 본인 작품 찾기 카피 키 스킵 안심 토스트 / 비회원 슬롯 라벨 카피 키 마이페이지 비회원 슬롯 인디케이터 / FAQ 카피 키 토큰 모델 FAQ 4건 + FAQ 카피 키 옛 SMS 톤 정정). 시스템 정합 — 신고 누적 처리에서 자동 비공개 시 토큰 비활성 처리, 기각 후 복원 처리에서 기각 복원 시 토큰 활성 처리 자동 호출 (Policy §3.4 / §32 정합).
-- 잔재 정리 — 플로우 맵 카피 키·푸터 카피 키·푸터 카피 키 옛 옛 라우트 패턴 URL 흔적 정정 또는 폐기. QaScreenShortcuts에서 옛 참여 URL 단축키 제거. ExhibitionWorkShareLanding 코멘트 정합 보정.
+- 잔재 정리 — 플로우 맵·푸터의 옛 라우트 패턴 URL 흔적 정정 또는 폐기. QA 단축키 화면에서 옛 참여 URL 단축키 제거. 작품 공유 랜딩 코멘트 정합 보정.
 - HTML 화면 스펙 v1.3 갱신(`_planning/_screen_specs/Artier_Screen_Spec_v1.html`) — USR-AUT-10b·USR-EXH-03 카피 동기화, USR-UPL-08 deprecated 표기, 04-B 자동 비공개 분기 추가, History v1.3 행 신설.
 
 ---
