@@ -288,17 +288,17 @@ ko/en 양측 동일 톤.
 
 <!-- 인용 정의 -->
 [Copy_v1.md]: Copy_v1.md
-[Policy §1]: Policy_v1.md#1-알림-채널-정책
-[Policy §1.1]: Policy_v1.md#11-채널-라우팅
-[Policy §21.1 L-4]: Policy_v1.md#211-검토-필요-문서-4종
-[Policy §1.2]: Policy_v1.md#12-phase-1-구현-상태
-[Policy §22.1]: Policy_v1.md#221-검수-sla
-[Policy §22.2]: Policy_v1.md#222-신고-sla
-[Policy §3.3]: Policy_v1.md#33-자동-연결-후-알림과-동시-선택
-[Policy §23.2]: Policy_v1.md#232-검수-상태-전환
-[Policy §12.2]: Policy_v1.md#122-2회-신고-자동-비공개
-[Policy §3]: Policy_v1.md#3-비회원-초대-정책
-[Policy §3.5]: Policy_v1.md#35-잘못-연결됐을-때
+[Policy §1]: Policy_v1.md#policy-1
+[Policy §1.1]: Policy_v1.md#policy-1-1
+[Policy §21.1 L-4]: Policy_v1.md#policy-21-1
+[Policy §1.2]: Policy_v1.md#policy-1-2
+[Policy §22.1]: Policy_v1.md#policy-22-1
+[Policy §22.2]: Policy_v1.md#policy-22-2
+[Policy §3.3]: Policy_v1.md#policy-3-3
+[Policy §23.2]: Policy_v1.md#policy-23-2
+[Policy §12.2]: Policy_v1.md#policy-12-2
+[Policy §3]: Policy_v1.md#policy-3
+[Policy §3.5]: Policy_v1.md#policy-3-5
 [Handoff_Privacy §12]: Handoff_Privacy_v1.md#12-개정-통지
 [Handoff_LegalReview_Checklist §3 LP-9]: Handoff_LegalReview_Checklist_v1.md#lp-9-광고마케팅-수신-동의-로그-보관
 [Handoff_LegalReview_Checklist §3 LP-6]: Handoff_LegalReview_Checklist_v1.md#lp-6-신고-처리-3액션의-사용자-고지-문구-통일

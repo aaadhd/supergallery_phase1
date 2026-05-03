@@ -219,9 +219,9 @@
 [Copy_v1.md]: Copy_v1.md
 [Handoff_Terms_v1.md]: Handoff_Terms_v1.md
 [Handoff_Privacy_v1.md]: Handoff_Privacy_v1.md
-[Policy §2.2]: Policy_v1.md#22-만-14세-검증
-[Policy §1]: Policy_v1.md#1-알림-채널-정책
-[§21.1 L-4]: Policy_v1.md#211-검토-필요-문서-4종
-[Policy §1.1]: Policy_v1.md#11-채널-라우팅
-[Policy §2.1]: Policy_v1.md#21-가입-옵션과-필수-수집-정보-region-분기-폐기
+[Policy §2.2]: Policy_v1.md#policy-2-2
+[Policy §1]: Policy_v1.md#policy-1
+[§21.1 L-4]: Policy_v1.md#policy-21-1
+[Policy §1.1]: Policy_v1.md#policy-1-1
+[Policy §2.1]: Policy_v1.md#policy-2-1
 [Handoff_LegalReview_Checklist_v1.md]: Handoff_LegalReview_Checklist_v1.md

@@ -2525,8 +2525,8 @@ export function translate(locale: Locale, key: MessageKey): string {
 | v1.0 | 2026-04-20 | PM × Claude | Copy_v1.md 신설 — Voice·Tone, 용어, 카피 구조 규칙, 패턴별 템플릿(확인·에러·빈상태·알림·토스트·로딩), 시니어 친화 6원칙, 전체 i18n 사전(ko/en 2,170 키), i18n 기술 규칙, 변경 워크플로우. |
 
 <!-- 인용 정의 -->
-[§5]: Policy_v1.md#5-용어-정책
-[§9]: Policy_v1.md#9-작품명전시명그룹명-정책
-[§3.5]: Policy_v1.md#35-잘못-연결됐을-때
-[§16.3]: Policy_v1.md#163-검색-스코어링-usr-src-01
-[§21]: Policy_v1.md#21-법무-체크포인트
+[§5]: Policy_v1.md#policy-5
+[§9]: Policy_v1.md#policy-9
+[§3.5]: Policy_v1.md#policy-3-5
+[§16.3]: Policy_v1.md#policy-16-3
+[§21]: Policy_v1.md#policy-21

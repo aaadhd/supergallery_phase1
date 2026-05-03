@@ -188,14 +188,14 @@
 
 <!-- 인용 정의 -->
 [Copy_v1.md]: Copy_v1.md
-[Policy §30]: Policy_v1.md#30-개인정보-열람정정삭제-요청-정책
-[Policy §33]: Policy_v1.md#33-작품-단위-운영팀-문의-정책
-[Policy §4.4]: Policy_v1.md#44-재가입
-[Policy §30.0]: Policy_v1.md#300-문의-채널-sla-통합-정리-참고
-[Policy §30.3]: Policy_v1.md#303-처리-기한-sla
-[Policy §30.4]: Policy_v1.md#304-본인-확인
-[Policy §22.2]: Policy_v1.md#222-신고-sla
+[Policy §30]: Policy_v1.md#policy-30
+[Policy §33]: Policy_v1.md#policy-33
+[Policy §4.4]: Policy_v1.md#policy-4-4
+[Policy §30.0]: Policy_v1.md#policy-30-0
+[Policy §30.3]: Policy_v1.md#policy-30-3
+[Policy §30.4]: Policy_v1.md#policy-30-4
+[Policy §22.2]: Policy_v1.md#policy-22-2
 [PRD_User_v1.md]: PRD_User_v1.md
 [ADM-INQ-01]: PRD_Admin_v1.md#adm-inq-01--문의함
 [Handoff_LegalReview_Checklist §3 LP-7]: Handoff_LegalReview_Checklist_v1.md#lp-7-데이터-내보내기삭제-요청-개인정보보호법gdpr
-[Policy §22.7]: Policy_v1.md#227-운영자-감사-로그-원칙
+[Policy §22.7]: Policy_v1.md#policy-22-7

@@ -185,10 +185,10 @@ PC 와이어프레임 HTML은 **정책·화면의 원문 단일 소스가 아니
 - 사업자 정보 11종은 [Handoff_LegalReview_Checklist §2]와 1:1 매핑
 
 <!-- 인용 정의 -->
-[Policy §2.5]: Policy_v1.md#25-이메일-인증-링크매직-링크--가입로그인
-[Policy §12.3]: Policy_v1.md#123-phase-1-범위-밖-추후-이관
+[Policy §2.5]: Policy_v1.md#policy-2-5
+[Policy §12.3]: Policy_v1.md#policy-12-3
 [USR-PRF-02]: PRD_User_v1.md#usr-prf-02--프로필-편집-모달
-[Policy §4.4]: Policy_v1.md#44-재가입
+[Policy §4.4]: Policy_v1.md#policy-4-4
 [Handoff_LegalReview_Checklist §2]: Handoff_LegalReview_Checklist_v1.md#2-사업자-정보-11종
 ```
 
@@ -561,7 +561,7 @@ CM-<번호>          공통 팝업·다이얼로그
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.10 | 2026-05-02 | PM × Codex | **푸시 경계와 버전 번호 룰 명문화** — `_planning` 내 모든 `.md`의 문서 이력은 원격 푸시 전 같은 행에 append, 푸시 후 다음 수정부터 다음 버전. **「주제별 연쇄 갱신 번들」** — 수정 시 연관 Policy·PRD·IA·Copy·핸드오프·HTML을 한 작업 범위에서 묶어 갱신. **SSoT 분담 명문화** — 정책 수치 = Policy §20, UI 사양 수치 = PRD_User §0.4.2, N종 열거 라벨 = Policy 캐노니컬 §, 프로필 옵션 = PRD USR-PRF-02, 알림 7종 = PRD USR-NTF-01. **운영 원칙** — (a) 수치 인용 룰. (b) Copy ↔ 코드: `Copy_v1.md`가 엄격 SSoT, Copy 먼저 → 코드. **닉네임 정책 SSoT 행 신설** — PRD USR-PRF-02. **번들 표 정정** — 초대·토큰 행의 오표기 `§12.2` 제거 → USR-AUT-10b 및 PRD §12 사용자 플로우 요약으로 명시. **PRD 기본 SSoT·Policy 정책-only** — `_planning` 상호 정합 절을 개정: 화면·AC·플로우 원문은 PRD 우선, Policy는 정책·수치 캐노니컬+경로 참조. 충돌 해소 2분기(구현 vs 정책). 충돌 방지 표에 화면 명세 행 추가. **잔여 정합** — `Handoff_FAQ_v1.md` 목록 설명 FAQ **14문항**, 「라이브 규칙」에 수치 출처 하위 불릿, `Handoff_UserInfo_Contact_v1.md` 문의 카테고리 **8종** 전면 반영. |
+| v1.10 | 2026-05-02 | PM × Codex | **푸시 경계와 버전 번호 룰 명문화** — `_planning` 내 모든 `.md`의 문서 이력은 원격 푸시 전 같은 행에 append, 푸시 후 다음 수정부터 다음 버전. **「주제별 연쇄 갱신 번들」** — 수정 시 연관 Policy·PRD·IA·Copy·핸드오프·HTML을 한 작업 범위에서 묶어 갱신. **SSoT 분담 명문화** — 정책 수치 = Policy §20, UI 사양 수치 = PRD_User §0.4.2, N종 열거 라벨 = Policy 캐노니컬 §, 프로필 옵션 = PRD USR-PRF-02, 알림 7종 = PRD USR-NTF-01. **운영 원칙** — (a) 수치 인용 룰. (b) Copy ↔ 코드: `Copy_v1.md`가 엄격 SSoT, Copy 먼저 → 코드. **닉네임 정책 SSoT 행 신설** — PRD USR-PRF-02. **번들 표 정정** — 초대·토큰 행의 오표기 `§12.2` 제거 → USR-AUT-10b 및 PRD §12 사용자 플로우 요약으로 명시. **PRD 기본 SSoT·Policy 정책-only** — `_planning` 상호 정합 절을 개정: 화면·AC·플로우 원문은 PRD 우선, Policy는 정책·수치 캐노니컬+경로 참조. 충돌 해소 2분기(구현 vs 정책). 충돌 방지 표에 화면 명세 행 추가. **잔여 정합** — `Handoff_FAQ_v1.md` 목록 설명 FAQ **14문항**, 「라이브 규칙」에 수치 출처 하위 불릿, `Handoff_UserInfo_Contact_v1.md` 문의 카테고리 **8종** 전면 반영. **Policy 인용 고정 앵커** — 제목 슬러그 대신 `Policy_v1.md#policy-*`로 타 문서 인용 링크 통일. |
 | v1.6 | 2026-05-01 | PM × Claude | **「용어 사전」 섹션 신설** — 사용자·역할·콘텐츠·검수 5상태·업로드 유형·큐레이션·사용자 행동·가입·인증·비회원 초대 8개 카테고리 표준어. 새 문서·카피·기획 변경 시 본 사전을 먼저 확인하는 운영 룰. |
 | v1.5 | 2026-05-01 | PM × Claude | **화면 스펙 HTML 등록** — `_screen_specs/Artier_Screen_Spec_v1.html`을 「기획 문서 목록」에 추가. **법무 검토용 체크리스트 등록** — `Handoff_LegalReview_Checklist_v1.md`를 「기획 문서 목록」에 추가. **핸드오프 신규 2종** — `Handoff_Onboarding_v1.md`(가입 후 4단계 + claim 흐름) · `Handoff_Notifications_v1.md`(인박스 + 검수·신고·Pick·초대 알림 + 채널 라우팅 매트릭스). |
 | v1.4 | 2026-04-26 | PM × Claude | 핸드오프 문서 체계 보강 — `Handoff_*` 7종(가입 동의/약관/개인정보/푸터/FAQ/서비스 소개/사용자정보·문의) 추가. 일반 UI 원고의 단일 소스를 `Copy_v1.md`로 고정. 약관·개인정보는 `Handoff_Terms_v1.md`·`Handoff_Privacy_v1.md`로 분리. |
@@ -583,7 +583,7 @@ CM-<번호>          공통 팝업·다이얼로그
 [IA_ScreenList_v1.md]: IA_ScreenList_v1.md
 [IA_ScreenList §1]: IA_ScreenList_v1.md#1-화면-id-체계
 [Policy_v1.md]: Policy_v1.md
-[Policy §1.1]: Policy_v1.md#11-채널-라우팅
+[Policy §1.1]: Policy_v1.md#policy-1-1
 [PRD_User_v1.md]: PRD_User_v1.md
 [PRD_User §0.4.4]: PRD_User_v1.md#044-접근성시니어-친화-ui-사양-ssot
 [PRD_Admin_v1.md]: PRD_Admin_v1.md

@@ -317,20 +317,20 @@ EU 거주 사용자에 대해서는 **분석 쿠키 기본 비활성** 정책을
 | v1 | 2026-04-26 | PM | 최초 초안 — 5개 섹션(수집·목적·기간·제3자·책임자). |
 
 <!-- 인용 정의 -->
-[Policy §21.0]: Policy_v1.md#210-법무-문서-단계별-마감-운영-가드
-[Policy §31 N-10]: Policy_v1.md#31-런칭-전-미해결-항목
-[Policy §31 N-14]: Policy_v1.md#31-런칭-전-미해결-항목
+[Policy §21.0]: Policy_v1.md#policy-21-0
+[Policy §31 N-10]: Policy_v1.md#policy-31
+[Policy §31 N-14]: Policy_v1.md#policy-31
 [Handoff_Footer_v1.md]: Handoff_Footer_v1.md
-[Policy §2.1]: Policy_v1.md#21-가입-옵션과-필수-수집-정보-region-분기-폐기
-[Policy §1.1]: Policy_v1.md#11-채널-라우팅
-[Policy §3]: Policy_v1.md#3-비회원-초대-정책
-[Policy §2.1.1]: Policy_v1.md#211-거주-국가--자동-수집-안-함
-[Policy §29]: Policy_v1.md#29-쿠키분석-동의-정책
-[Policy §11]: Policy_v1.md#11-카메라-사진-차단-정책
-[Policy §1]: Policy_v1.md#1-알림-채널-정책
-[Policy §4]: Policy_v1.md#4-탈퇴-작가-정책
-[Policy §22.7]: Policy_v1.md#227-운영자-감사-로그-원칙
-[Policy §22.6]: Policy_v1.md#226-운영-데이터-보관-기준
-[Policy §29.3]: Policy_v1.md#293-3자-처리자-목록-phase-1
-[Policy §30]: Policy_v1.md#30-개인정보-열람정정삭제-요청-정책
+[Policy §2.1]: Policy_v1.md#policy-2-1
+[Policy §1.1]: Policy_v1.md#policy-1-1
+[Policy §3]: Policy_v1.md#policy-3
+[Policy §2.1.1]: Policy_v1.md#policy-2-1-1
+[Policy §29]: Policy_v1.md#policy-29
+[Policy §11]: Policy_v1.md#policy-11
+[Policy §1]: Policy_v1.md#policy-1
+[Policy §4]: Policy_v1.md#policy-4
+[Policy §22.7]: Policy_v1.md#policy-22-7
+[Policy §22.6]: Policy_v1.md#policy-22-6
+[Policy §29.3]: Policy_v1.md#policy-29-3
+[Policy §30]: Policy_v1.md#policy-30
 [USR-INF-07]: IA_ScreenList_v1.md#usr-inf-07--문의하기

@@ -197,18 +197,18 @@
 | v1 | 2026-04-26 | PM | 최초 초안 — 5개 조항(목적·정의·이용·저작권·면책). |
 
 <!-- 인용 정의 -->
-[Policy §21.0]: Policy_v1.md#210-법무-문서-단계별-마감-운영-가드
-[Policy §31 N-10]: Policy_v1.md#31-런칭-전-미해결-항목
+[Policy §21.0]: Policy_v1.md#policy-21-0
+[Policy §31 N-10]: Policy_v1.md#policy-31
 [Handoff_Footer_v1.md]: Handoff_Footer_v1.md
-[Policy §1.1]: Policy_v1.md#11-채널-라우팅
-[Policy §2.2]: Policy_v1.md#22-만-14세-검증
-[Policy §27.1]: Policy_v1.md#271-프로필-편집-usr-prf-02
-[Policy §27.2]: Policy_v1.md#272-고정-필드-phase-1
+[Policy §1.1]: Policy_v1.md#policy-1-1
+[Policy §2.2]: Policy_v1.md#policy-2-2
+[Policy §27.1]: Policy_v1.md#policy-27-1
+[Policy §27.2]: Policy_v1.md#policy-27-2
 [USR-INF-07]: IA_ScreenList_v1.md#usr-inf-07--문의하기
-[Policy §3]: Policy_v1.md#3-비회원-초대-정책
-[Policy §26.2]: Policy_v1.md#262-피드상세-이미지-해상도-제한
-[Policy §4]: Policy_v1.md#4-탈퇴-작가-정책
-[Policy §22.1]: Policy_v1.md#221-검수-sla
-[Policy §12]: Policy_v1.md#12-신고모더레이션-정책-phase-1
-[Policy §11]: Policy_v1.md#11-카메라-사진-차단-정책
-[Policy §4.4]: Policy_v1.md#44-재가입
+[Policy §3]: Policy_v1.md#policy-3
+[Policy §26.2]: Policy_v1.md#policy-26-2
+[Policy §4]: Policy_v1.md#policy-4
+[Policy §22.1]: Policy_v1.md#policy-22-1
+[Policy §12]: Policy_v1.md#policy-12
+[Policy §11]: Policy_v1.md#policy-11
+[Policy §4.4]: Policy_v1.md#policy-4-4

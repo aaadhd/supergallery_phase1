@@ -154,4 +154,4 @@ Invite links are valid for 90 days from issue. If your friend hasn't signed up b
 
 <!-- 인용 정의 -->
 [Copy_v1.md]: Copy_v1.md
-[Policy §3]: Policy_v1.md#3-비회원-초대-정책
+[Policy §3]: Policy_v1.md#policy-3

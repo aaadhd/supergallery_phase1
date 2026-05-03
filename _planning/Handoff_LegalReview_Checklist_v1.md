@@ -34,7 +34,7 @@
 | 고객센터 전화번호·이메일 | 사업자 정보 + DPO 연락처 |
 | 개인정보 보호책임자(DPO) 이름·직위·연락처 | 처리방침 §10 |
 | 개인정보 보호 담당부서 | 처리방침 §10 |
-| 시행일·제정일 | 사용자 모집 시작일과 동일 운영 ([Policy N-10 PM 확정](Policy_v1.md#3101-pm-확정본-개발자-작업-제외)) |
+| 시행일·제정일 | 사용자 모집 시작일과 동일 운영 ([Policy N-10 PM 확정](Policy_v1.md#policy-31-0-1)) |
 | 카카오 알림톡 발송업체 | 처리방침 §5 (런칭 전 백엔드 연동 시 결정) |
 | 이메일 발송업체 | 처리방침 §5 (런칭 전 백엔드 연동 시 결정) |
 
@@ -224,29 +224,29 @@
 <!-- 인용 정의 -->
 [Handoff_Terms_v1.md]: Handoff_Terms_v1.md
 [Handoff_Privacy_v1.md]: Handoff_Privacy_v1.md
-[Policy §21.0]: Policy_v1.md#210-법무-문서-단계별-마감-운영-가드
+[Policy §21.0]: Policy_v1.md#policy-21-0
 [Handoff_Footer_v1.md]: Handoff_Footer_v1.md
 [Handoff_Signup_Consent_v1.md]: Handoff_Signup_Consent_v1.md
-[Policy §21.2]: Policy_v1.md#212-검토-필요-정책-포인트
-[Policy §2.2]: Policy_v1.md#22-만-14세-검증
-[Policy §2.1]: Policy_v1.md#21-가입-옵션과-필수-수집-정보-region-분기-폐기
-[Policy §18]: Policy_v1.md#18-데이터-보관저장-정책
-[Policy §3]: Policy_v1.md#3-비회원-초대-정책
-[Policy §4]: Policy_v1.md#4-탈퇴-작가-정책
-[Policy §12.2]: Policy_v1.md#122-2회-신고-자동-비공개
-[Policy §22.2]: Policy_v1.md#222-신고-sla
-[Policy §12.1]: Policy_v1.md#121-신고-처리-액션-어드민
-[Policy §12.1.3]: Policy_v1.md#1213-신고-처리-알림-전송-왕복-피드백
+[Policy §21.2]: Policy_v1.md#policy-21-2
+[Policy §2.2]: Policy_v1.md#policy-2-2
+[Policy §2.1]: Policy_v1.md#policy-2-1
+[Policy §18]: Policy_v1.md#policy-18
+[Policy §3]: Policy_v1.md#policy-3
+[Policy §4]: Policy_v1.md#policy-4
+[Policy §12.2]: Policy_v1.md#policy-12-2
+[Policy §22.2]: Policy_v1.md#policy-22-2
+[Policy §12.1]: Policy_v1.md#policy-12-1
+[Policy §12.1.3]: Policy_v1.md#policy-12-1-3
 [Copy_v1.md]: Copy_v1.md
-[Policy §30]: Policy_v1.md#30-개인정보-열람정정삭제-요청-정책
-[Policy §21.3]: Policy_v1.md#213-런칭-전-필수-수행
-[Policy §1]: Policy_v1.md#1-알림-채널-정책
-[Policy §2.3]: Policy_v1.md#23-중복-가입-차단
-[Policy §10]: Policy_v1.md#10-공유-정책
-[Policy §26]: Policy_v1.md#26-이미지-저작권-보호-정책
-[Policy §2.1.1]: Policy_v1.md#211-거주-국가--자동-수집-안-함
-[Policy §12.3]: Policy_v1.md#123-phase-1-범위-밖-추후-이관
-[Policy §21.1 L-4]: Policy_v1.md#211-검토-필요-문서-4종
+[Policy §30]: Policy_v1.md#policy-30
+[Policy §21.3]: Policy_v1.md#policy-21-3
+[Policy §1]: Policy_v1.md#policy-1
+[Policy §2.3]: Policy_v1.md#policy-2-3
+[Policy §10]: Policy_v1.md#policy-10
+[Policy §26]: Policy_v1.md#policy-26
+[Policy §2.1.1]: Policy_v1.md#policy-2-1-1
+[Policy §12.3]: Policy_v1.md#policy-12-3
+[Policy §21.1 L-4]: Policy_v1.md#policy-21-1
 [Policy_v1.md]: Policy_v1.md
 [PRD_User_v1.md]: PRD_User_v1.md
 [ADM-CKL-01]: IA_ScreenList_v1.md#adm-ckl-01--런칭-체크리스트

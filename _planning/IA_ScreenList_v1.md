@@ -1041,59 +1041,59 @@ UI 기본 언어는 한국어(KO)이며 영어(EN) 전환 지원. 가입 폼은 
 
 <!-- 인용 정의 -->
 [README.md]: README.md
-[Policy §1]: Policy_v1.md#1-알림-채널-정책
-[Policy §2.1]: Policy_v1.md#21-가입-옵션과-필수-수집-정보-region-분기-폐기
-[Policy §2.5]: Policy_v1.md#25-이메일-인증-링크매직-링크--가입로그인
-[Policy §2.2]: Policy_v1.md#22-만-14세-검증
-[Policy §9.4]: Policy_v1.md#94-닉네임
-[Policy §2]: Policy_v1.md#2-가입본인인증-정책
-[Policy §21.1 L-1]: Policy_v1.md#211-검토-필요-문서-4종
-[Policy §2.3]: Policy_v1.md#23-중복-가입-차단
-[Policy §7.2]: Policy_v1.md#72-적립-이벤트
-[Policy §3.2]: Policy_v1.md#32-본인-작품-찾기-가입자-본인-선택
-[Policy §3.3]: Policy_v1.md#33-자동-연결-후-알림과-동시-선택
-[Policy §12.3]: Policy_v1.md#123-phase-1-범위-밖-추후-이관
-[Policy §15]: Policy_v1.md#15-큐레이션배지-정책
-[Policy §16]: Policy_v1.md#16-피드-랭킹검색-스코어링-정책
-[Policy §4]: Policy_v1.md#4-탈퇴-작가-정책
-[Policy §10]: Policy_v1.md#10-공유-정책
-[Policy §12]: Policy_v1.md#12-신고모더레이션-정책-phase-1
-[Policy §3]: Policy_v1.md#3-비회원-초대-정책
-[Policy §10.3]: Policy_v1.md#103-공유-url-쿼리-분기
-[Policy §13.1]: Policy_v1.md#131-업로드-유형2종
-[Policy §13.2]: Policy_v1.md#132-함께-올리기의-역할2종
-[Policy §8]: Policy_v1.md#8-초안-저장-정책
-[Policy §12.1.1]: Policy_v1.md#1211-검수-반려-사유-이력-보존
-[Policy §9]: Policy_v1.md#9-작품명전시명그룹명-정책
-[Policy §14]: Policy_v1.md#14-커버-이미지-정책
-[Policy §13]: Policy_v1.md#13-업로드-유형역할-정책
-[Policy §11]: Policy_v1.md#11-카메라-사진-차단-정책
-[Policy §3.1]: Policy_v1.md#31-초대-링크-발급과-공유
-[Policy §12.1.2]: Policy_v1.md#1212-검수-상태별-수정삭제-정책
-[Policy §22.1]: Policy_v1.md#221-검수-sla
-[Policy §13.4]: Policy_v1.md#134-강사-표시-파생
-[Policy §9.2.1]: Policy_v1.md#921-작품명piece-title-편집-권한진입점
-[Policy §12.2.1]: Policy_v1.md#1221-고지처리-sla
-[Policy §9.2]: Policy_v1.md#92-필수-여부-및-빈값-표시
-[Policy §3.5]: Policy_v1.md#35-잘못-연결됐을-때
-[Policy §25]: Policy_v1.md#25-이벤트응모-정책
-[Policy §31 N-5]: Policy_v1.md#31-런칭-전-미해결-항목
-[Policy §16.3]: Policy_v1.md#163-검색-스코어링-usr-src-01
-[Policy §20]: Policy_v1.md#20-확정-수치-종합표
-[Policy §19.1]: Policy_v1.md#191-필수-원칙
-[Policy §31 N-10]: Policy_v1.md#31-런칭-전-미해결-항목
-[Policy §21.1 L-2]: Policy_v1.md#211-검토-필요-문서-4종
-[Policy §15.3]: Policy_v1.md#153-pick-운영-기준
-[Policy §15.4]: Policy_v1.md#154-pick-vs-기획전-경계
-[Policy §22.2]: Policy_v1.md#222-신고-sla
-[Policy §30]: Policy_v1.md#30-개인정보-열람정정삭제-요청-정책
+[Policy §1]: Policy_v1.md#policy-1
+[Policy §2.1]: Policy_v1.md#policy-2-1
+[Policy §2.5]: Policy_v1.md#policy-2-5
+[Policy §2.2]: Policy_v1.md#policy-2-2
+[Policy §9.4]: Policy_v1.md#policy-9-4
+[Policy §2]: Policy_v1.md#policy-2
+[Policy §21.1 L-1]: Policy_v1.md#policy-21-1
+[Policy §2.3]: Policy_v1.md#policy-2-3
+[Policy §7.2]: Policy_v1.md#policy-7-2
+[Policy §3.2]: Policy_v1.md#policy-3-2
+[Policy §3.3]: Policy_v1.md#policy-3-3
+[Policy §12.3]: Policy_v1.md#policy-12-3
+[Policy §15]: Policy_v1.md#policy-15
+[Policy §16]: Policy_v1.md#policy-16
+[Policy §4]: Policy_v1.md#policy-4
+[Policy §10]: Policy_v1.md#policy-10
+[Policy §12]: Policy_v1.md#policy-12
+[Policy §3]: Policy_v1.md#policy-3
+[Policy §10.3]: Policy_v1.md#policy-10-3
+[Policy §13.1]: Policy_v1.md#policy-13-1
+[Policy §13.2]: Policy_v1.md#policy-13-2
+[Policy §8]: Policy_v1.md#policy-8
+[Policy §12.1.1]: Policy_v1.md#policy-12-1-1
+[Policy §9]: Policy_v1.md#policy-9
+[Policy §14]: Policy_v1.md#policy-14
+[Policy §13]: Policy_v1.md#policy-13
+[Policy §11]: Policy_v1.md#policy-11
+[Policy §3.1]: Policy_v1.md#policy-3-1
+[Policy §12.1.2]: Policy_v1.md#policy-12-1-2
+[Policy §22.1]: Policy_v1.md#policy-22-1
+[Policy §13.4]: Policy_v1.md#policy-13-4
+[Policy §9.2.1]: Policy_v1.md#policy-9-2-1
+[Policy §12.2.1]: Policy_v1.md#policy-12-2-1
+[Policy §9.2]: Policy_v1.md#policy-9-2
+[Policy §3.5]: Policy_v1.md#policy-3-5
+[Policy §25]: Policy_v1.md#policy-25
+[Policy §31 N-5]: Policy_v1.md#policy-31
+[Policy §16.3]: Policy_v1.md#policy-16-3
+[Policy §20]: Policy_v1.md#policy-20
+[Policy §19.1]: Policy_v1.md#policy-19-1
+[Policy §31 N-10]: Policy_v1.md#policy-31
+[Policy §21.1 L-2]: Policy_v1.md#policy-21-1
+[Policy §15.3]: Policy_v1.md#policy-15-3
+[Policy §15.4]: Policy_v1.md#policy-15-4
+[Policy §22.2]: Policy_v1.md#policy-22-2
+[Policy §30]: Policy_v1.md#policy-30
 [PRD_Admin §0.6]: PRD_Admin_v1.md#06-감사-로그-audit-trail
-[Policy §12.0]: Policy_v1.md#120-신고-사유
-[Policy §12.1]: Policy_v1.md#121-신고-처리-액션-어드민
-[Policy §29]: Policy_v1.md#29-쿠키분석-동의-정책
+[Policy §12.0]: Policy_v1.md#policy-12-0
+[Policy §12.1]: Policy_v1.md#policy-12-1
+[Policy §29]: Policy_v1.md#policy-29
 [PRD_User_v1.md]: PRD_User_v1.md
 [PRD_Admin_v1.md]: PRD_Admin_v1.md
 [Policy_v1.md]: Policy_v1.md
-[Policy §19]: Policy_v1.md#19-접근성시니어-친화-정책
+[Policy §19]: Policy_v1.md#policy-19
 [Handoff_UserInfo_Contact_v1.md]: Handoff_UserInfo_Contact_v1.md
-[Policy §1.1]: Policy_v1.md#11-채널-라우팅
+[Policy §1.1]: Policy_v1.md#policy-1-1

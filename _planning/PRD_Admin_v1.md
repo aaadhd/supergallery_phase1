@@ -1155,38 +1155,38 @@ DB·런칭 직전 운영자가 본 표를 기준으로 초기 체크리스트를
 [Policy_v1.md]: Policy_v1.md
 [PRD_User_v1.md]: PRD_User_v1.md
 [PRD_User §0.1]: PRD_User_v1.md#0-문서-사용-안내
-[Policy §17]: Policy_v1.md#17-어드민-접근역할-정책
-[Policy §17.3]: Policy_v1.md#173-phase-2-권한-3단계-분리-예정
+[Policy §17]: Policy_v1.md#policy-17
+[Policy §17.3]: Policy_v1.md#policy-17-3
 [§0.6]: #06-감사-로그-audit-trail
-[Policy §3.1]: Policy_v1.md#31-초대-링크-발급과-공유
-[Policy §12.1.1]: Policy_v1.md#1211-검수-반려-사유-이력-보존
-[Policy §12]: Policy_v1.md#12-신고모더레이션-정책-phase-1
-[Policy §3]: Policy_v1.md#3-비회원-초대-정책
-[Policy §22.1]: Policy_v1.md#221-검수-sla
-[Policy §15.6]: Policy_v1.md#156-pick-선정-알림-전송-왕복-피드백
-[Policy §15.3]: Policy_v1.md#153-pick-운영-기준
-[Policy §15.1]: Policy_v1.md#151-큐레이션-개념-4종
-[Policy §15.4]: Policy_v1.md#154-pick-vs-기획전-경계
+[Policy §3.1]: Policy_v1.md#policy-3-1
+[Policy §12.1.1]: Policy_v1.md#policy-12-1-1
+[Policy §12]: Policy_v1.md#policy-12
+[Policy §3]: Policy_v1.md#policy-3
+[Policy §22.1]: Policy_v1.md#policy-22-1
+[Policy §15.6]: Policy_v1.md#policy-15-6
+[Policy §15.3]: Policy_v1.md#policy-15-3
+[Policy §15.1]: Policy_v1.md#policy-15-1
+[Policy §15.4]: Policy_v1.md#policy-15-4
 [PRD_User §2]: PRD_User_v1.md#usr-brw-01--홈-피드
-[Policy §15.2]: Policy_v1.md#152-배지-체계-공개
-[Policy §15.5]: Policy_v1.md#155-이벤트-선정-정책-런칭-전-필수
-[Policy §12.2.1]: Policy_v1.md#1221-고지처리-sla
-[Policy §12.1.3]: Policy_v1.md#1213-신고-처리-알림-전송-왕복-피드백
-[Policy §12.1.2]: Policy_v1.md#1212-검수-상태별-수정삭제-정책
-[Policy §22.2]: Policy_v1.md#222-신고-sla
-[Policy §12.3]: Policy_v1.md#123-phase-1-범위-밖-추후-이관
-[Policy §32]: Policy_v1.md#32-데이터-연쇄-정리-정책-참조-무결성
-[Policy §31 N-6]: Policy_v1.md#31-런칭-전-미해결-항목
-[Policy §31 N-9]: Policy_v1.md#31-런칭-전-미해결-항목
-[Policy §21]: Policy_v1.md#21-법무-체크포인트
-[Policy §31]: Policy_v1.md#31-런칭-전-미해결-항목
-[Policy §30]: Policy_v1.md#30-개인정보-열람정정삭제-요청-정책
-[Policy §22.6]: Policy_v1.md#226-운영-데이터-보관-기준
-[Policy §12.0]: Policy_v1.md#120-신고-사유
-[Policy §22.5]: Policy_v1.md#225-에스컬레이션-기준
-[Policy §18]: Policy_v1.md#18-데이터-보관저장-정책
-[Policy §30.0]: Policy_v1.md#300-문의-채널-sla-통합-정리-참고
-[Policy §30.3]: Policy_v1.md#303-처리-기한-sla
-[Policy §12.2]: Policy_v1.md#122-2회-신고-자동-비공개
-[Policy §4.4]: Policy_v1.md#44-재가입
-[Policy §12.1]: Policy_v1.md#121-신고-처리-액션-어드민
+[Policy §15.2]: Policy_v1.md#policy-15-2
+[Policy §15.5]: Policy_v1.md#policy-15-5
+[Policy §12.2.1]: Policy_v1.md#policy-12-2-1
+[Policy §12.1.3]: Policy_v1.md#policy-12-1-3
+[Policy §12.1.2]: Policy_v1.md#policy-12-1-2
+[Policy §22.2]: Policy_v1.md#policy-22-2
+[Policy §12.3]: Policy_v1.md#policy-12-3
+[Policy §32]: Policy_v1.md#policy-32
+[Policy §31 N-6]: Policy_v1.md#policy-31
+[Policy §31 N-9]: Policy_v1.md#policy-31
+[Policy §21]: Policy_v1.md#policy-21
+[Policy §31]: Policy_v1.md#policy-31
+[Policy §30]: Policy_v1.md#policy-30
+[Policy §22.6]: Policy_v1.md#policy-22-6
+[Policy §12.0]: Policy_v1.md#policy-12-0
+[Policy §22.5]: Policy_v1.md#policy-22-5
+[Policy §18]: Policy_v1.md#policy-18
+[Policy §30.0]: Policy_v1.md#policy-30-0
+[Policy §30.3]: Policy_v1.md#policy-30-3
+[Policy §12.2]: Policy_v1.md#policy-12-2
+[Policy §4.4]: Policy_v1.md#policy-4-4
+[Policy §12.1]: Policy_v1.md#policy-12-1

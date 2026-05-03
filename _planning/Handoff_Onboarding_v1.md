@@ -262,9 +262,9 @@
 
 <!-- 인용 정의 -->
 [Copy_v1.md]: Copy_v1.md
-[Policy §3]: Policy_v1.md#3-비회원-초대-정책
+[Policy §3]: Policy_v1.md#policy-3
 [Handoff_LegalReview_Checklist §3 LP-3]: Handoff_LegalReview_Checklist_v1.md#lp-3-비회원-초대--토큰-모델-적법-근거
-[Policy §2.1]: Policy_v1.md#21-가입-옵션과-필수-수집-정보-region-분기-폐기
-[Policy §3.2]: Policy_v1.md#32-본인-작품-찾기-가입자-본인-선택
-[Policy §3.3]: Policy_v1.md#33-자동-연결-후-알림과-동시-선택
-[Policy §3.5]: Policy_v1.md#35-잘못-연결됐을-때
+[Policy §2.1]: Policy_v1.md#policy-2-1
+[Policy §3.2]: Policy_v1.md#policy-3-2
+[Policy §3.3]: Policy_v1.md#policy-3-3
+[Policy §3.5]: Policy_v1.md#policy-3-5
