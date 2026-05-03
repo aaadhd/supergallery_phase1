@@ -1,5 +1,5 @@
 import { useCallback, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Toaster } from 'sonner';
 import { artists } from '../data';
@@ -245,6 +245,7 @@ export default function Settings() {
             {t('settings.sectionNotif')}
           </h2>
           <p className="text-xs text-muted-foreground mb-3">{t('settings.notifIntro')}</p>
+          <p className="text-xs text-muted-foreground mb-4 leading-relaxed">{t('settings.notifChannelPolicy')}</p>
 
           <div className="rounded-lg border border-border/40 px-4 bg-white mb-4">
             <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground pt-4 pb-1">
@@ -294,6 +295,17 @@ export default function Settings() {
               disabled
               hint={t('settings.notifSystemHint')}
             />
+          </div>
+
+          <div className="rounded-lg border border-border/40 px-4 py-4 bg-white">
+            <p className="text-sm font-medium text-foreground mb-1">{t('settings.eventUnsubscribeLabel')}</p>
+            <p className="text-xs text-muted-foreground mb-3">{t('settings.eventUnsubscribeHint')}</p>
+            <Link
+              to="/events?unsubscribe=1"
+              className="inline-flex min-h-[44px] items-center text-sm font-medium text-primary underline underline-offset-4 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+            >
+              {t('events.unsubscribeLink')}
+            </Link>
           </div>
         </section>
 

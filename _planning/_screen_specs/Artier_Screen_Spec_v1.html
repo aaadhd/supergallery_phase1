@@ -486,7 +486,7 @@
  <ul>
  <li><a href="#USR-EVT-01"><code>EVT-01</code><span>이벤트 목록</span></a></li>
  <li><a href="#USR-EVT-02"><code>EVT-02</code><span>이벤트 상세</span></a></li>
- <li><a href="#USR-EVT-03"><code>EVT-03</code><span>이메일 구독</span></a></li>
+ <li><a href="#USR-EVT-03"><code>EVT-03</code><span>알림 구독·해지</span></a></li>
  </ul>
  </li>
 
@@ -5007,13 +5007,14 @@
  <h3>구성 요소</h3>
  <dl>
  <dt><span class="bub">1</span></dt><dd>히어로 캐러셀 — embla, 닷 인디케이터. 활성 이벤트만</dd>
- <dt><span class="bub">2</span></dt><dd>예정 카드 — "알림 받기"(USR-EVT-03 모달)</dd>
+ <dt><span class="bub">2</span></dt><dd>예정 카드 — "알림 받기"(USR-EVT-03 구독 모달)</dd>
  <dt><span class="bub">3</span></dt><dd>참여 CTA — 1차 "참여하기" → USR-UPL-02 `?event=&lt;id&gt;` / 2차 "자세히 보기" → USR-EVT-02</dd>
+ <dt><span class="bub">4</span></dt><dd>하단 CTA 띠(구현) — "알림 받기"·"알림 해지"·`/events?unsubscribe=1` → USR-EVT-03 모달(구독|해지)</dd>
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
  <li>"참여하기" → USR-UPL-02 `?event=&lt;id&gt;`</li>
- <li>"알림 받기" → USR-EVT-03 모달</li>
+ <li>"알림 받기"·"알림 해지" → USR-EVT-03 모달</li>
  <li>종료 이벤트는 회색 + 클릭 시 결과 페이지 (Phase 2)</li>
  </ol></div>
  </div>

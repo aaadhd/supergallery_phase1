@@ -236,7 +236,7 @@ Phase 1은 **작품 단위 모더레이션만** 다룬다. 사용자 계정 차�
 
 ### 기타
 - **버전 관리**: `WORKS_STORAGE_VERSION` (`local-gallery-v16`) 변경 시 works 데이터 자동 재시드
-- **이벤트 데이터**: `eventStore.ts` 단일 소스 + `artier_managed_events_v1` 영속화
+- **이벤트 데이터**: `eventStore.ts` 단일 소스 + `artier_managed_events_v1` 영속화. **이벤트·공지 메일 구독**은 `eventSubscriptionStore.ts` + `artier_event_subscriptions`(전역 이메일 목록 1종, Policy §31 N-5).
 - **포인트 회수**: 업로드 후 24시간 이내 삭제 시 AP -20 (`pointsBackground.ts:pointsRecallIfQuickDelete`)
 - **강사 표시**: 별도 저장소 없음. `workStore` 작품 목록에서 파생 (`Profile.tsx`의 `instructorVisible`, 단일 소스)
 
