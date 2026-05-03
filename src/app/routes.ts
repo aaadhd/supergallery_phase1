@@ -80,7 +80,6 @@ export const router = createBrowserRouter([
           { path: 'settings/notifications', loader: () => redirect('/settings#notifications') },
           { path: 'exhibitions/:id', Component: ExhibitionRoute },
           ...demoRoutes,
-          { path: 'points', loader: () => redirect('/') },
           { path: 'about', Component: About },
           { path: 'faq', Component: Faq },
           { path: 'contact', Component: Contact },

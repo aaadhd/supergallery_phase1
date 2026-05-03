@@ -5,7 +5,6 @@
 const LEDGER_KEY = 'artier_points_ledger';
 const STATE_KEY = 'artier_points_state';
 const PUBLISH_TIMES_KEY = 'artier_work_publish_times';
-const PP_BALANCE_KEY = 'artier_pp_balance';
 
 /** 로컬 시간대 기준 YYYY-MM-DD (UTC 대신 사용자 시간대) */
 function localDateString(): string {
@@ -13,14 +12,7 @@ function localDateString(): string {
   return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
 }
 
-export const POINTS_LEDGER_EVENT = 'artier-points-ledger';
-
-function notifyLedgerChanged() {
-  if (typeof window === 'undefined') return;
-  window.dispatchEvent(new Event(POINTS_LEDGER_EVENT));
-}
-
-export type PointLedgerEntry = {
+type PointLedgerEntry = {
   id: string;
   at: string;
   kind: string;
@@ -87,7 +79,6 @@ function appendLedger(entry: { id?: string; kind: string; ap: number; note?: str
   };
   list.unshift(row);
   localStorage.setItem(LEDGER_KEY, JSON.stringify(list.slice(0, 500)));
-  notifyLedgerChanged();
 }
 
 function award(ap: number, kind: string, note?: string) {
@@ -227,42 +218,6 @@ export function pointsRecallIfQuickDelete(workId: string) {
 }
 
 /** 앱 초기화 시 만료 배치 시뮬레이션(로그만) */
-export function readPointsLedger(): PointLedgerEntry[] {
-  if (typeof window === 'undefined') return [];
-  try {
-    const list = JSON.parse(localStorage.getItem(LEDGER_KEY) || '[]') as PointLedgerEntry[];
-    return Array.isArray(list) ? list : [];
-  } catch {
-    return [];
-  }
-}
-
-/** 표시용 AP 잔액: 원장 합계(데모와 일치) */
-export function getApBalanceFromLedger(): number {
-  const sum = readPointsLedger().reduce((s, e) => s + (typeof e.ap === 'number' ? e.ap : 0), 0);
-  return Math.max(0, sum);
-}
-
-export function getPpBalance(): number {
-  if (typeof window === 'undefined') return 0;
-  try {
-    const raw = localStorage.getItem(PP_BALANCE_KEY);
-    if (raw == null) return 0;
-    const n = Number(raw);
-    return Number.isFinite(n) ? Math.max(0, n) : 0;
-  } catch {
-    return 0;
-  }
-}
-
-export function addDemoPp(amount: number) {
-  if (typeof window === 'undefined' || amount <= 0) return;
-  const next = getPpBalance() + amount;
-  localStorage.setItem(PP_BALANCE_KEY, String(next));
-  appendLedger({ kind: 'pp_credit', ap: 0, note: `PP +${amount} (demo)` });
-  notifyLedgerChanged();
-}
-
 export function runPointsExpiryBatch() {
   const ledger = JSON.parse(localStorage.getItem(LEDGER_KEY) || '[]') as PointLedgerEntry[];
   if (!Array.isArray(ledger) || ledger.length === 0) return;

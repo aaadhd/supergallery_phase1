@@ -185,23 +185,10 @@ const koMessages = {
   'flowMap.section13': `13. 이벤트 참여
 /events|이벤트 목록
 /events/1|이벤트 상세 예시`,
-  'flowMap.section14': `14. 포인트 적립 · 조회
-Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 는 런칭 전 백엔드 연동 후. 로컬 적립 로직은 가입·온보딩·둘러보기·업로드 등에서 계속 동작.`,
+  'flowMap.section14': `14. 포인트 적립
+Phase 1: 백그라운드 적립만(Policy §7.1). 사용자 노출 UI 없음. 로컬 적립 로직은 가입·온보딩·둘러보기·업로드 등에서 계속 동작하며 원장은 그대로 누적.`,
   'flowMap.section15': `15. 기획 검수 — reference 도구
 /demo/reference|모의 JWT·이메일 템플릿·발송 조건 표`,
-  'points.title': '포인트',
-  'points.back': '뒤로',
-  'points.apLabel': 'AP (활동)',
-  'points.ppLabel': 'PP (프리미엄)',
-  'points.ppHint': '유료·이벤트 지급. 데모에서는 아래 버튼으로만 증가합니다.',
-  'points.filterAll': '전체',
-  'points.filterEarn': '적립',
-  'points.filterUse': '사용·차감',
-  'points.empty': '내역이 없어요. 둘러보기·가입·업로드 등을 하면 AP가 쌓이에요.',
-  'points.demoNote': '표시 데이터는 브라우저 로컬 저장소 기준이에요. 실서비스와 다를 수 있어요.',
-  'points.demoToolbarTitle': '시연: PP 샘플 적립',
-  'points.demoPpButton': 'PP +50 (데모)',
-  'points.linkFlowMap': '← 플로우 데모(/demo)로 돌아가기',
   'loginDemo.suspendReason': '콘텐츠·신고 정책 위반 (시연)',
   'browse.tabAll': '전체',
   'browse.tabSolo': '개인전시',
@@ -1331,23 +1318,10 @@ Use the buttons above to push demo notifications`,
   'flowMap.section13': `13. Events
 /events|Event list
 /events/1|Sample event detail`,
-  'flowMap.section14': `14. Points earn / view
-Phase 1: background earn only (PRD & user flow). Points UI and /points come after backend integration. Local earn hooks still run on signup, onboarding, browse, upload, etc.`,
+  'flowMap.section14': `14. Points earn
+Phase 1: background earn only (Policy §7.1). No user-facing UI. Local earn hooks still run on signup, onboarding, browse, upload, etc., and the ledger keeps accumulating.`,
   'flowMap.section15': `15. PM review — reference demo
 /demo/reference|Mock JWT, email templates, send-rule table`,
-  'points.title': 'Points',
-  'points.back': 'Back',
-  'points.apLabel': 'AP (activity)',
-  'points.ppLabel': 'PP (premium)',
-  'points.ppHint': 'From purchases or campaigns. In demo, use the button below.',
-  'points.filterAll': 'All',
-  'points.filterEarn': 'Earned',
-  'points.filterUse': 'Spent / deducted',
-  'points.empty': 'No entries yet. Browse, sign up, or upload to earn AP.',
-  'points.demoNote': 'Data is read from local storage only; production may differ.',
-  'points.demoToolbarTitle': 'Demo: add sample PP',
-  'points.demoPpButton': 'PP +50 (demo)',
-  'points.linkFlowMap': '← Back to /demo',
   'loginDemo.suspendReason': 'Policy violation (demo suspension)',
   'browse.tabAll': 'All',
   'browse.tabSolo': 'Solo',
