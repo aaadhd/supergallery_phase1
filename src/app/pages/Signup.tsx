@@ -195,17 +195,19 @@ export default function Signup() {
           </div>
         </div>
 
-        <div className="space-y-2">
-          <Button
-            type="button"
-            onClick={openDemoVerifyLink}
-            disabled={!latestMagicLinkFor(email.trim())}
-            className="w-full min-h-[44px] rounded-lg bg-primary text-white text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50"
-          >
-            {t('signup.openMockLink')}
-          </Button>
-          <p className="text-center text-xs text-muted-foreground">{t('signup.openMockLinkHint')}</p>
-        </div>
+        {(import.meta.env.DEV || import.meta.env.VITE_FOOTER_QA_LINKS === 'true') && (
+          <div className="space-y-2">
+            <Button
+              type="button"
+              onClick={openDemoVerifyLink}
+              disabled={!latestMagicLinkFor(email.trim())}
+              className="w-full min-h-[44px] rounded-lg bg-primary text-white text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50"
+            >
+              {t('signup.openMockLink')}
+            </Button>
+            <p className="text-center text-xs text-muted-foreground">{t('signup.openMockLinkHint')}</p>
+          </div>
+        )}
 
         <div className="flex flex-col gap-2 border-t border-border/40 pt-4">
           <Button
