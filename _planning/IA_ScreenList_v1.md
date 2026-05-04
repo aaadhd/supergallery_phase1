@@ -841,11 +841,11 @@ UI 기본 언어는 한국어(KO)이며 영어(EN) 전환 지원. 가입 폼은 
 - 엔티티·정책: EVENT
 - 우선순위: **P0**
 
-#### ADM-EVT-03 · 이벤트 참여자 현황
+#### ADM-EVT-03 · 이벤트 참여자 현황 (선정작 관리 포함)
 - 경로: `/admin/events`
-- 구성: 이벤트 선택 드롭다운 · 상태 필터(완료/대기/취소) · 요약 카드(전체/완료 인원) · 테이블(작가·전시명·참여 시각·상태) · CSV 내보내기(추후)
-- 엔티티·정책: EVENT, EXHIBITION
-- 우선순위: **P1**
+- 구성: 이벤트 선택 드롭다운 · 상태 필터(완료/대기/취소) · 요약 카드(전체/완료/선정 인원) · 테이블(작가·전시명·참여 시각·상태·**선정 체크박스**) · 일괄 선정·해제 액션 · CSV 내보내기(추후)
+- 엔티티·정책: EVENT, EXHIBITION · [Policy §15.2] · [Policy §15.5]
+- 우선순위: **P0** (B-3c 라운드에서 선정 처리 핵심 기능 추가로 격상)
 
 ### 3.7 ADM-RPT · 신고 처리 (3 카드)
 
@@ -1005,20 +1005,19 @@ UI 기본 언어는 한국어(KO)이며 영어(EN) 전환 지원. 가입 폼은 
 - AUT 12 · BRW 1 · EXH 5 · UPL 10 · PRF 14 · EVT 4 · CUR 1 · SRC 2 · NTF 1 · STG 5 · INF 7
 - 별도: USR-AUT-09b·USR-EVT-03(P1) · USR-EXH-04(P2 레거시)
 
-**운영 어드민 (ADM) — 18개 P0 카드**
-- DSH 1 · REV 3 · PCK 2 · CUR 2 · BNR 2 · EVT 2 · RPT 3 · MBR 2 · INQ 1
-- 별도: ADM-PCK-03·ADM-EVT-03·ADM-CKL-01·ADM-ISU-01·ADM-NTC-01(P1) · ADM-MBR-03(보류) · ADM-WRK·ADM-PTN(폐기)
+**운영 어드민 (ADM) — 19개 P0 카드**
+- DSH 1 · REV 3 · PCK 2 · CUR 2 · BNR 2 · EVT 3 · RPT 3 · MBR 2 · INQ 1
+- 별도: ADM-PCK-03·ADM-CKL-01·ADM-ISU-01·ADM-NTC-01(P1) · ADM-MBR-03(보류) · ADM-WRK·ADM-PTN(폐기)
 
 **공통 (CM) — 7개 P0 카드**: CM-01·02·03·05·06·07·08 (CM-04 삭제됨, CM-09 DEV 한정, CM-10 런칭 빌드 차단)
 
-합계: **USR 62 + ADM 18 + CM 7 = 87개 P0 카드** (Phase 1 런칭 범위)
+합계: **USR 62 + ADM 19 + CM 7 = 88개 P0 카드** (Phase 1 런칭 범위)
 
 ### 5.2 P1 — 런칭 권장
 
 - USR-AUT-09b 온보딩 Step 0.5 — "전시 단위" 개념 안내
 - USR-EVT-03 이메일 구독(해지 UI 필수 후 정식)
 - ADM-PCK-03 Pick 이력 열람
-- ADM-EVT-03 이벤트 참여자 현황 심화
 - ADM-CKL-01 런칭 체크리스트 (내부 도구 · 런칭 직후 폐기 가능)
 - ADM-ISU-01 미결 이슈 (내부 도구)
 - ADM-NTC-01 공지 게시·관리 (런칭 전 백엔드 연동 후 운영팀 콘솔)
