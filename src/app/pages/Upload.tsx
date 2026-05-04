@@ -1,9 +1,8 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Link, useNavigate, useSearchParams, useBlocker } from 'react-router-dom';
-import { Image as ImageIcon, Plus, X, Search, GripVertical, ArrowLeft, ChevronLeft, ChevronRight, Trash2, Replace, ArrowUpDown, Monitor, Users, CalendarCheck, Star, Check, CircleHelp, GraduationCap } from 'lucide-react';
+import { Image as ImageIcon, Plus, X, Search, GripVertical, ArrowLeft, ChevronLeft, ChevronRight, Trash2, Replace, ArrowUpDown, Monitor, Users, Star, Check, CircleHelp, GraduationCap } from 'lucide-react';
 import { artists } from '../data';
 import { workStore, draftStore, useAuthStore } from '../store';
-import { eventStore, deriveStatus } from '../utils/eventStore';
 import { issueInviteToken, activateInviteToken, deactivateInviteToken } from '../utils/inviteTokenStore';
 import { InviteShareButton } from '../components/InviteShareButton';
 import { REJECTION_REASON_LABEL_KEY } from '../utils/reviewLabels';
@@ -311,7 +310,6 @@ export default function Upload() {
   const [groupSuggestOpen, setGroupSuggestOpen] = useState(false);
   const [workTick, setWorkTick] = useState(0);
   const [isOriginalWork, setIsOriginalWork] = useState(false);
-  const [eventConsent, setEventConsent] = useState(false);
   const [artistInputTab, setArtistInputTab] = useState<'member' | 'non-member'>('member');
   /* ── 변환 프로그레스 ── */
 
@@ -321,22 +319,9 @@ export default function Upload() {
   const [groupSubStep, setGroupSubStep] = useState<'askRole' | null>(null);
   const [cameraBlockNotice, setCameraBlockNotice] = useState(false);
 
-  /* ── 이벤트 연결 ── */
-  const linkedEventIdRaw = searchParams.get('event');
-  const linkedEventTitle = searchParams.get('eventTitle') ? decodeURIComponent(searchParams.get('eventTitle')!) : null;
-  // Policy §25.5: 종료된 이벤트는 신규 응모 차단. URL 직접 진입(`/upload?event=<endedId>`)도 가드.
-  const linkedEventId = useMemo(() => {
-    if (!linkedEventIdRaw) return null;
-    const ev = eventStore.get(linkedEventIdRaw);
-    if (ev && deriveStatus(ev) === 'ended') return null;
-    return linkedEventIdRaw;
-  }, [linkedEventIdRaw]);
-  useEffect(() => {
-    if (linkedEventIdRaw && !linkedEventId) {
-      toast.error(t('upload.eventEndedBlocked'));
-      navigate(`/events/${linkedEventIdRaw}`, { replace: true });
-    }
-  }, [linkedEventId, linkedEventIdRaw, navigate, t]);
+  /* ── 이벤트 응모는 USR-EVT-04 응모 모달 단일 진입점 (Policy §25.2). ?event= 진입은
+   *    routes.ts redirectUploadEventToEntry loader가 /events/<id>?entry=open으로 redirect.
+   */
 
   /* ── 이미지 선택 ── */
 
@@ -387,7 +372,6 @@ export default function Upload() {
     setExhibitionName('');
     setGroupName('');
     setIsOriginalWork(false);
-    setEventConsent(false);
     setIsInstructor(false);
     setSelectedContentId(null);
     setCoverImageIndex(0);
@@ -516,17 +500,6 @@ export default function Upload() {
     const w = workStore.getWork(editingWorkId);
     return w?.feedReviewStatus === 'rejected' ? w : null;
   }, [editingWorkId]);
-
-  // Policy §15.5·§25.2: 이벤트 응모는 게시 보존 동의 체크박스 통과가 필수.
-  // 편집 중인 전시가 이미 같은 이벤트에 연결돼 있으면 응모 시점 동의가 이미 잠긴 상태이므로 재요구 안 함.
-  const requiresEventConsent = useMemo(() => {
-    if (!linkedEventId) return false;
-    if (editingWorkId) {
-      const existing = workStore.getWork(editingWorkId);
-      if (existing?.linkedEventId === linkedEventId) return false;
-    }
-    return true;
-  }, [linkedEventId, editingWorkId]);
   useEffect(() => {
     const editId = searchParams.get('edit');
     if (!editId) return;
@@ -814,7 +787,7 @@ export default function Upload() {
       imageArtists,
       ...buildVisibilityPatch(!import.meta.env.PROD && import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true' ? 'public' : 'pending_review'),
       uploadedAt,
-      linkedEventId: linkedEventId || undefined,
+      // 이벤트 응모는 USR-EVT-04 응모 모달에서 직접 발행 — USR-UPL-02 발행에 linkedEventId 부여 X
       coverImageIndex:
         customCoverUrl && coverImageIndex === -1
           ? -1
@@ -824,22 +797,8 @@ export default function Upload() {
       customCoverUrl: customCoverUrl && coverImageIndex === -1 ? customCoverUrl : undefined,
     };
 
-    // Prevent duplicate event participation (editing the same work is OK)
-    if (linkedEventId && !editingWorkId) {
-      const alreadySubmitted = workStore.getWorks().some(
-        w => w.linkedEventId?.toString() === linkedEventId.toString() && w.artistId === artists[0]?.id
-      );
-      if (alreadySubmitted) {
-        toast.error(t('upload.errDuplicateEvent'));
-        return;
-      }
-    }
-
-    // Policy §15.5·§25.2: 응모 동의 체크박스 미통과 시 차단 (응모 시점 동의 잠금 정책)
-    if (requiresEventConsent && !eventConsent) {
-      toast.error(t('upload.errEventConsentRequired'));
-      return;
-    }
+    // 이벤트 응모는 USR-EVT-04 응모 모달 단일 진입점 (Policy §25.2).
+    // USR-UPL-02 일반 업로드 경로에서는 이벤트 연결을 받지 않음.
 
     setIsPublishing(true);
     const targetId = editingWorkId || newWork.id;
@@ -912,7 +871,6 @@ export default function Upload() {
         isInstructorUpload: newWork.isInstructorUpload,
         primaryExhibitionType: newWork.primaryExhibitionType,
         imageArtists: newWork.imageArtists,
-        linkedEventId: newWork.linkedEventId,
         coverImageIndex: newWork.coverImageIndex,
         customCoverUrl: newWork.customCoverUrl,
         ...buildVisibilityPatch(
@@ -1025,10 +983,7 @@ export default function Upload() {
           workId: targetId,
         });
       }
-      // 이벤트 응모면 이벤트 상세로 복귀
-      if (linkedEventId) {
-        navigate(`/events/${linkedEventId}`);
-      } else if (wasEditingExistingWork && !wasRejectedResubmit) {
+      if (wasEditingExistingWork && !wasRejectedResubmit) {
         // 일반 편집(approved/pending 메타-only)은 기존대로 토스트 + 프로필 복귀
         navigate('/me?tab=exhibition');
       } else {
@@ -1512,36 +1467,6 @@ export default function Upload() {
                       </label>
                     </div>
 
-                    {/* 이벤트 연결 표시 */}
-                    {linkedEventId && linkedEventTitle && (
-                      <div className="flex items-center gap-3 p-4 bg-primary/5 border border-green-200 rounded-xl">
-                        <div className="h-8 w-8 rounded-full bg-primary/10 flex items-center justify-center">
-                          <CalendarCheck className="h-4 w-4 text-primary" />
-                        </div>
-                        <div className="flex-1">
-                          <p className="text-sm font-medium text-foreground">{t('upload.eventWorkTitle')}</p>
-                          <p className="text-sm text-primary">{linkedEventTitle}</p>
-                        </div>
-                      </div>
-                    )}
-
-                    {/* 이벤트 응모 동의 (Policy §15.5·§25.2) */}
-                    {requiresEventConsent && (
-                      <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
-                        <label className="flex items-start gap-3 cursor-pointer group">
-                          <input
-                            type="checkbox"
-                            checked={eventConsent}
-                            onChange={(e) => setEventConsent(e.target.checked)}
-                            className="mt-1 flex-shrink-0 h-5 w-5 rounded border-amber-400 text-primary focus:ring-primary transition-all cursor-pointer"
-                          />
-                          <span className="text-sm text-amber-900 leading-snug cursor-pointer select-none">
-                            {t('upload.eventConsentLabel')}<RequiredMark />
-                          </span>
-                        </label>
-                      </div>
-                    )}
-
                   </div>
 
                   {/* 푸터 */}
@@ -1549,12 +1474,9 @@ export default function Upload() {
                     {!isOriginalWork && !isPublishing && (
                       <p className="text-xs text-amber-600 text-center mb-2">{t('upload.hintCheckOriginal')}</p>
                     )}
-                    {requiresEventConsent && !eventConsent && isOriginalWork && !isPublishing && (
-                      <p className="text-xs text-amber-600 text-center mb-2">{t('upload.errEventConsentRequired')}</p>
-                    )}
                     <div className="flex items-center justify-end gap-3">
                       <Button variant="ghost" onClick={() => setShowDetailsModal(false)} className="px-5 py-2.5 text-sm min-h-[44px]">{t('upload.close')}</Button>
-                      <Button disabled={isPublishing || !isOriginalWork || (requiresEventConsent && !eventConsent)} onClick={handlePublish} className={`px-6 py-2.5 text-sm font-medium rounded-lg transition-colors min-h-[44px] ${isPublishing || !isOriginalWork || (requiresEventConsent && !eventConsent) ? 'bg-muted text-muted-foreground' : 'bg-primary text-white lg:hover:bg-primary/90'}`}>
+                      <Button disabled={isPublishing || !isOriginalWork} onClick={handlePublish} className={`px-6 py-2.5 text-sm font-medium rounded-lg transition-colors min-h-[44px] ${isPublishing || !isOriginalWork ? 'bg-muted text-muted-foreground' : 'bg-primary text-white lg:hover:bg-primary/90'}`}>
                         {isPublishing
                           ? (editingWorkId ? t('upload.editModeSaving') : t('upload.publishing'))
                           : editingRejectedWork

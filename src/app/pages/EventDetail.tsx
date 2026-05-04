@@ -1,4 +1,4 @@
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useSearchParams } from 'react-router-dom';
 import { Calendar, ArrowLeft, ArrowRight, Users } from 'lucide-react';
 import { ImageWithFallback } from '../components/ImageWithFallback';
 import { analytics } from '../utils/analytics';
@@ -10,13 +10,15 @@ import { useI18n } from '../i18n/I18nProvider';
 import { Button } from '../components/ui/button';
 import { toast } from 'sonner';
 import { eventStore, deriveStatus, useManagedEvents } from '../utils/eventStore';
+import { EventEntryModal } from '../components/EventEntryModal';
 
 export default function EventDetail() {
   const { id } = useParams();
-  const navigate = useNavigate();
+  const [searchParams, setSearchParams] = useSearchParams();
   const { t } = useI18n();
   const auth = useAuthStore();
   const loginPrompt = useLoginPrompt();
+  const [showEntryModal, setShowEntryModal] = useState(false);
 
   // store 구독 (변경 시 재렌더)
   useManagedEvents();
@@ -35,13 +37,36 @@ export default function EventDetail() {
     return workStore.getWorks().some((w) => String(w.linkedEventId) === event.id);
   }, [event, auth]);
 
+  // ?entry=open 자동 오픈 (USR-EVT-04 진입 경로)
+  useEffect(() => {
+    if (searchParams.get('entry') !== 'open') return;
+    if (!event || isEnded || alreadySubmitted) {
+      // 응모 불가 상태면 쿼리 파라미터만 제거
+      const next = new URLSearchParams(searchParams);
+      next.delete('entry');
+      setSearchParams(next, { replace: true });
+      return;
+    }
+    if (!loginPrompt.tryProtectedAction('upload')) {
+      const next = new URLSearchParams(searchParams);
+      next.delete('entry');
+      setSearchParams(next, { replace: true });
+      return;
+    }
+    setShowEntryModal(true);
+    const next = new URLSearchParams(searchParams);
+    next.delete('entry');
+    setSearchParams(next, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [event?.id, isEnded, alreadySubmitted]);
+
   const handleParticipate = () => {
     if (!loginPrompt.tryProtectedAction('upload')) return;
     if (alreadySubmitted) {
       toast.error(t('events.alreadySubmitted'));
       return;
     }
-    navigate(`/upload?event=${event?.id}&eventTitle=${encodeURIComponent(event?.title || '')}`);
+    setShowEntryModal(true);
   };
 
   if (!event) {
@@ -129,6 +154,16 @@ export default function EventDetail() {
       </div>
 
       <LoginPromptModal open={loginPrompt.open} onClose={loginPrompt.close} action={loginPrompt.action} />
+      {event && (
+        <EventEntryModal
+          open={showEntryModal}
+          onClose={() => setShowEntryModal(false)}
+          eventId={event.id}
+          eventTitle={event.title}
+          eventStartAt={event.startAt}
+          eventEndAt={event.endAt}
+        />
+      )}
     </div>
   );
 }

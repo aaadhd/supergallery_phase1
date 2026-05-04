@@ -46,6 +46,15 @@ function redirectWorksToExhibitions({ params }: LoaderFunctionArgs) {
   return redirect(`/exhibitions/${id}`);
 }
 
+// Policy §25.2 — 이벤트 응모는 USR-EVT-04 응모 모달 단일 진입점.
+// /upload?event=<id> 외부 링크는 이벤트 상세 + 응모 모달 자동 오픈으로 redirect.
+function redirectUploadEventToEntry({ request }: LoaderFunctionArgs) {
+  const url = new URL(request.url);
+  const eventId = url.searchParams.get('event');
+  if (eventId) return redirect(`/events/${eventId}?entry=open`);
+  return null;
+}
+
 // /demo, /demo/reference는 PM 시연·QA 검수용. 프로덕션 빌드에서는 제거되며 catch-all이 404 처리.
 const demoRoutesEnabled =
   !import.meta.env.PROD || import.meta.env.VITE_FOOTER_QA_LINKS === 'true';
@@ -67,7 +76,7 @@ export const router = createBrowserRouter([
           { index: true, Component: Browse },
           { path: 'browse', loader: () => redirect('/') },
           { path: 'works/:id', loader: redirectWorksToExhibitions },
-          { path: 'upload', Component: Upload },
+          { path: 'upload', Component: Upload, loader: redirectUploadEventToEntry },
           { path: 'profile', Component: Profile },
           { path: 'profile/:id', Component: Profile },
           { path: 'me', Component: Profile },
