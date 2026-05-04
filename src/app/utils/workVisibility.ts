@@ -1,4 +1,5 @@
 import type { Work } from '../data';
+import { reconcilePieceIds } from './pieceId';
 
 export type WorkVisibility =
   | 'public'
@@ -96,8 +97,12 @@ export function buildVisibilityPatch(
 
 export function normalizeWorkVisibility(work: Work): Work {
   const next = getWorkVisibility(work);
+  // piece 안정 식별자 보정 (Policy §15.4 / §32.1 #8b — 작품 단위 큐레이션 참조용).
+  const imageCount = Array.isArray(work.image) ? work.image.length : 1;
+  const imagePieceIds = reconcilePieceIds(imageCount, work.imagePieceIds);
   return {
     ...work,
     ...buildVisibilityPatch(next, { autoHiddenAt: work.autoHiddenAt }),
+    imagePieceIds,
   };
 }

@@ -53,6 +53,12 @@ export interface Work {
   imageArtists?: ImageArtistAssignment[]; // 이미지별 작가 지정 (인덱스 = 이미지 인덱스)
   /** image 배열과 동일 순서·길이. 장별 작품명(비어 있으면 표시는 무제). 업로드 시 빈 칸은 전시명으로 채울 수 있음 */
   imagePieceTitles?: string[];
+  /**
+   * image 배열과 동일 순서·길이. piece 안정 식별자 (Policy §15.4 / §32.1 #8b 정합).
+   * 기획전·이벤트 발표 페이지 등 작품 단위 큐레이션이 인덱스 시프트(전시 편집)에 영향
+   * 받지 않도록 안정 ID로 참조한다. 부팅 시 마이그레이션 hook이 누락된 work에 자동 발급.
+   */
+  imagePieceIds?: string[];
   isHidden?: boolean; // 비공개 여부
   /**
    * 자동 비공개 발동 시각 (Policy §12.2 / §12.2.1 SLA 기준).

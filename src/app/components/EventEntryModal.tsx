@@ -15,6 +15,7 @@ import { todayLocalIso } from '../utils/localDate';
 import { containsProfanity } from '../utils/profanityFilter';
 import { shouldBlockCameraPhoto } from '../utils/cameraExifBlock';
 import { pointsOnWorkPublished } from '../utils/pointsBackground';
+import { generatePieceIds } from '../utils/pieceId';
 
 const MIN_SHORT_SIDE = 800;
 
@@ -168,6 +169,7 @@ export function EventEntryModal({ open, onClose, eventId, eventTitle, eventStart
       tags: [],
       exhibitionName: finalTitle,
       imagePieceTitles: [finalTitle],
+      imagePieceIds: generatePieceIds(1),
       primaryExhibitionType: 'solo',
       imageArtists: [
         { type: 'member', memberId: currentUser.id, memberName: currentUser.name, memberAvatar: currentUser.avatar },

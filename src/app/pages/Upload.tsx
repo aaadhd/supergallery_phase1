@@ -70,6 +70,7 @@ import { openConfirm } from '../components/ConfirmDialog';
 import { RequiredMark } from '../components/RequiredMark';
 import { containsProfanity } from '../utils/profanityFilter';
 import { todayLocalIso } from '../utils/localDate';
+import { generatePieceIds, reconcilePieceIds } from '../utils/pieceId';
 import { normalizeStoredPieceTitle } from '../utils/workDisplay';
 import { WorkDetailModal } from '../components/WorkDetailModal';
 import {
@@ -782,6 +783,7 @@ export default function Upload() {
       exhibitionName: exFinal,
       groupName: resolvedGroup,
       imagePieceTitles,
+      imagePieceIds: generatePieceIds(urls.length),
       isInstructorUpload: uploadType === 'group' ? isInstructor : undefined,
       primaryExhibitionType,
       imageArtists,
@@ -862,12 +864,19 @@ export default function Upload() {
 
       editDiff = { imageFieldsChanged, originalStatus };
 
+      // 이미지 배열이 변경됐으면 piece ID 재정렬(기존 ID 가능한 한 보존, 길이 부족 시 새 발급).
+      // 메타만 변경이면 기존 imagePieceIds 그대로 보존.
+      const reconciledPieceIds = imageFieldsChanged
+        ? reconcilePieceIds(newImages.length, original?.imagePieceIds)
+        : (original?.imagePieceIds ?? reconcilePieceIds(newImages.length, undefined));
+
       const editingUpdates: Partial<Work> = {
         title: newWork.title,
         image: newWork.image,
         exhibitionName: newWork.exhibitionName,
         groupName: newWork.groupName,
         imagePieceTitles: newWork.imagePieceTitles,
+        imagePieceIds: reconciledPieceIds,
         isInstructorUpload: newWork.isInstructorUpload,
         primaryExhibitionType: newWork.primaryExhibitionType,
         imageArtists: newWork.imageArtists,
