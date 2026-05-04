@@ -41,6 +41,7 @@ import {
 } from '../utils/workDisplay';
 import { REJECTION_REASON_LABEL_KEY } from '../utils/reviewLabels';
 import { openConfirm } from '../components/ConfirmDialog';
+import { curationStore } from '../utils/curationStore';
 import { containsProfanity } from '../utils/profanityFilter';
 import { WorkDetailModal } from '../components/WorkDetailModal';
 import { hydrateGroupWorks } from '../groupData';
@@ -1042,14 +1043,16 @@ export default function Profile() {
                                       className="text-destructive focus:text-destructive text-sm"
                                       onSelect={(e) => e.preventDefault()}
                                       onClick={async () => {
-                                        // Policy §32 cascade: 전시 삭제 시 비회원 초대 토큰도 자동 revoke됨 (workStore.removeWork에서 처리)
+                                        // Policy §32.2: 활성 Pick·기획전 게시 중이면 자가 삭제 시 명시 경고. cascade는 workStore.removeWork에서 처리.
                                         const hasNonMemberSlots = work.imageArtists?.some((a) => a.type === 'non-member');
-                                        const desc = hasNonMemberSlots
-                                          ? t('profile.deleteWorkPermanent') + '\n' + t('profile.deleteWorkHasPendingInvites')
-                                          : t('profile.deleteWorkPermanent');
+                                        const inActiveCuration = curationStore.getThemes().some((tm) => tm.workIds.includes(work.id));
+                                        const hasActiveCuration = work.pick === true || inActiveCuration;
+                                        const descParts = [t('profile.deleteWorkPermanent')];
+                                        if (hasNonMemberSlots) descParts.push(t('profile.deleteWorkHasPendingInvites'));
+                                        if (hasActiveCuration) descParts.push(t('profile.deleteWorkActiveCuration'));
                                         const ok = await openConfirm({
                                           title: t('profile.deleteWorkConfirm').replace('{title}', displayExhibitionTitle(work, t('work.untitled'))),
-                                          description: desc,
+                                          description: descParts.join('\n'),
                                           destructive: true,
                                           confirmLabel: t('profile.delete'),
                                         });
@@ -1222,12 +1225,19 @@ export default function Profile() {
                                         className="text-destructive focus:text-destructive text-sm"
                                         onSelect={(e) => e.preventDefault()}
                                         onClick={async () => {
+                                          // Policy §32.2: 활성 Pick·기획전 게시 중이면 자가 삭제 시 명시 경고
+                                          const hasNonMemberSlots = work.imageArtists?.some((a) => a.type === 'non-member');
+                                          const inActiveCuration = curationStore.getThemes().some((tm) => tm.workIds.includes(work.id));
+                                          const hasActiveCuration = work.pick === true || inActiveCuration;
+                                          const descParts = [t('profile.deleteWorkPermanent')];
+                                          if (hasNonMemberSlots) descParts.push(t('profile.deleteWorkHasPendingInvites'));
+                                          if (hasActiveCuration) descParts.push(t('profile.deleteWorkActiveCuration'));
                                           const ok = await openConfirm({
                                             title: t('profile.deleteWorkConfirm').replace(
                                               '{title}',
                                               displayProminentHeadline(work, t('work.untitled')),
                                             ),
-                                            description: t('profile.deleteWorkPermanent'),
+                                            description: descParts.join('\n'),
                                             destructive: true,
                                             confirmLabel: t('profile.delete'),
                                           });
