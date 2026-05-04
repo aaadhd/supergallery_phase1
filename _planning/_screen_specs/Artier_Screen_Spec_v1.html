@@ -4830,9 +4830,13 @@
  <div style="font-size: 12px; color: #7f1d1d; line-height: 1.6;"><strong>영구 삭제</strong>되며, 되돌릴 수 없어요.</div>
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">2</span>
  </div>
- <div style="background: #fff7ed; border-left: 3px solid #f97316; padding: 10px 12px; border-radius: 0 4px 4px 0; margin-bottom: 18px; position: relative;">
+ <div style="background: #fff7ed; border-left: 3px solid #f97316; padding: 10px 12px; border-radius: 0 4px 4px 0; margin-bottom: 10px; position: relative;">
  <div style="font-size: 11.5px; color: #7c2d12; line-height: 1.6;">⚠️ 비회원 작가 2명에게 보낼 초대 토큰도 함께 사라져요. 친구분이 가입해도 자동으로 본인 작품을 찾을 수 없게 됩니다.</div>
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">3</span>
+ </div>
+ <div style="background: #fef2f2; border-left: 3px solid #dc2626; padding: 10px 12px; border-radius: 0 4px 4px 0; margin-bottom: 18px; position: relative;">
+ <div style="font-size: 11.5px; color: #7f1d1d; line-height: 1.6;">⚠️ 현재 활성 Pick/기획전에 게시 중이에요. 삭제하면 발표에서도 빠집니다.</div>
+ <span class="bub" style="position: absolute; top: -10px; right: -10px;">4</span>
  </div>
  <div style="display: flex; gap: 8px;">
  <div style="flex: 1; border: 1px solid var(--line-2); padding: 11px; border-radius: 8px; font-size: 13px; text-align: center; color: var(--ink-2);">취소</div>
@@ -4857,16 +4861,18 @@
  <dt><span class="bub">1</span></dt><dd>제목 — 전시·초안명 명시</dd>
  <dt><span class="bub">2</span></dt><dd>복구 불가 경고 — 빨강 박스</dd>
  <dt><span class="bub">3</span></dt><dd>비회원 초대 영향 — 주황 박스 (해당 시만)</dd>
+ <dt><span class="bub">4</span></dt><dd>활성 Pick/기획전 게시 영향 — 빨강 박스 (해당 시만)</dd>
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
  <li>"삭제하기" 클릭 시 전시 영구 삭제 + 연쇄 정리(좋아요·저장·알림·Pick·기획전·신고 큐·초대 토큰)</li>
  <li>업로드 24시간 이내 삭제 시 AP -20 회수 (내부 식별자)</li>
  <li>발급된 초대 토큰도 함께 영구 만료</li>
+ <li>활성 Pick/기획전 게시 중일 때 추가 빨강 경고 박스 노출, "삭제" 확정 시 활성 게시에서도 즉시 제거</li>
  <li>ESC·바깥 탭으로도 닫힘 (취소와 동일)</li>
  </ol></div>
 
- <div class="pol"><h4>관련 정책</h4>초대 토큰 만료 · AP 회수 (§7.2)</div>
+ <div class="pol"><h4>관련 정책</h4>초대 토큰 만료 · AP 회수 (§7.2) · 사용자 자가 삭제 활성 게시 경고 (§32.2)</div>
  </div>
  </div>
  </div>
