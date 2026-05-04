@@ -607,6 +607,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.reviewInfoEditMeta': '제목·그룹명만 고치는 건 즉시 반영돼요.',
   'upload.reviewInfoReject': '반려되면 사유를 함께 알려드려요. 수정 후 다시 전시하면 새로 검수해 드려요.',
   'notif.workPublished': '"{title}" 전시가 공개됐어요. 내 작품을 확인해 보세요.',
+  'notif.curationSelected': '"{pieceTitle}" 작품이 "{curationTitle}" 기획전에 선정됐어요. 페이지에서 확인해 보세요.',
   'upload.labelOptional': '(선택)',
   'upload.eventWorkTitle': '이벤트 참여작',
   'upload.close': '닫기',
@@ -1781,6 +1782,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'upload.reviewInfoEditMeta': 'Editing only title or group name is reflected immediately.',
   'upload.reviewInfoReject': 'If rejected, we share the reason. You can edit and resubmit for a new review.',
   'notif.workPublished': 'Your work in "{title}" is now public.',
+  'notif.curationSelected': 'Your work “{pieceTitle}” was selected for the “{curationTitle}” curation. View it on the page.',
   'upload.labelOptional': '(optional)',
   'upload.eventWorkTitle': 'Event entry',
   'upload.close': 'Close',
@@ -2582,7 +2584,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.12 | 2026-05-04 | PM × Claude | **응모 모달(USR-EVT-04) 카피 신규 (Policy v2.18·IA v1.10 연동, B-3a)** — 모달 제목·이미지 안내 헬퍼·작품명 라벨/플레이스홀더·응모 CTA(전송 중 라벨 포함)·닫기 라벨·접수 완료 토스트·중복 응모 차단 안내·이미지 없음 에러·작품명 빈값 에러·1점만 받는 헬퍼 등 응모 모달 전용 ko/en 카피 12쌍 신설. 응모 동의 라벨·"자세히 보기" 카피는 기존 USR-UPL-02 ?event= 분기에서 신설했던 키를 그대로 USR-EVT-04 모달에서 재사용(라벨 내용이 화면 무관). |
+| v1.12 | 2026-05-04 | PM × Claude | **응모 모달(USR-EVT-04) 카피 신규 (Policy v2.18·IA v1.10 연동, B-3a)** — 모달 제목·이미지 안내 헬퍼·작품명 라벨/플레이스홀더·응모 CTA(전송 중 라벨 포함)·닫기 라벨·접수 완료 토스트·중복 응모 차단 안내·이미지 없음 에러·작품명 빈값 에러·1점만 받는 헬퍼 등 응모 모달 전용 ko/en 카피 12쌍 신설. 응모 동의 라벨·"자세히 보기" 카피는 기존 USR-UPL-02 ?event= 분기에서 신설했던 키를 그대로 USR-EVT-04 모달에서 재사용(라벨 내용이 화면 무관). 이후 append — **기획전 선정 알림 카피 신규 (B-3b)** — 운영팀이 기획전에 piece를 추가할 때 작가에게 발송하는 알림 메시지 ko/en 1쌍 신설(작품명·기획전 이름 변수 포함). 기획전 영구 배지는 정책상 X(§15.2), 알림으로만 인지. |
 | v1.11 | 2026-04-30 | PM × Claude | **검수 SLA 표현 정확화** — "주말·공휴일을 빼고 24시간 안에" / "within 24 business hours". **매직 링크 전환 잔재 정정** — 옛 비밀번호 재설정·변경 템플릿 2건 제거, 매직 링크 가입/로그인 템플릿 신설. 탈퇴 "비밀번호 확인" → "동의 체크박스". **검수 신청 단계 공유 모델 정합** (Policy §3) — 옛 자동 발송 약속 카피 정정(작가 직접 발송 안내). inactive 단계 능동 톤 카피("곧 공개될 전시예요. 지금 가입해두시면 통과 즉시 본인 작품을 골라보실 수 있어요"). 친구 클레임 톤 정정 — "들어왔어요" → "본인 자리를 등록했어요". 신규 카피 3쌍 ko/en (검수 신청 단계 클레임 안내·친구용 배지 hint·검수 통과 시 친구 알림). 초대 공유 메시지에 inactive 분기. **토큰 모델 정합** — 옛 전화 기반 초대 카피 9쌍 제거. 온보딩 카피 톤 정정. FAQ 4문항(친구 초대·자동 연결 안 됨·잘못 연결·만료) ko/en 신설. 본인 작품 찾기 흐름 신규 카피 13쌍 추가. **닉네임 정책 카피 정합** — Settings 닉네임 readonly 라벨·안내·1:1 문의 진입 CTA, 가입 단계 중복 에러, 1:1 문의 "닉네임 변경 신청" 카테고리 안내 ko/en 신설. Policy 교차 링크 `[§n](Policy_v1.md#…)` 단축·§9·§21 앵커 보강·알림 타입 절 참조 §3.5.5(폐기)→§3.5·§16.3 정정. **FAQ Q6 콘텐츠 결함 정정** — Phase 1엔 없는 회원용 비공개 토글을 약속하던 "비공개로 전환하면 피드에서만 숨길 수 있어요" / "Setting a work to private hides it from the feed only" ko/en 삭제. **Footer DPO ko/en SSoT 정합** — `footer.privacyOfficerValue` ko/en이 서로 다른 인물(카테 vs Jo Ga-young)을 가리키던 결함 → ko를 영문과 동일 인물(조가영)로 정정. **§1.1·N-5 정합** — 이벤트 구독·해지·설정 채널 안내 카피 다수 ko/en(events.*·settings.notifChannelPolicy·settings.eventUnsubscribe*). 이후 append — `profile.deleteWorkActiveCuration` ko/en 신설 (USR-PRF-13 활성 Pick/기획전 경고). 이후 append — `upload.eventConsentLabel`·`upload.eventConsentReadMore`·`upload.errEventConsentRequired` ko/en 신설 (USR-UPL-02 `?event=` 분기 응모 동의 체크박스). |
 | v1.10 | 2026-04-29 | PM × Claude | **UX 카피 톤 일괄 정리** — 사용자 노출 알림·토스트·배너의 격식체·행정 어휘를 시니어 친화 친근체로 정합. 검수·신고 알림(노출됩니다 → 다른 분들이 볼 수 있어요·반려되었어요 → 검수를 통과하지 못했어요·전시했습니다 → 올렸어요·기각 → 받아들여지지 않았어요), 업로드·시스템 토스트(되었습니다 → 됐어요·선정 → 뽑혔어요), 좋아요 토스트 간결화. |
 | v1.9 | 2026-04-28 | PM × Claude | **설정 계정 섹션 데모 잔재 정리** — "데모 세션 식별자"·"세션에서 계정을 읽을 수 없습니다" 카피 폐기. 설정 계정 섹션은 이메일 형식일 때만 노출, 아니면 행 자체 숨김. |
