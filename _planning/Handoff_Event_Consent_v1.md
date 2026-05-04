@@ -23,7 +23,7 @@
 | 게시 기간 | 이벤트별 운영팀 결정 (이벤트 공식 종료일 기준) |
 | 게시 면적 | 이벤트 상세·결과 발표·관련 배너 등 사이트 내 (외부 SNS·언론 마케팅 자료는 별도 약관 라이선스 적용) |
 | 권리 침해 사유 즉시 제거 | 신고 처리 "삭제"·저작권 침해 강제 삭제·명예훼손 등은 동의 잠금 무관 즉시 제거 |
-| 동의 이력 보존 | 작가 ID·전시 ID·이벤트 ID·동의 시각 스냅샷 (정보통신망법 §50 마케팅 동의 이력 보관 의무에 준하는 기준) |
+| 동의 이력 보존 | Phase 1: 전시-이벤트 연결(`connectedEventId`) 자체가 응모 시점 체크박스 통과의 증거로 갈음. 별도 CONSENT_LOG 저장은 백엔드 도입 후 명시 구현(작가 ID·전시 ID·이벤트 ID·동의 시각·정보통신망법 §50 마케팅 동의 이력 보관 의무에 준하는 기준 검토). |
 
 ---
 
@@ -72,8 +72,8 @@
 - 본인 본의가 아닌 게시·악의적 도용 등이 의심되시면 [USR-INF-07] 문의로 알려주시기 바랍니다.
 
 **6. 동의 이력 보존**
-- 응모 시점의 동의 이력(작가 ID·전시 ID·이벤트 ID·동의 시각)을 저장합니다.
-- 보존 기간은 회사 약관·관련 법령에서 정하는 기간을 따릅니다.
+- 본 작품이 이벤트에 연결된 사실 자체가 응모 시점 동의의 증거로 갈음됩니다.
+- 별도 동의 이력(작가 ID·전시 ID·이벤트 ID·동의 시각)의 명시 보관은 백엔드 도입 후 도입을 검토하며, 보존 기간은 회사 약관·관련 법령에서 정하는 기간을 따릅니다.
 
 ---
 
@@ -120,8 +120,8 @@ By entering this exhibition into this event, you allow the team to select submis
 - If you believe a posting is unauthorized or maliciously misappropriated, please reach out via [USR-INF-07] inquiries.
 
 **6. Consent record retention**
-- We store a record of your consent at the moment of entry (user ID, exhibition ID, event ID, timestamp).
-- The retention period follows our terms and applicable law.
+- The fact that this work is linked to the event itself serves as evidence of your consent at the moment of entry.
+- An explicit consent record (user ID, exhibition ID, event ID, timestamp) will be considered for backend integration; the retention period follows our terms and applicable law.
 
 ---
 
@@ -143,9 +143,9 @@ By entering this exhibition into this event, you allow the team to select submis
 - [ ] [USR-UPL-02] `?event=<id>` 분기에 응모 동의 체크박스 노출 (CTA 위 인라인)
 - [ ] 약관 보기 인라인 링크 → 본 §2.4 본문 게재(모달 또는 별도 페이지)
 - [ ] 발행 검증 순서 #11에 미체크 에러 진입(첫 위반 지점에서 중단)
-- [ ] 동의 이력 스냅샷 저장(작가 ID·전시 ID·이벤트 ID·동의 시각)
 - [ ] ko/en 양측 동일 의미 노출
 - [ ] 변호사 검토 결과(LP-11) 수령 후 §2.4·§3.4 본문 확정본 반영
+- [ ] (백엔드 도입 후) 명시 CONSENT_LOG 저장 — 작가 ID·전시 ID·이벤트 ID·동의 시각
 
 ---
 
@@ -153,7 +153,7 @@ By entering this exhibition into this event, you allow the team to select submis
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1 | 2026-05-04 | PM × Claude | 최초 작성 — Policy §15.5·§25.2·§32.1 #10 정책 결정 표·체크박스 라벨·약관 본문 ko/en·변호사 검토 5포인트·구현 체크 6건. LP-11 변호사 검토 대기 상태. |
+| v1 | 2026-05-04 | PM × Claude | 최초 작성 — Policy §15.5·§25.2·§32.1 #10 정책 결정 표·체크박스 라벨·약관 본문 ko/en·변호사 검토 5포인트·구현 체크 6건. LP-11 변호사 검토 대기 상태. 이후 append — Phase 1 동의 이력 저장 요구 완화: 전시-이벤트 연결(`connectedEventId`) 자체가 응모 시점 체크박스 통과의 증거로 갈음, 명시 CONSENT_LOG는 백엔드 도입 후 자연 흡수. §1 정책 결정 표·§2.4 #6·§3.4 #6·§5 구현 체크 정합. |
 
 <!-- 인용 정의 -->
 [Policy §15.5]: Policy_v1.md#policy-15-5
