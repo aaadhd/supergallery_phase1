@@ -311,6 +311,7 @@ export default function Upload() {
   const [groupSuggestOpen, setGroupSuggestOpen] = useState(false);
   const [workTick, setWorkTick] = useState(0);
   const [isOriginalWork, setIsOriginalWork] = useState(false);
+  const [eventConsent, setEventConsent] = useState(false);
   const [artistInputTab, setArtistInputTab] = useState<'member' | 'non-member'>('member');
   /* ── 변환 프로그레스 ── */
 
@@ -338,6 +339,7 @@ export default function Upload() {
   }, [linkedEventId, linkedEventIdRaw, navigate, t]);
 
   /* ── 이미지 선택 ── */
+
   const [selectedContentId, setSelectedContentId] = useState<string | null>(null);
   const [artistSearch, setArtistSearch] = useState('');
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -385,6 +387,7 @@ export default function Upload() {
     setExhibitionName('');
     setGroupName('');
     setIsOriginalWork(false);
+    setEventConsent(false);
     setIsInstructor(false);
     setSelectedContentId(null);
     setCoverImageIndex(0);
@@ -513,6 +516,17 @@ export default function Upload() {
     const w = workStore.getWork(editingWorkId);
     return w?.feedReviewStatus === 'rejected' ? w : null;
   }, [editingWorkId]);
+
+  // Policy §15.5·§25.2: 이벤트 응모는 게시 보존 동의 체크박스 통과가 필수.
+  // 편집 중인 전시가 이미 같은 이벤트에 연결돼 있으면 응모 시점 동의가 이미 잠긴 상태이므로 재요구 안 함.
+  const requiresEventConsent = useMemo(() => {
+    if (!linkedEventId) return false;
+    if (editingWorkId) {
+      const existing = workStore.getWork(editingWorkId);
+      if (existing?.linkedEventId === linkedEventId) return false;
+    }
+    return true;
+  }, [linkedEventId, editingWorkId]);
   useEffect(() => {
     const editId = searchParams.get('edit');
     if (!editId) return;
@@ -819,6 +833,12 @@ export default function Upload() {
         toast.error(t('upload.errDuplicateEvent'));
         return;
       }
+    }
+
+    // Policy §15.5·§25.2: 응모 동의 체크박스 미통과 시 차단 (응모 시점 동의 잠금 정책)
+    if (requiresEventConsent && !eventConsent) {
+      toast.error(t('upload.errEventConsentRequired'));
+      return;
     }
 
     setIsPublishing(true);
@@ -1505,6 +1525,23 @@ export default function Upload() {
                       </div>
                     )}
 
+                    {/* 이벤트 응모 동의 (Policy §15.5·§25.2) */}
+                    {requiresEventConsent && (
+                      <div className="bg-amber-50 rounded-xl p-4 border border-amber-200">
+                        <label className="flex items-start gap-3 cursor-pointer group">
+                          <input
+                            type="checkbox"
+                            checked={eventConsent}
+                            onChange={(e) => setEventConsent(e.target.checked)}
+                            className="mt-1 flex-shrink-0 h-5 w-5 rounded border-amber-400 text-primary focus:ring-primary transition-all cursor-pointer"
+                          />
+                          <span className="text-sm text-amber-900 leading-snug cursor-pointer select-none">
+                            {t('upload.eventConsentLabel')}<RequiredMark />
+                          </span>
+                        </label>
+                      </div>
+                    )}
+
                   </div>
 
                   {/* 푸터 */}
@@ -1512,9 +1549,12 @@ export default function Upload() {
                     {!isOriginalWork && !isPublishing && (
                       <p className="text-xs text-amber-600 text-center mb-2">{t('upload.hintCheckOriginal')}</p>
                     )}
+                    {requiresEventConsent && !eventConsent && isOriginalWork && !isPublishing && (
+                      <p className="text-xs text-amber-600 text-center mb-2">{t('upload.errEventConsentRequired')}</p>
+                    )}
                     <div className="flex items-center justify-end gap-3">
                       <Button variant="ghost" onClick={() => setShowDetailsModal(false)} className="px-5 py-2.5 text-sm min-h-[44px]">{t('upload.close')}</Button>
-                      <Button disabled={isPublishing || !isOriginalWork} onClick={handlePublish} className={`px-6 py-2.5 text-sm font-medium rounded-lg transition-colors min-h-[44px] ${isPublishing || !isOriginalWork ? 'bg-muted text-muted-foreground' : 'bg-primary text-white lg:hover:bg-primary/90'}`}>
+                      <Button disabled={isPublishing || !isOriginalWork || (requiresEventConsent && !eventConsent)} onClick={handlePublish} className={`px-6 py-2.5 text-sm font-medium rounded-lg transition-colors min-h-[44px] ${isPublishing || !isOriginalWork || (requiresEventConsent && !eventConsent) ? 'bg-muted text-muted-foreground' : 'bg-primary text-white lg:hover:bg-primary/90'}`}>
                         {isPublishing
                           ? (editingWorkId ? t('upload.editModeSaving') : t('upload.publishing'))
                           : editingRejectedWork
