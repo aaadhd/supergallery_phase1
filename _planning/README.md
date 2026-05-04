@@ -41,6 +41,7 @@ _planning/
 ├── Handoff_Onboarding_v1.md       # 가입 후 온보딩 다단 흐름 + 본인 작품 찾기(claim) 카피
 ├── Handoff_Notifications_v1.md    # 인박스 + 검수·신고·Pick·초대 알림 통합 + 채널 라우팅 매트릭스
 ├── Handoff_LegalReview_Checklist_v1.md # 변호사 전달용 검토 체크리스트(약관·처리방침 검토 포인트 일람)
+├── Handoff_Event_Consent_v1.md       # 이벤트 응모 동의 문구·정책 결정·검토 포인트(USR-UPL-02 ?event= 분기)
 ├── PRD_User_v1.md            # 사용자 앱 화면별 카드(목적·입력·처리·출력·수용기준)
 ├── PRD_Admin_v1.md           # 어드민 화면별 카드(목적·입력·처리·출력·수용기준)
 └── _screen_specs/
@@ -67,6 +68,7 @@ _planning/
 | [Handoff_Onboarding_v1.md] | PM · UX Writer · 외주 개발사 (가입 후 흐름 prose) |
 | [Handoff_Notifications_v1.md] | PM · 운영 · UX Writer · 외주 개발사 (사용자 도달 알림 통합) |
 | [Handoff_LegalReview_Checklist_v1.md] | PM · 법무 · DPO (변호사 검토 의뢰 시 동봉) |
+| [Handoff_Event_Consent_v1.md] | PM · 법무 · 외주 개발사 (이벤트 응모 동의 문구 단일 소스) |
 | [PRD_User_v1.md] | 개발사 · QA |
 | [PRD_Admin_v1.md] | 개발사 · QA · 운영팀 |
 | [_screen_specs/Artier_Screen_Spec_v1.html](_screen_specs/Artier_Screen_Spec_v1.html) | PM · 디자이너 · 외주 개발사 (PC 와이어프레임·플로우) |
@@ -138,6 +140,7 @@ PC 와이어프레임 HTML은 **정책·화면의 원문 단일 소스가 아니
 | **검수·반려·재검수·업로드 자격** (Policy §12.1.*, §13) | `Policy_v1.md` · `PRD_User_v1.md`·`PRD_Admin_v1.md`(UPL·PRF·ADM-REV 등) · `IA_ScreenList_v1.md` · `Handoff_Notifications_v1.md`(검수 알림) · HTML |
 | **가입·인증·매직 링크** (Policy §2.*) | `Policy_v1.md` · `PRD_User_v1.md`(USR-AUT*) · `IA_ScreenList_v1.md`(USR-AUT*) · `Handoff_Signup_Consent_v1.md` · `Copy_v1.md` |
 | **문의·개인정보 권리·SLA** (Policy §20·§30, USR-INF-07) | `Policy_v1.md` · `PRD_User_v1.md`(USR-INF-07) · `PRD_Admin_v1.md`(ADM-INQ 등) · `IA_ScreenList_v1.md` · `Copy_v1.md` · `Handoff_UserInfo_Contact_v1.md` · 필요 시 `Handoff_Privacy_v1.md` 참조 정합 |
+| **이벤트·큐레이션 동의·보존** (Policy §15·§25·§32) | `Policy_v1.md`(§15·§25·§32) · `PRD_User_v1.md`(USR-UPL-02 발행·USR-EVT-01·02·USR-PRF-13) · `IA_ScreenList_v1.md`(USR-UPL-02·USR-EVT·USR-PRF-13) · `Copy_v1.md`(upload.eventConsent*·profile.deleteWorkActiveCuration) · `Handoff_Event_Consent_v1.md` · `Handoff_LegalReview_Checklist_v1.md`(LP-11) · HTML 슬라이드 |
 | **새 표준어·금칙어** (README 「용어 사전」) | `README.md`(용어 사전) · 해당 표현이 남아 있는 `Policy`·PRD·IA·핸드오프·FAQ 등 **전체 grep** |
 | **수치 변경** (글자 상한·SLA·연령·토큰 TTL·자동 비공개 트리거 등) | **SSoT 1곳만 수정**: 정책 수치는 `Policy_v1.md` §20 + 캐노니컬 § / UI 사양은 `PRD_User_v1.md` §0.4.2. 다른 곳은 인용이라 자동 정합. 검증: SSoT 파일 grep으로 옛 값 잔재 확인 |
 | **N종 열거 라벨 변경** (검수 5종·반려 4사유·토큰 4상태·운영자 역할 등) | **SSoT 1곳만 수정**: `Policy_v1.md` 해당 § (§23/§12.1/§3/§17). PRD/IA는 인용 형태라 자동 반영. 사용자 노출 라벨은 `Copy_v1.md`도 같이 갱신(반려 4사유 한국어 라벨 등) |
@@ -561,7 +564,7 @@ CM-<번호>          공통 팝업·다이얼로그
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.11 | 2026-05-02 | PM × Claude | **Policy §23.0 — 전시 공개 상태 5종** 정책 SSoT 명문화 · **§31 N-11 해소** (`DELTA.md`·`Policy_v1.md` 번들). **§21.0** 소프트런칭 동치. **§31 N-5** 이벤트 메일 구독·해지(PRD·IA·단말 저장). |
+| v1.11 | 2026-05-02 | PM × Claude | **Policy §23.0 — 전시 공개 상태 5종** 정책 SSoT 명문화 · **§31 N-11 해소** (`DELTA.md`·`Policy_v1.md` 번들). **§21.0** 소프트런칭 동치. **§31 N-5** 이벤트 메일 구독·해지(PRD·IA·단말 저장). 이후 append — **Handoff_Event_Consent_v1.md 신설 등록** (이벤트 응모 동의 문구 단일 소스). 「주제별 연쇄 갱신 번들」에 "이벤트·큐레이션 동의·보존" 행 추가. |
 | v1.10 | 2026-05-02 | PM × Codex | **푸시 경계와 버전 번호 룰 명문화** — `_planning` 내 모든 `.md`의 문서 이력은 원격 푸시 전 같은 행에 append, 푸시 후 다음 수정부터 다음 버전. **「주제별 연쇄 갱신 번들」** — 수정 시 연관 Policy·PRD·IA·Copy·핸드오프·HTML을 한 작업 범위에서 묶어 갱신. **SSoT 분담 명문화** — 정책 수치 = Policy §20, UI 사양 수치 = PRD_User §0.4.2, N종 열거 라벨 = Policy 캐노니컬 §, 프로필 옵션 = PRD USR-PRF-02, 알림 7종 = PRD USR-NTF-01. **운영 원칙** — (a) 수치 인용 룰. (b) Copy ↔ 코드: `Copy_v1.md`가 엄격 SSoT, Copy 먼저 → 코드. **닉네임 정책 SSoT 행 신설** — PRD USR-PRF-02. **번들 표 정정** — 초대·토큰 행의 오표기 `§12.2` 제거 → USR-AUT-10b 및 PRD §12 사용자 플로우 요약으로 명시. **PRD 기본 SSoT·Policy 정책-only** — `_planning` 상호 정합 절을 개정: 화면·AC·플로우 원문은 PRD 우선, Policy는 정책·수치 캐노니컬+경로 참조. 충돌 해소 2분기(구현 vs 정책). 충돌 방지 표에 화면 명세 행 추가. **잔여 정합** — `Handoff_FAQ_v1.md` 목록 설명 FAQ **14문항**, 「라이브 규칙」에 수치 출처 하위 불릿, `Handoff_UserInfo_Contact_v1.md` 문의 카테고리 **8종** 전면 반영. **Policy 인용 고정 앵커** — 제목 슬러그 대신 `Policy_v1.md#policy-*`로 타 문서 인용 링크 통일. |
 | v1.6 | 2026-05-01 | PM × Claude | **「용어 사전」 섹션 신설** — 사용자·역할·콘텐츠·검수 5상태·업로드 유형·큐레이션·사용자 행동·가입·인증·비회원 초대 8개 카테고리 표준어. 새 문서·카피·기획 변경 시 본 사전을 먼저 확인하는 운영 룰. |
 | v1.5 | 2026-05-01 | PM × Claude | **화면 스펙 HTML 등록** — `_screen_specs/Artier_Screen_Spec_v1.html`을 「기획 문서 목록」에 추가. **법무 검토용 체크리스트 등록** — `Handoff_LegalReview_Checklist_v1.md`를 「기획 문서 목록」에 추가. **핸드오프 신규 2종** — `Handoff_Onboarding_v1.md`(가입 후 4단계 + claim 흐름) · `Handoff_Notifications_v1.md`(인박스 + 검수·신고·Pick·초대 알림 + 채널 라우팅 매트릭스). |
@@ -579,6 +582,7 @@ CM-<번호>          공통 팝업·다이얼로그
 [Handoff_Privacy_v1.md]: Handoff_Privacy_v1.md
 [Handoff_ServiceIntro_v1.md]: Handoff_ServiceIntro_v1.md
 [Handoff_Signup_Consent_v1.md]: Handoff_Signup_Consent_v1.md
+[Handoff_Event_Consent_v1.md]: Handoff_Event_Consent_v1.md
 [Handoff_Terms_v1.md]: Handoff_Terms_v1.md
 [Handoff_UserInfo_Contact_v1.md]: Handoff_UserInfo_Contact_v1.md
 [IA_ScreenList_v1.md]: IA_ScreenList_v1.md

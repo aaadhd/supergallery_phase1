@@ -503,6 +503,9 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'events.alreadySubmitted': '이미 이 이벤트에 작품을 제출했어요.',
   'events.alreadySubmittedShort': '이미 참여하셨어요',
   'upload.eventEndedBlocked': '종료된 이벤트에는 더 이상 응모할 수 없어요.',
+  'upload.eventConsentLabel': '선정될 경우 이벤트 결과·관련 페이지에 일정 기간 게시되며, 게시 기간 중 본 전시를 삭제해도 운영팀이 별도 보관한 사본으로 게시 기간 종료일까지 유지될 수 있음에 동의합니다.',
+  'upload.eventConsentReadMore': '응모 동의 자세히 보기',
+  'upload.errEventConsentRequired': '이벤트에 응모하시려면 게시 보존 동의에 체크해 주세요.',
   'events.detailPeriod': '기간',
   'events.detailTarget': '참여 대상',
   'events.detailGuide': '이벤트 안내',
@@ -1663,6 +1666,9 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'events.alreadySubmitted': 'You have already submitted to this event.',
   'events.alreadySubmittedShort': 'Already participated',
   'upload.eventEndedBlocked': "This event has ended, so new entries can't be accepted.",
+  'upload.eventConsentLabel': "I agree that, if selected, this exhibition may be displayed on the event results and related pages for a set period. If I delete this exhibition during that period, the team may keep a separate copy displayed until the end of the announcement period.",
+  'upload.eventConsentReadMore': 'Read more about the entry consent',
+  'upload.errEventConsentRequired': 'Please check the display retention consent to enter the event.',
   'events.detailBackLink': 'Back to events',
   'events.detailPeriod': 'Period',
   'events.detailTarget': 'Participants',
@@ -2552,7 +2558,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.11 | 2026-04-30 | PM × Claude | **검수 SLA 표현 정확화** — "주말·공휴일을 빼고 24시간 안에" / "within 24 business hours". **매직 링크 전환 잔재 정정** — 옛 비밀번호 재설정·변경 템플릿 2건 제거, 매직 링크 가입/로그인 템플릿 신설. 탈퇴 "비밀번호 확인" → "동의 체크박스". **검수 신청 단계 공유 모델 정합** (Policy §3) — 옛 자동 발송 약속 카피 정정(작가 직접 발송 안내). inactive 단계 능동 톤 카피("곧 공개될 전시예요. 지금 가입해두시면 통과 즉시 본인 작품을 골라보실 수 있어요"). 친구 클레임 톤 정정 — "들어왔어요" → "본인 자리를 등록했어요". 신규 카피 3쌍 ko/en (검수 신청 단계 클레임 안내·친구용 배지 hint·검수 통과 시 친구 알림). 초대 공유 메시지에 inactive 분기. **토큰 모델 정합** — 옛 전화 기반 초대 카피 9쌍 제거. 온보딩 카피 톤 정정. FAQ 4문항(친구 초대·자동 연결 안 됨·잘못 연결·만료) ko/en 신설. 본인 작품 찾기 흐름 신규 카피 13쌍 추가. **닉네임 정책 카피 정합** — Settings 닉네임 readonly 라벨·안내·1:1 문의 진입 CTA, 가입 단계 중복 에러, 1:1 문의 "닉네임 변경 신청" 카테고리 안내 ko/en 신설. Policy 교차 링크 `[§n](Policy_v1.md#…)` 단축·§9·§21 앵커 보강·알림 타입 절 참조 §3.5.5(폐기)→§3.5·§16.3 정정. **FAQ Q6 콘텐츠 결함 정정** — Phase 1엔 없는 회원용 비공개 토글을 약속하던 "비공개로 전환하면 피드에서만 숨길 수 있어요" / "Setting a work to private hides it from the feed only" ko/en 삭제. **Footer DPO ko/en SSoT 정합** — `footer.privacyOfficerValue` ko/en이 서로 다른 인물(카테 vs Jo Ga-young)을 가리키던 결함 → ko를 영문과 동일 인물(조가영)로 정정. **§1.1·N-5 정합** — 이벤트 구독·해지·설정 채널 안내 카피 다수 ko/en(events.*·settings.notifChannelPolicy·settings.eventUnsubscribe*). 이후 append — `profile.deleteWorkActiveCuration` ko/en 신설 (USR-PRF-13 활성 Pick/기획전 경고). |
+| v1.11 | 2026-04-30 | PM × Claude | **검수 SLA 표현 정확화** — "주말·공휴일을 빼고 24시간 안에" / "within 24 business hours". **매직 링크 전환 잔재 정정** — 옛 비밀번호 재설정·변경 템플릿 2건 제거, 매직 링크 가입/로그인 템플릿 신설. 탈퇴 "비밀번호 확인" → "동의 체크박스". **검수 신청 단계 공유 모델 정합** (Policy §3) — 옛 자동 발송 약속 카피 정정(작가 직접 발송 안내). inactive 단계 능동 톤 카피("곧 공개될 전시예요. 지금 가입해두시면 통과 즉시 본인 작품을 골라보실 수 있어요"). 친구 클레임 톤 정정 — "들어왔어요" → "본인 자리를 등록했어요". 신규 카피 3쌍 ko/en (검수 신청 단계 클레임 안내·친구용 배지 hint·검수 통과 시 친구 알림). 초대 공유 메시지에 inactive 분기. **토큰 모델 정합** — 옛 전화 기반 초대 카피 9쌍 제거. 온보딩 카피 톤 정정. FAQ 4문항(친구 초대·자동 연결 안 됨·잘못 연결·만료) ko/en 신설. 본인 작품 찾기 흐름 신규 카피 13쌍 추가. **닉네임 정책 카피 정합** — Settings 닉네임 readonly 라벨·안내·1:1 문의 진입 CTA, 가입 단계 중복 에러, 1:1 문의 "닉네임 변경 신청" 카테고리 안내 ko/en 신설. Policy 교차 링크 `[§n](Policy_v1.md#…)` 단축·§9·§21 앵커 보강·알림 타입 절 참조 §3.5.5(폐기)→§3.5·§16.3 정정. **FAQ Q6 콘텐츠 결함 정정** — Phase 1엔 없는 회원용 비공개 토글을 약속하던 "비공개로 전환하면 피드에서만 숨길 수 있어요" / "Setting a work to private hides it from the feed only" ko/en 삭제. **Footer DPO ko/en SSoT 정합** — `footer.privacyOfficerValue` ko/en이 서로 다른 인물(카테 vs Jo Ga-young)을 가리키던 결함 → ko를 영문과 동일 인물(조가영)로 정정. **§1.1·N-5 정합** — 이벤트 구독·해지·설정 채널 안내 카피 다수 ko/en(events.*·settings.notifChannelPolicy·settings.eventUnsubscribe*). 이후 append — `profile.deleteWorkActiveCuration` ko/en 신설 (USR-PRF-13 활성 Pick/기획전 경고). 이후 append — `upload.eventConsentLabel`·`upload.eventConsentReadMore`·`upload.errEventConsentRequired` ko/en 신설 (USR-UPL-02 `?event=` 분기 응모 동의 체크박스). |
 | v1.10 | 2026-04-29 | PM × Claude | **UX 카피 톤 일괄 정리** — 사용자 노출 알림·토스트·배너의 격식체·행정 어휘를 시니어 친화 친근체로 정합. 검수·신고 알림(노출됩니다 → 다른 분들이 볼 수 있어요·반려되었어요 → 검수를 통과하지 못했어요·전시했습니다 → 올렸어요·기각 → 받아들여지지 않았어요), 업로드·시스템 토스트(되었습니다 → 됐어요·선정 → 뽑혔어요), 좋아요 토스트 간결화. |
 | v1.9 | 2026-04-28 | PM × Claude | **설정 계정 섹션 데모 잔재 정리** — "데모 세션 식별자"·"세션에서 계정을 읽을 수 없습니다" 카피 폐기. 설정 계정 섹션은 이메일 형식일 때만 노출, 아니면 행 자체 숨김. |
 | v1.8 | 2026-04-28 | PM × Claude | **설정 화면 i18n 누락 보강** — 글자 크기 토글 라벨 3쌍(작게·보통·크게)과 화면 테마 섹션 4쌍(섹션 헤더·인트로·밝게·어둡게) ko/en 추가. |
