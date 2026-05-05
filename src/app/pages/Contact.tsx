@@ -15,6 +15,7 @@ import {
 import { toast } from 'sonner';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
+import { profileStore } from '../store';
 
 const CATEGORY_VALUES = ['account', 'upload', 'report', 'privacy', 'suggestion', 'bug', 'other'] as const;
 
@@ -33,7 +34,7 @@ function categoryMessageKey(v: string): MessageKey {
 
 export default function Contact() {
   const { t } = useI18n();
-  const [email, setEmail] = useState('');
+  const [email, setEmail] = useState(() => profileStore.getProfile().email ?? '');
   const [category, setCategory] = useState('');
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
