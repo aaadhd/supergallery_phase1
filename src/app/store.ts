@@ -880,14 +880,13 @@ export function performAccountWithdrawal(currentArtistId: string, withdrawReason
       const newSlots = keepIndices.map(i => slots[i]);
       const newTitles = work.imagePieceTitles ? keepIndices.map(i => work.imagePieceTitles![i] ?? '') : undefined;
       const newPieceIds = work.imagePieceIds ? keepIndices.map(i => work.imagePieceIds![i] ?? '') : undefined;
-      const removedUrls = new Set(images.filter((_, i) => !keepIndices.includes(i)));
-      const coverStale = work.customCoverUrl != null && removedUrls.has(work.customCoverUrl);
       void workStore.updateWork(work.id, {
         image: newImages.length === 1 ? newImages[0] : newImages,
         imageArtists: newSlots,
         ...(newTitles !== undefined && { imagePieceTitles: newTitles }),
         ...(newPieceIds !== undefined && { imagePieceIds: newPieceIds }),
-        ...(coverStale && { customCoverUrl: undefined }),
+        customCoverUrl: undefined,
+        coverImageIndex: 0,
       });
     }
   }
