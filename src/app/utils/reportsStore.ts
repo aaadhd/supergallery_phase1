@@ -1,17 +1,11 @@
 /** 사용자 신고 큐 (localStorage). Artier 신고 ↔ /admin/reports 가 같은 데이터를 봅니다. */
 
 import { workStore } from '../store';
-import { pushDemoNotification } from './pushDemoNotification';
 import { buildVisibilityPatch, isWorkHidden } from './workVisibility';
-import { translate } from '../i18n/messages';
-import { getStoredLocale } from '../i18n/uiStrings';
 
 export const REPORTS_STORAGE_KEY = 'artier_reports';
 
 export const REPORTS_CHANGED_EVENT = 'artier-reports-changed';
-
-/** Policy §12.2: 같은 전시에 N번째 신고 시 자동 비공개 처리 */
-const AUTO_HIDE_REPORT_THRESHOLD = 2;
 
 export type StoredUserReport = {
   id: string;
@@ -58,8 +52,8 @@ export function saveUserReports(reports: StoredUserReport[]): void {
 }
 
 /**
- * 신고 1건 추가. Policy §12.2에 따라 **같은 전시의 신고가 2회 이상** 누적되는
- * 순간 해당 전시를 자동 비공개 처리(`isHidden: true`)하고 작가에게 시스템 알림을 발송한다.
+ * 신고 1건 추가. Policy §12.2 v2.20에서 **자동 비공개 트리거 폐기**됨.
+ * 모든 신고는 운영팀이 §12.1의 3액션(삭제·기각·비공개 유지)으로 직접 판정한다.
  */
 export function appendUserReport(
   entry: Omit<StoredUserReport, 'adminStatus'> & { adminStatus?: 'pending' },
@@ -67,33 +61,6 @@ export function appendUserReport(
   const list = loadUserReports();
   list.unshift({ ...entry, adminStatus: entry.adminStatus ?? 'pending' });
   saveUserReports(list);
-
-  // Auto-hide trigger (Policy §12.2)
-  if (entry.targetType === 'work' && entry.targetId) {
-    const workId = entry.targetId;
-    const sameWorkReports = list.filter(
-      (r) => r.targetType === 'work' && r.targetId === workId,
-    );
-    if (sameWorkReports.length >= AUTO_HIDE_REPORT_THRESHOLD) {
-      const work = workStore.getWork(workId);
-      if (work && !isWorkHidden(work)) {
-        workStore.updateWork(workId, {
-          ...buildVisibilityPatch('hidden_auto'),
-        });
-        // Policy §3.4 v2.14: 자동 비공개 발동 시 초대 토큰도 inactive 회귀.
-        // 친구가 받은 링크는 보존되고, 운영팀 기각 판정으로 복원될 때 다시 active.
-        void import('./inviteTokenStore').then(({ deactivateInviteToken }) => {
-          deactivateInviteToken(workId);
-        });
-        const title = work.exhibitionName || work.title || '';
-        pushDemoNotification({
-          type: 'system',
-          message: translate(getStoredLocale(), 'report.notifAutoHidden').replace('{title}', title),
-          workId,
-        });
-      }
-    }
-  }
 }
 
 export function updateUserReport(id: string, patch: Partial<StoredUserReport>): void {
