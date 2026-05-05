@@ -92,7 +92,7 @@ export default function EventManagement() {
 
   const remove = async (ev: ManagedEvent) => {
     const ok = await openConfirm({
-      title: `"${ev.title}" 이벤트를 삭제할까요?`,
+      title: `"${ev.title}" 응모전을 삭제할까요?`,
       description: '되돌릴 수 없습니다. 유저 목록·상세에서 즉시 제거됩니다.',
       destructive: true,
       confirmLabel: '삭제',
@@ -105,7 +105,7 @@ export default function EventManagement() {
         workStore.updateWork(w.id, { linkedEventId: undefined });
       }
     });
-    toast.success('이벤트가 삭제되었습니다.');
+    toast.success('응모전이 삭제되었습니다.');
   };
 
   const submit = (e: FormEvent) => {
@@ -144,10 +144,10 @@ export default function EventManagement() {
     };
     if (editingId) {
       eventStore.update(editingId, payload);
-      toast.success('이벤트가 수정되었습니다.');
+      toast.success('응모전이 수정되었습니다.');
     } else {
       eventStore.add(payload);
-      toast.success('이벤트가 등록되었습니다.');
+      toast.success('응모전이 등록되었습니다.');
     }
     cancelEdit();
   };
@@ -155,7 +155,7 @@ export default function EventManagement() {
   if (loading) {
     return (
       <div>
-        <h1 className="text-xl font-bold mb-6 text-foreground">이벤트 관리</h1>
+        <h1 className="text-xl font-bold mb-6 text-foreground">응모전 관리</h1>
         <div className="rounded-lg border border-border py-16 text-center text-sm text-muted-foreground">불러오는 중…</div>
       </div>
     );
@@ -164,18 +164,18 @@ export default function EventManagement() {
   return (
     <div className="min-h-full">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-1">
-        <h1 className="text-xl font-bold text-foreground">이벤트 관리</h1>
+        <h1 className="text-xl font-bold text-foreground">응모전 관리</h1>
         <Button
           type="button"
           onClick={() => { setEditingId(null); setDraft(emptyDraft); setShowForm((v) => !v); }}
           className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90 inline-flex items-center gap-1.5"
         >
           <Plus className="w-4 h-4" />
-          새 이벤트
+          새 응모전
         </Button>
       </div>
       <p className="text-sm text-muted-foreground mb-6">
-        등록된 이벤트는 유저 목록(/events)과 상세(/events/:id)에 즉시 반영됩니다. 상태값은 시작/종료일 기준 자동 계산되며, 수동으로 덮어쓸 수도 있습니다.
+        등록된 응모전은 유저 목록(/events)과 상세(/events/:id)에 즉시 반영됩니다. 상태값은 시작/종료일 기준 자동 계산되며, 수동으로 덮어쓸 수도 있습니다.
       </p>
 
       {showForm && (
@@ -183,7 +183,7 @@ export default function EventManagement() {
           onSubmit={submit}
           className="mb-6 border border-border rounded-lg p-4 space-y-3 bg-muted/50"
         >
-          <p className="text-sm font-medium text-foreground">{editingId ? '이벤트 수정' : '새 이벤트 등록'}</p>
+          <p className="text-sm font-medium text-foreground">{editingId ? '응모전 수정' : '새 응모전 등록'}</p>
           <div className="grid sm:grid-cols-2 gap-3">
             <input
               placeholder="제목 *"
@@ -294,14 +294,14 @@ export default function EventManagement() {
 
       {sorted.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
-          등록된 이벤트가 없습니다. 상단 "새 이벤트" 버튼으로 등록해 보세요.
+          등록된 응모전가 없습니다. 상단 "새 응모전" 버튼으로 등록해 보세요.
         </div>
       ) : (
         <div className="border border-border rounded-lg overflow-hidden overflow-x-auto">
           <table className="w-full text-sm min-w-[720px]">
             <thead>
               <tr className="bg-muted text-left text-foreground">
-                <th className="px-4 py-3 font-medium">이벤트명</th>
+                <th className="px-4 py-3 font-medium">응모전명</th>
                 <th className="px-4 py-3 font-medium">기간</th>
                 <th className="px-4 py-3 font-medium">상태</th>
                 <th className="px-4 py-3 font-medium">참여작 공개</th>

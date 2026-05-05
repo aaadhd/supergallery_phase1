@@ -72,6 +72,7 @@ function pushCurationSelectedNotification(
   curationTitle: string,
   template: string,
   workId: string,
+  curationId: string,
 ) {
   if (!artistId) return;
   const message = template
@@ -81,6 +82,7 @@ function pushCurationSelectedNotification(
     type: 'curation',
     message,
     workId,
+    curationId,
     fromUser: { name: '운영팀', avatar: '', id: 'admin' },
     demo: false,
   });
@@ -206,11 +208,11 @@ export default function CurationManagement() {
         const idx = ids.indexOf(p.pieceId);
         if (idx < 0) continue;
         const pieceTitle = displayPieceTitleAtIndex(w, idx, untitled);
-        pushCurationSelectedNotification(w.artistId, pieceTitle, title, template, p.workId);
+        pushCurationSelectedNotification(w.artistId, pieceTitle, title, template, p.workId, editor.editingId);
       }
       toast.success('기획전이 수정되었습니다.');
     } else {
-      curationStore.addCuratedExhibition({
+      const created = curationStore.addCuratedExhibition({
         title,
         subtitle: editor.subtitle.trim() || undefined,
         pieces,
@@ -223,7 +225,7 @@ export default function CurationManagement() {
         const idx = ids.indexOf(p.pieceId);
         if (idx < 0) continue;
         const pieceTitle = displayPieceTitleAtIndex(w, idx, untitled);
-        pushCurationSelectedNotification(w.artistId, pieceTitle, title, template, p.workId);
+        pushCurationSelectedNotification(w.artistId, pieceTitle, title, template, p.workId, created.id);
       }
       toast.success('기획전이 추가되었습니다.');
     }

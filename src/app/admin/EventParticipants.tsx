@@ -195,15 +195,15 @@ export default function EventParticipants() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">이벤트 참여자 관리</h1>
-        <p className="text-sm text-muted-foreground mt-1">런칭 이벤트 참여 현황 및 참여자 목록</p>
+        <h1 className="text-2xl font-bold text-foreground">응모전 참여자 관리</h1>
+        <p className="text-sm text-muted-foreground mt-1">런칭 응모전 참여 현황 및 참여자 목록</p>
       </div>
 
       {/* Event summary cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
         {relevantEvents.length === 0 ? (
           <div className="col-span-full bg-white rounded-lg border p-6 text-center text-sm text-muted-foreground">
-            참여자가 등록된 이벤트가 없습니다.
+            참여자가 등록된 응모전가 없습니다.
           </div>
         ) : (
           relevantEvents.map(event => {
@@ -227,10 +227,10 @@ export default function EventParticipants() {
       <div className="flex flex-wrap gap-3">
         <Select value={filterEvent} onValueChange={setFilterEvent}>
           <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="이벤트" />
+            <SelectValue placeholder="응모전" />
           </SelectTrigger>
           <SelectContent>
-            <SelectItem value="all">전체 이벤트</SelectItem>
+            <SelectItem value="all">전체 응모전</SelectItem>
             {relevantEvents.map(e => (
               <SelectItem key={e.id} value={e.id}>{e.title}</SelectItem>
             ))}
@@ -340,7 +340,20 @@ export default function EventParticipants() {
                         <span className="text-xs text-muted-foreground/60">—</span>
                       )}
                     </TableCell>
-                    <TableCell className="font-medium text-foreground">{p.name}</TableCell>
+                    <TableCell className="font-medium text-foreground">
+                      {p.workId ? (
+                        <a
+                          href={`/exhibitions/${p.workId}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="lg:hover:underline lg:hover:text-primary"
+                        >
+                          {p.name}
+                        </a>
+                      ) : (
+                        p.name
+                      )}
+                    </TableCell>
                     <TableCell className="text-sm text-muted-foreground">{p.email}</TableCell>
                     <TableCell className="text-sm">{events.find(e => e.id === p.eventId)?.title ?? '-'}</TableCell>
                     <TableCell>

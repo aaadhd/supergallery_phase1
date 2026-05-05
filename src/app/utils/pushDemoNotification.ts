@@ -8,6 +8,8 @@ type DemoNotif = {
   message: string;
   fromUser?: { name: string; avatar: string; id: string };
   workId?: string;
+  /** 알림 라우팅 타깃 — type 'curation' 클릭 시 /curations/:id로 이동(PRD USR-NTF-01 §1). */
+  curationId?: string;
   read?: boolean;
   demo?: boolean;
 };
@@ -28,6 +30,7 @@ export function pushDemoNotification(payload: DemoNotif) {
     message: payload.message,
     fromUser: payload.fromUser,
     workId: payload.workId,
+    curationId: payload.curationId,
     read: payload.read ?? false,
     createdAt: new Date().toISOString(),
     demo: payload.demo !== false,

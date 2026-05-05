@@ -24,6 +24,8 @@ interface Notification {
   messageReplacements?: Record<string, string>;
   fromUser?: { name: string; avatar: string; id: string };
   workId?: string;
+  /** 라우팅 타깃 — type 'curation' 클릭 시 /curations/:id로 이동(PRD USR-NTF-01 §1). */
+  curationId?: string;
   read: boolean;
   createdAt: string;
   /** 플로우 데모에서 넣은 알림 — 알림 설정과 무관하게 목록에 표시 */
@@ -308,6 +310,11 @@ export default function Notifications() {
 
   const handleClick = (notif: Notification) => {
     markAsRead(notif.id);
+    // PRD USR-NTF-01 §1 — 기획전 선정 알림은 USR-CUR-01 페이지로 직행.
+    if (notif.type === 'curation' && notif.curationId) {
+      navigate(`/curations/${notif.curationId}`);
+      return;
+    }
     if (notif.type === 'event') {
       navigate('/events');
       return;
