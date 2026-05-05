@@ -39,14 +39,14 @@ const demoUserMember: MemberRow = {
 
 const initialMembers: MemberRow[] = [
   demoUserMember,
-  { id: 'm1', name: '김민서', email: 'minseo.k@example.com', joinedAt: '2025-11-02', avatar: 'MS', ap: 140 },
-  { id: 'm2', name: '이하준', email: 'hajun.lee@example.com', joinedAt: '2025-12-18', avatar: 'LJ', ap: 80 },
-  { id: 'm3', name: '박지우', email: 'spam_account@test.com', joinedAt: '2026-01-05', avatar: 'PJ', ap: 20 },
-  { id: 'm4', name: '최유나', email: 'yuna.c@example.com', joinedAt: '2026-02-14', avatar: 'CY', ap: 200 },
-  { id: 'm5', name: '정다은', email: 'daeun.j@example.com', joinedAt: '2026-02-20', avatar: 'JD', ap: 60 },
-  { id: 'm6', name: '한소희', email: 'sohee.h@example.com', joinedAt: '2026-03-01', avatar: 'HS', ap: 120 },
-  { id: 'm7', name: '오준영', email: 'banned_user@example.com', joinedAt: '2025-09-30', avatar: 'OY', ap: 40 },
-  { id: 'm8', name: '윤서아', email: 'seoa.y@example.com', joinedAt: '2026-03-15', avatar: 'YS', ap: 180 },
+  { id: 'm1', name: '민서_그림', email: 'minseo.k@example.com', joinedAt: '2025-11-02', avatar: '민', ap: 140 },
+  { id: 'm2', name: '하준아트', email: 'hajun.lee@example.com', joinedAt: '2025-12-18', avatar: '하', ap: 80 },
+  { id: 'm3', name: '지우123', email: 'spam_account@test.com', joinedAt: '2026-01-05', avatar: '지', ap: 20 },
+  { id: 'm4', name: '유나의갤러리', email: 'yuna.c@example.com', joinedAt: '2026-02-14', avatar: '유', ap: 200 },
+  { id: 'm5', name: '다은스케치', email: 'daeun.j@example.com', joinedAt: '2026-02-20', avatar: '다', ap: 60 },
+  { id: 'm6', name: '소희_watercolor', email: 'sohee.h@example.com', joinedAt: '2026-03-01', avatar: '소', ap: 120 },
+  { id: 'm7', name: '준영99', email: 'banned_user@example.com', joinedAt: '2025-09-30', avatar: '준', ap: 40 },
+  { id: 'm8', name: '서아의봄', email: 'seoa.y@example.com', joinedAt: '2026-03-15', avatar: '서', ap: 180 },
 ];
 
 const MEMBERS_KEY = 'artier_admin_members_v1';
@@ -139,7 +139,7 @@ export default function MemberManagement() {
       <div className="flex flex-wrap gap-3 mb-6">
         <input
           type="search"
-          placeholder="이름 또는 이메일 검색"
+          placeholder="닉네임 또는 이메일 검색"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           className="border border-border rounded-lg px-3 py-2 text-sm flex-1 min-w-[240px] max-w-md"
@@ -162,7 +162,7 @@ export default function MemberManagement() {
             <thead>
               <tr className="bg-muted text-left text-foreground">
                 <th className="px-4 py-3 font-medium w-24">프로필</th>
-                <th className="px-4 py-3 font-medium">이름</th>
+                <th className="px-4 py-3 font-medium">닉네임</th>
                 <th className="px-4 py-3 font-medium">이메일</th>
                 <th className="px-4 py-3 font-medium">가입일</th>
                 <th className="px-4 py-3 font-medium text-right">AP</th>
