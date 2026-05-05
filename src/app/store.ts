@@ -855,37 +855,10 @@ export function performAccountWithdrawal(currentArtistId: string, withdrawReason
       });
     }
   } catch { /* ignore */ }
-  const ownWorkIds: string[] = [];
-  workStore.getWorks().forEach((w) => {
-    if (w.artistId !== currentArtistId) return;
-    ownWorkIds.push(w.id);
-    workStore.updateWork(w.id, {
-      artist: {
-        ...w.artist,
-        id: w.artist.id,
-        name: ANON_DISPLAY,
-        avatar: ANON_AVATAR,
-        bio: undefined,
-      },
-    });
-  });
-  // Policy §3.4: 작가 탈퇴 시 본인 업로드 전시의 비회원 초대 토큰을 영구 무효(`revoked`)로 전환.
-  if (ownWorkIds.length > 0) {
-    void import('./utils/inviteTokenStore').then(({ revokeInviteToken }) => {
-      ownWorkIds.forEach((id) => revokeInviteToken(id));
-    });
-  }
-  // 탈퇴 작가의 작품을 어드민 Pick 목록에서 제거 (Policy §15.3 일관 — 탈퇴 작가 작품은 Pick 자격 없음).
-  try {
-    const pRaw = localStorage.getItem('artier_admin_picks_v1');
-    if (pRaw && ownWorkIds.length > 0) {
-      const picks = JSON.parse(pRaw) as string[];
-      const cleaned = picks.filter((p) => !ownWorkIds.includes(p));
-      if (cleaned.length !== picks.length) {
-        localStorage.setItem('artier_admin_picks_v1', JSON.stringify(cleaned));
-      }
-    }
-  } catch { /* ignore */ }
+  // Policy §4: 탈퇴 시 본인 업로드 전시 영구 삭제. removeWork가 기획전·응모전·Pick·초대 토큰·알림 cascade 처리.
+  workStore.getWorks()
+    .filter((w) => w.artistId === currentArtistId)
+    .forEach((w) => { void workStore.removeWork(w.id); });
   currentInteractions = { liked: [], saved: [] };
   localStorage.setItem('artier_interactions', JSON.stringify(currentInteractions));
   interactionListeners.forEach((l) => l());
