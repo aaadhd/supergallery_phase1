@@ -3,7 +3,8 @@ const STORAGE_KEY = 'artier_notifications';
 const MAX = 200;
 
 type DemoNotif = {
-  type: 'like' | 'follow' | 'pick' | 'system' | 'event' | 'invite';
+  /** 'curation' = 큐레이션(Pick·기획전 선정 등 운영팀 직권). Policy §15.2·USR-NTF-01 카테고리 8종 정합. */
+  type: 'like' | 'follow' | 'pick' | 'system' | 'event' | 'invite' | 'curation';
   message: string;
   fromUser?: { name: string; avatar: string; id: string };
   workId?: string;

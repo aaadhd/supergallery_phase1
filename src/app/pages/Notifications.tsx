@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Heart, UserPlus, Star, Bell, Check, Calendar, X } from 'lucide-react';
+import { Heart, UserPlus, Star, Bell, Check, Calendar, X, Bookmark } from 'lucide-react';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';
 import { artists } from '../data';
@@ -17,7 +17,7 @@ const NOTIF_RETENTION_MS = 90 * 86400000;
 
 interface Notification {
   id: string;
-  type: 'like' | 'follow' | 'pick' | 'system' | 'event' | 'invite';
+  type: 'like' | 'follow' | 'pick' | 'system' | 'event' | 'invite' | 'curation';
   /** 동적 알림은 message 그대로, 시드·시스템은 messageKey + replacements 권장 (i18n 정합). */
   message?: string;
   messageKey?: MessageKey;
@@ -171,6 +171,7 @@ const typeIcons = {
   system: Bell,
   event: Calendar,
   invite: UserPlus,
+  curation: Bookmark,
 } as const;
 
 const typeColors = {
@@ -180,6 +181,7 @@ const typeColors = {
   system: 'bg-muted/50 text-muted-foreground',
   event: 'bg-emerald-50 text-emerald-500',
   invite: 'bg-violet-50 text-violet-500',
+  curation: 'bg-orange-50 text-orange-500',
 } as const;
 
 function passesPrefs(n: Notification, p: NotificationSettingsState): boolean {
@@ -197,6 +199,9 @@ function passesPrefs(n: Notification, p: NotificationSettingsState): boolean {
       return p.marketing;
     case 'invite':
       // 작가가 직접 보낸 초대 링크의 결과 알림 — 본인 액션의 결과이므로 항상 노출 (Policy §3 v2.14).
+      return true;
+    case 'curation':
+      // 기획전 선정 알림 — 운영팀 직권 큐레이션 결과이므로 항상 노출 (Policy §15.2 — 영구 배지 X, 알림으로만 인지).
       return true;
     default:
       // Unknown type — 향후 확장 시 사용자 동의 없이 노출되지 않도록 보수적으로 차단.
