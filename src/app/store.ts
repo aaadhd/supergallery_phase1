@@ -858,14 +858,15 @@ export function performAccountWithdrawal(currentArtistId: string, withdrawReason
   for (const work of workStore.getWorks()) {
     const images = Array.isArray(work.image) ? work.image : [work.image];
     const slots = work.imageArtists ?? [];
-    const isGroupWork = work.primaryExhibitionType === 'group' && slots.length > 0;
-
+    // primaryExhibitionType 없는 레거시 전시도 slots 유무로 판단 (타입 무관 안전 처리)
     let keepIndices: number[];
-    if (isGroupWork) {
+    if (slots.length > 0) {
       keepIndices = images.map((_, i) => i).filter(i => {
         const ia = slots[i];
         return !ia || !(ia.type === 'member' && ia.memberId === currentArtistId);
       });
+      // 모두 타인 작품이라 필터 없을 경우 → 관련 없는 전시
+      if (keepIndices.length === images.length && work.artistId !== currentArtistId) continue;
     } else if (work.artistId === currentArtistId) {
       keepIndices = [];
     } else {

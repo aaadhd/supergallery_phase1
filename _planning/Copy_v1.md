@@ -1324,7 +1324,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'verify.retrySignup': '가입 다시 시작',
   'verify.retryLogin': '로그인 다시 시작',
   'verify.goHome': '로그인 화면으로',
-  'settings.withdrawConsentLabel': '모든 데이터가 영구 삭제되는 점을 이해하고 동의합니다.',
+  'settings.withdrawConsentLabel': '내 계정과 작품이 삭제되며 되돌릴 수 없음을 이해하고 동의합니다.',
   'settings.withdrawConsentErr': '데이터 삭제 동의에 체크해 주세요.',
   'footer.qaAuthVerifyDemoExpired': '인증 링크 만료 (시연)',
 } as const;
@@ -2485,7 +2485,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'verify.retrySignup': 'Restart sign-up',
   'verify.retryLogin': 'Restart sign-in',
   'verify.goHome': 'Back to login',
-  'settings.withdrawConsentLabel': 'I understand all my data will be permanently deleted.',
+  'settings.withdrawConsentLabel': 'I understand my account and works will be deleted and cannot be undone.',
   'settings.withdrawConsentErr': 'Please confirm you agree to delete all data.',
   'footer.qaAuthVerifyDemoExpired': 'Verify link expired (demo)',
 } as const;
