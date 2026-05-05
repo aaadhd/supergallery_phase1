@@ -4,6 +4,16 @@
 
 ---
 
+## 2026-05-05
+
+- **자동 비공개 트리거 폐기 전문서 정합 (Policy §12.2 v2.20, B-6 후속)** — 이전 사이클(05-04)에 코드·Policy 정합이 완료된 자동 비공개 트리거 폐기를 나머지 기획 문서 전체로 확산. PRD_Admin v1.24·PRD_User v2.10·IA v1.11·Copy v1.13·Handoff_Notifications v5·Handoff_LegalReview v3·HTML 화면 스펙에서 "2회 자동 비공개" 배너·정책 박스·SLA 4단계 배지·24h 에스컬레이션 카운트·채널 매트릭스 행 등 잔재 제거.
+- **「삭제」 액션 사유 변수 카피 전문서 반영** — `report.notifAutoHidden` ko/en 폐기, `report.notifTargetWorkDeleted`에 `{reason}` 변수 추가, 사유 라벨 4종(`deleteReason.*`) Copy·Handoff_Notifications·messages.ts 정합.
+- **ADM-MBR-01 회원 단위 자동 검토 배지 폐기** — 24h 신고 카운트 트리거 제거, 운영팀 신고 큐 직접 정성 판단으로 전환(§22.5 v2.20 정합).
+- **Handoff_LegalReview LP-5 재기술** — "2회 신고 자동 비공개 법적 리스크" → "「삭제」 액션 사유 4종 한정 법적 근거"로 전면 재기술(정통망법 §44의2·저작권법 §103·청소년보호법 §16 검토 포인트).
+- **코드 주석 정합** — `data.ts` autoHiddenAt @deprecated, `ReportManagement.tsx`·`reportsStore.ts`·`feedVisibility.ts` 등 src 9개 파일의 "자동 비공개" 잔재 주석·토스트 문자열 정정.
+
+---
+
 ## 2026-05-04
 
 - **§31 잔여 정리**: privacy 수집 항목 정정(§2.1.1 자동 country 수집 폐기 정합), 매직 링크 데모 PROD 가드(§31 N-16, §195), Points UI·read API·PP 인프라 백엔드 자연 흡수 정리(Policy §7.1 일관).
