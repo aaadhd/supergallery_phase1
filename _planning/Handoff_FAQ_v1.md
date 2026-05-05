@@ -30,7 +30,7 @@
 Artier는 비밀번호 대신 이메일 인증 링크로 로그인해요. 이메일을 받지 못했다면 스팸함을 먼저 확인해 주시고, 로그인 화면에서 "로그인 링크 다시 보내기"를 눌러 주세요. 30초 쿨다운 후 다시 보낼 수 있어요. 링크는 30분 동안 유효해요.
 
 #### Q3. 탈퇴하면 작품은 어떻게 되나요?
-탈퇴 후에도 업로드한 작품은 "작가 미상"으로 갤러리에 유지돼요. 탈퇴 전 작품 삭제를 원하시면 먼저 작품을 개별 삭제해 주세요.
+탈퇴하면 업로드한 전시가 모두 삭제돼요. 복구할 수 없으니 남기고 싶은 작품은 탈퇴 전에 따로 저장해 두세요.
 
 ### 업로드 카테고리
 
@@ -86,7 +86,7 @@ Tap the sign-in button on the home screen — it takes about a minute. We suppor
 Artier uses email magic links instead of passwords. If you didn't receive the email, check your spam folder first, then tap "Resend sign-in link" on the sign-in screen. There's a 30-second cooldown, and the link is valid for 30 minutes.
 
 #### Q3. What happens to my works if I delete my account?
-After you leave, your uploaded works stay in the gallery under "Unknown artist". If you want them removed, please delete each work individually before you leave.
+All your uploaded exhibitions are deleted when you leave. This cannot be undone.
 
 ### Upload category
 
