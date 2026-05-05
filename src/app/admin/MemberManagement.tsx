@@ -9,7 +9,7 @@ import { useDebouncedValue } from '../hooks/useDebouncedValue';
 import { usePagination } from '../hooks/usePagination';
 import { PaginationBar } from './components/PaginationBar';
 
-const MEMBERS_PAGE_SIZE = 50;
+const MEMBERS_PAGE_SIZE = 20;
 
 /**
  * Phase 1 회원 관리 (Policy §12.3).

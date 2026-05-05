@@ -21,7 +21,7 @@ import { usePagination } from '../hooks/usePagination';
 import { PaginationBar } from './components/PaginationBar';
 import { buildVisibilityPatch } from '../utils/workVisibility';
 
-const ADMIN_TABLE_PAGE_SIZE = 50;
+const ADMIN_TABLE_PAGE_SIZE = 20;
 
 type ReportState = '대기' | '비공개 유지' | '삭제' | '기각' | '처리완료';
 type ReportKind = '작품' | '댓글' | '프로필';
