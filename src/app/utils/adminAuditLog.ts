@@ -30,7 +30,8 @@ export type AuditAction =
   | 'notice_saved'           // 공지 생성·수정
   | 'notice_published'       // 공지 게시
   | 'notice_stopped'         // 공지 게시 중단
-  | 'notice_deleted';        // 공지 삭제
+  | 'notice_deleted'         // 공지 삭제
+  | 'member_deleted';        // 회원 영구 말소 (Policy §4·§30)
 
 export type DeletedWorkSnapshot = {
   workId: string;
