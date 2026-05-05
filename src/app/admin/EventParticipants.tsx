@@ -89,26 +89,82 @@ export default function EventParticipants() {
     return map;
   }, [events]);
 
+  const sendContestSelectedNotification = (eventTitle: string, workId: string) => {
+    const w = workStore.getWork(workId);
+    if (!w) return;
+    const message = t('notif.contestSelected')
+      .replace('{title}', displayExhibitionTitle(w, t('work.untitled')))
+      .replace('{event}', eventTitle);
+    pushDemoNotification({
+      type: 'event',
+      message,
+      workId,
+      fromUser: { name: '운영팀', avatar: '', id: 'admin' },
+      demo: false,
+    });
+  };
+
   const handleToggleSelected = (eventId: string, workId: string) => {
     const ev = events.find((e) => e.id === eventId);
     const w = workStore.getWork(workId);
     if (!ev || !w) return;
     const result = eventStore.toggleSelected(eventId, workId);
     if (result.added) {
-      const message = t('notif.contestSelected')
-        .replace('{title}', displayExhibitionTitle(w, t('work.untitled')))
-        .replace('{event}', ev.title);
-      pushDemoNotification({
-        type: 'event',
-        message,
-        workId,
-        fromUser: { name: '운영팀', avatar: '', id: 'admin' },
-        demo: false,
-      });
+      sendContestSelectedNotification(ev.title, workId);
       toast.success(`${displayExhibitionTitle(w, '')} 선정 처리 + 작가 알림 발송`);
     } else {
       toast(`${displayExhibitionTitle(w, '')} 선정 해제`);
     }
+  };
+
+  // 일괄 선정/해제용 다중 선택 (PRD ADM-EVT-03 AC-04). 행 단위 체크박스로 모았다가 버튼으로 일괄 처리.
+  const [bulkSelected, setBulkSelected] = useState<Set<string>>(new Set());
+
+  const toggleBulk = (key: string) => {
+    setBulkSelected((prev) => {
+      const next = new Set(prev);
+      if (next.has(key)) next.delete(key);
+      else next.add(key);
+      return next;
+    });
+  };
+  const clearBulk = () => setBulkSelected(new Set());
+
+  const handleBulkSelect = () => {
+    // 같은 응모전 행끼리 묶어 일괄 처리
+    const byEvent = new Map<string, string[]>();
+    for (const key of bulkSelected) {
+      const [eventId, workId] = key.split('::');
+      if (!eventId || !workId) continue;
+      if (!byEvent.has(eventId)) byEvent.set(eventId, []);
+      byEvent.get(eventId)!.push(workId);
+    }
+    let totalAdded = 0;
+    for (const [eventId, workIds] of byEvent) {
+      const ev = events.find((e) => e.id === eventId);
+      if (!ev) continue;
+      const { addedIds } = eventStore.bulkSelect(eventId, workIds);
+      for (const wid of addedIds) sendContestSelectedNotification(ev.title, wid);
+      totalAdded += addedIds.length;
+    }
+    if (totalAdded > 0) toast.success(`${totalAdded}건 선정 처리 + 작가 알림 발송`);
+    else toast('이미 선정된 항목이라 변동 없음');
+    clearBulk();
+  };
+
+  const handleBulkUnselect = () => {
+    const byEvent = new Map<string, string[]>();
+    for (const key of bulkSelected) {
+      const [eventId, workId] = key.split('::');
+      if (!eventId || !workId) continue;
+      if (!byEvent.has(eventId)) byEvent.set(eventId, []);
+      byEvent.get(eventId)!.push(workId);
+    }
+    for (const [eventId, workIds] of byEvent) {
+      eventStore.bulkUnselect(eventId, workIds);
+    }
+    toast(`${bulkSelected.size}건 선정 해제 (알림은 보존)`);
+    clearBulk();
   };
 
   const realParticipants = useParticipantsFromWorks();
@@ -196,11 +252,40 @@ export default function EventParticipants() {
         <span className="self-center text-sm text-muted-foreground">{filtered.length}명 표시</span>
       </div>
 
+      {/* 일괄 선정/해제 액션 바 (PRD ADM-EVT-03 AC-04) */}
+      {bulkSelected.size > 0 && (
+        <div className="flex flex-wrap items-center gap-3 bg-primary/5 border border-primary/30 rounded-lg px-4 py-3">
+          <span className="text-sm text-foreground">선택 {bulkSelected.size}건</span>
+          <button
+            type="button"
+            onClick={handleBulkSelect}
+            className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90"
+          >
+            {t('evt.adminBulkSelect')}
+          </button>
+          <button
+            type="button"
+            onClick={handleBulkUnselect}
+            className="text-sm px-3 py-1.5 rounded-lg border border-red-200 text-red-700 lg:hover:bg-red-50"
+          >
+            {t('evt.adminBulkUnselect')}
+          </button>
+          <button
+            type="button"
+            onClick={clearBulk}
+            className="text-xs text-muted-foreground hover:text-foreground ml-auto"
+          >
+            선택 해제
+          </button>
+        </div>
+      )}
+
       {/* Table */}
       <div className="bg-white rounded-lg border">
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-12"></TableHead>
               <TableHead className="w-20">선정</TableHead>
               <TableHead>이름</TableHead>
               <TableHead>이메일</TableHead>
@@ -212,7 +297,7 @@ export default function EventParticipants() {
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                   조건에 맞는 참여자가 없습니다.
                 </TableCell>
               </TableRow>
@@ -220,8 +305,23 @@ export default function EventParticipants() {
               filtered.map(p => {
                 const selectedSet = selectedByEvent.get(p.eventId);
                 const isSelected = !!(p.workId && selectedSet?.has(p.workId));
+                const bulkKey = p.workId ? `${p.eventId}::${p.workId}` : null;
+                const isBulkChecked = bulkKey ? bulkSelected.has(bulkKey) : false;
                 return (
                   <TableRow key={p.id}>
+                    <TableCell>
+                      {bulkKey ? (
+                        <input
+                          type="checkbox"
+                          checked={isBulkChecked}
+                          onChange={() => toggleBulk(bulkKey)}
+                          aria-label={`${p.name} 다중 선택`}
+                          className="h-4 w-4"
+                        />
+                      ) : (
+                        <span className="text-xs text-muted-foreground/60">—</span>
+                      )}
+                    </TableCell>
                     <TableCell>
                       {p.workId ? (
                         <label className="inline-flex items-center gap-2 cursor-pointer">

@@ -1,10 +1,11 @@
 import { motion } from 'framer-motion';
-import { X, Heart, Bookmark, Share2, ChevronLeft, ChevronRight, UserPlus, Users, Flag, MoreHorizontal, MessageSquare } from 'lucide-react';
+import { X, Heart, Bookmark, Share2, ChevronLeft, ChevronRight, UserPlus, Users, Flag, MoreHorizontal, MessageSquare, Trophy } from 'lucide-react';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator } from './ui/dropdown-menu';
 import { WorkInquiryModal } from './WorkInquiryModal';
 import { useI18n } from '../i18n/I18nProvider';
 import { Work, Artist, works, artists as allArtists } from '../data';
 import { hydrateGroupWorks } from '../groupData';
+import { eventStore, useManagedEvents } from '../utils/eventStore';
 import { imageUrls } from '../imageUrls';
 import { ImageWithFallback } from './ImageWithFallback';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -140,6 +141,10 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
   const headline = displayExhibitionTitle(work, t('work.untitled'));
   const groupOrgLine = displayGroupOrgName(work);
   const isPick = work.pickBadge === true || work.pick === true;
+  // Policy §15.2 — 응모전 선정작 영구 배지. 어떤 응모전이라도 selectedWorkIds에 본 work가 포함되어 있으면 노출.
+  // 운영팀 토글 OFF 시 자연 해제(PRD ADM-EVT-03 AC-05).
+  useManagedEvents();
+  const contestSelected = eventStore.getAll().find((ev) => ev.selectedWorkIds?.includes(workId));
   const hasCoOwners = !!work.coOwners?.length;
   const isGroupWork =
     work.primaryExhibitionType === 'group' ||
@@ -453,6 +458,15 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                     <path d="M9.049 2.927c.3-.921 1.603-.921 1.902 0l1.286 3.957a1 1 0 00.95.69h4.162c.969 0 1.371 1.24.588 1.81l-3.37 2.448a1 1 0 00-.364 1.118l1.287 3.957c.3.921-.755 1.688-1.54 1.118l-3.37-2.448a1 1 0 00-1.176 0l-3.37 2.448c-.784.57-1.838-.197-1.539-1.118l1.287-3.957a1 1 0 00-.364-1.118L2.063 9.384c-.783-.57-.38-1.81.588-1.81h4.162a1 1 0 00.95-.69l1.286-3.957z" />
                   </svg>
                   {t('about.feat3Title')}
+                </span>
+              )}
+              {contestSelected && (
+                <span
+                  className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold whitespace-nowrap"
+                  title={contestSelected.title}
+                >
+                  <Trophy className="h-3 w-3" />
+                  {t('badge.contestSelected')}
                 </span>
               )}
             {/* 그룹 작품은 "그룹 팔로우" 개념이 없음 — 버튼 숨김, 내 작품도 숨김 */}
