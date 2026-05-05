@@ -99,15 +99,6 @@ export default function ContentReview() {
   const [pickedReason, setPickedReason] = useState<RejectionReason>('low_quality');
   // ADM-030: 운영팀 내부 메모(선택, 최대 500자). rejectionHistory[i].note에 누적 저장.
   const [internalNote, setInternalNote] = useState('');
-  // PRD_Admin §349 ADM-REV-01 AC-09: 검수 대기 24시간 경과 행에 "시한 초과" 빨강 배지.
-  // 영업일 정확 산정은 백엔드 도입 후 정정. Phase 1은 캘린더 24h 단순화 (ReportManagement SLA와 일관).
-  const [tickNow, setTickNow] = useState(() => Date.now());
-  useEffect(() => {
-    const id = window.setInterval(() => setTickNow(Date.now()), 60_000);
-    return () => window.clearInterval(id);
-  }, []);
-  const REVIEW_SLA_MS = 24 * 60 * 60 * 1000;
-
   useEffect(() => {
     const t = window.setTimeout(() => setLoading(false), 240);
     return () => window.clearTimeout(t);
@@ -390,16 +381,6 @@ export default function ContentReview() {
                           </span>
                         )}
                       </span>
-                      {ui === '대기중' && date && (() => {
-                        const uploadedTs = new Date(date).getTime();
-                        if (!Number.isFinite(uploadedTs)) return null;
-                        if (tickNow - uploadedTs < REVIEW_SLA_MS) return null;
-                        return (
-                          <span className="ml-1.5 inline-flex rounded-full px-2 py-0.5 text-[11px] font-semibold bg-red-100 text-red-800 border border-red-300">
-                            {t('review.slaOverdue')}
-                          </span>
-                        );
-                      })()}
                     </td>
                     <td className="px-4 py-3 text-right space-x-2 whitespace-nowrap">
                       <Button
