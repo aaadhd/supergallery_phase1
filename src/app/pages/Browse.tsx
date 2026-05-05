@@ -543,6 +543,7 @@ export default function Browse() {
             }}
             allWorks={allWorks}
             onWorkReported={() => setHideRevision((n) => n + 1)}
+            initialPieceId={searchParams.get('piece') ?? undefined}
           />
         )}
       </AnimatePresence>

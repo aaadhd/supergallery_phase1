@@ -35,9 +35,11 @@ interface WorkDetailModalProps {
   onWorkReported?: () => void;
   /** 미리보기 모드 — 좋아요/저장/공유/신고 등 인터랙션 비활성 */
   isPreview?: boolean;
+  /** USR-CUR-01에서 piece 카드 클릭 시 해당 piece 슬라이드로 자동 스크롤 (Policy §15.4 / PRD AC-02). */
+  initialPieceId?: string;
 }
 
-export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: providedWorks, onWorkReported, isPreview }: WorkDetailModalProps) {
+export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: providedWorks, onWorkReported, isPreview, initialPieceId }: WorkDetailModalProps) {
   const { t } = useI18n();
   const defaultWorks = [...works, ...hydrateGroupWorks(allArtists)] as Work[];
   const allWorks = providedWorks || defaultWorks;
@@ -76,6 +78,24 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
     setIsZoomed(false);
     if (scrollContainerRef.current) scrollContainerRef.current.scrollTop = 0;
   }, [workId]);
+
+  // Policy §15.4 / USR-CUR-01 AC-02 — initialPieceId가 주어지면 해당 piece 슬라이드로 자동 스크롤.
+  useEffect(() => {
+    if (!initialPieceId) return;
+    const w = workStore.getWork(workId);
+    if (!w) return;
+    const pieceIds = Array.isArray(w.imagePieceIds) ? w.imagePieceIds : [];
+    const idx = pieceIds.indexOf(initialPieceId);
+    if (idx < 0) return;
+    requestAnimationFrame(() => {
+      const slide = scrollContainerRef.current?.querySelector<HTMLElement>(`[data-piece-index="${idx}"]`);
+      if (slide && scrollContainerRef.current) {
+        const containerTop = scrollContainerRef.current.getBoundingClientRect().top;
+        const slideTop = slide.getBoundingClientRect().top;
+        scrollContainerRef.current.scrollTop += slideTop - containerTop;
+      }
+    });
+  }, [workId, initialPieceId]);
 
   // Lock body scroll while modal is open
   useEffect(() => {
@@ -470,7 +490,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                 const workImageIndex = hasCoverPage ? index - 1 : index;
                 const slideLabel = isCoverSlide ? (work.exhibitionName || t('work.untitled')) : displayPieceTitleAtIndex(work, workImageIndex, t('work.untitled'));
                 return (
-                <div key={index} className={`relative w-full flex items-center justify-center overflow-hidden mb-0 ${isCoverSlide ? 'py-12 sm:py-16' : 'py-8 sm:py-10'}`}>
+                <div key={index} data-piece-index={isCoverSlide ? undefined : workImageIndex} className={`relative w-full flex items-center justify-center overflow-hidden mb-0 ${isCoverSlide ? 'py-12 sm:py-16' : 'py-8 sm:py-10'}`}>
 
                   {/* Background — 커버: 블랙, 작품: 블러 */}
                   {isCoverSlide ? (
