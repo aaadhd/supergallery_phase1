@@ -579,23 +579,20 @@ export default function Upload() {
       }
     }
 
-    // 그룹 전시 — 게시자 외 참여 작가 2명 이상 필수 (Policy §13.2)
+    // 그룹 전시 — 총 작가 2명 이상 필수 (게시자 외 1명 이상). Policy §13.2
     if (uploadType === 'group') {
       const selfId = artists[0]?.id;
-      const nonSelfArtists = new Set(
+      const allUniqueArtists = new Set(
         imageContents
-          .filter((c) => {
-            if (c.artistType === 'member') return c.artist?.id !== selfId;
-            if (c.artistType === 'non-member') return (c.nonMemberArtist?.displayName ?? '').trim().length > 0;
-            return false;
-          })
+          .filter((c) => c.artistType === 'member' || (c.artistType === 'non-member' && (c.nonMemberArtist?.displayName ?? '').trim().length > 0))
           .map((c) => c.artist?.id ?? c.nonMemberArtist?.displayName ?? ''),
       );
-      if (nonSelfArtists.size < 2) {
+      if (allUniqueArtists.size < 2) {
         const hasSelf = imageContents.some(
           (c) => c.artistType === 'member' && c.artist?.id === selfId,
         );
         if (hasSelf) {
+          // 게시자 본인 작품만 있음 → 개인 전시 전환 제안
           const switchToSolo = await openConfirm({
             title: t('upload.soloSuggestionTitle'),
             description: t('upload.soloSuggestionDesc'),
@@ -610,6 +607,7 @@ export default function Upload() {
           }
           return;
         } else {
+          // 타인 작품 1장뿐이고 게시자 작품 없음 → 그룹 성립 불가, 개인 전시 전환도 불가
           toast.error(t('upload.errGroupNeedsTwoArtists'));
           return;
         }
