@@ -8,7 +8,6 @@ export interface ImagesV1Entry {
   bio?: string;
   groupName?: string;
   exhibitionName: string;
-  isInstructor?: boolean;
   profile: string | null;
   images: string[];
   pieceTitles: string[];
