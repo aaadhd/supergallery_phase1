@@ -37,6 +37,7 @@ import AdminInquiries from './admin/AdminInquiries';
 import Settings from './pages/Settings';
 import Maintenance from './pages/Maintenance';
 import ExhibitionRoute from './pages/ExhibitionRoute';
+import CurationDetail from './pages/CurationDetail';
 import FlowDemoTools from './pages/FlowDemoTools';
 import DemoReferenceToolkit from './pages/DemoReferenceToolkit';
 
@@ -88,6 +89,7 @@ export const router = createBrowserRouter([
           { path: 'settings', Component: Settings },
           { path: 'settings/notifications', loader: () => redirect('/settings#notifications') },
           { path: 'exhibitions/:id', Component: ExhibitionRoute },
+          { path: 'curations/:id', Component: CurationDetail },
           ...demoRoutes,
           { path: 'about', Component: About },
           { path: 'faq', Component: Faq },
