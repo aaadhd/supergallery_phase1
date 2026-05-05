@@ -11,19 +11,22 @@ import { PaginationBar } from './components/PaginationBar';
 
 const MEMBERS_PAGE_SIZE = 20;
 
-/**
- * Phase 1 회원 관리 (Policy §12.3).
- * 계정 단위 제재(정지·경고 카운터)는 Phase 2에서 재설계.
- * Phase 1에서는 회원 기본 정보 + 받은 신고 열람만 제공.
- */
-
 type MemberRow = {
   id: string;
   name: string;
   email: string;
   joinedAt: string;
   avatar: string;
+  ap?: number;
 };
+
+function getDemoUserAp(): number {
+  try {
+    const raw = localStorage.getItem('artier_points_state');
+    if (raw) return (JSON.parse(raw) as { totalApAccrued?: number }).totalApAccrued ?? 0;
+  } catch { /* ignore */ }
+  return 0;
+}
 
 const DEMO_USER_ID = artists[0].id;
 const demoUserMember: MemberRow = {
@@ -36,14 +39,14 @@ const demoUserMember: MemberRow = {
 
 const initialMembers: MemberRow[] = [
   demoUserMember,
-  { id: 'm1', name: '김민서', email: 'minseo.k@example.com', joinedAt: '2025-11-02', avatar: 'MS' },
-  { id: 'm2', name: '이하준', email: 'hajun.lee@example.com', joinedAt: '2025-12-18', avatar: 'LJ' },
-  { id: 'm3', name: '박지우', email: 'spam_account@test.com', joinedAt: '2026-01-05', avatar: 'PJ' },
-  { id: 'm4', name: '최유나', email: 'yuna.c@example.com', joinedAt: '2026-02-14', avatar: 'CY' },
-  { id: 'm5', name: '정다은', email: 'daeun.j@example.com', joinedAt: '2026-02-20', avatar: 'JD' },
-  { id: 'm6', name: '한소희', email: 'sohee.h@example.com', joinedAt: '2026-03-01', avatar: 'HS' },
-  { id: 'm7', name: '오준영', email: 'banned_user@example.com', joinedAt: '2025-09-30', avatar: 'OY' },
-  { id: 'm8', name: '윤서아', email: 'seoa.y@example.com', joinedAt: '2026-03-15', avatar: 'YS' },
+  { id: 'm1', name: '김민서', email: 'minseo.k@example.com', joinedAt: '2025-11-02', avatar: 'MS', ap: 140 },
+  { id: 'm2', name: '이하준', email: 'hajun.lee@example.com', joinedAt: '2025-12-18', avatar: 'LJ', ap: 80 },
+  { id: 'm3', name: '박지우', email: 'spam_account@test.com', joinedAt: '2026-01-05', avatar: 'PJ', ap: 20 },
+  { id: 'm4', name: '최유나', email: 'yuna.c@example.com', joinedAt: '2026-02-14', avatar: 'CY', ap: 200 },
+  { id: 'm5', name: '정다은', email: 'daeun.j@example.com', joinedAt: '2026-02-20', avatar: 'JD', ap: 60 },
+  { id: 'm6', name: '한소희', email: 'sohee.h@example.com', joinedAt: '2026-03-01', avatar: 'HS', ap: 120 },
+  { id: 'm7', name: '오준영', email: 'banned_user@example.com', joinedAt: '2025-09-30', avatar: 'OY', ap: 40 },
+  { id: 'm8', name: '윤서아', email: 'seoa.y@example.com', joinedAt: '2026-03-15', avatar: 'YS', ap: 180 },
 ];
 
 const MEMBERS_KEY = 'artier_admin_members_v1';
@@ -162,6 +165,7 @@ export default function MemberManagement() {
                 <th className="px-4 py-3 font-medium">이름</th>
                 <th className="px-4 py-3 font-medium">이메일</th>
                 <th className="px-4 py-3 font-medium">가입일</th>
+                <th className="px-4 py-3 font-medium text-right">AP</th>
                 <th className="px-4 py-3 font-medium text-right">상세</th>
               </tr>
             </thead>
@@ -185,6 +189,9 @@ export default function MemberManagement() {
                   </td>
                   <td className="px-4 py-3 text-muted-foreground break-all">{m.email}</td>
                   <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{m.joinedAt}</td>
+                  <td className="px-4 py-3 text-right tabular-nums text-muted-foreground">
+                    {m.id === DEMO_USER_ID ? getDemoUserAp() : (m.ap ?? 0)}
+                  </td>
                   <td className="px-4 py-3 text-right">
                     <Button
                       type="button"
