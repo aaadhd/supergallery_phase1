@@ -39,7 +39,7 @@ export interface Work {
   coOwners?: Artist[]; // 레거시 호환용
   /** 기획 전시 제목(예: 25회 정기 전시). 상세·검색의 「전시」 표시 1순위 */
   exhibitionName?: string;
-  /** 소속·학과·동문 모임 등(예: 홍익대 미대동문). 강사 업로드 시 필수 등 */
+  /** 소속·학과·동문 모임 등(예: 홍익대 미대동문). 그룹 전시 필수. */
   groupName?: string;
   owner?: any; // groupData.ts WorkOwner 타입 호환
   /** 이번 주 Artier's Pick 활성 여부 (매주 교체) */
@@ -47,7 +47,7 @@ export interface Work {
   /** Pick 선정 이력 (한 번 선정되면 영구 배지) */
   pickBadge?: boolean;
   // Phase 1 신규 필드
-  primaryExhibitionType?: 'solo' | 'group'; // 전시 유형 (강사+그룹명 → group, 그 외 → solo)
+  primaryExhibitionType?: 'solo' | 'group'; // 전시 유형: 업로드 시 선택한 유형 저장
   imageArtists?: ImageArtistAssignment[]; // 이미지별 작가 지정 (인덱스 = 이미지 인덱스)
   /** image 배열과 동일 순서·길이. 장별 작품명(비어 있으면 표시는 무제). 업로드 시 빈 칸은 전시명으로 채울 수 있음 */
   imagePieceTitles?: string[];
@@ -93,7 +93,7 @@ export interface Work {
    * (구버전에선 image 배열 맨 앞에 끼어 있었음 — 2026-04-16 분리 저장으로 변경)
    */
   customCoverUrl?: string;
-  /** 업로더 ID (강사가 대리 업로드 시 artistId와 다를 수 있음) */
+  /** 업로더 ID. artistId와 다를 수 있음(예: 게시자가 본인 작품 없이 타인 작품만 올린 경우) */
   authorId?: string;
 }
 
