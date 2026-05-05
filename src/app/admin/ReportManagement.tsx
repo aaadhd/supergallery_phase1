@@ -35,7 +35,7 @@ type ReportRow = {
   status: ReportState;
   workId?: string;
   artistId?: string;
-  /** 자동 비공개 발동 시각 (Policy §12.2.1 SLA 계산 기준). 대상 전시의 autoHiddenAt을 파생. */
+  /** @deprecated Policy §12.2 v2.20 폐기 필드. 하위 호환용 유지. */
   autoHiddenAt?: string;
   /** 신고된 작품(piece) 인덱스 — 다중 이미지 전시에서 사용자가 명시 선택한 것. */
   pieceIndex?: number;
@@ -187,7 +187,7 @@ export default function ReportManagement() {
     setPage(1);
   }, [statusFilter, typeFilter, setPage]);
 
-  /** 비공개 유지: 자동 비공개(Policy §12.2) 또는 아직 공개 중인 대상을 운영자 확정 비공개로 전환. */
+  /** 비공개 유지: 운영팀이 신고 판정 결과 전시를 비공개 유지로 전환 (Policy §12.1 v2.20). */
   const keepHidden = (id: string) => {
     const raw = loadUserReports().find((r) => r.id === id);
     if (!raw) return;
@@ -268,7 +268,7 @@ export default function ReportManagement() {
   };
 
   /**
-   * 기각: 신고 부당 판정. 자동 비공개 상태(관리자 확정 비공개가 하나도 없음)였다면 즉시 복원.
+   * 기각: 신고 부당 판정. 운영팀이 비공개 유지로 처리했다면 즉시 복원 (Policy §12.1 v2.20).
    * Phase 1은 신고자 카운트 없음 (Policy §12.3).
    */
   const dismissReport = (id: string) => {
@@ -287,7 +287,7 @@ export default function ReportManagement() {
           message: `'${raw.targetName}' 전시가 검토 결과 정상 복원되었습니다.`,
           workId: raw.targetId,
         });
-        toast.message('기각 처리 — 자동 비공개였던 전시를 복원했습니다.');
+        toast.message('기각 처리 — 비공개 유지 상태였던 전시를 복원했습니다.');
         return;
       }
     }
@@ -432,7 +432,7 @@ export default function ReportManagement() {
                         disabled={r.status !== '대기'}
                         onClick={() => dismissReport(r.id)}
                         className="text-sm px-3 py-1.5 rounded-lg"
-                        title="신고 기각 — 자동 비공개였다면 즉시 복원"
+                        title="신고 기각 — 비공개 유지 상태였다면 즉시 복원"
                       >
                         <XCircle className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
                         기각

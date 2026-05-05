@@ -149,7 +149,7 @@ export default function AdminDashboard() {
                 <CardTitle className="text-3xl">{autoHiddenCount}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-xs text-muted-foreground">운영팀 비공개 유지·자동 비공개 잔존 합계</p>
+                <p className="text-xs text-muted-foreground">운영팀 비공개 유지 처리된 전시 수</p>
               </CardContent>
             </Card>
           </Link>

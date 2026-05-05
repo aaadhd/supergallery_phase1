@@ -29,7 +29,7 @@ export type StoredUserReport = {
    * - resolved : 단순 확인 완료(액션 없음, 레거시 호환)
    * - hidden   : 비공개 유지 확정 (Phase 1 3액션 중 하나)
    * - deleted  : 대상 삭제
-   * - dismissed: 기각 (자동 비공개였다면 복원)
+   * - dismissed: 기각 (비공개 유지 처리였다면 복원)
    * - warned   : (Phase 2 이관 - 레거시 데이터 호환용)
    */
   adminStatus?: 'pending' | 'resolved' | 'hidden' | 'deleted' | 'warned' | 'dismissed';
@@ -77,7 +77,7 @@ export function removeUserReport(id: string): void {
 
 /**
  * 기각 판정 후: 해당 전시의 어떤 신고도 관리자 확정 비공개(`adminStatus: 'hidden'`)가 아니고
- * 검토 대기 중(`adminStatus: 'pending'`)인 신고도 없으면 자동 비공개였다고 보고
+ * 검토 대기 중(`adminStatus: 'pending'`)인 신고도 없으면 운영팀 비공개 유지 상태였다고 보고
  * 복원(`isHidden: false`). 관리자 확정 또는 미처리 대기 신고가 있으면 유지.
  * 반환: 복원이 일어났으면 true.
  */
@@ -95,7 +95,7 @@ export function maybeRestoreAfterDismiss(workId: string): boolean {
   );
   if (hasPending) return false;
   workStore.updateWork(workId, { ...buildVisibilityPatch('public') });
-  // Policy §3.4 v2.14: 신고 기각으로 자동 비공개에서 복원되면 토큰도 다시 active.
+  // Policy §3.4 v2.14: 신고 기각으로 비공개 유지에서 복원되면 토큰도 다시 active.
   // 검수 승인 상태 (feedReviewStatus: 'approved')였을 때만 의미 있음 — deactivate→activate 호출은 idempotent라 안전.
   void import('./inviteTokenStore').then(({ activateInviteToken }) => {
     if (work.feedReviewStatus === 'approved') activateInviteToken(workId);

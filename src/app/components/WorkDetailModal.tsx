@@ -128,7 +128,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
     return () => window.removeEventListener('keydown', handleKeyDown);
   }, [onClose]);
 
-  // 모달 열린 상태에서 work이 삭제·자동 비공개로 사라지면 부모에 알려 정리하도록 한다.
+  // 모달 열린 상태에서 work이 삭제·비공개 처리로 사라지면 부모에 알려 정리하도록 한다.
   useEffect(() => {
     if (!work) onClose();
   }, [work, onClose]);

@@ -12,7 +12,7 @@ import type { Work } from '../data';
 /**
  * USR-EVT-05 응모전 선정작 발표 페이지 (Policy §15.5).
  * - 응모작은 USR-EVT-04 응모 모달로 발행된 1장짜리 전시 → 작품 단위 = 전시 단위 일치.
- * - 노출 조건: 응모전 publicationOpen + 선정작 + publishedAt 도달 + 각 작품 검수 승인 + 자동 비공개 아님.
+ * - 노출 조건: 응모전 publicationOpen + 선정작 + publishedAt 도달 + 각 작품 검수 승인 + 비공개 아님.
  * - 트리거: USR-EVT-02 "선정작 발표 보기" CTA / 어드민 발표 배너 / 직접 URL.
  */
 

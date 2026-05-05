@@ -12,7 +12,7 @@ import type { Work } from '../data';
 /**
  * USR-CUR-01 기획전 페이지 (Policy §15.1·§15.4).
  * - 작품(piece) 카드 그리드 — 다중 이미지 전시에서도 운영팀이 고른 piece 1장만 노출.
- * - 노출 필터: 검수 승인 + 자동 비공개 아님 (Policy §32.2).
+ * - 노출 필터: 검수 승인 + 비공개 아님 (Policy §32.2).
  * - 카드 클릭 → 그 piece가 속한 전시 상세 모달(`/exhibitions/:workId?piece=<pieceId>`).
  * - 진입은 어드민 배너([ADM-BNR-01]) 또는 직접 URL.
  */

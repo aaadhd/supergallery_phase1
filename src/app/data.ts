@@ -60,12 +60,7 @@ export interface Work {
    */
   imagePieceIds?: string[];
   isHidden?: boolean; // 비공개 여부
-  /**
-   * 자동 비공개 발동 시각 (Policy §12.2 / §12.2.1 SLA 기준).
-   * `appendUserReport`에서 2회 신고 트리거 시 `isHidden: true`와 함께 ISO 8601로 기록.
-   * 운영팀이 판정(삭제·기각·비공개 유지)을 완료하면 새 판정 시점까지 유지됨.
-   * ADM-RPT-01 큐 SLA 배지 계산 기준.
-   */
+  /** @deprecated Policy §12.2 v2.20 자동 비공개 트리거 폐기 — 운영팀 직접 판정으로 대체. 필드는 하위 호환용으로 유지. */
   autoHiddenAt?: string;
   /** 컬렉터블/판매 배지 등 (UI 데모) */
   isForSale?: boolean;
