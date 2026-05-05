@@ -4,16 +4,15 @@ const MAX = 200;
 
 type DemoNotif = {
   /**
-   * PRD USR-NTF-01 카테고리 8 칩 정합 (Policy §15.2·§3.2):
+   * PRD USR-NTF-01 카테고리 7 칩 정합 (Policy §15.2·§3.2). Phase 1엔 팔로잉 신작 미지원.
    *  - like / follow(새 팔로워)
    *  - groupInvite(그룹 전시 슬롯 추가 — 회원 슬롯 직접 지정)
-   *  - following(팔로잉 작가 신작)
    *  - pick / curation(운영팀 직권 큐레이션)
    *  - event(응모전 선정·공지)
    *  - invite(토큰 본인 작품 찾기 결과 = 초대 수락)
    *  - system(검수 통과·반려)
    */
-  type: 'like' | 'follow' | 'groupInvite' | 'following' | 'pick' | 'system' | 'event' | 'invite' | 'curation';
+  type: 'like' | 'follow' | 'groupInvite' | 'pick' | 'system' | 'event' | 'invite' | 'curation';
   message: string;
   fromUser?: { name: string; avatar: string; id: string };
   workId?: string;

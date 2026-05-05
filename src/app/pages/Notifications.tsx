@@ -17,7 +17,7 @@ const NOTIF_RETENTION_MS = 90 * 86400000;
 
 interface Notification {
   id: string;
-  type: 'like' | 'follow' | 'groupInvite' | 'following' | 'pick' | 'system' | 'event' | 'invite' | 'curation';
+  type: 'like' | 'follow' | 'groupInvite' | 'pick' | 'system' | 'event' | 'invite' | 'curation';
   /** 동적 알림은 message 그대로, 시드·시스템은 messageKey + replacements 권장 (i18n 정합). */
   message?: string;
   messageKey?: MessageKey;
@@ -174,7 +174,6 @@ const typeIcons = {
   like: Heart,
   follow: UserPlus,
   groupInvite: UserPlus,
-  following: UserPlus,
   pick: Star,
   system: Bell,
   event: Calendar,
@@ -186,7 +185,6 @@ const typeColors = {
   like: 'bg-red-50 text-red-400',
   follow: 'bg-blue-50 text-blue-400',
   groupInvite: 'bg-violet-50 text-violet-500',
-  following: 'bg-blue-50 text-blue-400',
   pick: 'bg-[#B8862F]/10 text-[#B8862F]',
   system: 'bg-muted/50 text-muted-foreground',
   event: 'bg-emerald-50 text-emerald-500',
@@ -204,9 +202,6 @@ function passesPrefs(n: Notification, p: NotificationSettingsState): boolean {
     case 'groupInvite':
       // 그룹 전시 비회원 슬롯 추가 또는 회원 슬롯 직접 지정 시 (PRD USR-NTF-01 §6).
       return p.groupExhibitionInvite;
-    case 'following':
-      // 팔로잉 작가의 신작 발행 시 (PRD §6 토글 가능).
-      return p.like; // Phase 1엔 별도 토글 키 미신설 — 'like' 토글에 합쳐 운영. Phase 2에 별도 newWorkFromFollowing 토글 검토.
     case 'pick':
       return p.weeklyTheme;
     case 'event':
@@ -226,11 +221,10 @@ function passesPrefs(n: Notification, p: NotificationSettingsState): boolean {
 }
 
 /**
- * 알림 칩 8종 (PRD USR-NTF-01 §2 정합).
+ * 알림 칩 7종 (PRD USR-NTF-01 §2 정합). Phase 1엔 팔로잉 신작 미지원으로 칩에서 제외.
  * 칩 ↔ Notification.type 매핑은 N:1 — 큐레이션 칩 = pick + curation, 시스템 칩 = system + invite(초대 수락).
- * 그룹 초대·팔로잉 신작 칩은 Phase 1엔 발송 hook 미구현이라 빈 카테고리.
  */
-type ChipId = 'all' | 'like' | 'follow' | 'groupInvite' | 'following' | 'curation' | 'event' | 'system';
+type ChipId = 'all' | 'like' | 'follow' | 'groupInvite' | 'curation' | 'event' | 'system';
 
 function chipMatches(chip: ChipId, n: Notification): boolean {
   switch (chip) {
@@ -242,8 +236,6 @@ function chipMatches(chip: ChipId, n: Notification): boolean {
       return n.type === 'follow';
     case 'groupInvite':
       return n.type === 'groupInvite';
-    case 'following':
-      return n.type === 'following';
     case 'curation':
       // Pick 선정 + 기획전 선정 (운영팀 직권 단발 큐레이션).
       return n.type === 'pick' || n.type === 'curation';
@@ -349,11 +341,6 @@ export default function Notifications() {
       navigate(`/exhibitions/${notif.workId}`);
       return;
     }
-    if (notif.type === 'following' && notif.workId) {
-      // PRD §1 — 팔로잉 신작 알림 클릭 시 그 신작 전시 상세로 이동.
-      navigate(`/exhibitions/${notif.workId}`);
-      return;
-    }
     if (notif.workId) navigate(`/exhibitions/${notif.workId}`);
     else if (notif.fromUser) navigate(`/profile/${notif.fromUser.id}`);
   };
@@ -363,7 +350,6 @@ export default function Notifications() {
     { id: 'like', label: t('notifications.categoryLike') },
     { id: 'follow', label: t('notifications.categoryFollow') },
     { id: 'groupInvite', label: t('notifications.categoryGroupInvite') },
-    { id: 'following', label: t('notifications.categoryFollowing') },
     { id: 'curation', label: t('notifications.categoryCuration') },
     { id: 'event', label: t('notifications.categoryEvent') },
     { id: 'system', label: t('notifications.categorySystem') },
