@@ -1,6 +1,7 @@
 // 전역 상태 관리 (간단한 구현)
 import { useState, useEffect } from 'react';
 import { Work, works as initialWorks, artists } from './data';
+import type { ImageArtistAssignment } from './data';
 import { pointsRecallIfQuickDelete } from './utils/pointsBackground';
 import { adjustArtistFollowerDelta, removeArtistFollowerDelta } from './utils/artistFollowDelta';
 import { clearMockSession } from './services/sessionTokens';
@@ -894,4 +895,38 @@ export function performAccountWithdrawal(currentArtistId: string, withdrawReason
   const draftIds = draftStore.getDrafts().map((d) => d.id);
   draftIds.forEach((id) => draftStore.deleteDraft(id));
   authStore.logout();
+}
+
+export type ConnectMemberResult =
+  | { ok: true; promoted: { workId: string; pieceIndex: number; memberId: string } }
+  | { ok: false; reason: 'work_not_found' | 'slot_not_found' | 'slot_not_non_member' };
+
+/**
+ * 가입자가 "본인 작품 찾기"에서 슬롯 카드를 명시 클릭했을 때 호출.
+ * type 가드: imageArtists[pieceIndex]가 'non-member'일 때만 'member'로 승격.
+ * race condition: 두 번째 호출은 'slot_not_non_member' 반환.
+ */
+export function connectMemberToSlot(
+  workId: string,
+  pieceIndex: number,
+  member: { id: string; name: string; avatar?: string },
+): ConnectMemberResult {
+  const work = workStore.getWork(workId);
+  if (!work) return { ok: false, reason: 'work_not_found' };
+  const slots = Array.isArray(work.imageArtists) ? work.imageArtists : [];
+  const slot = slots[pieceIndex];
+  if (!slot) return { ok: false, reason: 'slot_not_found' };
+  if (slot.type !== 'non-member') return { ok: false, reason: 'slot_not_non_member' };
+
+  const next: ImageArtistAssignment[] = slots.map((ia, idx) => {
+    if (idx !== pieceIndex) return ia;
+    return {
+      type: 'member',
+      memberId: member.id,
+      memberName: member.name,
+      memberAvatar: member.avatar,
+    };
+  });
+  void workStore.updateWork(workId, { imageArtists: next });
+  return { ok: true, promoted: { workId, pieceIndex, memberId: member.id } };
 }

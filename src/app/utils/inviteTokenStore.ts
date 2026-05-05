@@ -10,9 +10,6 @@
  * - Phase 1 한계: localStorage 보관 → 다른 기기 미동기. 백엔드 도입 시 정합(Policy §31 N-15).
  */
 
-import { workStore } from '../store';
-import type { ImageArtistAssignment } from '../data';
-
 const STORAGE_KEY = 'artier_invite_tokens_v1';
 const CHANGED_EVENT = 'artier-invite-tokens-changed';
 const TOKEN_TTL_MS = 90 * 24 * 60 * 60 * 1000; // 90일
@@ -154,15 +151,7 @@ export function deactivateInviteToken(workId: string): void {
 
 /** 영구 무효 (전시 삭제·작가 탈퇴·비회원 자리 0·만료 등). 복귀 불가. */
 export function revokeInviteToken(workId: string): void {
-  const map = loadAll();
-  let changed = false;
-  for (const t of Object.values(map)) {
-    if (t.workId === workId && t.status !== 'revoked') {
-      t.status = 'revoked';
-      changed = true;
-    }
-  }
-  if (changed) saveAll(map);
+  transitionStatus(workId, 'revoked');
 }
 
 /** 공유 URL 빌드. 랜딩(`/exhibitions/:id?invite=<token>`)에서 토큰 디코드. */
@@ -190,40 +179,6 @@ export function buildInviteShareText(
     return `${inviterName} invited you to "${workTitle}". Sign up and pick your work.`;
   }
   return `${inviterName}님이 '${workTitle}'에 회원님을 초대했어요. 가입하시면 본인 작품을 골라 연결할 수 있어요.`;
-}
-
-export type ConnectMemberResult =
-  | { ok: true; promoted: { workId: string; pieceIndex: number; memberId: string } }
-  | { ok: false; reason: 'work_not_found' | 'slot_not_found' | 'slot_not_non_member' };
-
-/**
- * 가입자가 "본인 작품 찾기"에서 슬롯 카드를 명시 클릭했을 때 호출.
- * type 가드: imageArtists[pieceIndex]가 'non-member'일 때만 'member'로 승격.
- * race condition: 두 번째 호출은 'slot_not_non_member' 반환.
- */
-export function connectMemberToSlot(
-  workId: string,
-  pieceIndex: number,
-  member: { id: string; name: string; avatar?: string },
-): ConnectMemberResult {
-  const work = workStore.getWork(workId);
-  if (!work) return { ok: false, reason: 'work_not_found' };
-  const slots = Array.isArray(work.imageArtists) ? work.imageArtists : [];
-  const slot = slots[pieceIndex];
-  if (!slot) return { ok: false, reason: 'slot_not_found' };
-  if (slot.type !== 'non-member') return { ok: false, reason: 'slot_not_non_member' };
-
-  const next: ImageArtistAssignment[] = slots.map((ia, idx) => {
-    if (idx !== pieceIndex) return ia;
-    return {
-      type: 'member',
-      memberId: member.id,
-      memberName: member.name,
-      memberAvatar: member.avatar,
-    };
-  });
-  workStore.updateWork(workId, { imageArtists: next });
-  return { ok: true, promoted: { workId, pieceIndex, memberId: member.id } };
 }
 
 /** 외부 변경 구독 (다른 탭의 storage 이벤트 + 같은 탭의 dispatched 이벤트 모두 처리). */

@@ -2,14 +2,13 @@ import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Camera } from 'lucide-react';
-import { profileStore, workStore } from '../store';
+import { profileStore, workStore, connectMemberToSlot } from '../store';
 import { artists } from '../data';
 import type { Work } from '../data';
 import type { MessageKey } from '../i18n/messages';
 import { pointsOnOnboardingStep1Complete } from '../utils/pointsBackground';
 import {
   getInviteToken,
-  connectMemberToSlot,
   type InviteToken,
 } from '../utils/inviteTokenStore';
 import { isEmailRegistered, registerAccount } from '../utils/registeredAccounts';
