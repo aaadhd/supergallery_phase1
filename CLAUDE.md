@@ -73,7 +73,7 @@ PM 결정이 영향을 받는 작업(카피 작성·정책 정정·기획 변경
 - `src/app/pages/ExhibitionRoute.tsx` — `?invite=<token>` (Policy §3 v2.14 비회원 초대 토큰) → ExhibitionInviteLanding · `?from=work` (레거시 작품 공유) → ExhibitionWorkShareLanding · 그 외 → Browse + 작품 모달 자동 오픈
 - `src/app/pages/ExhibitionInviteLanding.tsx` — 전시 초대장 오픈 화면 (2026-04-13 신설)
 - `src/app/pages/ExhibitionWorkShareLanding.tsx` — `?from=work` 작품 공유 랜딩
-- `src/app/pages/Profile.tsx` — 강사 표시 자동 파생 (`instructorVisible`)
+- `src/app/pages/Profile.tsx` — 프로필 홈·탭
 - `src/app/pages/Search.tsx` — 검색 (계정별/게스트 키; 로그인 시 guest 히스토리 병합)
 - `src/app/pages/FlowDemoTools.tsx` — `/demo` PM 데모 맵
 - `src/app/pages/DemoReferenceToolkit.tsx` — `/demo/reference` 검수 툴킷
@@ -104,8 +104,6 @@ PM 결정이 영향을 받는 작업(카피 작성·정책 정정·기획 변경
 - `src/app/utils/searchRank.ts` — 검색 결과 랭킹
 - `src/app/utils/pointsBackground.ts` — 포인트 적립/회수 (`pointsRecallIfQuickDelete`, `addDemoPp`)
 
-> ⚠️ **삭제됨**: `src/app/utils/instructorPublic.ts` (2026-04-13). 강사 여부는 더 이상 별도 플래그가 아니라 업로드 이력에서 자동 파생 — 아래 "강사 표시 정책" 참조.
-
 ## 코딩 규칙
 
 ### 필수
@@ -124,10 +122,6 @@ PM 결정이 영향을 받는 작업(카피 작성·정책 정정·기획 변경
 - 스프레드시트형 UI, 다중선택(Shift+Click), Tab 이동 방식
 - `window.confirm()`, `window.alert()` 직접 호출
 - `dangerouslySetInnerHTML` (XSS — 꼭 필요한 경우 sanitize 후 사용)
-- `UserProfile.isInstructor` 필드 재도입 (삭제됨, 자동 파생으로 통합)
-- `instructorPublic.ts` 재생성 (삭제됨)
-- 강사 여부를 위한 별도 프로필 토글 UI 추가
-- `localStorage` 키 `artier_instructor_public_ids` 재기록 (deprecated)
 
 ### Phase 2 선행 구현 (정리됨)
 이전엔 PRD §2.2 Out of Scope임에도 코드만 존재하던 3개 컴포넌트가 있었음.
@@ -161,27 +155,12 @@ PM 결정이 영향을 받는 작업(카피 작성·정책 정정·기획 변경
 - **Phase 1 한계**: 초대 링크 정보가 회원 본인 기기 안에만 보관(다른 기기에서 친구 가입 시 활성 상태 모름). 검색엔진·SNS 미리보기 차단도 일부 봇은 무시. 백엔드(서버 사이드 렌더링·중앙 토큰 저장소) 도입 시 정합 — Policy §31 N-15.
 - **제거됨**: 전화·이메일 매칭 기반 자동 연결, 본인 확인 yes/no 단계, 매칭 후보 무작위 3장 표본, 마이페이지 사후 보강 배너, 가입자 자가 disavow 진입점(piece 카드 "본인 작품 아님" 액션), ADM-RPT-01 "초대 매칭 거부" 카테고리, 발신자 양방향 알림 매트릭스(정보용 1건만 유지).
 
-## 강사 표시 정책 (2026-04-13 단일화)
+## 전시 업로드 자격 (본인 작품 포함 규칙)
 
-- 강사 여부는 **업로드 이력에서 자동 파생**되는 단일 소스 정책
-- `Profile.tsx`: `workStore`에서 구독한 `storeWorks`로 `instructorVisible = storeWorks.some((w) => w.artistId === profileArtist.id && w.isInstructorUpload === true)` (`useMemo`, 의존성 `[storeWorks, profileArtist.id]`)
-- **단일 진입점**: 함께 올리기 → 세부정보 모달 → "저는 강사예요" 체크박스
-- 한 작품이라도 `isInstructorUpload === true`로 발행되면 → 프로필에 "수강생 작품" 탭 자동 노출
-- 모든 해당 작품 삭제 시 → 자동 비노출
+누구나 **자기 작품이 포함된 전시**만 개설할 수 있다.
 
-### 전시 업로드 자격 (본인 작품 포함 규칙)
-
-누구나 **자기 작품이 포함된 전시**만 개설할 수 있다. 강사 예외만이 본인 작품 없이 전시 개설 가능(수강생 작품 전용 전시).
-
-- **강사 OFF** → 그룹 전시에 본인 작품 최소 1점 포함 **필수**. 위반 시 발행 차단(`upload.errMustIncludeSelf`). 검증 위치: [Upload.tsx](src/app/pages/Upload.tsx)의 발행 핸들러, `errMissingArtist` 검증 직후.
-- **강사 ON** → 본인 작품 포함 **금지**. 작가 선택 리스트에서 본인 필터링(`Upload.tsx`의 그룹 작가 후보 빌드 영역), 강사 ON 전환 시 본인 지정된 슬롯 자동 초기화(`Upload.tsx`의 `isInstructor` 변경 useEffect).
+- 그룹 전시에 본인 작품 최소 1점 포함 **필수**. 위반 시 발행 차단(`upload.errMustIncludeSelf`).
 - 혼자 올리기는 정의상 본인 작품만 포함되므로 별도 검증 없음.
-
-### 금지
-- `UserProfile.isInstructor` 필드 부활 (삭제됨)
-- 프로필 편집 화면에 "강사 토글" 추가 (UX 단순화 + 상태 불일치 차단 목적)
-- `instructorPublic.ts` 재생성
-- i18n 키 `profile.instructorToggle`, `profile.instructorHelp` 부활 (삭제됨)
 
 ## 환경 변수
 
@@ -237,7 +216,6 @@ Phase 1은 **작품 단위 모더레이션만** 다룬다. 사용자 계정 차�
 - **버전 관리**: `WORKS_STORAGE_VERSION` (`local-gallery-v16`) 변경 시 works 데이터 자동 재시드
 - **이벤트 데이터**: `eventStore.ts` 단일 소스 + `artier_managed_events_v1` 영속화. **이벤트·공지 메일 구독**은 `eventSubscriptionStore.ts` + `artier_event_subscriptions`(전역 이메일 목록 1종, Policy §31 N-5).
 - **포인트 회수**: 업로드 후 24시간 이내 삭제 시 AP -20 (`pointsBackground.ts:pointsRecallIfQuickDelete`)
-- **강사 표시**: 별도 저장소 없음. `workStore` 작품 목록에서 파생 (`Profile.tsx`의 `instructorVisible`, 단일 소스)
 
 ## 외부 연동 미완 (런칭 전 백엔드 연동 후)
 소셜 OAuth(카카오/구글/애플), 이메일 발송, Supabase 실서버.

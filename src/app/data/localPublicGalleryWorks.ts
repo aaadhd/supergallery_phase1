@@ -572,62 +572,6 @@ export function buildLocalPublicWorks(paths: string[], artistsList: Artist[]): W
 
   const mergedWorks: Work[] = [...baseWorksAfterGroupMerge, ...groupMultiMocks, ...soloMultiMocks];
 
-  // 둘러보기 확인용 목업:
-  // 그룹전시의 약 30%를 "복지관/문화센터" 톤의 강사 업로드로 표시한다.
-  // B안 준수: 업로더(강사)는 imageArtists에 포함되지 않는다 — 기존 작가는 수강생으로 남기고
-  // artistId/artist만 별도 강사 persona로 교체한다.
-  const instructorPool = ['local-botanical', 'local-character', 'local-night-scene'] as const;
-  const instructorGroupNamePool = [
-    '강남복지관',
-    '송파문화센터',
-    '마포복지관',
-    '종로문화센터',
-    '노원복지관',
-    '광진문화센터',
-    '수원복지관',
-    '분당문화센터',
-    '부산진복지관',
-    '해운대문화센터',
-    '대구수성복지관',
-    '광주북구문화센터',
-    '전주완산복지관',
-    '창원성산문화센터',
-    '청주상당복지관',
-  ] as const;
-  const groupWorks = mergedWorks.filter((w) => w.primaryExhibitionType === 'group');
-  const instructorTarget = Math.round(groupWorks.length * 0.3);
-  const instructorCandidates = [...groupWorks].sort((a, b) => {
-    const ah = hashStr(`${a.id}:${a.groupName ?? ''}:${a.exhibitionName ?? ''}`);
-    const bh = hashStr(`${b.id}:${b.groupName ?? ''}:${b.exhibitionName ?? ''}`);
-    return ah - bh;
-  });
-  for (let i = 0; i < instructorCandidates.length; i++) {
-    const w = instructorCandidates[i]!;
-    const makeInstructor = i < instructorTarget;
-    if (!makeInstructor) {
-      w.isInstructorUpload = false;
-      continue;
-    }
-    // 원 작가(수강생)가 강사 풀에 포함되어 있으면 다른 강사를 선택 — B안(업로더≠참여자) 유지
-    const studentId = w.artistId;
-    const eligible = instructorPool.filter((id) => id !== studentId);
-    if (eligible.length === 0) {
-      w.isInstructorUpload = false;
-      continue;
-    }
-    const instructorId = eligible[hashStr(`${w.id}:inst-persona`) % eligible.length]!;
-    const instructor = artistsList.find((a) => a.id === instructorId);
-    if (!instructor) {
-      w.isInstructorUpload = false;
-      continue;
-    }
-    w.artistId = instructor.id;
-    w.artist = instructor;
-    w.isInstructorUpload = true;
-    const nameIdx = hashStr(`${w.id}:inst-group`) % instructorGroupNamePool.length;
-    w.groupName = instructorGroupNamePool[nameIdx];
-  }
-
   // Artier's Pick 목업:
   // - 운영 5주 가정: 누적 Pick 이력 50개
   // - 이력 구성: 개인 25 + 그룹 25

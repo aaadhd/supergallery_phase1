@@ -1,6 +1,6 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { Link, useNavigate, useSearchParams, useBlocker } from 'react-router-dom';
-import { Image as ImageIcon, Plus, X, Search, GripVertical, ArrowLeft, ChevronLeft, ChevronRight, Trash2, Replace, ArrowUpDown, Monitor, Users, Star, Check, CircleHelp, GraduationCap } from 'lucide-react';
+import { Image as ImageIcon, Plus, X, Search, GripVertical, ArrowLeft, ChevronLeft, ChevronRight, Trash2, Replace, ArrowUpDown, Monitor, Users, Star, Check, CircleHelp } from 'lucide-react';
 import { artists } from '../data';
 import { workStore, draftStore, useAuthStore } from '../store';
 import { issueInviteToken, activateInviteToken, deactivateInviteToken } from '../utils/inviteTokenStore';
@@ -60,7 +60,6 @@ import {
 } from '../utils/groupNameRegistry';
 import { TITLE_FIELD_MAX_LEN } from '../utils/workDisplay';
 import { Button } from '../components/ui/button';
-import { Checkbox } from '../components/ui/checkbox';
 import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import { pointsOnWorkPublished } from '../utils/pointsBackground';
 import { pushDemoNotification } from '../utils/pushDemoNotification';
@@ -127,90 +126,6 @@ function checkMinResolution(dataUrl: string): Promise<boolean> {
     img.onerror = () => resolve(true); // 로드 실패 시 통과 (업로드 자체에서 걸림)
     img.src = dataUrl;
   });
-}
-
-/** 그룹 전시 — 강사 여부. `embedded`: 체크리스트 카드 내부(구분선 아래) */
-function GroupInstructorSection({
-  checkboxId,
-  isInstructor,
-  onInstructorChange,
-  roleInfoOpen,
-  onRoleInfoOpenChange,
-  embedded = false,
-}: {
-  checkboxId: string;
-  isInstructor: boolean;
-  onInstructorChange: (v: boolean) => void;
-  roleInfoOpen: boolean;
-  onRoleInfoOpenChange: (open: boolean) => void;
-  embedded?: boolean;
-}) {
-  const { t } = useI18n();
-  return (
-    <div
-      className={
-        embedded
-          ? 'relative'
-          : 'relative rounded-xl border border-border/50 bg-muted/20 px-3 py-2.5'
-      }
-    >
-      <div className="flex items-center justify-between gap-2">
-        <span className="text-xs font-semibold text-muted-foreground">
-          {t('upload.groupRolePrompt')}
-        </span>
-        <Popover open={roleInfoOpen} onOpenChange={onRoleInfoOpenChange}>
-          <PopoverTrigger asChild>
-            <button
-              type="button"
-              className="inline-flex shrink-0 rounded-full p-1 text-muted-foreground/80 hover:bg-muted hover:text-foreground"
-              aria-label={t('upload.roleInfoAria')}
-            >
-              <CircleHelp className={embedded ? 'h-3.5 w-3.5' : 'h-4 w-4'} />
-            </button>
-          </PopoverTrigger>
-          <PopoverContent
-            className="w-[min(calc(100vw-2rem),20rem)] p-4 z-[60]"
-            align="end"
-            side="bottom"
-            sideOffset={6}
-          >
-            <p className="text-sm font-semibold text-foreground mb-3">{t('upload.roleInfoTitle')}</p>
-            <div className="space-y-3 text-xs text-muted-foreground leading-relaxed">
-              <div>
-                <p className="font-medium text-foreground mb-1">{t('upload.roleParticipant')}</p>
-                <p>{t('upload.roleParticipantHelp')}</p>
-              </div>
-              <div>
-                <p className="font-medium text-foreground mb-1">{t('upload.roleInstructor')}</p>
-                <p>{t('upload.roleInstructorHelp')}</p>
-              </div>
-            </div>
-          </PopoverContent>
-        </Popover>
-      </div>
-      <div className={`flex items-start gap-2.5 ${embedded ? 'mt-2' : 'mt-2.5'}`}>
-        <Checkbox
-          id={checkboxId}
-          checked={isInstructor}
-          onCheckedChange={(v) => onInstructorChange(v === true)}
-          className="mt-0.5 shrink-0"
-        />
-        <div className="min-w-0 flex-1">
-          <label
-            htmlFor={checkboxId}
-            className={`text-foreground cursor-pointer select-none text-left block text-sm leading-snug`}
-          >
-            {t('upload.instructorCheckboxLabel')}
-          </label>
-          <p
-            className="text-muted-foreground/90 mt-1 text-xs leading-snug"
-          >
-            {t('upload.instructorRestrictionHint')}
-          </p>
-        </div>
-      </div>
-    </div>
-  );
 }
 
 /* ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━ */
@@ -317,10 +232,6 @@ export default function Upload() {
   const [artistInputTab, setArtistInputTab] = useState<'member' | 'non-member'>('member');
   /* ── 변환 프로그레스 ── */
 
-  /* ── 강사 ── */
-  const [isInstructor, setIsInstructor] = useState(false);
-  const [roleInfoOpen, setRoleInfoOpen] = useState(false);
-  const [groupSubStep, setGroupSubStep] = useState<'askRole' | null>(null);
   const [cameraBlockNotice, setCameraBlockNotice] = useState(false);
 
   /* ── 이벤트 응모는 USR-EVT-04 응모 모달 단일 진입점 (Policy §25.2). ?event= 진입은
@@ -372,11 +283,9 @@ export default function Upload() {
     if (!newKey) return;
     setContents([]);
     setUploadType(null);
-    setGroupSubStep(null);
     setExhibitionName('');
     setGroupName('');
     setIsOriginalWork(false);
-    setIsInstructor(false);
     setSelectedContentId(null);
     setCoverImageIndex(0);
     setCustomCoverUrl(null);
@@ -403,33 +312,6 @@ export default function Upload() {
       setSelectedContentId(contents[0].id);
     }
   }, [uploadType, contents.length, selectedContentId]);
-
-  // 강사 모드 전환 시 본인(=artists[0]) 귀속 슬롯 초기화 — 강사 모드는 100% 수강생 귀속이어야 함
-  useEffect(() => {
-    if (!isInstructor) return;
-    const selfId = artists[0]?.id;
-    if (!selfId) return;
-    const hasSelfSlot = contents.some((c) => c.artistType === 'member' && c.artist?.id === selfId);
-    if (!hasSelfSlot) return;
-    // 본인 슬롯이 있으면 확인 후 초기화
-    openConfirm({
-      title: t('upload.confirmInstructorClearSelf'),
-      destructive: true,
-    }).then((ok) => {
-      if (ok) {
-        setContents((prev) =>
-          prev.map((c) =>
-            c.artistType === 'member' && c.artist?.id === selfId
-              ? { ...c, artist: undefined, artistType: undefined }
-              : c,
-          ),
-        );
-        toast.info(t('upload.roleInstructorSelfCleared'));
-      } else {
-        setIsInstructor(false);
-      }
-    });
-  }, [isInstructor]);
 
   // 선택된 이미지의 작가 타입에 맞춰 탭 자동 전환
   useEffect(() => {
@@ -473,7 +355,6 @@ export default function Upload() {
     setUploadType(draft.uploadType ?? 'solo');
     setExhibitionName((draft.exhibitionName ?? draft.title ?? '').trim());
     if (draft.groupName) setGroupName(draft.groupName);
-    if (draft.isInstructor) setIsInstructor(true);
     if (typeof draft.coverImageIndex === 'number') setCoverImageIndex(draft.coverImageIndex);
     if (draft.customCoverUrl) setCustomCoverUrl(draft.customCoverUrl);
     let restored = draft.contents.map((c) => ({
@@ -543,7 +424,6 @@ export default function Upload() {
       return item;
     }));
     if (work.groupName) setGroupName(work.groupName);
-    if (work.isInstructorUpload) setIsInstructor(true);
     if (typeof work.coverImageIndex === 'number') setCoverImageIndex(work.coverImageIndex);
     if (work.customCoverUrl) setCustomCoverUrl(work.customCoverUrl);
     toast.success(t('upload.toastEditLoaded'));
@@ -699,8 +579,8 @@ export default function Upload() {
       }
     }
 
-    // 그룹 전시 + 강사 아님 → 본인 작품 최소 1점 포함 필수 (정책: 강사 체크 없으면 본인 작품 포함)
-    if (uploadType === 'group' && !isInstructor) {
+    // 그룹 전시 → 본인 작품 최소 1점 포함 필수 (예외 없음)
+    if (uploadType === 'group') {
       const selfId = artists[0]?.id;
       const includesSelf = imageContents.some(
         (c) => c.artistType === 'member' && c.artist?.id === selfId,
@@ -711,8 +591,8 @@ export default function Upload() {
       }
     }
 
-    // 그룹 전시 + 강사 아님 + 유니크 작가 1명 → 개인 전시 전환 제안
-    if (uploadType === 'group' && !isInstructor) {
+    // 그룹 전시 + 유니크 작가 1명 → 개인 전시 전환 제안
+    if (uploadType === 'group') {
       const unique = new Set(
         imageContents.map((c) => c.artist?.id || c.nonMemberArtist?.displayName || 'self'),
       );
@@ -797,7 +677,6 @@ export default function Upload() {
       groupName: resolvedGroup,
       imagePieceTitles,
       imagePieceIds,
-      isInstructorUpload: uploadType === 'group' ? isInstructor : undefined,
       primaryExhibitionType,
       imageArtists,
       ...buildVisibilityPatch(!import.meta.env.PROD && import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true' ? 'public' : 'pending_review'),
@@ -888,7 +767,6 @@ export default function Upload() {
         groupName: newWork.groupName,
         imagePieceTitles: newWork.imagePieceTitles,
         imagePieceIds: newWork.imagePieceIds,
-        isInstructorUpload: newWork.isInstructorUpload,
         primaryExhibitionType: newWork.primaryExhibitionType,
         imageArtists: newWork.imageArtists,
         coverImageIndex: newWork.coverImageIndex,
@@ -1028,7 +906,6 @@ export default function Upload() {
       exhibitionName: exhibitionName.trim(),
       uploadType: uploadType ?? undefined,
       groupName: groupName.trim() || undefined,
-      isInstructor: uploadType === 'group' ? isInstructor : undefined,
       coverImageIndex,
       contents: contents.map((c) => ({
         id: c.id,
@@ -1277,7 +1154,7 @@ export default function Upload() {
               <p className="text-sm text-muted-foreground font-medium leading-relaxed">{t('upload.typeSoloDesc1')}</p>
             </button>
             <button
-              onClick={() => setGroupSubStep('askRole')}
+              onClick={() => setUploadType('group')}
               className="flex flex-col items-center text-center p-10 bg-white border-2 border-border/60 hover:border-foreground transition-all rounded-2xl group shadow-sm hover:shadow-md"
             >
               <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
@@ -1287,50 +1164,6 @@ export default function Upload() {
               <p className="text-sm text-muted-foreground font-medium leading-relaxed">{t('upload.typeGroupDesc1')}</p>
             </button>
           </div>
-
-          {/* 함께 올리기 — 역할 선택 모달 */}
-          {groupSubStep === 'askRole' && (
-            <div className="fixed inset-0 z-50 flex items-center justify-center p-4" onClick={() => setGroupSubStep(null)}>
-              <div className="absolute inset-0 bg-black/50 animate-in fade-in duration-200" />
-              <div
-                className="relative z-10 w-full max-w-lg bg-white rounded-2xl shadow-2xl p-8 sm:p-10 animate-in fade-in zoom-in-95 duration-300"
-                onClick={(e) => e.stopPropagation()}
-              >
-                <button
-                  type="button"
-                  onClick={() => setGroupSubStep(null)}
-                  aria-label={t('upload.close')}
-                  className="absolute right-2 top-2 h-11 w-11 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-full text-muted-foreground hover:bg-muted transition-colors"
-                >
-                  <X className="h-5 w-5" />
-                </button>
-                <h2 className="text-xl sm:text-2xl font-bold text-foreground mb-2 text-center">{t('upload.groupRoleTitle')}</h2>
-                <p className="text-sm text-muted-foreground mb-8 text-center">{t('upload.groupRoleSubtitle')}</p>
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                  <button
-                    onClick={() => { setIsInstructor(false); setGroupSubStep(null); setUploadType('group'); }}
-                    className="flex flex-col items-center text-center p-6 sm:p-8 bg-white border-2 border-border/60 hover:border-foreground transition-all rounded-2xl group shadow-sm hover:shadow-md"
-                  >
-                    <div className="w-14 h-14 rounded-full bg-foreground text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <Users className="w-7 h-7" />
-                    </div>
-                    <h3 className="text-base font-bold text-foreground mb-2">{t('upload.groupRoleParticipant')}</h3>
-                    <p className="text-xs text-muted-foreground font-medium leading-relaxed">{t('upload.groupRoleParticipantDesc')}</p>
-                  </button>
-                  <button
-                    onClick={() => { setIsInstructor(true); setGroupSubStep(null); setUploadType('group'); }}
-                    className="flex flex-col items-center text-center p-6 sm:p-8 bg-white border-2 border-border/60 hover:border-foreground transition-all rounded-2xl group shadow-sm hover:shadow-md"
-                  >
-                    <div className="w-14 h-14 rounded-full bg-foreground text-white flex items-center justify-center mb-4 group-hover:scale-110 transition-transform">
-                      <GraduationCap className="w-7 h-7" />
-                    </div>
-                    <h3 className="text-base font-bold text-foreground mb-2">{t('upload.groupRoleInstructor')}</h3>
-                    <p className="text-xs text-muted-foreground font-medium leading-relaxed">{t('upload.groupRoleInstructorDesc')}</p>
-                  </button>
-                </div>
-              </div>
-            </div>
-          )}
         </div>
       ) : (
         <>
@@ -1548,8 +1381,8 @@ export default function Upload() {
                     {uploadType === 'group' && (
                       <div className="w-full mb-4 flex justify-center md:justify-start animate-in fade-in duration-500">
                         <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-muted text-xs font-medium text-muted-foreground">
-                          {isInstructor ? <GraduationCap className="h-3.5 w-3.5" /> : <Users className="h-3.5 w-3.5" />}
-                          {isInstructor ? t('upload.groupRoleDisplayInstructor') : t('upload.groupRoleDisplayParticipant')}
+                          <Users className="h-3.5 w-3.5" />
+                          {t('upload.groupRoleDisplayParticipant')}
                         </span>
                       </div>
                     )}
@@ -1947,7 +1780,7 @@ export default function Upload() {
                                     />
                                     {artistSearch && (
                                       <div className="absolute z-10 w-full mt-2 bg-white border border-border rounded-xl shadow-xl overflow-hidden max-h-56 overflow-y-auto">
-                                        {artists.filter(a => (!isInstructor || a.id !== artists[0].id) && a.name.toLowerCase().includes(artistSearch.toLowerCase())).slice(0, 10).map(artist => (
+                                        {artists.filter(a => a.name.toLowerCase().includes(artistSearch.toLowerCase())).slice(0, 10).map(artist => (
                                           <button key={artist.id}
                                             type="button"
                                             onClick={() => {

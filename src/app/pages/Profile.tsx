@@ -47,49 +47,6 @@ import { WorkDetailModal } from '../components/WorkDetailModal';
 import { hydrateGroupWorks } from '../groupData';
 import { isWorkPublic, isWorkHidden } from '../utils/workVisibility';
 
-function workHasStudentCredits(w: Work, instructorId: string): boolean {
-  const ia = w.imageArtists;
-  if (!ia?.length) return false;
-  return ia.some((a) => {
-    if (a.type === 'non-member') return true;
-    if (a.type === 'member' && a.memberId && a.memberId !== instructorId) return true;
-    return false;
-  });
-}
-
-/**
- * 수강생 작품 카드용: 이미지별 `imageArtists`에 연결된 작가를 순서대로 모으고, 동일 인물은 한 번만 표시.
- * 강사는 **어떤 이미지에든 본인을 작가(memberId)로 지정한 경우에만** 포함한다.
- * (업로더는 work.artist이지만 슬롯마다 수강생만 지정한 대리 업로드는 목록에 넣지 않음)
- */
-function allLinkedImageArtistLabels(w: Work, instructorId: string): string[] {
-  const ia = w.imageArtists;
-  if (!ia?.length) return [];
-  const seen = new Set<string>();
-  const out: string[] = [];
-  for (const a of ia) {
-    if (a.type === 'non-member') {
-      const label = (a.displayName?.trim() || '');
-      if (!label) continue;
-      const key = `n:${label}`;
-      if (seen.has(key)) continue;
-      seen.add(key);
-      out.push(label);
-    } else if (a.type === 'member' && a.memberId) {
-      let label = a.memberName?.trim() || '';
-      if (!label && a.memberId === instructorId && w.artistId === instructorId && w.artist?.name) {
-        label = w.artist.name.trim();
-      }
-      if (!label) continue;
-      const key = `m:${a.memberId}`;
-      if (seen.has(key)) continue;
-      seen.add(key);
-      out.push(label);
-    }
-  }
-  return out;
-}
-
 const LOCATION_VALUE_TO_KEY: Record<string, MessageKey> = {
   대한민국: 'profile.locKR',
   미국: 'profile.locUS',
@@ -110,7 +67,7 @@ function locationDisplayLabel(stored: string, tr: (k: MessageKey) => string): st
   return k ? tr(k) : stored;
 }
 
-type ProfileTabValue = 'exhibition' | 'works' | 'student-works' | 'likes' | 'saved' | 'drafts';
+type ProfileTabValue = 'exhibition' | 'works' | 'likes' | 'saved' | 'drafts';
 
 // Profile 페이지 — Phase 1 MVP
 export default function Profile() {
@@ -264,7 +221,6 @@ export default function Profile() {
   const artistWorks = useMemo(() => {
     const own = storeWorks
       .filter(w => w.artistId === profileArtist.id)
-      .filter(w => !w.isInstructorUpload)
       .filter(w => isOwnProfile || isWorkPublic(w));
     const ownIds = new Set(own.map(w => w.id));
 
@@ -302,7 +258,6 @@ export default function Profile() {
     if (w.primaryExhibitionType === 'group') return true;
     if (w.primaryExhibitionType === 'solo') return false;
     if (w.owner?.type === 'group') return true;
-    if (w.isInstructorUpload && w.groupName) return true;
     if (w.groupName && (w.imageArtists?.length ?? 0) > 1) return true;
     return false;
   };
@@ -381,18 +336,11 @@ export default function Profile() {
     return () => window.removeEventListener('keydown', handler);
   }, [worksViewerIndex, worksManageFlatImages.length]);
 
-  // 강사 여부는 업로드 이력에서 자동 파생 (isInstructorUpload === true 인 작품이 1건이라도 있으면 강사)
-  const instructorVisible = useMemo(
-    () => storeWorks.some((w) => w.artistId === profileArtist.id && w.isInstructorUpload === true),
-    [storeWorks, profileArtist.id],
-  );
-
   const allowedProfileTabs = useMemo((): ProfileTabValue[] => {
     const tabs: ProfileTabValue[] = ['exhibition'];
     if (isOwnProfile) tabs.push('works', 'likes', 'saved', 'drafts');
-    if (instructorVisible) tabs.push('student-works');
     return tabs;
-  }, [isOwnProfile, instructorVisible]);
+  }, [isOwnProfile]);
 
   const profileTabGuideKey = useMemo(() => {
     switch (profileTab) {
@@ -400,8 +348,6 @@ export default function Profile() {
         return 'profile.tabGuideExhibition';
       case 'works':
         return 'profile.tabGuideWorks';
-      case 'student-works':
-        return 'profile.tabGuideStudentWorks';
       case 'likes':
         return 'profile.tabGuideLikes';
       case 'saved':
@@ -460,18 +406,6 @@ export default function Profile() {
   useEffect(() => {
     setProfileTab((prev) => (allowedProfileTabs.includes(prev) ? prev : 'exhibition'));
   }, [allowedProfileTabs]);
-
-  const studentWorksList = useMemo(() => {
-    if (!instructorVisible) return [];
-    return storeWorks.filter(
-      (w) =>
-        w.isInstructorUpload &&
-        w.artistId === profileArtist.id &&
-        w.groupName &&
-        (w.primaryExhibitionType === 'group' || isGroupExhibition(w)) &&
-        workHasStudentCredits(w, profileArtist.id),
-    );
-  }, [storeWorks, profileArtist.id, instructorVisible]);
 
   if (isProfileNotFound) {
     return (
@@ -737,11 +671,6 @@ export default function Profile() {
 
               <div className="mt-4 sm:mt-6 flex flex-wrap items-center gap-2">
                 <h1 className="text-xl sm:text-2xl font-semibold">{displayName}</h1>
-                {instructorVisible && (
-                  <span className="inline-flex items-center rounded-full bg-muted text-foreground text-xs font-semibold px-2.5 py-0.5">
-                    {t('profile.instructorBadge')}
-                  </span>
-                )}
                 {isOwnProfile && (
                   <button
                     type="button"
@@ -887,14 +816,6 @@ export default function Profile() {
                       className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground py-3 min-h-[44px] text-sm px-4 text-muted-foreground"
                     >
                       {t('profile.tabWorkManage')}
-                    </TabsTrigger>
-                  )}
-                  {instructorVisible && (
-                    <TabsTrigger
-                      value="student-works"
-                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground py-3 min-h-[44px] text-sm px-4 text-muted-foreground"
-                    >
-                      {t('profile.studentWorks')}
                     </TabsTrigger>
                   )}
                   {isOwnProfile && (
@@ -1187,150 +1108,6 @@ export default function Profile() {
                           </Button>
                         </>
                       )}
-                    </div>
-                  )}
-                </TabsContent>
-
-                <TabsContent value="student-works" className="mt-6">
-                  {studentWorksList.length === 0 ? (
-                    <div className="rounded-xl border border-dashed border-border bg-muted/50 py-16 px-6 text-center">
-                      <Users className="h-10 w-10 text-muted-foreground/30 mx-auto mb-3" />
-                      <p className="text-sm font-medium text-muted-foreground">{t('profile.studentWorksEmpty')}</p>
-                      <p className="text-xs text-muted-foreground mt-2 max-w-md mx-auto">{t('profile.studentWorksHint')}</p>
-                    </div>
-                  ) : (
-                    <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-[1.625rem] sm:gap-[2.275rem] lg:gap-[2.6rem]">
-                      {studentWorksList.map((work) => {
-                        const linkedArtistLabels = allLinkedImageArtistLabels(work, profileArtist.id);
-                        return (
-                          <div
-                            key={work.id}
-                            className="cursor-pointer relative transition-all duration-300 ease-out lg:hover:-translate-y-1"
-                            onClick={() => setDetailWorkId(work.id)}
-                          >
-                            <div className="relative aspect-square rounded-sm overflow-hidden bg-white border border-border/40">
-                              <ImageWithFallback
-                                src={imageUrls[getThumbCover(work)] || getThumbCover(work)}
-                                alt={displayProminentHeadline(work, t('work.untitled'))}
-                                className="w-full h-full object-contain object-center"
-                              />
-
-                              {isOwnProfile && (
-                                <div className="absolute right-2 top-2 z-20" onClick={(e) => e.stopPropagation()}>
-                                  <DropdownMenu>
-                                    <DropdownMenuTrigger asChild>
-                                      <Button
-                                        type="button"
-                                        className="flex h-9 w-9 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-black/60 p-0 text-white shadow-none hover:bg-black/75 hover:text-white"
-                                        aria-label={t('profile.workMenuA11y')}
-                                      >
-                                        <MoreHorizontal className="h-4 w-4" strokeWidth={2.5} />
-                                      </Button>
-                                    </DropdownMenuTrigger>
-                                    <DropdownMenuContent align="end" sideOffset={4}>
-                                      <DropdownMenuItem
-                                        className="text-sm"
-                                        onSelect={(e) => e.preventDefault()}
-                                        onClick={() => handleEditWork(work.id, work.feedReviewStatus)}
-                                      >
-                                        <Tag className="h-4 w-4 mr-2" />
-                                        {t('profile.editWork')}
-                                      </DropdownMenuItem>
-                                      <DropdownMenuItem
-                                        className="text-destructive focus:text-destructive text-sm"
-                                        onSelect={(e) => e.preventDefault()}
-                                        onClick={async () => {
-                                          // Policy §32.2: 활성 Pick·기획전 게시 중이면 자가 삭제 시 명시 경고
-                                          const hasNonMemberSlots = work.imageArtists?.some((a) => a.type === 'non-member');
-                                          const inActiveCuration = curationStore.getCuratedExhibitions().some((c) => c.pieces.some((p) => p.workId === work.id));
-                                          const hasActiveCuration = work.pick === true || inActiveCuration;
-                                          const descParts = [t('profile.deleteWorkPermanent')];
-                                          if (hasNonMemberSlots) descParts.push(t('profile.deleteWorkHasPendingInvites'));
-                                          if (hasActiveCuration) descParts.push(t('profile.deleteWorkActiveCuration'));
-                                          const ok = await openConfirm({
-                                            title: t('profile.deleteWorkConfirm').replace(
-                                              '{title}',
-                                              displayProminentHeadline(work, t('work.untitled')),
-                                            ),
-                                            description: descParts.join('\n'),
-                                            destructive: true,
-                                            confirmLabel: t('profile.delete'),
-                                          });
-                                          if (ok) {
-                                            workStore.removeWork(work.id);
-                                            toast.success(t('profile.toastWorkDeleted'));
-                                          }
-                                        }}
-                                      >
-                                        <Trash2 className="h-4 w-4 mr-2" />
-                                        {t('profile.delete')}
-                                      </DropdownMenuItem>
-                                    </DropdownMenuContent>
-                                  </DropdownMenu>
-                                </div>
-                              )}
-
-                              {getImageCount(work.image) > 1 && (
-                                <div className="absolute left-2 top-2 z-10">
-                                  <div className="flex items-center gap-1 rounded-full bg-black/70 px-2 py-1 text-xs font-medium text-white backdrop-blur-sm">
-                                    <ImageIcon className="h-3 w-3" />
-                                    {getImageCount(work.image)}
-                                  </div>
-                                </div>
-                              )}
-
-                              {/* 하단 배지 (검수 상태 - 대리 업로드 작품용) */}
-                              {isOwnProfile && (work.feedReviewStatus === 'pending' || work.feedReviewStatus === 'rejected') && (
-                                <div className="absolute left-2 bottom-2 z-10 flex flex-col gap-1">
-                                  {work.feedReviewStatus === 'pending' && (
-                                    <span className="inline-flex rounded-full px-2 py-0.5 text-xs font-medium bg-muted/95 text-foreground border border-border backdrop-blur-sm w-fit">
-                                      {t('review.badgePending')}
-                                    </span>
-                                  )}
-                                  {work.feedReviewStatus === 'rejected' && (
-                                    <button
-                                      type="button"
-                                      onClick={(e) => { e.stopPropagation(); setRejectedModalWork(work); }}
-                                      className="inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium bg-red-500/95 text-white backdrop-blur-sm w-fit lg:hover:bg-red-600 transition-colors"
-                                    >
-                                      {t('review.badgeRejected')}
-                                      <span aria-hidden>›</span>
-                                    </button>
-                                  )}
-                                </div>
-                              )}
-
-                            </div>
-
-                            <div className="pt-2">
-                              <div className="flex items-center gap-1.5">
-                                <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
-                                  {t('profile.exhibitionNameBadge')}
-                                </span>
-                                <p className="text-sm font-medium text-foreground truncate">
-                                  {displayExhibitionTitle(work, t('work.untitled'))}
-                                </p>
-                              </div>
-                              {work.groupName && (
-                                <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5">
-                                  <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
-                                    {t('profile.groupNameBadge')}
-                                  </span>
-                                  {work.groupName}
-                                </p>
-                              )}
-                              {linkedArtistLabels.length > 0 && (
-                                <p className="text-xs text-muted-foreground mt-0.5 flex flex-wrap items-center gap-x-1.5 gap-y-1">
-                                  <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
-                                    {t('profile.artistNameBadge')}
-                                  </span>
-                                  <span className="min-w-0 break-words">{linkedArtistLabels.join(', ')}</span>
-                                </p>
-                              )}
-                            </div>
-                          </div>
-                        );
-                      })}
                     </div>
                   )}
                 </TabsContent>

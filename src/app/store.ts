@@ -138,8 +138,6 @@ export interface Draft {
   uploadType?: 'solo' | 'group';
   /** 함께 올리기의 그룹명 */
   groupName?: string;
-  /** 강사 업로드 여부 */
-  isInstructor?: boolean;
   /** 대표 이미지 인덱스. -1이면 `customCoverUrl` 사용 */
   coverImageIndex?: number;
   /** 로컬 파일로 별도 지정한 커버 (data URL). 저장 시 work.customCoverUrl로 이관 */

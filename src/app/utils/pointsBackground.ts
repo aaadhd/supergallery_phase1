@@ -116,7 +116,6 @@ export function pointsOnBrowseDailyVisit() {
 export function pointsOnWorkPublished(work: {
   id: string;
   primaryExhibitionType?: string;
-  isInstructorUpload?: boolean;
   groupName?: string;
 }) {
   let times: Record<string, string> = {};
@@ -154,18 +153,10 @@ export function pointsOnWorkPublished(work: {
   }
 
   if (work.primaryExhibitionType === 'group' && work.groupName) {
-    if (work.isInstructorUpload) {
-      const gk = `m:${month}:inst`;
-      if (!s.groupCreateMonth[gk]) {
-        s.groupCreateMonth[gk] = true;
-        award(s, 30, 'group_create', '그룹전시 생성');
-      }
-    } else {
-      const n = (s.groupParticipationMonth[month] || 0) + 1;
-      if (n <= 5) {
-        s.groupParticipationMonth[month] = n;
-        award(s, 15, 'group_participate', '그룹전시 참여');
-      }
+    const n = (s.groupParticipationMonth[month] || 0) + 1;
+    if (n <= 5) {
+      s.groupParticipationMonth[month] = n;
+      award(s, 15, 'group_participate', '그룹전시 참여');
     }
   }
 

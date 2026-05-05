@@ -8,7 +8,7 @@ export interface ImagesV1Entry {
   bio?: string;
   groupName?: string;
   exhibitionName: string;
-  isInstructor: boolean;
+  isInstructor?: boolean;
   profile: string | null;
   images: string[];
   pieceTitles: string[];
@@ -76,7 +76,6 @@ export function buildImagesV1Works(artistsList: Artist[]): Work[] {
       groupName: entry.groupName,
       primaryExhibitionType: 'solo',
       feedReviewStatus: 'approved',
-      isInstructorUpload: entry.isInstructor || undefined,
       pick: true,
       pickBadge: true,
       uploadedAt: new Date().toISOString(),

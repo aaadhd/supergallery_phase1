@@ -42,8 +42,6 @@ export interface Work {
   /** 소속·학과·동문 모임 등(예: 홍익대 미대동문). 강사 업로드 시 필수 등 */
   groupName?: string;
   owner?: any; // groupData.ts WorkOwner 타입 호환
-  taggedEmails?: string[]; // 강사가 태그한 수강생 이메일
-  isInstructorUpload?: boolean; // 강사 대리 업로드 여부
   /** 이번 주 Artier's Pick 활성 여부 (매주 교체) */
   pick?: boolean;
   /** Pick 선정 이력 (한 번 선정되면 영구 배지) */
