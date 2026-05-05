@@ -159,9 +159,10 @@ export default function ContentReview() {
       message: t('review.notifApproved'),
       workId: w.id,
     });
-    // 팔로워 신작 알림 (Phase 1 데모: 로그인 사용자에게 1건)
+    // 팔로잉 신작 알림 (PRD USR-NTF-01 §1 — 검수 통과 후 팔로워에게 발송).
+    // Phase 1 데모: 로그인 사용자가 본 작가를 팔로우 중일 때 자기 알림함에 1건 노출.
     pushDemoNotification({
-      type: 'like',
+      type: 'following',
       message: t('review.notifNewWork'),
       workId: w.id,
       fromUser: { name: w.artist.name, avatar: w.artist.avatar, id: w.artistId },
@@ -221,6 +222,8 @@ export default function ContentReview() {
       type: 'system',
       message: t('review.notifRejected').replace('{reason}', reasonLabel),
       workId: w.id,
+      // PRD USR-NTF-01 §1·AC-04 — 검수 반려 알림 클릭 시 프로필 전시 탭 + USR-PRF-12 모달 자동 오픈.
+      navigateTo: `/me?rejected=${encodeURIComponent(w.id)}`,
     });
     setRejectTarget(null);
   };

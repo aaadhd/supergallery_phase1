@@ -166,6 +166,21 @@ export default function Profile() {
     window.scrollTo(0, 0);
   }, [id]);
 
+  // PRD USR-NTF-01 AC-04 — 검수 반려 알림 클릭 시 ?rejected=<workId>로 진입 → 자동 USR-PRF-12 모달 오픈.
+  useEffect(() => {
+    const rejectedId = searchParams.get('rejected');
+    if (!rejectedId) return;
+    const w = workStore.getWork(rejectedId);
+    if (w && w.feedReviewStatus === 'rejected') {
+      setRejectedModalWork(w);
+    }
+    // 모달 오픈 후 쿼리 파라미터 정리(뒤로가기로 다시 떨어지지 않도록).
+    const next = new URLSearchParams(searchParams);
+    next.delete('rejected');
+    setSearchParams(next, { replace: true });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [storeWorks]);
+
   useEffect(() => {
     const unsubWork = workStore.subscribe(() => setStoreWorks(workStore.getWorks()));
     const unsubDraft = draftStore.subscribe(() => setDrafts(draftStore.getDrafts()));

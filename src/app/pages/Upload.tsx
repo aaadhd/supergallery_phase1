@@ -942,8 +942,9 @@ export default function Upload() {
         const notifTitle = newWork.exhibitionName || newWork.title || t('work.untitled');
         memberIds.forEach((memberId) => {
           const memberArtist = artists.find((a) => a.id === memberId);
+          // PRD USR-NTF-01 §1 — 그룹 초대 카테고리. 회원 슬롯 직접 지정 시 발송.
           pushDemoNotification({
-            type: 'system',
+            type: 'groupInvite',
             message: t('notif.workPublished').replace('{title}', notifTitle),
             workId: newWork.id,
             fromUser: memberArtist

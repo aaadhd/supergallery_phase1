@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertCircle, CheckSquare, AlertTriangle, Eye, Flag, RotateCcw, ShieldAlert } from 'lucide-react';
+import { AlertCircle, CheckSquare, AlertTriangle, Eye, Flag, RotateCcw, ShieldAlert, Trophy, Users } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Progress } from '../components/ui/progress';
@@ -9,6 +9,7 @@ import { STATUS_COLORS } from './constants';
 import { workStore, useWorkStore } from '../store';
 import { loadUserReports, REPORTS_CHANGED_EVENT } from '../utils/reportsStore';
 import { isWorkHidden } from '../utils/workVisibility';
+import { useManagedEvents, deriveStatus } from '../utils/eventStore';
 
 export default function AdminDashboard() {
   const issueStore = useIssueStore();
@@ -53,6 +54,13 @@ export default function AdminDashboard() {
       return hours >= 72;
     }).length;
   })();
+
+  // 응모전 운영 지표 (PRD ADM-EVT-03 트리거 정합 — 대시보드에서 진입)
+  const events = useManagedEvents();
+  const activeEventsCount = events.filter((e) => deriveStatus(e) === 'active').length;
+  const pendingPublication = events.filter(
+    (e) => e.publicationOpen === true && (e.selectedWorkIds?.length ?? 0) === 0,
+  ).length;
 
   // Issue stats
   const issuesByStatus = issues.reduce((acc, i) => {
@@ -159,6 +167,57 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </Link>
+        </div>
+      </section>
+
+      {/* 응모전 운영 (PRD ADM-EVT-03 트리거 — 대시보드에서 응모자 현황·발표 진입) */}
+      <section>
+        <h2 className="text-sm font-semibold text-muted-foreground mb-3">응모전 운영</h2>
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+          <Link to="/admin/managed-events">
+            <Card className="lg:hover:shadow-md transition-shadow cursor-pointer">
+              <CardHeader className="pb-2">
+                <CardDescription className="flex items-center gap-2">
+                  <Trophy className="w-4 h-4" />
+                  진행 중 응모전
+                </CardDescription>
+                <CardTitle className="text-3xl">{activeEventsCount}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs text-muted-foreground">참여작 공개·기간·발표 토글 관리</p>
+              </CardContent>
+            </Card>
+          </Link>
+          <Link to="/admin/events">
+            <Card className="lg:hover:shadow-md transition-shadow cursor-pointer">
+              <CardHeader className="pb-2">
+                <CardDescription className="flex items-center gap-2">
+                  <Users className="w-4 h-4" />
+                  응모자 현황
+                </CardDescription>
+                <CardTitle className="text-3xl">{events.reduce((acc, e) => acc + (e.selectedWorkIds?.length ?? 0), 0)}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs text-muted-foreground">선정 처리·일괄 선정·작품 검토</p>
+              </CardContent>
+            </Card>
+          </Link>
+          {pendingPublication > 0 && (
+            <Link to="/admin/managed-events">
+              <Card className="lg:hover:shadow-md transition-shadow cursor-pointer border-amber-200 bg-amber-50">
+                <CardHeader className="pb-2">
+                  <CardDescription className="flex items-center gap-2 text-amber-900">
+                    <AlertTriangle className="w-4 h-4" />
+                    발표 페이지 미작성
+                  </CardDescription>
+                  <CardTitle className="text-3xl text-amber-900">{pendingPublication}</CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <p className="text-xs text-amber-800">발표 토글 ON · 선정작 0건 응모전</p>
+                </CardContent>
+              </Card>
+            </Link>
+          )}
         </div>
       </section>
 

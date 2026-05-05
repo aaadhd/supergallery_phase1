@@ -17,7 +17,7 @@ const NOTIF_RETENTION_MS = 90 * 86400000;
 
 interface Notification {
   id: string;
-  type: 'like' | 'follow' | 'pick' | 'system' | 'event' | 'invite' | 'curation';
+  type: 'like' | 'follow' | 'groupInvite' | 'following' | 'pick' | 'system' | 'event' | 'invite' | 'curation';
   /** 동적 알림은 message 그대로, 시드·시스템은 messageKey + replacements 권장 (i18n 정합). */
   message?: string;
   messageKey?: MessageKey;
@@ -28,6 +28,8 @@ interface Notification {
   curationId?: string;
   /** 라우팅 타깃 — type 'event' 클릭 시 /events/:id 응모전 상세로 이동(PRD USR-NTF-01 §1). */
   eventId?: string;
+  /** explicit 라우팅 override (예: 검수 반려 → /me?rejected=<workId> + USR-PRF-12 모달). */
+  navigateTo?: string;
   read: boolean;
   createdAt: string;
   /** 플로우 데모에서 넣은 알림 — 알림 설정과 무관하게 목록에 표시 */
@@ -171,6 +173,8 @@ function formatRelativeTime(
 const typeIcons = {
   like: Heart,
   follow: UserPlus,
+  groupInvite: UserPlus,
+  following: UserPlus,
   pick: Star,
   system: Bell,
   event: Calendar,
@@ -181,6 +185,8 @@ const typeIcons = {
 const typeColors = {
   like: 'bg-red-50 text-red-400',
   follow: 'bg-blue-50 text-blue-400',
+  groupInvite: 'bg-violet-50 text-violet-500',
+  following: 'bg-blue-50 text-blue-400',
   pick: 'bg-[#B8862F]/10 text-[#B8862F]',
   system: 'bg-muted/50 text-muted-foreground',
   event: 'bg-emerald-50 text-emerald-500',
@@ -195,6 +201,12 @@ function passesPrefs(n: Notification, p: NotificationSettingsState): boolean {
       return p.like;
     case 'follow':
       return p.newFollower;
+    case 'groupInvite':
+      // 그룹 전시 비회원 슬롯 추가 또는 회원 슬롯 직접 지정 시 (PRD USR-NTF-01 §6).
+      return p.groupExhibitionInvite;
+    case 'following':
+      // 팔로잉 작가의 신작 발행 시 (PRD §6 토글 가능).
+      return p.like; // Phase 1엔 별도 토글 키 미신설 — 'like' 토글에 합쳐 운영. Phase 2에 별도 newWorkFromFollowing 토글 검토.
     case 'pick':
       return p.weeklyTheme;
     case 'event':
@@ -229,11 +241,9 @@ function chipMatches(chip: ChipId, n: Notification): boolean {
     case 'follow':
       return n.type === 'follow';
     case 'groupInvite':
-      // Phase 1엔 그룹 초대 알림 발송 hook 미구현. 본 type 분리는 후속 라운드.
-      return false;
+      return n.type === 'groupInvite';
     case 'following':
-      // Phase 1엔 팔로잉 신작 알림 발송 hook 미구현. Phase 2에서 hook 추가 후 자동 채워짐.
-      return false;
+      return n.type === 'following';
     case 'curation':
       // Pick 선정 + 기획전 선정 (운영팀 직권 단발 큐레이션).
       return n.type === 'pick' || n.type === 'curation';
@@ -312,6 +322,11 @@ export default function Notifications() {
 
   const handleClick = (notif: Notification) => {
     markAsRead(notif.id);
+    // explicit 라우팅 override 우선 — 검수 반려 알림 등 기본 type 분기로 표현 안 되는 흐름.
+    if (notif.navigateTo) {
+      navigate(notif.navigateTo);
+      return;
+    }
     // PRD USR-NTF-01 §1 라우팅 표 정합:
     //  - 기획전 선정 → USR-CUR-01
     //  - 응모전 선정·공지 → USR-EVT-02 응모전 상세 (eventId 있으면)
@@ -327,6 +342,16 @@ export default function Notifications() {
     }
     if (notif.type === 'invite' && notif.fromUser) {
       navigate(`/profile/${notif.fromUser.id}`);
+      return;
+    }
+    if (notif.type === 'groupInvite' && notif.workId) {
+      // PRD §1 — 그룹 초대 알림 클릭 시 해당 전시 상세로 이동.
+      navigate(`/exhibitions/${notif.workId}`);
+      return;
+    }
+    if (notif.type === 'following' && notif.workId) {
+      // PRD §1 — 팔로잉 신작 알림 클릭 시 그 신작 전시 상세로 이동.
+      navigate(`/exhibitions/${notif.workId}`);
       return;
     }
     if (notif.workId) navigate(`/exhibitions/${notif.workId}`);
