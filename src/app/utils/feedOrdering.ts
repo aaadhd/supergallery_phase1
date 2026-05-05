@@ -154,9 +154,10 @@ export function orderWorksForBrowseFeed(
 ): Work[] {
   // 버킷 할당 전 순서를 섞어, 새로고침마다 동일한 작품만 앞에 고정되는 현상을 줄인다.
   const randomizedWorks = [...works].sort(() => Math.random() - 0.5);
-  // Policy §15.1: 다수 기획전 운영 — 모든 기획전의 workIds union을 themed 버킷에 할당.
-  const themes = curationStore.getThemes();
-  const themeWorkIdSet = new Set(themes.flatMap((t) => t.workIds));
+  // Policy §15.1: 다수 기획전 운영 — 모든 기획전의 piece가 속한 work들을 curated 버킷에 할당.
+  // (B-4c-2에서 일반 피드 curated 버킷 인라인 노출은 제거 예정 — Policy §15.1 노출 표면상 기획전은 USR-CUR-01 페이지에만 노출되어야 함.)
+  const curatedExhibitions = curationStore.getCuratedExhibitions();
+  const curatedWorkIdSet = new Set(curatedExhibitions.flatMap((c) => c.pieces.map((p) => p.workId)));
   const featuredArtistIdSet = new Set(curationStore.getFeaturedArtistIds());
 
   const used = new Set<string>();
@@ -175,7 +176,7 @@ export function orderWorksForBrowseFeed(
   // 2026-04-22: 기본 Pick 10개 가정에서 확장 — public/images_1 Featured 전시가 모두 pick:true로
   // 시드되므로, 이들이 일반 rest 버킷으로 밀리지 않도록 상한을 60으로 넓힌다.
   const picks = assign(randomizedWorks, isPickWork, 'pick', 60).map((x) => x.work);
-  const themed = assign(randomizedWorks, (w) => themeWorkIdSet.has(w.id), 'theme').map((x) => x.work);
+  const themed = assign(randomizedWorks, (w) => curatedWorkIdSet.has(w.id), 'theme').map((x) => x.work);
   const featured = assign(randomizedWorks, (w) => featuredArtistIdSet.has(w.artistId), 'featured').map((x) => x.work);
   const personalized = assign(
     randomizedWorks,

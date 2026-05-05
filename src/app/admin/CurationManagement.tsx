@@ -2,8 +2,9 @@ import { useState, useEffect, type FormEvent } from 'react';
 import { toast } from 'sonner';
 import { Plus, Trash2, Star, Pencil, Check, X } from 'lucide-react';
 import { Button } from '../components/ui/button';
-import { curationStore, useCuration, type ThemeExhibition } from '../utils/curationStore';
+import { curationStore, useCuration, type CuratedExhibition, type CurationPieceRef } from '../utils/curationStore';
 import { artists } from '../data';
+import { workStore } from '../store';
 import { openConfirm } from '../components/ConfirmDialog';
 
 function parseWorkIds(raw: string): string[] {
@@ -13,9 +14,30 @@ function parseWorkIds(raw: string): string[] {
     .filter(Boolean);
 }
 
+/**
+ * 임시 변환기: workId 입력 → (workId, pieceId) 페어. piece 단위 큐레이션을 도입하면서
+ * 기존 workId-기반 admin 입력을 첫 piece에 매핑한다. piece 단위 UI는 B-4c-4에서 신설 예정.
+ * - 작품 부재 → 무시 (admin 토스트로 알려줌)
+ * - imagePieceIds 부재 → 무시 (관리자가 작품을 한 번 다시 저장해 piece ID 발급 후 재시도)
+ */
+function workIdsToPieces(workIds: string[]): { ok: CurationPieceRef[]; missing: string[] } {
+  const ok: CurationPieceRef[] = [];
+  const missing: string[] = [];
+  for (const wid of workIds) {
+    const w = workStore.getWork(wid);
+    const first = w?.imagePieceIds?.[0];
+    if (!first) {
+      missing.push(wid);
+      continue;
+    }
+    ok.push({ workId: wid, pieceId: first });
+  }
+  return { ok, missing };
+}
+
 export default function CurationManagement() {
   const [loading, setLoading] = useState(true);
-  const { themes, featuredArtistIds } = useCuration();
+  const { curatedExhibitions, featuredArtistIds } = useCuration();
   // 신규 추가 폼
   const [draftTitle, setDraftTitle] = useState('');
   const [draftSubtitle, setDraftSubtitle] = useState('');
@@ -31,14 +53,14 @@ export default function CurationManagement() {
     return () => window.clearTimeout(t);
   }, []);
 
-  const addTheme = (e: FormEvent) => {
+  const addCuratedExhibition = (e: FormEvent) => {
     e.preventDefault();
     const title = draftTitle.trim();
     if (!title) {
       toast.error('기획전 제목을 입력해 주세요.');
       return;
     }
-    if (themes.some((t) => t.title.trim() === title)) {
+    if (curatedExhibitions.some((c) => c.title.trim() === title)) {
       toast.error('같은 제목의 기획전이 이미 있어요. 다른 제목을 입력해 주세요.');
       return;
     }
@@ -47,10 +69,15 @@ export default function CurationManagement() {
       toast.error('포함할 작품 ID를 1개 이상 입력해 주세요.');
       return;
     }
-    curationStore.addTheme({
+    const { ok: pieces, missing } = workIdsToPieces(workIds);
+    if (missing.length) {
+      toast.error(`작품 ID를 찾지 못했거나 piece ID가 없습니다: ${missing.join(', ')}`);
+      return;
+    }
+    curationStore.addCuratedExhibition({
       title,
       subtitle: draftSubtitle.trim() || undefined,
-      workIds,
+      pieces,
     });
     setDraftTitle('');
     setDraftSubtitle('');
@@ -58,11 +85,20 @@ export default function CurationManagement() {
     toast.success('기획전이 추가되었습니다.');
   };
 
-  const startEdit = (t: ThemeExhibition) => {
-    setEditingId(t.id);
-    setEditTitle(t.title);
-    setEditSubtitle(t.subtitle ?? '');
-    setEditWorkIds(t.workIds.join(', '));
+  const startEdit = (c: CuratedExhibition) => {
+    setEditingId(c.id);
+    setEditTitle(c.title);
+    setEditSubtitle(c.subtitle ?? '');
+    // piece 단위 데이터를 workId 텍스트로 다시 평탄화(중복 workId는 1번만 노출).
+    const uniqueWorkIds: string[] = [];
+    const seen = new Set<string>();
+    for (const p of c.pieces) {
+      if (!seen.has(p.workId)) {
+        seen.add(p.workId);
+        uniqueWorkIds.push(p.workId);
+      }
+    }
+    setEditWorkIds(uniqueWorkIds.join(', '));
   };
 
   const cancelEdit = () => {
@@ -78,25 +114,31 @@ export default function CurationManagement() {
       toast.error('기획전 제목을 입력해 주세요.');
       return;
     }
-    curationStore.updateTheme(id, {
+    const workIds = parseWorkIds(editWorkIds);
+    const { ok: pieces, missing } = workIdsToPieces(workIds);
+    if (missing.length) {
+      toast.error(`작품 ID를 찾지 못했거나 piece ID가 없습니다: ${missing.join(', ')}`);
+      return;
+    }
+    curationStore.updateCuratedExhibition(id, {
       title,
       subtitle: editSubtitle.trim() || undefined,
-      workIds: parseWorkIds(editWorkIds),
+      pieces,
     });
     cancelEdit();
     toast.success('기획전이 수정되었습니다.');
   };
 
-  const removeTheme = async (t: ThemeExhibition) => {
+  const removeCuratedExhibition = async (c: CuratedExhibition) => {
     const ok = await openConfirm({
-      title: `'${t.title}' 기획전을 삭제할까요?`,
+      title: `'${c.title}' 기획전을 삭제할까요?`,
       description: '삭제하면 둘러보기 피드의 해당 기획전 레이어가 즉시 비활성됩니다.',
       destructive: true,
       confirmLabel: '삭제',
     });
     if (!ok) return;
-    curationStore.removeTheme(t.id);
-    if (editingId === t.id) cancelEdit();
+    curationStore.removeCuratedExhibition(c.id);
+    if (editingId === c.id) cancelEdit();
     toast.success('기획전이 삭제되었습니다.');
   };
 
@@ -124,19 +166,19 @@ export default function CurationManagement() {
 
       {/* 기획전 — 다수 운영 */}
       <section className="mb-10">
-        <h2 className="text-base font-semibold text-foreground mb-3">기획전 ({themes.length}개 활성)</h2>
+        <h2 className="text-base font-semibold text-foreground mb-3">기획전 ({curatedExhibitions.length}개 활성)</h2>
 
         {/* 활성 기획전 리스트 */}
-        {themes.length === 0 ? (
+        {curatedExhibitions.length === 0 ? (
           <div className="mb-3 rounded-lg border border-dashed border-border bg-muted/20 px-4 py-6 text-center text-sm text-muted-foreground">
             아직 운영 중인 기획전이 없습니다. 아래에서 새 기획전을 추가하세요.
           </div>
         ) : (
           <ul className="mb-4 space-y-3">
-            {themes.map((t) => {
-              const isEditing = editingId === t.id;
+            {curatedExhibitions.map((c) => {
+              const isEditing = editingId === c.id;
               return (
-                <li key={t.id} className="rounded-lg border border-border bg-white p-4">
+                <li key={c.id} className="rounded-lg border border-border bg-white p-4">
                   {isEditing ? (
                     <div className="space-y-3">
                       <div className="grid sm:grid-cols-2 gap-3">
@@ -162,7 +204,7 @@ export default function CurationManagement() {
                       <div className="flex gap-2">
                         <Button
                           type="button"
-                          onClick={() => saveEdit(t.id)}
+                          onClick={() => saveEdit(c.id)}
                           className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white inline-flex items-center gap-1.5"
                         >
                           <Check className="w-4 h-4" />
@@ -181,15 +223,15 @@ export default function CurationManagement() {
                   ) : (
                     <div className="flex items-start gap-3">
                       <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-foreground">{t.title}</p>
-                        {t.subtitle && (
-                          <p className="text-xs text-muted-foreground mt-0.5">{t.subtitle}</p>
+                        <p className="text-sm font-semibold text-foreground">{c.title}</p>
+                        {c.subtitle && (
+                          <p className="text-xs text-muted-foreground mt-0.5">{c.subtitle}</p>
                         )}
                         <p className="text-xs text-muted-foreground mt-1">
-                          포함 작품 <strong className="text-foreground">{t.workIds.length}</strong>개
-                          {t.workIds.length > 0 && (
+                          포함 piece <strong className="text-foreground">{c.pieces.length}</strong>개
+                          {c.pieces.length > 0 && (
                             <span className="ml-1 truncate inline-block max-w-[480px] align-bottom">
-                              · {t.workIds.slice(0, 6).join(', ')}{t.workIds.length > 6 ? ` 외 ${t.workIds.length - 6}` : ''}
+                              · {c.pieces.slice(0, 6).map((p) => p.workId).join(', ')}{c.pieces.length > 6 ? ` 외 ${c.pieces.length - 6}` : ''}
                             </span>
                           )}
                         </p>
@@ -197,18 +239,18 @@ export default function CurationManagement() {
                       <div className="flex shrink-0 gap-1.5">
                         <Button
                           type="button"
-                          onClick={() => startEdit(t)}
+                          onClick={() => startEdit(c)}
                           className="text-xs px-2.5 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/50 inline-flex items-center gap-1"
-                          aria-label={`${t.title} 수정`}
+                          aria-label={`${c.title} 수정`}
                         >
                           <Pencil className="w-3.5 h-3.5" />
                           수정
                         </Button>
                         <Button
                           type="button"
-                          onClick={() => removeTheme(t)}
+                          onClick={() => removeCuratedExhibition(c)}
                           className="text-xs px-2.5 py-1.5 rounded-lg border border-red-200 text-red-700 lg:hover:bg-red-50 inline-flex items-center gap-1"
-                          aria-label={`${t.title} 삭제`}
+                          aria-label={`${c.title} 삭제`}
                         >
                           <Trash2 className="w-3.5 h-3.5" />
                           삭제
@@ -224,7 +266,7 @@ export default function CurationManagement() {
 
         {/* 신규 추가 폼 */}
         <form
-          onSubmit={addTheme}
+          onSubmit={addCuratedExhibition}
           className="rounded-lg border border-border p-4 space-y-3 bg-muted/30"
         >
           <p className="text-sm font-semibold text-foreground">새 기획전 추가</p>

@@ -14,21 +14,82 @@ import { forgetSeenWork } from './utils/seenFeedWorks';
 import { cleanupReportRefsForWork } from './utils/reportStorage';
 import { normalizeWorkVisibility } from './utils/workVisibility';
 
+/**
+ * 전시(Work) 삭제 시 기획전(`artier_curation_v1`)에 박힌 piece 참조를 일괄 제거.
+ * Policy §32.1 #8b · §32.2 — piece 단위 큐레이션 cascade 정리.
+ * 레거시 필드(`themes`·`workIds`)도 함께 정리(아직 마이그레이션 전 storage 상태 대비).
+ */
 function cleanupOrphanedWorkId(workId: string) {
   if (typeof window === 'undefined') return;
   try {
     const curRaw = localStorage.getItem('artier_curation_v1');
     if (!curRaw) return;
     const state = JSON.parse(curRaw);
-    if (!state || typeof state !== 'object' || !Array.isArray(state.themes)) return;
+    if (!state || typeof state !== 'object') return;
+    const list = Array.isArray(state.curatedExhibitions)
+      ? state.curatedExhibitions
+      : Array.isArray(state.themes)
+        ? state.themes
+        : null;
+    if (!list) return;
     let changed = false;
-    for (const theme of state.themes) {
-      if (theme && Array.isArray(theme.workIds) && theme.workIds.includes(workId)) {
-        theme.workIds = theme.workIds.filter((id: string) => id !== workId);
+    for (const exh of list) {
+      if (!exh || typeof exh !== 'object') continue;
+      if (Array.isArray(exh.pieces)) {
+        const before = exh.pieces.length;
+        exh.pieces = exh.pieces.filter(
+          (p: { workId?: unknown }) => !p || typeof p !== 'object' || p.workId !== workId,
+        );
+        if (exh.pieces.length !== before) changed = true;
+      }
+      if (Array.isArray(exh.workIds) && exh.workIds.includes(workId)) {
+        exh.workIds = exh.workIds.filter((id: string) => id !== workId);
         changed = true;
       }
     }
-    if (changed) localStorage.setItem('artier_curation_v1', JSON.stringify(state));
+    if (changed) {
+      localStorage.setItem('artier_curation_v1', JSON.stringify(state));
+      window.dispatchEvent(new Event('artier-curation-changed'));
+    }
+  } catch { /* ignore */ }
+}
+
+/**
+ * 전시 편집 시 기존 piece가 사라졌으면(이미지 제거/재업로드로 pieceId가 더 이상 유효하지 않음)
+ * 기획전 참조에서 stale piece를 제거. Policy §32.2 — 자연 필터 위험 방지(잘못된 piece 노출 차단).
+ *
+ * @param workId 편집된 Work.id
+ * @param validPieceIds 편집 후 남아 있는 imagePieceIds 집합
+ */
+function cleanupOrphanedPieceIds(workId: string, validPieceIds: string[]) {
+  if (typeof window === 'undefined') return;
+  try {
+    const curRaw = localStorage.getItem('artier_curation_v1');
+    if (!curRaw) return;
+    const state = JSON.parse(curRaw);
+    if (!state || typeof state !== 'object') return;
+    const list = Array.isArray(state.curatedExhibitions)
+      ? state.curatedExhibitions
+      : Array.isArray(state.themes)
+        ? state.themes
+        : null;
+    if (!list) return;
+    const validSet = new Set(validPieceIds);
+    let changed = false;
+    for (const exh of list) {
+      if (!exh || typeof exh !== 'object' || !Array.isArray(exh.pieces)) continue;
+      const before = exh.pieces.length;
+      exh.pieces = exh.pieces.filter((p: { workId?: unknown; pieceId?: unknown }) => {
+        if (!p || typeof p !== 'object') return false;
+        if (p.workId !== workId) return true;
+        return typeof p.pieceId === 'string' && validSet.has(p.pieceId);
+      });
+      if (exh.pieces.length !== before) changed = true;
+    }
+    if (changed) {
+      localStorage.setItem('artier_curation_v1', JSON.stringify(state));
+      window.dispatchEvent(new Event('artier-curation-changed'));
+    }
   } catch { /* ignore */ }
 }
 
@@ -64,6 +125,8 @@ export interface Draft {
     nonMemberArtist?: { displayName: string };
     artistType?: 'member' | 'non-member' | 'self' | 'unknown';
     fullWidth?: boolean;
+    /** Work.imagePieceIds 안정 식별자. 초안→발행 시 그대로 work에 반영(편집 cascade 정합). */
+    pieceId?: string;
   }>;
   tags: string[];
   categories: string[];
@@ -200,6 +263,11 @@ export const workStore = {
     currentWorks = currentWorks.map(w =>
       w.id === id ? { ...w, ...updates } : w
     );
+    // 이미지 piece가 줄거나 ID가 바뀌면 기획전 참조 stale 정리
+    // (Policy §32.2 — 인덱스 시프트로 잘못된 piece가 큐레이션에 남는 위험 차단).
+    if (Array.isArray(updates.imagePieceIds)) {
+      cleanupOrphanedPieceIds(id, updates.imagePieceIds);
+    }
     emitWorksChanged();
     return schedulePersist();
   },

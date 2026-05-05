@@ -1045,7 +1045,7 @@ export default function Profile() {
                                       onClick={async () => {
                                         // Policy §32.2: 활성 Pick·기획전 게시 중이면 자가 삭제 시 명시 경고. cascade는 workStore.removeWork에서 처리.
                                         const hasNonMemberSlots = work.imageArtists?.some((a) => a.type === 'non-member');
-                                        const inActiveCuration = curationStore.getThemes().some((tm) => tm.workIds.includes(work.id));
+                                        const inActiveCuration = curationStore.getCuratedExhibitions().some((c) => c.pieces.some((p) => p.workId === work.id));
                                         const hasActiveCuration = work.pick === true || inActiveCuration;
                                         const descParts = [t('profile.deleteWorkPermanent')];
                                         if (hasNonMemberSlots) descParts.push(t('profile.deleteWorkHasPendingInvites'));
@@ -1227,7 +1227,7 @@ export default function Profile() {
                                         onClick={async () => {
                                           // Policy §32.2: 활성 Pick·기획전 게시 중이면 자가 삭제 시 명시 경고
                                           const hasNonMemberSlots = work.imageArtists?.some((a) => a.type === 'non-member');
-                                          const inActiveCuration = curationStore.getThemes().some((tm) => tm.workIds.includes(work.id));
+                                          const inActiveCuration = curationStore.getCuratedExhibitions().some((c) => c.pieces.some((p) => p.workId === work.id));
                                           const hasActiveCuration = work.pick === true || inActiveCuration;
                                           const descParts = [t('profile.deleteWorkPermanent')];
                                           if (hasNonMemberSlots) descParts.push(t('profile.deleteWorkHasPendingInvites'));

@@ -70,7 +70,7 @@ import { openConfirm } from '../components/ConfirmDialog';
 import { RequiredMark } from '../components/RequiredMark';
 import { containsProfanity } from '../utils/profanityFilter';
 import { todayLocalIso } from '../utils/localDate';
-import { generatePieceIds, reconcilePieceIds } from '../utils/pieceId';
+import { generatePieceId, reconcilePieceIds } from '../utils/pieceId';
 import { normalizeStoredPieceTitle } from '../utils/workDisplay';
 import { WorkDetailModal } from '../components/WorkDetailModal';
 import {
@@ -106,6 +106,9 @@ type ContentItem = {
   nonMemberArtist?: { displayName: string };
   artistType?: 'member' | 'non-member' | 'self' | 'unknown';
   fullWidth?: boolean; // default false (padded), true = 전폭 확장
+  /** piece 안정 식별자(Policy §15.4 / §32.1 #8b). 초안·편집·발행 전 과정에서 보존.
+   *  새 이미지 추가·이미지 교체 시 새로 발급. 발행 시 work.imagePieceIds[i]로 직결. */
+  pieceId?: string;
 };
 
 /* ─── 헬퍼 ─── */
@@ -482,6 +485,8 @@ export default function Upload() {
       nonMemberArtist: c.nonMemberArtist,
       artistType: c.artistType,
       fullWidth: c.fullWidth,
+      // 초안 저장 시점에 발급된 pieceId 보존(부재 시 발행 단계에서 발급).
+      pieceId: c.pieceId,
     }));
     const withUrl = restored.filter((c) => c.url);
     const ex = (draft.exhibitionName ?? draft.title ?? '').trim();
@@ -514,6 +519,8 @@ export default function Upload() {
     setUploadType(work.primaryExhibitionType === 'group' ? 'group' : 'solo');
     setExhibitionName(work.exhibitionName || '');
     const images = Array.isArray(work.image) ? work.image : [work.image];
+    // piece 안정 ID — 기존 work에 부재하면(레거시) 즉석 발급해 편집 후 publish 시점에 work.imagePieceIds로 반영.
+    const reconciledIds = reconcilePieceIds(images.filter(Boolean).length, work.imagePieceIds);
     setContents(images.filter(Boolean).map((url, i) => {
       const ia = work.imageArtists?.[i];
       const item: ContentItem = {
@@ -521,6 +528,7 @@ export default function Upload() {
         type: 'image' as const,
         url: url as string,
         title: work.imagePieceTitles?.[i] || '',
+        pieceId: reconciledIds[i],
       };
       if (ia?.type === 'member' && ia.memberId) {
         item.artist = { id: ia.memberId, name: ia.memberName || '', avatar: ia.memberAvatar || '' };
@@ -586,6 +594,7 @@ export default function Upload() {
           id: `${file.name}-${Date.now()}-${i}`,
           type: 'image',
           url,
+          pieceId: generatePieceId(),
         });
       } catch {
         toast.error(tn('upload.errFileRead', { name: file.name }));
@@ -622,7 +631,8 @@ export default function Upload() {
       const url = await convertImageFileToWebpDataUrlIfPossible(file);
       const passRes = await checkMinResolution(url);
       if (!passRes) { toast.error(t('upload.errMinShortSide800')); return; }
-      setContents(contents.map((c) => c.id === replaceTargetId ? { ...c, url } : c));
+      // 이미지 교체 = 새 piece. 기존 pieceId가 큐레이션에 박혀 있다면 발행 시 cascade로 stale 정리됨.
+      setContents(contents.map((c) => c.id === replaceTargetId ? { ...c, url, pieceId: generatePieceId() } : c));
       toast.success(t('upload.toastImageReplaced'));
     } catch { toast.error(tn('upload.errFileRead', { name: file.name })); }
     finally {
@@ -725,6 +735,9 @@ export default function Upload() {
 
     const currentUser = artists[0];
     const urls = imageContents.map((c) => c.url!);
+    // piece 안정 ID — content 순서·정체성을 그대로 work.imagePieceIds로 보존(Policy §15.4 / §32.1 #8b).
+    // 부재 시 이 시점에 발급(레거시 work 편집·정상 흐름 미스 모두 커버).
+    const imagePieceIds = imageContents.map((c) => c.pieceId ?? generatePieceId());
     const exFinal = exhibitionName.trim().slice(0, TITLE_FIELD_MAX_LEN);
 
     // v1.7: 작품명 자동생성 (저장값은 항상 TITLE_FIELD_MAX_LEN 이하)
@@ -783,7 +796,7 @@ export default function Upload() {
       exhibitionName: exFinal,
       groupName: resolvedGroup,
       imagePieceTitles,
-      imagePieceIds: generatePieceIds(urls.length),
+      imagePieceIds,
       isInstructorUpload: uploadType === 'group' ? isInstructor : undefined,
       primaryExhibitionType,
       imageArtists,
@@ -864,11 +877,9 @@ export default function Upload() {
 
       editDiff = { imageFieldsChanged, originalStatus };
 
-      // 이미지 배열이 변경됐으면 piece ID 재정렬(기존 ID 가능한 한 보존, 길이 부족 시 새 발급).
-      // 메타만 변경이면 기존 imagePieceIds 그대로 보존.
-      const reconciledPieceIds = imageFieldsChanged
-        ? reconcilePieceIds(newImages.length, original?.imagePieceIds)
-        : (original?.imagePieceIds ?? reconcilePieceIds(newImages.length, undefined));
+      // piece ID — contents.pieceId가 편집 진입 시 reconcile로 채워졌고, 이미지 추가/교체 시점에
+      // 새 ID가 발급되므로 newWork.imagePieceIds(=imageContents 매핑)를 그대로 사용한다.
+      // workStore.updateWork가 imagePieceIds 변경을 감지해 stale piece의 큐레이션 참조를 자동 cascade.
 
       const editingUpdates: Partial<Work> = {
         title: newWork.title,
@@ -876,7 +887,7 @@ export default function Upload() {
         exhibitionName: newWork.exhibitionName,
         groupName: newWork.groupName,
         imagePieceTitles: newWork.imagePieceTitles,
-        imagePieceIds: reconciledPieceIds,
+        imagePieceIds: newWork.imagePieceIds,
         isInstructorUpload: newWork.isInstructorUpload,
         primaryExhibitionType: newWork.primaryExhibitionType,
         imageArtists: newWork.imageArtists,
@@ -1027,6 +1038,7 @@ export default function Upload() {
         nonMemberArtist: c.nonMemberArtist,
         artistType: c.artistType,
         fullWidth: c.fullWidth,
+        pieceId: c.pieceId,
       })),
       tags: [],
       categories: [],
