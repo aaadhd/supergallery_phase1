@@ -503,9 +503,10 @@
  <div class="group">⚙️ 설정</div>
  <ul>
  <li><a href="#USR-STG-01"><code>STG-01</code><span>설정 홈</span></a></li>
- <li><a href="#USR-STG-05"><code>STG-03</code><span>알림 설정</span></a></li>
- <li><a href="#USR-STG-06"><code>STG-05</code><span>로그아웃</span></a></li>
- <li><a href="#USR-STG-03"><code>STG-06</code><span>탈퇴</span></a></li>
+ <li><a href="#USR-STG-04"><code>STG-04</code><span>글꼴 크기 조절</span></a></li>
+ <li><a href="#USR-STG-05"><code>STG-05</code><span>알림 설정</span></a></li>
+ <li><a href="#USR-STG-06"><code>STG-06</code><span>로그아웃</span></a></li>
+ <li><a href="#USR-STG-03"><code>STG-03</code><span>탈퇴</span></a></li>
  </ul>
  </li>
 
@@ -5415,7 +5416,7 @@
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">1</span>
  </div>
  <div style="display: flex; flex-direction: column; gap: 6px; position: relative;">
- <div style="padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; display: flex; align-items: center; gap: 12px;"><span style="font-size: 16px;">🔤</span><div style="flex: 1;"><div style="font-size: 13px; font-weight: 600;">글꼴 크기</div><div style="font-size: 10.5px; color: var(--ink-3);">보통 (110%)</div></div><span style="color: var(--ink-3);">›</span></div>
+ <div style="padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; display: flex; align-items: center; gap: 12px;"><span style="font-size: 16px;">🔤</span><div style="flex: 1;"><div style="font-size: 13px; font-weight: 600;">글꼴 크기</div><div style="font-size: 10.5px; color: var(--ink-3);">보통 (1.1)</div></div><span style="color: var(--ink-3);">›</span></div>
  <div style="padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; display: flex; align-items: center; gap: 12px;"><span style="font-size: 16px;">🔔</span><div style="flex: 1;"><div style="font-size: 13px; font-weight: 600;">알림 설정</div><div style="font-size: 10.5px; color: var(--ink-3);">5 토글</div></div><span style="color: var(--ink-3);">›</span></div>
  <div style="padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; display: flex; align-items: center; gap: 12px;"><span style="font-size: 16px;">🚪</span><div style="flex: 1;"><div style="font-size: 13px; font-weight: 600;">로그아웃</div></div><span style="color: var(--ink-3);">›</span></div>
  <div style="padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; display: flex; align-items: center; gap: 12px; color: #dc2626;"><span style="font-size: 16px;">⚠️</span><div style="flex: 1;"><div style="font-size: 13px; font-weight: 600;">탈퇴</div><div style="font-size: 10.5px; color: var(--ink-3);">계정 영구 삭제</div></div><span>›</span></div>
@@ -5442,6 +5443,58 @@
  </div>
  </div>
  <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-STG-01 · 설정 홈</span></div>
+ </section>
+
+
+ <!-- ───────── 화면: 글꼴 크기 조절 (PC) ───────── -->
+ <section class="slide" id="USR-STG-04">
+ <div class="slide-pad">
+ <div class="slide-head">
+ <div><div class="crumb">18 · 설정</div><h2>글꼴 크기 조절</h2></div>
+ <div class="meta"><span class="role">USR</span><span class="id">USR-STG-04</span><span class="device">PC</span><span class="ver">v1.6 NEW</span></div>
+ </div>
+
+ <div class="screen">
+ <div class="mock">
+ <div class="pc-frame">
+ <div class="chrome">
+ <span class="dots"><span></span><span></span><span></span></span>
+ <span class="url">artier.com/settings#font</span>
+ </div>
+ <div style="background: white; padding: 22px 28px; height: 100%; overflow-y: auto;">
+ <div style="font-size: 12px; color: var(--ink-3); margin-bottom: 4px;">← 설정</div>
+ <div style="font-size: 18px; font-weight: 700; margin-bottom: 6px;">글꼴 크기</div>
+ <div style="font-size: 12px; color: var(--ink-3); margin-bottom: 16px;">선택 즉시 적용돼요</div>
+ <div style="display: flex; flex-direction: column; gap: 8px;">
+ <label style="display: flex; padding: 14px 16px; border: 1px solid var(--line); border-radius: 8px; align-items: center; gap: 12px; cursor: pointer;"><input type="radio" name="font" style="accent-color: var(--ink);"> <div><div style="font-size: 12px; font-weight: 600;">작게</div><div style="font-size: 10.5px; color: var(--ink-3);">1.0</div></div></label>
+ <label style="display: flex; padding: 14px 16px; border: 2px solid var(--ink); border-radius: 8px; align-items: center; gap: 12px; cursor: pointer; background: #fafafa;"><input type="radio" name="font" checked style="accent-color: var(--ink);"> <div><div style="font-size: 13px; font-weight: 600;">보통</div><div style="font-size: 10.5px; color: var(--ink-3);">1.1 (기본값)</div></div></label>
+ <label style="display: flex; padding: 14px 16px; border: 1px solid var(--line); border-radius: 8px; align-items: center; gap: 12px; cursor: pointer;"><input type="radio" name="font" style="accent-color: var(--ink);"> <div><div style="font-size: 14px; font-weight: 600;">크게</div><div style="font-size: 10.5px; color: var(--ink-3);">1.2</div></div></label>
+ </div>
+ </div>
+ </div>
+ <div class="placeholder-note">3단 라디오 (작게 1.0 / 보통 1.1 / 크게 1.2) — 보통 기본 선택, 선택 즉시 반영·저장</div>
+ </div>
+
+ <div class="desc">
+ <h3>화면 정보</h3>
+ <dl>
+ <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> 설정 홈 내 글꼴 크기 항목 진입</dd>
+ </dl>
+
+ <h3>구성 요소</h3>
+ <dl>
+ <dt>—</dt><dd>3단 라디오 — 작게(1.0) / 보통(1.1, 기본) / 크게(1.2). 선택 즉시 저장</dd>
+ </dl>
+
+ <div class="ac"><h4>완성 기준</h4><ol>
+ <li>라디오 선택 즉시 전체 UI 폰트 배율 반영 (별도 저장 버튼 X)</li>
+ <li>기본값: 보통(1.1)</li>
+ <li>재방문 시 저장된 선택 유지</li>
+ </ol></div>
+ </div>
+ </div>
+ </div>
+ <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-STG-04 · 글꼴 크기 조절</span></div>
  </section>
 
 

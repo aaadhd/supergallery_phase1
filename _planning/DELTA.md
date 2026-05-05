@@ -13,6 +13,8 @@
 - **코드 주석 정합** — `data.ts` autoHiddenAt @deprecated, `ReportManagement.tsx`·`reportsStore.ts`·`feedVisibility.ts` 등 src 9개 파일의 "자동 비공개" 잔재 주석·토스트 문자열 정정.
 - **§0.6.1 감사 로그 전 어드민 액션 연결** — Pick·기획전·배너·응모전·선정작·문의·공지 핸들러에 appendAuditLog 추가. AuditAction 5종 → 21종.
 - **ADM-NTC-01 공지 관리 화면 구현** — `utils/noticeStore.ts`(localStorage CRUD, draft/published/stopped 상태, 고정 최대 2개, 기존 시드 자동 적재) + `admin/NoticeManagement.tsx`(목록·생성/수정 모달·게시·게시중단·삭제 + audit_log). 사용자측 `pages/Notices.tsx`·`NoticeDetail.tsx`를 정적 배열 → noticeStore 동적 읽기로 전환. 대시보드 공지 일감 카드 신설(게시 중·고정·임시저장 카운트).
+- **기획 문서 가독성 전면 개선** — 코드 경로·구현 세부·프로토타입 임시 처리 설명 제거(총 45건). 정책 수치 정합(피드 24건·폰트 1.0/1.1/1.2·어드민 20건). 화면 ID 정합(PRD 누락 11개 스텁 추가: USR-EXH-05/06·USR-SRC-02·USR-STG-04/05/06·ADM-PCK-02/03·ADM-CUR-02·ADM-BNR-02·ADM-EVT-02). IA·PRD·Policy에서 URL 경로·쿼리 파라미터 20건 제거. 과잉 명세 정리(권한 매트릭스 26행→1줄·ADM-CKL-01 33항목→6카테고리). HTML 화면 스펙 동기화(USR-STG-04 글꼴 크기 조절 신규 추가·nav 코드 정정·110%→1.1 표기).
+- **코드 단순화** — `pointsBackground.ts` stale read 버그 수정(award 함수를 상태 파라미터로 전환, 이중 loadState 제거). `inviteTokenStore.ts` revokeInviteToken 1줄 단순화·connectMemberToSlot store.ts 이동.
 
 ---
 
