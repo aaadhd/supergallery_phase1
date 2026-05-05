@@ -880,13 +880,22 @@ export function performAccountWithdrawal(currentArtistId: string, withdrawReason
       const newSlots = keepIndices.map(i => slots[i]);
       const newTitles = work.imagePieceTitles ? keepIndices.map(i => work.imagePieceTitles![i] ?? '') : undefined;
       const newPieceIds = work.imagePieceIds ? keepIndices.map(i => work.imagePieceIds![i] ?? '') : undefined;
+      const removedUrls = new Set(images.filter((_, i) => !keepIndices.includes(i)));
+      const customCoverDeleted = work.customCoverUrl != null && removedUrls.has(work.customCoverUrl);
+      const coverIdxDeleted = typeof work.coverImageIndex === 'number' &&
+        work.coverImageIndex >= 0 && !keepIndices.includes(work.coverImageIndex);
+      const newCoverIdx = coverIdxDeleted
+        ? 0
+        : typeof work.coverImageIndex === 'number' && work.coverImageIndex >= 0
+          ? keepIndices.indexOf(work.coverImageIndex)
+          : work.coverImageIndex;
       void workStore.updateWork(work.id, {
         image: newImages.length === 1 ? newImages[0] : newImages,
         imageArtists: newSlots,
         ...(newTitles !== undefined && { imagePieceTitles: newTitles }),
         ...(newPieceIds !== undefined && { imagePieceIds: newPieceIds }),
-        customCoverUrl: undefined,
-        coverImageIndex: 0,
+        ...(customCoverDeleted && { customCoverUrl: undefined }),
+        ...(newCoverIdx !== work.coverImageIndex && { coverImageIndex: newCoverIdx ?? 0 }),
       });
     }
   }
