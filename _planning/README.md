@@ -50,27 +50,27 @@ _planning/
 
 > **본 폴더에서 다루지 않는 것**:
 > - **시스템 아키텍처·데이터 모델·번들 분할·외부 연동 게이트웨이** 등 기술 결정 → 개발팀이 코드 단일 소스로 운용.
-> - **시각 토큰**(컬러·타이포·간격·아이콘 등) 및 컴포넌트 시각 스펙 → **개발팀 보유 디자인 시스템**으로 1차 구현하고, 결과물을 PM·디자이너가 검토하여 후속 보완하는 운영 모델. 본 폴더는 시니어 친화 접근성 임계값([PRD_User §0.4.4])만 강제한다.
+> - **시각 토큰**(컬러·타이포·간격·아이콘 등) 및 컴포넌트 시각 스펙 → **개발팀 보유 디자인 시스템**으로 1차 구현하고, 결과물을 PM·디자이너가 검토하여 후속 보완하는 운영 모델. 본 폴더는 시니어 친화 접근성 임계값([PRD_User §0.4.4](./PRD_User_v1.md#044-접근성시니어-친화-ui-사양-ssot))만 강제한다.
 
 | 파일 | 주요 독자 |
 |---|---|
-| [DELTA.md] | 개발사 · QA · PM (직전 핸드오프 이후 변경 사항을 가장 먼저 확인) |
-| [IA_ScreenList_v1.md] | PM · 디자이너 · 엔지니어 |
-| [Policy_v1.md] | PM · CS · 법무 · 엔지니어 |
-| [Copy_v1.md] | PM · UX Writer · 프런트 엔지니어 · 번역 |
-| [Handoff_Signup_Consent_v1.md] | PM · 외주 개발사 |
-| [Handoff_Terms_v1.md] | PM · 법무 · 외주 개발사 |
-| [Handoff_Privacy_v1.md] | PM · 법무 · 외주 개발사 |
-| [Handoff_Footer_v1.md] | PM · 외주 개발사 |
-| [Handoff_FAQ_v1.md] | PM · CS · 외주 개발사 |
-| [Handoff_ServiceIntro_v1.md] | PM · 브랜드 · 외주 개발사 |
-| [Handoff_UserInfo_Contact_v1.md] | PM · CS · 외주 개발사 |
-| [Handoff_Onboarding_v1.md] | PM · UX Writer · 외주 개발사 (가입 후 흐름 prose) |
-| [Handoff_Notifications_v1.md] | PM · 운영 · UX Writer · 외주 개발사 (사용자 도달 알림 통합) |
-| [Handoff_LegalReview_Checklist_v1.md] | PM · 법무 · DPO (변호사 검토 의뢰 시 동봉) |
-| [Handoff_Event_Consent_v1.md] | PM · 법무 · 외주 개발사 (응모전 응모 동의 문구 단일 소스) |
-| [PRD_User_v1.md] | 개발사 · QA |
-| [PRD_Admin_v1.md] | 개발사 · QA · 운영팀 |
+| [DELTA.md](./DELTA.md) | 개발사 · QA · PM (직전 핸드오프 이후 변경 사항을 가장 먼저 확인) |
+| [IA_ScreenList_v1.md](./IA_ScreenList_v1.md) | PM · 디자이너 · 엔지니어 |
+| [Policy_v1.md](./Policy_v1.md) | PM · CS · 법무 · 엔지니어 |
+| [Copy_v1.md](./Copy_v1.md) | PM · UX Writer · 프런트 엔지니어 · 번역 |
+| [Handoff_Signup_Consent_v1.md](./Handoff_Signup_Consent_v1.md) | PM · 외주 개발사 |
+| [Handoff_Terms_v1.md](./Handoff_Terms_v1.md) | PM · 법무 · 외주 개발사 |
+| [Handoff_Privacy_v1.md](./Handoff_Privacy_v1.md) | PM · 법무 · 외주 개발사 |
+| [Handoff_Footer_v1.md](./Handoff_Footer_v1.md) | PM · 외주 개발사 |
+| [Handoff_FAQ_v1.md](./Handoff_FAQ_v1.md) | PM · CS · 외주 개발사 |
+| [Handoff_ServiceIntro_v1.md](./Handoff_ServiceIntro_v1.md) | PM · 브랜드 · 외주 개발사 |
+| [Handoff_UserInfo_Contact_v1.md](./Handoff_UserInfo_Contact_v1.md) | PM · CS · 외주 개발사 |
+| [Handoff_Onboarding_v1.md](./Handoff_Onboarding_v1.md) | PM · UX Writer · 외주 개발사 (가입 후 흐름 prose) |
+| [Handoff_Notifications_v1.md](./Handoff_Notifications_v1.md) | PM · 운영 · UX Writer · 외주 개발사 (사용자 도달 알림 통합) |
+| [Handoff_LegalReview_Checklist_v1.md](./Handoff_LegalReview_Checklist_v1.md) | PM · 법무 · DPO (변호사 검토 의뢰 시 동봉) |
+| [Handoff_Event_Consent_v1.md](./Handoff_Event_Consent_v1.md) | PM · 법무 · 외주 개발사 (응모전 응모 동의 문구 단일 소스) |
+| [PRD_User_v1.md](./PRD_User_v1.md) | 개발사 · QA |
+| [PRD_Admin_v1.md](./PRD_Admin_v1.md) | 개발사 · QA · 운영팀 |
 | [_screen_specs/Artier_Screen_Spec_v1.html](_screen_specs/Artier_Screen_Spec_v1.html) | PM · 디자이너 · 외주 개발사 (PC 와이어프레임·플로우) |
 
 ---
@@ -104,7 +104,7 @@ PC 와이어프레임 HTML은 **정책·화면의 원문 단일 소스가 아니
 
 - **PM·기획이 문서를 정리할 때의 원문 계층**
   - **기본 SSoT — 화면·모달·입력/처리/출력·수용기준(AC)·플로우**: `PRD_User_v1.md` / `PRD_Admin_v1.md`(동일 화면 ID는 `IA_ScreenList_v1.md`와 함께 유지).
-  - **정책 SSoT — 허용/금지·SLA·법·운영 판정·정책 수치 캐노니컬**: `Policy_v1.md`. 화면 단계·UI 구성 등 **구현 상세는 PRD/IA에 두고**, Policy 본문에는 정책만 서술하며 필요한 경우 **[PRD_User_v1.md]·[PRD_Admin_v1.md]·[IA_ScreenList_v1.md]** 경로·화면 ID로 연결한다(동일 내용 장문 복제 금지).
+  - **정책 SSoT — 허용/금지·SLA·법·운영 판정·정책 수치 캐노니컬**: `Policy_v1.md`. 화면 단계·UI 구성 등 **구현 상세는 PRD/IA에 두고**, Policy 본문에는 정책만 서술하며 필요한 경우 **[PRD_User_v1.md](./PRD_User_v1.md)·[PRD_Admin_v1.md](./PRD_Admin_v1.md)·[IA_ScreenList_v1.md](./IA_ScreenList_v1.md)** 경로·화면 ID로 연결한다(동일 내용 장문 복제 금지).
   - **카피·원고**: `Copy_v1.md` · 각 `Handoff_*.md`(dual 관계는 「충돌 방지 구조」표).
 - **개발사·QA는 아래 「단일 읽기 규칙」만 따르면 된다** — 항목마다 다른 "우선순위"를 외울 필요 없음.
 - **라이브 규칙**: 같은 주제에 대해 수치·절 번호·액션 개수(예: 신고 처리 §12.1)·사용자 신고 단일 라벨(§12.0)·알림 행 수(§12.1.3) 등은 **본문 기준으로 일치**해야 한다. 문서 이력·`DELTA.md`의 **과거 결정 서술**은 역사로 남을 수 있으나, **현행 본문**과 정면 충돌하면 본문을 고친다.
@@ -154,31 +154,32 @@ PC 와이어프레임 HTML은 **정책·화면의 원문 단일 소스가 아니
 | 구간 | 규칙 |
 |---|---|
 | **원격에 푸시되기 전** (같은 로컬 작업·같은 PR·아직 `main`에 없음) | 어떤 `.md`도 **새 버전 행을 추가**하거나 **헤더의 `버전:`만 올려**선 안 된다. 변경 요약은 해당 문서의 **현재 최신 이력 행에 텍스트만 append**한다. (파일별 첫 수정 vs 같은 사이클 재수정 구분은 루트 `CLAUDE.md` git 판별과 동일.) |
-| **원격에 푸시된 이후** | 다음 로컬 작업 주기에서 그 파일을 손대면, 그때 **다음 버전** 행을 추가하고 헤더·요약 블록의 표시 버전을 맞춘다. |
+| **원격에 푸시된 이후** | 다음 로컬 작업 주기에서 그 파일을 손대면, 그때 **다음 버전** 행을 추가하고 헤더 메타데이터의 표시 버전을 맞춘다. |
 
 요약하면 **버전 숫자는 푸시가 나간 뒤에만 올라간다.** 푸시 전까지 서로 다른 파일만 따로 패치 버전을 올려 두지 않는다.
 
 ### 인용 표기 규약 (`.md` 내부 링크)
 
-다른 `_planning` 문서·소절을 가리키는 인용은 **마크다운 숏컷 참조 링크**로 통일한다. 본문에 대괄호 한 쌍만 남고, 정의는 파일 끝 `<!-- 인용 정의 -->` 블록에 모은다.
+다른 `_planning` 문서·소절을 가리키는 인용은 말미 `<!-- 인용 정의 -->`에 **목적지 URL을 한 번만** 적고, 본문에는 **`[라벨](./파일.md#앵커)` 인라인**으로 동일 경로를 둔다. 에디터·미리보기에서 클릭 시 **원문 위치**로 바로 이동한다(순수 참조형 `[라벨]`만 두면 일부 환경에서 말미 정의 줄로 점프한다).
 
 **본문 라벨 표준형**
 
-| 대상 | 라벨 | 예 |
+| 대상 | 라벨 | 예(본문에 쓰는 형태) |
 |---|---|---|
-| 다른 문서 전체 | `[<Filename>_v1.md]` 또는 `[<Filename>.md]` | `[Copy_v1.md]`, `[README.md]` |
-| Policy 소절 | `[Policy §X.Y]` (필요 시 하위 식별자 포함) | `[Policy §3.2]`, `[Policy §21.1 L-4]` |
-| PRD 소절 | `[PRD_User §X.Y]` 또는 `[PRD_Admin §X.Y]` | `[PRD_User §0.4.4]` |
-| 화면 카드 | `[USR-XXX-NN]` / `[ADM-XXX-NN]` | `[USR-PRF-02]`, `[ADM-RPT-01]` |
-| Handoff 소절 | `[<Handoff명> §N]` (`_v1.md` 생략) | `[Handoff_Privacy §10]` |
-| 같은 문서 내 소절 | `[§X.Y]` | `[§31]` |
+| 다른 문서 전체 | `[<Filename>_v1.md]` 또는 `[<Filename>.md]` | `[Copy_v1.md](./Copy_v1.md)` |
+| Policy 소절 | `[Policy §X.Y]` (필요 시 하위 식별자 포함) | `[Policy §3.2](./Policy_v1.md#policy-3-2)` |
+| PRD 소절 | `[PRD_User §X.Y]` 또는 `[PRD_Admin §X.Y]` | `[PRD_User §0.4.4](./PRD_User_v1.md#044-접근성시니어-친화-ui-사양-ssot)` |
+| 화면 카드 | `[USR-XXX-NN]` / `[ADM-XXX-NN]` | `[USR-PRF-02](./PRD_User_v1.md#usr-prf-02--프로필-편집-모달)` |
+| Handoff 소절 | `[<Handoff명> §N]` (`_v1.md` 생략) | `[Handoff_LegalReview_Checklist §2](./Handoff_LegalReview_Checklist_v1.md#2-사업자-정보-11종)` |
+| 같은 문서 내 소절 | `[§X.Y]` | Policy를 가리키면 `[§31](./Policy_v1.md#policy-31)` · 어드민 본문이면 `[§0.6](./PRD_Admin_v1.md#06-감사-로그-audit-trail)` |
 
 **원칙**
 
 - 라벨 안에 한국어 설명을 넣지 않는다(목적지 제목과 중복). 설명이 필요하면 라벨 **밖** 일반 산문으로: `매직 링크는 [Policy §2.5]를 따른다`.
-- 연속 인용 시 첫 번째에만 문서명, 이후 `§N`만: `[Policy §3.4] · [§3.5] · [§32]`.
+- 연속 인용 시 첫 번째에만 문서명, 이후 `§N`만: 첫 항은 `[Policy §3.4](./Policy_v1.md#policy-3-4)` 형태, 이어지는 `[§3.5](./Policy_v1.md#policy-3-5)` 등으로 통일.
 - TOC·목차 등 같은 문서 내 한국어 라벨이 의미 있는 경우(`[알림 채널](#1-알림-채널-정책)`)는 인라인 링크 그대로 둔다.
-- 정의 블록은 파일 말미 `## 문서 이력` 다음에 `<!-- 인용 정의 -->` 주석 + 정의 모음 형식.
+- 정의 블록은 파일 말미 `## 문서 이력` 다음에 `<!-- 인용 정의 -->` 주석 + 정의 모음 형식. 본문 인라인 URL과 **항상 같은 목적지**를 가리키도록 유지한다.
+- 동일 매핑을 일괄 생성·보정할 때 `_planning/_tools/expand_reference_links_to_inline.py`를 실행할 수 있다. 저장소 내 모든 `.md`의 말미 정의를 **병합**하고, `Policy §…`·`[§0.4.1]`(PRD_Admin) 등 **추론**·` v2.20` 접미 제거로 빠진 인라인을 보완한다.
 
 **예시 (raw md)**
 
@@ -281,7 +282,7 @@ PC 와이어프레임 HTML은 **정책·화면의 원문 단일 소스가 아니
 
 ## 화면 ID 체계
 
-화면 ID는 트랙·영역·일련번호로 구성한다. 상세는 [IA_ScreenList §1] 참조.
+화면 ID는 트랙·영역·일련번호로 구성한다. 상세는 [IA_ScreenList §1](./IA_ScreenList_v1.md#1-화면-id-체계) 참조.
 
 ```
 USR-<영역>-<번호>   사용자 앱
@@ -418,7 +419,7 @@ CM-<번호>          공통 팝업·다이얼로그
 | 내용 추가·변경·삭제 (하위 호환) | 마이너 +0.1 | v1.0 → v1.1 |
 | 구조 전면 재편·대규모 개편 | 메이저 +1.0 | v1.2 → v2.0 |
 
-파일명은 **`Policy_v1.md` 등 `_v1` 접미**를 유지한다. 마이너·패치 수준 변경마다 파일명을 바꾸지 않고, **같은 파일 내** 상단 변경 요약 + 말미 `## 문서 이력`으로만 추적한다. 메이저 개편으로 문서를 쪼개거나 아카이브(`_planning/archive/` 등)로 옮길 때만 파일명 분리를 검토한다.
+파일명은 **`Policy_v1.md` 등 `_v1` 접미**를 유지한다. 마이너·패치 수준 변경마다 파일명을 바꾸지 않고, **같은 파일 내** 말미 `## 문서 이력`으로만 추적한다. 메이저 개편으로 문서를 쪼개거나 아카이브(`_planning/archive/` 등)로 옮길 때만 파일명 분리를 검토한다.
 
 ### 2) 문서 이력 기록
 
@@ -433,13 +434,6 @@ CM-<번호>          공통 팝업·다이얼로그
 | v1.2 | 2026-04-20 | PM | §12 신고·모더레이션 Phase 1 단순화(3액션+2회 자동 비공개) |
 | v1.1 | 2026-04-19 | PM × Claude | Phase 2 용어 정비 — 2차 그랜드 오픈 한정 표기로 통일. 런칭 전 백엔드 연동 작업은 "런칭 전 백엔드 연동 후"로 교체. |
 | v1.0 | 2026-04-19 | PM × Claude | 최초 작성 — 기존 분산 문서를 `_planning/` 단일 소스로 재편. 2트랙 구조 · 화면 ID 체계 · 버전 규칙 · 핵심 결정 · 언어 정책 · 외부 참고 문서 연결 포함. |
-```
-
-문서 **상단**에도 가장 최근 변경 요약 블록을 유지한다.
-
-```markdown
-> **v1.2 변경 요약 (2026-04-20)**:
-> - §12 신고·모더레이션 Phase 1 단순화(3액션 + 2회 자동 비공개)
 ```
 
 ### 3) 이 README 동기화
@@ -475,9 +469,9 @@ CM-<번호>          공통 팝업·다이얼로그
 | 항목 | 내용 |
 |---|---|
 | 디자인 컨셉 | "작품이 주인공. UI는 뒤로 물러난다" — 차분·여유·존중 |
-| 다크 모드 | **Phase 1 지원**. 기본 "밝게", 사용자가 Settings(USR-STG-01)에서 "밝게/어둡게" 토글. 시스템 자동 감지 미사용 ([PRD_User §0.4.4]). |
+| 다크 모드 | **Phase 1 지원**. 기본 "밝게", 사용자가 Settings(USR-STG-01)에서 "밝게/어둡게" 토글. 시스템 자동 감지 미사용 ([PRD_User §0.4.4](./PRD_User_v1.md#044-접근성시니어-친화-ui-사양-ssot)). |
 
-> 폰트·컬러 토큰·아이콘·간격 등 시각 자산은 본 폴더에서 정의하지 않는다. 시니어 친화 접근성 정책(터치 44×44·입력 16px·글꼴 3단·포커스 링 가시화 등)은 [PRD_User §0.4.4]에 있다.
+> 폰트·컬러 토큰·아이콘·간격 등 시각 자산은 본 폴더에서 정의하지 않는다. 시니어 친화 접근성 정책(터치 44×44·입력 16px·글꼴 3단·포커스 링 가시화 등)은 [PRD_User §0.4.4](./PRD_User_v1.md#044-접근성시니어-친화-ui-사양-ssot)에 있다.
 
 ### 수익화·계정·인증
 
@@ -545,7 +539,7 @@ CM-<번호>          공통 팝업·다이얼로그
 - UI 기본 언어: **한국어(KO)**, 영어(EN) 전환 가능
 - 기획 문서: 한국어
 - 코드 주석·커밋 메시지: 개발사 컨벤션 위임
-- 법적 의무 알림(약관·개인정보 변경): 이메일 단일 채널([Policy §1.1])
+- 법적 의무 알림(약관·개인정보 변경): 이메일 단일 채널([Policy §1.1](./Policy_v1.md#policy-1-1))
 
 ---
 
@@ -564,15 +558,13 @@ CM-<번호>          공통 팝업·다이얼로그
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.12 | 2026-05-05 | PM × Claude | **§5 「용어 사전」 큐레이션 — 기획전 영문 표준어 명시** (CuratedExhibition). 옛 "테마전"·"Theme"·"ThemeExhibition" 사용 X 비고 추가. 이후 append — **응모전 표준어 정합 (B-4d-naming)** — §5 큐레이션 표에 "응모전 (영문 Contest)" 행 추가(옛 "이벤트" 행 변경). 옛 "이벤트(카테고리 의미)"·"응모형 이벤트"·"공모형 주간 테마전"·"Theme"을 **응모전**으로 통일하고 「주요 기능」 6 버킷 표기·큐레이션 행 표기를 한국어 통일. 화면 ID `EVT`·코드 식별자(`eventStore`·`evt.*`)는 코드 도메인이라 그대로 유지. 이후 append — **둘러보기 피드 6 → 5 버킷 정합 (B-4c-2)** — Policy §15.1 노출 표면(기획전 = USR-CUR-01만, 응모전 = 일반 피드 자연 노출 + 별도 부스트 X)과 코드 정합. 「주요 기능」 둘러보기 피드 행 표기를 5 버킷(Pick·추천 작가·개인화·신규·일반)으로 정정. |
-| v1.11 | 2026-05-02 | PM × Claude | **Policy §23.0 — 전시 공개 상태 5종** 정책 SSoT 명문화 · **§31 N-11 해소** (`DELTA.md`·`Policy_v1.md` 번들). **§21.0** 소프트런칭 동치. **§31 N-5** 응모전 메일 구독·해지(PRD·IA·단말 저장). 이후 append — **Handoff_Event_Consent_v1.md 신설 등록** (응모전 응모 동의 문구 단일 소스). 「주제별 연쇄 갱신 번들」에 "응모전·큐레이션 동의·보존" 행 추가. |
-| v1.10 | 2026-05-02 | PM × Codex | **푸시 경계와 버전 번호 룰 명문화** — `_planning` 내 모든 `.md`의 문서 이력은 원격 푸시 전 같은 행에 append, 푸시 후 다음 수정부터 다음 버전. **「주제별 연쇄 갱신 번들」** — 수정 시 연관 Policy·PRD·IA·Copy·핸드오프·HTML을 한 작업 범위에서 묶어 갱신. **SSoT 분담 명문화** — 정책 수치 = Policy §20, UI 사양 수치 = PRD_User §0.4.2, N종 열거 라벨 = Policy 캐노니컬 §, 프로필 옵션 = PRD USR-PRF-02, 알림 7종 = PRD USR-NTF-01. **운영 원칙** — (a) 수치 인용 룰. (b) Copy ↔ 코드: `Copy_v1.md`가 엄격 SSoT, Copy 먼저 → 코드. **닉네임 정책 SSoT 행 신설** — PRD USR-PRF-02. **번들 표 정정** — 초대·토큰 행의 오표기 `§12.2` 제거 → USR-AUT-10b 및 PRD §12 사용자 플로우 요약으로 명시. **PRD 기본 SSoT·Policy 정책-only** — `_planning` 상호 정합 절을 개정: 화면·AC·플로우 원문은 PRD 우선, Policy는 정책·수치 캐노니컬+경로 참조. 충돌 해소 2분기(구현 vs 정책). 충돌 방지 표에 화면 명세 행 추가. **잔여 정합** — `Handoff_FAQ_v1.md` 목록 설명 FAQ **14문항**, 「라이브 규칙」에 수치 출처 하위 불릿, `Handoff_UserInfo_Contact_v1.md` 문의 카테고리 **8종** 전면 반영. **Policy 인용 고정 앵커** — 제목 슬러그 대신 `Policy_v1.md#policy-*`로 타 문서 인용 링크 통일. |
+| v1.12 | 2026-05-05 | PM × Claude | 용어 사전 기획전·응모전 표준어, 주요 기능 피드 5버킷 정합. 이후 append — 주요 기획 MD 상단 변경 요약 블록 폐지, `## 문서 이력`을 짧은 한 줄 요약으로 정리, 본 README 문서 버전 규칙에서 상단 요약 예시 제거. 이후 append — 인용 본문을 `./파일.md#앵커` 인라인으로 통일(클릭 시 원문 이동), `PRD_User §0.5`·§0.4.4·`PRD_Admin` §0.6/0.4.3 고정 앵커, `_planning/_tools/expand_reference_links_to_inline.py`. 이후 append — 스크립트 전역 정의 병합·Policy § 추론·`v2.20` 라벨 정리 |
+| v1.11 | 2026-05-02 | PM × Claude | Policy §23.0·N-11·§21.0·§31 N-5, Handoff_Event_Consent 등록 |
+| v1.10 | 2026-05-02 | PM × Codex | 푸시 경계·연쇄 갱신 번들·SSoT 분담·상호 정합·Policy 앵커 규칙 명문화 |
 | v1.6 | 2026-05-01 | PM × Claude | **「용어 사전」 섹션 신설** — 사용자·역할·콘텐츠·검수 5상태·업로드 유형·큐레이션·사용자 행동·가입·인증·비회원 초대 8개 카테고리 표준어. 새 문서·카피·기획 변경 시 본 사전을 먼저 확인하는 운영 룰. |
 | v1.5 | 2026-05-01 | PM × Claude | **화면 스펙 HTML 등록** — `_screen_specs/Artier_Screen_Spec_v1.html`을 「기획 문서 목록」에 추가. **법무 검토용 체크리스트 등록** — `Handoff_LegalReview_Checklist_v1.md`를 「기획 문서 목록」에 추가. **핸드오프 신규 2종** — `Handoff_Onboarding_v1.md`(가입 후 4단계 + claim 흐름) · `Handoff_Notifications_v1.md`(인박스 + 검수·신고·Pick·초대 알림 + 채널 라우팅 매트릭스). |
 | v1.4 | 2026-04-26 | PM × Claude | 핸드오프 문서 체계 보강 — `Handoff_*` 7종(가입 동의/약관/개인정보/푸터/FAQ/서비스 소개/사용자정보·문의) 추가. 일반 UI 원고의 단일 소스를 `Copy_v1.md`로 고정. 약관·개인정보는 `Handoff_Terms_v1.md`·`Handoff_Privacy_v1.md`로 분리. |
-| v1.0 | 2026-04-19 | PM × Claude | 최초 작성 — 기존 분산 문서를 `_planning/` 단일 소스로 재편. 2트랙 구조 · 화면 ID 체계 · 버전 규칙 · 핵심 결정 · 언어 정책 · 외부 참고 문서 연결 포함. |
-
-<!-- 인용 정의 -->
+| v1.0 | 2026-04-19 | PM × Claude | 최초 작성 — 기존 분산 문서를 `_planning/` 단일 소스로 재편. 2트랙 구조 · 화면 ID 체계 · 버전 규칙 · 핵심 결정 · 언어 정책 · 외부 참고 문서 연결 포함. |<!-- 인용 정의 -->
 [Copy_v1.md]: Copy_v1.md
 [DELTA.md]: DELTA.md
 [Handoff_FAQ_v1.md]: Handoff_FAQ_v1.md

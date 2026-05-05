@@ -203,15 +203,14 @@ Phase 1은 **작품 단위 모더레이션만** 다룬다. 사용자 계정 차�
 | 액션 | 효과 | 비고 |
 |---|---|---|
 | **삭제** | 작품 신고 한정. `workStore.removeWork`로 영구 삭제 후 `adminStatus: 'deleted'` | `openConfirm`으로 confirm 필요 |
-| **기각** | 신고 부당 판정. 자동 비공개 상태였다면 **즉시 복원**(`isHidden: false`) | `adminStatus: 'dismissed'` |
+| **기각** | 신고 부당 판정. 운영팀이 비공개 유지 처리했다면 **즉시 복원**(`isHidden: false`) | `adminStatus: 'dismissed'` |
 | **비공개 유지** | 작품에 `isHidden: true` 유지 (둘러보기·검색에서 제외, 작가 본인 프로필엔 보임) | `adminStatus: 'hidden'` |
 | (목록에서 제거) | 액션 없이 큐에서만 제거 (레거시 호환) | `removeUserReport` |
 
-### 2회 자동 비공개 (Phase 1 핵심)
+### 자동 비공개 트리거 (2026-05-05 폐기)
 
-- 같은 전시에 **2번째 신고가 접수되는 순간** 즉시 `isHidden: true` + `adminStatus: 'hidden'` 전환. 작가에게 시스템 알림 1건.
-- 운영팀이 위 3액션 중 하나로 확정. 기각 판정 시 복원.
-- 트리거 위치: `reportsStore.appendUserReport` (신고 저장 직후 동일 `workId` 카운트 체크).
+- **Policy §12.2 v2.20에 따라 자동 비공개 트리거 폐기.** 모든 신고는 운영팀이 ADM-RPT-02에서 직접 3액션 중 하나로 판정.
+- `reportsStore.appendUserReport`에 있던 2회 자동 비공개 트리거 코드 제거됨.
 
 ### 폐기된 것 (2026-04-20 기준)
 

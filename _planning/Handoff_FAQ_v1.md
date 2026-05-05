@@ -5,7 +5,7 @@
 `USR-INF-02` FAQ 화면에 노출되는 자주 묻는 질문 14문항 전문이다. **문구 의미·카테고리**만 고정한다. 아코디언 UX·검색 등 구현 세부는 PRD·구현 판단에 따른다.
 
 > **단일 소스**
-> - 화면 문자열(i18n)은 [Copy_v1.md] FAQ 영역이 단일 소스다.
+> - 화면 문자열(i18n)은 [Copy_v1.md](./Copy_v1.md) FAQ 영역이 단일 소스다.
 > - 본 문서의 한글·영문은 Copy와 **같은 의미**를 유지하고, 수정 시 Copy를 먼저 갱신한 뒤 같은 작업 범위에서 본 문서를 맞춘다.
 
 ---
@@ -133,13 +133,13 @@ Invite links are valid for 90 days from issue. If your friend hasn't signed up b
 
 ## 문자열 출처
 
-모든 UI 문구는 [Copy_v1.md] FAQ 영역을 따른다. 본 문서는 prose 참고용이며 i18n 키 목록은 적지 않는다.
+모든 UI 문구는 [Copy_v1.md](./Copy_v1.md) FAQ 영역을 따른다. 본 문서는 prose 참고용이며 i18n 키 목록은 적지 않는다.
 
 ---
 
 ## 구현 체크
 
-- [ ] FAQ 14문항 전부 렌더링 (Q11~Q14는 [Policy §3] 토큰 모델 정합)
+- [ ] FAQ 14문항 전부 렌더링 (Q11~Q14는 [Policy §3](./Policy_v1.md#policy-3) 토큰 모델 정합)
 - [ ] 카테고리 필터 6종 동작 (전체·계정·업로드·전시·기타·비회원 초대)
 - [ ] 하단 문의 링크 경로 `/contact`
 - [ ] ko/en 동일 문항 수·동일 카테고리 (누락 검사)
@@ -151,7 +151,6 @@ Invite links are valid for 90 days from issue. If your friend hasn't signed up b
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
 | v2 | 2026-05-01 | PM × Claude | 본문 보강 — 14문항 ko/en 전문 게재. 카테고리별 묶음(계정/업로드/전시/기타/비회원 초대). **Q6 콘텐츠 결함 정정** — Phase 1엔 없는 회원용 비공개 토글을 약속하던 문장 ko/en 삭제. |
-
 <!-- 인용 정의 -->
 [Copy_v1.md]: Copy_v1.md
 [Policy §3]: Policy_v1.md#policy-3

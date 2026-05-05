@@ -927,26 +927,24 @@
  <div class="node terminator end">슬롯 "작가 미상"으로 전환<br>(가입자 닉네임·아바타 사라짐)</div>
  </div>
 
- <h3 style="margin-top: 32px;">⚠ 자동 비공개·재승인 시 토큰 동기화</h3>
+ <h3 style="margin-top: 32px;">⚠ 운영팀 신고 처리 시 토큰 동기화</h3>
  <div class="flow-col">
- <div class="node terminator start"><div class="actor">시스템</div>신고 2회 누적 → 자동 비공개</div>
- <div class="arrow-down"></div>
- <div class="node process"><div class="actor">시스템</div>토큰 자동 inactive 회귀<br>(친구 링크 보존)</div>
+ <div class="node terminator start"><div class="actor">사용자</div>신고 접수 → 운영팀 큐로 전송</div>
  <div class="arrow-down"></div>
  <div class="node decision"><div class="text">운영팀<br>판정?</div></div>
  <div class="branch-2" style="margin-top: 14px;">
  <div class="branch-col">
- <div class="branch-head yes" style="font-size: 10px;">기각·복원</div>
- <div class="node process">토큰 자동 active 복귀</div>
+ <div class="branch-head yes" style="font-size: 10px;">비공개 유지 → 기각 복원</div>
+ <div class="node process">비공개 유지 처리 시 토큰 inactive,<br>이후 기각 시 자동 active 복귀</div>
  </div>
  <div class="branch-col">
- <div class="branch-head no" style="font-size: 10px;">삭제·비공개 유지</div>
- <div class="node process">토큰 revoke 또는 inactive 유지</div>
+ <div class="branch-head no" style="font-size: 10px;">삭제</div>
+ <div class="node process">토큰 영구 revoke</div>
  </div>
  </div>
  </div>
 
- <div class="flow-note">📍 핵심: 작가 승인 게이트 없음. 즉시 자동 연결 옵션도 없음(항상 명시 클릭). 잘못 연결 시 가입자가 카톡 등으로 작가에게 알리고, 작가가 마이페이지에서 풀기. 신고 자동 비공개 시 토큰도 자동 inactive 회귀 → 기각 복원 시 자동 active.</div>
+ <div class="flow-note">📍 핵심: 작가 승인 게이트 없음. 즉시 자동 연결 옵션도 없음(항상 명시 클릭). 잘못 연결 시 가입자가 카톡 등으로 작가에게 알리고, 작가가 마이페이지에서 풀기. 자동 비공개 트리거는 Policy §12.2 v2.20에 따라 폐기 — 운영팀 직접 판정만.</div>
  </div>
  </div>
  <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>04-B · 자동 연결 순서도</span></div>
@@ -1231,11 +1229,11 @@
  <div class="slide-head"><div><div class="crumb">07 · 공통 정책</div><h2>신고·모더레이션</h2></div><div class="meta"><span class="ver">v1.2</span></div></div>
  <div class="policy"><div class="label">신고 단위</div><div class="body"><p>Phase 1은 <strong>전시 단위 모더레이션만</strong>. 사용자 계정 차원 제재는 Phase 2.</p></div></div>
  <div class="policy"><div class="label">사용자 신고 흐름</div><div class="body"><p>전시 상세에서 "신고" → <strong>단일 사유 안내</strong>(고정 라벨) + 선택 상세(200자) → 운영팀 큐로 접수. 사전 카테고리 라디오 없음.</p></div></div>
- <div class="policy"><div class="label">2회 자동 비공개</div><div class="body"><div class="callout warn">같은 전시에 <strong>2번째 신고가 접수되는 순간</strong> 즉시 비공개 전환. 작가에게 알림 1건. 운영팀 3액션으로 확정.</div></div></div>
+ <div class="policy"><div class="label">자동 비공개 트리거</div><div class="body"><div class="callout warn">Policy §12.2 v2.20에 따라 <strong>폐기</strong>. 모든 신고는 운영팀이 직접 판정한다(2번째 신고 즉시 자동 비공개 트리거 없음).</div></div></div>
  <div class="policy"><div class="label">운영팀 처리 액션</div><div class="body">
- <ul><li><strong>삭제</strong> — 작품 영구 삭제</li><li><strong>기각</strong> — 자동 비공개였으면 즉시 복원</li><li><strong>비공개 유지</strong> — 둘러보기·검색 제외</li><li><strong>큐에서 제거</strong> — 액션 없이 정리</li></ul>
+ <ul><li><strong>삭제</strong> — 작품 영구 삭제. 사유 4종 한정(저작권 침해 / 위법 / 청소년 유해 / 어뷰즈) + 자유 메모, 운영자 감사 로그 5년 보관</li><li><strong>기각</strong> — 비공개 유지 처리 상태였다면 즉시 복원</li><li><strong>비공개 유지</strong> — 둘러보기·검색 제외(작가 본인 프로필엔 노출). 작가가 수정 후 재검수 요청 가능</li><li><strong>큐에서 제거</strong> — 액션 없이 정리(레거시 호환)</li></ul>
  </div></div>
- <div class="policy"><div class="label">작가 알림</div><div class="body"><p>모든 처리 결과는 작가에게 시스템 알림. 자동 비공개 시점에도 알림 1건.</p></div></div>
+ <div class="policy"><div class="label">작가 알림</div><div class="body"><p>운영팀 처리 결과(삭제·비공개 유지·기각 후 복원)를 작가에게 시스템 알림. 「삭제」 알림에는 사유 라벨 동봉.</p></div></div>
  </div>
  <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>07-6 · 신고·모더레이션</span></div>
  </section>
@@ -2700,7 +2698,7 @@
  <dt><span class="bub">1</span></dt><dd>본인 한정 상단 배너 — 상태별(<code>pending</code>: 회색 / <code>rejected</code>: 빨강 / <code>hidden</code>: 주황). 외부엔 모달 진입 차단 또는 정상 노출</dd>
  <dt><span class="bub">2</span></dt><dd>Pick 배지 — 공개. ADM-PCK-01에서 운영자가 부여. 영구 이력</dd>
  <dt><span class="bub">3</span></dt><dd>강사 배지 — 공개. <code>isInstructorUpload === true</code> 자동 파생</dd>
- <dt><span class="bub">4</span></dt><dd>검수 상태 배지 — 본인 한정. 5종(공개·검수 대기·반려·자동 비공개·비공개 유지)</dd>
+ <dt><span class="bub">4</span></dt><dd>검수 상태 배지 — 본인 한정. 4종(공개·검수 대기·반려·비공개 유지) — Policy §23.0 v2.20</dd>
  </dl>
 
  <div class="callout info">검수 중 / 반려됨 / 비공개 상태에서 본인이 모달 열면 위 배너가 자동 노출. 일반 외부 사용자는 비공개 전시 자체에 접근 불가.</div>
@@ -2944,7 +2942,7 @@
  <dl>
  <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> USR-EXH-01 모달 / USR-PRF-01 점점점 → "신고"</dd>
  <dt></dt><dd><strong>중복 신고</strong> 같은 사용자가 같은 작품 재신고 차단 (단말 보관 키)</dd>
- <dt></dt><dd><strong>2회 자동 비공개</strong> 같은 전시 2번째 신고 즉시 isHidden=true</dd>
+ <dt></dt><dd><strong>접수 후 처리</strong> 운영팀 큐로 전송 — Policy §12.1 3액션(삭제·기각·비공개 유지) 중 직접 판정. 자동 비공개 트리거는 §12.2 v2.20 폐기</dd>
  </dl>
 
  <h3>구성 요소</h3>
@@ -4255,7 +4253,7 @@
  <div class="callout info">검수 상태 배지(검수중·반려됨·비공개)는 <strong>본인에게만</strong> 보임. 타인이 보는 프로필에서는 승인된 전시만 노출. 비회원 슬롯 인디케이터도 본인에게만 노출.</div>
 
  <div class="ac"><h4>완성 기준</h4><ol>
- <li>5종 상태 배지 자동 분기 (공개·검수 대기·반려·자동 비공개·비공개 유지)</li>
+ <li>4종 상태 배지 자동 분기 (공개·검수 대기·반려·비공개 유지) — Policy §23.0 v2.20</li>
  <li>점점점 메뉴는 본인 + 작성자(`artistId === currentUser.id`)만</li>
  <li>탈퇴 작가 프로필은 "작가 미상"으로 표시</li>
  <li>본인 그룹전 + 비회원 슬롯 1+ 보유 카드는 비회원 자리 인디케이터 표시 (Nielsen 휴리스틱 H1·H6 가시성 보강)</li>
@@ -6577,7 +6575,7 @@
  <li>저장 + 활성 → USR-CUR-01 기획전 페이지에 즉시 반영(작품 카드 그리드)</li>
  <li>해제 시 USR-CUR-01에서 노출 제거</li>
  <li>여러 기획전 동시 활성 가능(Pick vs 기획전 경계는 단위 + 주제·맥락)</li>
- <li>전시 삭제·자동 비공개·신고 처리 시 그 전시의 모든 piece 자동 cascade(Policy §32.1 #8b·§32.2)</li>
+ <li>전시 삭제·신고 처리(비공개 유지·삭제) 시 그 전시의 모든 piece 자동 cascade(Policy §32.1 #8b·§32.2)</li>
  </ol></div>
 
  <div class="pol"><h4>관련 정책</h4>큐레이션·배지 (§15.1·§15.4 작품 단위) · 데이터 cascade (§32.1 #8b·§32.2)</div>
@@ -7036,7 +7034,7 @@
  <div>저작권 침해</div>
  <div style="font-size: 10.5px; color: var(--ink-3);">1시간 전</div>
  <div><span style="background: #dc2626; color: white; padding: 1px 6px; border-radius: 8px; font-size: 10px; font-weight: 700;">2회</span></div>
- <div><span style="background: #fff7ed; color: #7c2d12; padding: 2px 6px; border-radius: 8px; font-size: 10px;">자동 비공개</span></div>
+ <div><span style="background: var(--line); color: var(--ink-2); padding: 2px 6px; border-radius: 8px; font-size: 10px;">대기</span></div>
  <div><span style="background: var(--ink); color: white; padding: 5px 11px; border-radius: 6px; font-size: 11px;">처리</span></div>
  </div>
  <div style="display: grid; grid-template-columns: 60px 1fr 1fr 110px 80px 60px 100px; padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 12px; align-items: center;">
@@ -7053,18 +7051,18 @@
  </div></main>
  </div>
  </div>
- <div class="placeholder-note">필터 + 중복 신고 카운트 + 자동 비공개 표시</div>
+ <div class="placeholder-note">필터 + 중복 신고 카운트(같은 전시 누적) — 운영팀 정성 판단 신호</div>
  </div>
 
  <div class="desc">
  <h3>구성 요소</h3>
  <dl>
- <dt><span class="bub">1</span></dt><dd>2회 신고 = 자동 비공개(빨강 배경) → 운영자 처리 우선</dd>
+ <dt><span class="bub">1</span></dt><dd>같은 전시 신고 누적 시 행에 "N회" 카운트 배지 — 운영팀이 직접 보고 정성 판단(자동 비공개 트리거는 Policy §12.2 v2.20 폐기)</dd>
  </dl>
 
  <div class="callout info">운영자 직권 신고 — 사용자 신고 없이 작품 차단이 필요하면 본 큐에 직접 등록(ADM-WRK 폐기로 흡수).</div>
 
- <div class="pol"><h4>관련 정책</h4>신고·모더레이션</div>
+ <div class="pol"><h4>관련 정책</h4>신고·모더레이션 §12.0~§12.1 · 처리 약속 §22.2 v2.20(자동 SLA 측정 폐기)</div>
  </div>
  </div>
  </div>
@@ -7098,8 +7096,8 @@
  <div style="font-size: 17px; font-weight: 700; margin-bottom: 12px;">미완성 풍경 — 박순자 작가</div>
  <div style="aspect-ratio: 4/3; background: linear-gradient(135deg, #fef3c7, #fecaca, #ddd6fe); border-radius: 8px; margin-bottom: 12px;"></div>
  <div style="background: #fef2f2; border-left: 3px solid #dc2626; padding: 11px 14px; border-radius: 0 4px 4px 0; margin-bottom: 12px; position: relative;">
- <div style="font-size: 11px; color: #991b1b; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 4px;">⚠ 자동 비공개 (2회 신고)</div>
- <div style="font-size: 11.5px; color: #7f1d1d; line-height: 1.5;">동일 전시에 2번째 신고가 접수되어 자동으로 비공개 처리됨. 24시간 내 운영자 판정 필요.</div>
+ <div style="font-size: 11px; color: #991b1b; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 4px;">⚠ 누적 신고 2건</div>
+ <div style="font-size: 11.5px; color: #7f1d1d; line-height: 1.5;">동일 전시에 신고가 누적되어 운영팀 정성 판단이 필요한 상태(자동 비공개 트리거 없음, Policy §12.2 v2.20).</div>
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">1</span>
  </div>
  </div>
@@ -7128,11 +7126,11 @@
  <div class="desc">
  <h3>구성 요소</h3>
  <dl>
- <dt><span class="bub">1</span></dt><dd>2회 자동 비공개 알림 — 영업일 24시간 내 판정 SLA</dd>
- <dt><span class="bub">2</span></dt><dd>처리 액션 — 3 액션(삭제·기각·비공개 유지) + 큐에서 제거(레거시). 각 클릭 시 ADM-RPT-03</dd>
+ <dt><span class="bub">1</span></dt><dd>같은 전시 누적 신고 배너 — 운영팀 정성 판단 신호. 영업일 24시간 이내 판정 목표(운영 의지, §22.2 v2.20)</dd>
+ <dt><span class="bub">2</span></dt><dd>처리 액션 — 3 액션(삭제·기각·비공개 유지) + 큐에서 제거(레거시). 각 클릭 시 ADM-RPT-03. 「삭제」는 사유 4종 select(저작권 침해 / 위법 / 청소년 유해 / 어뷰즈) + 자유 메모 모달</dd>
  </dl>
 
- <div class="pol"><h4>관련 정책</h4>신고 SLA · 사용자 신고 단일 라벨 (§12.0) · 처리 액션 (§12.1)</div>
+ <div class="pol"><h4>관련 정책</h4>신고 처리 약속 §22.2 v2.20 · 사용자 신고 단일 라벨 (§12.0) · 처리 액션 (§12.1 v2.20) · 운영자 감사 로그 5년 (§22.7)</div>
  </div>
  </div>
  </div>
@@ -7166,7 +7164,7 @@
  <div style="background: white; border-radius: 12px; padding: 20px 22px; position: relative;">
  <div style="font-size: 11px; color: #047857; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 6px;">변형 2 · 기각</div>
  <div style="font-size: 14px; font-weight: 700; margin-bottom: 6px;">신고를 기각하시겠어요?</div>
- <div style="font-size: 11.5px; color: var(--ink-2); margin-bottom: 12px; line-height: 1.6;">자동 비공개 상태였다면 즉시 복원됩니다.</div>
+ <div style="font-size: 11.5px; color: var(--ink-2); margin-bottom: 12px; line-height: 1.6;">비공개 유지 처리 상태였다면 즉시 복원됩니다.</div>
  <div style="background: #059669; color: white; padding: 8px; border-radius: 6px; font-size: 12px; font-weight: 600; text-align: center;">기각하기</div>
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">2</span>
  </div>

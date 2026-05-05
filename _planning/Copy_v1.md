@@ -1,10 +1,10 @@
-# Copy Guide (UX Writing) · v1.12
+# Copy Guide (UX Writing) · v1.13
 
-> Artier(SuperGallery Phase 1)의 UX 문구 가이드. 본 문서는 **톤·구조 기준(§1~5, §7~8)**과 **전체 i18n 사전(§6)**을 단일 소스로 제공한다. 구현은 §6의 한국어·영어 사전을 그대로 코드 i18n 사전으로 옮기고, §7 기술 규칙을 따른다.
+Artier(SuperGallery Phase 1)의 UX 문구 가이드. 본 문서는 **톤·구조 기준(§1~5, §7~8)**과 **전체 i18n 사전(§6)**을 단일 소스로 제공한다. 구현은 §6의 한국어·영어 사전을 그대로 코드 i18n 사전으로 옮기고, §7 기술 규칙을 따른다.
 
 **작성일**: 2026-04-20
-**최종 갱신**: 2026-05-04
-**버전**: v1.12
+**최종 갱신**: 2026-05-05
+**버전**: v1.13
 
 ---
 
@@ -36,7 +36,7 @@ Artier는 시니어·중장년 순수미술 작가를 주 고객으로 하는 **
 
 ## 2. 용어 정책
 
-상세는 [§5] — 여기선 카피 작성 시 가장 자주 걸리는 5개만.
+상세는 [§5](./Policy_v1.md#policy-5) — 여기선 카피 작성 시 가장 자주 걸리는 5개만.
 
 | 개념 | 쓰는 말 | 쓰지 말 말 |
 |---|---|---|
@@ -62,7 +62,7 @@ Artier는 시니어·중장년 순수미술 작가를 주 고객으로 하는 **
 | 토스트 본문 | 한 문장, **20자 전후** | 5초 내 읽힘 |
 | 알림 본문 | 한 문장 + 대상 인용, 최대 **40자** | 알림 센터에서 2줄 상한 |
 | 에러 메시지 | "원인 + 해결책" 한 문장 | 사용자가 바로 행동할 수 있어야 |
-| 작품명·전시명·그룹명 | **20자** | [§9] |
+| 작품명·전시명·그룹명 | **20자** | [§9](./Policy_v1.md#policy-9) |
 
 ### 3.2 시제·인칭
 
@@ -123,7 +123,7 @@ Artier는 시니어·중장년 순수미술 작가를 주 고객으로 하는 **
 
 ### 4.4 알림 (Notification)
 
-타입별 구조 (상세 [§3.5]·[§16.3] 참조):
+타입별 구조 (상세 [§3.5](./Policy_v1.md#policy-3-5)·[§16.3](./Policy_v1.md#policy-16-3) 참조):
 
 | 타입 | 구조 예 |
 |---|---|
@@ -579,9 +579,12 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'event.notifSelected': '축하해요! \'{title}\'이(가) \'{eventName}\' 선정작으로 뽑혔어요',
   'event.notifAnnouncement': '{message}',
   'invite.notifAutoMatched': '\'{name}\' 님이 \'{title}\' 전시에 본인 자리를 등록했어요. 잘못 연결됐다면 전시 편집에서 풀 수 있어요.',
-  'report.notifTargetWorkDeleted': '회원님의 전시 \'{title}\'이 신고 처리로 삭제됐어요.',
+  'report.notifTargetWorkDeleted': '회원님의 전시 \'{title}\'이 신고 처리로 삭제됐어요. 사유: {reason}. 자세한 내용은 문의하기로 연락 주세요.',
+  'report.deleteReason.copyright': '저작권 침해 확정',
+  'report.deleteReason.illegal': '위법 콘텐츠',
+  'report.deleteReason.minor_harmful': '청소년 유해',
+  'report.deleteReason.abuse': '어뷰즈',
   'report.notifTargetWorkHidden': '회원님의 전시 \'{title}\'이 신고 검토 결과 비공개로 전환됐어요. 피드와 검색에서 제외돼요.',
-  'report.notifAutoHidden': '회원님 전시 \'{title}\'이 신고 누적으로 잠시 비공개되었어요. 운영팀이 영업일 24시간 안에 확인해드리고, 문제 없으면 다시 공개돼요.',
   'report.notifReporterDismissed': '접수하신 신고는 운영팀 검토 결과 받아들여지지 않았어요.',
   'upload.toastPublishedImmediate': '작품이 등록됐어요. 둘러보기 피드에서 바로 보여요. (자동 승인 모드)',
   'upload.toastDraftSaved': '초안이 저장되었어요.',
@@ -1754,9 +1757,12 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'event.notifSelected': "Congrats! '{title}' was selected for '{eventName}'",
   'event.notifAnnouncement': '{message}',
   'invite.notifAutoMatched': "'{name}' claimed their slot in '{title}'. If it's the wrong link, you can unlink it from the exhibition editor.",
-  'report.notifTargetWorkDeleted': 'Your exhibition \'{title}\' has been removed following a report.',
+  'report.notifTargetWorkDeleted': 'Your exhibition \'{title}\' has been removed following a report. Reason: {reason}. Contact support for details.',
+  'report.deleteReason.copyright': 'Confirmed copyright infringement',
+  'report.deleteReason.illegal': 'Illegal content',
+  'report.deleteReason.minor_harmful': 'Harmful to minors',
+  'report.deleteReason.abuse': 'Abuse',
   'report.notifTargetWorkHidden': 'Your exhibition \'{title}\' has been hidden from Browse/Search after review.',
-  'report.notifAutoHidden': 'Your exhibition \'{title}\' is temporarily hidden after multiple reports. Our team will review it within 24 business hours, and it will reappear if there are no issues.',
   'report.notifReporterDismissed': 'Your report was dismissed after review.',
   'review.notifNewWork': 'has posted a new exhibition',
   'upload.toastPublishedImmediate': 'Exhibited and shown on Browse immediately. (auto-approve mode)',
@@ -2577,7 +2583,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 ## 9. 이 문서가 다루지 않는 것
 
 - 언어 자동 감지·폴백 로직 — `useI18n()` 훅이 단일 진입점이며, 구현 세부는 개발팀 코드 단일 소스.
-- 법무 문구(약관·개인정보) — [§21] 법무 체크포인트 이관.
+- 법무 문구(약관·개인정보) — [§21](./Policy_v1.md#policy-21) 법무 체크포인트 이관.
 - 마케팅 외부 문구 — 본 가이드는 **앱 내부 카피** 한정.
 
 ---
@@ -2586,19 +2592,19 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.12 | 2026-05-04 | PM × Claude | **응모 모달(USR-EVT-04) 카피 신규 (Policy v2.18·IA v1.10 연동, B-3a)** — 모달 제목·이미지 안내 헬퍼·작품명 라벨/플레이스홀더·응모 CTA(전송 중 라벨 포함)·닫기 라벨·접수 완료 토스트·중복 응모 차단 안내·이미지 없음 에러·작품명 빈값 에러·1점만 받는 헬퍼 등 응모 모달 전용 ko/en 카피 12쌍 신설. 응모 동의 라벨·"자세히 보기" 카피는 기존 USR-UPL-02 ?event= 분기에서 신설했던 키를 그대로 USR-EVT-04 모달에서 재사용(라벨 내용이 화면 무관). 이후 append — **기획전 선정 알림 카피 신규 (B-3b)** — 운영팀이 기획전에 piece를 추가할 때 작가에게 발송하는 알림 메시지 ko/en 1쌍 신설(작품명·기획전 이름 변수 포함). 기획전 영구 배지는 정책상 X(§15.2), 알림으로만 인지. 이후 append — **알림 카테고리 키 정합**: 기존 categoryPick(잔재)·categoryInvite 키 정리 → categoryFollowing(팔로잉 신작)·categoryGroupInvite(그룹 초대) 명확화 + categoryCuration(큐레이션) 신설 ko/en. 카테고리 키 7종 → 8종(전체 + 좋아요·팔로우·그룹 초대·팔로잉 신작·큐레이션·응모전·시스템). 이후 append — **응모전 표준어 정합 (B-4d-naming)** — i18n 한국어 라벨의 옛 "이벤트"(카테고리 의미)·"응모형 이벤트"·"공모형 주간 테마전"을 **응모전**으로 통일(`nav.events`·`events.title`·`events.upcomingSection`·`events.notifyModalTitle`·`events.unsubscribe*`·`events.detailGuide`·`events.detailBackLink`·`upload.eventConsentLabel`·`upload.eventWorkTitle`·`flowMap.section13`·`points.ppHint` 등). i18n 키 자체(`events.*`·`evt.*`·`nav.events`·`categoryEvent` 등)는 코드 도메인이라 그대로 유지. 영문 라벨도 일관성 위해 ko 변경 동행. 이후 append — **USR-CUR-01 기획전 페이지 카피 (B-4c-3)** — `curation.notFound`·`curation.empty`·`curation.pieceCount`·`curation.fromExhibition` ko/en 4쌍 신설. 이후 append — **기획전 선정 알림 카피 messages.ts 반영 (B-4c-5)** — `notif.curationSelected` ko/en을 i18n messages.ts에도 등록(이전엔 Copy_v1에만 박혀 있어 코드 호출 시 키 미정의). 이후 append — **알림 카테고리 칩 8종 라벨 코드 구현 (B-4e)** — `notifications.categoryGroupInvite`·`categoryFollowing`·`categoryCuration` ko/en 3쌍을 messages.ts에 신설. `notifications.categoryEvent` 라벨을 `'이벤트' / 'Events'` → `'응모전' / 'Contests'`로 정합(B-4d-naming). 옛 `categoryPick`·`categoryInvite` 키는 잔재로 messages.ts에 유지(타 코드 참조 깨짐 방지). 이후 append — **USR-EVT-05 발표 페이지 카피 (B-4d)** — `events.results*`(notFound·empty·notPublished·headerLabel·heading·endedAt·publishedAt·count) + `events.viewWinners` + 어드민 표시용 `evt.adminPublicationOpen`·`adminPublishedAt`·`adminMarkSelected`·`adminUnmarkSelected`·`adminBulkSelect`·`adminBulkUnselect`·`adminSelectedBadge` + `notif.contestSelected` ko/en 신설. 이후 append — **응모전 선정 배지 카피 (B-4d 후속)** — `badge.contestSelected` ko/en 신설(WorkDetailModal 헤더 배지 라벨). |
-| v1.11 | 2026-04-30 | PM × Claude | **검수 SLA 표현 정확화** — "주말·공휴일을 빼고 24시간 안에" / "within 24 business hours". **매직 링크 전환 잔재 정정** — 옛 비밀번호 재설정·변경 템플릿 2건 제거, 매직 링크 가입/로그인 템플릿 신설. 탈퇴 "비밀번호 확인" → "동의 체크박스". **검수 신청 단계 공유 모델 정합** (Policy §3) — 옛 자동 발송 약속 카피 정정(작가 직접 발송 안내). inactive 단계 능동 톤 카피("곧 공개될 전시예요. 지금 가입해두시면 통과 즉시 본인 작품을 골라보실 수 있어요"). 친구 클레임 톤 정정 — "들어왔어요" → "본인 자리를 등록했어요". 신규 카피 3쌍 ko/en (검수 신청 단계 클레임 안내·친구용 배지 hint·검수 통과 시 친구 알림). 초대 공유 메시지에 inactive 분기. **토큰 모델 정합** — 옛 전화 기반 초대 카피 9쌍 제거. 온보딩 카피 톤 정정. FAQ 4문항(친구 초대·자동 연결 안 됨·잘못 연결·만료) ko/en 신설. 본인 작품 찾기 흐름 신규 카피 13쌍 추가. **닉네임 정책 카피 정합** — Settings 닉네임 readonly 라벨·안내·1:1 문의 진입 CTA, 가입 단계 중복 에러, 1:1 문의 "닉네임 변경 신청" 카테고리 안내 ko/en 신설. Policy 교차 링크 `[§n](Policy_v1.md#…)` 단축·§9·§21 앵커 보강·알림 타입 절 참조 §3.5.5(폐기)→§3.5·§16.3 정정. **FAQ Q6 콘텐츠 결함 정정** — Phase 1엔 없는 회원용 비공개 토글을 약속하던 "비공개로 전환하면 피드에서만 숨길 수 있어요" / "Setting a work to private hides it from the feed only" ko/en 삭제. **Footer DPO ko/en SSoT 정합** — `footer.privacyOfficerValue` ko/en이 서로 다른 인물(카테 vs Jo Ga-young)을 가리키던 결함 → ko를 영문과 동일 인물(조가영)로 정정. **§1.1·N-5 정합** — 응모전 구독·해지·설정 채널 안내 카피 다수 ko/en(events.*·settings.notifChannelPolicy·settings.eventUnsubscribe*). 이후 append — `profile.deleteWorkActiveCuration` ko/en 신설 (USR-PRF-13 활성 Pick/기획전 경고). 이후 append — `upload.eventConsentLabel`·`upload.eventConsentReadMore`·`upload.errEventConsentRequired` ko/en 신설 (USR-UPL-02 `?event=` 분기 응모 동의 체크박스). |
-| v1.10 | 2026-04-29 | PM × Claude | **UX 카피 톤 일괄 정리** — 사용자 노출 알림·토스트·배너의 격식체·행정 어휘를 시니어 친화 친근체로 정합. 검수·신고 알림(노출됩니다 → 다른 분들이 볼 수 있어요·반려되었어요 → 검수를 통과하지 못했어요·전시했습니다 → 올렸어요·기각 → 받아들여지지 않았어요), 업로드·시스템 토스트(되었습니다 → 됐어요·선정 → 뽑혔어요), 좋아요 토스트 간결화. |
-| v1.9 | 2026-04-28 | PM × Claude | **설정 계정 섹션 데모 잔재 정리** — "데모 세션 식별자"·"세션에서 계정을 읽을 수 없습니다" 카피 폐기. 설정 계정 섹션은 이메일 형식일 때만 노출, 아니면 행 자체 숨김. |
-| v1.8 | 2026-04-28 | PM × Claude | **설정 화면 i18n 누락 보강** — 글자 크기 토글 라벨 3쌍(작게·보통·크게)과 화면 테마 섹션 4쌍(섹션 헤더·인트로·밝게·어둡게) ko/en 추가. |
-| v1.6 | 2026-04-27 | PM × Claude | **시니어 친화 카피 톤 정리** — 본인 작품 찾기 카피 위협 톤 → 안심 + 회복 경로 안내, 알리는 방법 구체화(카톡·문자 등), 기술 용어 평이화("검수 통과 후 활성화" → "공개되면 알릴 수 있어요"), 피해자 톤 → 액션 유도, 수동태 → 능동, 가입자 입장 일관(작가님 → 친구), CTA 일관("공유" → "보내기"). **신규 i18n 키 9쌍(ko/en)** — 검수 시작 알림·토큰 만료 D-N 노출·본인 작품 찾기 안전 신호·스킵 후 안심 토스트·마이페이지 비회원 슬롯 인디케이터·토큰 모델 FAQ 4쌍 + 옛 SMS 발송 톤 정정. |
-| v1.5 | 2026-04-27 | PM × Claude | **비회원 초대 토큰 모델 카피** — 초대 랜딩 신규 카피 6키 ko/en(작가 직접 공유 톤·토큰 상태별 안내·재요청 안내). 본인 작품 찾기 신규 카피 9키 ko/en(잘못 클릭해도 작가가 풀어줄 수 있다는 안전 신호·동시 선택 race 안내). 알림 카테고리 칩에 "초대" 타입 추가. |
-| v1.4 | 2026-04-27 | PM × Claude | **매직 링크 발송 헬프 안내 격상** — 스팸함 안내를 헬프 박스로, 신규 키 "메일이 안 와요?" + 검색 단서. **게스트 헤더 보조 진입점** — 데스크톱 게스트 헤더 우측에 "작가이신가요? 작품 올리기" 텍스트 링크 신설. **약관 마케팅 분리** — "전체 동의" → "필수 약관 모두 동의", 마케팅은 별도 명시 동의. **닉네임 욕설 검사 시점** — 온보딩 step 2에 즉시 인라인 에러. **검수 안내 어휘 통일** — "다시 발행" → "다시 전시". **비회원 초대 발송 시점 카피** — "전시 생성 시 자동 발송" → "검수 승인 후 자동 발송"(ko/en). **신고 사유 단일화 안내** — "다른 종류 신고는 1:1 문의로" 가이드 신설(Policy §12.0). **응모전 중복 참여 시각화** — 비활성 placeholder. **반려 편집 배너 도움 진입점** — "잘 모르겠어요? 1:1 문의" 신설. **응모전 정합성** — Policy §25.5·§25.6 코드 반영. **신고 큐 dedup** — (신고자, 대상) 동일 조합 1건만 노출(ADM-RPT-01 AC-02). **검수 SLA 배지** — 검수 대기 24h 경과 시 "시한 초과" 빨강 배지(ADM-REV-01 AC-09). **신고 에스컬레이션 배지** — 24h 같은 작품 ≥10건 빨강·같은 작가 ≥5건 황색 배지(Policy §22.5). **파트너 트래킹 폐기** — Phase 1 파트너 작가 영입은 운영팀 외부 도구로 처리. **기획전 다수화** — 개수 제한 없음·주제·맥락 단위(Policy §15.1·§15.4). **이메일 가입 약관 정리** — 이메일·푸시 분리 폐기 → 단일 마케팅 동의. "만 14세 이상이에요" 신설하여 이메일·소셜 양쪽 동일 4종 정합. **시드 알림 i18n화** — 신규 키 5종(팔로우·Pick 선정·환영·응모전 활성, ko/en). **어드민 한국어 단일 운영 명시**. |
-| v1.3 | 2026-04-26 | PM × Claude | 연결 제안·본인 확인 단계 카피 9쌍 ko/en 추가(Policy §3.4.1·§3.5.1). 헤더·모바일 가입 진입점 라벨 "로그인" → "로그인·가입"으로 통일. 실명 입력 폐기에 따라 온보딩 안내 6쌍 제거 + 가입·초대 안내의 실명 언급 정리. 비회원 초대 발송 라벨 "작가 실명" → "작가 이름". 소셜 가입 후 온보딩 안내에 "닉네임은 방금 적은 그대로 채워뒀어요" 추가. **마이페이지 "내 작품" 탭 안내 한 줄** — 본인 프로필 활성 'works' 탭 상단에 "내가 그린 작품(1점 단위)이 모이는 곳이에요. 초대로 자동 연결된 작품도 함께 보여요. 내가 올린 전시는 '전시' 탭에서 볼 수 있어요." 신설(ko/en). **초대 자동 연결 안내 강화** — 온보딩 step 2 폰 prefill 시 별도 안내 + step 3(완료) 화면에 매칭 성공 분기 카피 신설(ko/en). |
-| v1.2 | 2026-04-21 | PM × Claude | 매직 링크 전환 정합 — 비밀번호 재설정·변경 메일 템플릿 4키 ko/en 제거, 로그인 링크 메일 템플릿로 대체. 1:1 문의 카테고리에 "개인정보 열람·정정·삭제 요청" 추가 ko/en (Policy §30 연동). |
-| v1.1 | 2026-04-21 | PM × Claude | 이메일 인증 매직 링크 전환 카피 정합 — 온보딩 안내 "비밀번호 재설정" → "로그인·가입 인증 링크" 수신으로 교체 ko/en. FAQ "비밀번호 찾기" → "로그인 링크 메일이 오지 않을 때"(스팸함·재전송·30분 TTL 안내)로 재작성 ko/en. |
-| v1.0 | 2026-04-20 | PM × Claude | Copy_v1.md 신설 — Voice·Tone, 용어, 카피 구조 규칙, 패턴별 템플릿(확인·에러·빈상태·알림·토스트·로딩), 시니어 친화 6원칙, 전체 i18n 사전(ko/en 2,170 키), i18n 기술 규칙, 변경 워크플로우. |
-
+| v1.13 | 2026-05-05 | PM × Claude | 자동 비공개 알림 폐기, 삭제 사유·신고 알림 변수. 이후 append — 문서 이력 단순화. 이후 append — 인용 본문 인라인 링크 |
+| v1.12 | 2026-05-04 | PM × Claude | 응모·기획전·알림·응모전 표준어·발표 페이지 카피 |
+| v1.11 | 2026-04-30 | PM × Claude | 검수 SLA 문구, 매직 링크·토큰·FAQ·닉네임 정합 |
+| v1.10 | 2026-04-29 | PM × Claude | 알림·토스트 톤 일괄 정리 |
+| v1.9 | 2026-04-28 | PM × Claude | 설정 계정 섹션 데모 잔재 제거 |
+| v1.8 | 2026-04-28 | PM × Claude | 설정 글자 크기·테마 i18n |
+| v1.6 | 2026-04-27 | PM × Claude | 본인 작품 찾기·알림 톤 정리 |
+| v1.5 | 2026-04-27 | PM × Claude | 초대 토큰 랜딩·본인 작품 찾기 카피 |
+| v1.4 | 2026-04-27 | PM × Claude | 매직 링크 헬프·약관·신고·시드 알림 등 |
+| v1.3 | 2026-04-26 | PM × Claude | 본인 확인·가입 라벨·실명 제거 |
+| v1.2 | 2026-04-21 | PM × Claude | 매직 링크 메일·문의 카테고리 |
+| v1.1 | 2026-04-21 | PM × Claude | 온보딩·FAQ 매직 링크 정합 |
+| v1.0 | 2026-04-20 | PM × Claude | Copy_v1 신설 |
 <!-- 인용 정의 -->
 [§5]: Policy_v1.md#policy-5
 [§9]: Policy_v1.md#policy-9
