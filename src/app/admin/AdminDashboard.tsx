@@ -43,17 +43,8 @@ export default function AdminDashboard() {
     };
   }, []);
 
-  // 자동 비공개 처리된 전시 수 (Policy §12.2)
+  // 비공개 처리된 전시 수 (Policy §12.1 「비공개 유지」 또는 자동 비공개 잔존 — §12.2 v2.20 자동 트리거 폐기)
   const autoHiddenCount = workStore.getWorks().filter((w) => isWorkHidden(w)).length;
-  // SLA 위반 카운트 (Policy §12.2.1 — 자동 비공개 후 72h 경과 + 미처리)
-  const slaViolatedCount = (() => {
-    const now = Date.now();
-    return workStore.getWorks().filter((w) => {
-      if (!isWorkHidden(w) || !w.autoHiddenAt) return false;
-      const hours = (now - new Date(w.autoHiddenAt).getTime()) / (60 * 60 * 1000);
-      return hours >= 72;
-    }).length;
-  })();
 
   // 응모전 운영 지표 (PRD ADM-EVT-03 트리거 정합 — 대시보드에서 진입)
   const events = useManagedEvents();
@@ -158,12 +149,7 @@ export default function AdminDashboard() {
                 <CardTitle className="text-3xl">{autoHiddenCount}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-xs text-muted-foreground">2회 신고 자동 비공개 + 확정 비공개 합계</p>
-                {slaViolatedCount > 0 && (
-                  <p className="mt-1 text-xs font-semibold text-red-700">
-                    ⚠ SLA 위반 {slaViolatedCount}건 (72h 초과)
-                  </p>
-                )}
+                <p className="text-xs text-muted-foreground">운영팀 비공개 유지·자동 비공개 잔존 합계</p>
               </CardContent>
             </Card>
           </Link>

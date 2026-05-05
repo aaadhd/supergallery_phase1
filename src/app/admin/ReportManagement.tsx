@@ -77,25 +77,6 @@ function mapUserReportToRow(r: StoredUserReport): ReportRow {
   };
 }
 
-// Policy §22.5 에스컬레이션 기준 — 24시간 윈도우 + 임계 (큐 가시성 보강).
-const ESCALATION_WINDOW_MS = 24 * 60 * 60 * 1000;
-const ESCALATION_ARTIST_THRESHOLD = 5;
-const ESCALATION_WORK_THRESHOLD = 10;
-
-/** 24h 누적 (artist, work) 카운트 — 에스컬레이션 배지용. */
-function computeEscalationCounts(reports: ReturnType<typeof loadUserReports>, now: number) {
-  const cutoff = now - ESCALATION_WINDOW_MS;
-  const byArtist = new Map<string, number>();
-  const byWork = new Map<string, number>();
-  for (const r of reports) {
-    const ts = r.createdAt ? new Date(r.createdAt).getTime() : NaN;
-    if (!Number.isFinite(ts) || ts < cutoff) continue;
-    if (r.targetArtistId) byArtist.set(r.targetArtistId, (byArtist.get(r.targetArtistId) ?? 0) + 1);
-    if (r.targetType === 'work' && r.targetId) byWork.set(r.targetId, (byWork.get(r.targetId) ?? 0) + 1);
-  }
-  return { byArtist, byWork };
-}
-
 function mergeReportRows(): ReportRow[] {
   // PRD_Admin §667 ADM-RPT-01 AC-02: 같은 (신고자, 대상) 반복 신고는 큐에 1건만 노출(중복 방지).
   // 가장 최근 신고를 대표로 보존. reporterId 미상은 dedup 제외(레거시·익명 호환).
@@ -114,33 +95,6 @@ function mergeReportRows(): ReportRow[] {
     unique.push(r);
   }
   return unique.map(mapUserReportToRow);
-}
-
-/** Policy §12.2.1 SLA 4단계 계산. 판정 완료된 건(대기 아님) 또는 autoHiddenAt 없음이면 null. */
-type SlaTier = 'normal' | 'nearing' | 'exceeded' | 'violated';
-function computeSlaTier(row: ReportRow, now: number): SlaTier | null {
-  if (row.status !== '대기') return null;
-  if (!row.autoHiddenAt) return null;
-  const started = new Date(row.autoHiddenAt).getTime();
-  if (!Number.isFinite(started)) return null;
-  const hours = (now - started) / (60 * 60 * 1000);
-  if (hours >= 72) return 'violated';
-  if (hours >= 48) return 'exceeded';
-  if (hours >= 24) return 'nearing';
-  return 'normal';
-}
-
-function slaBadgeStyle(tier: SlaTier): { cls: string; label: string } {
-  switch (tier) {
-    case 'violated':
-      return { cls: 'bg-red-100 text-red-800 border border-red-300', label: 'SLA 위반' };
-    case 'exceeded':
-      return { cls: 'bg-orange-100 text-orange-800 border border-orange-300', label: 'SLA 초과' };
-    case 'nearing':
-      return { cls: 'bg-yellow-50 text-yellow-800 border border-yellow-200', label: 'SLA 임박' };
-    default:
-      return { cls: '', label: '' };
-  }
 }
 
 function stateBadge(s: ReportState) {
@@ -169,13 +123,7 @@ export default function ReportManagement() {
   const [rows, setRows] = useState<ReportRow[]>(mergeReportRows);
   const [statusFilter, setStatusFilter] = useState('전체');
   const [typeFilter, setTypeFilter] = useState('전체');
-  const [slaFilter, setSlaFilter] = useState<'전체' | '임박 이상' | '초과 이상' | '위반'>('전체');
-  // 시계 틱 (1분마다 SLA·에스컬레이션 재계산)
-  const [clockTick, setClockTick] = useState(0);
-  useEffect(() => {
-    const id = window.setInterval(() => setClockTick((n) => n + 1), 60_000);
-    return () => window.clearInterval(id);
-  }, []);
+  // Policy §22.2 v2.20·§22.5 — Phase 1엔 SLA 자동 측정·시간 기반 우선순위 폐기. 운영팀 정성 판단으로 처리.
 
   const refreshRows = useCallback(() => setRows(mergeReportRows()), []);
 
@@ -208,42 +156,29 @@ export default function ReportManagement() {
     return map;
   }, [rows]);
 
-  /** Policy §22.5 24h 에스컬레이션 카운트 — clockTick(1분 주기)으로 자동 갱신. */
-  const escalation = useMemo(
-    () => computeEscalationCounts(loadUserReports(), Date.now()),
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-    [clockTick, rows],
-  );
-
   const filtered = useMemo(() => {
-    const now = Date.now();
-    const tierRank: Record<SlaTier, number> = { normal: 0, nearing: 1, exceeded: 2, violated: 3 };
     return rows
       .filter((r) => {
         if (statusFilter !== '전체' && r.status !== statusFilter) return false;
         if (typeFilter !== '전체' && r.kind !== typeFilter) return false;
-        if (slaFilter !== '전체') {
-          const tier = computeSlaTier(r, now);
-          if (!tier) return false;
-          if (slaFilter === '임박 이상' && tierRank[tier] < 1) return false;
-          if (slaFilter === '초과 이상' && tierRank[tier] < 2) return false;
-          if (slaFilter === '위반' && tierRank[tier] < 3) return false;
-        }
         return true;
       })
       .sort((a, b) => {
-        // Policy §12.2.1: autoHiddenAt 오름차순 (가장 오래된 미처리 먼저). 없으면 뒤로.
-        const aPending = a.status === '대기' && a.autoHiddenAt ? new Date(a.autoHiddenAt).getTime() : Number.POSITIVE_INFINITY;
-        const bPending = b.status === '대기' && b.autoHiddenAt ? new Date(b.autoHiddenAt).getTime() : Number.POSITIVE_INFINITY;
-        return aPending - bPending;
+        // 대기 상태가 위, 그 안에선 신고 시각 오름차순(오래된 미처리 먼저).
+        const aPending = a.status === '대기' ? 0 : 1;
+        const bPending = b.status === '대기' ? 0 : 1;
+        if (aPending !== bPending) return aPending - bPending;
+        const aTime = new Date(a.reportedAt).getTime() || 0;
+        const bTime = new Date(b.reportedAt).getTime() || 0;
+        return aTime - bTime;
       });
-  }, [rows, statusFilter, typeFilter, slaFilter]);
+  }, [rows, statusFilter, typeFilter]);
 
   // PRD_Admin §0.5.2: 어드민 테이블 50건/페이지. 필터 변경 시 1페이지로 리셋.
   const { page, setPage, pageCount, pageItems, totalCount } = usePagination(filtered, ADMIN_TABLE_PAGE_SIZE);
   useEffect(() => {
     setPage(1);
-  }, [statusFilter, typeFilter, slaFilter, setPage]);
+  }, [statusFilter, typeFilter, setPage]);
 
   /** 비공개 유지: 자동 비공개(Policy §12.2) 또는 아직 공개 중인 대상을 운영자 확정 비공개로 전환. */
   const keepHidden = (id: string) => {
@@ -364,17 +299,6 @@ export default function ReportManagement() {
           <option value="댓글">댓글</option>
           <option value="프로필">프로필</option>
         </select>
-        <select
-          value={slaFilter}
-          onChange={(e) => setSlaFilter(e.target.value as typeof slaFilter)}
-          className="border border-border rounded-lg px-3 py-2 text-sm bg-white min-w-[170px]"
-          title="자동 비공개 발동 후 판정까지의 경과 시간 기준 (Policy §12.2.1)"
-        >
-          <option value="전체">SLA: 전체</option>
-          <option value="임박 이상">24h 임박 이상</option>
-          <option value="초과 이상">48h 초과 이상</option>
-          <option value="위반">72h 위반</option>
-        </select>
       </div>
 
       {filtered.length === 0 ? (
@@ -396,15 +320,10 @@ export default function ReportManagement() {
             </thead>
             <tbody>
               {pageItems.map((r) => {
-                const slaTier = computeSlaTier(r, Date.now());
-                const rowBg =
-                  slaTier === 'violated' ? 'bg-red-50 lg:hover:bg-red-100/60'
-                  : slaTier === 'exceeded' ? 'bg-orange-50/60 lg:hover:bg-orange-100/60'
-                  : 'lg:hover:bg-muted/50';
                 const targetKey = r.workId ? `work:${r.workId}` : r.artistId ? `artist:${r.artistId}` : '';
                 const accumulated = targetKey ? reportCountByTarget.get(targetKey) ?? 0 : 0;
                 return (
-                <tr key={r.id} className={`border-b border-border/40 transition-colors ${rowBg}`}>
+                <tr key={r.id} className="border-b border-border/40 transition-colors lg:hover:bg-muted/50">
                   <td className="px-4 py-3 text-foreground max-w-[200px]">
                     <div className="flex flex-col gap-1">
                       {r.workId ? (
@@ -434,37 +353,11 @@ export default function ReportManagement() {
                       {accumulated >= 2 && (
                         <span
                           className="inline-flex w-fit items-center rounded-full bg-rose-50 border border-rose-200 text-rose-700 px-2 py-0.5 text-[10px] font-semibold"
-                          title="같은 대상에 접수된 누적 신고 수 (ADM-040)"
+                          title="같은 대상에 접수된 누적 신고 수"
                         >
                           {accumulated}건 누적
                         </span>
                       )}
-                      {/* Policy §22.5 — 24h 에스컬레이션: 작품 10+ 또는 작가 5+ */}
-                      {(() => {
-                        const workCount = r.workId ? escalation.byWork.get(r.workId) ?? 0 : 0;
-                        const artistCount = r.artistId ? escalation.byArtist.get(r.artistId) ?? 0 : 0;
-                        if (workCount >= ESCALATION_WORK_THRESHOLD) {
-                          return (
-                            <span
-                              className="inline-flex w-fit items-center rounded-full bg-red-100 border border-red-300 text-red-800 px-2 py-0.5 text-[10px] font-semibold"
-                              title={`Policy §22.5 — 같은 전시에 24시간 내 신고 ${workCount}건 (≥10건 긴급 큐)`}
-                            >
-                              긴급 24h {workCount}건
-                            </span>
-                          );
-                        }
-                        if (artistCount >= ESCALATION_ARTIST_THRESHOLD) {
-                          return (
-                            <span
-                              className="inline-flex w-fit items-center rounded-full bg-amber-50 border border-amber-300 text-amber-800 px-2 py-0.5 text-[10px] font-semibold"
-                              title={`Policy §22.5 — 같은 작가에 24시간 내 신고 ${artistCount}건 (≥5건 검토 큐)`}
-                            >
-                              작가 24h {artistCount}건
-                            </span>
-                          );
-                        }
-                        return null;
-                      })()}
                     </div>
                   </td>
                   <td className="px-4 py-3">
@@ -479,17 +372,6 @@ export default function ReportManagement() {
                       <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${stateBadge(r.status)}`}>
                         {r.status}
                       </span>
-                      {slaTier && slaTier !== 'normal' && (() => {
-                        const { cls, label } = slaBadgeStyle(slaTier);
-                        return (
-                          <span
-                            className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold ${cls}`}
-                            title="Policy §12.2.1 — 자동 비공개 발동 후 경과 시간 기준"
-                          >
-                            {label}
-                          </span>
-                        );
-                      })()}
                     </div>
                   </td>
                   <td className="px-4 py-3 text-right">
