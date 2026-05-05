@@ -209,7 +209,40 @@ function passesPrefs(n: Notification, p: NotificationSettingsState): boolean {
   }
 }
 
-type CategoryTab = 'all' | Notification['type'];
+/**
+ * 알림 칩 8종 (PRD USR-NTF-01 §2 정합).
+ * 칩 ↔ Notification.type 매핑은 N:1 — 큐레이션 칩 = pick + curation, 시스템 칩 = system + invite(초대 수락).
+ * 그룹 초대·팔로잉 신작 칩은 Phase 1엔 발송 hook 미구현이라 빈 카테고리.
+ */
+type ChipId = 'all' | 'like' | 'follow' | 'groupInvite' | 'following' | 'curation' | 'event' | 'system';
+
+function chipMatches(chip: ChipId, n: Notification): boolean {
+  switch (chip) {
+    case 'all':
+      return true;
+    case 'like':
+      return n.type === 'like';
+    case 'follow':
+      return n.type === 'follow';
+    case 'groupInvite':
+      // Phase 1엔 그룹 초대 알림 발송 hook 미구현. 본 type 분리는 후속 라운드.
+      return false;
+    case 'following':
+      // Phase 1엔 팔로잉 신작 알림 발송 hook 미구현. Phase 2에서 hook 추가 후 자동 채워짐.
+      return false;
+    case 'curation':
+      // Pick 선정 + 기획전 선정 (운영팀 직권 단발 큐레이션).
+      return n.type === 'pick' || n.type === 'curation';
+    case 'event':
+      // 응모전 선정 + 응모전 공지 — 본 코드 type 'event'.
+      return n.type === 'event';
+    case 'system':
+      // 검수 통과·반려 + 초대 수락(USR-AUT-10b 토큰 본인 작품 찾기 결과).
+      return n.type === 'system' || n.type === 'invite';
+    default:
+      return false;
+  }
+}
 
 export default function Notifications() {
   const navigate = useNavigate();
@@ -223,7 +256,7 @@ export default function Notifications() {
 
   const [notifications, setNotifications] = useState<Notification[]>(loadNotifications);
   const [readFilter, setReadFilter] = useState<'all' | 'unread'>('all');
-  const [categoryTab, setCategoryTab] = useState<CategoryTab>('all');
+  const [categoryTab, setCategoryTab] = useState<ChipId>('all');
   const [prefs, setPrefs] = useState<NotificationSettingsState>(() => loadNotificationSettings());
 
   useEffect(() => {
@@ -249,7 +282,7 @@ export default function Notifications() {
   const filtered = useMemo(() => {
     let list = notifications;
     if (readFilter === 'unread') list = list.filter((n) => !n.read);
-    if (categoryTab !== 'all') list = list.filter((n) => n.type === categoryTab);
+    if (categoryTab !== 'all') list = list.filter((n) => chipMatches(categoryTab, n));
     return list.filter((n) => passesPrefs(n, prefs));
   }, [notifications, readFilter, categoryTab, prefs]);
 
@@ -283,13 +316,14 @@ export default function Notifications() {
     else if (notif.fromUser) navigate(`/profile/${notif.fromUser.id}`);
   };
 
-  const categoryChips: { id: CategoryTab; label: string }[] = [
+  const categoryChips: { id: ChipId; label: string }[] = [
     { id: 'all', label: t('notifications.categoryAll') },
     { id: 'like', label: t('notifications.categoryLike') },
     { id: 'follow', label: t('notifications.categoryFollow') },
-    { id: 'pick', label: t('notifications.categoryPick') },
+    { id: 'groupInvite', label: t('notifications.categoryGroupInvite') },
+    { id: 'following', label: t('notifications.categoryFollowing') },
+    { id: 'curation', label: t('notifications.categoryCuration') },
     { id: 'event', label: t('notifications.categoryEvent') },
-    { id: 'invite', label: t('notifications.categoryInvite') },
     { id: 'system', label: t('notifications.categorySystem') },
   ];
 
