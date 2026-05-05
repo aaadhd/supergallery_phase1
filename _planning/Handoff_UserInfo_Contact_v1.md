@@ -30,7 +30,7 @@
   궁금한 점이 있으시면 아래 양식으로 보내주세요.
   먼저 [FAQ]를 확인해 보시면 빠르게 답을 찾을 수 있어요.
 
-  [이름]                  [이메일]
+  [이메일]
   [문의 유형 ▼]           (8개 카테고리)
   [문의 내용 textarea]    {n}/1,000 글자
   [📎 파일 첨부]          최대 3개, 각 5MB 이하
@@ -57,7 +57,6 @@
 
 | 필드 | 라벨 | 플레이스홀더 |
 |---|---|---|
-| 이름 | 이름 | 이름을 입력하세요 |
 | 이메일 | 이메일 | 답변 받을 이메일 |
 | 문의 유형 | 문의 유형 | 문의 유형을 선택하세요 |
 | 문의 내용 | 문의 내용 | 문의 내용을 자세히 적어주세요 |
@@ -105,7 +104,6 @@
 
 | Field | Label | Placeholder |
 |---|---|---|
-| Name | Name | Your name |
 | Email | Email | Email for replies |
 | Topic | Topic | Select a topic |
 | Message | Message | Describe your inquiry |

@@ -36,7 +36,6 @@ type InquiryStatus = '신규' | '처리 중' | '완료' | '보류';
 
 interface StoredInquiry {
   id: string;
-  name: string;
   email: string;
   category: string;
   message: string;
@@ -345,8 +344,7 @@ export default function AdminInquiries() {
                         </span>
                       </td>
                       <td className="px-3 py-2 max-w-[180px]">
-                        <div className="truncate text-foreground">{i.name}</div>
-                        <div className="truncate text-xs text-muted-foreground">{i.email}</div>
+                        <div className="truncate text-muted-foreground">{i.email}</div>
                       </td>
                       <td className="px-3 py-2 max-w-[220px]">
                         {i.category === 'workInquiry' && (
@@ -390,7 +388,7 @@ export default function AdminInquiries() {
               <div>
                 <p className="text-xs text-muted-foreground">{selected.createdAt.slice(0, 19).replace('T', ' ')}</p>
                 <p className="text-sm font-semibold text-foreground">
-                  {selected.name} <span className="font-normal text-muted-foreground">{selected.email}</span>
+                  {selected.email}
                 </p>
               </div>
               <button

@@ -33,7 +33,6 @@ function categoryMessageKey(v: string): MessageKey {
 
 export default function Contact() {
   const { t } = useI18n();
-  const [name, setName] = useState('');
   const [email, setEmail] = useState('');
   const [category, setCategory] = useState('');
   const [message, setMessage] = useState('');
@@ -42,7 +41,7 @@ export default function Contact() {
 
   const handleSubmit = (e: React.FormEvent) => {
     e.preventDefault();
-    if (!name.trim() || !email.trim() || !category || !message.trim()) {
+    if (!email.trim() || !category || !message.trim()) {
       toast.error(t('contact.toastRequired'));
       return;
     }
@@ -66,7 +65,6 @@ export default function Contact() {
     }
     inquiries.push({
       id: `inq-${Date.now()}`,
-      name: name.trim(),
       email: email.trim(),
       category,
       message: message.trim(),
@@ -79,7 +77,6 @@ export default function Contact() {
       setSubmitting(false);
       toast.success(t('contact.toastSuccess'));
       toast(t('contact.autoResponse'), { duration: 5000 });
-      setName('');
       setEmail('');
       setCategory('');
       setMessage('');
@@ -107,19 +104,6 @@ export default function Contact() {
 
       <div className="mx-auto max-w-[700px] px-4 sm:px-6 py-5 sm:py-8">
         <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-border p-5 sm:p-8 space-y-4 sm:space-y-6">
-          <div>
-            <Label className="mb-1.5 block text-sm font-semibold text-foreground sm:mb-2 sm:text-sm">
-              {t('contact.name')} <span className="text-red-500">*</span>
-            </Label>
-            <Input
-              type="text"
-              value={name}
-              onChange={(e) => setName(e.target.value)}
-              placeholder={t('contact.placeholderName')}
-              className="min-h-[44px] rounded-lg border-border px-3 py-3 text-sm sm:px-4 sm:py-3.5 sm:text-sm focus-visible:ring-primary/20"
-            />
-          </div>
-
           <div>
             <Label className="mb-1.5 block text-sm font-semibold text-foreground sm:mb-2 sm:text-sm">
               {t('contact.email')} <span className="text-red-500">*</span>
