@@ -1,4 +1,5 @@
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Badge } from '../components/ui/badge';
 import {
@@ -79,9 +80,17 @@ function useParticipantsFromWorks(): EventParticipant[] {
 
 export default function EventParticipants() {
   const { t } = useI18n();
-  const [filterEvent, setFilterEvent] = useState('all');
+  const [searchParams] = useSearchParams();
+  const [filterEvent, setFilterEvent] = useState(searchParams.get('event') ?? 'all');
   const [filterStatus, setFilterStatus] = useState('all');
   const events = useManagedEvents();
+
+  // ADM-EVT-01에서 "응모자" 링크 진입 시 ?event=<id>로 응모전 자동 필터.
+  useEffect(() => {
+    const fromQuery = searchParams.get('event');
+    if (fromQuery && fromQuery !== filterEvent) setFilterEvent(fromQuery);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchParams]);
 
   const selectedByEvent = useMemo(() => {
     const map = new Map<string, Set<string>>();
@@ -89,7 +98,7 @@ export default function EventParticipants() {
     return map;
   }, [events]);
 
-  const sendContestSelectedNotification = (eventTitle: string, workId: string) => {
+  const sendContestSelectedNotification = (eventId: string, eventTitle: string, workId: string) => {
     const w = workStore.getWork(workId);
     if (!w) return;
     const message = t('notif.contestSelected')
@@ -99,6 +108,7 @@ export default function EventParticipants() {
       type: 'event',
       message,
       workId,
+      eventId,
       fromUser: { name: '운영팀', avatar: '', id: 'admin' },
       demo: false,
     });
@@ -110,7 +120,7 @@ export default function EventParticipants() {
     if (!ev || !w) return;
     const result = eventStore.toggleSelected(eventId, workId);
     if (result.added) {
-      sendContestSelectedNotification(ev.title, workId);
+      sendContestSelectedNotification(ev.id, ev.title, workId);
       toast.success(`${displayExhibitionTitle(w, '')} 선정 처리 + 작가 알림 발송`);
     } else {
       toast(`${displayExhibitionTitle(w, '')} 선정 해제`);
@@ -144,7 +154,7 @@ export default function EventParticipants() {
       const ev = events.find((e) => e.id === eventId);
       if (!ev) continue;
       const { addedIds } = eventStore.bulkSelect(eventId, workIds);
-      for (const wid of addedIds) sendContestSelectedNotification(ev.title, wid);
+      for (const wid of addedIds) sendContestSelectedNotification(eventId, ev.title, wid);
       totalAdded += addedIds.length;
     }
     if (totalAdded > 0) toast.success(`${totalAdded}건 선정 처리 + 작가 알림 발송`);

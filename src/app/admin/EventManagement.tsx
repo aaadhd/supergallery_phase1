@@ -1,6 +1,7 @@
 import { useMemo, useState, useEffect, type FormEvent } from 'react';
+import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Pencil, Plus, Trash2 } from 'lucide-react';
+import { Pencil, Plus, Trash2, Users } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { openConfirm } from '../components/ConfirmDialog';
 import {
@@ -326,6 +327,13 @@ export default function EventManagement() {
                     </td>
                     <td className="px-4 py-3 text-muted-foreground">{ev.worksPublic ? '즉시' : '종료 후'}</td>
                     <td className="px-4 py-3 text-right space-x-2 whitespace-nowrap">
+                      <Link
+                        to={`/admin/events?event=${ev.id}`}
+                        className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/30 inline-flex items-center gap-1.5"
+                      >
+                        <Users className="w-3.5 h-3.5" />
+                        응모자
+                      </Link>
                       <Button
                         type="button"
                         onClick={() => startEdit(ev)}

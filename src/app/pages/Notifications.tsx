@@ -26,6 +26,8 @@ interface Notification {
   workId?: string;
   /** 라우팅 타깃 — type 'curation' 클릭 시 /curations/:id로 이동(PRD USR-NTF-01 §1). */
   curationId?: string;
+  /** 라우팅 타깃 — type 'event' 클릭 시 /events/:id 응모전 상세로 이동(PRD USR-NTF-01 §1). */
+  eventId?: string;
   read: boolean;
   createdAt: string;
   /** 플로우 데모에서 넣은 알림 — 알림 설정과 무관하게 목록에 표시 */
@@ -310,13 +312,21 @@ export default function Notifications() {
 
   const handleClick = (notif: Notification) => {
     markAsRead(notif.id);
-    // PRD USR-NTF-01 §1 — 기획전 선정 알림은 USR-CUR-01 페이지로 직행.
+    // PRD USR-NTF-01 §1 라우팅 표 정합:
+    //  - 기획전 선정 → USR-CUR-01
+    //  - 응모전 선정·공지 → USR-EVT-02 응모전 상세 (eventId 있으면)
+    //  - 초대 수락 → USR-PRF-01 프로필 (PRD: 친구가 토큰 가입해 본인 작품 찾기 한 결과)
     if (notif.type === 'curation' && notif.curationId) {
       navigate(`/curations/${notif.curationId}`);
       return;
     }
     if (notif.type === 'event') {
-      navigate('/events');
+      if (notif.eventId) navigate(`/events/${notif.eventId}`);
+      else navigate('/events');
+      return;
+    }
+    if (notif.type === 'invite' && notif.fromUser) {
+      navigate(`/profile/${notif.fromUser.id}`);
       return;
     }
     if (notif.workId) navigate(`/exhibitions/${notif.workId}`);
@@ -434,12 +444,13 @@ export default function Notifications() {
                   }`}
                 >
                   <button type="button" onClick={() => handleClick(notif)} className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0 text-left bg-transparent border-0 p-0 cursor-pointer">
-                    {notif.fromUser ? (
+                    {notif.fromUser && notif.fromUser.avatar ? (
                       <Avatar className="h-10 w-10 shrink-0 ring-1 ring-border/50">
                         <AvatarImage src={notif.fromUser.avatar} alt={notif.fromUser.name} />
                         <AvatarFallback>{notif.fromUser.name[0]}</AvatarFallback>
                       </Avatar>
                     ) : (
+                      // 운영팀 발송 알림(curation·event)은 avatar='' — type 아이콘 fallback.
                       <div className={`h-10 w-10 shrink-0 rounded-full flex items-center justify-center ${colorClass}`}>
                         <Icon className="h-4 w-4" />
                       </div>
