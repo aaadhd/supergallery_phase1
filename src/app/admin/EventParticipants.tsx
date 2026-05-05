@@ -1,4 +1,5 @@
 import { useState, useMemo } from 'react';
+import { toast } from 'sonner';
 import { Badge } from '../components/ui/badge';
 import {
   Table, TableHeader, TableBody, TableHead, TableRow, TableCell,
@@ -6,9 +7,12 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '../components/ui/select';
-import { useManagedEvents, type ManagedEvent } from '../utils/eventStore';
+import { eventStore, useManagedEvents, type ManagedEvent } from '../utils/eventStore';
 import { workStore } from '../store';
 import { useSyncExternalStore } from 'react';
+import { useI18n } from '../i18n/I18nProvider';
+import { pushDemoNotification } from '../utils/pushDemoNotification';
+import { displayExhibitionTitle } from '../utils/workDisplay';
 
 interface EventParticipant {
   id: string;
@@ -17,6 +21,8 @@ interface EventParticipant {
   email: string;
   status: string;
   participatedAt: string;
+  /** 실 업로드 응모작이면 그 전시 ID — 선정 체크 토글 대상. 시드는 undefined. */
+  workId?: string;
 }
 
 /**
@@ -66,14 +72,44 @@ function useParticipantsFromWorks(): EventParticipant[] {
               ? '취소'
               : '대기 중',
         participatedAt: (w.uploadedAt || '').slice(0, 10),
+        workId: w.id,
       }));
   }, [works]);
 }
 
 export default function EventParticipants() {
+  const { t } = useI18n();
   const [filterEvent, setFilterEvent] = useState('all');
   const [filterStatus, setFilterStatus] = useState('all');
   const events = useManagedEvents();
+
+  const selectedByEvent = useMemo(() => {
+    const map = new Map<string, Set<string>>();
+    for (const e of events) map.set(e.id, new Set(e.selectedWorkIds ?? []));
+    return map;
+  }, [events]);
+
+  const handleToggleSelected = (eventId: string, workId: string) => {
+    const ev = events.find((e) => e.id === eventId);
+    const w = workStore.getWork(workId);
+    if (!ev || !w) return;
+    const result = eventStore.toggleSelected(eventId, workId);
+    if (result.added) {
+      const message = t('notif.contestSelected')
+        .replace('{title}', displayExhibitionTitle(w, t('work.untitled')))
+        .replace('{event}', ev.title);
+      pushDemoNotification({
+        type: 'event',
+        message,
+        workId,
+        fromUser: { name: '운영팀', avatar: '', id: 'admin' },
+        demo: false,
+      });
+      toast.success(`${displayExhibitionTitle(w, '')} 선정 처리 + 작가 알림 발송`);
+    } else {
+      toast(`${displayExhibitionTitle(w, '')} 선정 해제`);
+    }
+  };
 
   const realParticipants = useParticipantsFromWorks();
   // 시드 + 실 업로드 병합. id 충돌 없음 (시드: EP-*, 실: work-*)
@@ -165,9 +201,10 @@ export default function EventParticipants() {
         <Table>
           <TableHeader>
             <TableRow>
+              <TableHead className="w-20">선정</TableHead>
               <TableHead>이름</TableHead>
               <TableHead>이메일</TableHead>
-              <TableHead>이벤트</TableHead>
+              <TableHead>응모전</TableHead>
               <TableHead>상태</TableHead>
               <TableHead>참여일</TableHead>
             </TableRow>
@@ -175,22 +212,44 @@ export default function EventParticipants() {
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={5} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
                   조건에 맞는 참여자가 없습니다.
                 </TableCell>
               </TableRow>
             ) : (
-              filtered.map(p => (
-                <TableRow key={p.id}>
-                  <TableCell className="font-medium text-foreground">{p.name}</TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{p.email}</TableCell>
-                  <TableCell className="text-sm">{events.find(e => e.id === p.eventId)?.title ?? '-'}</TableCell>
-                  <TableCell>
-                    <Badge className={statusColors[p.status] || ''} variant="outline">{p.status}</Badge>
-                  </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">{p.participatedAt}</TableCell>
-                </TableRow>
-              ))
+              filtered.map(p => {
+                const selectedSet = selectedByEvent.get(p.eventId);
+                const isSelected = !!(p.workId && selectedSet?.has(p.workId));
+                return (
+                  <TableRow key={p.id}>
+                    <TableCell>
+                      {p.workId ? (
+                        <label className="inline-flex items-center gap-2 cursor-pointer">
+                          <input
+                            type="checkbox"
+                            checked={isSelected}
+                            onChange={() => handleToggleSelected(p.eventId, p.workId!)}
+                            aria-label={`${p.name} 선정 토글`}
+                            className="h-4 w-4"
+                          />
+                          {isSelected && (
+                            <span className="text-[11px] font-semibold text-primary">{t('evt.adminSelectedBadge')}</span>
+                          )}
+                        </label>
+                      ) : (
+                        <span className="text-xs text-muted-foreground/60">—</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="font-medium text-foreground">{p.name}</TableCell>
+                    <TableCell className="text-sm text-muted-foreground">{p.email}</TableCell>
+                    <TableCell className="text-sm">{events.find(e => e.id === p.eventId)?.title ?? '-'}</TableCell>
+                    <TableCell>
+                      <Badge className={statusColors[p.status] || ''} variant="outline">{p.status}</Badge>
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">{p.participatedAt}</TableCell>
+                  </TableRow>
+                );
+              })
             )}
           </TableBody>
         </Table>

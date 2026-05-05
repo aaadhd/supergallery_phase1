@@ -9,7 +9,7 @@ import { useLoginPrompt } from '../hooks/useLoginPrompt';
 import { useI18n } from '../i18n/I18nProvider';
 import { Button } from '../components/ui/button';
 import { toast } from 'sonner';
-import { eventStore, deriveStatus, useManagedEvents } from '../utils/eventStore';
+import { eventStore, deriveStatus, isPublicationVisible, useManagedEvents } from '../utils/eventStore';
 import { EventEntryModal } from '../components/EventEntryModal';
 
 export default function EventDetail() {
@@ -149,6 +149,19 @@ export default function EventDetail() {
               {t('events.participate')}
               <ArrowRight className="h-5 w-5" />
             </Button>
+          )}
+
+          {/* 선정작 발표 보기 CTA — Policy §15.5 / PRD USR-EVT-02 AC-05. publicationOpen + 선정작 + (있다면) publishedAt 도달 시 노출. */}
+          {event && isPublicationVisible(event) && (
+            <div className="mt-3">
+              <Link
+                to={`/events/${event.id}/results`}
+                className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 border border-primary text-primary rounded-lg text-sm font-medium lg:hover:bg-primary/5 transition-colors"
+              >
+                {t('events.viewWinners')}
+                <ArrowRight className="h-4 w-4" />
+              </Link>
+            </div>
           )}
         </div>
       </div>

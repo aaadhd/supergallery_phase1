@@ -23,6 +23,8 @@ type DraftState = {
   worksPublic: boolean;
   participantsLabel: string;
   status: EventStatus | '';
+  publicationOpen: boolean;
+  publishedAt: string;
 };
 
 const emptyDraft: DraftState = {
@@ -35,6 +37,8 @@ const emptyDraft: DraftState = {
   worksPublic: true,
   participantsLabel: '',
   status: '',
+  publicationOpen: false,
+  publishedAt: '',
 };
 
 function statusBadgeClass(s: EventStatus) {
@@ -74,6 +78,8 @@ export default function EventManagement() {
       worksPublic: ev.worksPublic,
       participantsLabel: ev.participantsLabel ?? '',
       status: ev.status ?? '',
+      publicationOpen: ev.publicationOpen ?? false,
+      publishedAt: ev.publishedAt ?? '',
     });
     setShowForm(true);
   };
@@ -117,6 +123,12 @@ export default function EventManagement() {
       toast.error('시작일이 종료일보다 늦을 수 없습니다.');
       return;
     }
+    // 발표 페이지 토글 ON 시 기존 선정작 0건이면 경고 (PRD AC-06) — 저장은 허용.
+    const existing = editingId ? eventStore.get(editingId) : null;
+    const selectedCount = existing?.selectedWorkIds?.length ?? 0;
+    if (draft.publicationOpen && selectedCount === 0) {
+      toast.warning('선정작이 0건이라 발표 페이지가 빈 상태로 표시됩니다. ADM-EVT-03에서 선정작을 체크해 주세요.');
+    }
     const payload: Omit<ManagedEvent, 'id'> = {
       title,
       subtitle: draft.subtitle.trim() || undefined,
@@ -127,6 +139,8 @@ export default function EventManagement() {
       worksPublic: draft.worksPublic,
       participantsLabel: draft.participantsLabel.trim() || undefined,
       status: draft.status || undefined,
+      publicationOpen: draft.publicationOpen,
+      publishedAt: draft.publishedAt.trim() || undefined,
     };
     if (editingId) {
       eventStore.update(editingId, payload);
@@ -237,6 +251,31 @@ export default function EventManagement() {
               <option value="active">진행중 수동</option>
               <option value="ended">종료 수동</option>
             </select>
+
+            {/* 선정작 발표 페이지 (Policy §15.5 / PRD ADM-EVT-01 AC-05·06) */}
+            <div className="sm:col-span-2 mt-2 pt-3 border-t border-border space-y-2">
+              <p className="text-xs font-semibold text-foreground">선정작 발표 페이지</p>
+              <label className="flex items-center gap-2 text-sm text-foreground">
+                <input
+                  type="checkbox"
+                  checked={draft.publicationOpen}
+                  onChange={(e) => setDraft((d) => ({ ...d, publicationOpen: e.target.checked }))}
+                />
+                선정작 발표 페이지를 사용자에게 게시 (USR-EVT-05)
+              </label>
+              <label className="flex flex-col gap-1 text-xs text-muted-foreground sm:max-w-xs">
+                발표일 (선택 — 비우면 토글 ON 즉시 노출)
+                <input
+                  type="date"
+                  value={draft.publishedAt}
+                  onChange={(e) => setDraft((d) => ({ ...d, publishedAt: e.target.value }))}
+                  className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground"
+                />
+              </label>
+              <p className="text-[11px] text-muted-foreground">
+                선정작은 ADM-EVT-03 응모자 현황의 선정 체크박스로 입력합니다. 발표 페이지 진입 배너는 ADM-BNR-01에서 별도로 게시할 수 있어요.
+              </p>
+            </div>
           </div>
           <div className="flex gap-2">
             <Button type="submit" className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white">

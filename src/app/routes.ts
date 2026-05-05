@@ -6,6 +6,7 @@ import Upload from './pages/Upload';
 import Profile from './pages/Profile';
 import Events from './pages/Events';
 import EventDetail from './pages/EventDetail';
+import EventResults from './pages/EventResults';
 import Terms from './pages/Terms';
 import Privacy from './pages/Privacy';
 import NotFound from './pages/NotFound';
@@ -84,6 +85,7 @@ export const router = createBrowserRouter([
           { path: 'me/edit', loader: () => redirect('/settings') },
           { path: 'events', Component: Events },
           { path: 'events/:id', Component: EventDetail },
+          { path: 'events/:id/results', Component: EventResults },
           { path: 'search', Component: Search },
           { path: 'notifications', Component: Notifications },
           { path: 'settings', Component: Settings },
