@@ -126,7 +126,7 @@ const koMessages = {
     '안녕하세요, {nickname}님.\n커뮤니티 가이드라인 위반으로 인해 계정 이용이 제한됐어요.\n• 사유: {reason}\n• 기간: {period}\n이의가 있으신 경우 문의하기를 통해 연락해주세요.\n\nCTA: 문의하기 → /contact',
   'refStub.tplWithdrawSubject': '[Artier] 회원 탈퇴가 완료됐어요',
   'refStub.tplWithdrawBody':
-    '안녕하세요.\n{date}에 Artier 탈퇴가 완료됐어요.\n• 업로드하신 전시는 모두 삭제됐어요.\n• 닉네임은 영구적으로 잠금 처리되어 다른 분이 사용할 수 없어요.\n• 개인정보는 관련 법령에 따라 처리돼요.\n다시 만날 수 있기를 바랍니다.',
+    '안녕하세요.\n{date}에 Artier 탈퇴가 완료됐어요.\n• 올리신 작품이 모두 삭제됐어요. 다른 작가의 작품이 있는 전시는 계속 공개돼요.\n• 닉네임은 영구적으로 잠금 처리되어 다른 분이 사용할 수 없어요.\n• 개인정보는 관련 법령에 따라 처리돼요.\n다시 만날 수 있기를 바랍니다.',
   'refStub.rulesTitle': '3. 이메일 발송 목록 (기능 모음 마스터 표)',
   'refStub.rulesLead':
     '「이메일 알림 템플릿」문서의 트리거·필수 여부와 동일합니다. 인앱 알림은 「알림 통합 트리거 표」를 참고하세요.',
@@ -669,7 +669,7 @@ Phase 1: 백그라운드 적립만(Policy §7.1). 사용자 노출 UI 없음. �
     'Artier는 비밀번호 대신 이메일 인증 링크로 로그인합니다. 이메일을 받지 못했다면 스팸함을 먼저 확인해 주시고, 로그인 화면에서 "로그인 링크 다시 보내기"를 눌러 주세요. 30초 쿨다운 후 재발송이 가능합니다. 링크는 30분 동안 유효합니다.',
   'faq.q3': '탈퇴하면 작품은 어떻게 되나요?',
   'faq.a3':
-    '탈퇴하면 업로드한 전시가 모두 삭제돼요. 복구할 수 없으니 남기고 싶은 작품은 탈퇴 전에 따로 저장해 두세요.',
+    '탈퇴하면 내 작품이 모든 전시에서 삭제돼요. 다른 작가의 작품이 있는 전시는 계속 공개돼요. 복구할 수 없으니 탈퇴 전에 따로 저장해 두세요.',
   'faq.q4': '어떤 파일 형식을 지원하나요?',
   'faq.a4':
     'JPG, PNG, WEBP, GIF 형식을 지원하며, 파일당 최대 10MB까지 업로드할 수 있어요. 전시당 최대 10장의 이미지를 올릴 수 있어요.',
@@ -989,7 +989,7 @@ Phase 1: 백그라운드 적립만(Policy §7.1). 사용자 노출 UI 없음. �
   'settings.withdraw': '회원 탈퇴',
   'settings.withdrawTitle': '정말 탈퇴하시겠어요?',
   'settings.withdrawBody':
-    '탈퇴하면 작성하신 데이터는 복구할 수 없어요. 올리신 전시는 모두 삭제되며, 계정·좋아요·팔로우 기록은 삭제돼요.',
+    '탈퇴하면 작성하신 데이터는 복구할 수 없어요. 내 작품이 삭제되며, 전시 내 다른 작가의 작품이 없으면 전시도 삭제돼요. 계정·좋아요·팔로우 기록은 삭제돼요.',
   'settings.withdrawSubmit': '탈퇴하기',
   'settings.withdrawBusy': '처리 중…',
   'settings.withdrawReasonSection': '탈퇴 사유를 선택해 주세요',
@@ -1323,7 +1323,7 @@ const enMessages: Record<MessageKey, string> = {
     'Hi {nickname},\nYour account has been restricted due to a community guidelines violation.\n• Reason: {reason}\n• Duration: {period}\nIf you believe this is an error, please contact us.\n\nCTA: Contact → /contact',
   'refStub.tplWithdrawSubject': '[Artier] Your account has been deleted',
   'refStub.tplWithdrawBody':
-    "Hello,\nYour Artier account was deleted on {date}.\n• All your uploaded exhibitions have been deleted.\n• Your nickname is permanently locked and cannot be reused.\n• Personal data is handled per applicable law.\nWe hope to see you again.",
+    "Hello,\nYour Artier account was deleted on {date}.\n• Your works have been removed from all exhibitions. Exhibitions with other artists' works remain visible.\n• Your nickname is permanently locked and cannot be reused.\n• Personal data is handled per applicable law.\nWe hope to see you again.",
   'refStub.rulesTitle': '3. Email send list (feature doc master table)',
   'refStub.rulesLead':
     'Same triggers and required/optional flags as the email template doc. In-app notifications: see the integrated trigger table.',
@@ -1867,7 +1867,7 @@ Phase 1: background earn only (Policy §7.1). No user-facing UI. Local earn hook
     'Artier uses email sign-in links instead of passwords. If you did not receive the email, check your spam folder first, then tap “Resend sign-in link” on the log-in screen. You can resend after a 30-second cooldown. The link is valid for 30 minutes.',
   'faq.q3': 'What happens to my works if I delete my account?',
   'faq.a3':
-    'All your uploaded exhibitions are deleted when you leave. This cannot be undone, so save anything you want to keep before deleting your account.',
+    "When you leave, your works are removed from all exhibitions. Exhibitions with other artists' works stay public. This cannot be undone.",
   'faq.q4': 'Which file formats are supported?',
   'faq.a4':
     'We support JPG, PNG, WEBP, and GIF up to 10MB per file, with up to 10 images per exhibition.',
@@ -2189,7 +2189,7 @@ Phase 1: background earn only (Policy §7.1). No user-facing UI. Local earn hook
   'settings.withdraw': 'Delete account',
   'settings.withdrawTitle': 'Delete your account?',
   'settings.withdrawBody':
-    'This cannot be undone. All your uploaded exhibitions will be deleted. Your account, likes, and follows will be removed.',
+    "This cannot be undone. Your works will be removed from all exhibitions. Exhibitions with no remaining works will also be deleted. Your account, likes, and follows will be removed.",
   'settings.withdrawSubmit': 'Delete account',
   'settings.withdrawBusy': 'Processing…',
   'settings.withdrawReasonSection': 'Why are you leaving?',

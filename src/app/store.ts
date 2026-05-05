@@ -853,10 +853,40 @@ export function performAccountWithdrawal(currentArtistId: string, withdrawReason
       });
     }
   } catch { /* ignore */ }
-  // Policy §4: 탈퇴 시 본인 업로드 전시 영구 삭제. removeWork가 기획전·응모전·Pick·초대 토큰·알림 cascade 처리.
-  workStore.getWorks()
-    .filter((w) => w.artistId === currentArtistId)
-    .forEach((w) => { void workStore.removeWork(w.id); });
+  // Policy §4: 탈퇴 시 본인 작품 삭제. 본인이 참여 작가인 슬롯 제거 후 이미지 0장이 된 전시는 cascade 삭제.
+  // 전시 컨테이너(본인 업로드)는 다른 작가 작품이 남아 있으면 유지.
+  for (const work of workStore.getWorks()) {
+    const images = Array.isArray(work.image) ? work.image : [work.image];
+    const slots = work.imageArtists ?? [];
+    const isGroupWork = work.primaryExhibitionType === 'group' && slots.length > 0;
+
+    let keepIndices: number[];
+    if (isGroupWork) {
+      keepIndices = images.map((_, i) => i).filter(i => {
+        const ia = slots[i];
+        return !ia || !(ia.type === 'member' && ia.memberId === currentArtistId);
+      });
+    } else if (work.artistId === currentArtistId) {
+      keepIndices = [];
+    } else {
+      continue;
+    }
+
+    if (keepIndices.length === 0) {
+      void workStore.removeWork(work.id);
+    } else if (keepIndices.length < images.length) {
+      const newImages = keepIndices.map(i => images[i]);
+      const newSlots = keepIndices.map(i => slots[i]);
+      const newTitles = work.imagePieceTitles ? keepIndices.map(i => work.imagePieceTitles![i] ?? '') : undefined;
+      const newPieceIds = work.imagePieceIds ? keepIndices.map(i => work.imagePieceIds![i] ?? '') : undefined;
+      void workStore.updateWork(work.id, {
+        image: newImages.length === 1 ? newImages[0] : newImages,
+        imageArtists: newSlots,
+        ...(newTitles !== undefined && { imagePieceTitles: newTitles }),
+        ...(newPieceIds !== undefined && { imagePieceIds: newPieceIds }),
+      });
+    }
+  }
   currentInteractions = { liked: [], saved: [] };
   localStorage.setItem('artier_interactions', JSON.stringify(currentInteractions));
   interactionListeners.forEach((l) => l());
