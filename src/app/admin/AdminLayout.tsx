@@ -52,6 +52,7 @@ const navSections: NavSection[] = [
       { to: '/admin/curation', icon: Sparkles, labelKey: 'admin.nav.curation' },
       { to: '/admin/banners', icon: PanelTop, labelKey: 'admin.nav.banners' },
       { to: '/admin/managed-events', icon: CalendarRange, labelKey: 'admin.nav.managedEvents' },
+      { to: '/admin/events', icon: Users, labelKey: 'admin.nav.eventParticipants' },
     ],
   },
   {
@@ -72,7 +73,7 @@ const navSections: NavSection[] = [
 
 // 폐기·통합 화면(PRD §9·§10): /admin/works·/admin/partners 라우트는 2026-04-26 제거됨.
 // 운영자는 ADM-RPT-01(신고 큐) / ADM-MBR-01(회원 관리)에서 접근.
-void Users; void ImageIcon; void CalendarDays;
+void ImageIcon; void CalendarDays;
 
 export default function AdminLayout() {
   const { t } = useI18n();

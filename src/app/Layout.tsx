@@ -9,7 +9,7 @@ import { accountSuspensionStore, authStore } from './store';
 
 const TITLE_BY_PATH: { prefix: string; ko: string; en: string }[] = [
   { prefix: '/search', ko: '검색 · Artier', en: 'Search · Artier' },
-  { prefix: '/events', ko: '이벤트 · Artier', en: 'Events · Artier' },
+  { prefix: '/events', ko: '응모전 · Artier', en: 'Contests · Artier' },
   { prefix: '/upload', ko: '작품 올리기 · Artier', en: 'Upload · Artier' },
   { prefix: '/settings', ko: '설정 · Artier', en: 'Settings · Artier' },
   { prefix: '/notifications', ko: '알림 · Artier', en: 'Notifications · Artier' },

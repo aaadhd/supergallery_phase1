@@ -22,7 +22,7 @@ export function setStoredLocale(locale: Locale) {
 export const UI_STRINGS = {
   ko: {
     navBrowse: '둘러보기',
-    navEvents: '이벤트',
+    navEvents: '응모전',
     navUpload: '올리기',
     navSearch: '검색',
     navProfile: '프로필',
@@ -36,7 +36,7 @@ export const UI_STRINGS = {
   },
   en: {
     navBrowse: 'Browse',
-    navEvents: 'Events',
+    navEvents: 'Contests',
     navUpload: 'Upload',
     navSearch: 'Search',
     navProfile: 'Profile',

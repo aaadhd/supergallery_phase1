@@ -8,7 +8,7 @@ export const LABELS = {
 
   // 네비게이션
   NAV_BROWSE: '둘러보기',
-  NAV_EVENTS: '이벤트',
+  NAV_EVENTS: '응모전',
   NAV_UPLOAD: '작품 올리기',
   NAV_PROFILE: '내 프로필',
   NAV_ADMIN: '운영 관리',
