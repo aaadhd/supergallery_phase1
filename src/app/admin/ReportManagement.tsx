@@ -15,7 +15,7 @@ import {
   type StoredUserReport,
 } from '../utils/reportsStore';
 import { pushDemoNotification } from '../utils/pushDemoNotification';
-import { logWorkDeletion, type DeletedWorkLogPayload } from '../utils/adminAuditLog';
+import { logWorkDeletion, appendAuditLog, type DeletedWorkLogPayload } from '../utils/adminAuditLog';
 import { useI18n } from '../i18n/I18nProvider';
 import { usePagination } from '../hooks/usePagination';
 import { PaginationBar } from './components/PaginationBar';
@@ -194,6 +194,13 @@ export default function ReportManagement() {
     if (raw.targetType === 'work' && raw.targetId) {
       workStore.updateWork(raw.targetId, { ...buildVisibilityPatch('hidden_admin') });
       updateUserReport(id, { adminStatus: 'hidden' });
+      appendAuditLog({
+        action: 'report_kept_hidden',
+        targetId: raw.targetId,
+        targetSnapshot: { reportId: id, targetName: raw.targetName },
+        actorId: 'admin',
+        actorRole: 'admin',
+      });
       pushDemoNotification({
         type: 'system',
         message: t('report.notifTargetWorkHidden').replace('{title}', raw.targetName),
@@ -275,6 +282,13 @@ export default function ReportManagement() {
     const raw = loadUserReports().find((r) => r.id === id);
     if (!raw) return;
     updateUserReport(id, { adminStatus: 'dismissed' });
+    appendAuditLog({
+      action: 'report_dismissed',
+      targetId: raw.targetId ?? id,
+      targetSnapshot: { reportId: id, targetName: raw.targetName, targetType: raw.targetType },
+      actorId: 'admin',
+      actorRole: 'admin',
+    });
     pushDemoNotification({
       type: 'system',
       message: t('report.notifReporterDismissed'),

@@ -27,6 +27,7 @@ import { useI18n } from '../i18n/I18nProvider';
 import { pushDemoNotification } from '../utils/pushDemoNotification';
 import { activateInviteToken, deactivateInviteToken } from '../utils/inviteTokenStore';
 import { buildVisibilityPatch } from '../utils/workVisibility';
+import { appendAuditLog } from '../utils/adminAuditLog';
 
 type ReviewStatusUi = '대기중' | '승인' | '반려';
 
@@ -153,6 +154,13 @@ export default function ContentReview() {
       ...buildVisibilityPatch('public'),
       rejectionReason: undefined,
     });
+    appendAuditLog({
+      action: 'review_approved',
+      targetId: w.id,
+      targetSnapshot: { exhibitionName: w.exhibitionName, artistId: w.artistId },
+      actorId: 'admin',
+      actorRole: 'admin',
+    });
     toast.success('승인되었습니다. 둘러보기 피드에 노출됩니다.');
     pushDemoNotification({
       type: 'system',
@@ -209,6 +217,18 @@ export default function ContentReview() {
     });
     // Policy §3 v2.14: 검수 반려 시 토큰 비활성화 (친구 링크 보존, 재승인 시 자동 활성화).
     deactivateInviteToken(w.id);
+    appendAuditLog({
+      action: 'review_rejected',
+      targetId: w.id,
+      targetSnapshot: {
+        exhibitionName: w.exhibitionName,
+        artistId: w.artistId,
+        reason: pickedReason,
+        ...(trimmedNote ? { note: trimmedNote } : {}),
+      },
+      actorId: 'admin',
+      actorRole: 'admin',
+    });
     toast.error('반려 처리되었습니다. 피드에는 노출되지 않습니다.');
     const reasonLabel = t(REJECTION_REASON_LABEL_KEY[pickedReason]);
     pushDemoNotification({
