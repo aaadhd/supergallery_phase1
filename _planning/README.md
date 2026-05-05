@@ -34,9 +34,7 @@ _planning/
 ├── Handoff_Signup_Consent_v1.md   # 가입/약관 동의 문구(이메일 가입·소셜 가입)
 ├── Handoff_Terms_v1.md            # 이용약관 초안 전문
 ├── Handoff_Privacy_v1.md          # 개인정보처리방침 초안 전문
-├── Handoff_Footer_v1.md           # 푸터 메뉴·사업자 정보·법정 고지
 ├── Handoff_FAQ_v1.md              # FAQ 14문항 원고
-├── Handoff_ServiceIntro_v1.md     # 서비스 소개(About) 원고
 ├── Handoff_UserInfo_Contact_v1.md # 사용자 정보/문의 입력 문구
 ├── Handoff_Onboarding_v1.md       # 가입 후 온보딩 다단 흐름 + 본인 작품 찾기(claim) 카피
 ├── Handoff_Notifications_v1.md    # 인박스 + 검수·신고·Pick·초대 알림 통합 + 채널 라우팅 매트릭스
@@ -61,9 +59,7 @@ _planning/
 | [Handoff_Signup_Consent_v1.md](./Handoff_Signup_Consent_v1.md) | PM · 외주 개발사 |
 | [Handoff_Terms_v1.md](./Handoff_Terms_v1.md) | PM · 법무 · 외주 개발사 |
 | [Handoff_Privacy_v1.md](./Handoff_Privacy_v1.md) | PM · 법무 · 외주 개발사 |
-| [Handoff_Footer_v1.md](./Handoff_Footer_v1.md) | PM · 외주 개발사 |
 | [Handoff_FAQ_v1.md](./Handoff_FAQ_v1.md) | PM · CS · 외주 개발사 |
-| [Handoff_ServiceIntro_v1.md](./Handoff_ServiceIntro_v1.md) | PM · 브랜드 · 외주 개발사 |
 | [Handoff_UserInfo_Contact_v1.md](./Handoff_UserInfo_Contact_v1.md) | PM · CS · 외주 개발사 |
 | [Handoff_Onboarding_v1.md](./Handoff_Onboarding_v1.md) | PM · UX Writer · 외주 개발사 (가입 후 흐름 prose) |
 | [Handoff_Notifications_v1.md](./Handoff_Notifications_v1.md) | PM · 운영 · UX Writer · 외주 개발사 (사용자 도달 알림 통합) |
@@ -241,7 +237,7 @@ PC 와이어프레임 HTML은 **정책·화면의 원문 단일 소스가 아니
 6. 원고 문서 세트
    - 일반 UI 카피: `Copy_v1.md` (단일 소스)
    - 법무 전문: `Handoff_Terms_v1.md`, `Handoff_Privacy_v1.md`
-   - 화면별 전달 문서: `Handoff_Signup_Consent_v1.md`, `Handoff_Footer_v1.md`, `Handoff_FAQ_v1.md`, `Handoff_ServiceIntro_v1.md`, `Handoff_UserInfo_Contact_v1.md`
+   - 화면별 전달 문서: `Handoff_Signup_Consent_v1.md`, `Handoff_FAQ_v1.md`, `Handoff_UserInfo_Contact_v1.md`
 
 ### 충돌 방지 구조 (단일 소스 고정)
 
@@ -260,7 +256,7 @@ PC 와이어프레임 HTML은 **정책·화면의 원문 단일 소스가 아니
 | 일반 정책/요건 (허용·금지·법무·운영) | `Policy_v1.md` | PRD는 화면에 반영한 구현 명세 + Policy 인용 |
 | PC 와이어·플로우 시각 | `_screen_specs/Artier_Screen_Spec_v1.html` | **원문이 아님** — IA·PRD의 시각 복제물. 변경 시 같은 작업 범위에서 갱신. 상세는 「화면 스펙 HTML 동기화 의무」 |
 | **일반 UI 카피 (i18n 키)** | `Copy_v1.md` — **엄격 SSoT** | **코드 동기화는 항상 Copy_v1.md 먼저 갱신 → 코드 반영**. 카피 사전 단독 lead 금지(예외: 코드↔Copy 일괄 정합 라운드). |
-| 사용자 노출 카피 prose 핸드오프본 | `Handoff_FAQ_v1.md`, `Handoff_ServiceIntro_v1.md`, `Handoff_Signup_Consent_v1.md`, `Handoff_Footer_v1.md`, `Handoff_UserInfo_Contact_v1.md`, `Handoff_Onboarding_v1.md`, `Handoff_Notifications_v1.md` | Copy_v1.md 동일 키의 prose 정리본. 변경 시 양측 동시 갱신 |
+| 사용자 노출 카피 prose 핸드오프본 | `Handoff_FAQ_v1.md`, `Handoff_Signup_Consent_v1.md`, `Handoff_UserInfo_Contact_v1.md`, `Handoff_Onboarding_v1.md`, `Handoff_Notifications_v1.md` | Copy_v1.md 동일 키의 prose 정리본. 변경 시 양측 동시 갱신 (푸터·About 원고는 Copy §10·§11로 흡수) |
 | 법무 전문 원문 | `Handoff_Terms_v1.md`, `Handoff_Privacy_v1.md` | Policy/PRD는 반영 위치와 요구사항만 기록 |
 
 > **표 이해**: 화면·AC·플로우의 **원문은 PRD**가 기본이다. 정책·수치·라벨 캐노니컬은 **Policy**. **PC 와이어**(`Artier_Screen_Spec_v1.html`)는 시각 파생물이며 IA·PRD와 동기화한다.
@@ -269,7 +265,7 @@ PC 와이어프레임 HTML은 **정책·화면의 원문 단일 소스가 아니
 - 화면 원문은 PRD, 정책 원문은 Policy, 카피는 Copy에서만 확장 관리. 나머지는 링크·요약·경로 참조.
 - **수치 인용 룰**: **정책 수치**(SLA·연령·토큰 TTL 등)는 Policy §20·해당 §에서 정의하고, PRD에는 **동일 값** 또는 `Policy §X 참조`만 둔다. **UI 한도·폼 제약**은 PRD §0.4.2가 SSoT이며 Policy §20는 색인. 같은 정책 수치를 PRD에 새로 "발명"하지 않는다.
 - **Copy ↔ 코드 동기화 방향**: `Copy_v1.md`가 엄격 SSoT다. 신규 카피·수정 카피는 **항상 `Copy_v1.md` 먼저** 갱신하고 코드의 카피 사전에 반영한다. 코드만 변경하고 `Copy_v1.md`를 미갱신 상태로 두지 않는다(다음 풀스캔에서 역방향 동기화 비용 발생).
-- **prose 핸드오프본 3종 예외**: `Copy_v1.md`(i18n 키 단일 소스)와 `Handoff_FAQ`·`Handoff_ServiceIntro`·`Handoff_Signup_Consent`(prose 본문)는 **같은 카피의 두 표현 형식**으로 의도된 dual 관계다. 카피 변경 시 두 파일을 같은 작업 범위에서 동시 갱신한다(코드는 `Copy_v1.md` 기준 동기화).
+- **prose 핸드오프본 예외**: `Copy_v1.md`(i18n 키 단일 소스)와 `Handoff_FAQ`·`Handoff_Signup_Consent`(prose 본문)는 **같은 카피의 두 표현 형식**으로 의도된 dual 관계다. 카피 변경 시 두 파일을 같은 작업 범위에서 동시 갱신한다(코드는 `Copy_v1.md` 기준 동기화).
 
 ---
 
@@ -531,6 +527,7 @@ CM-<번호>          공통 팝업·다이얼로그
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
 | v1.12 | 2026-05-05 | PM × Claude | 용어 사전 기획전·응모전 표준어, 피드 5버킷 정합, 문서 이력 간소화 규칙, 인용 인라인 링크 통일 |
+| v1.12 | 2026-05-05 | PM × Claude | Handoff_Footer·Handoff_ServiceIntro → Copy §10·§11 흡수, 참조 링크 정정 |
 | v1.11 | 2026-05-02 | PM × Claude | Policy §23.0·N-11·§21.0·§31 N-5, Handoff_Event_Consent 등록 |
 | v1.10 | 2026-05-02 | PM × Codex | 푸시 경계·연쇄 갱신 번들·SSoT 분담·상호 정합·Policy 앵커 규칙 명문화 |
 | v1.6 | 2026-05-01 | PM × Claude | **「용어 사전」 섹션 신설** — 사용자·역할·콘텐츠·검수 5상태·업로드 유형·큐레이션·사용자 행동·가입·인증·비회원 초대 8개 카테고리 표준어. 새 문서·카피·기획 변경 시 본 사전을 먼저 확인하는 운영 룰. |
@@ -540,12 +537,10 @@ CM-<번호>          공통 팝업·다이얼로그
 [Copy_v1.md]: Copy_v1.md
 [DELTA.md]: DELTA.md
 [Handoff_FAQ_v1.md]: Handoff_FAQ_v1.md
-[Handoff_Footer_v1.md]: Handoff_Footer_v1.md
 [Handoff_LegalReview_Checklist_v1.md]: Handoff_LegalReview_Checklist_v1.md
 [Handoff_Notifications_v1.md]: Handoff_Notifications_v1.md
 [Handoff_Onboarding_v1.md]: Handoff_Onboarding_v1.md
 [Handoff_Privacy_v1.md]: Handoff_Privacy_v1.md
-[Handoff_ServiceIntro_v1.md]: Handoff_ServiceIntro_v1.md
 [Handoff_Signup_Consent_v1.md]: Handoff_Signup_Consent_v1.md
 [Handoff_Event_Consent_v1.md]: Handoff_Event_Consent_v1.md
 [Handoff_Terms_v1.md]: Handoff_Terms_v1.md

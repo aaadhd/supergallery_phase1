@@ -14,7 +14,7 @@
 |---|---|---|---|
 | L-1 | [Handoff_Terms_v1.md](./Handoff_Terms_v1.md) — 이용약관 | 18조 + 부칙 | 변호사 검토용 초안 |
 | L-2 | [Handoff_Privacy_v1.md](./Handoff_Privacy_v1.md) — 개인정보처리방침 | 12개 섹션 | 변호사 + DPO 검토용 초안 |
-| L-3 | [Handoff_Footer_v1.md](./Handoff_Footer_v1.md) — 푸터·사업자 정보 | 별첨 | 회사명·사업자등록번호 채움 필요 |
+| L-3 | [Copy_v1.md §10](./Copy_v1.md#10-글로벌-푸터-원고) — 푸터·사업자 정보 | 별첨 | 회사명·사업자등록번호 채움 필요 |
 | L-4 | [Handoff_Signup_Consent_v1.md](./Handoff_Signup_Consent_v1.md) — 가입 동의 문구 | 별첨 | 마케팅 수신 동의 단일 항목·기본 OFF 결정 반영 |
 
 ---
@@ -242,7 +242,7 @@
 [Handoff_Terms_v1.md]: Handoff_Terms_v1.md
 [Handoff_Privacy_v1.md]: Handoff_Privacy_v1.md
 [Policy §21.0]: Policy_v1.md#21-0-법무-문서-단계별-마감-운영-가드
-[Handoff_Footer_v1.md]: Handoff_Footer_v1.md
+[Copy_v1.md §10]: Copy_v1.md#10-글로벌-푸터-원고
 [Handoff_Signup_Consent_v1.md]: Handoff_Signup_Consent_v1.md
 [Policy §21.2]: Policy_v1.md#21-2-검토-필요-정책-포인트
 [Policy §2.2]: Policy_v1.md#2-2-만-14세-검증
