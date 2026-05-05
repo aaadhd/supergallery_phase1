@@ -1,5 +1,5 @@
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { noticeStore } from '../utils/noticeStore';
+import { useNotices } from '../utils/noticeStore';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
 import { Button } from '../components/ui/button';
@@ -27,7 +27,7 @@ export default function NoticeDetail() {
   const navigate = useNavigate();
   const { t, locale } = useI18n();
   const dateLocale = locale === 'en' ? 'en-US' : 'ko-KR';
-  const published = noticeStore.getPublished();
+  const published = useNotices().filter((n) => n.status === 'published').sort((a, b) => b.createdAt.localeCompare(a.createdAt));
   const notice = id ? published.find((n) => n.id === id) : undefined;
   const idx = notice ? published.indexOf(notice) : -1;
   const prev = idx > 0 ? published[idx - 1] : null;
