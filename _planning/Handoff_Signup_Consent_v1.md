@@ -15,11 +15,11 @@
 
 | 항목 | 결정 | 근거 |
 |---|---|---|
-| 필수 동의 | 이용약관 + 개인정보 수집·이용 + 만 14세 이상 자기 명시 | [Policy §2.2](./Policy_v1.md#policy-2-2) |
-| 선택 동의 | 마케팅 정보 수신 (단일 항목, 기본 OFF) | [Policy §1](./Policy_v1.md#policy-1)·[§21.1 L-4](./Policy_v1.md#policy-21-1) |
-| 발송 채널 | 사용자 보유 식별자 자동 라우팅 (이메일·알림톡·SMS) | [Policy §1.1](./Policy_v1.md#policy-1-1) |
-| 만 14세 미만 차단 | 시스템 차단 + 약관 자기 명시 + 거짓 입력 책임 + 사후 신고 4단 가드 | [Policy §2.2](./Policy_v1.md#policy-2-2) |
-| 이메일·소셜 동일 구성 | 두 흐름 모두 4종 동의 동일 적용 | [Policy §2.1](./Policy_v1.md#policy-2-1) |
+| 필수 동의 | 이용약관 + 개인정보 수집·이용 + 만 14세 이상 자기 명시 | [Policy §2.2](./Policy_v1.md#2-2-만-14세-검증) |
+| 선택 동의 | 마케팅 정보 수신 (단일 항목, 기본 OFF) | [Policy §1](./Policy_v1.md#1-알림-채널-정책)·[§21.1 L-4](./Policy_v1.md#21-1-검토-필요-문서-4종) |
+| 발송 채널 | 사용자 보유 식별자 자동 라우팅 (이메일·알림톡·SMS) | [Policy §1.1](./Policy_v1.md#1-1-채널-라우팅) |
+| 만 14세 미만 차단 | 시스템 차단 + 약관 자기 명시 + 거짓 입력 책임 + 사후 신고 4단 가드 | [Policy §2.2](./Policy_v1.md#2-2-만-14세-검증) |
+| 이메일·소셜 동일 구성 | 두 흐름 모두 4종 동의 동일 적용 | [Policy §2.1](./Policy_v1.md#2-1-가입-옵션과-필수-수집-정보-region-분기-폐기) |
 
 ---
 
@@ -197,7 +197,7 @@
 - [ ] 동의값 저장 시 필수/선택 분리 + 시각·IP 함께 (백엔드 연동 후)
 - [ ] 14세 미만 시스템 차단(생년월일 검증) + 안내 문구 동시 노출
 - [ ] 이메일·소셜 양쪽에 동일한 4종 동의 구성 (동일 톤·동일 항목 수)
-- [ ] 마케팅 동의 보조 설명에 채널 자동 라우팅 명시 ([Policy §1.1](./Policy_v1.md#policy-1-1) 정합)
+- [ ] 마케팅 동의 보조 설명에 채널 자동 라우팅 명시 ([Policy §1.1](./Policy_v1.md#1-1-채널-라우팅) 정합)
 - [ ] ko/en 양측 동일 항목 수·동일 표현 일관성
 
 ---
@@ -218,9 +218,9 @@
 [Copy_v1.md]: Copy_v1.md
 [Handoff_Terms_v1.md]: Handoff_Terms_v1.md
 [Handoff_Privacy_v1.md]: Handoff_Privacy_v1.md
-[Policy §2.2]: Policy_v1.md#policy-2-2
-[Policy §1]: Policy_v1.md#policy-1
-[§21.1 L-4]: Policy_v1.md#policy-21-1
-[Policy §1.1]: Policy_v1.md#policy-1-1
-[Policy §2.1]: Policy_v1.md#policy-2-1
+[Policy §2.2]: Policy_v1.md#2-2-만-14세-검증
+[Policy §1]: Policy_v1.md#1-알림-채널-정책
+[§21.1 L-4]: Policy_v1.md#21-1-검토-필요-문서-4종
+[Policy §1.1]: Policy_v1.md#1-1-채널-라우팅
+[Policy §2.1]: Policy_v1.md#2-1-가입-옵션과-필수-수집-정보-region-분기-폐기
 [Handoff_LegalReview_Checklist_v1.md]: Handoff_LegalReview_Checklist_v1.md

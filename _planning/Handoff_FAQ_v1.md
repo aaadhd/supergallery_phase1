@@ -139,7 +139,7 @@ Invite links are valid for 90 days from issue. If your friend hasn't signed up b
 
 ## 구현 체크
 
-- [ ] FAQ 14문항 전부 렌더링 (Q11~Q14는 [Policy §3](./Policy_v1.md#policy-3) 토큰 모델 정합)
+- [ ] FAQ 14문항 전부 렌더링 (Q11~Q14는 [Policy §3](./Policy_v1.md#3-비회원-초대-정책) 토큰 모델 정합)
 - [ ] 카테고리 필터 6종 동작 (전체·계정·업로드·전시·기타·비회원 초대)
 - [ ] 하단 문의 링크 경로 `/contact`
 - [ ] ko/en 동일 문항 수·동일 카테고리 (누락 검사)
@@ -153,4 +153,4 @@ Invite links are valid for 90 days from issue. If your friend hasn't signed up b
 | v2 | 2026-05-01 | PM × Claude | 본문 보강 — 14문항 ko/en 전문 게재. 카테고리별 묶음(계정/업로드/전시/기타/비회원 초대). **Q6 콘텐츠 결함 정정** — Phase 1엔 없는 회원용 비공개 토글을 약속하던 문장 ko/en 삭제. |
 <!-- 인용 정의 -->
 [Copy_v1.md]: Copy_v1.md
-[Policy §3]: Policy_v1.md#policy-3
+[Policy §3]: Policy_v1.md#3-비회원-초대-정책

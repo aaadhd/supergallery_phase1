@@ -7,7 +7,7 @@
 > **단일 소스**
 > - 화면·알림 문자열은 [Copy_v1.md](./Copy_v1.md) 알림·검수·신고·초대·Pick 등 해당 영역이 단일 소스다.
 > - 수정 시 Copy를 먼저 갱신하고 본 문서를 같은 작업 범위에서 맞춘다.
-> - 일부 알림은 법적 의무 알림 채널(이메일)을 따른다 — [Policy §1](./Policy_v1.md#policy-1) 정합 확인 필수.
+> - 일부 알림은 법적 의무 알림 채널(이메일)을 따른다 — [Policy §1](./Policy_v1.md#1-알림-채널-정책) 정합 확인 필수.
 
 ---
 
@@ -15,10 +15,10 @@
 
 | 항목 | 결정 | 근거 |
 |---|---|---|
-| 채널 라우팅 | 사용자 보유 식별자 기준 자동 — 한국 전화번호 보유자는 카카오 알림톡(SMS 폴백), 그 외는 이메일 | [Policy §1.1](./Policy_v1.md#policy-1-1) |
-| 법적 의무 알림 (약관·처리방침 변경) | **이메일 단일 채널** | [Policy §1.1](./Policy_v1.md#policy-1-1) |
-| 마케팅 알림 | 단일 항목 동의(기본 OFF), 동의 시 보유 채널 자동 라우팅 | [Policy §21.1 L-4](./Policy_v1.md#policy-21-1) |
-| Phase 1 구현 상태 | 인박스(USR-NTF-01) 동작. 외부 채널은 백엔드 연동 후 활성화 | [Policy §1.2](./Policy_v1.md#policy-1-2) |
+| 채널 라우팅 | 사용자 보유 식별자 기준 자동 — 한국 전화번호 보유자는 카카오 알림톡(SMS 폴백), 그 외는 이메일 | [Policy §1.1](./Policy_v1.md#1-1-채널-라우팅) |
+| 법적 의무 알림 (약관·처리방침 변경) | **이메일 단일 채널** | [Policy §1.1](./Policy_v1.md#1-1-채널-라우팅) |
+| 마케팅 알림 | 단일 항목 동의(기본 OFF), 동의 시 보유 채널 자동 라우팅 | [Policy §21.1 L-4](./Policy_v1.md#21-1-검토-필요-문서-4종) |
+| Phase 1 구현 상태 | 인박스(USR-NTF-01) 동작. 외부 채널은 백엔드 연동 후 활성화 | [Policy §1.2](./Policy_v1.md#1-2-phase-1-구현-상태) |
 | 시니어 친화 톤 | 격식체 행정 어휘 폐기, 친근체 + 다음 행동 안내 | UX 톤·친근체 규칙은 [Copy 문서](Copy_v1.md)가 단일 소스 |
 
 ---
@@ -81,7 +81,7 @@
 - 한국어: '{title}' 전시가 검수에 들어갔어요. 보통 1영업일 안에 알림으로 결과를 알려드릴게요.
 - English: Your exhibition '{title}' is now under review. We'll let you know the result within about 1 business day.
 
-→ 발행 직후 1건. 검수 SLA([Policy §22.1](./Policy_v1.md#policy-22-1)) 영업일 24시간 인지.
+→ 발행 직후 1건. 검수 SLA([Policy §22.1](./Policy_v1.md#22-1-검수-sla)) 영업일 24시간 인지.
 
 ### 2.2 검수 승인 (작가)
 
@@ -93,14 +93,14 @@
 - 한국어: 함께 올라간 '{title}' 전시가 공개됐어요. 둘러보기 피드에서 확인하실 수 있어요.
 - English: '{title}' that you joined has been published. You can find it in the Browse feed.
 
-→ 검수 신청 단계에서 미리 본인 작품을 클레임한 회원 공동 작가에게 정보용 1건. ([Policy §3.3](./Policy_v1.md#policy-3-3))
+→ 검수 신청 단계에서 미리 본인 작품을 클레임한 회원 공동 작가에게 정보용 1건. ([Policy §3.3](./Policy_v1.md#3-3-자동-연결-후-알림과-동시-선택))
 
 ### 2.4 검수 반려 (작가)
 
 - 한국어: 올리신 작품이 검수를 통과하지 못했어요. 사유: {reason}
 - English: Your upload was not approved. Reason: {reason}
 
-→ 반려 사유 1종 필수 기록 ([Policy §23.2](./Policy_v1.md#policy-23-2)). 사용자는 편집 후 재검수 요청 가능.
+→ 반려 사유 1종 필수 기록 ([Policy §23.2](./Policy_v1.md#23-2-검수-상태-전환)). 사용자는 편집 후 재검수 요청 가능.
 
 ### 2.5 새 전시 알림 (팔로워에게)
 
@@ -113,14 +113,14 @@
 
 ## 3) 신고 알림
 
-신고 처리 결과를 신고 대상 작가·신고자에게 양방향 안내. 자동 비공개 트리거는 [Policy §12.2 v2.20](./Policy_v1.md#policy-12-2)에 따라 폐기 — 모든 처리는 운영팀이 직접 판정.
+신고 처리 결과를 신고 대상 작가·신고자에게 양방향 안내. 자동 비공개 트리거는 [Policy §12.2 v2.20](./Policy_v1.md#12-2-폐기-자동-비공개-정책)에 따라 폐기 — 모든 처리는 운영팀이 직접 판정.
 
 ### 3.1 작품 삭제 (작가에게)
 
 - 한국어: 회원님의 전시 '{title}'이 신고 처리로 삭제됐어요. 사유: {reason}.
 - English: Your exhibition '{title}' has been removed following a report. Reason: {reason}.
 
-→ 사유 변수는 [Policy §12.1 v2.20](./Policy_v1.md#policy-12-1) 4종(저작권 침해 / 위법 콘텐츠 / 청소년 유해 / 어뷰즈) 중 운영자가 선택한 라벨. 카피 키 ko/en 단일 문자열에 변수 주입.
+→ 사유 변수는 [Policy §12.1 v2.20](./Policy_v1.md#12-1-신고-처리-액션-어드민) 4종(저작권 침해 / 위법 콘텐츠 / 청소년 유해 / 어뷰즈) 중 운영자가 선택한 라벨. 카피 키 ko/en 단일 문자열에 변수 주입.
 
 ### 3.2 비공개 전환 (작가에게)
 
@@ -190,14 +190,14 @@
 
 ## 5) 초대·자동 연결 알림
 
-비회원 초대 토큰 모델([Policy §3](./Policy_v1.md#policy-3)) 흐름.
+비회원 초대 토큰 모델([Policy §3](./Policy_v1.md#3-비회원-초대-정책)) 흐름.
 
 ### 5.1 친구가 본인 자리 등록 (작가에게)
 
 - 한국어: '{name}' 님이 '{title}' 전시에 본인 자리를 등록했어요. 잘못 연결됐다면 전시 편집에서 풀 수 있어요.
 - English: '{name}' claimed their slot in '{title}'. If it's the wrong link, you can unlink it from the exhibition editor.
 
-→ 친구가 가입 직후 "본인 작품 찾기"에서 자리 클레임 시 작가에게 1건. 정보용. 별도 액션 진입점 없음(잘못 연결됐을 때 작가가 마이페이지 슬롯 편집으로 처리, [Policy §3.5](./Policy_v1.md#policy-3-5)).
+→ 친구가 가입 직후 "본인 작품 찾기"에서 자리 클레임 시 작가에게 1건. 정보용. 별도 액션 진입점 없음(잘못 연결됐을 때 작가가 마이페이지 슬롯 편집으로 처리, [Policy §3.5](./Policy_v1.md#3-5-잘못-연결됐을-때)).
 
 ---
 
@@ -232,9 +232,9 @@
 | 신고 기각(신고자) | ✓ | — | 자동 라우팅 | — | 신고자에게 결과 |
 | Pick 선정 | ✓ | 자동 라우팅 | 동의 시 | 동의 시 | Pick 선정 시 |
 | 초대 클레임(작가) | ✓ | 자동 라우팅 | 자동 라우팅 | 자동 라우팅 | 친구가 클레임했을 때 |
-| 약관·처리방침 변경 | — | — | **이메일 단일 채널** | — | [Policy §1.1](./Policy_v1.md#policy-1-1) 법적 의무 |
+| 약관·처리방침 변경 | — | — | **이메일 단일 채널** | — | [Policy §1.1](./Policy_v1.md#1-1-채널-라우팅) 법적 의무 |
 
-> **자동 라우팅 규칙** ([Policy §1.1](./Policy_v1.md#policy-1-1))
+> **자동 라우팅 규칙** ([Policy §1.1](./Policy_v1.md#1-1-채널-라우팅))
 > - 한국 전화번호 보유자: 카카오 알림톡 우선, 실패 시 SMS 폴백
 > - 그 외: 이메일
 > - 마케팅 알림은 동의 시에만 발송, 동의 채널 분리 없이 보유 식별자 자동 라우팅
@@ -271,9 +271,9 @@ ko/en 양측 동일 톤.
 - [ ] 시간 표기 4종 (방금·n분·n시간·n일)
 - [ ] 일괄 처리 확인 다이얼로그 2종 (모두 읽음·읽은 알림 삭제)
 - [ ] 검수 알림 5종 발송 트리거 정합 (제출·승인·승인-친구·반려·신규작품)
-- [ ] 신고 알림 Policy §12.1.3 표 4행과 발송 트리거 정합 (삭제·비공개 유지·기각(신고자)·기각→복원). 자동 비공개 알림 행은 [Policy §12.2 v2.20](./Policy_v1.md#policy-12-2) 트리거 폐기로 함께 폐기
+- [ ] 신고 알림 Policy §12.1.3 표 4행과 발송 트리거 정합 (삭제·비공개 유지·기각(신고자)·기각→복원). 자동 비공개 알림 행은 [Policy §12.2 v2.20](./Policy_v1.md#12-2-폐기-자동-비공개-정책) 트리거 폐기로 함께 폐기
 - [ ] 채널 라우팅 — 사용자 보유 연락 수단별 자동 판정 (한국 전화 → 알림톡, 그 외 → 이메일)
-- [ ] 법적 의무 알림(약관·처리방침 변경)은 이메일 단일 채널 ([Policy §1.1](./Policy_v1.md#policy-1-1))
+- [ ] 법적 의무 알림(약관·처리방침 변경)은 이메일 단일 채널 ([Policy §1.1](./Policy_v1.md#1-1-채널-라우팅))
 - [ ] 시니어 친화 톤(친근체) ko/en 양측 일관 적용
 - [ ] Phase 1 인박스 동작·외부 채널은 백엔드 연동 후 활성화
 
@@ -282,7 +282,7 @@ ko/en 양측 동일 톤.
 ## 11) 법무·운영 검토 연결
 
 - **법적 의무 알림** — 약관·개인정보처리방침 변경 시 이메일 단일 채널 발송. [Handoff_Privacy §12](./Handoff_Privacy_v1.md#12-개정-통지) 개정 통지 + [Handoff_Terms_v1.md 제3조](Handoff_Terms_v1.md) 약관 변경 통지와 정합.
-- **마케팅 동의 로그** — 마케팅 알림 발송 전 동의 보관 + 발송 이력 추적 ([Handoff_LegalReview_Checklist §3 LP-9](./Handoff_LegalReview_Checklist_v1.md#lp-9-광고마케팅-수신-동의-로그-보관)).
+- **마케팅 동의 로그** — 마케팅 알림 발송 전 동의 보관 + 발송 이력 추적 ([Handoff_LegalReview_Checklist §3 LP-9](./Handoff_LegalReview_Checklist_v1.md#lp-9-광고-마케팅-수신-동의-로그-보관)).
 - **검수·신고 처리 알림 톤** — 명예훼손·표현 자유 분쟁 시 회사의 면책 근거 ([Handoff_LegalReview_Checklist §3 LP-6](./Handoff_LegalReview_Checklist_v1.md#lp-6-신고-처리-3액션의-사용자-고지-문구-통일)).
 - **3자 처리자** — 카카오 알림톡·이메일 발송업체는 [Handoff_Privacy §5](./Handoff_Privacy_v1.md#5-개인정보-처리위탁) 위탁 처리 표에 등록.
 
@@ -298,18 +298,18 @@ ko/en 양측 동일 톤.
 | v2 | 2026-05-01 | PM × Codex | 인박스 카테고리 표기 정합 |
 | v1 | 2026-05-01 | PM × Claude | 최초 작성(알림 prose·채널 매트릭스·법무 연결) |<!-- 인용 정의 -->
 [Copy_v1.md]: Copy_v1.md
-[Policy §1]: Policy_v1.md#policy-1
-[Policy §1.1]: Policy_v1.md#policy-1-1
-[Policy §21.1 L-4]: Policy_v1.md#policy-21-1
-[Policy §1.2]: Policy_v1.md#policy-1-2
-[Policy §22.1]: Policy_v1.md#policy-22-1
-[Policy §22.2]: Policy_v1.md#policy-22-2
-[Policy §3.3]: Policy_v1.md#policy-3-3
-[Policy §23.2]: Policy_v1.md#policy-23-2
-[Policy §12.2]: Policy_v1.md#policy-12-2
-[Policy §3]: Policy_v1.md#policy-3
-[Policy §3.5]: Policy_v1.md#policy-3-5
+[Policy §1]: Policy_v1.md#1-알림-채널-정책
+[Policy §1.1]: Policy_v1.md#1-1-채널-라우팅
+[Policy §21.1 L-4]: Policy_v1.md#21-1-검토-필요-문서-4종
+[Policy §1.2]: Policy_v1.md#1-2-phase-1-구현-상태
+[Policy §22.1]: Policy_v1.md#22-1-검수-sla
+[Policy §22.2]: Policy_v1.md#22-2-신고-처리-약속
+[Policy §3.3]: Policy_v1.md#3-3-자동-연결-후-알림과-동시-선택
+[Policy §23.2]: Policy_v1.md#23-2-검수-상태-전환
+[Policy §12.2]: Policy_v1.md#12-2-폐기-자동-비공개-정책
+[Policy §3]: Policy_v1.md#3-비회원-초대-정책
+[Policy §3.5]: Policy_v1.md#3-5-잘못-연결됐을-때
 [Handoff_Privacy §12]: Handoff_Privacy_v1.md#12-개정-통지
-[Handoff_LegalReview_Checklist §3 LP-9]: Handoff_LegalReview_Checklist_v1.md#lp-9-광고마케팅-수신-동의-로그-보관
+[Handoff_LegalReview_Checklist §3 LP-9]: Handoff_LegalReview_Checklist_v1.md#lp-9-광고-마케팅-수신-동의-로그-보관
 [Handoff_LegalReview_Checklist §3 LP-6]: Handoff_LegalReview_Checklist_v1.md#lp-6-신고-처리-3액션의-사용자-고지-문구-통일
 [Handoff_Privacy §5]: Handoff_Privacy_v1.md#5-개인정보-처리위탁

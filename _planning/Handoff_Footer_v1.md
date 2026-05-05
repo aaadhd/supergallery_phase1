@@ -7,7 +7,7 @@
 > **단일 소스**
 > - 화면 문자열(i18n)은 [Copy_v1.md](./Copy_v1.md) 푸터 영역이 단일 소스다.
 > - 본 문서와 Copy를 같은 의미로 유지하고, 수정 시 Copy를 먼저 갱신한다.
-> - **사업자 정보 값은 placeholder**다. 회사 확정 시 [Handoff_LegalReview_Checklist §2](./Handoff_LegalReview_Checklist_v1.md#2-사업자-정보-11종)와 함께 일괄 갱신.
+> - **사업자 정보 값은 placeholder**다. 회사 확정 시 [Handoff_LegalReview_Checklist §2](./Handoff_LegalReview_Checklist_v1.md#2-회사가-확정해야-하는-정보-변호사-검토-전-단계)와 함께 일괄 갱신.
 
 ---
 
@@ -43,7 +43,7 @@
 
 ## 2) 사업자 정보 (placeholder — 회사 확정 후 채움)
 
-> ⚠️ 아래 값 컬럼은 **placeholder**다. 회사 확정 후 본 문서와 [Copy_v1.md](./Copy_v1.md)를 동시 갱신. 변호사 검토 단계에는 [Handoff_LegalReview_Checklist §2](./Handoff_LegalReview_Checklist_v1.md#2-사업자-정보-11종)의 11종 정보로 일괄 채움.
+> ⚠️ 아래 값 컬럼은 **placeholder**다. 회사 확정 후 본 문서와 [Copy_v1.md](./Copy_v1.md)를 동시 갱신. 변호사 검토 단계에는 [Handoff_LegalReview_Checklist §2](./Handoff_LegalReview_Checklist_v1.md#2-회사가-확정해야-하는-정보-변호사-검토-전-단계)의 11종 정보로 일괄 채움.
 
 ### 한국어 표
 
@@ -100,14 +100,14 @@
 - [ ] 사업자 정보 토글 펼침/접힘 + 라벨·값 한·영 분기
 - [ ] 법정 고지 ko/en 양측 노출
 - [ ] 쿠키 설정 클릭 시 CM-05 배너 재진입
-- [ ] 사업자 정보 11종 placeholder는 회사 확정 후 일괄 갱신([Handoff_LegalReview_Checklist §2](./Handoff_LegalReview_Checklist_v1.md#2-사업자-정보-11종) 정합)
+- [ ] 사업자 정보 11종 placeholder는 회사 확정 후 일괄 갱신([Handoff_LegalReview_Checklist §2](./Handoff_LegalReview_Checklist_v1.md#2-회사가-확정해야-하는-정보-변호사-검토-전-단계) 정합)
 - [ ] 데모 QA 진입점은 프로덕션에서 비노출
 
 ---
 
 ## 6) 법무 검토 연결
 
-- 사업자 정보 11종 — [Handoff_LegalReview_Checklist §2](./Handoff_LegalReview_Checklist_v1.md#2-사업자-정보-11종) "회사가 확정해야 하는 정보" 표와 1:1 매핑
+- 사업자 정보 11종 — [Handoff_LegalReview_Checklist §2](./Handoff_LegalReview_Checklist_v1.md#2-회사가-확정해야-하는-정보-변호사-검토-전-단계) "회사가 확정해야 하는 정보" 표와 1:1 매핑
 - 법정 고지 — 정보통신망법 §50의2 근거
 - DPO 표기 — [Handoff_Privacy §10](./Handoff_Privacy_v1.md#10-개인정보-보호책임자-dpo)과 정합
 
@@ -121,5 +121,5 @@
 | v1 | 2026-04-26 | PM | 최초 작성 — 적용 키 목록 + 링크 경로 + 구현 체크. 본문은 Copy 단일 소스 위임. |
 <!-- 인용 정의 -->
 [Copy_v1.md]: Copy_v1.md
-[Handoff_LegalReview_Checklist §2]: Handoff_LegalReview_Checklist_v1.md#2-사업자-정보-11종
+[Handoff_LegalReview_Checklist §2]: Handoff_LegalReview_Checklist_v1.md#2-회사가-확정해야-하는-정보-변호사-검토-전-단계
 [Handoff_Privacy §10]: Handoff_Privacy_v1.md#10-개인정보-보호책임자-dpo

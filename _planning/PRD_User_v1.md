@@ -8,7 +8,6 @@
 
 ---
 
-<a id="0-문서-사용-안내"></a>
 
 ## 0. 문서 사용 안내
 
@@ -50,7 +49,7 @@
 |---|---|
 | 기준 해상도 | 모바일 375px 우선 · 데스크톱 반응형 |
 | 다국어 | KO/EN 기본. 고정 폭 금지, i18n 키 분리 |
-| 터치 타깃 | 최소 44×44px ([Policy §19.1](./Policy_v1.md#policy-19-1)) |
+| 터치 타깃 | 최소 44×44px ([Policy §19.1](./Policy_v1.md#19-1-필수-원칙)) |
 | 입력 폰트 | ≥ 16px (iOS 줌 방지) |
 | 확인 다이얼로그 | 공통 다이얼로그 `CM-01` 사용. 브라우저 네이티브 confirm 금지 |
 | 인증 | 소셜 3종(카카오/구글/애플) + 이메일. Phase 1 인증은 모의 |
@@ -88,11 +87,11 @@
 | 최근 검색어 | 10건 (계정별/게스트 분리) |
 | 응모전 메일 구독 중복 방지 | 동일 이메일 전역 1회(서비스 단위 목록, 응모전별 분리 없음) |
 | 업로드 이미지 | 1~10장, 장당 원본 10MB 상한(클라이언트 5MB 자동 리사이즈) |
-| 전시명·작품명·그룹명 | 20자 ([Policy §9](./Policy_v1.md#policy-9)) |
-| 닉네임 | 2~20자, 비속어 불가, 전역 unique. 자율 변경 불가 — 1:1 문의 채널 ([Policy §9.4](./Policy_v1.md#policy-9-4)·[USR-PRF-02](./PRD_User_v1.md#usr-prf-02--프로필-편집-모달) SSoT) |
-| 바이오·한 줄 소개 | 바이오 200자, 한 줄 소개 20자 ([Policy §27.1](./Policy_v1.md#policy-27-1)) |
-| 신고 사유 본문(자유 메시지) | 200자 ([Policy §12.0](./Policy_v1.md#policy-12-0)) |
-| 문의 본문 | 1000자 ([Policy §20](./Policy_v1.md#policy-20)) |
+| 전시명·작품명·그룹명 | 20자 ([Policy §9](./Policy_v1.md#9-작품명-전시명-그룹명-정책)) |
+| 닉네임 | 2~20자, 비속어 불가, 전역 unique. 자율 변경 불가 — 1:1 문의 채널 ([Policy §9.4](./Policy_v1.md#9-4-닉네임)·[USR-PRF-02](./PRD_User_v1.md#usr-prf-02-프로필-편집-모달) SSoT) |
+| 바이오·한 줄 소개 | 바이오 200자, 한 줄 소개 20자 ([Policy §27.1](./Policy_v1.md#27-1-프로필-편집-usr-prf-02)) |
+| 신고 사유 본문(자유 메시지) | 200자 ([Policy §12.0](./Policy_v1.md#12-0-신고-사유)) |
+| 문의 본문 | 1000자 ([Policy §20](./Policy_v1.md#20-확정-수치-종합표)) |
 
 #### 0.4.3 인터랙션 타이밍
 
@@ -103,9 +102,8 @@
 | 토스트 지속 | 3s (성공·정보), 5s (에러·경고) |
 | 모달 진입 애니메이션 | 200ms (시스템 모션 줄이기 설정 시 0ms) |
 | 배너 자동 회전 주기 | 5s (사용자 터치 중 일시정지) |
-| 로그인 세션 유지 | [Policy §2.4](./Policy_v1.md#policy-2-4) — Phase 1은 토큰 영속(기기 교체·명시적 로그아웃 시까지), 런칭 전 백엔드 연동 후 자동 갱신·액세스 토큰 분리 정책 확정 |
+| 로그인 세션 유지 | [Policy §2.4](./Policy_v1.md#2-4-세션-자동-로그인) — Phase 1은 토큰 영속(기기 교체·명시적 로그아웃 시까지), 런칭 전 백엔드 연동 후 자동 갱신·액세스 토큰 분리 정책 확정 |
 
-<a id="044-접근성시니어-친화-ui-사양-ssot"></a>
 
 #### 0.4.4 접근성·시니어 친화 UI 사양 (SSoT)
 
@@ -128,7 +126,6 @@
 | 401 만료 | 로그인 모달 오픈, 재시도 후 원 액션 자동 실행 |
 | 413 파일 과대 | 업로드 전 클라이언트 리사이즈로 예방. 서버 거부 시 원인 토스트 |
 
-<a id="05-공통-전역-동작"></a>
 
 ### 0.5 공통 전역 동작
 
@@ -179,12 +176,11 @@
 
 #### 의존
 - 엔티티: USER_PROFILE, AUTH_SESSION
-- 정책: [Policy §2.4](./Policy_v1.md#policy-2-4)
+- 정책: [Policy §2.4](./Policy_v1.md#2-4-세션-자동-로그인)
 - 연결 화면: USR-BRW-01, USR-AUT-02
 
 ---
 
-<a id="usr-aut-02--로그인가입-시트-authsheet"></a>
 ### USR-AUT-02 · 로그인·가입 시트 (AuthSheet)
 
 **목적**: 로그인 + 신규 가입 진입점을 하나의 시트에 통합. 가입·로그인 통합 소셜 플로우("계속하기") + 이메일 가입 CTA + 하단 로그인 링크.
@@ -231,12 +227,11 @@
 
 #### 의존
 - 엔티티: USER_PROFILE, AUTH_SESSION
-- 정책: [Policy §2.1](./Policy_v1.md#policy-2-1)
+- 정책: [Policy §2.1](./Policy_v1.md#2-1-가입-옵션과-필수-수집-정보-region-분기-폐기)
 - 연결 화면: USR-BRW-01, USR-AUT-02b, USR-AUT-03·05·09
 
 ---
 
-<a id="usr-aut-02b--이메일-로그인-매직-링크-요청"></a>
 
 ### USR-AUT-02b · 이메일 로그인 (매직 링크 요청)
 
@@ -270,12 +265,11 @@
 
 #### 의존
 - 엔티티: USER_PROFILE, AUTH_SESSION, MAGIC_LINK_TOKEN
-- 정책: [Policy §2.5](./Policy_v1.md#policy-2-5)
+- 정책: [Policy §2.5](./Policy_v1.md#2-5-이메일-인증-링크-매직-링크-가입-로그인)
 - 연결 화면: USR-AUT-08(콜백), USR-BRW-01(redirect)
 
 ---
 
-<a id="usr-aut-03--이메일-가입-step-1-이메일-입력--매직-링크"></a>
 ### USR-AUT-03 · 이메일 가입 Step 1 (이메일 입력 → 매직 링크)
 
 **목적**: 이메일 1회 입력으로 가입 인증 링크 발송. 비밀번호 수집 없음.
@@ -309,12 +303,11 @@
 
 #### 의존
 - 엔티티: USER_PROFILE, MAGIC_LINK_TOKEN
-- 정책: [Policy §2.5](./Policy_v1.md#policy-2-5)
+- 정책: [Policy §2.5](./Policy_v1.md#2-5-이메일-인증-링크-매직-링크-가입-로그인)
 - 연결 화면: USR-AUT-08(콜백), USR-AUT-04(검증 후 Step 2)
 
 ---
 
-<a id="usr-aut-04--이메일-가입-step-2-닉네임생년월일"></a>
 ### USR-AUT-04 · 이메일 가입 Step 2 (닉네임·생년월일)
 
 **목적**: 매직 링크 검증 이후 닉네임·생년월일을 받는다(이메일 가입 1차 정보).
@@ -331,7 +324,7 @@
 #### 처리
 1. `/signup?step=2` 직접 진입 시 단말에 임시 보관한 이메일이 없으면 Step 1로 되돌림(미인증 상태 방지).
 2. 닉네임 실시간 카운터·비속어 필터·전역 unique 검사 (활성 회원·탈퇴 잠금·운영팀 변경 이력 모두 포함).
-3. 생년월일 만 14세 검증([Policy §2.2](./Policy_v1.md#policy-2-2)).
+3. 생년월일 만 14세 검증([Policy §2.2](./Policy_v1.md#2-2-만-14세-검증)).
 4. "다음" 클릭 → USR-AUT-05(Step 3 약관 동의)로 이동.
 
 #### 수용기준
@@ -347,12 +340,11 @@
 
 #### 의존
 - 엔티티: USER_PROFILE
-- 정책: [Policy §2.5](./Policy_v1.md#policy-2-5) · [Policy §2.2](./Policy_v1.md#policy-2-2) · [Policy §9.4](./Policy_v1.md#policy-9-4) · [Policy §4.4](./Policy_v1.md#policy-4-4)
+- 정책: [Policy §2.5](./Policy_v1.md#2-5-이메일-인증-링크-매직-링크-가입-로그인) · [Policy §2.2](./Policy_v1.md#2-2-만-14세-검증) · [Policy §9.4](./Policy_v1.md#9-4-닉네임) · [Policy §4.4](./Policy_v1.md#4-4-재가입)
 - 연결 화면: USR-AUT-08(선행) · USR-AUT-05(다음)
 
 ---
 
-<a id="usr-aut-05--회원가입-step-3-약관-동의"></a>
 ### USR-AUT-05 · 회원가입 Step 3 (약관 동의)
 
 **목적**: 가입 완료 직전 마지막 게이트. 필수 약관 3종 동의 + 선택 마케팅 동의를 받고 가입을 완결한다.
@@ -365,7 +357,7 @@
   - ② 개인정보처리방침에 동의
   - ③ "만 14세 이상이에요" 자기 명시
 - **선택 1종** (회색 라벨)
-  - ④ 마케팅 정보 수신 동의 (단일 항목, 채널 자동 라우팅 — 보유한 식별자 기준 이메일·알림톡·문자 자동, [Policy §1.1](./Policy_v1.md#policy-1-1))
+  - ④ 마케팅 정보 수신 동의 (단일 항목, 채널 자동 라우팅 — 보유한 식별자 기준 이메일·알림톡·문자 자동, [Policy §1.1](./Policy_v1.md#1-1-채널-라우팅))
 
 #### 처리
 1. **"필수 약관 모두 동의" 마스터 토글** — 필수 3종만 일괄 on/off. 마케팅은 별도 명시 동의 유지(다크 패턴 회피). indeterminate 상태 지원(필수 일부만 체크 시).
@@ -385,8 +377,8 @@
 - EC-02: `/signup?step=3` 직접 진입 + Step 2 미완 / When 로드 / Then Step 1로 리다이렉트(미인증 방지).
 
 #### 의존
-- 엔티티: USER_PROFILE, CONSENT_LOG (마케팅 동의 보관 — 런칭 전 백엔드 연동 후 운영 보강)
-- 정책: [Policy §2.5](./Policy_v1.md#policy-2-5) · [Policy §2.2](./Policy_v1.md#policy-2-2) · [Policy §1.1](./Policy_v1.md#policy-1-1) · [Policy §7](./Policy_v1.md#policy-7) · [Policy §21.1 L-4](./Policy_v1.md#policy-21-1)
+- 엔티티: USER_PROFILE, 동의 이력 (마케팅 동의 보관 — 런칭 전 백엔드 연동 후 운영 보강)
+- 정책: [Policy §2.5](./Policy_v1.md#2-5-이메일-인증-링크-매직-링크-가입-로그인) · [Policy §2.2](./Policy_v1.md#2-2-만-14세-검증) · [Policy §1.1](./Policy_v1.md#1-1-채널-라우팅) · [Policy §7](./Policy_v1.md#7-포인트-ap-정책) · [Policy §21.1 L-4](./Policy_v1.md#21-1-검토-필요-문서-4종)
 - 연결 화면: USR-AUT-04(이전) · USR-AUT-09(다음 — 온보딩 환영) · USR-INF-05·USR-INF-06(약관·개인정보 보기)
 
 ---
@@ -397,7 +389,6 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 
 ---
 
-<a id="usr-aut-08--이메일-매직-링크-콜백"></a>
 ### USR-AUT-08 · 이메일 매직 링크 콜백
 
 **목적**: 메일 링크(`/auth/verify?token=…`)를 검증해 로그인 세션 발급 또는 가입 이어가기를 처리.
@@ -423,12 +414,11 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 
 #### 의존
 - 엔티티: AUTH_SESSION, MAGIC_LINK_TOKEN
-- 정책: [Policy §2.5](./Policy_v1.md#policy-2-5)
+- 정책: [Policy §2.5](./Policy_v1.md#2-5-이메일-인증-링크-매직-링크-가입-로그인)
 - 연결 화면: USR-AUT-02b, USR-AUT-04
 
 ---
 
-<a id="usr-aut-06--소셜-최초-가입-모달"></a>
 ### USR-AUT-06 · 소셜 최초 가입 모달
 
 **목적**: 소셜 인증 성공 시 약관 동의·닉네임을 수집해 Artier 가입을 완결한다.
@@ -437,13 +427,13 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 
 #### 입력
 - **소셜 제공자 기본 정보** (제공자별 필수 동의 항목 자동 수신, prefill, 사용자 수정 가능)
-  - **카카오**: 이메일·표시명·**전화번호·생년월일** (카카오 동의 항목 필수 동의 전제 — [Policy §31 N-14](./Policy_v1.md#policy-31))
+  - **카카오**: 이메일·표시명·**전화번호·생년월일** (카카오 동의 항목 필수 동의 전제 — [Policy §31 N-14](./Policy_v1.md#31-런칭-전-미해결-항목))
   - **구글**: 이메일·표시명
   - **애플**: 이메일(릴레이 가능)·표시명
 - **닉네임** (필수, 2~20자, 비속어 불가, 전역 unique 검사) — 소셜 표시명 prefill, 글자 수 카운터 노출(USR-AUT-04 동일 패턴)
 - **약관 동의 4종** (USR-AUT-05와 동일 구성)
   - 필수: 이용약관·개인정보처리방침·"만 14세 이상이에요"
-  - 선택: 마케팅 정보 수신 동의(단일 항목, 채널 자동 라우팅 — [Policy §1.1](./Policy_v1.md#policy-1-1))
+  - 선택: 마케팅 정보 수신 동의(단일 항목, 채널 자동 라우팅 — [Policy §1.1](./Policy_v1.md#1-1-채널-라우팅))
 
 #### 처리
 1. 소셜 OAuth 응답에서 제공자별 필수 동의 항목 수신: 카카오는 전화번호·생년월일도 자동 적재(만 14세 검증 자동 통과). 그 외는 이메일만 자동, 생년월일은 USR-AUT-10 온보딩에서 추가 수집. 소셜 표시명을 닉네임으로 prefill + 사용자 수정 가능. 비속어·중복 시 인라인 에러.
@@ -461,16 +451,15 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 
 #### 엣지케이스
 - EC-01: 모달 외부 탭·ESC → 닫지 않음. 취소는 상단 X만 허용(소셜 인증 세션이 이미 존재하므로).
-- EC-02: 소셜 제공자가 이메일을 제공하지 않은 경우 — Step 1 USR-AUT-10에서 이메일 추가 입력 분기([Policy §2.1](./Policy_v1.md#policy-2-1)).
+- EC-02: 소셜 제공자가 이메일을 제공하지 않은 경우 — Step 1 USR-AUT-10에서 이메일 추가 입력 분기([Policy §2.1](./Policy_v1.md#2-1-가입-옵션과-필수-수집-정보-region-분기-폐기)).
 
 #### 의존
 - 엔티티: USER_PROFILE, SOCIAL_PROVIDER_FLAG
-- 정책: [Policy §2.1](./Policy_v1.md#policy-2-1) · [Policy §2.3](./Policy_v1.md#policy-2-3) · [Policy §1.1](./Policy_v1.md#policy-1-1) · [Policy §7](./Policy_v1.md#policy-7) · [Policy §9.4](./Policy_v1.md#policy-9-4)
+- 정책: [Policy §2.1](./Policy_v1.md#2-1-가입-옵션과-필수-수집-정보-region-분기-폐기) · [Policy §2.3](./Policy_v1.md#2-3-중복-가입-차단) · [Policy §1.1](./Policy_v1.md#1-1-채널-라우팅) · [Policy §7](./Policy_v1.md#7-포인트-ap-정책) · [Policy §9.4](./Policy_v1.md#9-4-닉네임)
 - 연결 화면: USR-AUT-02(선행) · USR-AUT-09(다음 — 온보딩 환영)
 
 ---
 
-<a id="usr-aut-09--온보딩-step-0--환영"></a>
 ### USR-AUT-09 · 온보딩 Step 0 — 환영
 
 **목적**: 가입 완료 직후 첫 화면. 시니어 사용자에게 따뜻한 환영 메시지로 가입 성공을 명확히 전달하고, 다단 온보딩의 시작점임을 인식시킨다.
@@ -495,7 +484,7 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 
 #### 의존
 - 엔티티: USER_PROFILE
-- 정책: [Policy §6](./Policy_v1.md#policy-6) · [Policy §19](./Policy_v1.md#policy-19)
+- 정책: [Policy §6](./Policy_v1.md#6-phase-정의) · [Policy §19](./Policy_v1.md#19-접근성-시니어-친화-정책)
 - 연결 화면: USR-AUT-05·USR-AUT-06(선행) · USR-AUT-09b(다음)
 
 ---
@@ -532,12 +521,11 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 
 #### 의존
 - 엔티티: 없음 (정보 전달 단계)
-- 정책: [Policy §6](./Policy_v1.md#policy-6) · [Policy §19](./Policy_v1.md#policy-19)
+- 정책: [Policy §6](./Policy_v1.md#6-phase-정의) · [Policy §19](./Policy_v1.md#19-접근성-시니어-친화-정책)
 - 연결 화면: USR-AUT-09(이전) · USR-AUT-10(다음)
 
 ---
 
-<a id="usr-aut-10--온보딩-step-1--프로필-입력"></a>
 ### USR-AUT-10 · 온보딩 Step 1 — 프로필 입력
 
 **목적**: 가입 경로별로 분기된 안내와 함께 닉네임·프로필 사진·(소셜 가입자) 이메일·관심사를 받아 회원 프로필을 완성한다. 가입 단계에서 받은 닉네임·프로필 이미지를 prefill해 시니어가 "왜 또 입력하지?" 멈추지 않게 한다.
@@ -588,12 +576,11 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 
 #### 의존
 - 엔티티: USER_PROFILE, INVITE_TOKEN(분기 판별)
-- 정책: [Policy §2](./Policy_v1.md#policy-2) · [Policy §2.1](./Policy_v1.md#policy-2-1) · [Policy §9.4](./Policy_v1.md#policy-9-4) · [Policy §4.4](./Policy_v1.md#policy-4-4)
+- 정책: [Policy §2](./Policy_v1.md#2-가입-본인인증-정책) · [Policy §2.1](./Policy_v1.md#2-1-가입-옵션과-필수-수집-정보-region-분기-폐기) · [Policy §9.4](./Policy_v1.md#9-4-닉네임) · [Policy §4.4](./Policy_v1.md#4-4-재가입)
 - 연결 화면: USR-AUT-09b(이전) · USR-AUT-10b(활성·비활성 토큰 보유) · USR-AUT-11(토큰 없거나 만료·취소)
 
 ---
 
-<a id="usr-aut-10b--온보딩-step-2--본인-작품-찾기-조건부"></a>
 
 ### USR-AUT-10b · 온보딩 Step 2 — 본인 작품 찾기 (조건부)
 
@@ -642,12 +629,11 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 
 #### 의존
 - 엔티티: INVITE_TOKEN, EXHIBITION (참여 작가 슬롯 — Policy §23.3 슬롯 상태 정합)
-- 정책: [Policy §3](./Policy_v1.md#policy-3) · [Policy §3.2](./Policy_v1.md#policy-3-2) · [Policy §3.3](./Policy_v1.md#policy-3-3) · [Policy §3.5](./Policy_v1.md#policy-3-5)
+- 정책: [Policy §3](./Policy_v1.md#3-비회원-초대-정책) · [Policy §3.2](./Policy_v1.md#3-2-본인-작품-찾기-가입자-본인-선택) · [Policy §3.3](./Policy_v1.md#3-3-자동-연결-후-알림과-동시-선택) · [Policy §3.5](./Policy_v1.md#3-5-잘못-연결됐을-때)
 - 연결 화면: USR-AUT-10(선행 — 프로필 입력) · USR-AUT-11(온보딩 완료) · USR-PRF-05(잘못 연결 시 작가 회복 경로)
 
 ---
 
-<a id="usr-aut-11--온보딩-step-3--완료-축하"></a>
 ### USR-AUT-11 · 온보딩 Step 3 — 완료 축하
 
 **목적**: 가입 종착점. 자부심 모먼트(컨페티 + 닉네임 호명) + 첫 업로드 유도 CTA. 시니어 사용자가 가입 완료를 명확히 인식하고 다음 행동으로 자연스럽게 이어지도록 한다.
@@ -677,25 +663,24 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 
 #### 의존
 - 엔티티: USER_PROFILE
-- 정책: [Policy §6](./Policy_v1.md#policy-6) · [Policy §19](./Policy_v1.md#policy-19)
+- 정책: [Policy §6](./Policy_v1.md#6-phase-정의) · [Policy §19](./Policy_v1.md#19-접근성-시니어-친화-정책)
 - 연결 화면: USR-AUT-10·USR-AUT-10b(선행) · USR-UPL-01(1차 CTA) · USR-BRW-01(2차 링크)
 
 ---
 
 ### USR-AUT-12 · 계정 정지 안내 (보류)
 
-> **Phase 1 범위 밖** — 사용자 계정 차원 제재는 [Policy §12.3](./Policy_v1.md#policy-12-3)에 따라 추후 별도 로드맵에서 재설계한다. 본 화면 카드는 보류 상태이며 Phase 1 실서비스에서는 사용되지 않는다.
+> **Phase 1 범위 밖** — 사용자 계정 차원 제재는 [Policy §12.3](./Policy_v1.md#12-3-phase-1-범위-밖-추후-이관)에 따라 추후 별도 로드맵에서 재설계한다. 본 화면 카드는 보류 상태이며 Phase 1 실서비스에서는 사용되지 않는다.
 
 #### 의존 (추후 설계 시 참고)
 - 엔티티: SANCTION
-- 정책: [Policy §12.3](./Policy_v1.md#policy-12-3)
+- 정책: [Policy §12.3](./Policy_v1.md#12-3-phase-1-범위-밖-추후-이관)
 - 연결 화면: USR-INF-07
 
 ---
 
 ## 2. USR-BRW · 둘러보기
 
-<a id="usr-brw-01--홈-피드"></a>
 
 ### USR-BRW-01 · 홈 피드
 
@@ -720,21 +705,16 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 - 응모전 슬라이드는 응모전 상태에 따라 "참여하기" CTA 활성화.
 - **배너·응모전 모두 0건** → 캐러셀 영역 자체 숨김(§EC-02).
 
-**2) 피드 버킷 분류** ([Policy §16.1](./Policy_v1.md#policy-16-1))
+**2) 피드 버킷 분류** ([Policy §16.1](./Policy_v1.md#16-1-피드-랭킹-둘러보기-usr-brw-01))
 - Pick → Featured(추천 작가의 전시) → Personalized(팔로잉 작가의 전시) → Recent(14일 이내 업로드) → Rest(나머지 일반)
 - 각 전시는 **우선 순위가 높은 버킷에만 할당**(중복 방지).
 - 이미 본 작품은 해당 버킷 **하단**으로 밀려남.
-- 기획전·응모전은 §15.1 노출 표면상 일반 피드 부스트 대상이 아님(기획전은 [USR-CUR-01](./PRD_User_v1.md#usr-cur-01--기획전-페이지), 응모전은 검수 통과 후 일반 전시 카드로 자연 노출).
+- 기획전·응모전은 §15.1 노출 표면상 일반 피드 부스트 대상이 아님(기획전은 [USR-CUR-01](./PRD_User_v1.md#usr-cur-01-기획전-페이지), 응모전은 검수 통과 후 일반 전시 카드로 자연 노출).
 
 **3) 점수 계산**
-```
-base = log1p(likes) × 2.2 + log1p(saves) × 3.2
-following_bonus = 3.5 (팔로우 중일 때)
-bucket_boost = { Pick: +14, Featured: +6,
-                 Personalized: +7, Recent: +3, Rest: 0 }
-noise = 버킷별 ±범위 내 난수
-total = base + following_bonus + bucket_boost + noise
-```
+- base: 좋아요·저장·팔로우 신호 가중합(로그 스케일, 수치는 [Policy §16.1](./Policy_v1.md#16-1-피드-랭킹-알고리즘) 참조)
+- bucket_boost, noise 등 세부 수치는 [Policy §16.1](./Policy_v1.md#16-1-피드-랭킹-알고리즘) SSoT 참조
+
 각 버킷 내부는 total 내림차순으로 정렬.
 
 **4) 인터리빙 패턴 적용**
@@ -775,7 +755,7 @@ total = base + following_bonus + bucket_boost + noise
 | 카드 내 좋아요·저장 | 전시 단위 토글. 비로그인 → CM-02 |
 | 카드 내 작가 아바타·이름 탭 | USR-PRF-01 프로필 이동 |
 | 배너 탭 | 외부 링크 또는 USR-EVT-02 |
-| 탭 전환 | URL `?tab=all|solo|group` 즉시 동기화(`all`은 쿼리 생략) + 피드 재구성(스크롤 최상단) + `replace` 모드로 히스토리 누적 방지 |
+| 탭 전환 | URL `?tab=all|solo|group` 즉시 동기화(`all`은 쿼리 생략) + 피드 재구성(스크롤 최상단) + URL 유지 |
 | 직접 URL(`/?tab=group`) 또는 뒤로가기 | 해당 탭으로 상태 복원 (URL → UI 단방향 반영) |
 | 스크롤 끝 도달 | 다음 20건 로드 |
 | 카드 길게 누르기 | **동작 없음**(시니어 UX 오조작 방지) |
@@ -801,7 +781,7 @@ total = base + following_bonus + bucket_boost + noise
 
 **무한 스크롤·탭**
 - AC-11: Given 승인된 전시 80건 / When 스크롤 끝 도달 / Then 20 → 20 → 20 → 20 순으로 페이지네이션.
-- AC-12: Given 탭 "함께 올리기" 선택 / When 탭 / Then 함께 올리기 만 노출 + URL `?tab=group` 즉시 갱신(`replace` 모드).
+- AC-12: Given 탭 "함께 올리기" 선택 / When 탭 / Then 함께 올리기 만 노출 + URL `?tab=group` 즉시 갱신.
 - AC-13: Given 탭 전환 / When 탭 / Then 스크롤이 최상단으로 복귀.
 - AC-13.1: Given `/?tab=solo` 직접 진입 또는 북마크 / When 로드 / Then 혼자 올리기 탭 상태로 시작.
 - AC-13.2: Given `?tab=xxx` 알 수 없는 값 / When 로드 / Then `all` 탭으로 복원(URL `?tab=` 생략).
@@ -833,14 +813,13 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 의존
 - 엔티티: EXHIBITION, INTERACTION, FOLLOW, BANNER, EVENT, CURATION, PICK
-- 정책: [Policy §15](./Policy_v1.md#policy-15) · [Policy §16](./Policy_v1.md#policy-16) · [Policy §22.4](./Policy_v1.md#policy-22-4)
+- 정책: [Policy §15](./Policy_v1.md#15-큐레이션-배지-정책) · [Policy §16](./Policy_v1.md#16-피드-랭킹-검색-스코어링-정책) · [Policy §22.4](./Policy_v1.md#22-4-어뷰즈-방지)
 - 연결 화면: USR-EXH-01, USR-PRF-01, USR-EVT-02, USR-AUT-02, CM-02, CM-06
 
 ---
 
 ## 3. USR-EXH · 전시·작품 상세
 
-<a id="usr-exh-01--전시-상세-모달"></a>
 ### USR-EXH-01 · 전시 상세 모달
 
 **목적**: 선택한 전시의 이미지 시퀀스·메타 정보·인터랙션을 제공.
@@ -893,8 +872,8 @@ total = base + following_bonus + bucket_boost + noise
 - AC-04: Given 공유 탭 (PC) / When 클릭 / Then 클립보드에 "[작가명] 님이 [전시명]…" 멘트 + 전시 단위 링크 복사 + 토스트.
 - AC-05: Given 본인 전시 + 반려 / When 썸네일 탭(피드·프로필에서) / Then 상세 모달 대신 **반려 사유 모달** 오픈(수정하기·닫기).
 - AC-06: Given 공유 탭 (모바일) / When 클릭 / Then 모바일 OS 네이티브 공유 시트 호출 + 같은 멘트·전시 링크 전달. 미지원 브라우저는 PC 동작(클립보드 복사)으로 fallback.
-- AC-07: Given 본인 전시 + 검수 대기 상태 / When 본인이 카드 탭(프로필 전시 탭에서) / Then 상세 모달 진입 + 상단 안내 배너 노출("운영팀이 확인하고 있어요. 주말·공휴일을 빼고 24시간 안에 공개돼요" 톤, [Policy §22.1](./Policy_v1.md#policy-22-1)).
-- AC-08: Given 본인 전시 + 운영팀이 신고 검토 결과 비공개 유지로 처리한 상태 / When 본인이 카드 탭 / Then 상세 모달 진입 + 상단 배너 "검토 결과 비공개로 전환됐어요. 수정 후 재검수를 요청할 수 있어요"([Policy §12.1](./Policy_v1.md#policy-12-1)).
+- AC-07: Given 본인 전시 + 검수 대기 상태 / When 본인이 카드 탭(프로필 전시 탭에서) / Then 상세 모달 진입 + 상단 안내 배너 노출("운영팀이 확인하고 있어요. 주말·공휴일을 빼고 24시간 안에 공개돼요" 톤, [Policy §22.1](./Policy_v1.md#22-1-검수-sla)).
+- AC-08: Given 본인 전시 + 운영팀이 신고 검토 결과 비공개 유지로 처리한 상태 / When 본인이 카드 탭 / Then 상세 모달 진입 + 상단 배너 "검토 결과 비공개로 전환됐어요. 수정 후 재검수를 요청할 수 있어요"([Policy §12.1](./Policy_v1.md#12-1-신고-처리-액션-어드민)).
 
 #### 엣지케이스
 - EC-01: 이미 삭제된 전시 ID로 직접 URL 진입 → "삭제된 전시입니다" 안내 + 피드로 리다이렉트.
@@ -902,7 +881,7 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 의존
 - 엔티티: EXHIBITION, INTERACTION, FOLLOW, NOTIFICATION
-- 정책: [Policy §10](./Policy_v1.md#policy-10) · [Policy §12](./Policy_v1.md#policy-12) · [Policy §4](./Policy_v1.md#policy-4)
+- 정책: [Policy §10](./Policy_v1.md#10-공유-정책) · [Policy §12](./Policy_v1.md#12-신고-모더레이션-정책-phase-1) · [Policy §4](./Policy_v1.md#4-탈퇴-작가-정책)
 - 연결 화면: USR-PRF-01, `CM-02`, `CM-03`
 
 ---
@@ -936,12 +915,11 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 의존
 - 엔티티: CURATION, EXHIBITION
-- 정책: [Policy §15](./Policy_v1.md#policy-15)
+- 정책: [Policy §15](./Policy_v1.md#15-큐레이션-배지-정책)
 - 연결 화면: USR-EXH-01, USR-PRF-01
 
 ---
 
-<a id="usr-exh-03--초대장-랜딩"></a>
 ### USR-EXH-03 · 초대장 랜딩
 
 **목적**: 작가가 친구에게 직접 보낸 비회원 초대 링크에서 전시를 소개하고 가입을 유도. 가입 직후엔 본인 작품 클레임으로 이어진다(Policy §3 v2.14 토큰 모델).
@@ -957,7 +935,7 @@ total = base + following_bonus + bucket_boost + noise
    - **전시 삭제**: "이 전시는 삭제됐어요" 안내 + Artier 가입·둘러보기 CTA. 본문 비노출.
    - **자동·확정 비공개**(Policy §12.2): "이 전시는 운영팀 검토 중이에요" 안내 + Artier 가입 CTA. 본문 비노출.
    - **토큰 활성** (검수 통과): 정상 초대 레이아웃(커버·제목·참여 작가·작품 그리드).
-   - **토큰 비활성** (검수 신청·반려 단계): 같은 전시의 검수 중 작품 미리보기 그리드 + "곧 공개될 전시예요. 지금 가입해두시면 통과 즉시 본인 작품을 골라보실 수 있어요" 안내([Policy §3.4](./Policy_v1.md#policy-3-4)).
+   - **토큰 비활성** (검수 신청·반려 단계): 같은 전시의 검수 중 작품 미리보기 그리드 + "곧 공개될 전시예요. 지금 가입해두시면 통과 즉시 본인 작품을 골라보실 수 있어요" 안내([Policy §3.4](./Policy_v1.md#3-4-검수-삭제-취소-만료)).
    - **토큰 취소·만료·전시 미일치**: 본문 차단 + 안내 + 일반 전시 페이지로 복귀 CTA.
 3. 비로그인 사용자: 가입 유도 배너 상단 고정. 가입 후 본인 작품 찾기(USR-AUT-10b)로 자동 진입할 수 있도록 토큰을 단말에 임시 보관. 가입 진입은 USR-AUT-02 시트(소셜 + 이메일 매직 링크)로 이동.
 4. 로그인 사용자 + 활성 토큰: 일반 USR-EXH-01 상세 모달로 라우팅(이미 가입자는 본인 작품 찾기 자동 진입 안 함).
@@ -973,11 +951,11 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 수용기준
 - AC-01: Given 비로그인 + 활성 토큰 / When 진입 / Then 상단 가입 CTA + 토큰을 단말 임시 보관(가입 후 USR-AUT-10b 본인 작품 찾기로 자동 진입용).
-- AC-02: Given 비활성 토큰(검수 신청·반려 단계) / When 진입 / Then 같은 전시의 검수 중 작품 미리보기 그리드 + 능동톤 안내 카피 + 가입 CTA. 가입 시 토큰은 단말 임시 보관, 검수 통과 시 USR-AUT-10b 자동 진입 가능 ([Policy §3.4](./Policy_v1.md#policy-3-4)).
+- AC-02: Given 비활성 토큰(검수 신청·반려 단계) / When 진입 / Then 같은 전시의 검수 중 작품 미리보기 그리드 + 능동톤 안내 카피 + 가입 CTA. 가입 시 토큰은 단말 임시 보관, 검수 통과 시 USR-AUT-10b 자동 진입 가능 ([Policy §3.4](./Policy_v1.md#3-4-검수-삭제-취소-만료)).
 - AC-03: Given 전시가 이미 삭제 / When 진입 / Then "이 전시는 삭제되었습니다" 안내 + 일반 피드 유도.
 - AC-04: Given 전시가 비공개 처리 (자동·확정 비공개) / When 진입 / Then "운영팀 검토 중" 안내 + 작품 본문 비노출 + Artier 가입 CTA 유지.
 - AC-05: Given 토큰 만료(90일 경과)·취소(작품 삭제·작가 탈퇴) / When 진입 / Then "초대 링크가 만료됐어요. 보내주신 분께 새 링크를 부탁해 주세요" 안내 + 일반 전시 페이지 복귀 CTA.
-- AC-06: Given 가입자가 USR-AUT-10b에서 본인 작품 카드 명시 클릭 → "네, 맞아요" / When claim 처리 / Then 슬롯 회원 승격 + 작가에게 정보용 알림 1건 ([Policy §3.2](./Policy_v1.md#policy-3-2)·[Policy §3.3](./Policy_v1.md#policy-3-3)).
+- AC-06: Given 가입자가 USR-AUT-10b에서 본인 작품 카드 명시 클릭 → "네, 맞아요" / When claim 처리 / Then 슬롯 회원 승격 + 작가에게 정보용 알림 1건 ([Policy §3.2](./Policy_v1.md#3-2-본인-작품-찾기-가입자-본인-선택)·[Policy §3.3](./Policy_v1.md#3-3-자동-연결-후-알림과-동시-선택)).
 - AC-07: Given 로그인 사용자 + 활성 토큰 / When 진입 / Then 일반 USR-EXH-01 상세 모달로 라우팅(이미 가입된 사용자는 본인 작품 찾기 자동 진입 안 함).
 - AC-08: Given 로그인 사용자 + 비활성 토큰 / When 진입 / Then 같은 전시의 검수 중 작품 미리보기 그리드 노출 + "검수 통과 시 자동 공개" 안내(작가 본인이면 본인 마이페이지로, 그 외 회원은 알림 안내).
 
@@ -986,7 +964,7 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 의존
 - 엔티티: EXHIBITION, INVITE_TOKEN
-- 정책: [Policy §3](./Policy_v1.md#policy-3) · [Policy §3.1](./Policy_v1.md#policy-3-1) · [Policy §3.2](./Policy_v1.md#policy-3-2) · [Policy §3.3](./Policy_v1.md#policy-3-3) · [Policy §3.4](./Policy_v1.md#policy-3-4) · [Policy §10.3](./Policy_v1.md#policy-10-3) · [Policy §12.2](./Policy_v1.md#policy-12-2)
+- 정책: [Policy §3](./Policy_v1.md#3-비회원-초대-정책) · [Policy §3.1](./Policy_v1.md#3-1-초대-링크-발급과-공유) · [Policy §3.2](./Policy_v1.md#3-2-본인-작품-찾기-가입자-본인-선택) · [Policy §3.3](./Policy_v1.md#3-3-자동-연결-후-알림과-동시-선택) · [Policy §3.4](./Policy_v1.md#3-4-검수-삭제-취소-만료) · [Policy §10.3](./Policy_v1.md#10-3-공유-url-쿼리-분기) · [Policy §12.2](./Policy_v1.md#12-2-폐기-자동-비공개-정책)
 - 연결 화면: USR-AUT-02(가입 시트 진입), USR-AUT-03(이메일 가입), USR-AUT-06(소셜 첫 가입), USR-AUT-10b(claim), USR-EXH-01, USR-PRF-01
 
 ---
@@ -1016,14 +994,13 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 의존
 - 엔티티: EXHIBITION
-- 정책: [Policy §10.3](./Policy_v1.md#policy-10-3)
+- 정책: [Policy §10.3](./Policy_v1.md#10-3-공유-url-쿼리-분기)
 - 연결 화면: USR-EXH-01
 
 ---
 
 ## 4. USR-UPL · 업로드
 
-<a id="usr-upl-01--업로드-유형-선택"></a>
 ### USR-UPL-01 · 업로드 유형 선택
 
 **목적**: 업로드를 시작하기 전에 유형(혼자/함께)과, 함께인 경우 역할(참여 작가/강사)을 먼저 결정.
@@ -1050,12 +1027,11 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 의존
 - 엔티티: EXHIBITION (draft)
-- 정책: [Policy §13](./Policy_v1.md#policy-13)
+- 정책: [Policy §13](./Policy_v1.md#13-업로드-유형-역할-정책)
 - 연결 화면: USR-UPL-02
 
 ---
 
-<a id="usr-upl-02--업로드-메인-이미지작가메타-입력"></a>
 ### USR-UPL-02 · 업로드 메인 (이미지·작가·메타 입력)
 
 **목적**: 전시를 구성하는 이미지·작가·메타 정보를 한 화면에서 입력하고 검수 대기 상태로 발행. 업로드 플로우의 중심 화면이며 서브플로우가 여러 개 연결된다.
@@ -1067,18 +1043,17 @@ total = base + following_bonus + bucket_boost + noise
 #### A. 이미지 추가·관리
 
 **파일 추가**
-- input(accept=.jpg,.jpeg,.png,.webp,.gif) multiple + 드롭존 클릭·드래그앤드롭
+- [Policy §20](./Policy_v1.md#20-저작권-보호-및-이미지-보안-정책) 허용 포맷 기준 적용 + 드롭존 클릭·드래그앤드롭
 - 동시 최대 10장. 초과 시 토스트 "이미지는 최대 10장까지 업로드할 수 있어요." + 초과 분 무시
 
 **검증 순서(각 파일 순차)**
 1. **크기 > 10MB** → "파일이 너무 커요. 더 작은 이미지를 선택해 주세요."
-2. **포맷 불일치**(MIME 검증) → "지원하지 않는 이미지 형식이에요"
-3. **카메라 사진 차단** (USR-UPL-07 배너 트리거, [Policy §11](./Policy_v1.md#policy-11)):
+2. **포맷 불일치**(MIME 검증, [Policy §20](./Policy_v1.md#20-저작권-보호-및-이미지-보안-정책) 허용 포맷 기준 적용) → "지원하지 않는 이미지 형식이에요"
+3. **카메라 사진 차단** (USR-UPL-07 배너 트리거, [Policy §11](./Policy_v1.md#11-카메라-사진-차단-정책)):
    - 이미지 파일의 실제 데이터로 JPEG 여부 확인(파일명·확장자가 아니라 파일 내용 기준)
    - JPEG인 경우 촬영 메타데이터에서 카메라 제조사·모델 정보 검사
    - 존재 시 추가 차단 + 배너 표시
 4. **해상도**: 짧은 변 < 800px → "이미지가 너무 작아요. 더 큰 이미지를 사용해 주세요."
-5. **WebP 변환**: 자동 변환 후 내부 단말 보관
 
 **진행률 표시**
 - 현재/전체 진행 수치를 보여주는 스티키 프로그레스 바
@@ -1120,19 +1095,19 @@ total = base + following_bonus + bucket_boost + noise
 - 진입 토스트 "이어서 작업할 수 있어요"
 
 **`?event=<id>` (deprecated)**
-- 응모전 응모는 USR-UPL-02가 아니라 [USR-EVT-04](./PRD_User_v1.md#usr-evt-04--응모전-응모-모달) 응모 모달 단일 진입점으로 변경됨([Policy §25.2](./Policy_v1.md#policy-25-2)).
+- 응모전 응모는 USR-UPL-02가 아니라 [USR-EVT-04](./PRD_User_v1.md#usr-evt-04-응모전-응모-모달) 응모 모달 단일 진입점으로 변경됨([Policy §25.2](./Policy_v1.md#25-2-응모-조건)).
 - USR-UPL-02 진입 시 응모전 연결 분기는 **미지원**. 일반 업로드만 가능.
-- 외부에서 `?event=` 파라미터로 USR-UPL-02 진입 시도 시 응모전 상세 페이지로 안내(응모 모달 자동 오픈 처리는 라우팅 동작 — 본 PRD 카드 범위 밖, 코드 단일 소스).
+- 외부에서 `?event=` 파라미터로 USR-UPL-02 진입 시도 시 응모전 상세 페이지로 안내.
 
 **`?edit=<id>`**
 - 기존 전시 프리필(유형·전시명·이미지·작가·커버·역할·응모전 연결)
 - 상단 "수정 중" 뱃지 + CTA 라벨 "수정 저장"
 - 저장 시 **편집 가능 필드만 갱신**한다. 아래 불변 필드는 **보존**:
   - 전시 ID(참조 무결성), 좋아요·저장 카운터, 업로드 시각(피드 정렬 기준), 작가 ID·작가 정체성(업로더), **반려 이력(감사·재범 추적용)**
-- **검수 상태는 항상 검수 대기로 재설정**(auto-approve 환경만 즉시 통과). 재검수 대상.
+- **검수 상태는 항상 검수 대기로 재설정**(자동 승인 환경만 즉시 통과). 재검수 대상.
 - **반려 사유는 빈 값으로 초기화**(재발행 시 "현재" 반려 사유만 제거. 누적 반려 이력은 별도로 보존).
 - AP 적립 없음, 중복 응모전 검증 스킵, 비회원 초대 토큰 신규 발급 없음(기존 토큰 유지).
-- 저장 성공 시: 완료 화면(USR-UPL-03)으로 가지 않고 **프로필 전시 탭**(USR-PRF-05)으로 복귀 + 아래 5 시나리오 중 해당 토스트 표시([Policy §12.1.2](./Policy_v1.md#policy-12-1-2)):
+- 저장 성공 시: 완료 화면(USR-UPL-03)으로 가지 않고 **프로필 전시 탭**(USR-PRF-05)으로 복귀 + 아래 5 시나리오 중 해당 토스트 표시([Policy §12.1.2](./Policy_v1.md#12-1-2-검수-상태별-수정-삭제-정책)):
   - 검수 통과 유지(메타만): "수정 사항이 바로 반영되었어요."
   - 검수 통과 → 검수 대기(이미지 변경): "이미지가 바뀌어 잠시 검수 대기예요. 공개되면 알려드릴게요."
   - 검수 대기 유지: "수정 사항이 검수 대기에 반영됐어요."
@@ -1153,15 +1128,15 @@ total = base + following_bonus + bucket_boost + noise
 | 7 | 함께인데 특정 이미지 작가 미지정 | "{N}번째 작품에 작가가 지정되지 않았어요." |
 | 8 | 함께(참여 작가)인데 본인 작품 0장 | "본인 작품을 한 점 이상 포함해 주세요." |
 | 9 | 함께(참여 작가)인데 모든 이미지 동일 작가 | (모달) "이미지는 모두 동일 작가네요. 혼자 올리기로 전환할까요?" |
-| 10 | (deprecated) 중복 응모전 응모 | USR-UPL-02 일반 업로드는 응모 진입점이 아님([Policy §25.2](./Policy_v1.md#policy-25-2)). 응모전 응모는 USR-EVT-04에서 별도 검증. |
+| 10 | (deprecated) 중복 응모전 응모 | USR-UPL-02 일반 업로드는 응모 진입점이 아님([Policy §25.2](./Policy_v1.md#25-2-응모-조건)). 응모전 응모는 USR-EVT-04에서 별도 검증. |
 
 첫 위반 지점에서 중단 + 해당 필드 포커스·스크롤.
 
 #### F. 발행 성공 처리
 
-- 전시 저장: 전시 ID 신규 생성 · 검수 대기 상태로 전이(auto-approve 시 즉시 통과) · 업로드 시각 기록 · 연결 응모전 ID(해당 시)
+- 전시 저장: 전시 ID 신규 생성 · 검수 대기 상태로 전이(자동 승인 환경 시 즉시 통과) · 업로드 시각 기록 · 연결 응모전 ID(해당 시)
 - 비회원 초대 정보는 참여 작가 슬롯 목록에 보존(검수 승인 시 토큰 활성화 — Policy §3.1 v2.14)
-- **AP 적립** 분기([Policy §7.2](./Policy_v1.md#policy-7-2)):
+- **AP 적립** 분기([Policy §7.2](./Policy_v1.md#7-2-적립-이벤트)):
   - 첫 업로드 +100 (최초 1회)
   - 일반 업로드 +20 (일 2회 상한, 첫 업로드 당일 제외)
   - 월 4회 +50 (월별)
@@ -1186,7 +1161,7 @@ total = base + following_bonus + bucket_boost + noise
 #### 수용기준 (통합 15개)
 
 - AC-01: Given 이미지 11장 시도 / When 드롭 / Then 10장까지만 + 초과 에러 토스트.
-- AC-02: Given 카메라로 촬영된 JPEG(촬영 메타데이터에 제조사 정보 있음) / When 추가 / Then 차단 + USR-UPL-07 배너 ([Policy §11](./Policy_v1.md#policy-11)).
+- AC-02: Given 카메라로 촬영된 JPEG(촬영 메타데이터에 제조사 정보 있음) / When 추가 / Then 차단 + USR-UPL-07 배너 ([Policy §11](./Policy_v1.md#11-카메라-사진-차단-정책)).
 - AC-03: Given 짧은 변 799px / When 추가 / Then "800px 이상" 에러 + 차단.
 - AC-04: Given 참여 작가 + 본인 0장 / When 발행 / Then 에러 "본인 작품 1점 이상 필요".
 - AC-05: Given 강사 OFF→ON 전환 / When 본인 지정된 슬롯 존재 / Then 슬롯 자동 초기화.
@@ -1195,7 +1170,7 @@ total = base + following_bonus + bucket_boost + noise
 - AC-08: Given 당일 일반 업로드 2회 후 3번째 / When 발행 / Then AP 적립 없음(상한).
 - AC-09: Given 24시간 이내 삭제 / When 확정 / Then AP -20 회수(잔액 음수 방지).
 - AC-10: Given `?edit=<id>` + 전시 존재 / When 로드 / Then 전 필드 프리필 + "수정 중" 뱃지.
-- AC-11: Given 전시 편집 모드(`?edit=<id>`) 저장 / When 완료 / Then 검수 대기 상태로 재설정(auto-approve 시 즉시 통과) + 반려 사유 제거 + 전시 ID·좋아요·저장·업로드 시각·반려 이력 보존 + AP 적립 없음.
+- AC-11: Given 전시 편집 모드(`?edit=<id>`) 저장 / When 완료 / Then 검수 대기 상태로 재설정(자동 승인 환경 시 즉시 통과) + 반려 사유 제거 + 전시 ID·좋아요·저장·업로드 시각·반려 이력 보존 + AP 적립 없음.
 - AC-12: Given 비회원 포함 발행 / When "전시하기" / Then USR-UPL-08 프리뷰 → 확인 후 발행.
 - AC-13: Given `?event=<id>` 중복 참여 / When 발행 / Then 에러 "이미 참여한 응모전입니다".
 - AC-14: Given 내용 입력 + 다른 경로 이동 시도 / When 이탈 / Then USR-UPL-09 모달.
@@ -1226,18 +1201,17 @@ total = base + following_bonus + bucket_boost + noise
 #### 의존
 - 엔티티: EXHIBITION, DRAFT, INVITE_TOKEN, EVENT, POINT_LEDGER
 - 정책:
-  - [§3](./Policy_v1.md#policy-3)
-  - [§7.2](./Policy_v1.md#policy-7-2)
-  - [§8](./Policy_v1.md#policy-8)
-  - [§9](./Policy_v1.md#policy-9)
-  - [§11](./Policy_v1.md#policy-11)
-  - [§13](./Policy_v1.md#policy-13)
-  - [§14](./Policy_v1.md#policy-14)
+  - [§3](./Policy_v1.md#3-비회원-초대-정책)
+  - [§7.2](./Policy_v1.md#7-2-적립-이벤트)
+  - [§8](./Policy_v1.md#8-초안-저장-정책)
+  - [§9](./Policy_v1.md#9-작품명-전시명-그룹명-정책)
+  - [§11](./Policy_v1.md#11-카메라-사진-차단-정책)
+  - [§13](./Policy_v1.md#13-업로드-유형-역할-정책)
+  - [§14](./Policy_v1.md#14-커버-이미지-정책)
 - 연결 화면: USR-UPL-01·03·04·05·06·07·08·09, USR-PRF-01·10
 
 ---
 
-<a id="usr-upl-03--전시-완료-확인"></a>
 ### USR-UPL-03 · 전시 완료 확인
 
 **목적**: 발행 직후 검수 대기 안내 + 다음 행동 선택지 제공.
@@ -1250,7 +1224,7 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 처리
 1. 확인 화면 표시.
-2. 비회원 초대가 포함됐으면 "지금부터 마이페이지 '친구에게 알리기' 버튼으로 친구에게 보낼 수 있어요. 검수 통과 시 자동으로 공개돼요" 안내([Policy §3](./Policy_v1.md#policy-3) v2.16 검수 신청 단계 공유 모델 — 발행 직후부터 토큰 발급, 비활성 단계에서도 공유 가능).
+2. 비회원 초대가 포함됐으면 "지금부터 마이페이지 '친구에게 알리기' 버튼으로 친구에게 보낼 수 있어요. 검수 통과 시 자동으로 공개돼요" 안내([Policy §3](./Policy_v1.md#3-비회원-초대-정책) v2.16 검수 신청 단계 공유 모델 — 발행 직후부터 토큰 발급, 비활성 단계에서도 공유 가능).
 3. CTA 2개: "내 전시 보기"(USR-PRF-01의 전시 탭) / "둘러보기"(USR-BRW-01).
 
 #### 출력
@@ -1271,7 +1245,6 @@ total = base + following_bonus + bucket_boost + noise
 
 ## 5. USR-PRF · 프로필
 
-<a id="usr-prf-01--프로필-홈"></a>
 ### USR-PRF-01 · 프로필 홈
 
 **목적**: 본인/타인 프로필의 작품·인터랙션·초안 등을 탭 단위로 제공. 시니어 작가의 "내 갤러리" 역할 + 감상자의 작가 탐색 지점.
@@ -1299,7 +1272,7 @@ total = base + following_bonus + bucket_boost + noise
 - **강사 배지**(자동 파생): 본인 업로드 전시 중 강사 역할로 발행한 전시가 1건 이상.
 - 팔로워·팔로잉 숫자(탭 시 USR-PRF-04 모달).
 - 본인 프로필: 우상단에 "편집" 연필 아이콘(USR-PRF-02) + "카메라" 아이콘(USR-PRF-03).
-- **본인 프로필 + 비회원 슬롯 보유 전시**: 헤더 아래 "친구에게 알리기" 버튼 노출 — 클릭 시 토큰 상태별 공유 시트(활성=초대 메시지, 비활성=검수 신청 단계 안내). 활성·비활성 토큰만 노출, 만료·취소 시 비활성. 발행 직후부터 사용 가능([Policy §3.1](./Policy_v1.md#policy-3-1) v2.16).
+- **본인 프로필 + 비회원 슬롯 보유 전시**: 헤더 아래 "친구에게 알리기" 버튼 노출 — 클릭 시 토큰 상태별 공유 시트(활성=초대 메시지, 비활성=검수 신청 단계 안내). 활성·비활성 토큰만 노출, 만료·취소 시 비활성. 발행 직후부터 사용 가능([Policy §3.1](./Policy_v1.md#3-1-초대-링크-발급과-공유) v2.16).
 - 타인 프로필: 팔로우/언팔로우 버튼(자기 자신·탈퇴 작가는 숨김 또는 비활성).
 
 **2) 탈퇴 작가 처리**
@@ -1349,7 +1322,7 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 의존
 - 엔티티: USER_PROFILE, EXHIBITION, DRAFT, FOLLOW, INTERACTION
-- 정책: [Policy §4](./Policy_v1.md#policy-4) · [Policy §13.4](./Policy_v1.md#policy-13-4)
+- 정책: [Policy §4](./Policy_v1.md#4-탈퇴-작가-정책) · [Policy §13.4](./Policy_v1.md#13-4-강사-표시-파생)
 - 연결 화면: USR-EXH-01, USR-UPL-02, USR-PRF-02~04, USR-AUT-02, CM-02
 
 #### 5.1.1 전시 탭
@@ -1369,13 +1342,13 @@ total = base + following_bonus + bucket_boost + noise
 - 참여 작가로만 연결된 전시는 메뉴 없음(수정·삭제 불가. 업로더를 통해 수정 안내).
 
 **작품명(piece) 편집 — 본 탭이 단일 진입점**
-- 본인 업로드 전시 카드에서 piece 작품명 수정 진입을 제공한다(인라인 편집 모달 USR-PRF-11). 내 작품 탭(USR-PRF-06)은 보기 전용이라 편집 진입을 두지 않는다([Policy §9.2.1](./Policy_v1.md#policy-9-2-1)).
+- 본인 업로드 전시 카드에서 piece 작품명 수정 진입을 제공한다(인라인 편집 모달 USR-PRF-11). 내 작품 탭(USR-PRF-06)은 보기 전용이라 편집 진입을 두지 않는다([Policy §9.2.1](./Policy_v1.md#9-2-1-작품명-piece-title-편집-권한-진입점)).
 - 시니어 사용성: "수정은 한 곳에서만"으로 단일화하여 어디서 수정했는지 헷갈리지 않게 한다.
-- 빈값 저장 허용. 시스템이 "무제"로 자동 채우지 않으며 빈값일 때는 작품명 줄을 미표시한다([Policy §9.2](./Policy_v1.md#policy-9-2)).
+- 빈값 저장 허용. 시스템이 "무제"로 자동 채우지 않으며 빈값일 때는 작품명 줄을 미표시한다([Policy §9.2](./Policy_v1.md#9-2-필수-여부-및-빈값-표시)).
 
 **점점점 메뉴**
 - **전시 수정** → `/upload?edit=<id>`
-  - 검수 대기 상태의 전시일 때는 진입 전 확인 모달 노출([Policy §12.1.2](./Policy_v1.md#policy-12-1-2)):
+  - 검수 대기 상태의 전시일 때는 진입 전 확인 모달 노출([Policy §12.1.2](./Policy_v1.md#12-1-2-검수-상태별-수정-삭제-정책)):
     - 제목: "검수 중인 전시를 수정할까요?"
     - 설명: "지금 수정하면 검수 대기에 변경 사항이 반영되고, 검수 대기 시간이 다시 시작돼요."
     - [취소] / [수정하기]
@@ -1438,13 +1411,13 @@ total = base + following_bonus + bucket_boost + noise
 **뷰**
 - 이미지 단위 썸네일 그리드
 - 카드 하단: "작품명" 배지 + 작품명 / "전시명" 배지 + 전시명
-- **작품명 빈값**: 카드·상세에서 **"(제목 없음)"** 회색 텍스트로 표시한다. 시스템이 "무제"로 자동 채우지 않는다([Policy §9.2](./Policy_v1.md#policy-9-2)). 작가가 직접 입력한 "무제"는 일반 작품명으로 그대로 노출.
+- **작품명 빈값**: 카드·상세에서 **"(제목 없음)"** 회색 텍스트로 표시한다. 시스템이 "무제"로 자동 채우지 않는다([Policy §9.2](./Policy_v1.md#9-2-필수-여부-및-빈값-표시)). 작가가 직접 입력한 "무제"는 일반 작품명으로 그대로 노출.
 
 **편집 정책 — 본 탭은 보기 전용**
 
 본 탭(USR-PRF-06)에서는 작품명·전시명·기타 어떤 메타도 편집하지 않는다(보기 전용).
 
-- **작품명 편집은 USR-PRF-05(전시 탭)에서 단일 진입점**으로 제공([Policy §9.2.1](./Policy_v1.md#policy-9-2-1)). 본인 업로드 전시 카드 → 인라인 편집 모달(USR-PRF-11).
+- **작품명 편집은 USR-PRF-05(전시 탭)에서 단일 진입점**으로 제공([Policy §9.2.1](./Policy_v1.md#9-2-1-작품명-piece-title-편집-권한-진입점)). 본인 업로드 전시 카드 → 인라인 편집 모달(USR-PRF-11).
 - **그룹 전시 참여 슬롯**(다른 사람이 올린 전시의 내 이미지)에 대한 가입자 자가 해제 진입점은 없다(Policy §3.5 v2.14). 잘못 연결된 경우 가입자가 작가에게 직접 알리고, 작가가 본인 마이페이지의 슬롯 편집(USR-PRF-05)에서 해제하면 슬롯이 작가 미상으로 전환된다.
 - **시니어 사용성 근거**: 같은 외형 카드(본인 업로드 piece와 그룹전 참여 piece)가 한 화면에 섞이면 어떤 카드가 편집되는지 시니어가 헷갈린다. 내 작품 탭은 "본 작품 모음 갤러리"로 단순화하고 수정은 전시 탭으로 일원화. 클릭 1회 추가의 비용보다 두 진입점이 만드는 헷갈림 비용이 더 크다.
 
@@ -1474,7 +1447,7 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 5.1.4 좋아요 탭 (USR-PRF-08, `likes`) — 본인만
 
-- 내가 좋아요한 타인 전시만(본인 작품 좋아요는 [Policy §24.3](./Policy_v1.md#policy-24-3) 정합으로 탭 비노출).
+- 내가 좋아요한 타인 전시만(본인 작품 좋아요는 [Policy §24.3](./Policy_v1.md#24-3-좋아요) 정합으로 탭 비노출).
 - 전시 단위 카드(썸네일·전시명·작가명). 카드 탭 → USR-EXH-01.
 - 해제: 상세 모달에서 토글(별도 해제 버튼 없음).
 - AC-L1: Given 본인이 타인 전시 N건에 좋아요 / When 좋아요 탭 로드 / Then N건 카드 노출(최신순).
@@ -1482,7 +1455,7 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 5.1.5 저장 탭 (USR-PRF-09, `saved`) — 본인만
 
-- 내가 저장한 타인 전시만(본인 작품 저장도 [Policy §24.4](./Policy_v1.md#policy-24-4) 정합으로 탭에서 숨김).
+- 내가 저장한 타인 전시만(본인 작품 저장도 [Policy §24.4](./Policy_v1.md#24-4-저장) 정합으로 탭에서 숨김).
 - 전시 단위 카드(썸네일·전시명·작가명). 카드 탭 → USR-EXH-01.
 - 해제: 상세 모달에서 토글.
 - AC-S1: Given 본인이 타인 전시 N건 저장 / When 저장 탭 로드 / Then N건 카드 노출(최신순).
@@ -1499,16 +1472,16 @@ total = base + following_bonus + bucket_boost + noise
 
 - 트리거: 본인 전시 카드 점점점 메뉴 → "삭제".
 - 구성: "이 전시를 삭제할까요?" + 본문 "영구 삭제되며 되돌릴 수 없어요. 24시간 이내 업로드면 적립 포인트 −20 회수." + **활성 Pick/기획전 게시 중일 때 추가 빨강 경고 박스**("현재 활성 Pick/기획전에 게시 중이에요. 삭제하면 발표에서도 빠집니다.") + 취소 / **삭제(빨강)** 2 버튼.
-- 처리: 확인 시 [Policy §32.1](./Policy_v1.md#policy-32-1) 연쇄 정리 (전시 본체 + 좋아요·저장·알림·Pick·기획전·신고 큐·초대 토큰 모두 정리). 어드민 삭제·신고 "삭제" 트리거는 동일 정리 절차를 따르되 본 화면을 거치지 않으며 별도 경고 없이 진행([Policy §32.2](./Policy_v1.md#policy-32-2)).
+- 처리: 확인 시 [Policy §32.1](./Policy_v1.md#32-1-전시-삭제-시-정리-대상) 연쇄 정리 (전시 본체 + 좋아요·저장·알림·Pick·기획전·신고 큐·초대 토큰 모두 정리). 어드민 삭제·신고 "삭제" 트리거는 동일 정리 절차를 따르되 본 화면을 거치지 않으며 별도 경고 없이 진행([Policy §32.2](./Policy_v1.md#32-2-운영-원칙)).
 - AC-D1: Given 24시간 이내 업로드 전시 삭제 / When 확정 / Then AP −20 회수 + 연쇄 정리 + 카드 즉시 사라짐.
-- AC-D2: Given 비회원 슬롯 보유 전시 삭제 / When 확정 / Then 해당 토큰 영구 취소([Policy §3.4](./Policy_v1.md#policy-3-4)).
-- AC-D3: Given 활성 Pick 또는 기획전에 게시 중인 전시 삭제 진입 / When 다이얼로그 노출 / Then 추가 빨강 경고 박스가 표시되며, 사용자가 "삭제" 확정 시 활성 게시에서도 즉시 제거([Policy §32.1](./Policy_v1.md#policy-32-1) #8 정합).
+- AC-D2: Given 비회원 슬롯 보유 전시 삭제 / When 확정 / Then 해당 토큰 영구 취소([Policy §3.4](./Policy_v1.md#3-4-검수-삭제-취소-만료)).
+- AC-D3: Given 활성 Pick 또는 기획전에 게시 중인 전시 삭제 진입 / When 다이얼로그 노출 / Then 추가 빨강 경고 박스가 표시되며, 사용자가 "삭제" 확정 시 활성 게시에서도 즉시 제거([Policy §32.1](./Policy_v1.md#32-1-전시-삭제-시-정리-대상) #8 정합).
 
 #### 5.1.8 USR-PRF-14 · 내 작품 전용 뷰어 (다크 배경) — 본인만
 
 - 트리거: 내 작품 탭(USR-PRF-06) 또는 전시 탭(USR-PRF-05)에서 본인 업로드 piece 썸네일 탭.
 - 구성: 다크 배경 풀스크린 뷰어 + 좌우 스와이프(piece 간 이동) + 닫기 X 버튼. 좋아요·저장·공유·신고 액션 비노출(본인 작품 감상 전용).
-- 처리: 본인 작품 감상이므로 [Policy §26.2](./Policy_v1.md#policy-26-2) 정합으로 **원본 해상도 표시 가능**(줌 뷰어 포함). 다운로드 경로 차단·우클릭·드래그·길게 누르기 차단([Policy §26.1](./Policy_v1.md#policy-26-1))은 그대로 적용.
+- 처리: 본인 작품 감상이므로 [Policy §26.2](./Policy_v1.md#26-2-피드-상세-이미지-해상도-제한) 정합으로 **원본 해상도 표시 가능**(줌 뷰어 포함). 다운로드 경로 차단·우클릭·드래그·길게 누르기 차단([Policy §26.1](./Policy_v1.md#26-1-차단-대상-사용자-행동-모든-플랫폼))은 그대로 적용.
 - AC-V1: Given 본인 piece 썸네일 탭 / When 클릭 / Then 다크 풀스크린 뷰어 오픈 + 액션 버튼 비노출.
 - AC-V2: Given 뷰어 좌우 스와이프 / When 동작 / Then 같은 전시 내 piece 간 순환 이동.
 
@@ -1521,7 +1494,6 @@ total = base + following_bonus + bucket_boost + noise
 
 ---
 
-<a id="usr-prf-02--프로필-편집-모달"></a>
 ### USR-PRF-02 · 프로필 편집 모달
 
 **목적**: 프로필 헤더 정보(소개·바이오·지역·관심사·외부링크) 수정. 닉네임은 가입 후 본인 변경 불가(아래 「닉네임 정책 SSoT」 참조).
@@ -1566,7 +1538,7 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 의존
 - 엔티티: USER_PROFILE
-- 정책: [Policy §27](./Policy_v1.md#policy-27) · [Policy §9.1](./Policy_v1.md#policy-9-1) · [Policy §20](./Policy_v1.md#policy-20) · [Policy §4.4](./Policy_v1.md#policy-4-4)
+- 정책: [Policy §27](./Policy_v1.md#27-계정-정보-편집) · [Policy §9.1](./Policy_v1.md#9-1-공통-규칙) · [Policy §20](./Policy_v1.md#20-확정-수치-종합표) · [Policy §4.4](./Policy_v1.md#4-4-재가입)
 - 연결 화면: USR-PRF-01, USR-PRF-03, USR-INF-07
 
 ---
@@ -1600,12 +1572,11 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 의존
 - 엔티티: USER_PROFILE
-- 정책: [Policy §20](./Policy_v1.md#policy-20)
+- 정책: [Policy §20](./Policy_v1.md#20-확정-수치-종합표)
 - 연결 화면: USR-PRF-01
 
 ---
 
-<a id="usr-prf-04--팔로워팔로잉-모달"></a>
 ### USR-PRF-04 · 팔로워·팔로잉 모달
 
 **목적**: 팔로워·팔로잉 전체 목록 열람 + 팔로우 토글.
@@ -1626,14 +1597,13 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 의존
 - 엔티티: FOLLOW, USER_PROFILE
-- 정책: [Policy §4](./Policy_v1.md#policy-4)
+- 정책: [Policy §4](./Policy_v1.md#4-탈퇴-작가-정책)
 - 연결 화면: USR-PRF-01
 
 ---
 
 ## 6. USR-EVT · 응모전
 
-<a id="usr-evt-01--응모전-목록"></a>
 
 ### USR-EVT-01 · 응모전 목록
 
@@ -1671,7 +1641,6 @@ total = base + following_bonus + bucket_boost + noise
 
 ---
 
-<a id="usr-evt-02--응모전-상세"></a>
 ### USR-EVT-02 · 응모전 상세
 
 **목적**: 응모전 상세 내용 확인 + 참여 유도 + 참여작 열람(공개 모드).
@@ -1685,12 +1654,12 @@ total = base + following_bonus + bucket_boost + noise
 #### 처리
 1. 응모전 배너·기간·대상·설명 렌더.
 2. 상태(활성/예정/종료) 자동 판정 — 로컬 자정 기준.
-3. "참여하기" CTA → **[USR-EVT-04](./PRD_User_v1.md#usr-evt-04--응모전-응모-모달) 응모 모달 오픈**:
+3. "참여하기" CTA → **[USR-EVT-04](./PRD_User_v1.md#usr-evt-04-응모전-응모-모달) 응모 모달 오픈**:
    - 활성 + 미참여 → CTA 활성, 클릭 시 모달 오픈
    - 종료 → 비활성
    - 이미 참여 → "이미 참여함" 라벨, CTA 비활성
 4. 응모작 공개 토글이 켜진 응모전은 참여 전시 목록 노출.
-5. 선정 발표 단계 응모전이면 "**선정작 발표 보기**" CTA → [USR-EVT-05](./PRD_User_v1.md#usr-evt-05--응모전-선정작-발표-페이지) 발표 페이지 이동.
+5. 선정 발표 단계 응모전이면 "**선정작 발표 보기**" CTA → [USR-EVT-05](./PRD_User_v1.md#usr-evt-05-응모전-선정작-발표-페이지) 발표 페이지 이동.
 
 #### 수용기준
 - AC-01: Given 응모전 종료 / When 상세 로드 / Then "참여하기" 버튼 비활성 + "참여가 마감된 응모전이에요" 문구.
@@ -1705,7 +1674,6 @@ total = base + following_bonus + bucket_boost + noise
 
 ---
 
-<a id="usr-evt-04--응모전-응모-모달"></a>
 ### USR-EVT-04 · 응모전 응모 모달
 
 **목적**: 사용자가 새 1장짜리 개인 전시를 발행하며 동시에 응모전에 응모(Policy §15.5·§25.2). 일반 업로드(USR-UPL-02)와 분리된 단일 진입점.
@@ -1721,7 +1689,7 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 처리
 1. 모달 헤더에 응모전명·기간 표시.
-2. 이미지 1장 업로드 — 다중 응모 미지원 (1장 강제). 카메라 사진 차단·해상도·파일 크기 검증은 일반 업로드와 동일 정책([Policy §11](./Policy_v1.md#policy-11)).
+2. 이미지 1장 업로드 — 다중 응모 미지원 (1장 강제). 카메라 사진 차단·해상도·파일 크기 검증은 일반 업로드와 동일 정책([Policy §11](./Policy_v1.md#11-카메라-사진-차단-정책)).
 3. 작품명 입력 — 응모 전시는 전시명 = 작품명 동일 저장 (시니어 인지 단순화). 다중 이미지 전시처럼 두 필드를 분리할 의미가 없음.
 4. 두 동의 체크박스 통과 시 CTA 활성.
 5. 발행 시 검증 순서: 이미지 0장 / 작품명 빈 값 / 원작 미체크 / 작품명 비속어 / 응모 동의 미체크 / 카메라 차단 / 해상도·파일 크기 / **한 사용자 한 응모전 한 번 중복 검사**(이미 참여한 응모전이면 "이미 참여하셨어요"). 첫 위반 지점에서 중단.
@@ -1739,12 +1707,11 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 의존
 - 엔티티: EXHIBITION (1장짜리 + 응모전 연결)
-- 정책: [Policy §15.5](./Policy_v1.md#policy-15-5) · [Policy §25.2](./Policy_v1.md#policy-25-2) · [Policy §32.2](./Policy_v1.md#policy-32-2)
+- 정책: [Policy §15.5](./Policy_v1.md#15-5-응모전-선정-정책-런칭-전-필수) · [Policy §25.2](./Policy_v1.md#25-2-응모-조건) · [Policy §32.2](./Policy_v1.md#32-2-운영-원칙)
 - 연결 화면: USR-EVT-01, USR-EVT-02, USR-EVT-05
 
 ---
 
-<a id="usr-evt-05--응모전-선정작-발표-페이지"></a>
 ### USR-EVT-05 · 응모전 선정작 발표 페이지
 
 **목적**: 운영팀이 선정한 작품을 작품 카드 그리드로 발표(Policy §15.5).
@@ -1769,14 +1736,14 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 의존
 - 엔티티: EXHIBITION
-- 정책: [Policy §15.5](./Policy_v1.md#policy-15-5) · [Policy §15.2](./Policy_v1.md#policy-15-2) · [Policy §32.2](./Policy_v1.md#policy-32-2)
+- 정책: [Policy §15.5](./Policy_v1.md#15-5-응모전-선정-정책-런칭-전-필수) · [Policy §15.2](./Policy_v1.md#15-2-배지-체계-공개) · [Policy §32.2](./Policy_v1.md#32-2-운영-원칙)
 - 연결 화면: USR-EVT-02
 
 ---
 
 ### USR-EVT-03 · 응모전 알림 구독 모달
 
-**목적**: 이메일로 응모전·공지 알림을 받도록 구독하거나, 동일 이메일로 구독을 해지한다([Policy §31 N-5](./Policy_v1.md#policy-31)).
+**목적**: 이메일로 응모전·공지 알림을 받도록 구독하거나, 동일 이메일로 구독을 해지한다([Policy §31 N-5](./Policy_v1.md#31-런칭-전-미해결-항목)).
 **트리거**: USR-EVT-01(구독·해지·해지용 URL 파라미터), USR-STG-05 링크.
 **우선순위**: **P1**
 
@@ -1807,7 +1774,6 @@ total = base + following_bonus + bucket_boost + noise
 
 ## 7. USR-CUR · 기획전
 
-<a id="usr-cur-01--기획전-페이지"></a>
 ### USR-CUR-01 · 기획전 페이지
 
 **목적**: 운영팀이 주제·맥락으로 큐레이션한 작품(piece) 컬렉션을 별도 페이지에서 노출(Policy §15.1·§15.4).
@@ -1834,7 +1800,7 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 의존
 - 엔티티: EXHIBITION · CURATION
-- 정책: [Policy §15.1](./Policy_v1.md#policy-15-1) · [Policy §15.4](./Policy_v1.md#policy-15-4) · [Policy §32.1](./Policy_v1.md#policy-32-1) #8b · [Policy §32.2](./Policy_v1.md#policy-32-2)
+- 정책: [Policy §15.1](./Policy_v1.md#15-1-큐레이션-개념-4종) · [Policy §15.4](./Policy_v1.md#15-4-pick-vs-기획전-경계) · [Policy §32.1](./Policy_v1.md#32-1-전시-삭제-시-정리-대상) #8b · [Policy §32.2](./Policy_v1.md#32-2-운영-원칙)
 - 연결 화면: USR-EXH-01(전시 상세), USR-PRF-01(작가 프로필)
 
 ---
@@ -1853,7 +1819,7 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 처리
 1. 입력 시 실시간 자동완성(최대 8개).
-2. 확정 검색 시 [Policy §16.3](./Policy_v1.md#policy-16-3) 가중치 기반 정렬.
+2. 확정 검색 시 [Policy §16.3](./Policy_v1.md#16-3-검색-스코어링-usr-src-01) 가중치 기반 정렬.
 3. 통합 상위 매치: 결과 상단에 작가 1명 + 작품 2개.
 4. 작가·작품 결과 그리드 분리 표시.
 5. 최근 검색어(최대 10개):
@@ -1869,14 +1835,13 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 의존
 - 엔티티: EXHIBITION, USER_PROFILE, SEARCH_HISTORY
-- 정책: [Policy §16](./Policy_v1.md#policy-16)
+- 정책: [Policy §16](./Policy_v1.md#16-피드-랭킹-검색-스코어링-정책)
 - 연결 화면: USR-PRF-01, USR-EXH-01
 
 ---
 
 ## 9. USR-NTF · 알림
 
-<a id="usr-ntf-01--알림-센터"></a>
 ### USR-NTF-01 · 알림 센터
 
 **목적**: 좋아요·팔로우·그룹 초대·큐레이션·응모전·시스템 7가지 칩의 인앱 알림을 시간순으로 제공하고, 사용자가 읽음·삭제·원본 이동을 관리하도록 함.
@@ -1884,7 +1849,7 @@ total = base + following_bonus + bucket_boost + noise
 **우선순위**: **P0**
 
 #### 입력
-- 알림 목록(90일 보관 + 200건 상한, FIFO 자동 정리 — [Policy §20](./Policy_v1.md#policy-20))
+- 알림 목록(90일 보관 + 200건 상한, FIFO 자동 정리 — [Policy §20](./Policy_v1.md#20-확정-수치-종합표))
 - 필터(읽음/안읽음 탭 + 타입 칩)
 - 사용자 알림 설정(NOTIFICATION_SETTING)
 
@@ -1937,17 +1902,17 @@ total = base + following_bonus + bucket_boost + noise
 
 - **큐레이션 카테고리** — 운영팀 직권 큐레이션 단발 알림:
   - Pick 선정 알림: 내 전시가 Pick 선정될 때.
-  - 기획전 선정 알림: 운영팀이 내 작품(piece)을 기획전에 추가한 시점([Policy §15.1](./Policy_v1.md#policy-15-1)·[Policy §15.4](./Policy_v1.md#policy-15-4)).
+  - 기획전 선정 알림: 운영팀이 내 작품(piece)을 기획전에 추가한 시점([Policy §15.1](./Policy_v1.md#15-1-큐레이션-개념-4종)·[Policy §15.4](./Policy_v1.md#15-4-pick-vs-기획전-경계)).
 - **응모전 카테고리** — 사용자 응모전 알림:
-  - 응모전 선정 알림: 운영팀이 내 응모작을 응모전 선정작으로 확정한 시점([Policy §15.5](./Policy_v1.md#policy-15-5)).
+  - 응모전 선정 알림: 운영팀이 내 응모작을 응모전 선정작으로 확정한 시점([Policy §15.5](./Policy_v1.md#15-5-응모전-선정-정책-런칭-전-필수)).
   - 응모전 공지 알림: 참여한 응모전의 공지·종료 알림.
 - **시스템 카테고리** — 시스템 운영 알림:
   - 검수 결과 알림(통과/반려): 내 전시 검수 판정 시.
-  - 초대 수락 알림: 내가 보낸 토큰 링크로 가입한 친구가 USR-AUT-10b "본인 작품 찾기"에서 카드를 명시 클릭해 회원 슬롯 승격된 시점([Policy §3.2](./Policy_v1.md#policy-3-2)·[Policy §3.3](./Policy_v1.md#policy-3-3)).
+  - 초대 수락 알림: 내가 보낸 토큰 링크로 가입한 친구가 USR-AUT-10b "본인 작품 찾기"에서 카드를 명시 클릭해 회원 슬롯 승격된 시점([Policy §3.2](./Policy_v1.md#3-2-본인-작품-찾기-가입자-본인-선택)·[Policy §3.3](./Policy_v1.md#3-3-자동-연결-후-알림과-동시-선택)).
 
 **마케팅 토글 동작** (USR-STG-01 §4 마케팅 토글 OFF 시):
 - 인앱 알림에는 마케팅 종류가 없음(본 표 10종에 마케팅 없음).
-- 마케팅 토글은 **외부 채널 마케팅 발송 동의** 제어 — 이메일·알림톡·문자로 발송되는 운영팀 마케팅 메시지(응모전 안내 push 등)를 보유 식별자에 따라 자동 라우팅([Policy §1.1](./Policy_v1.md#policy-1-1)). OFF 시 외부 채널 마케팅 발송 차단(법적 의무 알림은 §1.1 정합으로 별도).
+- 마케팅 토글은 **외부 채널 마케팅 발송 동의** 제어 — 이메일·알림톡·문자로 발송되는 운영팀 마케팅 메시지(응모전 안내 push 등)를 보유 식별자에 따라 자동 라우팅([Policy §1.1](./Policy_v1.md#1-1-채널-라우팅)). OFF 시 외부 채널 마케팅 발송 차단(법적 의무 알림은 §1.1 정합으로 별도).
 
 #### 출력
 - 필터 바 · 일괄 액션 버튼
@@ -1979,14 +1944,13 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 의존
 - 엔티티: NOTIFICATION, NOTIFICATION_SETTING
-- 정책: [Policy §1](./Policy_v1.md#policy-1) · [Policy §20](./Policy_v1.md#policy-20)
+- 정책: [Policy §1](./Policy_v1.md#1-알림-채널-정책) · [Policy §20](./Policy_v1.md#20-확정-수치-종합표)
 - 연결 화면: USR-EXH-01, USR-PRF-01, USR-PRF-05, USR-PRF-12, USR-EVT-02, USR-AUT-02
 
 ---
 
 ## 10. USR-STG · 설정
 
-<a id="usr-stg-01--설정-홈"></a>
 ### USR-STG-01 · 설정 홈
 
 **목적**: 계정·알림·글꼴·언어 등 사용자 개인 설정 관리 + 로그아웃·탈퇴 진입.
@@ -2014,7 +1978,7 @@ total = base + following_bonus + bucket_boost + noise
 
 #### 의존
 - 엔티티: USER_PROFILE, NOTIFICATION_SETTING, UI_PREFERENCES
-- 정책: [Policy §19](./Policy_v1.md#policy-19)
+- 정책: [Policy §19](./Policy_v1.md#19-접근성-시니어-친화-정책)
 - 연결 화면: USR-STG-02, USR-STG-03, USR-INF-07
 
 ---
@@ -2025,7 +1989,6 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 
 ---
 
-<a id="usr-stg-03--탈퇴-모달"></a>
 ### USR-STG-03 · 탈퇴 모달
 
 **목적**: 사용자 탈퇴 + 사유 수집. 비밀번호 재입력 없이 **데이터 영구 삭제 동의 체크박스**로 대체(Policy §2.5).
@@ -2039,7 +2002,7 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 
 #### 처리
 1. 사유 선택 + 동의 체크박스 체크 확인.
-2. [Policy §4](./Policy_v1.md#policy-4)에 따라:
+2. [Policy §4](./Policy_v1.md#4-탈퇴-작가-정책)에 따라:
    - 작가명 "작가 미상"으로 익명화
    - 프로필 접근 차단
    - 작품은 유지, 인터랙션 차단
@@ -2058,7 +2021,7 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 
 #### 의존
 - 엔티티: USER_PROFILE (탈퇴 상태 전환)
-- 정책: [Policy §4](./Policy_v1.md#policy-4)
+- 정책: [Policy §4](./Policy_v1.md#4-탈퇴-작가-정책)
 - 연결 화면: USR-AUT-02
 
 ---
@@ -2087,7 +2050,7 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 - EC-01: 외부 SNS 링크가 미설정인 경우 → 해당 버튼 숨김(플레이스홀더 노출 안 함).
 
 #### 의존
-- 정책: [Policy §5](./Policy_v1.md#policy-5) · [Policy §19.3](./Policy_v1.md#policy-19-3)
+- 정책: [Policy §5](./Policy_v1.md#5-용어-정책) · [Policy §19.3](./Policy_v1.md#19-3-다국어)
 - 연결 화면: USR-INF-07
 
 ---
@@ -2170,7 +2133,6 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 
 ---
 
-<a id="usr-inf-05--이용약관"></a>
 ### USR-INF-05 · 이용약관
 
 **목적**: 서비스 이용약관의 법적 공개.
@@ -2201,23 +2163,22 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 
 #### 수용기준
 - AC-01: Given 진입 / When 로드 / Then 시행일·개정일 상단 표시 + 목차 네비.
-- AC-02: Given 약관 변경 후 최초 접속 / When 사용자 감지 / Then 변경 고지(법적 의무 알림 — [Policy §1.1](./Policy_v1.md#policy-1-1)) + 재동의 플로우 진입.
+- AC-02: Given 약관 변경 후 최초 접속 / When 사용자 감지 / Then 변경 고지(법적 의무 알림 — [Policy §1.1](./Policy_v1.md#1-1-채널-라우팅)) + 재동의 플로우 진입.
 - AC-03: Given 앵커 `/terms#article-5` / When 진입 / Then 해당 조문 자동 스크롤.
 
 #### 엣지케이스
 - EC-01: 법무 미확정 상태 → **초안 배너** 상단 고정("본 약관은 법무 확정 전 초안입니다") — 런칭 빌드에서는 제거.
 
 #### 노트
-- 런칭 전 법무 확정 필수([Policy §31 N-10](./Policy_v1.md#policy-31), [Policy §21.1 L-1](./Policy_v1.md#policy-21-1)).
+- 런칭 전 법무 확정 필수([Policy §31 N-10](./Policy_v1.md#31-런칭-전-미해결-항목), [Policy §21.1 L-1](./Policy_v1.md#21-1-검토-필요-문서-4종)).
 - 약관 이전 버전 아카이브 페이지는 후순위 개발.
 
 #### 의존
-- 정책: [Policy §5](./Policy_v1.md#policy-5) · [Policy §21.1](./Policy_v1.md#policy-21-1)
+- 정책: [Policy §5](./Policy_v1.md#5-용어-정책) · [Policy §21.1](./Policy_v1.md#21-1-검토-필요-문서-4종)
 - 연결 화면: USR-AUT-05(Step 3 약관), USR-AUT-06(소셜 모달), USR-INF-06
 
 ---
 
-<a id="usr-inf-06--개인정보처리방침"></a>
 ### USR-INF-06 · 개인정보처리방침
 
 **목적**: 개인정보 수집·이용·제공·파기 정책의 법적 공개.
@@ -2252,16 +2213,15 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 - EC-01: 개정일이 최근 30일 이내 → 상단 "최근 개정되었습니다" 배지.
 
 #### 노트
-- 런칭 전 법무 확정 필수([Policy §31 N-10](./Policy_v1.md#policy-31), [Policy §21.1 L-2](./Policy_v1.md#policy-21-1)).
-- **데이터 내보내기·삭제 요청 기능은 런칭 전 필수**([Policy §21.3](./Policy_v1.md#policy-21-3)) — 요청 접수 채널은 USR-INF-07.
+- 런칭 전 법무 확정 필수([Policy §31 N-10](./Policy_v1.md#31-런칭-전-미해결-항목), [Policy §21.1 L-2](./Policy_v1.md#21-1-검토-필요-문서-4종)).
+- **데이터 내보내기·삭제 요청 기능은 런칭 전 필수**([Policy §21.3](./Policy_v1.md#21-3-런칭-전-필수-수행)) — 요청 접수 채널은 USR-INF-07.
 
 #### 의존
-- 정책: [Policy §2.1](./Policy_v1.md#policy-2-1) · [Policy §18](./Policy_v1.md#policy-18) · [Policy §21](./Policy_v1.md#policy-21)
+- 정책: [Policy §2.1](./Policy_v1.md#2-1-가입-옵션과-필수-수집-정보-region-분기-폐기) · [Policy §18](./Policy_v1.md#18-데이터-보관-저장-정책) · [Policy §21](./Policy_v1.md#21-법무-체크포인트)
 - 연결 화면: USR-INF-07, CM-05
 
 ---
 
-<a id="usr-inf-07--문의하기"></a>
 ### USR-INF-07 · 문의하기
 **목적**: 사용자 문의 수집. 일반 문의 + **개인정보 권리 행사 요청**(Policy §30) 단일 진입점.
 **트리거**: 푸터 링크, `/contact`, 에러 바운더리(CM-07)에서 연결, 마이페이지 데이터 권리 안내에서도 연결.
@@ -2273,10 +2233,10 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
   | # | 라벨 | 비고 |
   |---|---|---|
   | 1 | 계정 관련 | 로그인·세션·탈퇴 등 |
-  | 2 | **닉네임 변경 신청** | [Policy §4.4](./Policy_v1.md#policy-4-4) 정합. 본인 확인·희망 닉네임·변경 사유 입력. 운영팀 처리 시 옛 닉네임 잠금 풀 자동 등록 → ADM-INQ-01 |
+  | 2 | **닉네임 변경 신청** | [Policy §4.4](./Policy_v1.md#4-4-재가입) 정합. 본인 확인·희망 닉네임·변경 사유 입력. 운영팀 처리 시 옛 닉네임 잠금 풀 자동 등록 → ADM-INQ-01 |
   | 3 | 업로드/전시 관련 | 검수·이미지 형식 등 |
-  | 4 | 신고/저작권 관련 | 작품 처리 결과 문의 포함. [Policy §22.2](./Policy_v1.md#policy-22-2) 위급 영업일 24시간 |
-  | 5 | 개인정보 열람·정정·삭제 요청 | [Policy §30](./Policy_v1.md#policy-30) 권리 행사 채널. 30일 SLA |
+  | 4 | 신고/저작권 관련 | 작품 처리 결과 문의 포함. [Policy §22.1](./Policy_v1.md#22-1-검수-sla) 기준 |
+  | 5 | 개인정보 열람·정정·삭제 요청 | [Policy §30](./Policy_v1.md#30-개인정보-열람-정정-삭제-요청-정책) 권리 행사 채널. 30일 SLA |
   | 6 | 제안/피드백 | — |
   | 7 | 오류 제보 | 재현 자료 첨부 권장 |
   | 8 | 기타 | — |
@@ -2294,17 +2254,17 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 - AC-03: Given 파일 6MB / When 업로드 / Then 에러 "5MB 이하 파일만 첨부할 수 있어요".
 - AC-04: Given 개인정보 요청 카테고리 선택 / When 폼 로드 / Then 본인 확인 안내 문구 노출.
 - AC-05: Given 닉네임 변경 신청 카테고리 선택 / When 폼 로드 / Then 본인 확인 안내 + 희망 닉네임 필드 + 변경 사유 필드 추가 노출.
-- AC-06: Given 닉네임 변경 신청 제출 / When 운영팀 처리 / Then 옛 닉네임이 전역 unique 잠금 풀에 자동 등록되어 다른 사용자 재사용 불가 ([Policy §4.4](./Policy_v1.md#policy-4-4)).
+- AC-06: Given 닉네임 변경 신청 제출 / When 운영팀 처리 / Then 옛 닉네임이 전역 unique 잠금 풀에 자동 등록되어 다른 사용자 재사용 불가 ([Policy §4.4](./Policy_v1.md#4-4-재가입)).
 #### 의존
 - 엔티티: INQUIRY
-- 정책: [Policy §30](./Policy_v1.md#policy-30)
+- 정책: [Policy §30](./Policy_v1.md#30-개인정보-열람-정정-삭제-요청-정책)
 - 연결 화면: 운영 측 ADM-INQ-01
 
 ---
 
 ## 12. CM · 공통 컴포넌트·다이얼로그
 
-> 모든 CM 화면의 상세 정의는 [IA_ScreenList §4](./IA_ScreenList_v1.md#4-공통-팝업다이얼로그-cm). 아래는 사용자 앱(USR) 기준의 수용기준.
+> 모든 CM 화면의 상세 정의는 [IA_ScreenList §4](./IA_ScreenList_v1.md#4-공통-팝업-다이얼로그-cm). 아래는 사용자 앱(USR) 기준의 수용기준.
 
 ### CM-01 · 확인 다이얼로그
 - AC-01: Given 복구 불가 액션 트리거 / When 다이얼로그 오픈 / Then 확정 버튼 빨간 스타일 + 취소는 기본 스타일.
@@ -2317,18 +2277,18 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 - AC-03: Given 로그인 버튼 탭 / When 이동 / Then 로그인 화면으로 이동, 로그인 완료 후 원래 경로로 자동 복귀.
 
 ### CM-03 · 신고 모달
-- 단일 사유 안내 박스 ([Policy §12.0](./Policy_v1.md#policy-12-0)): "이 작품은 작가 본인의 그림이 아니에요" + 한 줄 설명("다른 사람의 작품을 본인 것처럼 올린 것 같아요").
+- 단일 사유 안내 박스 ([Policy §12.0](./Policy_v1.md#12-0-신고-사유)): "이 작품은 작가 본인의 그림이 아니에요" + 한 줄 설명("다른 사람의 작품을 본인 것처럼 올린 것 같아요").
 - 자유 메시지(최대 200자, 카운터) — 사용자가 추가 정황(원본 출처 링크 등) 입력.
 - 허위 신고 책임 안내 한 줄.
 - 동일 `(신고자, 대상)` 조합 재신고 시도 → 에러 "이미 신고한 대상이에요.".
 
 ### CM-04 · (삭제됨)
-- 2026-04-19 초대 자동 연결 단순화로 제거(폰 매칭 후보 본인 확인 게이트). 2026-04-27 Policy §3 v2.14 토큰 모델 전환으로 USR-AUT-10b "본인 작품 찾기"(가입자 명시 클릭) 흐름으로 재구성됨. 가입자 자가 해제 진입점도 폐기 — 잘못 연결 시 작가가 마이페이지 슬롯 편집에서 해제 ([Policy §3.5](./Policy_v1.md#policy-3-5)).
+- 2026-04-19 초대 자동 연결 단순화로 제거(폰 매칭 후보 본인 확인 게이트). 2026-04-27 Policy §3 v2.14 토큰 모델 전환으로 USR-AUT-10b "본인 작품 찾기"(가입자 명시 클릭) 흐름으로 재구성됨. 가입자 자가 해제 진입점도 폐기 — 잘못 연결 시 작가가 마이페이지 슬롯 편집에서 해제 ([Policy §3.5](./Policy_v1.md#3-5-잘못-연결됐을-때)).
 
 ### CM-05 · 쿠키 동의
 - 최초 방문 시 하단 배너. 옵션: "모두 동의" / "필수만" / 개인정보처리방침 링크.
 - 선택 결과는 사용자 단말에 보관. 배너 즉시 사라짐.
-- 필수/분석 쿠키 구분 및 3자 처리자 목록은 [Policy §29](./Policy_v1.md#policy-29).
+- 필수/분석 쿠키 구분 및 3자 처리자 목록은 [Policy §29](./Policy_v1.md#29-쿠키-분석-동의-정책).
 
 ### CM-06 · 오프라인 배너
 - 네트워크 오프라인 감지 시 상단 고정 배너. 온라인 복귀 시 자동 해제.
@@ -2362,7 +2322,7 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 1. 작가가 친구에게 카톡·문자 등으로 보낸 토큰 링크(`?invite=<token>`) → USR-EXH-03 랜딩
 2. 가입 CTA → §13.1 신규 가입 플로우 (이메일 USR-AUT-03→04→05 또는 소셜 USR-AUT-06)
 3. 온보딩 진행 중 USR-AUT-10b(본인 작품 찾기, 활성 또는 비활성 토큰 보유 시 조건부 진입)에서 본인 그림 카드 명시 클릭 + 확인 다이얼로그 1회 → 즉시 회원 슬롯으로 연결
-4. 잘못 연결됐다면 가입자가 작가에게 직접 알리고, 작가가 마이페이지 슬롯 편집에서 작가 미상으로 풀어준다(자가 해제 진입점은 폐기, [Policy §3.5](./Policy_v1.md#policy-3-5) v2.14)
+4. 잘못 연결됐다면 가입자가 작가에게 직접 알리고, 작가가 마이페이지 슬롯 편집에서 작가 미상으로 풀어준다(자가 해제 진입점은 폐기, [Policy §3.5](./Policy_v1.md#3-5-잘못-연결됐을-때) v2.14)
 
 ### 13.3 작품 업로드 플로우
 
@@ -2383,7 +2343,7 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 
 1. USR-EXH-01 or USR-PRF-01 신고 버튼 → CM-03
 2. 신고 접수 → 운영팀 큐(ADM-RPT-01)에 표시
-3. 처리 결과에 따라 대상 작가·신고자 알림([Policy §12.1.3](./Policy_v1.md#policy-12-1-3) 매트릭스 · [Policy §12.4](./Policy_v1.md#policy-12-4) 신고자 보호)
+3. 처리 결과에 따라 대상 작가·신고자 알림([Policy §12.1.3](./Policy_v1.md#12-1-3-신고-처리-알림-전송-왕복-피드백) 매트릭스 · [Policy §12.4](./Policy_v1.md#12-4-신고자-보호) 신고자 보호)
 
 ### 13.6 회원 탈퇴 플로우
 
@@ -2394,7 +2354,6 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 
 ---
 
-<a id="부록--사용자-앱-엔티티-요약-사용-범위"></a>
 
 ## 부록 · 사용자 앱 엔티티 요약 (사용 범위)
 
@@ -2405,8 +2364,8 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 | **USER_PROFILE** | 사용자 프로필 | 닉네임(필수), 이메일(필수), 생년월일(필수, 만 14세 검증), 전화번호(선택, 카카오 소셜 로그인 시 자동), 바이오, **위치**(공개 프로필, 11개 국가/지역 + 기타 드롭다운), 관심사, 외부 링크, 프로필 이미지, 언어, 글꼴 배율, 테마(밝게/어둡게), 알림 설정 |
 | **AUTH_SESSION** | 로그인 세션 | 세션 토큰, 만료, 인증 방식(카카오·구글·애플 OAuth / 이메일 매직 링크 별도 분류) |
 | **MAGIC_LINK_TOKEN** | 이메일 매직 링크 토큰 | 토큰, 이메일, 의도(가입/로그인), 발급 시각, 만료(30분), 소비 여부 |
-| **CONSENT_LOG** | 약관·마케팅 동의 이력 | 사용자 ID, 동의 항목(이용약관·개인정보·만 14세·마케팅), 동의 일시, 동의 시점 IP·UA, 변경 이력 (런칭 전 백엔드 연동 후 영속화) |
-| **POINT_LEDGER** | 포인트(AP) 원장 | 사용자 ID, 응모전 종류, 적립/회수 점수, 발생 시각, 관련 객체 ID. 최대 500건 FIFO ([Policy §7.3](./Policy_v1.md#policy-7-3)) |
+| **동의 이력** | 약관·마케팅 동의 이력 | 사용자 ID, 동의 항목(이용약관·개인정보·만 14세·마케팅), 동의 일시, 변경 이력 (런칭 전 백엔드 연동 후 영속화) |
+| **POINT_LEDGER** | 포인트(AP) 원장 | 사용자 ID, 응모전 종류, 적립/회수 점수, 발생 시각, 관련 객체 ID. 최대 500건(초과 시 오래된 항목 자동 제거) ([Policy §7.3](./Policy_v1.md#7-3-원장-보관)) |
 | **FAQ_ENTRY** | FAQ 항목 | 카테고리, 질문, 답변, 게시 순서. USR-INF-02에서 노출 (Phase 1 운영팀 데이터로 시드) |
 | **EXHIBITION** | 전시(1~10 이미지) | 제목, 그룹명, 유형(혼자/함께), 역할(참여 작가/강사), 이미지 1~10장, 커버, 작품명, 이미지별 작가, 설명, 연결 응모전 ID, **공개 상태(공개/검수 대기/반려/비공개 유지)** — Policy §23.0 v2.20 4종, 발행 시각 |
 | **DRAFT** | 전시 초안 | 전시 초안 스냅샷 + 마지막 수정 시각 |
@@ -2420,7 +2379,7 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 | **CURATION** | 기획전 | 제목, 부제, 포함 전시 ID[], 기간 |
 | **PICK** | Artier's Pick 선정 기록 | 대상 전시 ID, 선정 일시 |
 | **BANNER** | 홈 배너 | 이미지, 링크, 기간, 순서 |
-| **SANCTION** | 정지·제재 상태 (보류) | Phase 1 미사용 — 사용자 계정 단위 제재는 [Policy §12.3](./Policy_v1.md#policy-12-3)에 따라 추후 별도 로드맵에서 재설계 |
+| **SANCTION** | 정지·제재 상태 (보류) | Phase 1 미사용 — 사용자 계정 단위 제재는 [Policy §12.3](./Policy_v1.md#12-3-phase-1-범위-밖-추후-이관)에 따라 추후 별도 로드맵에서 재설계 |
 | **REPORT** | 신고 | 신고자, 대상 유형·ID, 사유, 처리 상태 |
 | **NOTICE** | 운영 공지 | 제목, 본문, 게시 일시 |
 | **INQUIRY** | 문의 | 이름, 이메일, 카테고리, 내용, 첨부 |
@@ -2433,7 +2392,7 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v2.10 | 2026-05-05 | PM × Claude | 자동 비공개 폐기 정합, EXHIBITION 공개 상태 4종, 노출 필터 문구. 이후 append — 상단 변경 요약 블록 폐지, 문서 이력 단순화. 이후 append — §0.5·§0.4.4 고정 앵커, 인용 본문 인라인 링크 |
+| v2.10 | 2026-05-05 | PM × Claude | 자동 비공개 폐기 정합, EXHIBITION 공개 상태 4종, 노출 필터 문구. 이후 append — 상단 변경 요약 블록 폐지, 문서 이력 단순화. 이후 append — §0.5·§0.4.4 고정 앵커, 인용 본문 인라인 링크. 이후 append — Policy에서 이관한 `USR-*` 화면 ID 참조 정의 블록 본 파일 인용에 추가(Cursor 참조 UX). 이후 append — 구현 세부 제거: input accept 속성값→Policy §20 인용, WebP 변환 세부 제거, log1p 수식→Policy §16.1 인용, auto-approve→자동 승인 환경, replace 모드→URL 유지, CONSENT_LOG→동의 이력, FIFO→초과 시 오래된 항목 자동 제거, IP·UA 수집 세부 제거, 라우팅 동작 괄호 주석 제거, 영업일 24시간 수치→Policy §22.1 인용 |
 | v2.9 | 2026-05-04 | PM × Claude | 응모·기획전·알림 카테고리·피드 버킷 코드 및 PRD 정합 |
 | v2.8 | 2026-04-30 | PM × Claude | 검수 단계 공유·초대·프로필 배지·문의 정합 |
 | v2.7 | 2026-04-27 | PM × Claude | 토큰 모델·본인 작품 찾기·Nielsen 후속 |
@@ -2454,80 +2413,3 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 | v1.2 | 2026-04-19 | PM × Claude | 반려 이력 보존 |
 | v1.1 | 2026-04-19 | PM × Claude | 편집 불변 필드·반려 사유 |
 | v1.0 | 2026-04-19 | PM × Claude | 최초 작성 |
-<!-- 인용 정의 -->
-[README.md]: README.md
-[IA_ScreenList_v1.md]: IA_ScreenList_v1.md
-[Policy_v1.md]: Policy_v1.md
-[Copy_v1.md]: Copy_v1.md
-[Policy §19.1]: Policy_v1.md#policy-19-1
-[Policy §2.4]: Policy_v1.md#policy-2-4
-[Policy §2.1]: Policy_v1.md#policy-2-1
-[Policy §2.5]: Policy_v1.md#policy-2-5
-[Policy §12.3]: Policy_v1.md#policy-12-3
-[Policy §2.2]: Policy_v1.md#policy-2-2
-[Policy §9.4]: Policy_v1.md#policy-9-4
-[Policy §2.3]: Policy_v1.md#policy-2-3
-[Policy §2]: Policy_v1.md#policy-2
-[Policy §3]: Policy_v1.md#policy-3
-[Policy §16.1]: Policy_v1.md#policy-16-1
-[Policy §15]: Policy_v1.md#policy-15
-[Policy §15.5]: Policy_v1.md#policy-15-5
-[Policy §25.2]: Policy_v1.md#policy-25-2
-[Handoff_Event_Consent_v1.md]: Handoff_Event_Consent_v1.md
-[Policy §16]: Policy_v1.md#policy-16
-[Policy §22.4]: Policy_v1.md#policy-22-4
-[Policy §10]: Policy_v1.md#policy-10
-[Policy §12]: Policy_v1.md#policy-12
-[Policy §4]: Policy_v1.md#policy-4
-[Policy §3.3]: Policy_v1.md#policy-3-3
-[Policy §10.3]: Policy_v1.md#policy-10-3
-[Policy §12.2]: Policy_v1.md#policy-12-2
-[Policy §13]: Policy_v1.md#policy-13
-[Policy §12.1.2]: Policy_v1.md#policy-12-1-2
-[Policy §7.2]: Policy_v1.md#policy-7-2
-[§3]: Policy_v1.md#policy-3
-[§7.2]: Policy_v1.md#policy-7-2
-[§8]: Policy_v1.md#policy-8
-[§9]: Policy_v1.md#policy-9
-[§11]: Policy_v1.md#policy-11
-[§13]: Policy_v1.md#policy-13
-[§14]: Policy_v1.md#policy-14
-[Policy §13.4]: Policy_v1.md#policy-13-4
-[Policy §9.2.1]: Policy_v1.md#policy-9-2-1
-[Policy §9.2]: Policy_v1.md#policy-9-2
-[Policy §27]: Policy_v1.md#policy-27
-[Policy §9.1]: Policy_v1.md#policy-9-1
-[Policy §20]: Policy_v1.md#policy-20
-[Policy §31 N-5]: Policy_v1.md#policy-31
-[Policy §16.3]: Policy_v1.md#policy-16-3
-[Policy §1]: Policy_v1.md#policy-1
-[Policy §19]: Policy_v1.md#policy-19
-[Policy §5]: Policy_v1.md#policy-5
-[Policy §19.3]: Policy_v1.md#policy-19-3
-[Policy §1.1]: Policy_v1.md#policy-1-1
-[Policy §31 N-10]: Policy_v1.md#policy-31
-[Policy §21.1 L-1]: Policy_v1.md#policy-21-1
-[Policy §21.1]: Policy_v1.md#policy-21-1
-[Policy §21.1 L-2]: Policy_v1.md#policy-21-1
-[Policy §21.3]: Policy_v1.md#policy-21-3
-[Policy §18]: Policy_v1.md#policy-18
-[Policy §21]: Policy_v1.md#policy-21
-[Policy §30]: Policy_v1.md#policy-30
-[IA_ScreenList §4]: IA_ScreenList_v1.md#4-공통-팝업다이얼로그-cm
-[Policy §29]: Policy_v1.md#policy-29
-[Policy §3.2]: Policy_v1.md#policy-3-2
-[Policy §3.5]: Policy_v1.md#policy-3-5
-[Policy §4.4]: Policy_v1.md#policy-4-4
-[Policy §3.3]: Policy_v1.md#policy-3-3
-[Policy §6]: Policy_v1.md#policy-6
-[Policy §19]: Policy_v1.md#policy-19
-[Policy §7]: Policy_v1.md#policy-7
-[Policy §21.1 L-4]: Policy_v1.md#policy-21-1
-[Handoff_UserInfo_Contact_v1.md]: Handoff_UserInfo_Contact_v1.md
-[Policy §22.2]: Policy_v1.md#policy-22-2
-[Policy §12.0]: Policy_v1.md#policy-12-0
-[Policy §3.1]: Policy_v1.md#policy-3-1
-[Policy §3.4]: Policy_v1.md#policy-3-4
-[Policy §27.1]: Policy_v1.md#policy-27-1
-[Policy §9]: Policy_v1.md#policy-9
-[Policy §11]: Policy_v1.md#policy-11

@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 """
 Scan _planning/*.md for local links [text](path.md#frag) and verify
-target file declares id="frag" via <a id="..."> and/or <h1–h6 id="..."> (heading id는 미리보기 스크롤 정합에 유리).
-Also flags #fragment with no id in target (false negatives possible if only GFM heading slug).
+target file declares id="frag" via <a id>, <h1–h6 id>, 펜스 밖 마크다운 제목(#–######)에서 파생한 GFM류 슬러그.
+레거시 Policy용 블록 `<div id="policy-…">`는 참조용으로만 매칭한다.
 
 예시·설명용으로만 쓰인 링크(인라인 코드 `` `...` `` 안, ``` 펜스 블록 안)은 검사에서 제외한다.
 동일 줄에 `[텍스트](#앵커)` 예시를 두면 상대 앵커가 현재 파일로 오인되므로,
@@ -15,6 +15,8 @@ import re
 import sys
 from pathlib import Path
 from urllib.parse import unquote
+
+from md_heading_slugs import heading_slug_set_from_text
 
 ROOT = Path(__file__).resolve().parent.parent
 MD_LINK = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
@@ -53,6 +55,12 @@ def collect_ids(text: str) -> set[str]:
     ids: set[str] = set()
     ids.update(re.findall(r'<a\s+id="([^"]+)"\s*/?>', text, re.I))
     ids.update(re.findall(r"<h[1-6]\b[^>]*\bid=\"([^\"]+)\"", text, re.I))
+    # Policy_v1: 블록 고정 앵커(div/span) — 미리보기 조각 스크롤 정합
+    ids.update(
+        re.findall(
+            r"<(?:div|span)\b[^>]*\bid=\"(policy-[^\"]+)\"", text, re.I
+        )
+    )
     return ids
 
 
@@ -73,6 +81,7 @@ def main() -> None:
         t = p.read_text(encoding="utf-8")
         file_text[p.name] = t
         file_ids[p.name] = collect_ids(t)
+        file_ids[p.name].update(heading_slug_set_from_text(t))
 
     for src_name, text in file_text.items():
         in_fence = False
@@ -115,10 +124,16 @@ def main() -> None:
                     issues.append((src_name, i, raw, "id 미존재", f"{target}#{frag}"))
 
     if not issues:
-        print("OK: 로컬 .md #앵커 전수 검사에서 불일치 없음 (<a id> / <h1–h6 id> 기준).")
+        print(
+            "OK: 로컬 .md #앵커 전수 검사에서 불일치 없음 "
+            "(<a id> / <h1–h6 id> / 마크다운 제목 슬러그 / policy div·span 레거시)."
+        )
         return
 
-    print(f"문제 {len(issues)}건 (<a id> / <h1–h6 id> 기준)\n")
+    print(
+        f"문제 {len(issues)}건 "
+        "(<a id> / <h1–h6 id> / 제목 슬러그 / policy div·span 레거시)\n"
+    )
     cur = None
     for src, line, raw, reason, detail in issues:
         key = (src, line)

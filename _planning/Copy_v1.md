@@ -36,7 +36,7 @@ Artier는 시니어·중장년 순수미술 작가를 주 고객으로 하는 **
 
 ## 2. 용어 정책
 
-상세는 [§5](./Policy_v1.md#policy-5) — 여기선 카피 작성 시 가장 자주 걸리는 5개만.
+상세는 [§5](./Policy_v1.md#5-용어-정책) — 여기선 카피 작성 시 가장 자주 걸리는 5개만.
 
 | 개념 | 쓰는 말 | 쓰지 말 말 |
 |---|---|---|
@@ -62,7 +62,7 @@ Artier는 시니어·중장년 순수미술 작가를 주 고객으로 하는 **
 | 토스트 본문 | 한 문장, **20자 전후** | 5초 내 읽힘 |
 | 알림 본문 | 한 문장 + 대상 인용, 최대 **40자** | 알림 센터에서 2줄 상한 |
 | 에러 메시지 | "원인 + 해결책" 한 문장 | 사용자가 바로 행동할 수 있어야 |
-| 작품명·전시명·그룹명 | **20자** | [§9](./Policy_v1.md#policy-9) |
+| 작품명·전시명·그룹명 | **20자** | [§9](./Policy_v1.md#9-작품명-전시명-그룹명-정책) |
 
 ### 3.2 시제·인칭
 
@@ -123,7 +123,7 @@ Artier는 시니어·중장년 순수미술 작가를 주 고객으로 하는 **
 
 ### 4.4 알림 (Notification)
 
-타입별 구조 (상세 [§3.5](./Policy_v1.md#policy-3-5)·[§16.3](./Policy_v1.md#policy-16-3) 참조):
+타입별 구조 (상세 [§3.5](./Policy_v1.md#3-5-잘못-연결됐을-때)·[§16.3](./Policy_v1.md#16-3-검색-스코어링-usr-src-01) 참조):
 
 | 타입 | 구조 예 |
 |---|---|
@@ -219,6 +219,8 @@ const koMessages = {
   'footer.jurisdictionValue': '서울중앙지방법원',
   'footer.emailCollectionNotice':
     '본 사이트에 게시된 이메일 주소가 전자우편 수집 프로그램이나 그 밖의 기술적 장치를 이용하여 무단으로 수집되는 것을 거부합니다. (정보통신망법)',
+  // ── 런칭 빌드 제거 대상 (Policy §31 N-16) ─────────────────
+  // 아래 키는 PM·개발 검수 도구 전용이며 실서비스에 노출되지 않는다.
   'demo.title': '플로우 데모',
   'demo.lead':
     '상단의 「Phase 1 유저 플로우 — 화면 바로가기」에서 문서 14개 흐름별 URL을 한꺼번에 열 수 있어요. 아래 도구로 알림·초대·탈퇴는 데모 전용으로 시연합니다.',
@@ -353,6 +355,7 @@ const koMessages = {
 Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 는 런칭 전 백엔드 연동 후. 로컬 적립 로직은 가입·온보딩·둘러보기·업로드 등에서 계속 동작.`,
   'flowMap.section15': `15. 기획 검수 — reference 도구
 /demo/reference|모의 JWT·이메일 템플릿·발송 조건 표`,
+  // ── 런칭 빌드 제거 대상 끝 ───────────────────────────────
   'points.title': '포인트',
   'points.back': '뒤로',
   'points.apLabel': 'AP (활동)',
@@ -586,7 +589,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'report.deleteReason.abuse': '어뷰즈',
   'report.notifTargetWorkHidden': '회원님의 전시 \'{title}\'이 신고 검토 결과 비공개로 전환됐어요. 피드와 검색에서 제외돼요.',
   'report.notifReporterDismissed': '접수하신 신고는 운영팀 검토 결과 받아들여지지 않았어요.',
-  'upload.toastPublishedImmediate': '작품이 등록됐어요. 둘러보기 피드에서 바로 보여요. (자동 승인 모드)',
+  'upload.toastPublishedImmediate': '작품이 등록됐어요. 둘러보기 피드에서 바로 보여요.',
   'upload.toastDraftSaved': '초안이 저장되었어요.',
   'upload.toastOrderSaved': '순서가 저장되었어요.',
   'upload.confirmStudent': '업로드하는 작품들에 대한 작가의 동의를 받았어요',
@@ -1399,6 +1402,8 @@ const enMessages: Record<MessageKey, string> = {
   'footer.jurisdictionValue': 'Seoul Central District Court',
   'footer.emailCollectionNotice':
     'We prohibit the unauthorized collection of email addresses posted on this site using harvesting software or other automated or technical means. (Act on Promotion of Information and Communications Network Utilization and Information Protection, etc.)',
+  // ── 런칭 빌드 제거 대상 (Policy §31 N-16) ─────────────────
+  // 아래 키는 PM·개발 검수 도구 전용이며 실서비스에 노출되지 않는다.
   'demo.title': 'Flow demo',
   'demo.lead':
     'Use the flow index at the top to open every Phase 1 screen by URL. Below: demo-only tools for notifications, invites, and withdrawal.',
@@ -1533,6 +1538,7 @@ Use the buttons above to push demo notifications`,
 Phase 1: background earn only (PRD & user flow). Points UI and /points come after backend integration. Local earn hooks still run on signup, onboarding, browse, upload, etc.`,
   'flowMap.section15': `15. PM review — reference demo
 /demo/reference|Mock JWT, email templates, send-rule table`,
+  // ── 런칭 빌드 제거 대상 끝 ───────────────────────────────
   'points.title': 'Points',
   'points.back': 'Back',
   'points.apLabel': 'AP (activity)',
@@ -1765,7 +1771,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'report.notifTargetWorkHidden': 'Your exhibition \'{title}\' has been hidden from Browse/Search after review.',
   'report.notifReporterDismissed': 'Your report was dismissed after review.',
   'review.notifNewWork': 'has posted a new exhibition',
-  'upload.toastPublishedImmediate': 'Exhibited and shown on Browse immediately. (auto-approve mode)',
+  'upload.toastPublishedImmediate': 'Exhibited and shown on Browse immediately.',
   'upload.toastDraftSaved': 'Draft saved.',
   'upload.toastOrderSaved': 'Order saved.',
   'upload.confirmStudent': 'I confirm consent to upload students’ work',
@@ -2576,14 +2582,14 @@ export function translate(locale: Locale, key: MessageKey): string {
 2. i18n 사전(ko/en) 동시 수정
 3. 키가 새로 생기면 네임스페이스 §7.1에 맞게 명명
 4. 문서 §6 ko/en 사전에 동시 반영 (필요 시 Policy·PRD의 관련 섹션도 갱신)
-5. 빌드 통과 + 언어 전환 테스트(locale 스냅샷 안티패턴 점검)
+5. 빌드 통과 + 언어 전환 테스트
 
 ---
 
 ## 9. 이 문서가 다루지 않는 것
 
 - 언어 자동 감지·폴백 로직 — `useI18n()` 훅이 단일 진입점이며, 구현 세부는 개발팀 코드 단일 소스.
-- 법무 문구(약관·개인정보) — [§21](./Policy_v1.md#policy-21) 법무 체크포인트 이관.
+- 법무 문구(약관·개인정보) — [§21](./Policy_v1.md#21-법무-체크포인트) 법무 체크포인트 이관.
 - 마케팅 외부 문구 — 본 가이드는 **앱 내부 카피** 한정.
 
 ---
@@ -2606,8 +2612,8 @@ export function translate(locale: Locale, key: MessageKey): string {
 | v1.1 | 2026-04-21 | PM × Claude | 온보딩·FAQ 매직 링크 정합 |
 | v1.0 | 2026-04-20 | PM × Claude | Copy_v1 신설 |
 <!-- 인용 정의 -->
-[§5]: Policy_v1.md#policy-5
-[§9]: Policy_v1.md#policy-9
-[§3.5]: Policy_v1.md#policy-3-5
-[§16.3]: Policy_v1.md#policy-16-3
-[§21]: Policy_v1.md#policy-21
+[§5]: Policy_v1.md#5-용어-정책
+[§9]: Policy_v1.md#9-작품명-전시명-그룹명-정책
+[§3.5]: Policy_v1.md#3-5-잘못-연결됐을-때
+[§16.3]: Policy_v1.md#16-3-검색-스코어링-usr-src-01
+[§21]: Policy_v1.md#21-법무-체크포인트

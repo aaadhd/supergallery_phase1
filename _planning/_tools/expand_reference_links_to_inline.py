@@ -74,8 +74,24 @@ def should_skip_label(label: str) -> bool:
     return False
 
 
+_POLICY_SECTION_MAP: dict[str, str] | None = None
+
+
+def _policy_section_map() -> dict[str, str]:
+    global _POLICY_SECTION_MAP
+    if _POLICY_SECTION_MAP is None:
+        from policy_gfm_slugs import policy_section_key_to_slug
+
+        root = Path(__file__).resolve().parent.parent
+        text = (root / "Policy_v1.md").read_text(encoding="utf-8")
+        _POLICY_SECTION_MAP = policy_section_key_to_slug(text)
+    return _POLICY_SECTION_MAP
+
+
 def infer_policy_url(label: str) -> str | None:
-    """Policy §… / §… (Policy 파일 내) 숫자 소절 → policy-* 슬러그."""
+    """Policy §… / §… (Policy 파일 내) 숫자 소절 → Policy_v1.md GFM 제목 슬러그."""
+    from policy_gfm_slugs import slug_for_section_key
+
     lab = strip_version_suffix(label)
     if lab.startswith("Policy §"):
         inner = lab[len("Policy §") :].strip()
@@ -86,18 +102,20 @@ def infer_policy_url(label: str) -> str | None:
 
     inner = strip_version_suffix(inner)
 
-    if inner.startswith("31 N-") or inner == "31":
-        return "./Policy_v1.md#policy-31"
+    if re.match(r"^31\s+N-", inner) or inner == "31":
+        inner = "31"
 
     m = re.match(r"^(\d+(?:\.\d+)*)\s+L-(\d+)$", inner)
     if m:
-        frag = "policy-" + m.group(1).replace(".", "-")
-        return f"./Policy_v1.md#{frag}"
+        dotted = m.group(1)
+        frag = slug_for_section_key(_policy_section_map(), dotted)
+        return f"./Policy_v1.md#{frag}" if frag else None
 
     m = re.match(r"^(\d+(?:\.\d+)*)$", inner)
     if m:
-        frag = "policy-" + m.group(1).replace(".", "-")
-        return f"./Policy_v1.md#{frag}"
+        dotted = m.group(1)
+        frag = slug_for_section_key(_policy_section_map(), dotted)
+        return f"./Policy_v1.md#{frag}" if frag else None
 
     return None
 

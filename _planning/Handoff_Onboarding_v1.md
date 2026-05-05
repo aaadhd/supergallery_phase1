@@ -7,7 +7,7 @@
 > **단일 소스**
 > - 화면 문자열은 [Copy_v1.md](./Copy_v1.md) 온보딩·claim 관련 영역이 단일 소스다.
 > - 수정 시 Copy를 먼저 갱신하고 본 문서를 같은 작업 범위에서 맞춘다.
-> - "본인 작품 찾기" 단계는 [Policy §3](./Policy_v1.md#policy-3)과 직결되어 변호사 검토 시 [Handoff_LegalReview_Checklist §3 LP-3](./Handoff_LegalReview_Checklist_v1.md#lp-3-비회원-초대--토큰-모델-적법-근거) 함께 참조 권장.
+> - "본인 작품 찾기" 단계는 [Policy §3](./Policy_v1.md#3-비회원-초대-정책)과 직결되어 변호사 검토 시 [Handoff_LegalReview_Checklist §3 LP-3](./Handoff_LegalReview_Checklist_v1.md#lp-3-비회원-초대-토큰-모델-적법-근거) 함께 참조 권장.
 
 ---
 
@@ -15,11 +15,11 @@
 
 | 항목 | 결정 | 근거 |
 |---|---|---|
-| 진입 분기 | 일반 가입 / 소셜 가입 / 초대 링크 가입 3종 | [Policy §2.1](./Policy_v1.md#policy-2-1)·[Policy §3](./Policy_v1.md#policy-3) |
-| Step 2 (본인 작품 찾기) 진입 조건 | 활성 또는 비활성 토큰 보유 시 | [Policy §3.2](./Policy_v1.md#policy-3-2) |
-| 자동 연결 | 없음. 가입자 명시 클릭 + 확인 다이얼로그 1회 필요 | [Policy §3.2](./Policy_v1.md#policy-3-2) |
-| 동시 선택 처리 | 두 가입자가 동시에 같은 자리를 선택하면 첫 번째만 인정, 두 번째는 자동 차단 + 안내 | [Policy §3.3](./Policy_v1.md#policy-3-3) |
-| Step 1 공통 폼 | 지역 분기 없음. 닉네임·생년월일·프로필 이미지 단일 폼 | [Policy §2.1](./Policy_v1.md#policy-2-1) |
+| 진입 분기 | 일반 가입 / 소셜 가입 / 초대 링크 가입 3종 | [Policy §2.1](./Policy_v1.md#2-1-가입-옵션과-필수-수집-정보-region-분기-폐기)·[Policy §3](./Policy_v1.md#3-비회원-초대-정책) |
+| Step 2 (본인 작품 찾기) 진입 조건 | 활성 또는 비활성 토큰 보유 시 | [Policy §3.2](./Policy_v1.md#3-2-본인-작품-찾기-가입자-본인-선택) |
+| 자동 연결 | 없음. 가입자 명시 클릭 + 확인 다이얼로그 1회 필요 | [Policy §3.2](./Policy_v1.md#3-2-본인-작품-찾기-가입자-본인-선택) |
+| 동시 선택 처리 | 두 가입자가 동시에 같은 자리를 선택하면 첫 번째만 인정, 두 번째는 자동 차단 + 안내 | [Policy §3.3](./Policy_v1.md#3-3-자동-연결-후-알림과-동시-선택) |
+| Step 1 공통 폼 | 지역 분기 없음. 닉네임·생년월일·프로필 이미지 단일 폼 | [Policy §2.1](./Policy_v1.md#2-1-가입-옵션과-필수-수집-정보-region-분기-폐기) |
 
 ---
 
@@ -63,7 +63,7 @@
 
 ## 2) Step 1 — 프로필 입력 (모든 사용자 공통, USR-AUT-10)
 
-지역 분기 없는 단일 폼([Policy §2.1](./Policy_v1.md#policy-2-1)).
+지역 분기 없는 단일 폼([Policy §2.1](./Policy_v1.md#2-1-가입-옵션과-필수-수집-정보-region-분기-폐기)).
 
 ### 2.1 진입 분기별 안내 (상단 배너)
 
@@ -137,7 +137,7 @@
 
 ## 3) Step 2 — 본인 작품 찾기 (claim, 토큰 보유자만)
 
-초대 링크로 가입한 사용자가 가입 직후 진입하는 단계. **활성 또는 비활성 토큰** 보유 시에만 노출 ([Policy §3.2](./Policy_v1.md#policy-3-2)).
+초대 링크로 가입한 사용자가 가입 직후 진입하는 단계. **활성 또는 비활성 토큰** 보유 시에만 노출 ([Policy §3.2](./Policy_v1.md#3-2-본인-작품-찾기-가입자-본인-선택)).
 
 ### 3.1 진입 안내
 
@@ -236,7 +236,7 @@
 
 - [ ] Step 0 / 0.5 / 1 / 2(조건부) / 3 — 총 5단계 모두 ko/en 동작
 - [ ] 진입 분기별 배너 자동 분기 (일반·소셜·초대) — 단말에 임시 보관된 토큰 보유 여부로 판정
-- [ ] Step 2 진입 조건: 활성 또는 비활성 토큰 보유 ([Policy §3.2](./Policy_v1.md#policy-3-2)). 토큰 없으면 자동 스킵
+- [ ] Step 2 진입 조건: 활성 또는 비활성 토큰 보유 ([Policy §3.2](./Policy_v1.md#3-2-본인-작품-찾기-가입자-본인-선택)). 토큰 없으면 자동 스킵
 - [ ] 동시 선택 처리: 두 번째 클릭 시 §3.5 동시 선택 토스트 + 카드 새로고침
 - [ ] 명시 클릭 + 확인 다이얼로그 1회 = 자동 연결 방지 (Policy §3.2 자동 연결 옵션 없음)
 - [ ] 관심사 태그 15종 ko/en 동일 노출 + 다중 선택 동작
@@ -248,9 +248,9 @@
 
 ## 8) 법무·UX 검토 연결
 
-- **claim 흐름의 법적 적정성** — 자동 매칭 폐기·명시 클릭만 허용 ([Handoff_LegalReview_Checklist §3 LP-3](./Handoff_LegalReview_Checklist_v1.md#lp-3-비회원-초대--토큰-모델-적법-근거))
+- **claim 흐름의 법적 적정성** — 자동 매칭 폐기·명시 클릭만 허용 ([Handoff_LegalReview_Checklist §3 LP-3](./Handoff_LegalReview_Checklist_v1.md#lp-3-비회원-초대-토큰-모델-적법-근거))
 - **만 14세 검증** — 본 화면은 가입 후 단계라 검증은 가입 시점에서 끝남. 본 화면에 14세 표기 별도 없음
-- **개인정보 자기결정권** — 잘못 연결 시 사용자 자가 해제 UI 없음 ([Policy §3.5](./Policy_v1.md#policy-3-5)). §3.4·§3.5 카피가 "작가에게 알려 풀기" 회복 경로를 안내
+- **개인정보 자기결정권** — 잘못 연결 시 사용자 자가 해제 UI 없음 ([Policy §3.5](./Policy_v1.md#3-5-잘못-연결됐을-때)). §3.4·§3.5 카피가 "작가에게 알려 풀기" 회복 경로를 안내
 
 ---
 
@@ -261,9 +261,9 @@
 | v1 | 2026-05-01 | PM × Claude | 최초 작성 — 온보딩 카피(Step 0~3) + 본인 작품 찾기(Step 2) ko/en prose. Policy §3 토큰 모델 정합 + 시니어 친화 톤 + 법무·UX 검토 연결. 단일 소스 안내 문구 정리. **후속** — 독자=개발·작성=기획 명시, `(온보딩 카피 키)` 등 플레이스홀더·표 키 열 제거, 관심사 태그 표 복구, §「적용 키」→「문자열 출처」, 시니어 표·체크리스트·법무 절 자연어화. |
 <!-- 인용 정의 -->
 [Copy_v1.md]: Copy_v1.md
-[Policy §3]: Policy_v1.md#policy-3
-[Handoff_LegalReview_Checklist §3 LP-3]: Handoff_LegalReview_Checklist_v1.md#lp-3-비회원-초대--토큰-모델-적법-근거
-[Policy §2.1]: Policy_v1.md#policy-2-1
-[Policy §3.2]: Policy_v1.md#policy-3-2
-[Policy §3.3]: Policy_v1.md#policy-3-3
-[Policy §3.5]: Policy_v1.md#policy-3-5
+[Policy §3]: Policy_v1.md#3-비회원-초대-정책
+[Handoff_LegalReview_Checklist §3 LP-3]: Handoff_LegalReview_Checklist_v1.md#lp-3-비회원-초대-토큰-모델-적법-근거
+[Policy §2.1]: Policy_v1.md#2-1-가입-옵션과-필수-수집-정보-region-분기-폐기
+[Policy §3.2]: Policy_v1.md#3-2-본인-작품-찾기-가입자-본인-선택
+[Policy §3.3]: Policy_v1.md#3-3-자동-연결-후-알림과-동시-선택
+[Policy §3.5]: Policy_v1.md#3-5-잘못-연결됐을-때
