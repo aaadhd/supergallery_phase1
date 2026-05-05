@@ -548,7 +548,7 @@ export default function Upload() {
     }
     if (!isOriginalWork) {
       toast.error(
-        uploadType === 'group' ? t('upload.errCheckStudentConsent') : t('upload.errCheckOriginal'),
+        uploadType === 'group' ? t('upload.errCheckGroupConsent') : t('upload.errCheckOriginal'),
       );
       return;
     }
@@ -579,35 +579,38 @@ export default function Upload() {
       }
     }
 
-    // 그룹 전시 → 본인 작품 최소 1점 포함 필수 (예외 없음)
+    // 그룹 전시 — 게시자 외 참여 작가 2명 이상 필수 (Policy §13.2)
     if (uploadType === 'group') {
       const selfId = artists[0]?.id;
-      const includesSelf = imageContents.some(
-        (c) => c.artistType === 'member' && c.artist?.id === selfId,
+      const nonSelfArtists = new Set(
+        imageContents
+          .filter((c) => {
+            if (c.artistType === 'member') return c.artist?.id !== selfId;
+            if (c.artistType === 'non-member') return (c.nonMemberArtist?.displayName ?? '').trim().length > 0;
+            return false;
+          })
+          .map((c) => c.artist?.id ?? c.nonMemberArtist?.displayName ?? ''),
       );
-      if (!includesSelf) {
-        toast.error(t('upload.errMustIncludeSelf'));
-        return;
-      }
-    }
-
-    // 그룹 전시 + 유니크 작가 1명 → 개인 전시 전환 제안
-    if (uploadType === 'group') {
-      const unique = new Set(
-        imageContents.map((c) => c.artist?.id || c.nonMemberArtist?.displayName || 'self'),
-      );
-      if (unique.size <= 1) {
-        const switchToSolo = await openConfirm({
-          title: t('upload.soloSuggestionTitle'),
-          description: t('upload.soloSuggestionDesc'),
-          confirmLabel: t('upload.soloSuggestionConfirm'),
-        });
-        if (switchToSolo) {
-          setUploadType('solo');
-          setGroupName('');
-          setContents((prev) => prev.map((p) => ({ ...p, artist: undefined, nonMemberArtist: undefined, artistType: undefined })));
-          setShowDetailsModal(false);
-          toast.success(t('upload.soloSuggestionSwitched'));
+      if (nonSelfArtists.size < 2) {
+        const hasSelf = imageContents.some(
+          (c) => c.artistType === 'member' && c.artist?.id === selfId,
+        );
+        if (hasSelf) {
+          const switchToSolo = await openConfirm({
+            title: t('upload.soloSuggestionTitle'),
+            description: t('upload.soloSuggestionDesc'),
+            confirmLabel: t('upload.soloSuggestionConfirm'),
+          });
+          if (switchToSolo) {
+            setUploadType('solo');
+            setGroupName('');
+            setContents((prev) => prev.map((p) => ({ ...p, artist: undefined, nonMemberArtist: undefined, artistType: undefined })));
+            setShowDetailsModal(false);
+            toast.success(t('upload.soloSuggestionSwitched'));
+          }
+          return;
+        } else {
+          toast.error(t('upload.errGroupNeedsTwoArtists'));
           return;
         }
       }
