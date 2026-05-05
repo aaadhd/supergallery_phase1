@@ -123,7 +123,7 @@ Artier는 시니어·중장년 순수미술 작가를 주 고객으로 하는 **
 
 ### 4.4 알림 (Notification)
 
-타입별 구조 (상세 [§3.5](./Policy_v1.md#3-5-잘못-연결됐을-때)·[§16.3](./Policy_v1.md#16-3-검색-스코어링-usr-src-01) 참조):
+타입별 구조:
 
 | 타입 | 구조 예 |
 |---|---|
@@ -2629,6 +2629,4 @@ export function translate(locale: Locale, key: MessageKey): string {
 <!-- 인용 정의 -->
 [§5]: Policy_v1.md#5-용어-정책
 [§9]: Policy_v1.md#9-작품명-전시명-그룹명-정책
-[§3.5]: Policy_v1.md#3-5-잘못-연결됐을-때
-[§16.3]: Policy_v1.md#16-3-검색-스코어링-usr-src-01
 [§21]: Policy_v1.md#21-법무-체크포인트
