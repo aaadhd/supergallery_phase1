@@ -216,8 +216,7 @@ export default function Profile() {
   };
   const [profileNickname, setProfileNickname] = useState(() => profileStore.getProfile().name || profileArtist.name);
 
-  // 작품 필터링 (강사 대리 업로드 작품은 전시/작품관리에서 제외 — 수강생 작품 탭에서만 노출)
-  // + 그룹 전시(시드·유저 업로드 공통)에서 이 작가가 참여 작가로 포함된 작품도 합산
+  // 작품 필터링: 이 작가가 업로드한 전시 + 그룹 전시에서 참여 작가로 포함된 전시 합산
   const artistWorks = useMemo(() => {
     const own = storeWorks
       .filter(w => w.artistId === profileArtist.id)

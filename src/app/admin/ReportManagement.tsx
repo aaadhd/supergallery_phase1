@@ -35,8 +35,6 @@ type ReportRow = {
   status: ReportState;
   workId?: string;
   artistId?: string;
-  /** @deprecated Policy §12.2 v2.20 폐기 필드. 하위 호환용 유지. */
-  autoHiddenAt?: string;
   /** 신고된 작품(piece) 인덱스 — 다중 이미지 전시에서 사용자가 명시 선택한 것. */
   pieceIndex?: number;
 };
@@ -59,11 +57,6 @@ function mapUserReportToRow(r: StoredUserReport): ReportRow {
     dismissed: '기각',
   };
   const status: ReportState = statusMap[r.adminStatus ?? 'pending'];
-  // 같은 워크로 신고가 2회째 누적되었을 때 work.autoHiddenAt이 존재. 대기 상태인 경우만 SLA 계산 의미 있음.
-  const autoHiddenAt =
-    r.targetType === 'work' && r.targetId
-      ? workStore.getWork(r.targetId)?.autoHiddenAt
-      : undefined;
   return {
     id: r.id,
     target,
@@ -73,7 +66,6 @@ function mapUserReportToRow(r: StoredUserReport): ReportRow {
     status,
     workId: r.targetType === 'work' ? r.targetId : undefined,
     artistId: r.targetArtistId,
-    autoHiddenAt,
     pieceIndex: r.pieceIndex,
   };
 }
