@@ -11,6 +11,7 @@ import { isWorkPublic } from '../utils/workVisibility';
 import { pushDemoNotification } from '../utils/pushDemoNotification';
 import { useI18n } from '../i18n/I18nProvider';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
+import { appendAuditLog } from '../utils/adminAuditLog';
 
 const MAX_PICKS = 10;
 const PICKS_KEY = 'artier_admin_picks_v1';
@@ -157,6 +158,7 @@ export default function PickManagement() {
       message: t('pick.notifSelected').replace('{title}', displayExhibitionTitle(work, t('work.untitled'))),
       workId: work.id,
     });
+    appendAuditLog({ action: 'pick_added', targetId: work.id, targetSnapshot: { exhibitionName: work.exhibitionName, artistId: work.artistId }, actorId: 'admin', actorRole: 'admin' });
     setSearch('');
     toast.success('Pick에 추가되었습니다.');
   };
@@ -165,6 +167,7 @@ export default function PickManagement() {
     setPickIds((prev) => prev.filter((pid) => pid !== id));
     // 이력 배지는 유지하고, 활성 Pick만 해제
     workStore.updateWork(id, { pick: false });
+    appendAuditLog({ action: 'pick_removed', targetId: id, actorId: 'admin', actorRole: 'admin' });
     toast.message('Pick에서 제거되었습니다.');
   };
 

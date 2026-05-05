@@ -14,6 +14,7 @@ import { useSyncExternalStore } from 'react';
 import { useI18n } from '../i18n/I18nProvider';
 import { pushDemoNotification } from '../utils/pushDemoNotification';
 import { displayExhibitionTitle } from '../utils/workDisplay';
+import { appendAuditLog } from '../utils/adminAuditLog';
 
 interface EventParticipant {
   id: string;
@@ -121,8 +122,10 @@ export default function EventParticipants() {
     const result = eventStore.toggleSelected(eventId, workId);
     if (result.added) {
       sendContestSelectedNotification(ev.id, ev.title, workId);
+      appendAuditLog({ action: 'contest_selected', targetId: workId, targetSnapshot: { eventId, eventTitle: ev.title }, actorId: 'admin', actorRole: 'admin' });
       toast.success(`${displayExhibitionTitle(w, '')} 선정 처리 + 작가 알림 발송`);
     } else {
+      appendAuditLog({ action: 'contest_unselected', targetId: workId, targetSnapshot: { eventId, eventTitle: ev.title }, actorId: 'admin', actorRole: 'admin' });
       toast(`${displayExhibitionTitle(w, '')} 선정 해제`);
     }
   };
@@ -157,8 +160,10 @@ export default function EventParticipants() {
       for (const wid of addedIds) sendContestSelectedNotification(eventId, ev.title, wid);
       totalAdded += addedIds.length;
     }
-    if (totalAdded > 0) toast.success(`${totalAdded}건 선정 처리 + 작가 알림 발송`);
-    else toast('이미 선정된 항목이라 변동 없음');
+    if (totalAdded > 0) {
+      appendAuditLog({ action: 'contest_selected', targetId: 'bulk', targetSnapshot: { totalAdded }, actorId: 'admin', actorRole: 'admin' });
+      toast.success(`${totalAdded}건 선정 처리 + 작가 알림 발송`);
+    } else toast('이미 선정된 항목이라 변동 없음');
     clearBulk();
   };
 
@@ -173,6 +178,7 @@ export default function EventParticipants() {
     for (const [eventId, workIds] of byEvent) {
       eventStore.bulkUnselect(eventId, workIds);
     }
+    appendAuditLog({ action: 'contest_unselected', targetId: 'bulk', targetSnapshot: { count: bulkSelected.size }, actorId: 'admin', actorRole: 'admin' });
     toast(`${bulkSelected.size}건 선정 해제 (알림은 보존)`);
     clearBulk();
   };

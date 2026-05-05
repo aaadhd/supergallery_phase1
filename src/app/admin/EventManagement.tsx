@@ -13,6 +13,7 @@ import {
   type EventStatus,
 } from '../utils/eventStore';
 import { workStore } from '../store';
+import { appendAuditLog } from '../utils/adminAuditLog';
 
 type DraftState = {
   title: string;
@@ -106,6 +107,7 @@ export default function EventManagement() {
         workStore.updateWork(w.id, { linkedEventId: undefined });
       }
     });
+    appendAuditLog({ action: 'event_deleted', targetId: ev.id, targetSnapshot: { title: ev.title }, actorId: 'admin', actorRole: 'admin' });
     toast.success('응모전이 삭제되었습니다.');
   };
 
@@ -145,9 +147,11 @@ export default function EventManagement() {
     };
     if (editingId) {
       eventStore.update(editingId, payload);
+      appendAuditLog({ action: 'event_saved', targetId: editingId, targetSnapshot: { title }, actorId: 'admin', actorRole: 'admin' });
       toast.success('응모전이 수정되었습니다.');
     } else {
-      eventStore.add(payload);
+      const created = eventStore.add(payload);
+      appendAuditLog({ action: 'event_saved', targetId: created.id, targetSnapshot: { title }, actorId: 'admin', actorRole: 'admin' });
       toast.success('응모전이 등록되었습니다.');
     }
     cancelEdit();

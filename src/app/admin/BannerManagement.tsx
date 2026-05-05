@@ -10,6 +10,7 @@ import {
 } from '../utils/bannerStore';
 import { openConfirm } from '../components/ConfirmDialog';
 import { todayLocalIso } from '../utils/localDate';
+import { appendAuditLog } from '../utils/adminAuditLog';
 import {
   DndContext,
   closestCenter,
@@ -108,6 +109,7 @@ export default function BannerManagement() {
     });
     if (!ok) return;
     bannerStore.remove(id);
+    appendAuditLog({ action: 'banner_deleted', targetId: id, targetSnapshot: { title }, actorId: 'admin', actorRole: 'admin' });
     toast.success('배너가 삭제되었습니다.');
   };
 
@@ -134,6 +136,7 @@ export default function BannerManagement() {
       toast.error(`배너는 최대 ${MAX_BANNERS}개까지 등록할 수 있습니다.`);
       return;
     }
+    appendAuditLog({ action: 'banner_saved', targetId: result.id ?? 'new', targetSnapshot: { title: draft.title.trim() }, actorId: 'admin', actorRole: 'admin' });
     setDraft(emptyDraft);
     setShowForm(false);
     toast.success('배너가 등록되었습니다. 둘러보기에 반영됩니다.');

@@ -3,6 +3,7 @@ import { toast } from 'sonner';
 import { MessageSquare, ShieldAlert, ChevronRight, X } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { openConfirm } from '../components/ConfirmDialog';
+import { appendAuditLog } from '../utils/adminAuditLog';
 
 /**
  * ADM-INQ-01 · 문의함 (Policy §30 연동 · PRD_Admin §11.5).
@@ -226,6 +227,7 @@ export default function AdminInquiries() {
         ? { ...(selected.privacy ?? {}), subjectVerified }
         : selected.privacy,
     });
+    appendAuditLog({ action: 'inquiry_answered', targetId: selected.id, targetSnapshot: { category: selected.category }, actorId: 'admin', actorRole: 'admin' });
     toast.success('답변을 저장했습니다. (모의 발송 — 런칭 후 SMTP 연동)');
     setReplyText('');
   };
@@ -233,6 +235,7 @@ export default function AdminInquiries() {
   const changeStatus = (id: string, next: InquiryStatus) => {
     const prev = inquiries.find((i) => i.id === id)?.status ?? '신규';
     updateInquiry(id, { status: next });
+    appendAuditLog({ action: 'inquiry_status_changed', targetId: id, targetSnapshot: { prev, next }, actorId: 'admin', actorRole: 'admin' });
     toast.message(`상태: ${prev} → ${next}`);
   };
 

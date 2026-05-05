@@ -16,6 +16,7 @@ import { displayPieceTitleAtIndex, displayExhibitionTitle } from '../utils/workD
 import { pushDemoNotification } from '../utils/pushDemoNotification';
 import { useI18n } from '../i18n/I18nProvider';
 import type { Work } from '../data';
+import { appendAuditLog } from '../utils/adminAuditLog';
 
 /**
  * ADM-CUR-01 기획전 관리 (Policy v2.19, PRD v1.23 — piece 단위 큐레이션).
@@ -210,6 +211,7 @@ export default function CurationManagement() {
         const pieceTitle = displayPieceTitleAtIndex(w, idx, untitled);
         pushCurationSelectedNotification(w.artistId, pieceTitle, title, template, p.workId, editor.editingId);
       }
+      appendAuditLog({ action: 'curation_saved', targetId: editor.editingId, targetSnapshot: { title, pieceCount: pieces.length }, actorId: 'admin', actorRole: 'admin' });
       toast.success('기획전이 수정되었습니다.');
     } else {
       const created = curationStore.addCuratedExhibition({
@@ -227,6 +229,7 @@ export default function CurationManagement() {
         const pieceTitle = displayPieceTitleAtIndex(w, idx, untitled);
         pushCurationSelectedNotification(w.artistId, pieceTitle, title, template, p.workId, created.id);
       }
+      appendAuditLog({ action: 'curation_saved', targetId: created.id, targetSnapshot: { title, pieceCount: pieces.length }, actorId: 'admin', actorRole: 'admin' });
       toast.success('기획전이 추가되었습니다.');
     }
     closeEditor();
@@ -241,6 +244,7 @@ export default function CurationManagement() {
     });
     if (!ok) return;
     curationStore.removeCuratedExhibition(c.id);
+    appendAuditLog({ action: 'curation_deleted', targetId: c.id, targetSnapshot: { title: c.title }, actorId: 'admin', actorRole: 'admin' });
     toast.success('기획전이 삭제되었습니다.');
   };
 

@@ -14,7 +14,19 @@ export type AuditAction =
   | 'report_dismissed'       // 신고 「기각」
   | 'report_kept_hidden'     // 신고 「비공개 유지」
   | 'review_approved'
-  | 'review_rejected';
+  | 'review_rejected'
+  | 'pick_added'             // Pick 선정
+  | 'pick_removed'           // Pick 해제
+  | 'curation_saved'         // 기획전 생성·수정
+  | 'curation_deleted'       // 기획전 삭제
+  | 'banner_saved'           // 배너 등록·수정
+  | 'banner_deleted'         // 배너 삭제
+  | 'event_saved'            // 응모전 등록·수정
+  | 'event_deleted'          // 응모전 삭제
+  | 'contest_selected'       // 응모전 선정작 지정
+  | 'contest_unselected'     // 응모전 선정작 취소
+  | 'inquiry_answered'       // 문의 답변
+  | 'inquiry_status_changed'; // 문의 상태 변경
 
 export type DeletedWorkSnapshot = {
   workId: string;

@@ -91,7 +91,7 @@ export const bannerStore = {
   getAll: getAllStable,
   getVisible: getVisibleStable,
 
-  add(banner: Omit<AdminBanner, 'id'>): { ok: boolean; reason?: string } {
+  add(banner: Omit<AdminBanner, 'id'>): { ok: boolean; id?: string; reason?: string } {
     const list = readFromStorage();
     if (list.length >= MAX_BANNERS) {
       return { ok: false, reason: 'limit_reached' };
@@ -101,7 +101,7 @@ export const bannerStore = {
       id: `bn-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,
     };
     writeToStorage([...list, next]);
-    return { ok: true };
+    return { ok: true, id: next.id };
   },
 
   update(id: string, patch: Partial<Omit<AdminBanner, 'id'>>): void {
