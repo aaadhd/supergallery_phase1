@@ -1,8 +1,10 @@
 import { Link } from 'react-router-dom';
 import { ChevronRight, Megaphone } from 'lucide-react';
-import { NOTICES, getNoticeTitle } from '../data/notices';
+import { noticeStore, useNotices } from '../utils/noticeStore';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
+
+void noticeStore; // 스토어 초기화 보장
 
 const CATEGORY_COLORS: Record<string, string> = {
   서비스: 'bg-muted text-muted-foreground',
@@ -24,7 +26,14 @@ function categoryLabel(cat: string, t: (k: MessageKey) => string): string {
 
 export default function Notices() {
   const { t, locale } = useI18n();
-  const notices = NOTICES;
+  const allNotices = useNotices();
+  const notices = allNotices
+    .filter((n) => n.status === 'published')
+    .sort((a, b) => {
+      if (a.isPinned && !b.isPinned) return -1;
+      if (!a.isPinned && b.isPinned) return 1;
+      return b.createdAt.localeCompare(a.createdAt);
+    });
   const dateLocale = locale === 'en' ? 'en-US' : 'ko-KR';
 
   return (
@@ -68,7 +77,7 @@ export default function Notices() {
                     </span>
                   </div>
                   <h3 className="text-sm sm:text-base font-semibold text-foreground truncate">
-                    {getNoticeTitle(notice, locale)}
+                    {locale === 'en' ? (notice.titleEn || notice.title) : notice.title}
                   </h3>
                   <span className="text-xs text-muted-foreground mt-1 block">
                     {new Date(notice.createdAt).toLocaleDateString(dateLocale, {

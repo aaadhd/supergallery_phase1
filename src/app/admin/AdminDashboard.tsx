@@ -1,10 +1,11 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertCircle, CheckSquare, AlertTriangle, Eye, Flag, RotateCcw, ShieldAlert, Trophy, Users } from 'lucide-react';
+import { AlertCircle, CheckSquare, AlertTriangle, Eye, Flag, Megaphone, RotateCcw, ShieldAlert, Trophy, Users } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { Progress } from '../components/ui/progress';
 import { useIssueStore, useChecklistStore } from './adminStore';
+import { useNotices } from '../utils/noticeStore';
 import { STATUS_COLORS } from './constants';
 import { workStore, useWorkStore } from '../store';
 import { loadUserReports, REPORTS_CHANGED_EVENT } from '../utils/reportsStore';
@@ -45,6 +46,12 @@ export default function AdminDashboard() {
 
   // 비공개 처리된 전시 수 (Policy §12.1 「비공개 유지」 또는 자동 비공개 잔존 — §12.2 v2.20 자동 트리거 폐기)
   const autoHiddenCount = workStore.getWorks().filter((w) => isWorkHidden(w)).length;
+
+  // 공지 지표 (ADM-NTC-01)
+  const allNotices = useNotices();
+  const noticeDraftCount = allNotices.filter((n) => n.status === 'draft').length;
+  const noticePublishedCount = allNotices.filter((n) => n.status === 'published').length;
+  const noticePinnedCount = allNotices.filter((n) => n.status === 'published' && n.isPinned).length;
 
   // 응모전 운영 지표 (PRD ADM-EVT-03 트리거 정합 — 대시보드에서 진입)
   const events = useManagedEvents();
@@ -150,6 +157,23 @@ export default function AdminDashboard() {
               </CardHeader>
               <CardContent>
                 <p className="text-xs text-muted-foreground">운영팀 비공개 유지 처리된 전시 수</p>
+              </CardContent>
+            </Card>
+          </Link>
+
+          <Link to="/admin/notices">
+            <Card className="lg:hover:shadow-md transition-shadow cursor-pointer">
+              <CardHeader className="pb-2">
+                <CardDescription className="flex items-center gap-2">
+                  <Megaphone className="w-4 h-4" />
+                  공지 일감
+                </CardDescription>
+                <CardTitle className="text-3xl">{noticePublishedCount}</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs text-muted-foreground">
+                  게시 중 {noticePublishedCount}건 · 고정 {noticePinnedCount}/2 · 임시저장 {noticeDraftCount}건
+                </p>
               </CardContent>
             </Card>
           </Link>

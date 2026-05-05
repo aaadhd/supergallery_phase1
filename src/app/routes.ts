@@ -35,6 +35,7 @@ import EventManagement from './admin/EventManagement';
 import ReportManagement from './admin/ReportManagement';
 import MemberManagement from './admin/MemberManagement';
 import AdminInquiries from './admin/AdminInquiries';
+import NoticeManagement from './admin/NoticeManagement';
 import Settings from './pages/Settings';
 import Maintenance from './pages/Maintenance';
 import ExhibitionRoute from './pages/ExhibitionRoute';
@@ -127,6 +128,7 @@ export const router = createBrowserRouter([
           { path: 'reports', Component: ReportManagement },
           { path: 'members', Component: MemberManagement },
           { path: 'inquiries', Component: AdminInquiries },
+          { path: 'notices', Component: NoticeManagement },
         ],
       },
     ],

@@ -1,5 +1,5 @@
 import { Link, useNavigate, useParams } from 'react-router-dom';
-import { getNoticeById, getNoticeNeighbors, getNoticeContent, getNoticeTitle } from '../data/notices';
+import { noticeStore } from '../utils/noticeStore';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
 import { Button } from '../components/ui/button';
@@ -27,8 +27,11 @@ export default function NoticeDetail() {
   const navigate = useNavigate();
   const { t, locale } = useI18n();
   const dateLocale = locale === 'en' ? 'en-US' : 'ko-KR';
-  const notice = id ? getNoticeById(id) : undefined;
-  const { prev, next } = id ? getNoticeNeighbors(id) : { prev: null, next: null };
+  const published = noticeStore.getPublished();
+  const notice = id ? published.find((n) => n.id === id) : undefined;
+  const idx = notice ? published.indexOf(notice) : -1;
+  const prev = idx > 0 ? published[idx - 1] : null;
+  const next = idx >= 0 && idx < published.length - 1 ? published[idx + 1] : null;
 
   if (!notice) {
     return (
@@ -67,13 +70,15 @@ export default function NoticeDetail() {
               })}
             </span>
           </div>
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground">{getNoticeTitle(notice, locale)}</h1>
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">
+            {locale === 'en' ? (notice.titleEn || notice.title) : notice.title}
+          </h1>
         </div>
       </div>
       <div className="mx-auto max-w-[800px] px-6 py-8">
         <div className="bg-white rounded-xl border border-border p-8 mb-8">
           <p className="text-sm text-foreground leading-relaxed whitespace-pre-wrap">
-            {getNoticeContent(notice, locale)}
+            {locale === 'en' ? (notice.contentEn || notice.content) : notice.content}
           </p>
         </div>
 
@@ -86,9 +91,9 @@ export default function NoticeDetail() {
               <Link
                 to={`/notices/${prev.id}`}
                 className="text-primary lg:hover:underline truncate min-w-0 sm:flex-1"
-                title={getNoticeTitle(prev, locale)}
+                title={locale === 'en' ? (prev.titleEn || prev.title) : prev.title}
               >
-                {t('noticeDetail.prev').replace('{title}', getNoticeTitle(prev, locale))}
+                {t('noticeDetail.prev').replace('{title}', locale === 'en' ? (prev.titleEn || prev.title) : prev.title)}
               </Link>
             ) : (
               <span className="text-muted-foreground sm:flex-1">{t('noticeDetail.prevNone')}</span>
@@ -97,9 +102,9 @@ export default function NoticeDetail() {
               <Link
                 to={`/notices/${next.id}`}
                 className="text-primary lg:hover:underline truncate min-w-0 sm:flex-1 sm:text-right"
-                title={getNoticeTitle(next, locale)}
+                title={locale === 'en' ? (next.titleEn || next.title) : next.title}
               >
-                {t('noticeDetail.next').replace('{title}', getNoticeTitle(next, locale))}
+                {t('noticeDetail.next').replace('{title}', locale === 'en' ? (next.titleEn || next.title) : next.title)}
               </Link>
             ) : (
               <span className="text-muted-foreground sm:flex-1 sm:text-right">{t('noticeDetail.nextNone')}</span>

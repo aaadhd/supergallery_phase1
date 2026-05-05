@@ -17,6 +17,7 @@ import {
   Flag,
   UserCog,
   MessageSquare,
+  Megaphone,
 } from 'lucide-react';
 import { LABELS } from './constants';
 import { authStore } from '../store';
@@ -53,6 +54,7 @@ const navSections: NavSection[] = [
       { to: '/admin/banners', icon: PanelTop, labelKey: 'admin.nav.banners' },
       { to: '/admin/managed-events', icon: CalendarRange, labelKey: 'admin.nav.managedEvents' },
       { to: '/admin/events', icon: Users, labelKey: 'admin.nav.eventParticipants' },
+      { to: '/admin/notices', icon: Megaphone, labelKey: 'admin.nav.notices' },
     ],
   },
   {

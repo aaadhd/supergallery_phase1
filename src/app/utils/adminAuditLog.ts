@@ -26,7 +26,11 @@ export type AuditAction =
   | 'contest_selected'       // 응모전 선정작 지정
   | 'contest_unselected'     // 응모전 선정작 취소
   | 'inquiry_answered'       // 문의 답변
-  | 'inquiry_status_changed'; // 문의 상태 변경
+  | 'inquiry_status_changed' // 문의 상태 변경
+  | 'notice_saved'           // 공지 생성·수정
+  | 'notice_published'       // 공지 게시
+  | 'notice_stopped'         // 공지 게시 중단
+  | 'notice_deleted';        // 공지 삭제
 
 export type DeletedWorkSnapshot = {
   workId: string;
