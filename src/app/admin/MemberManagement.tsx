@@ -3,11 +3,8 @@ import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { X, AlertTriangle } from 'lucide-react';
 import { Button } from '../components/ui/button';
-import { openConfirm } from '../components/ConfirmDialog';
 import { artists } from '../data';
 import { loadUserReports, type StoredUserReport } from '../utils/reportsStore';
-import { workStore } from '../store';
-import { appendAuditLog } from '../utils/adminAuditLog';
 import { useDebouncedValue } from '../hooks/useDebouncedValue';
 import { usePagination } from '../hooks/usePagination';
 import { PaginationBar } from './components/PaginationBar';
@@ -93,30 +90,6 @@ export default function MemberManagement() {
       setSearchParams(next, { replace: true });
     }
   }, [searchParams, members, setSearchParams]);
-
-  const deleteMember = async (member: MemberRow) => {
-    const ok = await openConfirm({
-      title: `'${member.name}' 계정을 말소할까요?`,
-      description: '되돌릴 수 없습니다. 이 회원의 모든 전시·데이터가 함께 삭제됩니다.',
-      confirmLabel: '계정 말소',
-      destructive: true,
-    });
-    if (!ok) return;
-    // 회원의 모든 전시 cascade 삭제 (기획전 piece·응모전 선정작·토큰 등 workStore.removeWork에서 처리)
-    workStore.getWorks()
-      .filter((w) => w.artistId === member.id)
-      .forEach((w) => workStore.removeWork(w.id));
-    setMembers((prev) => prev.filter((m) => m.id !== member.id));
-    appendAuditLog({
-      action: 'member_deleted',
-      targetId: member.id,
-      targetSnapshot: { name: member.name, email: member.email, joinedAt: member.joinedAt },
-      actorId: 'admin',
-      actorRole: 'admin',
-    });
-    closeDetail();
-    toast.success(`'${member.name}' 계정이 말소됐습니다.`);
-  };
 
   const closeDetail = () => {
     setDetailId(null);
@@ -312,24 +285,11 @@ export default function MemberManagement() {
                 </section>
               </div>
 
-              <footer className="flex items-center justify-between border-t border-border px-5 py-3">
-                {member.id !== DEMO_USER_ID ? (
-                  <Button
-                    type="button"
-                    variant="destructive"
-                    onClick={() => deleteMember(member)}
-                    className="min-h-[44px] text-sm"
-                  >
-                    계정 말소
-                  </Button>
-                ) : (
-                  <span className="text-xs text-muted-foreground">데모 계정은 말소할 수 없습니다.</span>
-                )}
+              <footer className="flex justify-end gap-2 border-t border-border px-5 py-3">
                 <Button
                   type="button"
-                  variant="outline"
                   onClick={closeDetail}
-                  className="min-h-[44px] px-4 py-2 text-sm"
+                  className="min-h-[44px] px-4 py-2 text-sm font-medium rounded-lg border border-border lg:hover:bg-muted/50"
                 >
                   닫기
                 </Button>
