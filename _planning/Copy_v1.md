@@ -171,7 +171,7 @@ Artier는 시니어·중장년 순수미술 작가를 주 고객으로 하는 **
 ```ts
 const koMessages = {
   'nav.browse': '둘러보기',
-  'nav.events': '이벤트',
+  'nav.events': '응모전',
   'nav.upload': '작품 올리기',
   'nav.uploadShort': '올리기',
   'nav.search': '검색',
@@ -302,7 +302,7 @@ const koMessages = {
   'refStub.rulesColTrigger': '발송 트리거',
   'refStub.rulesColReq': '필수/선택',
   'refStub.emailMasterBlock':
-    '1|회원가입 환영|회원가입 완료 시|필수\n2|가입 인증 링크|이메일 가입 직후|필수 (매직 링크 30분)\n3|로그인 인증 링크|이메일 로그인 요청 시|필수 (매직 링크 30분)\n4|Artier\'s Pick 선정|어드민이 Pick 배지 부여 시|필수\n5|위클리 베스트 선정|어드민이 위클리 베스트 배지 부여 시|필수\n6|공지사항 (정책 변경)|이용약관/개인정보처리방침 변경 시|법적 의무\n7|마케팅 이메일|이벤트/캠페인 (수신 동의자만)|선택 동의자\n8|계정 정지 안내|어드민이 계정 정지 처리 시|필수\n9|회원 탈퇴 완료|탈퇴 처리 완료 시|권장',
+    '1|회원가입 환영|회원가입 완료 시|필수\n2|가입 인증 링크|이메일 가입 직후|필수 (매직 링크 30분)\n3|로그인 인증 링크|이메일 로그인 요청 시|필수 (매직 링크 30분)\n4|Artier\'s Pick 선정|어드민이 Pick 배지 부여 시|필수\n5|위클리 베스트 선정|어드민이 위클리 베스트 배지 부여 시|필수\n6|공지사항 (정책 변경)|이용약관/개인정보처리방침 변경 시|법적 의무\n7|마케팅 이메일|응모전/캠페인 (수신 동의자만)|선택 동의자\n8|계정 정지 안내|어드민이 계정 정지 처리 시|필수\n9|회원 탈퇴 완료|탈퇴 처리 완료 시|권장',
   'flowMap.heading': 'Phase 1 유저 플로우 — 화면 바로가기',
   'flowMap.intro':
     '아래는 `SuperGallery Phase 1 유저 플로우` 문서 흐름과 대응하는 URL입니다(15번 블록은 기획 검수용 데모). 로그인이 필요한 화면은 GNB에서 로그인한 뒤 이용하세요.',
@@ -346,9 +346,9 @@ const koMessages = {
   'flowMap.section12': `12. 비회원 초대 (Policy §3 v2.14 토큰 모델)
 /exhibitions/{workId}?invite={token}|작가가 보낸 초대 링크의 랜딩 화면 (4상태 분기: 활성·검수 중·취소·만료)
 (토큰은 마이페이지 "친구에게 알리기" 버튼에서 생성. 친구가 가입하면 본인 작품 찾기 화면으로 자동 진입)`,
-  'flowMap.section13': `13. 이벤트 참여
-/events|이벤트 목록
-/events/1|이벤트 상세 예시`,
+  'flowMap.section13': `13. 응모전 참여
+/events|응모전 목록
+/events/1|응모전 상세 예시`,
   'flowMap.section14': `14. 포인트 적립 · 조회
 Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 는 런칭 전 백엔드 연동 후. 로컬 적립 로직은 가입·온보딩·둘러보기·업로드 등에서 계속 동작.`,
   'flowMap.section15': `15. 기획 검수 — reference 도구
@@ -357,7 +357,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'points.back': '뒤로',
   'points.apLabel': 'AP (활동)',
   'points.ppLabel': 'PP (프리미엄)',
-  'points.ppHint': '유료·이벤트 지급. 데모에서는 아래 버튼으로만 증가합니다.',
+  'points.ppHint': '유료·응모전 지급. 데모에서는 아래 버튼으로만 증가합니다.',
   'points.filterAll': '전체',
   'points.filterEarn': '적립',
   'points.filterUse': '사용·차감',
@@ -468,39 +468,39 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'notifications.filterAll': '전체',
   'notifications.filterUnread': '읽지 않음',
   'notifications.empty': '알림이 없어요',
-  'events.title': '이벤트',
-  'events.subtitle': 'Artier에서 진행 중인 다양한 이벤트를 확인하세요',
+  'events.title': '응모전',
+  'events.subtitle': 'Artier에서 진행 중인 다양한 응모전을 확인하세요',
   'events.participate': '참여하기',
-  'events.noActiveEvents': '현재 진행 중인 이벤트가 없어요',
-  'events.noUpcoming': '예정된 이벤트가 없어요',
-  'events.upcomingSection': '예정된 이벤트',
+  'events.noActiveEvents': '현재 진행 중인 응모전이 없어요',
+  'events.noUpcoming': '예정된 응모전이 없어요',
+  'events.upcomingSection': '예정된 응모전',
   'events.comingSoonBadge': 'COMING SOON',
-  'events.ctaTitle': '이벤트를 놓치지 마세요',
-  'events.ctaLead': '새로운 이벤트 소식을 가장 먼저 받아보세요',
+  'events.ctaTitle': '응모전을 놓치지 마세요',
+  'events.ctaLead': '새로운 응모전 소식을 가장 먼저 받아보세요',
   'events.ctaNotify': '알림 받기',
-  'events.notifyModalTitle': '이벤트 알림 신청',
+  'events.notifyModalTitle': '응모전 알림 신청',
   'events.notifyModalLead':
     '이메일로 구독을 관리해요. 실제 안내는 카카오 가입은 알림톡·문자를 먼저 쓰고, 그 밖의 가입은 주로 이메일로 보내요.',
   'events.notifyEmailPlaceholder': '이메일 주소 입력',
   'events.notifySubmit': '알림 신청하기',
   'events.notifyDoneTitle': '신청 완료!',
-  'events.notifyDoneLead': '새로운 이벤트 소식을 보내드릴게요',
+  'events.notifyDoneLead': '새로운 응모전 소식을 보내드릴게요',
   'events.notifyErrEmpty': '이메일을 입력해 주세요',
   'events.notifyErrInvalid': '올바른 이메일 형식이 아니에요',
   'events.notifyDuplicate': '이미 구독 중이에요',
   'events.notifyToastSubscribed': '알림 신청을 받았어요',
   'events.unsubscribeLink': '알림 해지',
-  'events.unsubscribeModalTitle': '이벤트 알림 해지',
+  'events.unsubscribeModalTitle': '응모전 알림 해지',
   'events.unsubscribeModalLead': '구독해 두신 이메일을 입력하면 목록에서 빼 드려요.',
   'events.unsubscribeSubmit': '해지하기',
   'events.unsubscribeDoneTitle': '해지했어요',
-  'events.unsubscribeDoneLead': '더 이상 이 주소로 이벤트 안내를 보내지 않아요.',
+  'events.unsubscribeDoneLead': '더 이상 이 주소로 응모전 안내를 보내지 않아요.',
   'events.unsubscribeToastDone': '구독을 해지했어요',
   'events.unsubscribeNotFound': '등록된 구독을 찾지 못했어요',
   'events.switchToUnsubscribe': '대신 알림을 해지할까요?',
   'events.switchToSubscribe': '알림 신청으로 돌아가기',
-  'events.detailNotFound': '이벤트를 찾을 수 없어요.',
-  'events.alreadySubmitted': '이미 이 이벤트에 작품을 제출했어요.',
+  'events.detailNotFound': '응모전을 찾을 수 없어요.',
+  'events.alreadySubmitted': '이미 이 응모전에 작품을 제출했어요.',
   'events.alreadySubmittedShort': '이미 참여하셨어요',
   'evt.entryModalTitle': '{eventName}에 응모하기',
   'evt.entryModalImageHint': '이미지를 1장 추가해 주세요. (드래그하거나 파일을 선택)',
@@ -514,15 +514,15 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'evt.errEntryImageRequired': '이미지를 1장 추가해 주세요.',
   'evt.errEntryArtworkRequired': '작품명을 입력해 주세요.',
   'evt.entryHelperSinglePiece': '응모는 작품 1점(이미지 1장)만 받아요.',
-  'upload.eventEndedBlocked': '종료된 이벤트에는 더 이상 응모할 수 없어요.',
-  'upload.eventConsentLabel': '선정될 경우 이벤트 결과·관련 페이지에 일정 기간 게시되며, 게시 기간 중 본 전시를 삭제해도 운영팀이 별도 보관한 사본으로 게시 기간 종료일까지 유지될 수 있음에 동의합니다.',
+  'upload.eventEndedBlocked': '종료된 응모전에는 더 이상 응모할 수 없어요.',
+  'upload.eventConsentLabel': '선정될 경우 응모전 결과·관련 페이지에 일정 기간 게시되며, 게시 기간 중 본 전시를 삭제해도 운영팀이 별도 보관한 사본으로 게시 기간 종료일까지 유지될 수 있음에 동의합니다.',
   'upload.eventConsentReadMore': '응모 동의 자세히 보기',
-  'upload.errEventConsentRequired': '이벤트에 응모하시려면 게시 보존 동의에 체크해 주세요.',
+  'upload.errEventConsentRequired': '응모전에 응모하시려면 게시 보존 동의에 체크해 주세요.',
   'events.detailPeriod': '기간',
   'events.detailTarget': '참여 대상',
-  'events.detailGuide': '이벤트 안내',
-  'events.detailEnded': '참여가 마감된 이벤트예요',
-  'events.detailBackLink': '이벤트 목록으로 돌아가기',
+  'events.detailGuide': '응모전 안내',
+  'events.detailEnded': '참여가 마감된 응모전이에요',
+  'events.detailBackLink': '응모전 목록으로 돌아가기',
   'upload.errExhibitionNameRequired': '전시명을 입력해야 전시할 수 있어요.',
   'upload.errGroupNameRequired': '그룹 전시는 소속 그룹명을 입력해야 전시할 수 있어요.',
   'upload.errProfanityExhibitionName': '전시명에 부적절한 단어가 포함되어 있어요. 다른 표현으로 바꿔 주세요.',
@@ -609,7 +609,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'notif.workPublished': '"{title}" 전시가 공개됐어요. 내 작품을 확인해 보세요.',
   'notif.curationSelected': '"{pieceTitle}" 작품이 "{curationTitle}" 기획전에 선정됐어요. 페이지에서 확인해 보세요.',
   'upload.labelOptional': '(선택)',
-  'upload.eventWorkTitle': '이벤트 참여작',
+  'upload.eventWorkTitle': '응모전 참여작',
   'upload.close': '닫기',
   'upload.dropzoneTitle': '이미지(최대 10장)를 드래그 또는 업로드해주세요.',
   'upload.dropzoneFormats': '최대 10MB의 JPG, PNG, WEBP, GIF 이미지 파일',
@@ -698,7 +698,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.toastImageReplaced': '이미지가 교체되었어요.',
   'upload.errMissingArtistAt': '{positions}번째 작품에 작가가 지정되지 않았어요.',
   'upload.errMustIncludeSelf': '본인 작품을 한 점 이상 포함해 주세요. 본인 작품 없이 전시하려면 "저는 강사예요" 체크박스를 켜 주세요.',
-  'upload.errDuplicateEvent': '이미 이 이벤트에 참여한 작품이 있어요.',
+  'upload.errDuplicateEvent': '이미 이 응모전에 참여한 작품이 있어요.',
   'upload.errWorkNotFound': '수정하려는 작품을 찾을 수 없어요.',
   'upload.publishedConfirmTitle': '전시가 등록되었어요',
   'upload.publishedConfirmTitleApproved': '전시가 공개되었어요',
@@ -753,13 +753,13 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'notifications.categoryGroupInvite': '그룹 초대',
   'notifications.categoryFollowing': '팔로잉 신작',
   'notifications.categoryCuration': '큐레이션',
-  'notifications.categoryEvent': '이벤트',
+  'notifications.categoryEvent': '응모전',
   'notifications.categorySystem': '시스템',
   'notifications.settingsLink': '알림 설정',
   'notifications.emptyUnread': '읽지 않은 알림이 없어요',
   'notifications.emptyHint': '새로운 소식이 생기면 여기에 표시돼요',
-  'eventDetail.notifHint': '이벤트·초대 알림은 설정에서 끌 수 있어요.',
-  'eventDetail.backToList': '이벤트 목록으로',
+  'eventDetail.notifHint': '응모전·초대 알림은 설정에서 끌 수 있어요.',
+  'eventDetail.backToList': '응모전 목록으로',
   'eventDetail.statusActive': '진행중',
   'eventDetail.statusScheduled': '예정',
   'eventDetail.statusEnded': '종료',
@@ -862,7 +862,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'faq.a14':
     '초대 링크는 발급일로부터 90일 동안 유효해요. 그 안에 친구가 가입하지 않으면 만료되고, 작가님이 마이페이지에서 새 링크를 다시 만들 수 있어요. 검수 대기·반려 중에는 링크가 일시 비활성 상태가 되고, 재승인되면 자동으로 다시 활성화돼요.',
   'meta.ogDescription':
-    '디지털 드로잉·아트 작품을 전시하고 발견하는 온라인 갤러리. 그룹 전시, Artier\'s Pick, 이벤트를 한곳에서.',
+    '디지털 드로잉·아트 작품을 전시하고 발견하는 온라인 갤러리. 그룹 전시, Artier\'s Pick, 응모전을 한곳에서.',
   'contact.title': '문의하기',
   'contact.leadBeforeFaq': '궁금한 점이 있으시면 아래 양식으로 보내주세요. 먼저 ',
   'contact.leadAfterFaq': '를 확인해 보시면 빠르게 답을 찾을 수 있어요.',
@@ -904,7 +904,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'notices.empty': '공지사항이 없어요',
   'notices.pinned': '고정',
   'notices.categoryService': '서비스',
-  'notices.categoryEvent': '이벤트',
+  'notices.categoryEvent': '응모전',
   'notices.categoryPolicy': '정책',
   'notices.categoryOther': '기타',
   'noticeDetail.notFound': '공지를 찾을 수 없어요.',
@@ -1062,7 +1062,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'notifications.seedFollowed': '님이 회원님을 팔로우하기 시작했어요',
   'notifications.seedPickSelected': '축하해요! "{work}"이(가) Artier’s Pick으로 뽑혔어요',
   'notifications.seedWelcome': 'Artier에 오신 것을 환영합니다! 첫 작품을 업로드해 보세요.',
-  'notifications.seedEventActive': '「{event}」 이벤트가 진행 중이에요. 지금 참여해 보세요.',
+  'notifications.seedEventActive': '「{event}」 응모전이 진행 중이에요. 지금 참여해 보세요.',
   'profile.openProfileAria': '{name} 프로필 열기',
   'profile.linksUrlPlaceholder': '나머지 URL을 입력해 주세요.',
   'profile.linksWebsitePlaceholder': '전체 URL(https 포함)을 입력해 주세요.',
@@ -1150,8 +1150,8 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'settings.notifRequiredGroup': '필수 알림',
   'settings.notifSystem': '시스템 공지',
   'settings.notifSystemHint': '끌 수 없음',
-  'settings.eventUnsubscribeLabel': '이벤트 메일 알림 해지',
-  'settings.eventUnsubscribeHint': '이벤트 목록 화면에서 이메일로 해지할 수 있어요.',
+  'settings.eventUnsubscribeLabel': '응모전 메일 알림 해지',
+  'settings.eventUnsubscribeHint': '응모전 목록 화면에서 이메일로 해지할 수 있어요.',
   'settings.sectionAccountActions': '계정',
   'settings.logoutRow': '로그아웃',
   'settings.withdrawWarning': '탈퇴하면 모든 데이터가 삭제되며 되돌릴 수 없어요.',
@@ -1262,7 +1262,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'admin.nav.picks': 'Pick',
   'admin.nav.curation': '기획전',
   'admin.nav.banners': '배너',
-  'admin.nav.managedEvents': '이벤트',
+  'admin.nav.managedEvents': '응모전',
   'admin.nav.reports': '신고 처리',
   'admin.nav.members': '회원 관리',
   'admin.nav.inquiries': '문의함',
@@ -1295,11 +1295,11 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'footer.qaAdminInquiries': '문의함',
   'footer.qaAdminIssues': '미결 이슈',
   'footer.qaAdminChecklist': '런칭 체크리스트',
-  'footer.qaAdminEventParticipants': '이벤트 참여자',
+  'footer.qaAdminEventParticipants': '응모전 참여자',
   'footer.qaAdminPicks': "Artier's Pick",
   'footer.qaAdminCuration': '피드 큐레이션',
   'footer.qaAdminBanners': '배너 관리',
-  'footer.qaAdminManagedEvents': '이벤트 관리',
+  'footer.qaAdminManagedEvents': '응모전 관리',
   'footer.copyright': '© {year} {name}. All rights reserved.',
   'signup.linkSendCta': '인증 메일 보내기',
   'signup.linkSending': '발송 중…',
@@ -2586,14 +2586,14 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.12 | 2026-05-04 | PM × Claude | **응모 모달(USR-EVT-04) 카피 신규 (Policy v2.18·IA v1.10 연동, B-3a)** — 모달 제목·이미지 안내 헬퍼·작품명 라벨/플레이스홀더·응모 CTA(전송 중 라벨 포함)·닫기 라벨·접수 완료 토스트·중복 응모 차단 안내·이미지 없음 에러·작품명 빈값 에러·1점만 받는 헬퍼 등 응모 모달 전용 ko/en 카피 12쌍 신설. 응모 동의 라벨·"자세히 보기" 카피는 기존 USR-UPL-02 ?event= 분기에서 신설했던 키를 그대로 USR-EVT-04 모달에서 재사용(라벨 내용이 화면 무관). 이후 append — **기획전 선정 알림 카피 신규 (B-3b)** — 운영팀이 기획전에 piece를 추가할 때 작가에게 발송하는 알림 메시지 ko/en 1쌍 신설(작품명·기획전 이름 변수 포함). 기획전 영구 배지는 정책상 X(§15.2), 알림으로만 인지. 이후 append — **알림 카테고리 키 정합**: 기존 categoryPick(잔재)·categoryInvite 키 정리 → categoryFollowing(팔로잉 신작)·categoryGroupInvite(그룹 초대) 명확화 + categoryCuration(큐레이션) 신설 ko/en. 카테고리 키 7종 → 8종(전체 + 좋아요·팔로우·그룹 초대·팔로잉 신작·큐레이션·이벤트·시스템). |
-| v1.11 | 2026-04-30 | PM × Claude | **검수 SLA 표현 정확화** — "주말·공휴일을 빼고 24시간 안에" / "within 24 business hours". **매직 링크 전환 잔재 정정** — 옛 비밀번호 재설정·변경 템플릿 2건 제거, 매직 링크 가입/로그인 템플릿 신설. 탈퇴 "비밀번호 확인" → "동의 체크박스". **검수 신청 단계 공유 모델 정합** (Policy §3) — 옛 자동 발송 약속 카피 정정(작가 직접 발송 안내). inactive 단계 능동 톤 카피("곧 공개될 전시예요. 지금 가입해두시면 통과 즉시 본인 작품을 골라보실 수 있어요"). 친구 클레임 톤 정정 — "들어왔어요" → "본인 자리를 등록했어요". 신규 카피 3쌍 ko/en (검수 신청 단계 클레임 안내·친구용 배지 hint·검수 통과 시 친구 알림). 초대 공유 메시지에 inactive 분기. **토큰 모델 정합** — 옛 전화 기반 초대 카피 9쌍 제거. 온보딩 카피 톤 정정. FAQ 4문항(친구 초대·자동 연결 안 됨·잘못 연결·만료) ko/en 신설. 본인 작품 찾기 흐름 신규 카피 13쌍 추가. **닉네임 정책 카피 정합** — Settings 닉네임 readonly 라벨·안내·1:1 문의 진입 CTA, 가입 단계 중복 에러, 1:1 문의 "닉네임 변경 신청" 카테고리 안내 ko/en 신설. Policy 교차 링크 `[§n](Policy_v1.md#…)` 단축·§9·§21 앵커 보강·알림 타입 절 참조 §3.5.5(폐기)→§3.5·§16.3 정정. **FAQ Q6 콘텐츠 결함 정정** — Phase 1엔 없는 회원용 비공개 토글을 약속하던 "비공개로 전환하면 피드에서만 숨길 수 있어요" / "Setting a work to private hides it from the feed only" ko/en 삭제. **Footer DPO ko/en SSoT 정합** — `footer.privacyOfficerValue` ko/en이 서로 다른 인물(카테 vs Jo Ga-young)을 가리키던 결함 → ko를 영문과 동일 인물(조가영)로 정정. **§1.1·N-5 정합** — 이벤트 구독·해지·설정 채널 안내 카피 다수 ko/en(events.*·settings.notifChannelPolicy·settings.eventUnsubscribe*). 이후 append — `profile.deleteWorkActiveCuration` ko/en 신설 (USR-PRF-13 활성 Pick/기획전 경고). 이후 append — `upload.eventConsentLabel`·`upload.eventConsentReadMore`·`upload.errEventConsentRequired` ko/en 신설 (USR-UPL-02 `?event=` 분기 응모 동의 체크박스). |
+| v1.12 | 2026-05-04 | PM × Claude | **응모 모달(USR-EVT-04) 카피 신규 (Policy v2.18·IA v1.10 연동, B-3a)** — 모달 제목·이미지 안내 헬퍼·작품명 라벨/플레이스홀더·응모 CTA(전송 중 라벨 포함)·닫기 라벨·접수 완료 토스트·중복 응모 차단 안내·이미지 없음 에러·작품명 빈값 에러·1점만 받는 헬퍼 등 응모 모달 전용 ko/en 카피 12쌍 신설. 응모 동의 라벨·"자세히 보기" 카피는 기존 USR-UPL-02 ?event= 분기에서 신설했던 키를 그대로 USR-EVT-04 모달에서 재사용(라벨 내용이 화면 무관). 이후 append — **기획전 선정 알림 카피 신규 (B-3b)** — 운영팀이 기획전에 piece를 추가할 때 작가에게 발송하는 알림 메시지 ko/en 1쌍 신설(작품명·기획전 이름 변수 포함). 기획전 영구 배지는 정책상 X(§15.2), 알림으로만 인지. 이후 append — **알림 카테고리 키 정합**: 기존 categoryPick(잔재)·categoryInvite 키 정리 → categoryFollowing(팔로잉 신작)·categoryGroupInvite(그룹 초대) 명확화 + categoryCuration(큐레이션) 신설 ko/en. 카테고리 키 7종 → 8종(전체 + 좋아요·팔로우·그룹 초대·팔로잉 신작·큐레이션·응모전·시스템). 이후 append — **응모전 표준어 정합 (B-4d-naming)** — i18n 한국어 라벨의 옛 "이벤트"(카테고리 의미)·"응모형 이벤트"·"공모형 주간 테마전"을 **응모전**으로 통일(`nav.events`·`events.title`·`events.upcomingSection`·`events.notifyModalTitle`·`events.unsubscribe*`·`events.detailGuide`·`events.detailBackLink`·`upload.eventConsentLabel`·`upload.eventWorkTitle`·`flowMap.section13`·`points.ppHint` 등). i18n 키 자체(`events.*`·`evt.*`·`nav.events`·`categoryEvent` 등)는 코드 도메인이라 그대로 유지. 영문 라벨도 일관성 위해 ko 변경 동행. |
+| v1.11 | 2026-04-30 | PM × Claude | **검수 SLA 표현 정확화** — "주말·공휴일을 빼고 24시간 안에" / "within 24 business hours". **매직 링크 전환 잔재 정정** — 옛 비밀번호 재설정·변경 템플릿 2건 제거, 매직 링크 가입/로그인 템플릿 신설. 탈퇴 "비밀번호 확인" → "동의 체크박스". **검수 신청 단계 공유 모델 정합** (Policy §3) — 옛 자동 발송 약속 카피 정정(작가 직접 발송 안내). inactive 단계 능동 톤 카피("곧 공개될 전시예요. 지금 가입해두시면 통과 즉시 본인 작품을 골라보실 수 있어요"). 친구 클레임 톤 정정 — "들어왔어요" → "본인 자리를 등록했어요". 신규 카피 3쌍 ko/en (검수 신청 단계 클레임 안내·친구용 배지 hint·검수 통과 시 친구 알림). 초대 공유 메시지에 inactive 분기. **토큰 모델 정합** — 옛 전화 기반 초대 카피 9쌍 제거. 온보딩 카피 톤 정정. FAQ 4문항(친구 초대·자동 연결 안 됨·잘못 연결·만료) ko/en 신설. 본인 작품 찾기 흐름 신규 카피 13쌍 추가. **닉네임 정책 카피 정합** — Settings 닉네임 readonly 라벨·안내·1:1 문의 진입 CTA, 가입 단계 중복 에러, 1:1 문의 "닉네임 변경 신청" 카테고리 안내 ko/en 신설. Policy 교차 링크 `[§n](Policy_v1.md#…)` 단축·§9·§21 앵커 보강·알림 타입 절 참조 §3.5.5(폐기)→§3.5·§16.3 정정. **FAQ Q6 콘텐츠 결함 정정** — Phase 1엔 없는 회원용 비공개 토글을 약속하던 "비공개로 전환하면 피드에서만 숨길 수 있어요" / "Setting a work to private hides it from the feed only" ko/en 삭제. **Footer DPO ko/en SSoT 정합** — `footer.privacyOfficerValue` ko/en이 서로 다른 인물(카테 vs Jo Ga-young)을 가리키던 결함 → ko를 영문과 동일 인물(조가영)로 정정. **§1.1·N-5 정합** — 응모전 구독·해지·설정 채널 안내 카피 다수 ko/en(events.*·settings.notifChannelPolicy·settings.eventUnsubscribe*). 이후 append — `profile.deleteWorkActiveCuration` ko/en 신설 (USR-PRF-13 활성 Pick/기획전 경고). 이후 append — `upload.eventConsentLabel`·`upload.eventConsentReadMore`·`upload.errEventConsentRequired` ko/en 신설 (USR-UPL-02 `?event=` 분기 응모 동의 체크박스). |
 | v1.10 | 2026-04-29 | PM × Claude | **UX 카피 톤 일괄 정리** — 사용자 노출 알림·토스트·배너의 격식체·행정 어휘를 시니어 친화 친근체로 정합. 검수·신고 알림(노출됩니다 → 다른 분들이 볼 수 있어요·반려되었어요 → 검수를 통과하지 못했어요·전시했습니다 → 올렸어요·기각 → 받아들여지지 않았어요), 업로드·시스템 토스트(되었습니다 → 됐어요·선정 → 뽑혔어요), 좋아요 토스트 간결화. |
 | v1.9 | 2026-04-28 | PM × Claude | **설정 계정 섹션 데모 잔재 정리** — "데모 세션 식별자"·"세션에서 계정을 읽을 수 없습니다" 카피 폐기. 설정 계정 섹션은 이메일 형식일 때만 노출, 아니면 행 자체 숨김. |
 | v1.8 | 2026-04-28 | PM × Claude | **설정 화면 i18n 누락 보강** — 글자 크기 토글 라벨 3쌍(작게·보통·크게)과 화면 테마 섹션 4쌍(섹션 헤더·인트로·밝게·어둡게) ko/en 추가. |
 | v1.6 | 2026-04-27 | PM × Claude | **시니어 친화 카피 톤 정리** — 본인 작품 찾기 카피 위협 톤 → 안심 + 회복 경로 안내, 알리는 방법 구체화(카톡·문자 등), 기술 용어 평이화("검수 통과 후 활성화" → "공개되면 알릴 수 있어요"), 피해자 톤 → 액션 유도, 수동태 → 능동, 가입자 입장 일관(작가님 → 친구), CTA 일관("공유" → "보내기"). **신규 i18n 키 9쌍(ko/en)** — 검수 시작 알림·토큰 만료 D-N 노출·본인 작품 찾기 안전 신호·스킵 후 안심 토스트·마이페이지 비회원 슬롯 인디케이터·토큰 모델 FAQ 4쌍 + 옛 SMS 발송 톤 정정. |
 | v1.5 | 2026-04-27 | PM × Claude | **비회원 초대 토큰 모델 카피** — 초대 랜딩 신규 카피 6키 ko/en(작가 직접 공유 톤·토큰 상태별 안내·재요청 안내). 본인 작품 찾기 신규 카피 9키 ko/en(잘못 클릭해도 작가가 풀어줄 수 있다는 안전 신호·동시 선택 race 안내). 알림 카테고리 칩에 "초대" 타입 추가. |
-| v1.4 | 2026-04-27 | PM × Claude | **매직 링크 발송 헬프 안내 격상** — 스팸함 안내를 헬프 박스로, 신규 키 "메일이 안 와요?" + 검색 단서. **게스트 헤더 보조 진입점** — 데스크톱 게스트 헤더 우측에 "작가이신가요? 작품 올리기" 텍스트 링크 신설. **약관 마케팅 분리** — "전체 동의" → "필수 약관 모두 동의", 마케팅은 별도 명시 동의. **닉네임 욕설 검사 시점** — 온보딩 step 2에 즉시 인라인 에러. **검수 안내 어휘 통일** — "다시 발행" → "다시 전시". **비회원 초대 발송 시점 카피** — "전시 생성 시 자동 발송" → "검수 승인 후 자동 발송"(ko/en). **신고 사유 단일화 안내** — "다른 종류 신고는 1:1 문의로" 가이드 신설(Policy §12.0). **이벤트 중복 참여 시각화** — 비활성 placeholder. **반려 편집 배너 도움 진입점** — "잘 모르겠어요? 1:1 문의" 신설. **이벤트 정합성** — Policy §25.5·§25.6 코드 반영. **신고 큐 dedup** — (신고자, 대상) 동일 조합 1건만 노출(ADM-RPT-01 AC-02). **검수 SLA 배지** — 검수 대기 24h 경과 시 "시한 초과" 빨강 배지(ADM-REV-01 AC-09). **신고 에스컬레이션 배지** — 24h 같은 작품 ≥10건 빨강·같은 작가 ≥5건 황색 배지(Policy §22.5). **파트너 트래킹 폐기** — Phase 1 파트너 작가 영입은 운영팀 외부 도구로 처리. **기획전 다수화** — 개수 제한 없음·주제·맥락 단위(Policy §15.1·§15.4). **이메일 가입 약관 정리** — 이메일·푸시 분리 폐기 → 단일 마케팅 동의. "만 14세 이상이에요" 신설하여 이메일·소셜 양쪽 동일 4종 정합. **시드 알림 i18n화** — 신규 키 5종(팔로우·Pick 선정·환영·이벤트 활성, ko/en). **어드민 한국어 단일 운영 명시**. |
+| v1.4 | 2026-04-27 | PM × Claude | **매직 링크 발송 헬프 안내 격상** — 스팸함 안내를 헬프 박스로, 신규 키 "메일이 안 와요?" + 검색 단서. **게스트 헤더 보조 진입점** — 데스크톱 게스트 헤더 우측에 "작가이신가요? 작품 올리기" 텍스트 링크 신설. **약관 마케팅 분리** — "전체 동의" → "필수 약관 모두 동의", 마케팅은 별도 명시 동의. **닉네임 욕설 검사 시점** — 온보딩 step 2에 즉시 인라인 에러. **검수 안내 어휘 통일** — "다시 발행" → "다시 전시". **비회원 초대 발송 시점 카피** — "전시 생성 시 자동 발송" → "검수 승인 후 자동 발송"(ko/en). **신고 사유 단일화 안내** — "다른 종류 신고는 1:1 문의로" 가이드 신설(Policy §12.0). **응모전 중복 참여 시각화** — 비활성 placeholder. **반려 편집 배너 도움 진입점** — "잘 모르겠어요? 1:1 문의" 신설. **응모전 정합성** — Policy §25.5·§25.6 코드 반영. **신고 큐 dedup** — (신고자, 대상) 동일 조합 1건만 노출(ADM-RPT-01 AC-02). **검수 SLA 배지** — 검수 대기 24h 경과 시 "시한 초과" 빨강 배지(ADM-REV-01 AC-09). **신고 에스컬레이션 배지** — 24h 같은 작품 ≥10건 빨강·같은 작가 ≥5건 황색 배지(Policy §22.5). **파트너 트래킹 폐기** — Phase 1 파트너 작가 영입은 운영팀 외부 도구로 처리. **기획전 다수화** — 개수 제한 없음·주제·맥락 단위(Policy §15.1·§15.4). **이메일 가입 약관 정리** — 이메일·푸시 분리 폐기 → 단일 마케팅 동의. "만 14세 이상이에요" 신설하여 이메일·소셜 양쪽 동일 4종 정합. **시드 알림 i18n화** — 신규 키 5종(팔로우·Pick 선정·환영·응모전 활성, ko/en). **어드민 한국어 단일 운영 명시**. |
 | v1.3 | 2026-04-26 | PM × Claude | 연결 제안·본인 확인 단계 카피 9쌍 ko/en 추가(Policy §3.4.1·§3.5.1). 헤더·모바일 가입 진입점 라벨 "로그인" → "로그인·가입"으로 통일. 실명 입력 폐기에 따라 온보딩 안내 6쌍 제거 + 가입·초대 안내의 실명 언급 정리. 비회원 초대 발송 라벨 "작가 실명" → "작가 이름". 소셜 가입 후 온보딩 안내에 "닉네임은 방금 적은 그대로 채워뒀어요" 추가. **마이페이지 "내 작품" 탭 안내 한 줄** — 본인 프로필 활성 'works' 탭 상단에 "내가 그린 작품(1점 단위)이 모이는 곳이에요. 초대로 자동 연결된 작품도 함께 보여요. 내가 올린 전시는 '전시' 탭에서 볼 수 있어요." 신설(ko/en). **초대 자동 연결 안내 강화** — 온보딩 step 2 폰 prefill 시 별도 안내 + step 3(완료) 화면에 매칭 성공 분기 카피 신설(ko/en). |
 | v1.2 | 2026-04-21 | PM × Claude | 매직 링크 전환 정합 — 비밀번호 재설정·변경 메일 템플릿 4키 ko/en 제거, 로그인 링크 메일 템플릿로 대체. 1:1 문의 카테고리에 "개인정보 열람·정정·삭제 요청" 추가 ko/en (Policy §30 연동). |
 | v1.1 | 2026-04-21 | PM × Claude | 이메일 인증 매직 링크 전환 카피 정합 — 온보딩 안내 "비밀번호 재설정" → "로그인·가입 인증 링크" 수신으로 교체 ko/en. FAQ "비밀번호 찾기" → "로그인 링크 메일이 오지 않을 때"(스팸함·재전송·30분 TTL 안내)로 재작성 ko/en. |
