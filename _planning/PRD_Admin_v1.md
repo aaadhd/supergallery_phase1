@@ -1086,7 +1086,7 @@ DB·런칭 직전 운영자가 본 표를 기준으로 초기 체크리스트를
 **엔티티**: NOTICE
 **감사 로그**: 공지 게시·게시 중단·수정·삭제 시 운영자 감사 로그 1건 (§0.6 정책 적용)
 
-**구현 상태**: Phase 1 미구현. 런칭 전 백엔드 연동 후 운영팀 콘솔에서 사용 시작.
+**구현 상태**: 2026-05-05 Phase 1 구현 완료 — `admin/NoticeManagement.tsx` + `utils/noticeStore.ts`. 사용자측(`pages/Notices.tsx`·`pages/NoticeDetail.tsx`)도 noticeStore 동적 읽기로 전환.
 
 ---
 
@@ -1141,6 +1141,7 @@ DB·런칭 직전 운영자가 본 표를 기준으로 초기 체크리스트를
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.25 | 2026-05-05 | PM × Claude | **§0.6.1 감사 로그 전 어드민 액션 연결** — Pick·기획전·배너·응모전·선정작·문의·공지 핸들러에 appendAuditLog 추가. AuditAction 5종 → 21종(pick/curation/banner/event/contest/inquiry/notice 계열). **ADM-NTC-01 공지 관리 구현** — noticeStore(localStorage, draft/published/stopped 상태 관리, 고정 최대 2개) + NoticeManagement 어드민 화면(목록·생성·수정·게시·중단·삭제). 사용자측 Notices·NoticeDetail을 noticeStore 동적 읽기로 전환. 대시보드 공지 일감 카드 신설. ADM-NTC-01 구현 상태 "미구현" → 완료로 갱신. |
 | v1.24 | 2026-05-05 | PM × Claude | 자동 비공개·SLA 자동 측정 폐기 정합, 신고 삭제·감사 로그, 대시보드·엔티티. 이후 append — 상단 변경 요약 블록 폐지, 문서 이력 단순화. 이후 append — §0.6·§0.4.3 고정 앵커, 인용 본문 인라인 링크 |
 | v1.23 | 2026-05-04 | PM × Claude | 기획전 piece UX, 응모 발표·선정, 코드 구현 연동 |
 | v1.22 | 2026-04-30 | PM × Claude | 검수 승인 시 참여자 알림, 감사 로그 단순화, 인라인 코드 정합 |

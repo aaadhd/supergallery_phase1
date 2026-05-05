@@ -572,6 +572,7 @@
  <li><a href="#ADM-CKL-01"><code>CKL-01</code><span>체크리스트</span></a></li>
  <li><a href="#ADM-ISU-01"><code>ISU-01</code><span>미결 이슈</span></a></li>
  <li><a href="#ADM-INQ-01"><code>INQ-01</code><span>문의함</span></a></li>
+ <li><a href="#ADM-NTC-01"><code>NTC-01</code><span>공지 관리 ⭐</span></a></li>
  </ul>
  </li>
 
@@ -7596,6 +7597,100 @@
  </div>
  </div>
  <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-INQ-01 · 문의함</span></div>
+ </section>
+
+ <!-- ───────── 화면: 공지 관리 (PC) ───────── -->
+ <section class="slide" id="ADM-NTC-01">
+ <div class="slide-pad">
+ <div class="slide-head">
+ <div><div class="crumb">28 · 운영 — 공지</div><h2>공지 관리</h2></div>
+ <div class="meta"><span class="role">ADM</span><span class="id">ADM-NTC-01</span><span class="device">PC</span><span class="ver">v1.0 NEW</span></div>
+ </div>
+
+ <div class="screen">
+ <div class="mock">
+ <div class="pc-frame">
+ <div class="chrome"><span class="dots"><span></span><span></span><span></span></span><span class="url">artier.com/admin/notices</span></div>
+ <div style="background: white; height: 100%; display: flex;">
+ <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
+ <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
+ <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; color: var(--ink-2);">검수</div>
+ <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; color: var(--ink-2);">신고</div>
+ <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; color: var(--ink-2);">배너</div>
+ <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; background: var(--ink); color: white;">공지 관리</div>
+ <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; color: var(--ink-2);">문의함</div>
+ </aside>
+ <main style="flex: 1; overflow: auto; padding: 18px 22px;">
+ <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+ <div style="font-size: 17px; font-weight: 700;">공지 관리</div>
+ <div style="background: var(--ink); color: white; padding: 7px 14px; border-radius: 6px; font-size: 11.5px;">+ 새 공지</div>
+ </div>
+ <!-- 상태 필터 -->
+ <div style="display: flex; gap: 8px; margin-bottom: 14px;">
+ <span style="padding: 4px 12px; background: var(--ink); color: white; border-radius: 14px; font-size: 11px;">전체</span>
+ <span style="padding: 4px 12px; border: 1px solid var(--line-2); border-radius: 14px; font-size: 11px; color: var(--ink-2);">임시저장</span>
+ <span style="padding: 4px 12px; border: 1px solid var(--line-2); border-radius: 14px; font-size: 11px; color: var(--ink-2);">게시 중</span>
+ <span style="padding: 4px 12px; border: 1px solid var(--line-2); border-radius: 14px; font-size: 11px; color: var(--ink-2);">게시 중단</span>
+ </div>
+ <!-- 목록 테이블 -->
+ <div style="border: 1px solid var(--line); border-radius: 8px; overflow: hidden;">
+ <div style="display: grid; grid-template-columns: 1fr 80px 90px 90px 140px; padding: 9px 14px; background: #fafafa; border-bottom: 1px solid var(--line); font-size: 10.5px; color: var(--ink-3); font-weight: 600;">
+ <div>제목</div><div>카테고리</div><div>상태</div><div>게시일</div><div></div>
+ </div>
+ <!-- 행 1 — 게시 중 + 고정 -->
+ <div style="display: grid; grid-template-columns: 1fr 80px 90px 90px 140px; padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 12px; align-items: center;">
+ <div>
+ <div style="display: flex; align-items: center; gap: 5px; font-weight: 600;">
+ <span style="font-size: 10px; color: #f59e0b;">📌</span> Artier 그랜드 오픈 안내
+ </div>
+ <div style="font-size: 10.5px; color: var(--ink-3); margin-top: 2px;">Artier Grand Opening</div>
+ </div>
+ <div style="font-size: 10.5px; color: var(--ink-3);">서비스</div>
+ <div><span style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; padding: 2px 7px; border-radius: 8px; font-size: 10px; font-weight: 500;">게시 중</span></div>
+ <div style="font-size: 10.5px; color: var(--ink-3);">2026-05-01</div>
+ <div style="display: flex; gap: 4px; justify-content: flex-end;">
+ <span style="border: 1px solid var(--line-2); padding: 3px 8px; border-radius: 6px; font-size: 10px; color: var(--ink-2);">수정</span>
+ <span style="border: 1px solid var(--line-2); padding: 3px 8px; border-radius: 6px; font-size: 10px; color: var(--ink-2);">중단</span>
+ </div>
+ </div>
+ <!-- 행 2 — 임시저장 -->
+ <div style="display: grid; grid-template-columns: 1fr 80px 90px 90px 140px; padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 12px; align-items: center;">
+ <div>
+ <div style="font-weight: 600;">5월 점검 공지</div>
+ <div style="font-size: 10.5px; color: var(--ink-3); margin-top: 2px;">May Maintenance Notice</div>
+ </div>
+ <div style="font-size: 10.5px; color: var(--ink-3);">서비스</div>
+ <div><span style="background: #f4f4f5; color: var(--ink-3); padding: 2px 7px; border-radius: 8px; font-size: 10px;">임시저장</span></div>
+ <div style="font-size: 10.5px; color: var(--ink-3);">2026-05-04</div>
+ <div style="display: flex; gap: 4px; justify-content: flex-end;">
+ <span style="border: 1px solid var(--line-2); padding: 3px 8px; border-radius: 6px; font-size: 10px; color: var(--ink-2);">수정</span>
+ <span style="border: 1px solid var(--line-2); padding: 3px 8px; border-radius: 6px; font-size: 10px; color: #16a34a;">게시</span>
+ <span style="border: 1px solid var(--line-2); padding: 3px 8px; border-radius: 6px; font-size: 10px; color: #dc2626;">삭제</span>
+ </div>
+ </div>
+ </div>
+ </main>
+ </div>
+ </div>
+ </div>
+ <div class="placeholder-note">상태 필터(전체·임시저장·게시 중·게시 중단) + 공지 목록 + 생성/수정 모달</div>
+ </div>
+
+ <div class="desc">
+ <h3>구성 요소</h3>
+ <dl>
+ <dt><span class="bub">1</span></dt><dd>상태 필터 — 전체 / 임시저장 / 게시 중 / 게시 중단</dd>
+ <dt><span class="bub">2</span></dt><dd>목록 테이블 — 제목(ko + en 서브) · 카테고리 · 상태 배지 · 게시일 · 액션(수정 / 게시 / 중단 / 삭제)</dd>
+ <dt><span class="bub">3</span></dt><dd>생성/수정 모달 — 카테고리 select · 고정 체크박스 · ko/en 제목 · ko/en 본문 textarea · 상태 라디오(신규 작성 시만)</dd>
+ </dl>
+
+ <div class="callout info">게시 중인 공지는 삭제 불가 — 먼저 "게시 중단"으로 전환 후 삭제(PRD AC-04). 고정 공지는 최대 2개 한도(PRD AC-03). 게시·삭제·수정 시 운영자 감사 로그 1건 기록(PRD_Admin §0.6).</div>
+
+ <div class="pol"><h4>관련 정책</h4>공지 엔티티 (§14 NOTICE) · 감사 로그 (§0.6) · 사용자측 USR-INF-03·04</div>
+ </div>
+ </div>
+ </div>
+ <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-NTC-01 · 공지 관리</span></div>
  </section>
 
  <!-- ───────── 화면: CM-02 로그인 유도 모달 (PC) ───────── -->

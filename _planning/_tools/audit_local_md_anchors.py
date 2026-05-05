@@ -1,8 +1,12 @@
 #!/usr/bin/env python3
 """
 Scan _planning/*.md for local links [text](path.md#frag) and verify
-target file contains <a id="frag"> (this repo's convention).
+target file declares id="frag" via <a id="..."> and/or <h1–h6 id="..."> (heading id는 미리보기 스크롤 정합에 유리).
 Also flags #fragment with no id in target (false negatives possible if only GFM heading slug).
+
+예시·설명용으로만 쓰인 링크(인라인 코드 `` `...` `` 안, ``` 펜스 블록 안)은 검사에서 제외한다.
+동일 줄에 `[텍스트](#앵커)` 예시를 두면 상대 앵커가 현재 파일로 오인되므로,
+문서 본문 예시는 `./대상.md#앵커` 형태를 권장한다(README 「문서 갱신 규칙」 참고).
 """
 
 from __future__ import annotations
@@ -16,6 +20,27 @@ ROOT = Path(__file__).resolve().parent.parent
 MD_LINK = re.compile(r"\[[^\]]*\]\(([^)]+)\)")
 
 
+def mask_inline_backticks(line: str) -> str:
+    """Replace characters inside paired `...` with spaces so [](...) is not matched."""
+    out: list[str] = []
+    i = 0
+    n = len(line)
+    while i < n:
+        if line[i] == "`":
+            out.append(" ")
+            i += 1
+            while i < n and line[i] != "`":
+                out.append(" ")
+                i += 1
+            if i < n:
+                out.append(" ")
+                i += 1
+        else:
+            out.append(line[i])
+            i += 1
+    return "".join(out)
+
+
 def split_link(url: str) -> tuple[str | None, str | None]:
     url = unquote(url.strip())
     if "#" in url:
@@ -25,7 +50,10 @@ def split_link(url: str) -> tuple[str | None, str | None]:
 
 
 def collect_ids(text: str) -> set[str]:
-    return set(re.findall(r'<a\s+id="([^"]+)"\s*/?>', text, re.I))
+    ids: set[str] = set()
+    ids.update(re.findall(r'<a\s+id="([^"]+)"\s*/?>', text, re.I))
+    ids.update(re.findall(r"<h[1-6]\b[^>]*\bid=\"([^\"]+)\"", text, re.I))
+    return ids
 
 
 def is_external(url: str) -> bool:
@@ -47,8 +75,17 @@ def main() -> None:
         file_ids[p.name] = collect_ids(t)
 
     for src_name, text in file_text.items():
+        in_fence = False
         for i, line in enumerate(text.splitlines(), 1):
-            for m in MD_LINK.finditer(line):
+            stripped = line.strip()
+            if stripped.startswith("```"):
+                in_fence = not in_fence
+                continue
+            if in_fence:
+                continue
+
+            scan_line = mask_inline_backticks(line)
+            for m in MD_LINK.finditer(scan_line):
                 raw = m.group(1)
                 if raw.startswith("<"):
                     continue
@@ -78,10 +115,10 @@ def main() -> None:
                     issues.append((src_name, i, raw, "id 미존재", f"{target}#{frag}"))
 
     if not issues:
-        print("OK: 로컬 .md #앵커 전수 검사에서 불일치 없음 (<a id> 기준).")
+        print("OK: 로컬 .md #앵커 전수 검사에서 불일치 없음 (<a id> / <h1–h6 id> 기준).")
         return
 
-    print(f"문제 {len(issues)}건 (<a id=\"...\"> 기준)\n")
+    print(f"문제 {len(issues)}건 (<a id> / <h1–h6 id> 기준)\n")
     cur = None
     for src, line, raw, reason, detail in issues:
         key = (src, line)

@@ -11,6 +11,8 @@
 - **ADM-MBR-01 회원 단위 자동 검토 배지 폐기** — 24h 신고 카운트 트리거 제거, 운영팀 신고 큐 직접 정성 판단으로 전환(§22.5 v2.20 정합).
 - **Handoff_LegalReview LP-5 재기술** — "2회 신고 자동 비공개 법적 리스크" → "「삭제」 액션 사유 4종 한정 법적 근거"로 전면 재기술(정통망법 §44의2·저작권법 §103·청소년보호법 §16 검토 포인트).
 - **코드 주석 정합** — `data.ts` autoHiddenAt @deprecated, `ReportManagement.tsx`·`reportsStore.ts`·`feedVisibility.ts` 등 src 9개 파일의 "자동 비공개" 잔재 주석·토스트 문자열 정정.
+- **§0.6.1 감사 로그 전 어드민 액션 연결** — Pick·기획전·배너·응모전·선정작·문의·공지 핸들러에 appendAuditLog 추가. AuditAction 5종 → 21종.
+- **ADM-NTC-01 공지 관리 화면 구현** — `utils/noticeStore.ts`(localStorage CRUD, draft/published/stopped 상태, 고정 최대 2개, 기존 시드 자동 적재) + `admin/NoticeManagement.tsx`(목록·생성/수정 모달·게시·게시중단·삭제 + audit_log). 사용자측 `pages/Notices.tsx`·`NoticeDetail.tsx`를 정적 배열 → noticeStore 동적 읽기로 전환. 대시보드 공지 일감 카드 신설(게시 중·고정·임시저장 카운트).
 
 ---
 
