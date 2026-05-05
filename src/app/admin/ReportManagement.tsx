@@ -15,6 +15,7 @@ import {
   type StoredUserReport,
 } from '../utils/reportsStore';
 import { pushDemoNotification } from '../utils/pushDemoNotification';
+import { logWorkDeletion, type DeletedWorkLogPayload } from '../utils/adminAuditLog';
 import { useI18n } from '../i18n/I18nProvider';
 import { usePagination } from '../hooks/usePagination';
 import { PaginationBar } from './components/PaginationBar';
@@ -125,6 +126,12 @@ export default function ReportManagement() {
   const [typeFilter, setTypeFilter] = useState('전체');
   // Policy §22.2 v2.20·§22.5 — Phase 1엔 SLA 자동 측정·시간 기반 우선순위 폐기. 운영팀 정성 판단으로 처리.
 
+  // Policy §12.1 v2.20 「삭제」 사유 4종 한정 + audit_log 기록.
+  type DeleteReason = DeletedWorkLogPayload['reason'];
+  const [deleteDialog, setDeleteDialog] = useState<{ reportId: string; workId: string; targetName: string } | null>(null);
+  const [deleteReason, setDeleteReason] = useState<DeleteReason>('copyright');
+  const [deleteNote, setDeleteNote] = useState('');
+
   const refreshRows = useCallback(() => setRows(mergeReportRows()), []);
 
   useEffect(() => {
@@ -199,31 +206,65 @@ export default function ReportManagement() {
     toast.message('이 신고는 비공개 유지로 마감했습니다.');
   };
 
-  /** 삭제: 작품을 영구 삭제 + 신고 처리 (작품 신고에만 적용) */
-  const deleteTarget = async (id: string) => {
+  /** 삭제 다이얼로그 오픈: 사유 선택을 위해 별도 모달로 진입 (Policy §12.1 v2.20). */
+  const openDeleteDialog = (id: string) => {
     const raw = loadUserReports().find((r) => r.id === id);
     if (!raw || raw.targetType !== 'work' || !raw.targetId) {
       toast.error('작품 신고에 한해 삭제할 수 있습니다.');
       return;
     }
-    const ok = await openConfirm({
-      title: '신고 대상 작품을 삭제할까요?',
-      description: '복구할 수 없습니다. 좋아요·저장 등 부속 데이터도 함께 정리됩니다.',
-      destructive: true,
-      confirmLabel: '삭제',
+    setDeleteDialog({ reportId: id, workId: raw.targetId, targetName: raw.targetName });
+    setDeleteReason('copyright');
+    setDeleteNote('');
+  };
+
+  /** 삭제 확정: 작품 영구 삭제 + audit_log 기록 + 신고 처리 + 작가 알림 (Policy §12.1 v2.20·§22.7). */
+  const confirmDelete = () => {
+    if (!deleteDialog) return;
+    const { reportId, workId, targetName } = deleteDialog;
+    const work = workStore.getWork(workId);
+    if (!work) {
+      toast.error('작품을 찾을 수 없습니다 (이미 삭제됨).');
+      setDeleteDialog(null);
+      return;
+    }
+
+    // 같은 work에 누적된 신고 ID 수집 (분쟁 증빙)
+    const linkedReportIds = loadUserReports()
+      .filter((r) => r.targetType === 'work' && r.targetId === workId)
+      .map((r) => r.id);
+
+    // audit_log entry 기록 (작품 메타 스냅샷 + 사유 + 메모 + 연결 신고 ID, 5년 보관)
+    const images = Array.isArray(work.image) ? work.image : work.image ? [work.image] : [];
+    logWorkDeletion('admin', 'admin', {
+      reason: deleteReason,
+      reasonNote: deleteNote.trim() || undefined,
+      reportIds: linkedReportIds,
+      snapshot: {
+        workId,
+        artistId: work.artistId,
+        artistName: work.artist?.name ?? '',
+        exhibitionName: work.exhibitionName,
+        pieceTitles: work.imagePieceTitles,
+        uploadedAt: work.uploadedAt,
+        imageRefs: images,
+      },
     });
-    if (!ok) return;
-    // 삭제 전에 targetName을 캡처(removeWork 후에는 work 조회 불가).
-    const deletedTitle = raw.targetName;
-    const deletedWorkId = raw.targetId;
-    workStore.removeWork(deletedWorkId);
-    updateUserReport(id, { adminStatus: 'deleted' });
-    // 작품 작가에게 삭제 알림 (workId는 이미 삭제됐으니 참조하지 않음)
+
+    // 작품 영구 삭제 (cascade는 workStore.removeWork에서 처리 — 기획전 piece·응모전 selectedWorkIds 등)
+    workStore.removeWork(workId);
+    updateUserReport(reportId, { adminStatus: 'deleted' });
+
+    // 작가에게 삭제 알림 + 사유 변수
+    const reasonLabel = t(`report.deleteReason.${deleteReason}` as never);
     pushDemoNotification({
       type: 'system',
-      message: t('report.notifTargetWorkDeleted').replace('{title}', deletedTitle),
+      message: t('report.notifTargetWorkDeleted')
+        .replace('{title}', targetName)
+        .replace('{reason}', reasonLabel),
     });
-    toast.success('작품이 삭제되었습니다.');
+    toast.success(`작품 삭제 + 감사 로그 기록 (사유: ${reasonLabel})`);
+    setDeleteDialog(null);
   };
 
   /**
@@ -379,7 +420,7 @@ export default function ReportManagement() {
                       <Button
                         type="button"
                         disabled={r.status !== '대기'}
-                        onClick={() => deleteTarget(r.id)}
+                        onClick={() => openDeleteDialog(r.id)}
                         className="text-sm px-3 py-1.5 rounded-lg bg-red-600 text-white lg:hover:bg-red-700 disabled:opacity-50 disabled:pointer-events-none"
                       >
                         <Trash2 className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
@@ -432,6 +473,73 @@ export default function ReportManagement() {
               pageSize={ADMIN_TABLE_PAGE_SIZE}
               onPageChange={setPage}
             />
+          </div>
+        </div>
+      )}
+
+      {/* 삭제 사유 + 자유 메모 모달 (Policy §12.1 v2.20). audit_log entry 기록용. */}
+      {deleteDialog && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          onClick={() => setDeleteDialog(null)}
+        >
+          <div
+            className="bg-white rounded-xl border border-border shadow-xl w-full max-w-md p-5 space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div>
+              <h3 className="text-base font-bold text-foreground">"{deleteDialog.targetName}" 작품 삭제</h3>
+              <p className="text-xs text-muted-foreground mt-1">
+                복구할 수 없습니다. 사유와 메모는 운영자 감사 로그에 5년 보관됩니다 (Policy §22.7).
+              </p>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-foreground">삭제 사유 <span className="text-destructive">*</span></label>
+              <select
+                value={deleteReason}
+                onChange={(e) => setDeleteReason(e.target.value as DeleteReason)}
+                className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
+              >
+                <option value="copyright">저작권 침해 확정</option>
+                <option value="illegal">위법 콘텐츠 (명예훼손·혐오 등)</option>
+                <option value="minor_harmful">청소년 유해</option>
+                <option value="abuse">어뷰즈 (스팸·도배·계정 우회)</option>
+              </select>
+            </div>
+
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-foreground">메모 (선택)</label>
+              <textarea
+                value={deleteNote}
+                onChange={(e) => setDeleteNote(e.target.value)}
+                placeholder="판단 근거·증거 링크 등 (감사 로그에 함께 보관)"
+                className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white min-h-[72px]"
+                maxLength={500}
+              />
+              <p className="text-[11px] text-muted-foreground text-right">{deleteNote.length}/500</p>
+            </div>
+
+            <div className="flex gap-2 justify-end pt-1">
+              <Button
+                type="button"
+                variant="outline"
+                onClick={() => setDeleteDialog(null)}
+                className="text-sm"
+              >
+                취소
+              </Button>
+              <Button
+                type="button"
+                onClick={confirmDelete}
+                className="text-sm bg-red-600 text-white lg:hover:bg-red-700"
+              >
+                <Trash2 className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
+                영구 삭제
+              </Button>
+            </div>
           </div>
         </div>
       )}
