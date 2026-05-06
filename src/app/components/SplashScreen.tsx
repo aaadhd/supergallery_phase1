@@ -1,4 +1,5 @@
 import { useState, useEffect, type ReactNode } from 'react';
+import { Palette } from 'lucide-react';
 import { getStoredLocale } from '../i18n/uiStrings';
 import { translate } from '../i18n/messages';
 
@@ -45,13 +46,16 @@ export function SplashScreen({ children, minDuration = 1800 }: SplashScreenProps
           phase === 'fading' ? 'opacity-0' : 'opacity-100'
         }`}
       >
-        {/* Logo + watercolor background */}
+        {/* Logo */}
         <div className="relative flex flex-col items-center gap-5 animate-in fade-in zoom-in-95 duration-700">
-          <img
-            src="/images/splash.png"
-            alt={translate(getStoredLocale(), 'splash.alt')}
-            className="w-40 h-40 sm:w-48 sm:h-48 object-contain drop-shadow-sm"
-          />
+          <div className="flex flex-col items-center gap-3">
+            <div className="h-20 w-20 flex items-center justify-center rounded-3xl bg-primary/10 text-primary shadow-sm">
+              <Palette className="h-10 w-10" />
+            </div>
+            <span className="text-2xl font-bold tracking-tight text-foreground">
+              {translate(getStoredLocale(), 'brand.name')}
+            </span>
+          </div>
           {/* Loading dots */}
           <div className="flex gap-1.5">
             {[0, 1, 2].map((i) => (
