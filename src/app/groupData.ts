@@ -802,14 +802,8 @@ export function hydrateGroupWorks(allArtists: Artist[]) {
       _PIECE_TITLE_POOL[(idx * 13 + imgIdx * 7) % _PIECE_TITLE_POOL.length]
     );
 
-    const firstMember = imageArtists.find(ia => ia.type === 'member' && ia.memberId);
-    const leadArtist = firstMember?.type === 'member' && firstMember.memberId
-      ? allArtists.find(a => a.id === firstMember.memberId) : undefined;
-
     return {
       ...gw,
-      artistId: leadArtist?.id ?? gw.artistId,
-      artist: leadArtist ?? gw.artist,
       imageArtists,
       imagePieceTitles,
       groupName: group.name,

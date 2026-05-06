@@ -189,9 +189,9 @@ export default function Search() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-white pb-20 md:pb-0">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       {/* Search bar */}
-      <div className="bg-white border-b border-border">
+      <div className="bg-background border-b border-border">
         <div className="mx-auto max-w-[800px] px-4 sm:px-6 py-6 sm:py-10">
           <div className="relative" ref={searchWrapRef}>
             <SearchIcon className="absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground z-10" />
@@ -210,7 +210,7 @@ export default function Search() {
               aria-expanded={suggestOpen && autocompleteSuggestions.length > 0}
               aria-autocomplete="list"
               maxLength={100}
-              className="w-full pl-12 sm:pl-14 pr-12 sm:pr-14 py-4 sm:py-5 text-base sm:text-base border-2 border-border rounded-2xl focus:outline-none focus:border-primary focus:ring-[3px] focus:ring-primary/10 transition-all bg-white"
+              className="w-full pl-12 sm:pl-14 pr-12 sm:pr-14 py-4 sm:py-5 text-base sm:text-base border-2 border-border rounded-2xl focus:outline-none focus:border-primary focus:ring-[3px] focus:ring-primary/10 transition-all bg-card"
             />
             {query && (
               <Button
@@ -223,7 +223,7 @@ export default function Search() {
             )}
             {suggestOpen && autocompleteSuggestions.length > 0 && !searchTerm && (
               <ul
-                className="absolute left-0 right-0 top-full mt-2 z-20 rounded-xl border border-border bg-white shadow-lg py-1 max-h-64 overflow-y-auto"
+                className="absolute left-0 right-0 top-full mt-2 z-20 rounded-xl border border-border bg-card shadow-lg py-1 max-h-64 overflow-y-auto"
                 role="listbox"
               >
                 <li className="px-3 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wide">
@@ -290,17 +290,6 @@ export default function Search() {
               </div>
             )}
 
-            {/* 검색 안내 — 시니어 친화 빈 상태 보강 */}
-            <div className="rounded-xl border border-border/40 bg-muted/30 p-5 sm:p-6">
-              <h2 className="text-base sm:text-lg font-semibold text-foreground mb-3">
-                {t('search.helpTitle')}
-              </h2>
-              <ul className="space-y-2 text-sm sm:text-base text-muted-foreground leading-relaxed list-disc pl-5">
-                <li>{t('search.helpItem1')}</li>
-                <li>{t('search.helpItem2')}</li>
-                <li>{t('search.helpItem3')}</li>
-              </ul>
-            </div>
           </div>
         )}
 

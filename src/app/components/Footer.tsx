@@ -67,12 +67,12 @@ export function Footer() {
   return (
     <footer
       ref={containerRef}
-      className="shrink-0 border-t border-border bg-white/95 backdrop-blur-md z-30"
+      className="shrink-0 border-t border-border bg-background/95 backdrop-blur-md z-30"
     >
       {/* 확장 상세 패널 (바 위로 슬라이드 업) */}
       {expanded && (
         <div
-          className="border-b border-border/60 bg-white animate-in fade-in slide-in-from-bottom-2 duration-200"
+          className="border-b border-border/60 bg-card animate-in fade-in slide-in-from-bottom-2 duration-200"
           role="region"
           aria-label={t('footer.businessInfo')}
         >

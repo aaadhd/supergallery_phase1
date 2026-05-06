@@ -345,15 +345,12 @@ export default function Browse() {
   // RENDER
   // =========================================================================
   return (
-    <div className="min-h-full bg-white">
+    <div className="min-h-full bg-background">
       {/* ----------------------------------------------------------------- */}
       {/* HERO — 에디토리얼 갤러리 톤                                              */}
       {/* ----------------------------------------------------------------- */}
-      <div className="bg-white">
+      <div className="bg-background">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 pt-4 sm:pt-6 pb-2 sm:pb-3">
-          <p className="text-xs sm:text-xs text-muted-foreground tracking-[0.14em] uppercase mb-2">
-            {t('browse.heroKicker')}
-          </p>
           <div className="relative group">
             <div className="overflow-hidden sm:rounded-sm ring-1 ring-foreground/[0.08] shadow-[0_28px_80px_-32px_rgba(35,32,40,0.45)]" ref={emblaRef}>
               <div className="flex">
@@ -377,7 +374,7 @@ export default function Browse() {
                               {banner.tag}
                             </span>
                           )}
-                          <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold text-white mb-2 sm:mb-2.5 leading-tight tracking-tight">
+                          <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold text-white mb-2 sm:mb-2.5 leading-tight tracking-tight drop-shadow-md">
                             {banner.title}
                           </h2>
                           <p className="text-sm sm:text-base text-white/90 font-medium max-w-xl leading-relaxed hidden sm:block">
@@ -428,7 +425,7 @@ export default function Browse() {
       {/* ----------------------------------------------------------------- */}
       {/* CATEGORY — 언더라인 탭                                                  */}
       {/* ----------------------------------------------------------------- */}
-      <div className="sticky top-0 z-40 border-b border-border/60 bg-white/90 backdrop-blur-lg backdrop-saturate-150">
+      <div className="sticky top-0 z-40 border-b border-border/60 bg-background/90 backdrop-blur-lg backdrop-saturate-150">
         <div className="mx-auto flex min-h-11 sm:min-h-12 max-w-[1440px] items-end gap-5 sm:gap-7 px-4 sm:px-8 lg:px-12">
           {categories.map((cat) => (
             <Button
@@ -733,109 +730,105 @@ function WorkCard({ work, index, onSelect, onArtistClick, isFollowing, onToggleF
       </div>
 
       {/* Info */}
-      <div className="px-3 pt-3 pb-4 sm:px-3.5 sm:pb-5 bg-card">
-        <div className="flex items-baseline justify-between gap-2 mb-1">
-          <h3 className="text-sm font-medium text-foreground leading-snug line-clamp-2 min-w-0">
-            {exhibitionLabel}
-          </h3>
-        </div>
+      <div className="px-3 pt-3 pb-2 sm:px-3.5 bg-card">
+        <h3 className="text-sm font-medium text-foreground leading-snug line-clamp-2 min-w-0 mb-1">
+          {exhibitionLabel}
+        </h3>
 
-        {/* Artist row */}
-        <div className="flex items-center">
-          <div className="flex items-center gap-2 min-w-0 w-full">
-            {useGroupStyleRow ? (
-              <BrowseArtistPeek
-                coarse={coarsePointer}
-                trigger={
-                  <Button
-                    variant="ghost"
-                    type="button"
-                    className="flex items-center gap-2 min-h-10 min-w-0 text-sm text-muted-foreground transition-none touch-manipulation rounded-md px-1 -mx-1 lg:hover:bg-transparent lg:hover:text-muted-foreground active:bg-transparent cursor-default"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-zinc-200 shrink-0"><Users className="h-3 w-3" /></span>
-                    <span>{truncateArtistName((groupName?.trim() || exhibitionLabel || '') as string)}</span>
-                  </Button>
-                }
-              >
-                <p className="text-sm font-semibold text-foreground px-1 mb-3">{t('browse.groupMembersLabel')}</p>
-                {peekMembers.map((m) => (
-                  <MemberRow
-                    key={m.id}
-                    artist={m}
-                    isFollowing={isFollowing(m.id)}
-                    onToggleFollow={() => onToggleFollow(m.id)}
-                    onNavigate={(id) => navigate(`/profile/${id}`)}
-                  />
-                ))}
-                {nonMemberArtists.map((nm) => (
-                  <MemberRow
-                    key={`nm-${nm.displayName}`}
-                    artist={{ id: `nm-${nm.displayName}`, name: nm.displayName as string, avatar: '', bio: '' }}
-                    isRegistered={false}
-                    isFollowing={false}
-                    onToggleFollow={() => {}}
-                    onNavigate={() => {}}
-                  />
-                ))}
-              </BrowseArtistPeek>
-            ) : hasCoOwnersNoGroup ? (
-              <BrowseArtistPeek
-                coarse={coarsePointer}
-                trigger={
-                  <Button
-                    variant="ghost"
-                    type="button"
-                    className="flex items-center gap-2 min-h-10 min-w-0 text-sm text-muted-foreground transition-none touch-manipulation rounded-md px-1 -mx-1 lg:hover:bg-transparent lg:hover:text-muted-foreground active:bg-transparent cursor-default"
-                    onClick={(e) => e.stopPropagation()}
-                  >
-                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-zinc-200 shrink-0"><Users className="h-3 w-3" /></span>
-                    <span>{truncateArtistName(t('browse.groupArtistsLabel'))}</span>
-                  </Button>
-                }
-              >
-                <p className="text-sm font-semibold text-foreground px-1 mb-3">{t('browse.groupMembersLabel')}</p>
-                {peekMembers.map((m) => (
-                  <MemberRow
-                    key={m.id}
-                    artist={m}
-                    isFollowing={isFollowing(m.id)}
-                    onToggleFollow={() => onToggleFollow(m.id)}
-                    onNavigate={(id) => navigate(`/profile/${id}`)}
-                  />
-                ))}
-                {nonMemberArtists.map((nm) => (
-                  <MemberRow
-                    key={`nm-${nm.displayName}`}
-                    artist={{ id: `nm-${nm.displayName}`, name: nm.displayName as string, avatar: '', bio: '' }}
-                    isRegistered={false}
-                    isFollowing={false}
-                    onToggleFollow={() => {}}
-                    onNavigate={() => {}}
-                  />
-                ))}
-              </BrowseArtistPeek>
-            ) : (
-              <Button
-                variant="ghost"
-                type="button"
-                className="flex items-center gap-2 min-h-10 min-w-0 text-sm text-muted-foreground lg:hover:text-foreground active:text-foreground transition-colors touch-manipulation rounded-md px-1 -mx-1"
-                onClick={(e) => {
-                  e.stopPropagation();
-                  onArtistClick(artist.id);
-                }}
-              >
-                {artist.avatar && (
-                  <img
-                    src={artist.avatar}
-                    alt={artist.name}
-                    className="h-7 w-7 rounded-full object-cover shrink-0"
-                  />
-                )}
-                <span>{truncateArtistName(artist.name)}</span>
-              </Button>
-            )}
-          </div>
+        {/* Artist row — py-0 버튼으로 시각 높이 최소화, 카드 전체가 터치 타깃 */}
+        <div className="flex items-center -mx-1">
+          {useGroupStyleRow ? (
+            <BrowseArtistPeek
+              coarse={coarsePointer}
+              trigger={
+                <Button
+                  variant="ghost"
+                  type="button"
+                  className="flex items-center gap-1.5 py-1 px-1 min-w-0 text-sm text-muted-foreground transition-none touch-manipulation rounded-md lg:hover:bg-transparent lg:hover:text-muted-foreground active:bg-transparent cursor-default"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-200 shrink-0"><Users className="h-3.5 w-3.5" /></span>
+                  <span className="truncate">{truncateArtistName((groupName?.trim() || exhibitionLabel || '') as string)}</span>
+                </Button>
+              }
+            >
+              <p className="text-sm font-semibold text-foreground px-1 mb-3">{t('browse.groupMembersLabel')}</p>
+              {peekMembers.map((m) => (
+                <MemberRow
+                  key={m.id}
+                  artist={m}
+                  isFollowing={isFollowing(m.id)}
+                  onToggleFollow={() => onToggleFollow(m.id)}
+                  onNavigate={(id) => navigate(`/profile/${id}`)}
+                />
+              ))}
+              {nonMemberArtists.map((nm) => (
+                <MemberRow
+                  key={`nm-${nm.displayName}`}
+                  artist={{ id: `nm-${nm.displayName}`, name: nm.displayName as string, avatar: '', bio: '' }}
+                  isRegistered={false}
+                  isFollowing={false}
+                  onToggleFollow={() => {}}
+                  onNavigate={() => {}}
+                />
+              ))}
+            </BrowseArtistPeek>
+          ) : hasCoOwnersNoGroup ? (
+            <BrowseArtistPeek
+              coarse={coarsePointer}
+              trigger={
+                <Button
+                  variant="ghost"
+                  type="button"
+                  className="flex items-center gap-1.5 py-1 px-1 min-w-0 text-sm text-muted-foreground transition-none touch-manipulation rounded-md lg:hover:bg-transparent lg:hover:text-muted-foreground active:bg-transparent cursor-default"
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  <span className="flex h-6 w-6 items-center justify-center rounded-full bg-zinc-200 shrink-0"><Users className="h-3.5 w-3.5" /></span>
+                  <span className="truncate">{truncateArtistName(t('browse.groupArtistsLabel'))}</span>
+                </Button>
+              }
+            >
+              <p className="text-sm font-semibold text-foreground px-1 mb-3">{t('browse.groupMembersLabel')}</p>
+              {peekMembers.map((m) => (
+                <MemberRow
+                  key={m.id}
+                  artist={m}
+                  isFollowing={isFollowing(m.id)}
+                  onToggleFollow={() => onToggleFollow(m.id)}
+                  onNavigate={(id) => navigate(`/profile/${id}`)}
+                />
+              ))}
+              {nonMemberArtists.map((nm) => (
+                <MemberRow
+                  key={`nm-${nm.displayName}`}
+                  artist={{ id: `nm-${nm.displayName}`, name: nm.displayName as string, avatar: '', bio: '' }}
+                  isRegistered={false}
+                  isFollowing={false}
+                  onToggleFollow={() => {}}
+                  onNavigate={() => {}}
+                />
+              ))}
+            </BrowseArtistPeek>
+          ) : (
+            <Button
+              variant="ghost"
+              type="button"
+              className="flex items-center gap-1.5 py-1 px-1 min-w-0 text-sm text-muted-foreground lg:hover:text-foreground active:text-foreground transition-colors touch-manipulation rounded-md"
+              onClick={(e) => {
+                e.stopPropagation();
+                onArtistClick(artist.id);
+              }}
+            >
+              {artist.avatar && (
+                <img
+                  src={artist.avatar}
+                  alt={artist.name}
+                  className="h-6 w-6 rounded-full object-cover shrink-0"
+                />
+              )}
+              <span className="truncate">{truncateArtistName(artist.name)}</span>
+            </Button>
+          )}
         </div>
       </div>
     </article>

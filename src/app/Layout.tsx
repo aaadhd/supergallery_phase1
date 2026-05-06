@@ -24,7 +24,7 @@ export default function Layout() {
   /** 홈 둘러보기: 스크롤은 main만, 푸터는 항상 화면 하단에 보임 */
   const { t } = useI18n();
   const browseDocked = pathname === '/';
-  const hideFooter = pathname.startsWith('/upload');
+  const hideFooter = false; // Always show footer
   const [localeTick, setLocaleTick] = useState(0);
 
   // 전역 계정 정지 가드 — 정지된 상태면 강제 로그아웃

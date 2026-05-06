@@ -1146,19 +1146,19 @@ export default function Upload() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full max-w-2xl">
             <button
               onClick={() => setUploadType('solo')}
-              className="flex flex-col items-center text-center p-10 bg-white border-2 border-border/60 hover:border-foreground transition-all rounded-2xl group shadow-sm hover:shadow-md"
+              className="flex flex-col items-center text-center p-10 bg-white border-2 border-border/60 hover:border-primary transition-all rounded-2xl group shadow-sm hover:shadow-md"
             >
-              <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
-                <ImageIcon className="w-8 h-8" />
+              <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg shadow-primary/30">
+                <Monitor className="w-8 h-8" />
               </div>
               <h2 className="text-xl font-bold text-foreground mb-3">{t('upload.typeSolo')}</h2>
               <p className="text-sm text-muted-foreground font-medium leading-relaxed">{t('upload.typeSoloDesc1')}</p>
             </button>
             <button
               onClick={() => setUploadType('group')}
-              className="flex flex-col items-center text-center p-10 bg-white border-2 border-border/60 hover:border-foreground transition-all rounded-2xl group shadow-sm hover:shadow-md"
+              className="flex flex-col items-center text-center p-10 bg-white border-2 border-border/60 hover:border-primary transition-all rounded-2xl group shadow-sm hover:shadow-md"
             >
-              <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+              <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg shadow-primary/30">
                 <Users className="w-8 h-8" />
               </div>
               <h2 className="text-xl font-bold text-foreground mb-3">{t('upload.typeGroup')}</h2>

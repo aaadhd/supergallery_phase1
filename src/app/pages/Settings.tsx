@@ -184,9 +184,9 @@ export default function Settings() {
   }
 
   return (
-    <div className="min-h-screen bg-white pb-20 md:pb-0">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
       <Toaster position="top-center" richColors toastOptions={{ duration: 5000 }} />
-      <div className="mx-auto max-w-lg px-5 sm:px-6 py-10 sm:py-12">
+      <div className="mx-auto max-w-3xl px-5 sm:px-6 py-10 sm:py-12">
         <h1 className="text-2xl font-semibold text-foreground tracking-tight mb-10">{t('settings.title')}</h1>
 
         {isEmailShape && sessionSub ? (
@@ -194,7 +194,7 @@ export default function Settings() {
             <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-1">
               {t('settings.sectionAccount')}
             </h2>
-            <div className="rounded-lg border border-border/40 overflow-hidden bg-white px-4 py-4">
+            <div className="rounded-lg border border-border/40 overflow-hidden bg-card px-4 py-4">
               <p className="text-xs text-muted-foreground mb-1">
                 {t('settings.emailLabel')}
               </p>
@@ -210,8 +210,7 @@ export default function Settings() {
           <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-3">
             {t('settings.sectionFontScale')}
           </h2>
-          <p className="text-xs text-muted-foreground mb-3">{t('settings.fontScaleIntro')}</p>
-          <div className="rounded-lg border border-border/40 bg-white p-2 grid grid-cols-3 gap-2" role="radiogroup" aria-label={t('settings.sectionFontScale')}>
+          <div className="rounded-lg border border-border/40 bg-card p-2 grid grid-cols-3 gap-2" role="radiogroup" aria-label={t('settings.sectionFontScale')}>
             {(['small', 'medium', 'large'] as const).map((opt) => {
               const active = fontScale === opt;
               const labelKey = `settings.fontScale_${opt}` as MessageKey;
@@ -245,41 +244,18 @@ export default function Settings() {
           <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-3">
             {t('settings.sectionNotif')}
           </h2>
-          <p className="text-xs text-muted-foreground mb-3">{t('settings.notifIntro')}</p>
-          <p className="text-xs text-muted-foreground mb-4 leading-relaxed">{t('settings.notifChannelPolicy')}</p>
 
-          <div className="rounded-xl border border-border/50 bg-white divide-y divide-border/40 overflow-hidden mb-4">
-            <div className="px-4 py-2.5 bg-muted/30">
-              <p className="text-xs font-medium text-muted-foreground">{t('settings.notifOptionalGroup')}</p>
-            </div>
+          <div className="rounded-xl border border-border/50 bg-card divide-y divide-border/40 overflow-hidden mb-4">
             <div className="px-4">
               <ToggleRow label={t('settings.notifLike')} checked={notifications.like} onChange={(v) => handleToggle('like', v)} />
               <ToggleRow label={t('settings.notifNewFollower')} checked={notifications.newFollower} onChange={(v) => handleToggle('newFollower', v)} />
               <ToggleRow label={t('settings.notifGroupInvite')} checked={notifications.groupExhibitionInvite} onChange={(v) => handleToggle('groupExhibitionInvite', v)} />
-              <ToggleRow label={t('settings.notifWeeklyTheme')} checked={notifications.weeklyTheme} onChange={(v) => handleToggle('weeklyTheme', v)} hint={t('settings.notifWeeklyThemeHint')} />
+              <ToggleRow label={t('settings.notifWeeklyTheme')} checked={notifications.weeklyTheme} onChange={(v) => handleToggle('weeklyTheme', v)} />
               <ToggleRow label={t('settings.notifMarketing')} checked={notifications.marketing} onChange={(v) => handleToggle('marketing', v)} />
             </div>
           </div>
 
-          <div className="rounded-xl border border-border/50 bg-white divide-y divide-border/40 overflow-hidden mb-4">
-            <div className="px-4 py-2.5 bg-muted/30">
-              <p className="text-xs font-medium text-muted-foreground">{t('settings.notifRequiredGroup')}</p>
-            </div>
-            <div className="px-4">
-              <ToggleRow label={t('settings.notifSystem')} checked onChange={() => {}} disabled hint={t('settings.notifSystemHint')} />
-            </div>
-          </div>
 
-          <div className="rounded-xl border border-border/50 bg-white px-4 py-3.5">
-            <p className="text-sm font-medium text-foreground mb-0.5">{t('settings.eventUnsubscribeLabel')}</p>
-            <p className="text-xs text-muted-foreground mb-2.5">{t('settings.eventUnsubscribeHint')}</p>
-            <Link
-              to="/events?unsubscribe=1"
-              className="inline-flex items-center text-sm font-medium text-primary lg:hover:underline underline-offset-4"
-            >
-              {t('events.unsubscribeLink')}
-            </Link>
-          </div>
         </section>
 
         <div className="h-px bg-border my-10" aria-hidden />
@@ -288,7 +264,7 @@ export default function Settings() {
           <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-3">
             {t('settings.sectionAccountActions')}
           </h2>
-          <div className="rounded-xl border border-border/50 overflow-hidden bg-white">
+          <div className="rounded-xl border border-border/50 overflow-hidden bg-card">
             <button
               type="button"
               onClick={handleLogout}
@@ -332,7 +308,7 @@ export default function Settings() {
           aria-modal="true"
           aria-labelledby="withdraw-title"
         >
-          <div className="bg-white rounded-xl max-w-md w-full shadow-xl p-6 space-y-4">
+          <div className="bg-card rounded-xl max-w-md w-full shadow-xl p-6 space-y-4">
             <h2 id="withdraw-title" className="text-lg font-semibold text-foreground">
               {t('settings.withdrawTitle')}
             </h2>
@@ -434,9 +410,8 @@ function ThemeToggleSection() {
       <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-3">
         {t('settings.sectionTheme')}
       </h2>
-      <p className="text-xs text-muted-foreground mb-3">{t('settings.themeIntro')}</p>
       <div
-        className="rounded-lg border border-border/40 bg-white p-2 grid grid-cols-2 gap-2"
+        className="rounded-lg border border-border/40 bg-card p-2 grid grid-cols-2 gap-2"
         role="radiogroup"
         aria-label={t('settings.sectionTheme')}
       >

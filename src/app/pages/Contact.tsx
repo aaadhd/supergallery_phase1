@@ -1,6 +1,5 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { Send } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
@@ -34,7 +33,8 @@ function categoryMessageKey(v: string): MessageKey {
 
 export default function Contact() {
   const { t } = useI18n();
-  const [email, setEmail] = useState(() => profileStore.getProfile().email ?? '');
+  const profileEmail = profileStore.getProfile().email ?? '';
+  const [email, setEmail] = useState(profileEmail);
   const [category, setCategory] = useState('');
   const [message, setMessage] = useState('');
   const [submitting, setSubmitting] = useState(false);
@@ -86,11 +86,10 @@ export default function Contact() {
   };
 
   return (
-    <div className="min-h-screen bg-white pb-20 md:pb-0">
-      <div className="bg-white border-b border-border">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <div className="bg-background border-b border-border">
         <div className="mx-auto max-w-[700px] px-4 sm:px-6 py-6 sm:py-10">
           <div className="flex items-center gap-2 sm:gap-3 mb-2">
-            <Send className="h-6 w-6 sm:h-7 sm:h-7 text-primary shrink-0" />
             <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('contact.title')}</h1>
           </div>
           <p className="text-sm sm:text-sm text-muted-foreground">
@@ -104,17 +103,18 @@ export default function Contact() {
       </div>
 
       <div className="mx-auto max-w-[700px] px-4 sm:px-6 py-5 sm:py-8">
-        <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-border p-5 sm:p-8 space-y-4 sm:space-y-6">
+        <form onSubmit={handleSubmit} className="bg-card rounded-2xl border border-border p-5 sm:p-8 space-y-4 sm:space-y-6">
           <div>
             <Label className="mb-1.5 block text-sm font-semibold text-foreground sm:mb-2 sm:text-sm">
-              {t('contact.email')} <span className="text-red-500">*</span>
+              {t('contact.email')} {!profileEmail && <span className="text-red-500">*</span>}
             </Label>
             <Input
               type="email"
               value={email}
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={profileEmail ? undefined : (e) => setEmail(e.target.value)}
+              readOnly={!!profileEmail}
               placeholder={t('contact.placeholderEmail')}
-              className="min-h-[44px] rounded-lg border-border px-3 py-3 text-sm sm:px-4 sm:py-3.5 sm:text-sm focus-visible:ring-primary/20"
+              className={`min-h-[44px] rounded-lg border-border px-3 py-3 text-sm sm:px-4 sm:py-3.5 sm:text-sm focus-visible:ring-primary/20 ${profileEmail ? 'bg-muted/40 text-muted-foreground cursor-default' : ''}`}
             />
           </div>
 

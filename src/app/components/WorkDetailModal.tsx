@@ -412,11 +412,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
           {/* Header: artist info + follow */}
           <div className="w-full flex items-center justify-between px-4 sm:px-8 lg:px-10 py-5 bg-white border-b border-zinc-200 z-20">
             <div className="flex items-center gap-3 min-w-0">
-              {isGroupWork ? (
-                <div className="flex h-11 w-11 items-center justify-center rounded-full bg-zinc-100 border border-zinc-200 shrink-0">
-                  <Users className="h-5 w-5 text-zinc-500" />
-                </div>
-              ) : (
+              {!isGroupWork && (
                 <button
                   type="button"
                   onClick={() => handleArtistClick(work.artist.id)}
@@ -431,8 +427,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
               <div className="flex flex-col gap-0.5 min-w-0">
                 <h2 className="text-zinc-900 text-base sm:text-lg font-extrabold leading-tight truncate">{headline}</h2>
                 {isGroupWork ? (
-                  // 그룹 작품은 "그룹 자체"가 프로필을 가지지 않음 — 그룹명만 표시하고 팔로우/클릭은 개별 멤버(ArtistRow)로 유도
-                  <span className="text-zinc-600 text-sm font-medium">
+                  <span className="text-zinc-500 text-sm">
                     {work.groupName?.trim() || groupOrgLine || displayArtistName}
                   </span>
                 ) : (
@@ -441,14 +436,6 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                     onClick={() => handleArtistClick(work.artist.id)}
                   >
                     {displayArtistName}
-                  </span>
-                )}
-                {showUploaderLine && (
-                  <span
-                    className="text-zinc-500 text-xs cursor-pointer lg:hover:text-zinc-700 lg:hover:underline transition-colors"
-                    onClick={() => handleArtistClick(uploaderArtist.id)}
-                  >
-                    {t('profile.uploaderLabel')}: {uploaderName}
                   </span>
                 )}
               </div>
@@ -471,21 +458,6 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                   {t('badge.contestSelected')}
                 </span>
               )}
-            {/* 그룹 작품은 "그룹 팔로우" 개념이 없음 — 버튼 숨김, 내 작품도 숨김 */}
-            {!isGroupWork && work.artist.id !== allArtists[0]?.id && (
-              <button
-                type="button"
-                onClick={() => requireAuth(() => followStore.toggle(work.artist.id))}
-                className={`hidden sm:flex min-h-[44px] shrink-0 items-center gap-1.5 rounded-lg px-4 py-2.5 text-sm font-bold transition-colors border ${
-                  follows.isFollowing(work.artist.id)
-                    ? 'bg-zinc-100 text-zinc-600 lg:hover:bg-zinc-200 border-zinc-200'
-                    : 'bg-primary text-white border-primary lg:hover:bg-primary/95 shadow-sm'
-                }`}
-              >
-                <UserPlus className="h-4 w-4" />
-                {follows.isFollowing(work.artist.id) ? t('social.following') : t('social.follow')}
-              </button>
-            )}
             </div>
           </div>
 
@@ -532,7 +504,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                         alt={`${slideLabel}${totalImages > 1 ? ` - ${index + 1}` : ''}`}
                         preventRightClick
                         preventDrag
-                        className="block h-[74vh] w-auto mx-auto"
+                        className="block h-[66vh] w-auto mx-auto"
                         onDoubleClick={() => setDeepZoomSrc(src)}
                       />
                     </div>
@@ -583,6 +555,35 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
               );
               })}
             </div>
+
+            {/* ── 좋아요 · 저장 · 팔로우 — 마지막 이미지 직후 ── */}
+            {!isPreview && !isWithdrawnArtist && (
+              <div className="w-full bg-zinc-950 py-8 px-4 flex flex-col items-center gap-5">
+                {/* 좋아요 / 저장 */}
+                <div className="flex gap-3 w-full max-w-[520px]">
+                  <button
+                    type="button"
+                    onClick={() => requireAuth(handleLike)}
+                    className={`flex-1 flex items-center justify-center gap-2 min-h-[52px] rounded-full text-sm font-bold transition-all ${
+                      isLiked ? 'bg-[#FF2E63] text-white' : 'bg-white/10 text-white lg:hover:bg-white/20'
+                    }`}
+                  >
+                    <Heart className={`h-5 w-5 ${isLiked ? 'fill-white' : ''}`} />
+                    {t('workDetail.like')}
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => requireAuth(handleSave)}
+                    className={`flex-1 flex items-center justify-center gap-2 min-h-[52px] rounded-full text-sm font-bold transition-all ${
+                      isSaved ? 'bg-primary text-white' : 'bg-white/10 text-white lg:hover:bg-white/20'
+                    }`}
+                  >
+                    <Bookmark className={`h-5 w-5 ${isSaved ? 'fill-white' : ''}`} />
+                    {t('workDetail.save')}
+                  </button>
+                </div>
+              </div>
+            )}
 
             {/* Work info section */}
             <div className="w-full bg-white">
@@ -641,6 +642,15 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                       />
                     ))}
                   </div>
+                  {showUploaderLine && (
+                    <p className="mt-4 pt-4 border-t border-zinc-200 text-xs text-zinc-400 text-center">
+                      {t('profile.uploaderLabel')}: <button
+                        type="button"
+                        className="lg:hover:underline text-zinc-500"
+                        onClick={() => handleArtistClick(uploaderArtist!.id)}
+                      >{uploaderName}</button>
+                    </p>
+                  )}
                 </div>
               ) : (
                 <div className="bg-zinc-50 rounded-2xl border border-zinc-200 p-6 sm:p-8 text-center shadow-sm">
@@ -657,7 +667,21 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                     {work.artist.name}
                   </h3>
                   {work.artist.bio && (
-                    <p className="mb-5 text-sm text-zinc-600">{work.artist.bio}</p>
+                    <p className="mb-4 text-sm text-zinc-600">{work.artist.bio}</p>
+                  )}
+                  {!isPreview && work.artist.id !== allArtists[0]?.id && (
+                    <button
+                      type="button"
+                      onClick={() => requireAuth(() => followStore.toggle(work.artist.id))}
+                      className={`inline-flex items-center gap-2 min-h-[44px] px-6 rounded-full text-sm font-bold border transition-all ${
+                        follows.isFollowing(work.artist.id)
+                          ? 'bg-zinc-100 text-zinc-500 border-zinc-200'
+                          : 'bg-primary text-white border-primary lg:hover:bg-primary/90'
+                      }`}
+                    >
+                      <UserPlus className="h-4 w-4" />
+                      {follows.isFollowing(work.artist.id) ? t('social.following') : t('social.follow')}
+                    </button>
                   )}
                 </div>
               );

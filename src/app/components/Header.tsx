@@ -1,5 +1,5 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Plus, Search, Bell, Home, CalendarDays, User, Settings, Globe, Check } from 'lucide-react';
+import { Plus, Search, Bell, Home, CalendarDays, User, Settings, Globe, Check, Palette } from 'lucide-react';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import {
@@ -74,7 +74,7 @@ export function Header() {
   return (
     <>
       <TooltipProvider delayDuration={150}>
-      <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-white/80 backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-white/72">
+      <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/85 backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-background/80">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-3 sm:py-3.5">
           <div className="flex items-center gap-3 sm:gap-4">
             {/* 왼쪽: 로고 + 네비 */}
@@ -83,11 +83,9 @@ export function Header() {
               to="/"
               className="flex items-center gap-2.5 rounded-xl pr-2 -ml-1 pl-1 lg:hover:bg-muted/60 transition-colors"
             >
-              <img
-                src="/logo.png"
-                alt="Proud Gallery Logo"
-                className="h-9 w-9 sm:h-10 sm:w-10 object-contain rounded-xl shadow-sm ring-1 ring-border/10"
-              />
+              <div className="h-9 w-9 sm:h-10 sm:w-10 flex items-center justify-center rounded-xl bg-primary/10 text-primary shadow-sm ring-1 ring-border/10 shrink-0">
+                <Palette className="h-5 w-5 sm:h-5 sm:w-5" />
+              </div>
               <span className="text-base sm:text-lg font-semibold tracking-tight text-foreground">{t('brand.name')}</span>
             </Link>
 
@@ -272,7 +270,7 @@ export function Header() {
         </div>
       </header>
 
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-white/92 backdrop-blur-lg border-t border-border/80 safe-area-bottom shadow-[0_-4px_24px_rgba(0,0,0,0.06)]">
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-background/92 backdrop-blur-lg border-t border-border/70 safe-area-bottom shadow-[0_-2px_16px_rgba(60,40,70,0.08)]">
         <div className="flex items-center justify-around h-14">
           <Button
             variant="ghost"

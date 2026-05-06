@@ -205,6 +205,41 @@ export default function Profile() {
     navigate(`/upload?edit=${workId}`);
   };
 
+  // Policy §9.2.1 — piece 주인이 어느 전시에서든 자신의 piece를 제거
+  const handleRemovePiece = async (work: Work, imgIndex: number) => {
+    const ok = await openConfirm({
+      title: t('profile.removePieceConfirmTitle'),
+      description: t('profile.removePieceConfirmDesc'),
+      destructive: true,
+      confirmLabel: t('profile.delete'),
+    });
+    if (!ok) return;
+    // store에 없는 작품(hydrateGroupWorks 출처)은 먼저 추가해 수정 가능 상태로 전환
+    let latestWork = workStore.getWorks().find(w => w.id === work.id);
+    if (!latestWork) {
+      await workStore.addWork(work);
+      latestWork = work;
+    }
+    const imgs = Array.isArray(latestWork.image) ? [...latestWork.image] : [latestWork.image];
+    if (imgs.length <= 1) {
+      workStore.removeWork(latestWork.id);
+    } else {
+      await workStore.updateWork(latestWork.id, {
+        image: imgs.filter((_, i) => i !== imgIndex) as typeof latestWork.image,
+        ...(latestWork.imagePieceTitles && {
+          imagePieceTitles: latestWork.imagePieceTitles.filter((_, i) => i !== imgIndex),
+        }),
+        ...(latestWork.imageArtists && {
+          imageArtists: latestWork.imageArtists.filter((_, i) => i !== imgIndex),
+        }),
+        ...(latestWork.imagePieceIds && {
+          imagePieceIds: latestWork.imagePieceIds.filter((_, i) => i !== imgIndex),
+        }),
+      });
+    }
+    toast.success(t('profile.removePieceSuccess'));
+  };
+
   // 현재 프로필 아티스트
   const matchedArtist = id ? artists.find(a => a.id === id) : artists[0];
   const profileArtist = matchedArtist ?? artists[0];
@@ -247,8 +282,11 @@ export default function Profile() {
     });
 
     const hydrated = hydrateGroupWorks(artists) as Work[];
+    // storeParticipating과 중복 방지 — store에 이미 들어온 work는 hydrated에서 제외
+    const storeIds = new Set(storeWorks.map(w => w.id));
     const participating = hydrated.filter(gw => {
       if (ownIds.has(gw.id)) return false;
+      if (storeIds.has(gw.id)) return false;
       if (!isOwnProfile && isWorkHidden(gw)) return false;
       if (gw.artistId === profileArtist.id) return true;
       return gw.imageArtists?.some(ia => ia.type === 'member' && ia.memberId === profileArtist.id) ?? false;
@@ -306,11 +344,8 @@ export default function Profile() {
   type FlatImage = { work: Work; imgSrc: string; imgIndex: number; pieceTitle: string; isOwnUpload: boolean };
   const worksManageFlatImages: FlatImage[] = useMemo(() => {
     const pool = [...artistWorks, ...taggedWorks];
-    const allMyWorks = onlyMyUploads
-      ? pool.filter((w) => w.artistId === profileArtist.id || w.authorId === profileArtist.id)
-      : pool;
     const myId = profileArtist.id;
-    return allMyWorks.flatMap((work) => {
+    return pool.flatMap((work) => {
       const imgs = Array.isArray(work.image) ? work.image : [work.image];
       const ias = work.imageArtists;
       const myIndices: number[] = [];
@@ -335,7 +370,7 @@ export default function Profile() {
           isOwnUpload: work.artistId === myId || work.authorId === myId,
         }));
     });
-  }, [artistWorks, taggedWorks, profileArtist.id, imageUrls, t, onlyMyUploads]);
+  }, [artistWorks, taggedWorks, profileArtist.id, imageUrls, t]);
 
   // 작품 관리 뷰어 키보드 네비게이션
   useEffect(() => {
@@ -358,38 +393,23 @@ export default function Profile() {
 
   const profileTabGuideKey = useMemo(() => {
     switch (profileTab) {
-      case 'exhibition':
-        return 'profile.tabGuideExhibition';
-      case 'works':
-        return 'profile.tabGuideWorks';
-      case 'likes':
-        return 'profile.tabGuideLikes';
-      case 'saved':
-        return 'profile.tabGuideSaves';
-      case 'drafts':
-        return 'profile.tabGuideDrafts';
-      default:
-        return 'profile.tabGuideExhibition';
+      case 'exhibition': return 'profile.tabGuideExhibition';
+      case 'works': return 'profile.tabGuideWorks';
+      case 'likes': return 'profile.tabGuideLikes';
+      case 'saved': return 'profile.tabGuideSaves';
+      case 'drafts': return 'profile.tabGuideDrafts';
+      default: return 'profile.tabGuideExhibition';
     }
   }, [profileTab]);
 
-  // 탭별 안내 박스 표시 여부 — 한 번 닫으면 localStorage에 기록, '안내 보기' 버튼으로 다시 열 수 있음
   const guideSeenKey = (tab: ProfileTabValue) => `artier_profile_guide_seen__${tab}`;
   const [guideOpen, setGuideOpen] = useState<boolean>(() => {
     if (typeof window === 'undefined') return true;
-    try {
-      return localStorage.getItem(guideSeenKey(profileTab)) !== '1';
-    } catch {
-      return true;
-    }
+    try { return localStorage.getItem(guideSeenKey(profileTab)) !== '1'; } catch { return true; }
   });
   useEffect(() => {
     if (typeof window === 'undefined') return;
-    try {
-      setGuideOpen(localStorage.getItem(guideSeenKey(profileTab)) !== '1');
-    } catch {
-      setGuideOpen(true);
-    }
+    try { setGuideOpen(localStorage.getItem(guideSeenKey(profileTab)) !== '1'); } catch { setGuideOpen(true); }
   }, [profileTab]);
   const dismissGuide = () => {
     try { localStorage.setItem(guideSeenKey(profileTab), '1'); } catch { /* ignore */ }
@@ -447,7 +467,7 @@ export default function Profile() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       {/* 프로필 이미지 변경 모달 */}
       <ProfileImageModal
         open={showProfileImageModal}
@@ -467,9 +487,9 @@ export default function Profile() {
             onClick={closeProfileEdit}
           />
 
-          <div className="relative z-10 w-full max-w-2xl bg-white rounded-2xl shadow-2xl mx-4 max-h-[90vh] flex flex-col overflow-hidden">
+          <div className="relative z-10 w-full max-w-2xl bg-card rounded-2xl shadow-2xl mx-4 max-h-[90vh] flex flex-col overflow-hidden">
             {/* 헤더 — sticky so close button is always reachable on mobile */}
-            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border px-6 py-5 bg-white rounded-t-2xl shrink-0">
+            <div className="sticky top-0 z-10 flex items-center justify-between border-b border-border px-6 py-5 bg-card rounded-t-2xl shrink-0">
               <h2 className="text-lg font-semibold text-foreground">{t('profile.edit')}</h2>
               <Button
                 variant="ghost"
@@ -506,6 +526,9 @@ export default function Profile() {
                       {profileNickname.length}/{TITLE_FIELD_MAX_LEN}
                     </span>
                   </div>
+                  {profileNickname.trim().length > 0 && profileNickname.trim().length < 2 && (
+                    <p className="mt-1.5 text-sm text-destructive">{t('signup.errNickname')}</p>
+                  )}
                   {containsProfanity(profileNickname) && (
                     <p className="mt-1.5 text-sm text-destructive">{t('profile.errProfanity')}</p>
                   )}
@@ -634,6 +657,10 @@ export default function Profile() {
               </Button>
               <Button
                 onClick={() => {
+                  if (profileNickname.trim().length < 2) {
+                    toast.error(t('signup.errNickname'));
+                    return;
+                  }
                   if (containsProfanity(profileNickname) || containsProfanity(profileHeadline) || containsProfanity(profileBio)) {
                     toast.error(t('profile.errProfanity'));
                     return;
@@ -660,7 +687,7 @@ export default function Profile() {
       )}
 
       {/* 프로필 섹션 */}
-      <div className="bg-white border-b pb-20 md:pb-0">
+      <div className="bg-background border-b pb-20 md:pb-0">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-6">
             <div className="flex flex-col md:flex-row gap-5 md:gap-8">
             {/* 왼쪽: 프로필 정보 */}
@@ -771,18 +798,18 @@ export default function Profile() {
                   onClick={() => { setFollowModalTab('followers'); setShowFollowersModal(true); }}
                   className="flex items-center gap-1 min-h-[44px] px-2 -ml-2 rounded-lg lg:hover:bg-muted/40 transition-colors"
                 >
-                  <span className="font-semibold text-foreground">
-                    {getDisplayFollowerCount(profileArtist).toLocaleString()}
-                  </span>
                   <span className="text-muted-foreground">{t('profile.followModalFollowers')}</span>
+                  <span className="font-semibold text-foreground">
+                    {getDisplayFollowerCount(profileArtist)}
+                  </span>
                 </button>
                 <button
                   type="button"
                   onClick={() => { setFollowModalTab('following'); setShowFollowersModal(true); }}
                   className="flex items-center gap-1 min-h-[44px] px-2 rounded-lg lg:hover:bg-muted/40 transition-colors"
                 >
-                  <span className="font-semibold text-foreground">{profileArtist.following?.toLocaleString() || '0'}</span>
                   <span className="text-muted-foreground">{t('profile.followModalFollowing')}</span>
+                  <span className="font-semibold text-foreground">{profileArtist.following || 0}</span>
                 </button>
               </div>
 
@@ -861,7 +888,7 @@ export default function Profile() {
 
                 {guideOpen ? (
                   <div className="mt-3 relative rounded-lg border border-border/60 bg-muted/30 pl-3.5 pr-12 py-2.5 text-xs sm:text-sm text-muted-foreground">
-                    {t(profileTabGuideKey)}
+                    {t(profileTabGuideKey as MessageKey)}
                     <button
                       type="button"
                       onClick={dismissGuide}
@@ -967,7 +994,7 @@ export default function Profile() {
                               className="w-full h-full object-contain object-center"
                             />
 
-                            {/* 옵션 메뉴 (본인이 업로드한 작품만 수정/삭제 가능) */}
+                            {/* 업로더 메뉴 — 전시 수정·삭제 */}
                             {isMyUpload && (
                               <div className="absolute right-2 top-2 z-20" onClick={(e) => e.stopPropagation()}>
                                 <DropdownMenu>
@@ -1061,31 +1088,14 @@ export default function Profile() {
 
                           {/* 이미지 하단 정보 */}
                           <div className="pt-2">
-                            <div className="flex items-center gap-1.5">
-                              <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
-                                {t('profile.exhibitionNameBadge')}
-                              </span>
-                              <p className="text-sm font-medium text-foreground truncate">
-                                {displayExhibitionTitle(work, t('work.untitled'))}
-                              </p>
-                            </div>
+                            <p className="text-sm font-medium text-foreground truncate">
+                              {displayExhibitionTitle(work, t('work.untitled'))}
+                            </p>
                             {isGroupExhibition(work) && work.groupName ? (
-                              <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5">
-                                <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
-                                  {t('profile.groupNameBadge')}
-                                </span>
+                              <p className="text-xs text-muted-foreground mt-0.5 truncate">
                                 {work.groupName}
                               </p>
-                            ) : (
-                              !(isOwnProfile && !isMyUpload) && (
-                                <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5">
-                                  <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
-                                    {t('profile.artistNameBadge')}
-                                  </span>
-                                  {work.artist?.name ?? t('work.unknownUploader')}
-                                </p>
-                              )
-                            )}
+                            ) : null}
                             {isMyUpload && (() => {
                               // 비회원 슬롯 가시성 (Policy §3 v2.14 — 작가 운영 가시성)
                               const nonMembers = (work.imageArtists ?? []).filter((ia) => ia?.type === 'non-member');
@@ -1128,22 +1138,6 @@ export default function Profile() {
 
                 {/* ===== 내 작품 탭 — 개별 이미지(그림) 단위 ===== */}
                 <TabsContent value="works" className="mt-6">
-                  {isOwnProfile && (
-                    <p className="mb-3 text-xs text-muted-foreground leading-relaxed">{t('profile.tabHelpWorks')}</p>
-                  )}
-                  {isOwnProfile && (
-                    <div className="mb-4 flex items-center gap-2 flex-wrap">
-                      <label className="ml-auto flex items-center gap-2 min-h-[44px] px-2 cursor-pointer select-none text-sm text-foreground">
-                        <input
-                          type="checkbox"
-                          checked={onlyMyUploads}
-                          onChange={(e) => setOnlyMyUploads(e.target.checked)}
-                          className="h-4 w-4 accent-primary"
-                        />
-                        {t('profile.filterOnlyMine')}
-                      </label>
-                    </div>
-                  )}
                   {worksManageFlatImages.length > 0 ? (
                     <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-3 gap-[1.625rem] sm:gap-[2.275rem] lg:gap-[2.6rem]">
                       {worksManageFlatImages.map((fi, flatIdx) => {
@@ -1166,6 +1160,39 @@ export default function Profile() {
                               className="w-full h-full object-contain object-center"
                             />
 
+                            {/* piece 메뉴 — Policy §9.2.1: piece 주인은 작품명 수정·전시에서 빼기 가능 */}
+                            <div className="absolute right-2 top-2 z-20" onClick={(e) => e.stopPropagation()}>
+                              <DropdownMenu>
+                                <DropdownMenuTrigger asChild>
+                                  <Button
+                                    type="button"
+                                    className="flex h-9 w-9 min-h-[44px] min-w-[44px] items-center justify-center rounded-full bg-black/60 p-0 text-white shadow-none hover:bg-black/75 hover:text-white"
+                                    aria-label={t('profile.workMenuA11y')}
+                                  >
+                                    <MoreHorizontal className="h-4 w-4" strokeWidth={2.5} />
+                                  </Button>
+                                </DropdownMenuTrigger>
+                                <DropdownMenuContent align="end" sideOffset={4}>
+                                  <DropdownMenuItem
+                                    className="text-sm"
+                                    onSelect={(e) => e.preventDefault()}
+                                    onClick={openRename}
+                                  >
+                                    <Pencil className="h-4 w-4 mr-2" />
+                                    {t('profile.renameWork')}
+                                  </DropdownMenuItem>
+                                  <DropdownMenuItem
+                                    className="text-destructive focus:text-destructive text-sm"
+                                    onSelect={(e) => e.preventDefault()}
+                                    onClick={() => handleRemovePiece(fi.work, fi.imgIndex)}
+                                  >
+                                    <Trash2 className="h-4 w-4 mr-2" />
+                                    {t('profile.removePieceFromExhibition')}
+                                  </DropdownMenuItem>
+                                </DropdownMenuContent>
+                              </DropdownMenu>
+                            </div>
+
                             {/* 개별 이미지 상태 뱃지 (내 작품 탭) — Policy §12.2.1 hidden 포함 4종 */}
                             {((fi.work.feedReviewStatus && fi.work.feedReviewStatus !== 'approved') || fi.work.isHidden) && (
                               <div className="absolute left-2 bottom-2 z-10">
@@ -1187,38 +1214,15 @@ export default function Profile() {
 
                           </div>
                           <div className="pt-2">
-                            {/* 작품명: 본인 업로드 전시의 이미지에만 편집 가능 (Policy §9 v2.6) */}
-                            <div className="flex items-center gap-1.5">
-                              <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
-                                {t('profile.workNameBadge')}
-                              </span>
-                              {fi.isOwnUpload ? (
-                                <button
-                                  type="button"
-                                  onClick={openRename}
-                                  className="group/title min-h-[44px] flex items-center gap-1.5 flex-1 min-w-0 text-left -ml-1 pl-1 pr-2 rounded lg:hover:bg-muted/40 transition-colors"
-                                  aria-label={t('profile.renameWork')}
-                                >
-                                  <span className="truncate text-sm font-medium text-foreground">{fi.pieceTitle}</span>
-                                  <Pencil className="h-3.5 w-3.5 shrink-0 text-muted-foreground/60 lg:group-hover/title:text-foreground transition-colors" aria-hidden />
-                                </button>
-                              ) : (
-                                <span className="min-h-[44px] flex items-center flex-1 min-w-0 px-1 truncate text-sm font-medium text-foreground">
-                                  {fi.pieceTitle}
-                                </span>
-                              )}
-                            </div>
-                            {/* 전시명: 뷰어로 진입 */}
+                            <p className="text-sm font-medium text-foreground truncate">{fi.pieceTitle}</p>
+                            {/* 전시명: 전시 상세 모달 진입 */}
                             <button
                               type="button"
                               className="w-full text-left cursor-pointer"
-                              onClick={() => setWorksViewerIndex(flatIdx)}
+                              onClick={() => setDetailWorkId(fi.work.id)}
                             >
-                              <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5 truncate">
-                                <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
-                                  {t('profile.exhibitionNameBadge')}
-                                </span>
-                                <span className="truncate">{displayExhibitionTitle(fi.work, t('work.untitled'))}</span>
+                              <p className="text-xs text-muted-foreground/70 mt-0.5 truncate lg:hover:text-muted-foreground transition-colors">
+                                {displayExhibitionTitle(fi.work, t('work.untitled'))}
                               </p>
                             </button>
                           </div>
@@ -1259,28 +1263,13 @@ export default function Profile() {
                             />
                           </div>
                           <div className="pt-2">
-                            <div className="flex items-center gap-1.5">
-                              <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
-                                {t('profile.exhibitionNameBadge')}
-                              </span>
-                              <p className="text-sm font-medium text-foreground truncate">
-                                {displayExhibitionTitle(work, t('work.untitled'))}
-                              </p>
-                            </div>
+                            <p className="text-sm font-medium text-foreground truncate">
+                              {displayExhibitionTitle(work, t('work.untitled'))}
+                            </p>
                             {isGroupExhibition(work) && work.groupName ? (
-                              <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5">
-                                <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
-                                  {t('profile.groupNameBadge')}
-                                </span>
-                                <span className="truncate">{work.groupName}</span>
-                              </p>
+                              <p className="text-xs text-muted-foreground mt-0.5 truncate">{work.groupName}</p>
                             ) : (
-                              <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5">
-                                <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
-                                  {t('profile.artistNameBadge')}
-                                </span>
-                                <span className="truncate">{work.artist?.name ?? t('work.unknownUploader')}</span>
-                              </p>
+                              <p className="text-xs text-muted-foreground mt-0.5 truncate">{work.artist?.name ?? t('work.unknownUploader')}</p>
                             )}
                           </div>
                         </div>
@@ -1318,28 +1307,13 @@ export default function Profile() {
                             />
                           </div>
                           <div className="pt-2">
-                            <div className="flex items-center gap-1.5">
-                              <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
-                                {t('profile.exhibitionNameBadge')}
-                              </span>
-                              <p className="text-sm font-medium text-foreground truncate">
-                                {displayExhibitionTitle(work, t('work.untitled'))}
-                              </p>
-                            </div>
+                            <p className="text-sm font-medium text-foreground truncate">
+                              {displayExhibitionTitle(work, t('work.untitled'))}
+                            </p>
                             {isGroupExhibition(work) && work.groupName ? (
-                              <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5">
-                                <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
-                                  {t('profile.groupNameBadge')}
-                                </span>
-                                <span className="truncate">{work.groupName}</span>
-                              </p>
+                              <p className="text-xs text-muted-foreground mt-0.5 truncate">{work.groupName}</p>
                             ) : (
-                              <p className="text-xs text-muted-foreground mt-0.5 flex items-center gap-1.5">
-                                <span className="inline-flex shrink-0 rounded-full bg-primary/10 px-2 py-0.5 text-xs font-semibold text-primary">
-                                  {t('profile.artistNameBadge')}
-                                </span>
-                                <span className="truncate">{work.artist?.name ?? t('work.unknownUploader')}</span>
-                              </p>
+                              <p className="text-xs text-muted-foreground mt-0.5 truncate">{work.artist?.name ?? t('work.unknownUploader')}</p>
                             )}
                           </div>
                         </div>
@@ -1454,7 +1428,7 @@ export default function Profile() {
       {showFollowersModal && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
           <div className="absolute inset-0 bg-black/50" onClick={() => setShowFollowersModal(false)} />
-          <div className="relative z-10 w-full max-w-md bg-white rounded-2xl shadow-2xl mx-4 max-h-[70vh] flex flex-col">
+          <div className="relative z-10 w-full max-w-md bg-card rounded-2xl shadow-2xl mx-4 max-h-[70vh] flex flex-col">
             <div className="flex items-center justify-between border-b border-border px-6 py-4">
               <div className="flex gap-4">
                 <Button
@@ -1641,7 +1615,7 @@ export default function Profile() {
             onClick={() => { setRejectedModalWork(null); setShowRejectionHistory(false); }}
           >
             <div
-              className="bg-white rounded-xl shadow-lg max-w-md w-full p-5 max-h-[85vh] overflow-y-auto"
+              className="bg-card rounded-xl shadow-lg max-w-md w-full p-5 max-h-[85vh] overflow-y-auto"
               onClick={(e) => e.stopPropagation()}
             >
               <h2 className="text-base font-bold text-foreground mb-1">
@@ -1715,7 +1689,12 @@ export default function Profile() {
           }
           const workId = renamingFlatImage.work.id;
           const imgIndex = renamingFlatImage.imgIndex;
-          const latestWork = workStore.getWorks().find(w => w.id === workId) ?? renamingFlatImage.work;
+          // store에 없는 작품(hydrateGroupWorks 출처)은 먼저 추가해 수정 가능 상태로 전환
+          let latestWork = workStore.getWorks().find(w => w.id === workId);
+          if (!latestWork) {
+            void workStore.addWork(renamingFlatImage.work);
+            latestWork = renamingFlatImage.work;
+          }
           const imgs = Array.isArray(latestWork.image) ? latestWork.image : [latestWork.image];
           const prev = latestWork.imagePieceTitles ?? [];
           const newTitles = Array.from({ length: imgs.length }, (_, i) =>
@@ -1731,7 +1710,7 @@ export default function Profile() {
           onClick={() => setRenamingFlatImage(null)}
         >
           <div
-            className="bg-white rounded-xl shadow-lg max-w-md w-full p-5"
+            className="bg-card rounded-xl shadow-lg max-w-md w-full p-5"
             onClick={(e) => e.stopPropagation()}
           >
             <h2 className="text-base font-bold text-foreground mb-4">

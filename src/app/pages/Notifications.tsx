@@ -317,8 +317,8 @@ export default function Notifications() {
 
 
   return (
-    <div className="min-h-screen bg-white pb-20 md:pb-0">
-      <div className="bg-white border-b border-border">
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <div className="bg-background border-b border-border">
         <div className="mx-auto max-w-[700px] px-4 sm:px-6 py-5 sm:py-8">
           <div className="flex items-center justify-between gap-3">
             <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('notifications.title')}</h1>
@@ -395,7 +395,7 @@ export default function Notifications() {
                 <div
                   key={notif.id}
                   className={`flex items-start gap-3 sm:gap-4 w-full px-4 py-4 sm:px-5 sm:py-5 text-left transition-colors ${
-                    notif.read ? 'bg-white lg:hover:bg-muted/30' : 'bg-primary/[0.04] lg:hover:bg-primary/[0.07]'
+                    notif.read ? 'bg-card lg:hover:bg-muted/30' : 'bg-primary/[0.04] lg:hover:bg-primary/[0.07]'
                   }`}
                 >
                   <button type="button" onClick={() => handleClick(notif)} className="flex items-start gap-3 sm:gap-4 flex-1 min-w-0 text-left bg-transparent border-0 p-0 cursor-pointer">

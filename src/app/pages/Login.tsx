@@ -129,7 +129,7 @@ export default function Login() {
 
   if (emailMode) {
     return (
-      <div className="min-h-screen bg-white flex items-center justify-center px-4 py-10">
+      <div className="min-h-screen bg-background flex items-center justify-center px-4 py-10">
         <div className="w-full max-w-md">
           <button
             type="button"
@@ -282,7 +282,7 @@ export default function Login() {
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       <AuthSheet open={sheetOpen} onOpenChange={onSheetOpenChange} redirectTo={redirectTo} />
     </div>
   );

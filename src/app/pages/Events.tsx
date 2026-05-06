@@ -125,11 +125,10 @@ export default function Events() {
   };
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="min-h-screen bg-background">
       {/* 페이지 헤더 */}
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 pt-4 sm:pt-8 pb-2">
         <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-1">{t('events.title')}</h1>
-        <p className="text-sm text-muted-foreground">{t('events.subtitle')}</p>
       </div>
 
       {/* 진행 중 이벤트 — 프리미엄 캐러셀 */}
@@ -225,7 +224,12 @@ export default function Events() {
         <h2 className="text-lg sm:text-xl font-bold text-foreground mb-4 sm:mb-6">{t('events.upcomingSection')}</h2>
 
         {upcomingEvents.length === 0 ? (
-          <p className="text-sm text-muted-foreground py-8 text-center">{t('events.noUpcoming')}</p>
+          <div className="rounded-3xl border-2 border-dashed border-border bg-muted/30 py-20 flex flex-col items-center justify-center text-muted-foreground mx-4 sm:mx-0">
+            <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
+              <Calendar className="h-8 w-8 opacity-60" />
+            </div>
+            <p className="text-base font-semibold text-foreground mb-1">{t('events.noUpcoming')}</p>
+          </div>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
             {upcomingEvents.map((event) => (
@@ -299,7 +303,7 @@ export default function Events() {
             setNotifyInlineError('');
           }}
         >
-          <div className="bg-white rounded-2xl p-5 sm:p-6 w-full max-w-md mx-auto relative" onClick={(e) => e.stopPropagation()}>
+          <div className="bg-card rounded-2xl p-5 sm:p-6 w-full max-w-md mx-auto relative" onClick={(e) => e.stopPropagation()}>
             <Button
               variant="ghost"
               size="icon"
