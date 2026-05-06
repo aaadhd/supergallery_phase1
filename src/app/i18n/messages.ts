@@ -45,7 +45,7 @@ const koMessages = {
   'footer.bizRepValue': '홍길동',
   'footer.bizRegValue': '000-00-00000',
   'footer.mailOrderValue': '제2026-서울강남-00000호',
-  'footer.privacyOfficerValue': '카테',
+  'footer.privacyOfficerValue': '조가영',
   'footer.addressValue': '서울특별시 강남구 테헤란로 000, 0층',
   'footer.contactEmailValue': 'contact@artier.kr',
   'footer.phoneValue': '02-0000-0000',
