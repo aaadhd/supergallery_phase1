@@ -14,10 +14,10 @@
 - **한국어 "작품"** (개별 이미지 1장) = 코드상 **별도 엔티티가 없고** `Work` 안의 `image[i]` + `imagePieceTitles[i]` + `imageArtists[i]` 배열 요소로 존재.
 - 따라서 좋아요·저장·Pick·신고·뱃지는 모두 `Work`(=전시) 단위 스칼라. 이미지별 인터랙션 필드는 구조적으로 존재하지 않음.
 - URL은 이미 `/exhibitions/:workId`로 "exhibition" 용어를 쓰고 있어 일관성 있음. 타입 이름만 과거 명이 남은 상태.
-- Phase 2 백엔드 ERD 설계 시 `Work` → `Exhibition` 리네이밍 검토 권장.
+- 백엔드 ERD 설계 시 `Work` → `Exhibition` 리네이밍 검토 권장.
 
 ## 스펙 문서
-- **기획 단일 소스**: `_planning/` — 정책(`Policy_v1.md`)·사용자 PRD(`PRD_User_v1.md`)·어드민 PRD(`PRD_Admin_v1.md`)·화면 목록(`IA_ScreenList_v1.md`)·카피 가이드(`Copy_v1.md`). **세부 역할**은 `_planning/README.md` 「충돌 방지 구조」와 동일: **화면·AC·플로우의 기본 SSoT는 PRD**, **정책·수치 캐노니컬은 Policy**(구현 경로는 PRD/IA 참조). 시스템 아키텍처·데이터 모델·디자인 토큰은 본 폴더가 정의하지 않으며, 코드(스토어·엔티티)와 디자인 자산이 단일 소스다.
+- **기획 단일 소스**: `_planning/` — 정책(`Policy_v1.md`)·사용자 PRD(`PRD_User_v1.md`)·어드민 PRD(`PRD_Admin_v1.md`)·화면 목록(`IA_ScreenList_v1.md`)·카피 가이드(`Copy_v1.md`). **화면·AC·플로우의 SSoT는 PRD**, **정책·수치 캐노니컬은 Policy**. 시스템 아키텍처·데이터 모델·디자인 토큰은 코드(스토어·엔티티)와 디자인 자산이 단일 소스.
 - 전시명·작품명·그룹명 글자 상한: **`TITLE_FIELD_MAX_LEN`** (`src/app/utils/workDisplay.ts`, 현재 **20**).
 - 작품 톤 배경 묻어나는 효과: **원본 이미지를 blur + scale + opacity로 깔아** 순수 CSS로 구현 (`WorkDetailModal.tsx`·`Upload.tsx`의 BluredArtworkBg 컴포넌트). dominant-color 추출 알고리즘 불필요.
 
@@ -70,8 +70,8 @@ PM 결정이 영향을 받는 작업(카피 작성·정책 정정·기획 변경
 ### 페이지
 - `src/app/pages/Upload.tsx` — 작품 업로드 전체 플로우
 - `src/app/pages/ExhibitionDetail.tsx` — 전시 상세
-- `src/app/pages/ExhibitionRoute.tsx` — `?invite=<token>` (Policy §3 v2.14 비회원 초대 토큰) → ExhibitionInviteLanding · `?from=work` (레거시 작품 공유) → ExhibitionWorkShareLanding · 그 외 → Browse + 작품 모달 자동 오픈
-- `src/app/pages/ExhibitionInviteLanding.tsx` — 전시 초대장 오픈 화면 (2026-04-13 신설)
+- `src/app/pages/ExhibitionRoute.tsx` — `?invite=<token>` (비회원 초대 토큰) → ExhibitionInviteLanding · `?from=work` (레거시 작품 공유) → ExhibitionWorkShareLanding · 그 외 → Browse + 작품 모달 자동 오픈
+- `src/app/pages/ExhibitionInviteLanding.tsx` — 전시 초대장 오픈 화면
 - `src/app/pages/ExhibitionWorkShareLanding.tsx` — `?from=work` 작품 공유 랜딩
 - `src/app/pages/Profile.tsx` — 프로필 홈·탭
 - `src/app/pages/Search.tsx` — 검색 (계정별/게스트 키; 로그인 시 guest 히스토리 병합)
@@ -81,16 +81,16 @@ PM 결정이 영향을 받는 작업(카피 작성·정책 정정·기획 변경
 ### 컴포넌트
 - `src/app/components/ConfirmDialog.tsx` — 커스텀 확인 다이얼로그 (Radix AlertDialog 기반, Promise API)
 - `src/app/components/WorkDetailModal.tsx` — 일반 공유 URL에 `?from=invite` 흔적 부여 (라우팅상 Browse fallthrough라 작동은 모달 오픈으로 동일. 비회원 초대 토큰 모델은 별도 `InviteShareButton`이 `?invite=<token>` 생성)
-- `src/app/components/PointsBootstrap.tsx` — 부트스트랩 포인트 동기화
+- `src/app/components/PointsBootstrap.tsx` — 부트스트랩 포인트 동기화 + 레거시 localStorage 키 정리
 - `src/app/components/WorksStorageSync.tsx` — works 스토리지 버전 동기화
 - `src/app/components/work/CopyrightProtectedImage.tsx` — 우클릭/드래그 차단 이미지 컴포넌트
-- `src/app/components/SocialSignupModal.tsx` — 소셜 첫 가입 시 약관 동의 + 닉네임 입력 (SCR-AUTH-03)
+- `src/app/components/SocialSignupModal.tsx` — 소셜 첫 가입 시 약관 동의 + 닉네임 입력
 - `src/app/components/QaScreenShortcuts.tsx` — QA/검수용 바로가기 플로팅 버튼 (DEV 또는 `VITE_FOOTER_QA_LINKS` 활성 시)
 - `src/app/components/RequiredMark.tsx` — 필수 입력 표시 (빨간 별 + sr-only 라벨)
 
 ### 유틸 / Store
 - `src/app/store.ts` — `WORKS_STORAGE_VERSION` 스토리지 버전 관리 (현재 값 `local-gallery-v16`, 키 `artier_works_version`). `workStore`·`draftStore`·`profileStore` 등 핵심 스토어가 본 파일 안에 함께 정의됨.
-- `src/app/utils/inviteTokenStore.ts` — 비회원 초대 토큰 스토어 (Policy §3 v2.14). `issueInviteToken`(전시 발행 직후, status `'inactive'`) · `activateInviteToken`(검수 승인) · `deactivateInviteToken`(검수 반려·대기 회귀) · `revokeInviteToken`(전시 삭제·만료, 영구 무효) · `getInviteToken` lazy 만료 평가 · `connectMemberToSlot`(가입자가 본인 작품 카드 클릭 시 type 가드로 `'non-member'` → `'member'` 승격, 동시 선택 race 차단). 90일 TTL.
+- `src/app/utils/inviteTokenStore.ts` — 비회원 초대 토큰 스토어. `issueInviteToken`(전시 발행 직후, status `'inactive'`) · `activateInviteToken`(검수 승인) · `deactivateInviteToken`(검수 반려·대기 회귀) · `revokeInviteToken`(전시 삭제·만료, 영구 무효) · `getInviteToken` lazy 만료 평가 · `connectMemberToSlot`(가입자가 본인 작품 카드 클릭 시 type 가드로 `'non-member'` → `'member'` 승격, 동시 선택 race 차단). 90일 TTL.
 - `src/app/utils/adminGate.ts` — 운영팀 역할 토글
 - `src/app/utils/feedOrdering.ts` — 둘러보기 피드 랭킹
 - `src/app/utils/feedVisibility.ts` — 피드 공개 여부 필터
@@ -99,7 +99,7 @@ PM 결정이 영향을 받는 작업(카피 작성·정책 정정·기획 변경
 - `src/app/utils/reviewLabels.ts` — 검수 사유 4분류
 - `src/app/utils/analytics.ts` — GA4 스캐폴딩
 - `src/app/utils/registeredAccounts.ts` — 가입 이메일·전화 중복 검사 레지스트리
-- `src/app/utils/groupNameRegistry.ts` — 그룹명 자동완성(내 최근·작품 기반). 중복 허용 정책(2026-04-17)으로 정규화·캐논 맵 제거됨
+- `src/app/utils/groupNameRegistry.ts` — 그룹명 자동완성(내 최근·작품 기반). 중복 허용, 정규화·캐논 맵 없음.
 - `src/app/utils/imageHelper.ts` — 이미지 리사이즈·유틸
 - `src/app/utils/searchRank.ts` — 검색 결과 랭킹
 - `src/app/utils/pointsBackground.ts` — 포인트 적립/회수 (`pointsRecallIfQuickDelete`, `addDemoPp`)
@@ -109,8 +109,7 @@ PM 결정이 영향을 받는 작업(카피 작성·정책 정정·기획 변경
 ### 필수
 - **다국어**: `useI18n()`의 `t()` 사용. 문자열 하드코딩 금지.
   - **locale 반응성**: `getStoredLocale()` 스냅샷 함수를 렌더 시점에 직접 호출하지 말 것.
-    반드시 `useI18n()`의 `locale`·`t`를 사용해 런타임 언어 전환 시 리렌더가 트리거되게 할 것
-    (구 `ContentReview.tsx` 패턴은 안티패턴 — §11.5에서 `useI18n()`으로 정리 완료).
+    반드시 `useI18n()`의 `locale`·`t`를 사용해 런타임 언어 전환 시 리렌더가 트리거되게 할 것.
 - **상태관리**: `workStore`, `draftStore` 사용
 - **스타일**: Tailwind CSS + shadcn/ui
 - **시니어 친화**: 모든 인터랙티브 요소 `min-h-[44px]` 유지
@@ -123,44 +122,35 @@ PM 결정이 영향을 받는 작업(카피 작성·정책 정정·기획 변경
 - `window.confirm()`, `window.alert()` 직접 호출
 - `dangerouslySetInnerHTML` (XSS — 꼭 필요한 경우 sanitize 후 사용)
 
-### Phase 2 선행 구현 (정리됨)
-이전엔 PRD §2.2 Out of Scope임에도 코드만 존재하던 3개 컴포넌트가 있었음.
-어디에서도 import되지 않는 dead code였기에 모두 삭제됨:
-- ~~Pin 코멘트 (`PinCommentLayer`, `pinCommentStore.ts`, `artier_pin_comments` 키)~~
-- ~~타임랩스 (`TimelapsePlayer`)~~
-- ~~색상 팔레트 추출 (`ColorPaletteSuggestion`, `utils/colorPalette.ts`)~~
+### Dead code 금지 (export만 두고 화면 미연결)
+다음 이름은 삭제된 컴포넌트다. 재도입 시 PRD Out of Scope 여부를 확인하고 실제 사용 화면도 함께 연결할 것:
+- `PinCommentLayer`, `pinCommentStore.ts` — Pin 코멘트
+- `TimelapsePlayer` — 타임랩스
+- `ColorPaletteSuggestion`, `utils/colorPalette.ts` — 색상 팔레트 추출
 
-→ Phase 2에서 구현할 때 신규로 작성. 위 이름들을 재도입할 때는 PRD §2.2 범위 내인지
-확인하고 실제 사용 화면도 같이 연결할 것 (export만 두는 dead code는 금지).
+### UI 제거, 데이터 필드 잔존
+- 댓글 — `Work.comments` 필드는 데이터에 남아 있으나 `feedOrdering.ts`의 `scoreWork()`는 좋아요·저장·팔로우만 반영. `WorkCard` 하단 댓글 숫자 미노출 (Out of Scope).
 
-### PRD §2.2 적용으로 UI 제거됨, 데이터 필드만 잔존
-다음 항목은 위와 다른 범주 — **한때 구현되었다가 PRD Out of Scope에 맞춰 UI를 제거**한 흔적.
-관련 필드/계산 로직이 아직 코드에 남아 있으니 건드릴 때 주의:
-- 댓글 — `WorkCard` 하단 숫자 미노출. `Work.comments` 필드는 데이터에 남아 있으나 **`feedOrdering.ts`의 `scoreWork()`는 좋아요·저장·팔로우만 반영**하고 댓글 가중치는 사용하지 않음
+## 초대 자동 연결 정책
 
-### WorkCard 표시 규칙
-- 카드 하단에 **좋아요·저장 상태 아이콘만** 노출 (숫자 비노출)
-- 댓글 숫자는 PRD §2.2 Out of Scope 적용으로 제거됨
+회사가 외부 채널로 발송하지 않는다. 비회원의 전화·이메일은 받지 않는다(이름만). 작가가 직접 친구에게 링크를 보내고, 친구가 가입 후 본인 작품 카드를 명시 클릭하면 자동 연결된다. 작가 승인 게이트·가입자 자가 해제 진입점 없음.
 
-## 초대 자동 연결 정책 (Policy §3 · v2.14 토큰 + 가입자 본인 선택)
-
-회사가 외부 채널로 발송하지 않는다. 비회원의 전화·이메일은 받지 않는다(이름만). 작가가 직접 친구에게 링크를 보내고, 친구가 가입 후 본인 작품 카드를 명시 클릭하면 자동 연결된다. 작가 승인 게이트·가입자 자가 해제 진입점 모두 폐기.
-
-- **토큰 발급**: 검수 통과 시 전시 단위 1개 활성화. 발급은 발행 직후, 활성화는 검수 승인 후. 검수 대기·반려 중에는 비활성(친구 링크 보존, 재승인 시 자동 활성화). 작품 삭제·작가 탈퇴·비회원 자리 0·발급 후 90일 경과 시 영구 만료. 만료는 친구가 클릭하는 시점에 즉석 평가(별도 cron 없음, 매직 링크와 동일 패턴).
+- **토큰 발급**: 검수 통과 시 전시 단위 1개 활성화. 발급은 발행 직후, 활성화는 검수 승인 후. 검수 대기·반려 중에는 비활성(친구 링크 보존, 재승인 시 자동 활성화). 작품 삭제·작가 탈퇴·비회원 자리 0·발급 후 90일 경과 시 영구 만료. 만료는 친구가 클릭하는 시점에 즉석 평가(별도 cron 없음).
 - **공유 권한**: 전시 업로더(`work.artistId === currentUser.id`)에게만. 그룹 전시 다른 회원 작가에게 공유 버튼 노출 X.
 - **본인 작품 찾기**: 가입자가 토큰으로 진입하면 가입 직후 카드 N개(슬롯 1개여도 동일 형식). 명시 클릭 + 확인 다이얼로그 1회 → 즉시 'member' 승격. 자동 클릭·즉시 자동 연결 옵션 없음. `'unknown'` 슬롯은 카드 미노출. 두 가입자가 같은 슬롯 동시 선택 시 type 가드(`'non-member'`만 승격)로 두 번째는 자동 차단 + 토스트 안내 + 카드 새로고침.
 - **알림**: 작가에게 정보용 1건만(닉네임 + 작가가 적어둔 표시명 함께). 별도 액션·거부 진입점 없음.
 - **잘못 연결**: 가입자 자가 해제 진입점 X. 가입자가 작가에게 직접 알리고 작가가 마이페이지 슬롯 편집으로 풀기 → 슬롯이 `'unknown'`으로 전환되고 닉네임·아바타 사라짐. 회원 직접 추가 케이스도 동일.
 - **타입**: `ImageArtistAssignment.type` = `'member' | 'non-member' | 'unknown'` (`src/app/data.ts`). 슬롯 후보 자격은 `'non-member'`에 한정.
-- **Phase 1 한계**: 초대 링크 정보가 회원 본인 기기 안에만 보관(다른 기기에서 친구 가입 시 활성 상태 모름). 검색엔진·SNS 미리보기 차단도 일부 봇은 무시. 백엔드(서버 사이드 렌더링·중앙 토큰 저장소) 도입 시 정합 — Policy §31 N-15.
-- **제거됨**: 전화·이메일 매칭 기반 자동 연결, 본인 확인 yes/no 단계, 매칭 후보 무작위 3장 표본, 마이페이지 사후 보강 배너, 가입자 자가 disavow 진입점(piece 카드 "본인 작품 아님" 액션), ADM-RPT-01 "초대 매칭 거부" 카테고리, 발신자 양방향 알림 매트릭스(정보용 1건만 유지).
+- **Phase 1 한계**: 초대 링크 정보가 회원 본인 기기 안에만 보관(다른 기기에서 친구 가입 시 활성 상태 모름). 검색엔진·SNS 미리보기 차단도 일부 봇은 무시.
 
 ## 전시 업로드 자격 (그룹 전시 성립 조건)
 
-**그룹 전시** = 총 작가 **2명 이상** (= 게시자 외 참여 작가 1명 이상). 게시자 본인 작품 포함 여부는 무관.
+**그룹 전시** = 전시에 등장하는 서로 다른 작가(작품 주인) **2명 이상**.
+- 게시자 본인 작품 포함 시: 타인 1명 이상이면 성립.
+- 게시자 본인 작품 미포함 시: 타인 2명 이상이어야 성립.
 
-- 게시자 외 참여 작가 0명(본인 작품만 있음) → 개인 전시 전환 다이얼로그(`upload.soloSuggestionTitle`/`Desc`).
-- 총 작가 1명이고 그 1명이 게시자가 아닌 경우(게시자 본인 작품 없음) → 발행 차단 (`upload.errGroupNeedsTwoArtists`). 개인 전시 전환 불가.
+- 게시자 본인 작품만 있고 타인 0명 → 개인 전시 전환 다이얼로그(`upload.soloSuggestionTitle`/`Desc`).
+- 게시자 본인 작품 없이 타인 1명만 있는 경우 → 발행 차단 (`upload.errGroupNeedsTwoArtists`). 개인 전시 전환 불가.
 - 혼자 올리기는 정의상 본인 작품만 포함되므로 별도 검증 없음.
 
 ## 환경 변수
@@ -172,13 +162,11 @@ PM 결정이 영향을 받는 작업(카피 작성·정책 정정·기획 변경
 | `VITE_UPLOAD_AUTO_APPROVE=true` | 업로드 즉시 `approved` (검수 대기 우회) | 로컬·PM 데모 편의 — **프로덕션 비권장** |
 | `VITE_ADMIN_OPEN=true` | 어드민 게이트 우회 | CI / 프리뷰 환경 |
 
-## 신고·모더레이션 정책 (2026-04-20 Phase 1 단순화)
+## 신고·모더레이션 정책
 
-Phase 1은 **작품 단위 모더레이션만** 다룬다. 사용자 계정 차원 제재(주의·시한부 정지·영구 정지·경고 카운터·허위 신고 카운터)는 **Phase 2**에서 재설계. Policy §12.3.
+Phase 1은 **작품 단위 모더레이션만** 다룬다. 사용자 계정 차원 제재는 Phase 2에서 재설계. 자동 비공개 트리거 없음 — 모든 신고는 운영팀이 ADM-RPT-02에서 직접 판정.
 
 ### 신고 처리 액션 (어드민 콘솔 `admin/ReportManagement.tsx`)
-
-3가지 액션 + 1가지 리스트 정리 옵션:
 
 | 액션 | 효과 | 비고 |
 |---|---|---|
@@ -186,18 +174,6 @@ Phase 1은 **작품 단위 모더레이션만** 다룬다. 사용자 계정 차�
 | **기각** | 신고 부당 판정. 운영팀이 비공개 유지 처리했다면 **즉시 복원**(`isHidden: false`) | `adminStatus: 'dismissed'` |
 | **비공개 유지** | 작품에 `isHidden: true` 유지 (둘러보기·검색에서 제외, 작가 본인 프로필엔 보임) | `adminStatus: 'hidden'` |
 | (목록에서 제거) | 액션 없이 큐에서만 제거 (레거시 호환) | `removeUserReport` |
-
-### 자동 비공개 트리거 (2026-05-05 폐기)
-
-- **Policy §12.2 v2.20에 따라 자동 비공개 트리거 폐기.** 모든 신고는 운영팀이 ADM-RPT-02에서 직접 3액션 중 하나로 판정.
-- `reportsStore.appendUserReport`에 있던 2회 자동 비공개 트리거 코드 제거됨.
-
-### 폐기된 것 (2026-04-20 기준)
-
-- `sanctionStore.ts` 전체 폐기 (2026-04-28). Phase 1 정책(§12.3) 상 호출부 0건이었고, 메모리 규칙(런칭 전 백엔드 연동 후 자연 흡수 결함은 별도 작업 안 함) 정합.
-- `accountSuspensionStore` 호출부 — 제거됨(데모용 Login.tsx 쿼리 플래그만 남음)
-- `ADM-MBR-03` 정지 모달 UI — Phase 2 이관
-- 경고·자동 승격·이의제기 SLA 관련 모든 로직
 
 ## 데이터·영속화
 
@@ -207,22 +183,22 @@ Phase 1은 **작품 단위 모더레이션만** 다룬다. 사용자 계정 차�
 
 - **핵심 앱 상태 (`store.ts`)**: `artier_works_version`, `artier_works`, `artier_drafts`, `artier_profile`, `artier_interactions`, `artier_auth`, `artier_follows`, `artier_account_suspension`, `artier_withdrawn_artists`, `artier_demo_last_withdraw_reason`
 - **작품·피드·알림**: `artier_curation_v1`, `artier_feed_seen_work_ids`, `artier_notifications`, `artier_notification_settings`
-- **배너·이벤트·어드민**: `artier_admin_banners_v1`, `artier_managed_events_v1`, `artier_event_subscriptions`, `artier_admin_issues`, `artier_admin_checklist`, `artier_admin_members_v1`, `artier_admin_picks_v1`, `artier_admin_audit_log_v1` (운영자 감사 로그 — 런칭 전 백엔드 이관 후 서버 테이블로 재출발)
-- **초대·포인트·신고·기타**: `artier_invite_tokens_v1` (Policy §3 v2.14 토큰 스토어 — 전시 단위 1개, 90일 TTL), `artier_points_ledger`, `artier_points_state`, `artier_work_publish_times`, `artier_pp_balance`, `artier_artist_follower_delta`, `artier_reports`, `artier_report_hidden_v2`, `artier_report_signatures_v1`, `artier_reported_works`, `artier_reported_artists` (레거시 신고 키), `artier_warning_counter_v1`, `artier_false_report_counter_v1`, `artier_social_signed_up__<provider>` (kakao/google/apple), `artier_pending_signup_nickname`·`artier_pending_signup_email`·`artier_pending_social_signup` (Signup/소셜 가입 → Onboarding 프리필 핸드오프, 온보딩 종료 시 정리), `artier_registered_emails_v1`·`artier_registered_phones_v1` (가입 완료된 이메일·전화 레지스트리 — 중복 가입 차단, `utils/registeredAccounts.ts`), `artier_last_group_name`, `artier_my_group_names`, `artier_inquiries`
+- **배너·이벤트·어드민**: `artier_admin_banners_v3`, `artier_managed_events_v4`, `artier_event_subscriptions`, `artier_admin_members_v1`, `artier_admin_picks_v1`, `artier_admin_audit_log_v1` (운영자 감사 로그 — 런칭 전 백엔드 이관 후 서버 테이블로 재출발)
+- **초대·포인트·신고·기타**: `artier_invite_tokens_v1` (전시 단위 1개, 90일 TTL), `artier_points_ledger`, `artier_points_state`, `artier_work_publish_times`, `artier_pp_balance`, `artier_artist_follower_delta`, `artier_reports`, `artier_report_hidden_v2`, `artier_report_signatures_v1`, `artier_reported_works`, `artier_reported_artists`, `artier_warning_counter_v1`, `artier_false_report_counter_v1`, `artier_social_signed_up__<provider>` (kakao/google/apple), `artier_pending_signup_nickname`·`artier_pending_signup_email`·`artier_pending_social_signup` (Signup/소셜 가입 → Onboarding 프리필 핸드오프, 온보딩 종료 시 정리), `artier_registered_emails_v1`·`artier_registered_phones_v1` (중복 가입 차단, `utils/registeredAccounts.ts`), `artier_last_group_name`, `artier_my_group_names`, `artier_inquiries`
 - **UX·데모**: `artier_locale`, `artier_font_scale`, `artier_cookie_consent`, `artier_onboarding_done`, `artier_splash_seen`, `artier_mock_jwt_session`, `artier_admin_session_v1` (`adminGate`), `artier_recent_searches__guest`, `artier_recent_searches__<slug>` (`Search.tsx`)
-- **sessionStorage** (별도): 접두 `artier_scroll_` + 논리 키 — 스크롤 복원 (`src/app/utils/scrollRestore.ts`). `artier_pending_invite_token` — 초대 링크 랜딩 → 가입 → 온보딩 "본인 작품 찾기" 핸드오프 (Policy §3 v2.14, 가입 종료 시 정리).
-- **Deprecated (부팅 시 제거)**: `artier_instructor_public_ids` (2026-04-13 강사 단일화), `artier_pin_comments` (2026-04-15 Phase 2 선행 제거), `artier_upload_guide_seen` (2026-04-15), `artier_group_canonical_map` (2026-04-17 그룹명 중복 허용), `artier_signup_region`·`artier_pending_signup_realname` (2026-04-26 region·실명 폐기), `artier_pending_sms_invite`·`artier_pending_signup_phone`·`artier_invite_messaging_log`·`artier_invite_match_log`·`artier_invite_decline_log` (2026-04-27 Policy §3 v2.14 토큰 모델 전환) — `PointsBootstrap` 마운트 시 `LEGACY_STORAGE_KEYS`로 일괄 정리. sessionStorage `artier_pending_invite_claims` (2026-04-19 초대 자동 연결 단순화)·`artier_geo_demo_cache` (2026-04-26)도 `LEGACY_SESSION_KEYS`로 동일 시점 정리
+- **sessionStorage** (별도): 접두 `artier_scroll_` + 논리 키 — 스크롤 복원 (`src/app/utils/scrollRestore.ts`). `artier_pending_invite_token` — 초대 링크 랜딩 → 가입 → 온보딩 "본인 작품 찾기" 핸드오프 (가입 종료 시 정리).
+- **Deprecated (부팅 시 제거)**: `artier_instructor_public_ids`, `artier_pin_comments`, `artier_upload_guide_seen`, `artier_group_canonical_map`, `artier_signup_region`, `artier_pending_signup_realname`, `artier_pending_sms_invite`, `artier_pending_signup_phone`, `artier_invite_messaging_log`, `artier_invite_match_log`, `artier_invite_decline_log`, `artier_admin_issues`, `artier_admin_checklist` — `PointsBootstrap` 마운트 시 `LEGACY_STORAGE_KEYS`로 일괄 정리. sessionStorage `artier_pending_invite_claims`·`artier_geo_demo_cache` — `LEGACY_SESSION_KEYS`로 동일 시점 정리.
 
 ### 기타
 - **버전 관리**: `WORKS_STORAGE_VERSION` (`local-gallery-v16`) 변경 시 works 데이터 자동 재시드
-- **이벤트 데이터**: `eventStore.ts` 단일 소스 + `artier_managed_events_v1` 영속화. **이벤트·공지 메일 구독**은 `eventSubscriptionStore.ts` + `artier_event_subscriptions`(전역 이메일 목록 1종, Policy §31 N-5).
-- **포인트 회수**: 업로드 후 24시간 이내 삭제 시 AP -20 (`pointsBackground.ts:pointsRecallIfQuickDelete`)
+- **이벤트 데이터**: `eventStore.ts` 단일 소스 + `artier_managed_events_v4` 영속화. 이벤트·공지 메일 구독은 `eventSubscriptionStore.ts` + `artier_event_subscriptions`.
+- **포인트 회수**: 업로드 후 24시간 이내 삭제 시 AP -20 (`pointsBackground.ts`)
 
 ## 외부 연동 미완 (런칭 전 백엔드 연동 후)
 소셜 OAuth(카카오/구글/애플), 이메일 발송, Supabase 실서버.
 모두 모의(localStorage 로그) 수준이며 PM 데모 목적상 의도적 유보.
 
-비회원 SMS·카카오 알림톡 발송은 Policy §3 v2.14에서 폐기됨(회사가 외부 채널 발송 안 함). OG 동적 생성은 §31 N-9에서 Phase 2로 강등.
+비회원 SMS·카카오 알림톡 발송은 폐기(회사가 외부 채널 발송 안 함). OG 동적 생성은 Phase 2 이관.
 
 ## 우선 보완 항목 (런칭 전)
-**남은 대표 과제**: 실 OAuth·이메일/SMS 발송·프로덕션 BaaS, 약관 법무 확정(Policy §31 N-10), 파비콘/manifest. 세부 항목은 `_planning/Policy_v1.md` §31(런칭 전 미해결 항목) 참조.
+**남은 대표 과제**: 실 OAuth·이메일/SMS 발송·프로덕션 BaaS, 약관 법무 확정, 파비콘/manifest. 세부 항목은 `_planning/Policy_v1.md` §31 참조.

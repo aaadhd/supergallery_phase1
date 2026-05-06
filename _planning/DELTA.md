@@ -4,6 +4,31 @@
 
 ---
 
+## 2026-05-06
+
+- **어드민 메뉴 재설계** — 체크리스트·이슈 제거, 추천 전시(ADM-CUR-02) 독립 메뉴 분리. 최종 메뉴: 대시보드·검수·신고·Pick·추천 전시·기획전·응모전·배너·회원·공지·문의.
+- **추천 작가 → 추천 전시 전환** — 피드 featured 버킷 부스트 기준을 작가 단위에서 전시 단위로 변경. 전수 반영.
+- **대시보드 지표 교체** — 미결 이슈·체크리스트 진행률 제거 → 신고 대기·미답변 문의 건수로 교체.
+- **HTML 화면 스펙 가독성 개선** — 비개발자(디자이너·관계자) 대상으로 기술 용어 정리, 외부 정책 참조를 인라인 설명으로 교체, 히스토리성 문구 제거. ADM-CKL·ISU 슬라이드 제거, 추천 전시 ADM-CUR-02 화면 신규 작성.
+
+---
+
+## 2026-05-05 (2차)
+
+- **강사(instructor) 기능 완전 제거** — Upload·Profile·Browse·data·groupData·store·WorkDetailModal·pointsBackground 코드 전체, Policy §13·PRD_User·PRD_Admin·IA·Copy·HTML 스펙 전수 반영. 그룹 전시 업로드 시 본인 작품 포함 예외 없이 항상 필수 → 이후 그룹 전시 정의 변경으로 대체됨.
+- **그룹 전시 정의 변경** — 총 작가 2명 이상(= 게시자 외 참여 작가 1명 이상)이면 그룹 전시 성립. 게시자 본인 작품 포함 여부 무관. 발행 검증 분기: 게시자 본인만(타인 0명) → 개인전 전환 다이얼로그, 총 1명이고 게시자 아닌 경우 → 차단(errGroupNeedsTwoArtists). Policy §13.2·§13.3·§13.6, PRD E.표, Copy, CLAUDE.md, README, HTML 전수 갱신.
+- **탈퇴 정책 변경** — 탈퇴 시 본인 이미지 슬롯 삭제, 전시 컨테이너 유지(다른 작가 작품 남아있으면 계속 공개). 이미지 0장이 된 전시만 cascade 삭제. 커버 이미지가 삭제된 경우 첫 번째 이미지로 fallback. Policy §4.2·§23.3, PRD_User USR-STG-03, PRD_Admin ADM-MBR-02, Copy 탈퇴 문구, store.ts performAccountWithdrawal 전면 재작성.
+- **§13.6 그룹 전시 사후 유지** — 탈퇴로 참여 작가 감소해도 자동 강등 없음. 이미지 0장 시에만 전시 삭제.
+- **문의하기(USR-INF-07) 이름 필드 제거** — Contact.tsx 이름 필드 삭제, 로그인 사용자 이메일 프리필 추가. PRD·IA·Policy §30.1 정합.
+- **어드민 검수 SLA 배지 제거** — ContentReview.tsx 24h 초과 빨강 배지 및 tickNow interval 제거. 사용자 안내 "24시간 이내 공개" 문구는 유지. Policy §22 헤딩 수정.
+- **ADM-MBR-01 닉네임·AP 컬럼** — 어드민 회원 목록 "이름" → "닉네임" 헤더, 누적 AP 열 추가. 시드 데이터 실명→닉네임 전환.
+- **NoticeDetail 구독 버그 수정** — 1회성 스냅샷 읽기 → useSyncExternalStore 구독으로 교체.
+- **report.notifTargetWorkRestored 키 추가** — Policy §12.1.3 "기각→복원" 알림 정의 대비 i18n 키 누락 해소(messages.ts + Copy_v1.md).
+- **문서 품질 개선** — Policy TMI 6건(§2.3·§7.2·§12.1.2·§19.4·§33.1·§10.3) 압축·정리. IA deprecated 섹션(ADM-WRK·ADM-PTN·CM-04) 한 줄 주석으로 압축. Copy 무관 링크 제거. 풀스캔 18건(탈퇴·교차참조·§23.3 충돌 등) 수정.
+- **코드 잔재 정리** — ReportManagement.tsx autoHiddenAt dead code, Profile.tsx 강사 주석, imagesV1Works.ts isInstructor 타입 필드, imagesV1Manifest.json 37개 항목 isInstructor 데이터 제거.
+
+---
+
 ## 2026-05-05
 
 - **자동 비공개 트리거 폐기 전문서 정합 (Policy §12.2 v2.20, B-6 후속)** — 이전 사이클(05-04)에 코드·Policy 정합이 완료된 자동 비공개 트리거 폐기를 나머지 기획 문서 전체로 확산. PRD_Admin v1.24·PRD_User v2.10·IA v1.11·Copy v1.13·Handoff_Notifications v5·Handoff_LegalReview v3·HTML 화면 스펙에서 "2회 자동 비공개" 배너·정책 박스·SLA 4단계 배지·24h 에스컬레이션 카운트·채널 매트릭스 행 등 잔재 제거.

@@ -3,8 +3,6 @@ import { Outlet, NavLink, Link, Navigate, useLocation } from 'react-router-dom';
 import { toast, Toaster } from 'sonner';
 import {
   LayoutDashboard,
-  AlertCircle,
-  CheckSquare,
   Users,
   CalendarDays,
   ArrowLeft,
@@ -18,6 +16,7 @@ import {
   UserCog,
   MessageSquare,
   Megaphone,
+  Telescope,
 } from 'lucide-react';
 import { LABELS } from './constants';
 import { authStore } from '../store';
@@ -50,32 +49,25 @@ const navSections: NavSection[] = [
     sectionLabelKey: 'admin.section.contentOps',
     items: [
       { to: '/admin/picks', icon: Star, labelKey: 'admin.nav.picks' },
+      { to: '/admin/featured', icon: Telescope, labelKey: 'admin.nav.featured' },
       { to: '/admin/curation', icon: Sparkles, labelKey: 'admin.nav.curation' },
+      { to: '/admin/contests', icon: CalendarRange, labelKey: 'admin.nav.contests' },
       { to: '/admin/banners', icon: PanelTop, labelKey: 'admin.nav.banners' },
-      { to: '/admin/managed-events', icon: CalendarRange, labelKey: 'admin.nav.managedEvents' },
-      { to: '/admin/events', icon: Users, labelKey: 'admin.nav.eventParticipants' },
-      { to: '/admin/notices', icon: Megaphone, labelKey: 'admin.nav.notices' },
     ],
   },
   {
     sectionLabelKey: 'admin.section.members',
     items: [
       { to: '/admin/members', icon: UserCog, labelKey: 'admin.nav.members' },
-    ],
-  },
-  {
-    sectionLabelKey: 'admin.section.operations',
-    items: [
+      { to: '/admin/notices', icon: Megaphone, labelKey: 'admin.nav.notices' },
       { to: '/admin/inquiries', icon: MessageSquare, labelKey: 'admin.nav.inquiries' },
-      { to: '/admin/issues', icon: AlertCircle, labelKey: 'admin.nav.issues' },
-      { to: '/admin/checklist', icon: CheckSquare, labelKey: 'admin.nav.checklist' },
     ],
   },
 ];
 
 // 폐기·통합 화면(PRD §9·§10): /admin/works·/admin/partners 라우트는 2026-04-26 제거됨.
 // 운영자는 ADM-RPT-01(신고 큐) / ADM-MBR-01(회원 관리)에서 접근.
-void ImageIcon; void CalendarDays;
+void ImageIcon; void Users;
 
 export default function AdminLayout() {
   const { t } = useI18n();
@@ -84,6 +76,13 @@ export default function AdminLayout() {
   const [sessionValid, setSessionValid] = useState(() =>
     canAccessAdminRoutes(authStore.isLoggedIn()),
   );
+
+  // 어드민은 시니어 폰트 스케일 미적용 — 진입 시 16px로 고정, 이탈 시 복원.
+  useEffect(() => {
+    const prev = document.documentElement.style.fontSize;
+    document.documentElement.style.fontSize = '16px';
+    return () => { document.documentElement.style.fontSize = prev; };
+  }, []);
 
   // 사용자 활동 감지 → 세션 타임스탬프 갱신 (adminGate가 60s throttle).
   useEffect(() => {
@@ -136,20 +135,11 @@ export default function AdminLayout() {
         <div className="p-4 border-b border-slate-800">
           <Link
             to="/"
-            className="flex items-center gap-2 text-sm text-slate-400 lg:hover:text-white mb-3"
+            className="flex items-center gap-2 text-sm text-slate-400 lg:hover:text-white mb-2"
           >
             <ArrowLeft className="w-4 h-4" />
-            {LABELS.SERVICE_NAME} {t('admin.backToApp')}
           </Link>
-          <p className="text-xs font-semibold uppercase tracking-wider text-amber-400/90">{t('admin.consoleLabel')}</p>
-          <h1 className="text-lg font-bold text-white mt-0.5">{LABELS.NAV_ADMIN}</h1>
-          <div className="mt-1.5 inline-flex items-center gap-1.5 rounded-full bg-emerald-400/15 border border-emerald-400/40 px-2 py-0.5 text-xs font-medium text-emerald-300">
-            <span className="w-1.5 h-1.5 rounded-full bg-emerald-400"></span>
-            {t('admin.roleBadge')}
-          </div>
-          <p className="text-xs text-slate-400 mt-2 leading-snug">
-            {t('admin.sidebarNote')}
-          </p>
+          <h1 className="text-base font-bold text-white">Artier Admin</h1>
         </div>
         <nav className="flex-1 p-3 space-y-3">
           {navSections.map((section, sectionIdx) => (
@@ -179,9 +169,6 @@ export default function AdminLayout() {
             </div>
           ))}
         </nav>
-        <div className="p-4 border-t border-slate-800">
-          <p className="text-xs text-slate-500">{LABELS.PROJECT_NAME} {t('admin.footerNote')}</p>
-        </div>
       </aside>
 
       <main className="flex-1 overflow-auto bg-slate-50/80">

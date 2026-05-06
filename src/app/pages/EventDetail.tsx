@@ -1,5 +1,5 @@
 import { useParams, Link, useSearchParams } from 'react-router-dom';
-import { Calendar, ArrowLeft, ArrowRight, Users } from 'lucide-react';
+import { Calendar, ArrowLeft, ArrowRight, Users, X } from 'lucide-react';
 import { ImageWithFallback } from '../components/ImageWithFallback';
 import { analytics } from '../utils/analytics';
 import { useEffect, useState, useMemo } from 'react';
@@ -11,6 +11,7 @@ import { Button } from '../components/ui/button';
 import { toast } from 'sonner';
 import { eventStore, deriveStatus, isPublicationVisible, useManagedEvents } from '../utils/eventStore';
 import { EventEntryModal } from '../components/EventEntryModal';
+import { openConfirm } from '../components/ConfirmDialog';
 
 export default function EventDetail() {
   const { id } = useParams();
@@ -19,6 +20,7 @@ export default function EventDetail() {
   const auth = useAuthStore();
   const loginPrompt = useLoginPrompt();
   const [showEntryModal, setShowEntryModal] = useState(false);
+  const [showMyEntryModal, setShowMyEntryModal] = useState(false);
 
   // store 구독 (변경 시 재렌더)
   useManagedEvents();
@@ -31,11 +33,26 @@ export default function EventDetail() {
   const eventStatus = event ? deriveStatus(event) : null;
   const isEnded = eventStatus === 'ended';
 
-  // 중복 참여 방지: 이미 이 이벤트에 작품을 제출했는지 확인
-  const alreadySubmitted = useMemo(() => {
-    if (!event || !auth.isLoggedIn()) return false;
-    return workStore.getWorks().some((w) => String(w.linkedEventId) === event.id);
+  const myEntry = useMemo(() => {
+    if (!event || !auth.isLoggedIn()) return null;
+    return workStore.getWorks().find((w) => String(w.linkedEventId) === event.id) ?? null;
   }, [event, auth]);
+
+  const alreadySubmitted = !!myEntry;
+
+  const handleCancelEntry = async () => {
+    if (!myEntry) return;
+    const ok = await openConfirm({
+      title: t('events.cancelEntryConfirmTitle' as never),
+      description: t('events.cancelEntryConfirmDesc' as never),
+      confirmLabel: t('events.cancelEntry' as never),
+      destructive: true,
+    });
+    if (!ok) return;
+    workStore.removeWork(myEntry.id);
+    setShowMyEntryModal(false);
+    toast.success(t('events.cancelEntrySuccess' as never));
+  };
 
   // ?entry=open 자동 오픈 (USR-EVT-04 진입 경로)
   useEffect(() => {
@@ -126,25 +143,30 @@ export default function EventDetail() {
           <h2 className="text-base sm:text-lg font-bold text-foreground mb-3 sm:mb-4">{t('events.detailGuide')}</h2>
           <p className="text-sm sm:text-sm lg:text-base text-foreground leading-relaxed mb-6 sm:mb-10">{event.description}</p>
 
-          <p className="text-xs sm:text-sm text-muted-foreground mb-6 sm:mb-8">
-            {t('eventDetail.notifHint')}{' '}
-            <Link to="/settings#notifications" className="text-primary font-medium lg:hover:underline">
-              {t('notifications.settingsLink')}
-            </Link>
-          </p>
-
           {isEnded ? (
-            <div className="flex sm:inline-flex items-center justify-center gap-2 px-5 sm:px-8 py-3 sm:py-3.5 bg-muted text-muted-foreground rounded-lg text-sm sm:text-sm font-medium cursor-not-allowed w-full sm:w-auto">
+            <div className="flex sm:inline-flex items-center justify-center gap-2 px-5 sm:px-8 py-3 sm:py-3.5 bg-muted text-muted-foreground rounded-lg text-sm font-medium cursor-not-allowed w-full sm:w-auto">
               {t('events.detailEnded')}
             </div>
           ) : alreadySubmitted ? (
-            <div className="flex sm:inline-flex items-center justify-center gap-2 px-5 sm:px-8 py-3 sm:py-3.5 bg-muted text-muted-foreground rounded-lg text-sm sm:text-sm font-medium cursor-not-allowed w-full sm:w-auto">
-              {t('events.alreadySubmittedShort')}
+            <div className="flex flex-wrap gap-2">
+              <Button
+                onClick={() => setShowMyEntryModal(true)}
+                className="inline-flex items-center gap-2 px-5 sm:px-8 py-3 sm:py-3.5 bg-foreground text-white rounded-lg text-sm font-medium lg:hover:bg-foreground/90 transition-colors justify-center"
+              >
+                {t('events.viewMyEntry' as never)}
+              </Button>
+              <button
+                type="button"
+                onClick={handleCancelEntry}
+                className="inline-flex items-center gap-2 px-5 sm:px-6 py-3 sm:py-3.5 border border-border text-foreground rounded-lg text-sm font-medium lg:hover:bg-muted/40 transition-colors justify-center"
+              >
+                {t('events.cancelEntry' as never)}
+              </button>
             </div>
           ) : (
             <Button
               onClick={handleParticipate}
-              className="inline-flex items-center gap-2 px-5 sm:px-8 py-3 sm:py-3.5 bg-foreground text-white rounded-lg text-sm sm:text-sm font-medium lg:hover:bg-foreground/90 transition-colors w-full sm:w-auto justify-center"
+              className="inline-flex items-center gap-2 px-5 sm:px-8 py-3 sm:py-3.5 bg-foreground text-white rounded-lg text-sm font-medium lg:hover:bg-foreground/90 transition-colors w-full sm:w-auto justify-center"
             >
               {t('events.participate')}
               <ArrowRight className="h-5 w-5" />
@@ -176,6 +198,45 @@ export default function EventDetail() {
           eventStartAt={event.startAt}
           eventEndAt={event.endAt}
         />
+      )}
+
+      {/* 내 응모작 보기 모달 */}
+      {showMyEntryModal && myEntry && (
+        <div
+          className="fixed inset-0 z-50 bg-black/60 flex items-center justify-center p-4"
+          onClick={() => setShowMyEntryModal(false)}
+        >
+          <div
+            className="bg-white rounded-2xl shadow-xl max-w-sm w-full overflow-hidden"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div className="relative">
+              <img
+                src={Array.isArray(myEntry.image) ? myEntry.image[0] : myEntry.image}
+                alt={myEntry.exhibitionName}
+                className="w-full aspect-square object-cover"
+              />
+              <button
+                type="button"
+                onClick={() => setShowMyEntryModal(false)}
+                className="absolute top-3 right-3 w-8 h-8 rounded-full bg-black/50 text-white flex items-center justify-center lg:hover:bg-black/70"
+              >
+                <X className="w-4 h-4" />
+              </button>
+            </div>
+            <div className="p-4">
+              <p className="font-semibold text-foreground mb-1">{myEntry.exhibitionName}</p>
+              <p className="text-xs text-muted-foreground mb-4">{t('events.participate')} · {myEntry.uploadedAt}</p>
+              <button
+                type="button"
+                onClick={handleCancelEntry}
+                className="w-full py-2.5 rounded-lg border border-red-200 text-red-700 text-sm font-medium lg:hover:bg-red-50 transition-colors"
+              >
+                {t('events.cancelEntry' as never)}
+              </button>
+            </div>
+          </div>
+        </div>
       )}
     </div>
   );

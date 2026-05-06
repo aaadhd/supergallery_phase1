@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- Last synced: / PRD_Admin v1.24 / IA v1.10 / Copy v1.11 (2026-05-02) -->
+<!-- Last synced: Policy v2.19 / PRD_User v2.10 / PRD_Admin v1.25 / IA v1.11 / Copy v1.14 (2026-05-06) -->
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
@@ -540,7 +540,7 @@
  <li><a href="#ADM-PCK-02"><code>PCK-02</code><span>Pick 추가</span></a></li>
  <li><a href="#ADM-PCK-03"><code>PCK-03</code><span>Pick 이력</span></a></li>
  <li><a href="#ADM-CUR-01"><code>CUR-01</code><span>기획전 관리</span></a></li>
- <li><a href="#ADM-CUR-02"><code>CUR-02</code><span>추천 작가</span></a></li>
+ <li><a href="#ADM-CUR-02"><code>CUR-02</code><span>추천 전시 ⭐</span></a></li>
  </ul>
  </li>
 
@@ -570,8 +570,6 @@
  <li>
  <div class="group">🧰 운영 — 도구</div>
  <ul>
- <li><a href="#ADM-CKL-01"><code>CKL-01</code><span>체크리스트</span></a></li>
- <li><a href="#ADM-ISU-01"><code>ISU-01</code><span>미결 이슈</span></a></li>
  <li><a href="#ADM-INQ-01"><code>INQ-01</code><span>문의함</span></a></li>
  <li><a href="#ADM-NTC-01"><code>NTC-01</code><span>공지 관리 ⭐</span></a></li>
  </ul>
@@ -599,6 +597,7 @@
  <dt>버전</dt><dd><span class="badge">v1.5</span></dd>
  <dt>기준 디바이스</dt><dd>PC (1280px 기준 와이어프레임). 모바일 버전은 후속 작업</dd>
  <dt>작성일</dt><dd>2026-04-26</dd>
+ <dt>최종 갱신</dt><dd>2026-05-06</dd>
  <dt>핵심 가치</dt><dd>"그림 한 점도 어엿한 전시"</dd>
  <dt>총 화면 수</dt><dd>87개 (사용자 64 · 운영 23)</dd>
  </dl>
@@ -619,22 +618,22 @@
  <tr>
  <td class="ver">v1.5</td>
  <td class="date">2026-04-30</td>
- <td><strong>검수 신청 단계 공유 모델 반영 .</strong> (1) USR-EXH-03 초대장 랜딩 inactive 분기 본문 갱신 — 같은 전시의 pending 작품 미리보기 그리드 노출(invite flow 한정), 카피 능동톤("곧 공개될 전시예요. 지금 가입해두시면 통과 즉시 본인 작품을 골라보실 수 있어요"). (2) USR-AUT-10b 본인 작품 찾기 진입 조건 확장 — 활성 토큰 → 활성 또는 inactive 토큰. inactive 단계엔 헤더 한 줄 안내 추가("검수 신청 중이에요. 미리 골라두시면 공개 시 자동 노출돼요"). (3) USR-UPL-03 발행 완료 모달의 비회원 안내 카피 정정 — "검수 승인 직후 발송돼요" → "작가님이 직접 카톡·문자로 보내주세요. 지금 바로". (4) USR-PRF-05 마이페이지 검수 배지를 클레임 슬롯 보유자(member co-creator)에게도 노출, hint 카피 분기. (5) ADM-REV-01 approve 시점에 클레임된 회원 참여자 알림 1건 추가 발송. (6) 내부 식별자 토큰 상태별 메시지 분기, `InviteShareButton` 잠금 해제(active+inactive 공유), 편집으로 pending 회귀 시 토큰 자동 deactivate(work feedReviewStatus 정합). <strong>본 사이클 후속 정합 (2026-05-01)</strong> — title·헤더 ver div·표지 badge·History 메타·푸터 107건 v1.4 → v1.5 일괄 정정. USR-EXH-04(작품 공유 랜딩 Deprecated) 본문에 잔재했던 옛 옛 초대 URL 모델 표기 2건을 토큰 모델(`?invite=&lt;token&gt;`)로 정정(v2.14+ 정합). USR-AUT-12(정지 보류) 카드의 "Phase 2 작업" 표현 제거 → "이관 항목" + "런칭 전 백엔드 연동 후 재설계 시 함께 정합"으로 재서술(메모리 규칙: "Phase 2 작업" 표현 금지 / 백엔드 도입 후 자연 흡수 결함 별도 작업 안 함).</td>
+ <td>검수 신청 단계 공유 모델 반영, 토큰 모델 후속 정합</td>
  </tr>
  <tr>
  <td class="ver">v1.4</td>
  <td class="date">2026-04-28</td>
- <td><strong>데드코드 일괄 청소.</strong> i18n 미사용 키 116쌍(ko+en 232 entries) 제거 — 업로드 카피 키 UI 폐기 47개·작품 상세 카피 키 8개·작품 문의 카피 키 5개·설정 카피 키 14개·검색 카피 키 9개 등. shadcn/ui 미사용 컴포넌트 26개(accordion·alert·calendar·carousel·command·form·sheet·sidebar·skeleton·sonner 등) 일괄 삭제. sanctionStore.ts 모듈 폐기(Phase 2 이관 메모리 규칙 정합). AdminGuard.tsx 화면·내부 식별자·내부 식별자 hook 미사용 export 제거. `ImageArtistAssignment.phoneNumber` 필드 + Upload·Profile의 항상 false 분기 정리(토큰 모델 정합). 화면 자체 변경 없음 — 본 업데이트는 코드 정합 작업이며 mockup·플로우엔 영향 없음.</td>
+ <td>미사용 i18n 키·컴포넌트 일괄 정리 (화면 변경 없음)</td>
  </tr>
  <tr>
  <td class="ver">v1.3</td>
  <td class="date">2026-04-27</td>
- <td><strong>토큰 모델 코드 구현 완료 + 후속 카피·시스템 정합 + Nielsen 휴리스틱 fix 반영.</strong> (1) USR-AUT-10b 본인 작품 찾기 카피 안심 톤 정정 (위협 X), 카드 1개 안전 신호·스킵 안심 토스트·동시 선택 race 카피 추가. (2) USR-EXH-03 초대장 랜딩 4상태 분기 (활성·검수 중·취소·만료/불일치) + 만료 카피 시니어 친화 정정. (3) USR-UPL-08 발행 직전 확인 모달 deprecated (코드 제거, UPL-10·PRF-05 InviteShareButton으로 흡수). (4) 04-B 자동 연결 흐름에 자동 비공개·재승인 시 토큰 동기화 분기 추가. (5) "공유" → "초대 링크 보내기" 카피 통일. 정책 §3 v2.14 + §32 cascade #11 + §3.4 작가 탈퇴/자동 비공개 시 토큰 revoke·deactivate 정합.</td>
+ <td>토큰 모델 후속 카피·플로우 정합, 초대장 랜딩 4상태 분기</td>
  </tr>
  <tr>
  <td class="ver">v1.2</td>
  <td class="date">2026-04-26</td>
- <td>화면 mockup을 모바일 → PC 와이어프레임으로 교체(1280px 기준). 플로우차트(04-A/B/C)는 표준 순서도 기호에서 단순 네모박스로 재통일. <strong>PC 와이어프레임 86개 mockup 완성</strong> — 사용자 63개(USR-AUT 14·BRW 1·EXH 6·UPL 10·PRF 14·EVT 3·SRC 2·NTF 1·STG 5·INF 7) + 운영 23개(DSH·REV 3·PCK 3·CUR 2·BNR 2·EVT 3·RPT 3·MBR 3·CKL·ISU·INQ). TOC 좌측 네비 14 그룹으로 재편.</td>
+ <td>PC 와이어프레임(1280px) 86개 mockup 완성, 플로우차트 재통일</td>
  </tr>
  <tr>
  <td class="ver">v1.1</td>
@@ -651,7 +650,7 @@
 
  <h4 style="margin-top: 36px; font-size: 13px; color: var(--ink-3); letter-spacing: .04em; text-transform: uppercase;">디바이스 버전 정책</h4>
  <p style="font-size: 13px; color: var(--ink-2); line-height: 1.8;">
- 본 v1.2는 <strong>PC 화면 기준</strong>. 1280px 기준 와이어프레임으로 그렸으며 데스크톱 브라우저에서 보는 사용자 흐름을 표현. <strong>모바일 버전(390px 기준)은 v1.x에서 별도 작성</strong>하여 본 문서와 연결될 예정. 일부 화면(전시 상세 모달 등)은 PC·모바일 인터랙션이 다르므로 모바일 버전에서 별도 mockup 필요.
+ 본 v1.5는 <strong>PC 화면 기준</strong>. 1280px 기준 와이어프레임으로 그렸으며 데스크톱 브라우저에서 보는 사용자 흐름을 표현. 모바일 버전(390px 기준)은 별도 문서로 작성. 일부 화면(전시 상세 모달 등)은 PC·모바일 인터랙션이 다르므로 모바일 버전에서 별도 mockup 필요.
  </p>
  </div>
  <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>00 · History</span></div>
@@ -686,7 +685,7 @@
  <ul class="v-list">
  <li><strong>전시 단위</strong> — 작품 1점도 전시 1개. 갤러리의 격</li>
  <li><strong>자부심 모먼트</strong> — "내 그림이 전시되었다" 감각</li>
- <li><strong>그룹 전시</strong> — 동호회·강의 함께 올리기</li>
+ <li><strong>그룹 전시</strong> — 동호회·모임 함께 올리기</li>
  <li><strong>친구 초대</strong> — 본인 메신저로 직접 공유</li>
  <li><strong>시니어 친화</strong> — 큰 터치, 명확한 1차 CTA</li>
  </ul>
@@ -697,7 +696,7 @@
  <div class="label">총 화면 수 (사용자 64 + 운영 23)</div>
  <ul class="v-list" style="margin-top: 16px;">
  <li><strong>포함</strong> 가입·전시 발행·둘러보기·검색·프로필·신고·검수·응모전·공지</li>
- <li><strong>제외 (Phase 2)</strong> 댓글·메시지·실시간·결제·작품 거래</li>
+ <li><strong>추후 지원 예정</strong> 댓글·메시지·실시간·결제·작품 거래</li>
  <li><strong>관망 (런칭 전)</strong> 실 소셜 로그인·이메일/SMS 발송·토큰 백엔드</li>
  </ul>
  </div>
@@ -943,7 +942,7 @@
  </div>
  </div>
 
- <div class="flow-note">📍 핵심: 작가 승인 게이트 없음. 즉시 자동 연결 옵션도 없음(항상 명시 클릭). 잘못 연결 시 가입자가 카톡 등으로 작가에게 알리고, 작가가 마이페이지에서 풀기. 자동 비공개 트리거는 Policy §12.2 v2.20에 따라 폐기 — 운영팀 직접 판정만.</div>
+ <div class="flow-note">📍 핵심: 작가 승인 게이트 없음. 즉시 자동 연결 옵션도 없음(항상 명시 클릭). 잘못 연결 시 가입자가 카톡 등으로 작가에게 알리고, 작가가 마이페이지에서 풀기. 운영팀이 직접 판정한다.</div>
  </div>
  </div>
  <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>04-B · 자동 연결 순서도</span></div>
@@ -1072,7 +1071,7 @@
  <li>대시보드 <code>DSH-01</code></li>
  <li>검수 큐·검수 상세·반려 사유 <code>REV-01~03</code></li>
  <li>Pick 대시보드·검색·이력 <code>PCK-01~03</code></li>
- <li>큐레이션·추천 작가 <code>CUR-01·02</code></li>
+ <li>큐레이션(기획전 CUR-01 · 추천 전시 CUR-02)</li>
  <li>배너 목록·편집 <code>BNR-01·02</code></li>
  <li>응모전 목록·편집·참여자 <code>EVT-01~03</code></li>
  </ul>
@@ -1175,11 +1174,11 @@
  <div class="callout"><strong>온보딩에서 시각적 학습</strong><br>"여기는 디지털 갤러리예요" 화면에서 1점 전시 / 6점 전시 예시 카드 2개를 같은 형식·같은 무게로 보여줌.</div>
  </div></div>
  <div class="policy"><div class="label">전시 유형</div><div class="body">
- <ul><li><strong>혼자 올리기 (개인전)</strong> — 본인 작품만</li><li><strong>함께 올리기 (그룹전)</strong> — 동호회·강의·지인. 그룹명 필수</li></ul>
+ <ul><li><strong>혼자 올리기 (개인전)</strong> — 본인 작품만</li><li><strong>함께 올리기 (그룹전)</strong> — 동호회·모임·지인. 그룹명 필수</li></ul>
  </div></div>
  <div class="policy"><div class="label">그룹 전시 성립 조건</div><div class="body">
- <p>게시자 외 <strong>참여 작가 2명 이상</strong> 배정 시 그룹 전시 성립.</p>
- <ul><li>게시자 본인 작품 포함 여부는 무관</li><li>게시자 외 참여 작가 2명 미만이면 발행 시 개인 전시 전환 다이얼로그</li></ul>
+ <p>총 작가 <strong>2명 이상</strong> (= 게시자 외 참여 작가 1명 이상) 시 그룹 전시 성립.</p>
+ <ul><li>게시자 본인 작품 포함 여부는 무관</li><li>게시자 외 0명 → 개인전 전환 다이얼로그</li><li>총 1명이고 게시자 본인 작품 없음 → 발행 차단</li></ul>
  </div></div>
  <div class="policy"><div class="label">참여 작가 슬롯</div><div class="body">
  <ul><li><strong>회원</strong> — 가입한 작가가 명시적으로 연결됨</li><li><strong>비회원</strong> — 작가의 표시명만</li><li><strong>작가 미상</strong> — 작가 정보가 풀린 상태</li></ul>
@@ -1226,9 +1225,9 @@
  <div class="slide-head"><div><div class="crumb">07 · 공통 정책</div><h2>신고·모더레이션</h2></div><div class="meta"><span class="ver">v1.2</span></div></div>
  <div class="policy"><div class="label">신고 단위</div><div class="body"><p>Phase 1은 <strong>전시 단위 모더레이션만</strong>. 사용자 계정 차원 제재는 Phase 2.</p></div></div>
  <div class="policy"><div class="label">사용자 신고 흐름</div><div class="body"><p>전시 상세에서 "신고" → <strong>단일 사유 안내</strong>(고정 라벨) + 선택 상세(200자) → 운영팀 큐로 접수. 사전 카테고리 라디오 없음.</p></div></div>
- <div class="policy"><div class="label">자동 비공개 트리거</div><div class="body"><div class="callout warn">Policy §12.2 v2.20에 따라 <strong>폐기</strong>. 모든 신고는 운영팀이 직접 판정한다(2번째 신고 즉시 자동 비공개 트리거 없음).</div></div></div>
+ <div class="policy"><div class="label">자동 비공개 트리거</div><div class="body"><div class="callout warn"><strong>폐기됨</strong>. 모든 신고는 운영팀이 직접 판정한다.</div></div></div>
  <div class="policy"><div class="label">운영팀 처리 액션</div><div class="body">
- <ul><li><strong>삭제</strong> — 작품 영구 삭제. 사유 4종 한정(저작권 침해 / 위법 / 청소년 유해 / 어뷰즈) + 자유 메모, 운영자 감사 로그 5년 보관</li><li><strong>기각</strong> — 비공개 유지 처리 상태였다면 즉시 복원</li><li><strong>비공개 유지</strong> — 둘러보기·검색 제외(작가 본인 프로필엔 노출). 작가가 수정 후 재검수 요청 가능</li><li><strong>큐에서 제거</strong> — 액션 없이 정리(레거시 호환)</li></ul>
+ <ul><li><strong>삭제</strong> — 작품 영구 삭제. 사유 4종 한정(저작권 침해 / 위법 / 청소년 유해 / 어뷰즈) + 자유 메모, 운영자 감사 로그 5년 보관</li><li><strong>기각</strong> — 비공개 유지 처리 상태였다면 즉시 복원</li><li><strong>비공개 유지</strong> — 둘러보기·검색 제외(작가 본인 프로필엔 노출). 작가가 수정 후 재검수 요청 가능</li><li><strong>큐에서 제거</strong> — 액션 없이 정리</li></ul>
  </div></div>
  <div class="policy"><div class="label">작가 알림</div><div class="body"><p>운영팀 처리 결과(삭제·비공개 유지·기각 후 복원)를 작가에게 시스템 알림. 「삭제」 알림에는 사유 라벨 동봉.</p></div></div>
  </div>
@@ -1451,7 +1450,7 @@
  <dl>
  <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> USR-AUT-02 "로그인 하기" · 경로 /login?mode=email</dd>
  <dt></dt><dd><strong>플로우</strong> 이메일 입력 → 매직 링크 발송 → 메일에서 링크 클릭 → USR-AUT-08 콜백 → 로그인 완료</dd>
- <dt></dt><dd><strong>비밀번호 없음</strong> Phase 1은 매직 링크 단일</dd>
+ <dt></dt><dd><strong>비밀번호 없음</strong> 이메일 매직 링크 방식만 지원</dd>
  </dl>
 
  <h3>구성 요소</h3>
@@ -1529,7 +1528,7 @@
  <dl>
  <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> USR-AUT-02 "이메일로 가입하기" · 경로 /signup?step=1</dd>
  <dt></dt><dd><strong>플로우</strong> 이메일 입력 → 매직 링크 발송 → 콜백(USR-AUT-08) → Step 2 이동</dd>
- <dt></dt><dd><strong>비밀번호 없음</strong> Phase 1 매직 링크 단일</dd>
+ <dt></dt><dd><strong>비밀번호 없음</strong> 이메일 매직 링크 방식만 지원</dd>
  </dl>
 
  <h3>구성 요소</h3>
@@ -1744,7 +1743,7 @@
  <li>완료 직후 단말 임시 보관 키 생성, USR-AUT-09 진입</li>
  </ol></div>
 
- <div class="pol"><h4>관련 정책</h4>가입 약관 (L-1~L-4) · 가입·인증 (07-2)</div>
+ <div class="pol"><h4>관련 정책</h4>가입 약관 동의 (필수 2종 + 선택 2종) · 가입·인증 (07-2)</div>
  </div>
  </div>
  </div>
@@ -1819,7 +1818,7 @@
 
  <h3>구성 요소</h3>
  <dl>
- <dt><span class="bub">1</span></dt><dd>닉네임 — 소셜 프로필에서 자동 채움, 가입 단계에서만 수정 가능. 2~20자·비속어 필터 + **전역 unique 검사** (활성·탈퇴 잠금·운영팀 변경 이력 모두에 대해 충돌). 가입 완료 후엔 본인 변경 불가 — USR-PRF-02 SSoT</dd>
+ <dt><span class="bub">1</span></dt><dd>닉네임 — 소셜 프로필에서 자동 채움, 가입 단계에서만 수정 가능. 2~20자·비속어 필터 + **전역 unique 검사** (활성·탈퇴 잠금·운영팀 변경 이력 모두에 대해 충돌). 가입 완료 후엔 본인 변경 불가</dd>
  <dt><span class="bub">2</span></dt><dd>약관 — 이메일 가입과 동일 4종(필수 2 + 선택 2). 모달 내부에서 압축 표시</dd>
  <dt><span class="bub">3</span></dt><dd>가입 완료 → USR-AUT-09 (온보딩 진입)</dd>
  </dl>
@@ -1889,7 +1888,7 @@
  <div class="desc">
  <h3>화면 정보</h3>
  <dl>
- <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> 메일 링크 클릭 → 경로 /auth/verify?token=… (QA: `?demo=expired` · `?demo=invalid`)</dd>
+ <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> 매직 링크 메일의 버튼 클릭 → 토큰 자동 검증 처리</dd>
  <dt></dt><dd><strong>화면 자체는 거의 안 보임</strong> 검증·이동이 즉각 일어나야 자연스러움. 만 만료·오류 시에만 화면 잔류</dd>
  </dl>
 
@@ -1902,10 +1901,7 @@
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
- <li>토큰 검증은 서버 측. Phase 1은 브라우저 로컬 모의(매직 링크 토큰 스토어)</li>
- <li>이미 사용된 토큰은 즉시 무효 처리</li>
- <li>QA용 `?demo=` 파라미터로 각 상태 직접 확인 가능</li>
- <li>리다이렉트는 SPA 내부 라우팅 (page reload X)</li>
+ <li>이미 사용된 링크는 즉시 무효 처리</li>
  </ol></div>
 
  <div class="pol"><h4>관련 정책</h4>매직 링크 · 가입·인증 (07-2)</div>
@@ -2081,11 +2077,10 @@
  <li>예시 카드 2개가 같은 형식·같은 무게로 표시</li>
  <li>PC: 2열 가로 배치. 모바일(별도 버전): 1열 세로</li>
  <li>이전·다음 버튼 클릭 영역 충분</li>
- <li>예시 이미지는 Phase 1 그라디언트 placeholder, Phase 2에 실제 작품 thumbnail 교체 검토</li>
+ <li>예시 이미지는 현재 그라디언트 placeholder 사용, 추후 실제 작품 썸네일로 교체 예정</li>
  <li>한·영 모두 자연스러운 번역</li>
  </ol></div>
 
- <div class="change-log"><strong>v1.0 변경</strong>온보딩 단계 신설. 시니어가 Artier만의 개념을 시각적으로 학습</div>
  <div class="pol"><h4>관련 정책</h4>전시 단위 (07-4) · 시니어 친화 (07-3)</div>
  </div>
  </div>
@@ -2174,12 +2169,12 @@
 
  <div class="ac"><h4>완성 기준</h4><ol>
  <li>닉네임·생년월일 모두 입력해야 "다음" 활성</li>
- <li>전화번호·지역(region)·실명은 묻지 않음 (Phase 1 정책)</li>
+ <li>전화번호·지역·실명은 묻지 않음</li>
  <li>프로필 사진 5MB 초과 시 안내</li>
  <li>완료 시 AP +30 적립</li>
  </ol></div>
 
- <div class="pol"><h4>관련 정책</h4>가입·인증 §2.1 (Policy) · 만 14세 §2.2 · 포인트 §7.2</div>
+ <div class="pol"><h4>관련 정책</h4>가입·인증 (07-2) · 만 14세 미만 가입 불가 · 가입 완료 시 활동 포인트 20 지급</div>
  </div>
  </div>
  </div>
@@ -2288,7 +2283,6 @@
  <li>"여기 없어요" 시 슬롯 미연결, 가입 정상 완료</li>
  </ol></div>
 
- <div class="change-log"><strong>v1.3 변경</strong>안심 톤 카피로 전환 (위협 X), "어떻게 알릴지" 구체화 (카톡·문자), 카드 1개 안전 신호 + 스킵 안심 토스트 추가</div>
  <div class="pol"><h4>관련 정책</h4>비회원 초대 (07-5)</div>
  </div>
  </div>
@@ -2364,8 +2358,6 @@
  <div class="ac"><h4>완성 기준</h4><ol>
  <li>컨페티는 1회만 재생 (페이지 재방문 시 재생 X)</li>
  <li>"작가님" 호칭은 한국어, 영어는 ", [name]"</li>
- <li>완료 시 `artier_pending_signup_*` 임시 키 일괄 정리</li>
- <li>단말 보관 키 플래그 저장</li>
  </ol></div>
 
  <div class="pol"><h4>관련 정책</h4>전시 단위 (07-4) · 시니어 친화 (07-3)</div>
@@ -2395,14 +2387,14 @@
  <div style="display: inline-block; padding: 6px 14px; background: #fef2f2; border: 1px solid #dc2626; color: #991b1b; border-radius: 14px; font-size: 11px; font-weight: 700; margin-bottom: 20px;">PHASE 2 이관</div>
  <div style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">계정 정지 안내 화면</div>
  <div style="font-size: 13px; color: var(--ink-2); line-height: 1.7;">
- 사용자 계정 차원 제재(주의·시한부 정지·영구 정지·경고/허위 신고 카운터)는 Phase 1 범위 밖.<br>
- Phase 2 사용자 제재 재설계 시 이 화면을 mockup으로 보강합니다.
+ 사용자 계정 차원 제재(주의·시한부 정지·영구 정지·경고/허위 신고 카운터)는 현재 버전에서 지원하지 않음.<br>
+ 추후 버전에서 구현 예정입니다.
  </div>
- <div style="margin-top: 18px; font-size: 11px; color: var(--ink-3);">관련: 계정 제재 등 Phase 1 범위 밖 항목 · Phase 2 이관</div>
+ <div style="margin-top: 18px; font-size: 11px; color: var(--ink-3);">관련: 계정 제재는 추후 지원 예정</div>
  </div>
  </div>
  </div>
- <div class="placeholder-note">Phase 1 범위 밖 — 빈 화면 자리만 예약</div>
+ <div class="placeholder-note">추후 지원 예정 — 빈 화면 자리만 예약</div>
  </div>
 
  <div class="desc">
@@ -2413,7 +2405,7 @@
  <dt></dt><dd><strong>이관 항목</strong> 정지 모달 디자인·정지 단계 정의·이의제기 진입점·SLA — 런칭 전 백엔드 연동 후 재설계 시 함께 정합</dd>
  </dl>
 
- <div class="pol"><h4>관련 정책</h4>계정 제재 · Phase 2 이관 — 작품 단위 신고·모더레이션(§12.0~§12.2)과 별개</div>
+ <div class="pol"><h4>관련 정책</h4>계정 제재는 추후 버전에서 지원 예정 — 전시 단위 신고·모더레이션(07-6)과 별개</div>
  </div>
  </div>
  </div>
@@ -2437,7 +2429,7 @@
  <div class="viewport">
  <div class="pc-header" style="position: relative;">
  <span class="logo">Artier</span>
- <div class="nav"><span class="active">홈</span><span>둘러보기</span><span>응모전</span><span>공지</span></div>
+ <div class="nav"><span class="active">홈</span><span>둘러보기</span><span>이벤트</span><span>공지</span></div>
  <div class="actions"><span>🔍</span><span>🔔</span><span>👤</span></div>
  <span class="bub" style="position: absolute; top: -10px; right: 0;">1</span>
  </div>
@@ -2690,21 +2682,21 @@
 
  <h3>구성 요소</h3>
  <dl>
- <dt><span class="bub">1</span></dt><dd>본인 한정 상단 배너 — 상태별(<code>pending</code>: 회색 / <code>rejected</code>: 빨강 / <code>hidden</code>: 주황). 외부엔 모달 진입 차단 또는 정상 노출</dd>
+ <dt><span class="bub">1</span></dt><dd>본인 한정 상단 배너 — 상태별(검수 대기: 회색 / 반려됨: 빨강 / 비공개 유지: 주황). 외부엔 모달 진입 차단 또는 정상 노출</dd>
  <dt><span class="bub">2</span></dt><dd>Pick 배지 — 공개. ADM-PCK-01에서 운영자가 부여. 영구 이력</dd>
- <dt><span class="bub">3</span></dt><dd>검수 상태 배지 — 본인 한정. 4종(공개·검수 대기·반려·비공개 유지) — Policy §23.0 v2.20</dd>
+ <dt><span class="bub">3</span></dt><dd>검수 상태 배지 — 본인 한정. 4종(공개·검수 대기·반려·비공개 유지)</dd>
  </dl>
 
  <div class="callout info">검수 중 / 반려됨 / 비공개 상태에서 본인이 모달 열면 위 배너가 자동 노출. 일반 외부 사용자는 비공개 전시 자체에 접근 불가.</div>
 
  <div class="ac"><h4>완성 기준</h4><ol>
- <li>본인 = <code>work.artistId === currentUser.id</code> 일 때만 검수 배지·안내 배너 노출</li>
+ <li>본인 전시일 때만 검수 배지·안내 배너 노출</li>
  <li>Pick 배지는 공개. 모든 사용자에게 동일 표시</li>
- <li><code>rejected</code> 상태는 외부 모달 진입 자체를 차단(USR-PRF-12로 우회)</li>
+ <li>반려됨 상태에서는 외부 사용자 모달 진입 차단 (반려 안내 화면으로 유도)</li>
  <li>본인엔 신고 진입점 비노출, 외부엔 노출</li>
  </ol></div>
 
- <div class="pol"><h4>관련 정책</h4>검수 SLA · Pick (§15.3)</div>
+ <div class="pol"><h4>관련 정책</h4>검수 처리 24시간 이내 목표 · Pick 선정 (운영팀 직접 배지 부여)</div>
  </div>
  </div>
  </div>
@@ -2787,7 +2779,7 @@
  <li>운영자가 ADM-CUR-01에서 만든 큐레이션만 노출</li>
  <li>기간 만료 후엔 "종료된 기획전" 배지로 변경</li>
  <li>작가 리본 클릭 → USR-PRF-01</li>
- <li>관련 전시 섹션 하단에 추가(Phase 1.1)</li>
+ <li>관련 전시 섹션 하단에 추가</li>
  </ol></div>
 
  <div class="pol"><h4>관련 정책</h4>큐레이션·배지</div>
@@ -2874,10 +2866,9 @@
  <li>1차 CTA → 가입 흐름 → "본인 작품 찾기"로 자동 이동</li>
  <li>"그냥 둘러볼게요" → 일반 전시 상세</li>
  <li>이미 회원인 사람 → 로그인 후 바로 "본인 작품 찾기"</li>
- <li>검색엔진 인덱싱 차단 메타 (단, Phase 1 한계)</li>
+ <li>검색엔진 인덱싱 차단 메타 (단, 일부 검색엔진 봇은 차단되지 않을 수 있음)</li>
  </ol></div>
 
- <div class="change-log"><strong>v1.3 변경</strong>토큰 만료/취소 카피 시니어 친화 정정 ("다시 받아주세요" → "새 링크를 부탁해 주세요"). 4상태 분기 (활성·검수 중·취소·만료/불일치) 명시. 자동 비공개 시 토큰 자동 inactive 동기화</div>
  <div class="pol"><h4>관련 정책</h4>비회원 초대 (07-5)</div>
  </div>
  </div>
@@ -2936,7 +2927,7 @@
  <dl>
  <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> USR-EXH-01 모달 / USR-PRF-01 점점점 → "신고"</dd>
  <dt></dt><dd><strong>중복 신고</strong> 같은 사용자가 같은 작품 재신고 차단 (단말 보관 키)</dd>
- <dt></dt><dd><strong>접수 후 처리</strong> 운영팀 큐로 전송 — Policy §12.1 3액션(삭제·기각·비공개 유지) 중 직접 판정. 자동 비공개 트리거는 §12.2 v2.20 폐기</dd>
+ <dt></dt><dd><strong>접수 후 처리</strong> 운영팀 큐로 전송 — 삭제·기각·비공개 유지 중 직접 판정.</dd>
  </dl>
 
  <h3>구성 요소</h3>
@@ -3072,7 +3063,7 @@
  <div style="border: 1.5px solid var(--line-2); padding: 22px; border-radius: 10px; background: #fafafa; position: relative;">
  <div style="font-size: 28px; margin-bottom: 8px;">👥</div>
  <div style="font-size: 15px; font-weight: 700; margin-bottom: 6px;">함께 올리기</div>
- <div style="font-size: 11px; color: var(--ink-3); line-height: 1.6;">동호회·클래스·친구의 작품을 하나의 그룹 전시로 묶어요.</div>
+ <div style="font-size: 11px; color: var(--ink-3); line-height: 1.6;">동호회·모임·친구의 작품을 하나의 그룹 전시로 묶어요.</div>
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">2</span>
  </div>
  </div>
@@ -3183,7 +3174,8 @@
  <div class="ac"><h4>완성 기준</h4><ol>
  <li>이미지 1~10장. 외 차단 + 토스트</li>
  <li>전시 제목 빈 값 → 에러</li>
- <li>그룹전 + 게시자 외 참여 작가 2명 미만 → 개인 전시 전환 다이얼로그</li>
+ <li>그룹전 + 게시자 외 0명 → 개인 전시 전환 다이얼로그</li>
+ <li>그룹전 + 총 1명이고 게시자 본인 작품 없음 → 발행 차단</li>
  <li>발행 후 24h 이내 삭제 시 활동 포인트 회수</li>
  <li>발행 직전 비회원 슬롯 있으면 미리보기 모달</li>
  <li>발행 중 페이지 이탈 → 이탈 방지 다이얼로그</li>
@@ -3257,7 +3249,7 @@
  <div class="desc">
  <h3>화면 정보</h3>
  <dl>
- <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> USR-PRF-12 반려 사유 모달 → "수정하기" → 경로 /upload?edit=&lt;workId&gt; (feedReviewStatus='rejected')</dd>
+ <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> 반려 사유 모달 → "수정하기" 클릭 → 반려 컨텍스트 업로드 편집 화면 진입</dd>
  <dt></dt><dd><strong>차이점</strong> 일반 USR-UPL-03과 같은 화면이지만 반려 컨텍스트 진입 시 인라인 배너·라벨이 자동 분기</dd>
  </dl>
 
@@ -3276,13 +3268,12 @@
  </div>
 
  <div class="ac"><h4>완성 기준 (재발행 시 동작)</h4><ol>
- <li><code>rejectionReason</code>을 <code>null</code>로 초기화 (현재 사유 사라짐)</li>
- <li><code>rejectionHistory</code>는 <strong>보존</strong> (누적 이력)</li>
- <li>이미지 변경 여부에 따라 <code>feedReviewStatus</code> 전이(<code>pending</code> 복귀 또는 <code>approved</code> 즉시)</li>
+ <li>현재 반려 사유 초기화, 누적 반려 이력은 보존</li>
+ <li>이미지 변경 여부에 따라 검수 재요청 또는 즉시 승인</li>
  <li>"다시 검수가 시작되었어요" 인앱 토스트</li>
  </ol></div>
 
- <div class="pol"><h4>관련 정책</h4>반려 사유 이력 · 검수 트리거 매트릭스 (§12.1.2)</div>
+ <div class="pol"><h4>관련 정책</h4>반려 사유 이력 보존 · 이미지 변경 시 재검수 자동 트리거, 텍스트만 변경 시 즉시 승인</div>
  </div>
  </div>
  </div>
@@ -3361,7 +3352,6 @@
  <dt><span class="bub">3</span></dt><dd>커버 — 업로드 이미지 중 선택 또는 별도 파일 업로드</dd>
  <dt><span class="bub">4</span></dt><dd>원작 확인 체크박스 — 혼자=원작 / 함께=참여 작가 동의</dd>
  </dl>
- <div style="font-size: 10.5px; color: var(--ink-3); margin-top: 8px; padding: 8px; background: #fef3c7; border-left: 3px solid #f59e0b; border-radius: 0 4px 4px 0;"><strong>변경(2026-05-04)</strong>: USR-UPL-02 일반 업로드는 응모전 응모 진입점이 아님. 응모전 응모 모달(USR-EVT-04)은 별도 슬라이드 — Phase 1 코드 구현 후 슬라이드 작성 예정.</div>
 
  <div class="ac"><h4>완성 기준</h4><ol>
  <li>전시명 20자 초과 차단</li>
@@ -3676,7 +3666,7 @@
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
- <li>새로고침·창 닫기에도 동작 (`beforeunload`)</li>
+ <li>새로고침·창 닫기 시에도 이탈 방지 동작</li>
  <li>"초안 저장" → USR-PRF-10 초안 탭으로 이동</li>
  <li>"나가기" 클릭 시 한 번 더 확인하지 않음 (3 옵션 자체가 명확)</li>
  <li>모바일 ESC 또는 백 제스처도 동일 동작</li>
@@ -3939,7 +3929,7 @@
 
  <h3>구성 요소</h3>
  <dl>
- <dt><span class="bub">1</span></dt><dd>닉네임 — readonly + "1:1 문의" 안내. 본인 변경 불가, 운영팀 1:1 문의 채널로만 (USR-PRF-02 SSoT)</dd>
+ <dt><span class="bub">1</span></dt><dd>닉네임 — 읽기 전용 + "1:1 문의" 안내. 본인 직접 변경 불가, 운영팀 문의로만 변경 가능</dd>
  <dt><span class="bub">2</span></dt><dd>headline 20자 + 바이오 200자</dd>
  <dt><span class="bub">3</span></dt><dd>관심사 칩 — 15종 토글(painting·drawing·digitalArt 등)</dd>
  <dt><span class="bub">4</span></dt><dd>외부 링크 6 플랫폼(IG·YT·FB·X·Pinterest·Vimeo)</dd>
@@ -3953,7 +3943,7 @@
  <li>"저장" 후 즉시 USR-PRF-01 새로고침 없이 반영</li>
  </ol></div>
 
- <div class="pol"><h4>관련 정책</h4>닉네임 정책 SSoT — PRD USR-PRF-02. 전역 unique·자율 변경 불가·운영팀 1:1 문의 채널·탈퇴 시 영구 잠금</div>
+ <div class="pol"><h4>관련 정책</h4>닉네임은 전체 고유값 · 본인 직접 변경 불가, 운영팀 문의 채널로만 · 탈퇴 후 동일 닉네임 재사용 불가</div>
  </div>
  </div>
  </div>
@@ -4170,15 +4160,14 @@
  <div class="callout info">검수 상태 배지(검수중·반려됨·비공개)는 <strong>본인에게만</strong> 보임. 타인이 보는 프로필에서는 승인된 전시만 노출. 비회원 슬롯 인디케이터도 본인에게만 노출.</div>
 
  <div class="ac"><h4>완성 기준</h4><ol>
- <li>4종 상태 배지 자동 분기 (공개·검수 대기·반려·비공개 유지) — Policy §23.0 v2.20</li>
- <li>점점점 메뉴는 본인 + 작성자(`artistId === currentUser.id`)만</li>
+ <li>4종 상태 배지 자동 분기 (공개·검수 대기·반려·비공개 유지)</li>
+ <li>점점점 메뉴는 본인 전시에만 표시</li>
  <li>탈퇴 작가 프로필 클릭 시 "탈퇴한 작가예요" 안내 화면 표시</li>
- <li>본인 그룹전 + 비회원 슬롯 1+ 보유 카드는 비회원 자리 인디케이터 표시 (Nielsen 휴리스틱 H1·H6 가시성 보강)</li>
- <li>승인된 전시 + 비회원 슬롯 1+ 카드의 InviteShareButton 다이얼로그에 토큰 만료 D-N 노출 (초대 카피 키)</li>
+ <li>본인 그룹전 + 비회원 슬롯이 있는 카드는 "비어있는 자리" 인디케이터 표시</li>
+ <li>승인된 전시 + 비회원 슬롯이 있는 카드에서 초대 링크 공유 버튼 활성화, 만료 임박 시 잔여일 표시</li>
  </ol></div>
 
- <div class="pol"><h4>관련 정책</h4>작품명 편집 · 검수 SLA (§22.1) · 신고 (§12) · 비회원 초대 토큰 (§3 v2.14)</div>
- <div class="change-log"><strong>v1.3 변경</strong>비회원 슬롯 인디케이터 + 토큰 만료 D-N 가시성 추가 (Nielsen H1·H6).</div>
+ <div class="pol"><h4>관련 정책</h4>작품명 편집 · 검수 처리 24시간 이내 목표 · 신고 (07-6) · 비회원 초대 (07-5)</div>
  </div>
  </div>
  </div>
@@ -4253,7 +4242,7 @@
  <div class="ac"><h4>완성 기준</h4><ol>
  <li>썸네일 클릭 시 USR-PRF-14 (다크 뷰어) 진입</li>
  <li>점점점 메뉴 미노출 (수정·삭제 진입점 없음)</li>
- <li>동일 이미지 다중 전시 포함 시 중복 표시 (Phase 2 그룹화)</li>
+ <li>동일 이미지 다중 전시 포함 시 중복 표시 (추후 그룹화 지원 예정)</li>
  </ol></div>
 
  <div class="pol"><h4>관련 정책</h4>작품명 편집 · 자가 해제</div>
@@ -4562,7 +4551,7 @@
  <li>자동 포커스</li>
  </ol></div>
 
- <div class="pol"><h4>관련 정책</h4>작품명 편집 권한 · 빈값 표시 (§9.2)</div>
+ <div class="pol"><h4>관련 정책</h4>작품명 편집 권한 · 미입력 시 "제목 없음" 표시</div>
  </div>
  </div>
  </div>
@@ -4634,7 +4623,7 @@
  <li>재발행 후 반려 사유 null 초기화. 반려 이력는 영구 보존</li>
  </ol></div>
 
- <div class="pol"><h4>관련 정책</h4>반려 사유 이력 · 검수 (§12)</div>
+ <div class="pol"><h4>관련 정책</h4>반려 사유 이력 보존 · 신고·검수 (07-6)</div>
  </div>
  </div>
  </div>
@@ -4689,7 +4678,7 @@
  <h3>화면 정보</h3>
  <dl>
  <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> USR-PRF-05/07 점점점 삭제 또는 USR-PRF-10 초안 삭제</dd>
- <dt></dt><dd><strong>패턴</strong> CM-01 ConfirmDialog `destructive: true` (브라우저 confirm 금지)</dd>
+ <dt></dt><dd><strong>패턴</strong> 삭제 확인 다이얼로그 — 빨간 버튼 강조형 (브라우저 기본 confirm 사용 금지)</dd>
  </dl>
 
  <h3>구성 요소</h3>
@@ -4708,7 +4697,7 @@
  <li>ESC·바깥 탭으로도 닫힘 (취소와 동일)</li>
  </ol></div>
 
- <div class="pol"><h4>관련 정책</h4>초대 토큰 만료 · AP 회수 (§7.2) · 사용자 자가 삭제 활성 게시 경고 (§32.2)</div>
+ <div class="pol"><h4>관련 정책</h4>초대 링크 만료 · 전시 삭제 시 활동 포인트 회수 · 활성 Pick·기획전 게시 중 삭제 시 경고</div>
  </div>
  </div>
  </div>
@@ -4857,7 +4846,7 @@
  <div class="ac"><h4>완성 기준</h4><ol>
  <li>"참여하기" → USR-UPL-02 `?event=&lt;id&gt;`</li>
  <li>"알림 받기"·"알림 해지" → USR-EVT-03 모달</li>
- <li>종료 응모전은 회색 + 클릭 시 결과 페이지 (Phase 2)</li>
+ <li>종료 응모전은 회색 + 클릭 시 결과 페이지 (추후 지원 예정)</li>
  </ol></div>
  </div>
  </div>
@@ -4923,14 +4912,16 @@
  <h3>구성 요소</h3>
  <dl>
  <dt><span class="bub">1</span></dt><dd>상태 + D-day — 진행/예정/종료 자동</dd>
- <dt><span class="bub">2</span></dt><dd>참여하기 → USR-UPL-02 `?event=<id>` 컨텍스트 자동 주입</dd>
+ <dt><span class="bub">2</span></dt><dd>CTA — 미응모: "참여하기" / 응모 후: "내 응모작 보기" + "응모 취소" / 종료: 비활성</dd>
  <dt><span class="bub">3</span></dt><dd>참여 작품 그리드 — 카드 탭 시 USR-EXH-01</dd>
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
- <li>중복 참여는 1인 1전시 제한 (정책 따라 조정)</li>
- <li>종료 후엔 "참여하기" 버튼 비활성</li>
- <li>예정 상태는 "알림 받기"로 대체</li>
+ <li>미응모 + 진행 중 → "참여하기" 버튼</li>
+ <li>응모 후 → "내 응모작 보기"(모달) + "응모 취소" 버튼</li>
+ <li>응모 취소 확인 다이얼로그 → 확인 시 작품 삭제, 재응모 가능 상태 복귀</li>
+ <li>종료 후 → 버튼 비활성</li>
+ <li>응모작은 피드·마이페이지 미노출 (응모전 상세에서만 확인)</li>
  </ol></div>
 
  <div class="pol"><h4>관련 정책</h4>응모전·응모</div>
@@ -5029,7 +5020,7 @@
  <h3>화면 정보</h3>
  <dl>
  <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> 경로 /search 빈 쿼리 진입</dd>
- <dt></dt><dd><strong>스토리지</strong> 로그인 시 `artier_recent_searches__<slug>`, 비로그인 시 `__guest`</dd>
+ <dt></dt><dd>최근 검색어 — 로그인 계정별 / 비로그인 공용으로 각각 저장</dd>
  </dl>
 
  <h3>구성 요소</h3>
@@ -5197,15 +5188,14 @@
 
  <h3>구성 요소</h3>
  <dl>
- <dt><span class="bub">1</span></dt><dd>필터 — 읽음/안읽음 + 타입 칩 7종 (좋아요·팔로우·그룹 초대·팔로잉 신작·큐레이션·응모전·시스템). PRD USR-NTF-01 §1·§2 SSoT 정합</dd>
+ <dt><span class="bub">1</span></dt><dd>필터 — 읽음/안읽음 + 타입 칩 6종 (좋아요·팔로우·그룹 초대·큐레이션·응모전·시스템)</dd>
  <dt><span class="bub">2</span></dt><dd>알림 카드 — 타입별 아이콘·배경 색. 안 읽음은 명확한 배경, 읽음은 옅은 톤</dd>
  </dl>
 
- <div class="copy"><h4>메시지 템플릿 (PRD USR-NTF-01 §1 SSoT — 11종)</h4>
+ <div class="copy"><h4>알림 메시지 템플릿 (11종)</h4>
  <span class="copy-line">좋아요: "[작가명]님이 '작품명'을 좋아합니다"</span>
  <span class="copy-line">팔로우: "[작가명]님이 회원님을 팔로우합니다"</span>
  <span class="copy-line">그룹 초대: "[작가명]님이 회원님을 '전시명' 그룹 전시에 초대했어요"</span>
- <span class="copy-line">팔로잉 신작: "[작가명]님이 새 전시를 올렸어요"</span>
  <span class="copy-line">큐레이션 — Pick 선정: "축하해요! '전시명'이(가) Artier's Pick으로 뽑혔어요"</span>
  <span class="copy-line">큐레이션 — 기획전 선정: "회원님의 작품 '작품명'이(가) '기획전명' 기획전에 선정됐어요"</span>
  <span class="copy-line">응모전 — 선정: "축하해요! '전시명'이(가) '응모전명' 선정작으로 뽑혔어요"</span>
@@ -5292,7 +5282,7 @@
  <div class="slide-pad">
  <div class="slide-head">
  <div><div class="crumb">18 · 설정</div><h2>글꼴 크기 조절</h2></div>
- <div class="meta"><span class="role">USR</span><span class="id">USR-STG-04</span><span class="device">PC</span><span class="ver">v1.6 NEW</span></div>
+ <div class="meta"><span class="role">USR</span><span class="id">USR-STG-04</span><span class="device">PC</span><span class="ver">v1.5 NEW</span></div>
  </div>
 
  <div class="screen">
@@ -5362,13 +5352,13 @@
  <div style="display: flex; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; align-items: center;"><div style="flex: 1;"><div style="font-size: 13px; font-weight: 600;">좋아요</div><div style="font-size: 10.5px; color: var(--ink-3);">내 작품에 좋아요가 달리면</div></div><div style="width: 36px; height: 20px; background: var(--ink); border-radius: 12px; position: relative;"><div style="position: absolute; right: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></div></div></div>
  <div style="display: flex; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; align-items: center;"><div style="flex: 1;"><div style="font-size: 13px; font-weight: 600;">팔로우</div><div style="font-size: 10.5px; color: var(--ink-3);">새 팔로워가 생기면</div></div><div style="width: 36px; height: 20px; background: var(--ink); border-radius: 12px; position: relative;"><div style="position: absolute; right: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></div></div></div>
  <div style="display: flex; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; align-items: center;"><div style="flex: 1;"><div style="font-size: 13px; font-weight: 600;">그룹 초대</div><div style="font-size: 10.5px; color: var(--ink-3);">그룹전 참여 슬롯 매칭 시</div></div><div style="width: 36px; height: 20px; background: var(--ink); border-radius: 12px; position: relative;"><div style="position: absolute; right: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></div></div></div>
- <div style="display: flex; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; align-items: center;"><div style="flex: 1;"><div style="font-size: 13px; font-weight: 600;">팔로잉 신작</div><div style="font-size: 10.5px; color: var(--ink-3);">팔로우한 작가가 새 전시를 올리면</div></div><div style="width: 36px; height: 20px; background: var(--line); border-radius: 12px; position: relative;"><div style="position: absolute; left: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></div></div></div>
+ <div style="display: flex; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; align-items: center;"><div style="flex: 1;"><div style="font-size: 13px; font-weight: 600;">기획전 · Pick</div><div style="font-size: 10.5px; color: var(--ink-3);">Pick 선정, 기획전 등 하이라이트 알림</div></div><div style="width: 36px; height: 20px; background: var(--line); border-radius: 12px; position: relative;"><div style="position: absolute; left: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></div></div></div>
  <div style="display: flex; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; align-items: center;"><div style="flex: 1;"><div style="font-size: 13px; font-weight: 600;">마케팅</div><div style="font-size: 10.5px; color: var(--ink-3);">응모전·프로모션 안내 (이메일·알림톡·문자 자동 라우팅)</div></div><div style="width: 36px; height: 20px; background: var(--line); border-radius: 12px; position: relative;"><div style="position: absolute; left: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></div></div></div>
  </div>
  <div style="font-size: 10.5px; color: var(--ink-3); margin-top: 12px;">큐레이션(Pick·기획전 선정)·응모전(응모전 선정·공지)·시스템(검수 결과·초대 수락)은 본인 전시·계정에 직접 영향이라 끌 수 없는 강제 알림으로 발송돼요.</div>
  </div>
  </div>
- <div class="placeholder-note">5 토글 (좋아요·팔로우·그룹 초대·팔로잉 신작·마케팅) — 일부 ON, 일부 OFF 기본값. 시스템 알림 5종은 토글 없음</div>
+ <div class="placeholder-note">5 토글 (좋아요·팔로우·그룹 초대·기획전 Pick·마케팅) — 일부 ON, 일부 OFF 기본값. 시스템 알림 5종은 토글 없음</div>
  </div>
 
  <div class="desc">
@@ -5379,7 +5369,7 @@
 
  <h3>구성 요소</h3>
  <dl>
- <dt>—</dt><dd>5 토글 — 좋아요·팔로우·그룹 초대·팔로잉 신작·마케팅 (시스템 알림 5종은 토글 없음 — 검수·Pick·응모전 선정·응모전 공지·초대 수락)</dd>
+ <dt>—</dt><dd>5 토글 — 좋아요·팔로우·그룹 초대·기획전 Pick·마케팅 (시스템 알림 5종은 토글 없음 — 검수·Pick·응모전 선정·응모전 공지·초대 수락)</dd>
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
@@ -5456,7 +5446,7 @@
  <div style="background: white; width: 460px; max-height: 92%; overflow-y: auto; border-radius: 12px; padding: 24px 26px; box-shadow: 0 20px 50px rgba(0,0,0,.3); position: relative;">
  <div style="font-size: 17px; font-weight: 700; color: #dc2626; margin-bottom: 8px;">정말 탈퇴하시겠어요?</div>
  <div style="background: #fef2f2; border-left: 3px solid #dc2626; padding: 12px 14px; border-radius: 0 4px 4px 0; margin-bottom: 16px; position: relative;">
- <div style="font-size: 11.5px; color: #7f1d1d; line-height: 1.7;">탈퇴 시 모든 작품·전시·팔로우 관계가 <strong>영구 삭제</strong>되며 복구할 수 없어요.<br>업로드한 그룹전에서는 작가명이 "작가 미상"으로 표시됩니다.</div>
+ <div style="font-size: 11.5px; color: #7f1d1d; line-height: 1.7;">탈퇴 시 본인 작품 슬롯이 <strong>영구 삭제</strong>되며 복구할 수 없어요.<br>전시 컨테이너는 유지되며, 다른 작가 작품이 남아 있으면 계속 공개됩니다.</div>
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">1</span>
  </div>
  <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 6px;">탈퇴 사유</div>
@@ -5470,7 +5460,7 @@
  </div>
  <div style="display: flex; padding: 10px 12px; background: #fff7ed; border-radius: 6px; gap: 10px; align-items: flex-start; margin-bottom: 18px; position: relative;">
  <div style="width: 16px; height: 16px; background: var(--ink); color: white; border-radius: 3px; font-size: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 2px;">✓</div>
- <div style="font-size: 11.5px; color: #7c2d12; line-height: 1.6;">모든 데이터가 영구 삭제되는 점을 이해하고 동의합니다.</div>
+ <div style="font-size: 11.5px; color: #7c2d12; line-height: 1.6;">내 계정과 작품이 삭제되며 되돌릴 수 없음을 이해하고 동의합니다.</div>
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">3</span>
  </div>
  <div style="display: flex; gap: 8px;">
@@ -5492,18 +5482,18 @@
 
  <h3>구성 요소</h3>
  <dl>
- <dt><span class="bub">1</span></dt><dd>경고 — 영구 삭제 + 작가 미상 전환 안내</dd>
+ <dt><span class="bub">1</span></dt><dd>경고 — 본인 슬롯 삭제·전시 컨테이너 유지 안내</dd>
  <dt><span class="bub">2</span></dt><dd>탈퇴 사유 5택(PR 사용자 설정 §12.6) — 기타 선택 시 짧은 텍스트 입력</dd>
  <dt><span class="bub">3</span></dt><dd>동의 체크박스 — 이게 켜져야 빨강 버튼 활성</dd>
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
  <li>탈퇴 직후 세션 종료 → USR-AUT-02</li>
- <li>그룹전에서 본인 슬롯은 "작가 미상" 자동 변환</li>
+ <li>그룹전에서 본인 이미지 슬롯 삭제, 전시 컨테이너 유지</li>
  <li>사유는 운영 통계용으로 익명 저장</li>
  </ol></div>
 
- <div class="pol"><h4>관련 정책</h4>탈퇴 작가 · 매직 링크 (§2.5)</div>
+ <div class="pol"><h4>관련 정책</h4>탈퇴 작가 처리 · 이메일 매직 링크 인증 방식</div>
  </div>
  </div>
  </div>
@@ -5537,7 +5527,7 @@
  </div>
  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 28px;">
  <div style="padding: 16px; background: #fafafa; border-radius: 8px;"><div style="font-size: 22px; margin-bottom: 6px;">🖼️</div><div style="font-size: 12px; font-weight: 700; margin-bottom: 4px;">전시 단위</div><div style="font-size: 11px; color: var(--ink-3); line-height: 1.6;">한 점이어도 전시. 갤러리의 격을 그대로</div></div>
- <div style="padding: 16px; background: #fafafa; border-radius: 8px;"><div style="font-size: 22px; margin-bottom: 6px;">👥</div><div style="font-size: 12px; font-weight: 700; margin-bottom: 4px;">함께 올리기</div><div style="font-size: 11px; color: var(--ink-3); line-height: 1.6;">동호회·강의 그룹전을 손쉽게</div></div>
+ <div style="padding: 16px; background: #fafafa; border-radius: 8px;"><div style="font-size: 22px; margin-bottom: 6px;">👥</div><div style="font-size: 12px; font-weight: 700; margin-bottom: 4px;">함께 올리기</div><div style="font-size: 11px; color: var(--ink-3); line-height: 1.6;">동호회·모임 그룹전을 손쉽게</div></div>
  <div style="padding: 16px; background: #fafafa; border-radius: 8px;"><div style="font-size: 22px; margin-bottom: 6px;">🎨</div><div style="font-size: 12px; font-weight: 700; margin-bottom: 4px;">시니어 친화</div><div style="font-size: 11px; color: var(--ink-3); line-height: 1.6;">큰 글자·명확한 1차 CTA</div></div>
  </div>
  <div style="font-size: 12px; color: var(--ink-3); border-top: 1px solid var(--line); padding-top: 16px;">서비스 문의는 <span style="text-decoration: underline; color: var(--ink);">문의하기</span> 페이지로 연락 주세요.</div>
@@ -5843,7 +5833,7 @@
  <dt></dt><dd><strong>법무</strong> 데이터 내보내기·삭제 기능 런칭 전 필수</dd>
  </dl>
 
- <div class="pol"><h4>관련 정책</h4>법무 체크포인트 (L-2)</div>
+ <div class="pol"><h4>관련 정책</h4>개인정보 처리 법무 확인 필요 (런칭 전 법무팀 검토)</div>
  </div>
  </div>
  </div>
@@ -5922,7 +5912,7 @@
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
  <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">체크리스트</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">이슈</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
+ <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -5934,27 +5924,21 @@
  </div>
  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; position: relative;">
  <div style="border: 1px solid var(--line); border-radius: 8px; padding: 14px;">
- <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">미결 이슈</div>
- <div style="font-size: 26px; font-weight: 800;">12</div>
- <div style="font-size: 11px; color: #dc2626;">긴급 3 · 높음 5</div>
+ <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">신고 대기</div>
+ <div style="font-size: 26px; font-weight: 800; color: #dc2626;">3</div>
+ <div style="font-size: 11px; color: var(--ink-3);">미처리 신고 건수</div>
  </div>
  <div style="border: 1px solid var(--line); border-radius: 8px; padding: 14px;">
- <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">체크리스트 진행률</div>
- <div style="font-size: 26px; font-weight: 800;">68%</div>
- <div style="font-size: 11px; color: var(--ink-3);">총 47개 중 32개 완료</div>
+ <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">미답변 문의</div>
+ <div style="font-size: 26px; font-weight: 800;">7</div>
+ <div style="font-size: 11px; color: var(--ink-3);">신규 · 처리 중</div>
  </div>
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">2</span>
- </div>
- <div style="font-size: 11px; color: var(--ink-3); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 8px;">카테고리별 진행률</div>
- <div style="display: flex; flex-direction: column; gap: 6px;">
- <div style="display: flex; align-items: center; gap: 10px;"><div style="width: 70px; font-size: 11px; color: var(--ink-2);">법무</div><div style="flex: 1; height: 6px; background: var(--line); border-radius: 3px;"><div style="width: 30%; height: 100%; background: #dc2626; border-radius: 3px;"></div></div><div style="width: 36px; text-align: right; font-size: 11px; color: var(--ink-3);">3/10</div></div>
- <div style="display: flex; align-items: center; gap: 10px;"><div style="width: 70px; font-size: 11px; color: var(--ink-2);">QA</div><div style="flex: 1; height: 6px; background: var(--line); border-radius: 3px;"><div style="width: 80%; height: 100%; background: #059669; border-radius: 3px;"></div></div><div style="width: 36px; text-align: right; font-size: 11px; color: var(--ink-3);">8/10</div></div>
- <div style="display: flex; align-items: center; gap: 10px;"><div style="width: 70px; font-size: 11px; color: var(--ink-2);">콘텐츠</div><div style="flex: 1; height: 6px; background: var(--line); border-radius: 3px;"><div style="width: 90%; height: 100%; background: #059669; border-radius: 3px;"></div></div><div style="width: 36px; text-align: right; font-size: 11px; color: var(--ink-3);">9/10</div></div>
  </div>
  </div></main>
  </div>
  </div>
- <div class="placeholder-note">차단 요소 + 지표 카드 + 카테고리 진행률</div>
+ <div class="placeholder-note">차단 요소 + 운영 현황 카드</div>
  </div>
 
  <div class="desc">
@@ -5965,8 +5949,8 @@
 
  <h3>구성 요소</h3>
  <dl>
- <dt><span class="bub">1</span></dt><dd>차단 요소 경고 — 빨강 박스. ADM-CKL 항목 중 "차단됨" 상태 자동 집계</dd>
- <dt><span class="bub">2</span></dt><dd>지표 카드 — 미결 이슈 + 체크리스트 진행률</dd>
+ <dt><span class="bub">1</span></dt><dd>런칭 전 필수 확인 사항 — 빨강 박스. 법무·외부 연동 등 미완료 항목</dd>
+ <dt><span class="bub">2</span></dt><dd>운영 현황 카드 — 신고 대기 건수 + 미답변 문의 건수</dd>
  </dl>
  </div>
  </div>
@@ -5992,7 +5976,7 @@
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
  <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">체크리스트</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">이슈</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
+ <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -6043,7 +6027,7 @@
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
- <li>대기 건은 SLA 카운터(1~24시간)와 함께 시각화</li>
+ <li>대기 건 업로드 시간 기준 정렬</li>
  <li>업로드 시간 기준 정렬</li>
  <li>운영자 동시 접근 시 잠금 표시</li>
  </ol></div>
@@ -6071,7 +6055,7 @@
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
  <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">체크리스트</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">이슈</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
+ <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px; display: grid; grid-template-columns: 1.5fr 1fr; gap: 18px; height: calc(100% - 36px);">
@@ -6129,7 +6113,7 @@
  <li>응모전 연결된 경우 응모 카운트 갱신</li>
  </ol></div>
 
- <div class="pol"><h4>관련 정책</h4>검수 SLA · 신고 (§12)</div>
+ <div class="pol"><h4>관련 정책</h4>검수 처리 24시간 이내 목표 · 신고 처리 (07-6)</div>
  </div>
  </div>
  </div>
@@ -6213,7 +6197,7 @@
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
  <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">체크리스트</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">이슈</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
+ <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -6277,7 +6261,7 @@
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
  <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">체크리스트</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">이슈</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
+ <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -6353,7 +6337,7 @@
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
  <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">체크리스트</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">이슈</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
+ <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -6416,7 +6400,7 @@
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
  <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">체크리스트</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">이슈</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
+ <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -6458,31 +6442,30 @@
  <h3>구성 요소</h3>
  <dl>
  <dt><span class="bub">1</span></dt><dd>활성 기획전 목록 — 개수 제한 없음. 운영팀 재량으로 여러 기획전 동시 운영 가능</dd>
- <dt><span class="bub">2</span></dt><dd>포함 전시 — 쉼표 또는 줄바꿈 구분 ID (Phase 1 정책 v2.19 이후: <strong>작품(piece) 단위 선택</strong>으로 재설계 — 전시 카드 → piece sub 그리드 2단계. 본 슬라이드 mock는 v2.19 이전 모델로 갱신 예정)</dd>
+ <dt><span class="bub">2</span></dt><dd>포함 전시 — 전시 카드 선택 후 작품(piece) 단위 sub 그리드 2단계 선택</dd>
  </dl>
 
- <div style="font-size: 10.5px; color: var(--ink-3); margin-top: 8px; padding: 8px; background: #fef3c7; border-left: 3px solid #f59e0b; border-radius: 0 4px 4px 0;"><strong>변경(2026-05-04, Policy v2.19)</strong>: 기획전 단위 = 작품(piece). 전시 → piece sub 그리드 2단계 선택 UX. 사용자 측 USR-CUR-01 기획전 페이지(작품 카드 그리드)도 신설. 본 슬라이드 mock·구성 요소·완성 기준 갱신은 코드 구현 후 디자인 시점에 작성 예정.</div>
 
  <div class="ac"><h4>완성 기준</h4><ol>
  <li>저장 + 활성 → USR-CUR-01 기획전 페이지에 즉시 반영(작품 카드 그리드)</li>
  <li>해제 시 USR-CUR-01에서 노출 제거</li>
  <li>여러 기획전 동시 활성 가능(Pick vs 기획전 경계는 단위 + 주제·맥락)</li>
- <li>전시 삭제·신고 처리(비공개 유지·삭제) 시 그 전시의 모든 piece 자동 cascade(Policy §32.1 #8b·§32.2)</li>
+ <li>전시 삭제·신고 처리(비공개 유지·삭제) 시 해당 전시의 기획전 포함도 함께 해제</li>
  </ol></div>
 
- <div class="pol"><h4>관련 정책</h4>큐레이션·배지 (§15.1·§15.4 작품 단위) · 데이터 cascade (§32.1 #8b·§32.2)</div>
+ <div class="pol"><h4>관련 정책</h4>큐레이션·배지 · 전시 삭제 시 Pick·기획전·응모전 연결도 함께 해제</div>
  </div>
  </div>
  </div>
  <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-CUR-01 · 기획전</span></div>
  </section>
 
- <!-- ───────── 화면: 추천 작가 관리 (PC) ───────── -->
+ <!-- ───────── 화면: 추천 전시 관리 (PC) ───────── -->
  <section class="slide" id="ADM-CUR-02">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">23 · 운영 — 기획전·배너</div><h2>추천 작가 관리</h2></div>
- <div class="meta"><span class="role">ADM</span><span class="id">ADM-CUR-02</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
+ <div><div class="crumb">23 · 운영 — 추천 전시</div><h2>추천 전시 관리</h2></div>
+ <div class="meta"><span class="role">ADM</span><span class="id">ADM-CUR-02</span><span class="device">PC</span><span class="ver">v1.5 NEW</span></div>
  </div>
 
  <div class="screen">
@@ -6490,40 +6473,59 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/admin</span>
+ <span class="url">artier.com/admin/featured</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
  <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">체크리스트</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">이슈</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
+ <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
- <div style="font-size: 17px; font-weight: 700; margin-bottom: 4px;">추천 작가</div>
- <div style="font-size: 12px; color: var(--ink-3); margin-bottom: 14px;">현재 추천 작가 5명 · 홈 피드 상단 노출</div>
- <div style="border: 1.5px solid var(--ink); padding: 9px 12px; border-radius: 6px; font-size: 12px; color: var(--ink-3); margin-bottom: 14px;">🔍 작가 이름 검색...</div>
- <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
- <div style="display: flex; align-items: center; gap: 10px; padding: 10px; border: 1.5px solid var(--ink); border-radius: 6px; background: #fafafa;"><div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #fef3c7, #fecaca);"></div><div style="flex: 1;"><div style="font-size: 12px; font-weight: 600;">박순자</div><div style="font-size: 10px; color: var(--ink-3);">유화 · 풍경</div></div><div style="width: 16px; height: 16px; background: var(--ink); color: white; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 10px;">✓</div></div>
- <div style="display: flex; align-items: center; gap: 10px; padding: 10px; border: 1.5px solid var(--ink); border-radius: 6px; background: #fafafa;"><div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #d1fae5, #dbeafe);"></div><div style="flex: 1;"><div style="font-size: 12px; font-weight: 600;">이영자</div><div style="font-size: 10px; color: var(--ink-3);">수채화</div></div><div style="width: 16px; height: 16px; background: var(--ink); color: white; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 10px;">✓</div></div>
- <div style="display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid var(--line-2); border-radius: 6px;"><div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #ddd6fe, #fef3c7);"></div><div style="flex: 1;"><div style="font-size: 12px; font-weight: 600;">김복례</div><div style="font-size: 10px; color: var(--ink-3);">유화 · 인물</div></div><div style="width: 16px; height: 16px; border: 1.5px solid var(--line-2); border-radius: 3px;"></div></div>
- <div style="display: flex; align-items: center; gap: 10px; padding: 10px; border: 1px solid var(--line-2); border-radius: 6px;"><div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #fecaca, #ddd6fe);"></div><div style="flex: 1;"><div style="font-size: 12px; font-weight: 600;">최영순</div><div style="font-size: 10px; color: var(--ink-3);">한국화</div></div><div style="width: 16px; height: 16px; border: 1.5px solid var(--line-2); border-radius: 3px;"></div></div>
+ <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+ <div style="font-size: 17px; font-weight: 700;">추천 전시</div>
+ <span style="background: var(--ink); color: white; padding: 6px 14px; border-radius: 6px; font-size: 11.5px;">+ 전시 추가</span>
  </div>
- <div style="margin-top: 12px; font-size: 11px; color: var(--ink-3);">체크박스 토글 시 즉시 저장됩니다</div>
+ <div style="font-size: 12px; color: var(--ink-3); margin-bottom: 14px;">현재 4개 · 피드 상단 노출 (사용자에게 라벨 미표시)</div>
+ <div style="display: flex; flex-direction: column; gap: 8px;">
+ <div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px; background: #fafafa;">
+ <div style="color: var(--ink-3); font-size: 12px; width: 16px; text-align: center;">⠿</div>
+ <div style="width: 48px; height: 36px; background: linear-gradient(135deg, #fef3c7, #fecaca); border-radius: 4px;"></div>
+ <div style="flex: 1;"><div style="font-size: 12px; font-weight: 600;">봄날의 수채화</div><div style="font-size: 10.5px; color: var(--ink-3);">달빛이 · 수채화</div></div>
+ <span style="font-size: 10px; color: var(--ink-3); border: 1px solid var(--line-2); padding: 2px 8px; border-radius: 4px;">공개</span>
+ <span style="font-size: 11px; color: #dc2626; cursor: pointer;">제거</span>
+ </div>
+ <div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 8px;">
+ <div style="color: var(--ink-3); font-size: 12px; width: 16px; text-align: center;">⠿</div>
+ <div style="width: 48px; height: 36px; background: linear-gradient(135deg, #d1fae5, #dbeafe); border-radius: 4px;"></div>
+ <div style="flex: 1;"><div style="font-size: 12px; font-weight: 600;">가을 유화 연작</div><div style="font-size: 10.5px; color: var(--ink-3);">꽃내음 · 유화</div></div>
+ <span style="font-size: 10px; color: var(--ink-3); border: 1px solid var(--line-2); padding: 2px 8px; border-radius: 4px;">공개</span>
+ <span style="font-size: 11px; color: #dc2626; cursor: pointer;">제거</span>
+ </div>
+ </div>
  </div></main>
  </div>
  </div>
- <div class="placeholder-note">체크박스 그리드 — 즉시 저장(토글)</div>
+ <div class="placeholder-note">추천 전시 목록 + 순서 변경 + 추가</div>
  </div>
 
  <div class="desc">
  <h3>구성 요소</h3>
  <dl>
- <dt>—</dt><dd>작가 카드 그리드 + 체크박스. 토글 시 내부 식별자 즉시 갱신</dd>
+ <dt>—</dt><dd>추천 전시 목록(드래그 핸들·전시 썸네일·제목·작가명·공개 상태) + 제거 · 상단 "전시 추가" 버튼</dd>
  </dl>
+ <h3>완성 기준</h3>
+ <ol>
+ <li>추천 전시로 저장된 전시는 피드 featured 버킷에서 +6점 부스트 적용</li>
+ <li>비공개·삭제된 전시는 목록에서 자동 제외</li>
+ <li>순서 변경 시 상위일수록 피드에서 먼저 노출</li>
+ <li>사용자 피드에는 배지·라벨 없이 노출 순서에만 영향</li>
+ </ol>
+ <div class="pol"><h4>관련 정책</h4>피드 featured 버킷 부스트 (+6점) · Pick과 별개로 운영</div>
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-CUR-02 · 추천 작가</span></div>
+ <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-CUR-02 · 추천 전시</span></div>
  </section>
 
  <!-- ───────── 화면: 배너 목록 (PC) ───────── -->
@@ -6544,7 +6546,7 @@
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
  <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">체크리스트</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">이슈</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
+ <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -6587,7 +6589,7 @@
  </div></main>
  </div>
  </div>
- <div class="placeholder-note">5개 상한 + DnD 순서 + 활성 토글</div>
+ <div class="placeholder-note">5개 상한 + 탭(게시 중·예정·기간 종료) + DnD 순서 + 활성 토글</div>
  </div>
 
  <div class="desc">
@@ -6598,8 +6600,10 @@
 
  <div class="ac"><h4>완성 기준</h4><ol>
  <li>5개 상한 시 "새 배너" 비활성</li>
+ <li>탭 3개: 게시 중 / 예정 / 기간 종료 — 각 탭에 건수 배지</li>
+ <li>게시 중·예정 탭: DnD 순서 조정 가능</li>
+ <li>기간 종료 탭: 순서 조정 없음, 삭제만 가능</li>
  <li>활성 토글 즉시 반영</li>
- <li>기간 종료된 배너는 자동으로 비활성 + 회색</li>
  </ol></div>
  </div>
  </div>
@@ -6625,7 +6629,7 @@
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
  <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">체크리스트</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">이슈</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
+ <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -6697,7 +6701,7 @@
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
  <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">체크리스트</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">이슈</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
+ <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -6767,7 +6771,7 @@
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
  <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">체크리스트</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">이슈</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
+ <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -6841,7 +6845,7 @@
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
  <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">체크리스트</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">이슈</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
+ <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -6902,7 +6906,7 @@
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
  <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">체크리스트</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">이슈</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
+ <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -6917,8 +6921,8 @@
  <span style="padding: 5px 11px; border: 1px solid var(--line-2); border-radius: 14px; font-size: 11px;">부적절 1</span>
  </div>
  <div style="border: 1px solid var(--line); border-radius: 8px; overflow: hidden; position: relative;">
- <div style="display: grid; grid-template-columns: 60px 1fr 1fr 110px 80px 60px 100px; padding: 10px 14px; background: #fafafa; border-bottom: 1px solid var(--line); font-size: 10.5px; color: var(--ink-3); font-weight: 600;">
- <div></div><div>대상</div><div>사유</div><div>신고일</div><div>중복</div><div>상태</div><div></div>
+ <div style="display: grid; grid-template-columns: 1fr 1fr 80px 120px 60px 160px; padding: 10px 14px; background: #fafafa; border-bottom: 1px solid var(--line); font-size: 10.5px; color: var(--ink-3); font-weight: 600;">
+ <div>신고대상</div><div>신고사유</div><div>신고자</div><div>신고일시</div><div>상태</div><div>작업</div>
  </div>
  <div style="display: grid; grid-template-columns: 60px 1fr 1fr 110px 80px 60px 100px; padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 12px; align-items: center; background: #fef2f2;">
  <div style="width: 40px; aspect-ratio: 1; background: linear-gradient(135deg, #fef3c7, #fecaca); border-radius: 4px;"></div>
@@ -6949,12 +6953,19 @@
  <div class="desc">
  <h3>구성 요소</h3>
  <dl>
- <dt><span class="bub">1</span></dt><dd>같은 전시 신고 누적 시 행에 "N회" 카운트 배지 — 운영팀이 직접 보고 정성 판단(자동 비공개 트리거는 Policy §12.2 v2.20 폐기)</dd>
+ <dt><span class="bub">1</span></dt><dd>같은 전시 신고 누적 시 행에 "N회" 카운트 배지 — 운영팀이 직접 보고 정성 판단</dd>
  </dl>
 
  <div class="callout info">운영자 직권 신고 — 사용자 신고 없이 작품 차단이 필요하면 본 큐에 직접 등록(ADM-WRK 폐기로 흡수).</div>
 
- <div class="pol"><h4>관련 정책</h4>신고·모더레이션 §12.0~§12.1 · 처리 약속 §22.2 v2.20(자동 SLA 측정 폐기)</div>
+ <div class="ac"><h4>완성 기준</h4><ol>
+ <li>상태 필터: 전체·대기·삭제·비공개 유지·기각</li>
+ <li>신고자 닉네임 표시 (현재 프로필 기준)</li>
+ <li>신고일시 YYYY-MM-DD HH:mm 포맷</li>
+ <li>작업: 삭제·기각·비공개 유지 (목록에서 제거 폐기)</li>
+ </ol></div>
+
+ <div class="pol"><h4>관련 정책</h4>신고·모더레이션 (07-6) · 운영팀 직접 판정</div>
  </div>
  </div>
  </div>
@@ -6979,7 +6990,7 @@
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
  <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">체크리스트</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">이슈</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
+ <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 18px;">
@@ -6989,7 +7000,7 @@
  <div style="aspect-ratio: 4/3; background: linear-gradient(135deg, #fef3c7, #fecaca, #ddd6fe); border-radius: 8px; margin-bottom: 12px;"></div>
  <div style="background: #fef2f2; border-left: 3px solid #dc2626; padding: 11px 14px; border-radius: 0 4px 4px 0; margin-bottom: 12px; position: relative;">
  <div style="font-size: 11px; color: #991b1b; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 4px;">⚠ 누적 신고 2건</div>
- <div style="font-size: 11.5px; color: #7f1d1d; line-height: 1.5;">동일 전시에 신고가 누적되어 운영팀 정성 판단이 필요한 상태(자동 비공개 트리거 없음, Policy §12.2 v2.20).</div>
+ <div style="font-size: 11.5px; color: #7f1d1d; line-height: 1.5;">동일 전시에 신고가 누적되어 운영팀 정성 판단이 필요한 상태.</div>
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">1</span>
  </div>
  </div>
@@ -7012,17 +7023,17 @@
  </div></main>
  </div>
  </div>
- <div class="placeholder-note">작품 미리보기 + 신고 사유(단일 라벨 + 상세 200자) + 3 액션 + 큐에서 제거(레거시)</div>
+ <div class="placeholder-note">작품 미리보기 + 신고 사유(단일 라벨 + 상세 200자) + 3 액션 + 큐에서 제거</div>
  </div>
 
  <div class="desc">
  <h3>구성 요소</h3>
  <dl>
  <dt><span class="bub">1</span></dt><dd>같은 전시 누적 신고 배너 — 운영팀 정성 판단 신호. 영업일 24시간 이내 판정 목표(운영 의지, §22.2 v2.20)</dd>
- <dt><span class="bub">2</span></dt><dd>처리 액션 — 3 액션(삭제·기각·비공개 유지) + 큐에서 제거(레거시). 각 클릭 시 ADM-RPT-03. 「삭제」는 사유 4종 select(저작권 침해 / 위법 / 청소년 유해 / 어뷰즈) + 자유 메모 모달</dd>
+ <dt><span class="bub">2</span></dt><dd>처리 액션 — 3 액션(삭제·기각·비공개 유지) + 큐에서 제거. 각 클릭 시 ADM-RPT-03. 「삭제」는 사유 4종 select(저작권 침해 / 위법 / 청소년 유해 / 어뷰즈) + 자유 메모 모달</dd>
  </dl>
 
- <div class="pol"><h4>관련 정책</h4>신고 처리 약속 §22.2 v2.20 · 사용자 신고 단일 라벨 (§12.0) · 처리 액션 (§12.1 v2.20) · 운영자 감사 로그 5년 (§22.7)</div>
+ <div class="pol"><h4>관련 정책</h4>신고 처리 (07-6) · 처리 액션 3종(삭제·기각·비공개 유지) · 운영자 처리 내역 5년 보관</div>
  </div>
  </div>
  </div>
@@ -7070,7 +7081,7 @@
  <div style="background: white; border-radius: 12px; padding: 20px 22px; position: relative;">
  <div style="font-size: 11px; color: var(--ink-3); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 6px;">변형 4 · 목록에서 제거</div>
  <div style="font-size: 14px; font-weight: 700; margin-bottom: 6px;">큐에서만 제거할까요?</div>
- <div style="font-size: 11.5px; color: var(--ink-2); margin-bottom: 12px; line-height: 1.6;">작품 상태 변경 없음. 레거시 호환용.</div>
+ <div style="font-size: 11.5px; color: var(--ink-2); margin-bottom: 12px; line-height: 1.6;">작품 상태 변경 없음.</div>
  <div style="border: 1px solid var(--line-2); padding: 8px; border-radius: 6px; font-size: 12px; text-align: center;">제거</div>
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">4</span>
  </div>
@@ -7084,9 +7095,9 @@
  <h3>구성 요소</h3>
  <dl>
  <dt><span class="bub">1</span></dt><dd>삭제 — 전시 영구 삭제 + 연쇄 정리</dd>
- <dt><span class="bub">2</span></dt><dd>기각 — adminStatus 'dismissed', isHidden 복원</dd>
- <dt><span class="bub">3</span></dt><dd>비공개 유지 — adminStatus 'hidden'</dd>
- <dt><span class="bub">4</span></dt><dd>목록에서 제거 — 액션 없이 큐 정리(레거시)</dd>
+ <dt><span class="bub">2</span></dt><dd>기각 — 신고 부당 판정, 비공개 상태였으면 즉시 복원</dd>
+ <dt><span class="bub">3</span></dt><dd>비공개 유지 — 둘러보기·검색에서 제외, 작가 본인 프로필엔 보임</dd>
+ <dt><span class="bub">4</span></dt><dd>목록에서 제거 — 액션 없이 큐 정리</dd>
  </dl>
 
  <div class="pol"><h4>관련 정책</h4>신고 처리 액션</div>
@@ -7114,38 +7125,41 @@
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
  <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">체크리스트</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">이슈</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
+ <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
  <div style="font-size: 17px; font-weight: 700; margin-bottom: 14px;">회원 관리</div>
- <div style="border: 1.5px solid var(--ink); padding: 9px 12px; border-radius: 6px; font-size: 12px; color: var(--ink-3); margin-bottom: 14px;">🔍 이름·이메일 검색...</div>
+ <div style="border: 1.5px solid var(--ink); padding: 9px 12px; border-radius: 6px; font-size: 12px; color: var(--ink-3); margin-bottom: 14px;">🔍 닉네임·이메일 검색...</div>
  <div style="border: 1px solid var(--line); border-radius: 8px; overflow: hidden;">
- <div style="display: grid; grid-template-columns: 50px 1.4fr 1.4fr 100px 100px 80px; padding: 10px 14px; background: #fafafa; border-bottom: 1px solid var(--line); font-size: 10.5px; color: var(--ink-3); font-weight: 600;">
- <div></div><div>이름</div><div>이메일</div><div>가입일</div><div>경로</div><div></div>
+ <div style="display: grid; grid-template-columns: 50px 1.4fr 1.4fr 100px 100px 80px 80px; padding: 10px 14px; background: #fafafa; border-bottom: 1px solid var(--line); font-size: 10.5px; color: var(--ink-3); font-weight: 600;">
+ <div></div><div>닉네임</div><div>이메일</div><div>가입일</div><div>경로</div><div>누적 AP</div><div></div>
  </div>
- <div style="display: grid; grid-template-columns: 50px 1.4fr 1.4fr 100px 100px 80px; padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 12px; align-items: center;">
+ <div style="display: grid; grid-template-columns: 50px 1.4fr 1.4fr 100px 100px 80px 80px; padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 12px; align-items: center;">
  <div><div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #fef3c7, #fecaca);"></div></div>
- <div style="font-weight: 600;">홍길동</div>
+ <div style="font-weight: 600;">꽃내음</div>
  <div style="font-size: 11.5px; color: var(--ink-2);">name@example.com</div>
  <div style="font-size: 10.5px; color: var(--ink-3);">04.01</div>
  <div style="font-size: 10.5px; color: var(--ink-3);">이메일</div>
+ <div style="font-size: 10.5px; color: var(--ink-3);">320</div>
  <div><span style="border: 1px solid var(--line-2); padding: 4px 10px; border-radius: 4px; font-size: 11px;">상세</span></div>
  </div>
- <div style="display: grid; grid-template-columns: 50px 1.4fr 1.4fr 100px 100px 80px; padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 12px; align-items: center;">
+ <div style="display: grid; grid-template-columns: 50px 1.4fr 1.4fr 100px 100px 80px 80px; padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 12px; align-items: center;">
  <div><div style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, #d1fae5, #dbeafe);"></div></div>
- <div style="font-weight: 600;">박순자</div>
+ <div style="font-weight: 600;">달빛이</div>
  <div style="font-size: 11.5px; color: var(--ink-2);">park@kakao.com</div>
  <div style="font-size: 10.5px; color: var(--ink-3);">03.18</div>
  <div style="font-size: 10.5px; color: var(--ink-3);">카카오</div>
+ <div style="font-size: 10.5px; color: var(--ink-3);">85</div>
  <div><span style="border: 1px solid var(--line-2); padding: 4px 10px; border-radius: 4px; font-size: 11px;">상세</span></div>
  </div>
- <div style="display: grid; grid-template-columns: 50px 1.4fr 1.4fr 100px 100px 80px; padding: 10px 14px; font-size: 12px; align-items: center; opacity: .5;">
+ <div style="display: grid; grid-template-columns: 50px 1.4fr 1.4fr 100px 100px 80px 80px; padding: 10px 14px; font-size: 12px; align-items: center; opacity: .5;">
  <div><div style="width: 32px; height: 32px; border-radius: 50%; background: var(--line);"></div></div>
- <div style="font-weight: 600;">작가 미상</div>
+ <div style="font-weight: 600;">탈퇴한 작가</div>
  <div style="font-size: 11.5px; color: var(--ink-3);">탈퇴 (2026.04.10)</div>
  <div style="font-size: 10.5px; color: var(--ink-3);">02.05</div>
  <div style="font-size: 10.5px; color: var(--ink-3);">구글</div>
+ <div style="font-size: 10.5px; color: var(--ink-3);">—</div>
  <div></div>
  </div>
  </div>
@@ -7158,7 +7172,7 @@
  <div class="desc">
  <h3>구성 요소</h3>
  <dl>
- <dt>—</dt><dd>이름·이메일·가입일·가입경로 + 상세 진입</dd>
+ <dt>—</dt><dd>닉네임·이메일·가입일·가입경로·누적 AP + 상세 진입</dd>
  </dl>
  </div>
  </div>
@@ -7184,7 +7198,7 @@
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
  <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">체크리스트</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">이슈</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
+ <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -7215,7 +7229,7 @@
  <div class="desc">
  <h3>구성 요소</h3>
  <dl>
- <dt>—</dt><dd>지표 카드 + 최근 신고 5건. 정지·해제 CTA는 Phase 2로 이관</dd>
+ <dt>—</dt><dd>지표 카드 + 최근 신고 5건. 정지·해제 기능은 추후 지원 예정</dd>
  </dl>
 
  <div class="pol"><h4>관련 정책</h4>제재 시스템 Phase 2 이관</div>
@@ -7243,20 +7257,20 @@
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
  <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">체크리스트</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">이슈</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
+ <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 60px 40px; display: flex; align-items: center; justify-content: center; min-height: 400px;">
  <div style="max-width: 460px; text-align: center;">
- <div style="display: inline-block; padding: 6px 14px; background: #fef2f2; border: 1px solid #dc2626; color: #991b1b; border-radius: 14px; font-size: 11px; font-weight: 700; margin-bottom: 18px;">PHASE 2 이관</div>
+ <div style="display: inline-block; padding: 6px 14px; background: #fef2f2; border: 1px solid #dc2626; color: #991b1b; border-radius: 14px; font-size: 11px; font-weight: 700; margin-bottom: 18px;">추후 지원 예정</div>
  <div style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">사용자 제재 시스템</div>
- <div style="font-size: 13px; color: var(--ink-2); line-height: 1.7;">정지 단계·이의제기 진입점·경고 카운터·SLA 등 사용자 계정 차원 제재는 Phase 1 범위 밖.<br>Phase 2 사용자 제재 재설계 시 이 모달을 mockup으로 보강합니다.</div>
- <div style="margin-top: 18px; font-size: 11px; color: var(--ink-3);">관련: 계정 제재 등 Phase 1 범위 밖</div>
+ <div style="font-size: 13px; color: var(--ink-2); line-height: 1.7;">정지 단계·이의제기 진입점·경고 카운터·SLA 등 사용자 계정 차원 제재는 현재 버전에서 지원하지 않음.</div>
+ <div style="margin-top: 18px; font-size: 11px; color: var(--ink-3);">관련: 계정 제재는 추후 지원 예정</div>
  </div>
  </div></main>
  </div>
  </div>
- <div class="placeholder-note">Phase 1 범위 밖</div>
+ <div class="placeholder-note">추후 지원 예정</div>
  </div>
 
  <div class="desc">
@@ -7267,147 +7281,7 @@
  <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-MBR-03 · 정지(보류)</span></div>
  </section>
 
- <!-- ───────── 화면: 런칭 체크리스트 (PC) ───────── -->
- <section class="slide" id="ADM-CKL-01">
- <div class="slide-pad">
- <div class="slide-head">
- <div><div class="crumb">27 · 운영 — 운영 도구</div><h2>런칭 체크리스트</h2></div>
- <div class="meta"><span class="role">ADM</span><span class="id">ADM-CKL-01</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
- </div>
 
- <div class="screen">
- <div class="mock">
- <div class="pc-frame">
- <div class="chrome">
- <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/admin</span>
- </div>
- <div style="background: white; height: 100%; display: flex;">
- <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
- <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">체크리스트</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">이슈</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
- </aside>
- <main style="flex: 1; overflow: auto;">
- <div style="padding: 18px 22px;">
- <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px;">
- <div style="font-size: 17px; font-weight: 700;">런칭 체크리스트</div>
- <div style="font-size: 13px; font-weight: 700; color: var(--ink);">전체 진행률 68%</div>
- </div>
- <div style="height: 8px; background: var(--line); border-radius: 4px; margin-bottom: 18px;"><div style="width: 68%; height: 100%; background: var(--ink); border-radius: 4px;"></div></div>
- <div style="display: flex; gap: 8px; margin-bottom: 14px;">
- <span style="padding: 5px 11px; background: var(--ink); color: white; border-radius: 14px; font-size: 11px;">전체 47</span>
- <span style="padding: 5px 11px; border: 1px solid var(--line-2); border-radius: 14px; font-size: 11px;">QA</span>
- <span style="padding: 5px 11px; border: 1px solid var(--line-2); border-radius: 14px; font-size: 11px;">법무</span>
- <span style="padding: 5px 11px; border: 1px solid var(--line-2); border-radius: 14px; font-size: 11px;">콘텐츠</span>
- <span style="padding: 5px 11px; border: 1px solid var(--line-2); border-radius: 14px; font-size: 11px;">운영</span>
- </div>
- <div style="font-size: 12px; color: var(--ink-3); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 8px;">법무 · 3 / 10</div>
- <div style="display: flex; flex-direction: column; gap: 6px;">
- <div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px; background: #fef2f2;">
- <div style="width: 16px; height: 16px; border: 1.5px solid #dc2626; border-radius: 3px;"></div>
- <div style="flex: 1;"><div style="font-size: 12px; font-weight: 600;">이용약관 법무 확정</div><div style="font-size: 10.5px; color: #991b1b;">담당: 법무팀 · 기한 04.30 ⚠ 초과</div></div>
- <span style="background: #fef2f2; color: #991b1b; padding: 2px 8px; border-radius: 8px; font-size: 10px; font-weight: 700;">차단됨</span>
- </div>
- <div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px;">
- <div style="width: 16px; height: 16px; background: var(--ink); color: white; border-radius: 3px; display: flex; align-items: center; justify-content: center; font-size: 10px;">✓</div>
- <div style="flex: 1;"><div style="font-size: 12px; font-weight: 600; text-decoration: line-through; color: var(--ink-3);">DPO 지정 + 이메일 안내</div><div style="font-size: 10.5px; color: var(--ink-3);">담당: 정보보호 · 04.20 완료</div></div>
- </div>
- <div style="display: flex; align-items: center; gap: 12px; padding: 10px 12px; border: 1px solid var(--line); border-radius: 6px;">
- <div style="width: 16px; height: 16px; border: 1.5px solid var(--line-2); border-radius: 3px;"></div>
- <div style="flex: 1;"><div style="font-size: 12px; font-weight: 600;">개인정보처리방침 본문 작성</div><div style="font-size: 10.5px; color: var(--ink-3);">담당: 법무팀 · 기한 05.05</div></div>
- </div>
- </div>
- </div></main>
- </div>
- </div>
- <div class="placeholder-note">카테고리별 진행률 + 항목 + 차단됨 빨간 배경</div>
- </div>
-
- <div class="desc">
- <h3>구성 요소</h3>
- <dl>
- <dt>—</dt><dd>전체 진행률 + 카테고리 필터 + 항목(상태·기한·담당). 차단됨은 빨강</dd>
- </dl>
-
- <div class="callout info">사이드바 노출 조건 — Phase 1 정식 런칭 전까지만. 런칭 후 자동 제거.</div>
- </div>
- </div>
- </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-CKL-01 · 체크리스트</span></div>
- </section>
-
- <!-- ───────── 화면: 미결 이슈 (PC) ───────── -->
- <section class="slide" id="ADM-ISU-01">
- <div class="slide-pad">
- <div class="slide-head">
- <div><div class="crumb">27 · 운영 — 운영 도구</div><h2>미결 이슈</h2></div>
- <div class="meta"><span class="role">ADM</span><span class="id">ADM-ISU-01</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
- </div>
-
- <div class="screen">
- <div class="mock">
- <div class="pc-frame">
- <div class="chrome">
- <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/admin</span>
- </div>
- <div style="background: white; height: 100%; display: flex;">
- <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
- <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">체크리스트</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">이슈</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
- </aside>
- <main style="flex: 1; overflow: auto;">
- <div style="padding: 18px 22px;">
- <div style="display: flex; justify-content: space-between; margin-bottom: 14px;">
- <div style="font-size: 17px; font-weight: 700;">미결 이슈</div>
- <div style="font-size: 11px; color: var(--ink-3);">긴급 3 · 높음 5 · 보통 4</div>
- </div>
- <div style="display: flex; gap: 8px; margin-bottom: 14px;">
- <span style="padding: 5px 11px; background: var(--ink); color: white; border-radius: 14px; font-size: 11px;">전체</span>
- <span style="padding: 5px 11px; border: 1px solid var(--line-2); border-radius: 14px; font-size: 11px; color: var(--ink-2);">긴급</span>
- <span style="padding: 5px 11px; border: 1px solid var(--line-2); border-radius: 14px; font-size: 11px; color: var(--ink-2);">백엔드</span>
- <span style="padding: 5px 11px; border: 1px solid var(--line-2); border-radius: 14px; font-size: 11px; color: var(--ink-2);">UX</span>
- <span style="padding: 5px 11px; border: 1px solid var(--line-2); border-radius: 14px; font-size: 11px; color: var(--ink-2);">법무</span>
- </div>
- <div style="border: 1px solid var(--line); border-radius: 8px; overflow: hidden;">
- <div style="display: grid; grid-template-columns: 60px 2fr 90px 80px 100px 100px 80px; padding: 10px 14px; background: #fafafa; border-bottom: 1px solid var(--line); font-size: 10.5px; color: var(--ink-3); font-weight: 600;">
- <div>ID</div><div>제목</div><div>카테고리</div><div>우선</div><div>담당</div><div>기한</div><div>차단</div>
- </div>
- <div style="display: grid; grid-template-columns: 60px 2fr 90px 80px 100px 100px 80px; padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 12px; align-items: center; background: #fef2f2;">
- <div style="font-family: monospace; font-size: 10.5px;">ISU-001</div>
- <div style="font-weight: 600;">매직 링크 발송 서비스 미연동</div>
- <div style="font-size: 10.5px;">백엔드</div>
- <div><span style="background: #dc2626; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: 700;">긴급</span></div>
- <div>김개발</div>
- <div style="color: #dc2626; font-size: 10.5px;">04.30 ⚠</div>
- <div>✅</div>
- </div>
- <div style="display: grid; grid-template-columns: 60px 2fr 90px 80px 100px 100px 80px; padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 12px; align-items: center;">
- <div style="font-family: monospace; font-size: 10.5px;">ISU-002</div>
- <div style="font-weight: 600;">OG 이미지 동적 생성</div>
- <div style="font-size: 10.5px;">백엔드</div>
- <div><span style="background: #f97316; color: white; padding: 2px 6px; border-radius: 4px; font-size: 10px;">높음</span></div>
- <div>김개발</div>
- <div style="color: var(--ink-3); font-size: 10.5px;">05.10</div>
- <div></div>
- </div>
- </div>
- </div></main>
- </div>
- </div>
- <div class="placeholder-note">필터 + 테이블 + 차단·기한 강조</div>
- </div>
-
- <div class="desc">
- <h3>구성 요소</h3>
- <dl>
- <dt>—</dt><dd>4 필터 + 테이블 + 차단 표시 + 긴급/높음 ADM-DSH-01 연동</dd>
- </dl>
- </div>
- </div>
- </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-ISU-01 · 미결 이슈</span></div>
- </section>
 
  <!-- ───────── 화면: 문의함 (PC) ───────── -->
  <section class="slide" id="ADM-INQ-01">
@@ -7427,7 +7301,7 @@
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
  <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">체크리스트</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">이슈</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">문의</div>
+ <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -7495,7 +7369,7 @@
  <div class="slide-pad">
  <div class="slide-head">
  <div><div class="crumb">28 · 운영 — 공지</div><h2>공지 관리</h2></div>
- <div class="meta"><span class="role">ADM</span><span class="id">ADM-NTC-01</span><span class="device">PC</span><span class="ver">v1.0 NEW</span></div>
+ <div class="meta"><span class="role">ADM</span><span class="id">ADM-NTC-01</span><span class="device">PC</span><span class="ver">v1.5 NEW</span></div>
  </div>
 
  <div class="screen">
@@ -7505,11 +7379,7 @@
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
  <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; color: var(--ink-2);">검수</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; color: var(--ink-2);">신고</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; color: var(--ink-2);">배너</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; background: var(--ink); color: white;">공지 관리</div>
- <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; color: var(--ink-2);">문의함</div>
+ <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto; padding: 18px 22px;">
  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
@@ -7577,7 +7447,7 @@
 
  <div class="callout info">게시 중인 공지는 삭제 불가 — 먼저 "게시 중단"으로 전환 후 삭제(PRD AC-04). 고정 공지는 최대 2개 한도(PRD AC-03). 게시·삭제·수정 시 운영자 감사 로그 1건 기록(PRD_Admin §0.6).</div>
 
- <div class="pol"><h4>관련 정책</h4>공지 엔티티 (§14 NOTICE) · 감사 로그 (§0.6) · 사용자측 USR-INF-03·04</div>
+ <div class="pol"><h4>관련 정책</h4>공지 관리 · 운영자 처리 내역 감사 로그 · 사용자 화면 USR-INF-03·04</div>
  </div>
  </div>
  </div>

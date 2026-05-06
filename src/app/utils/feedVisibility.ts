@@ -8,5 +8,6 @@ import { isWorkPublic } from './workVisibility';
  * 본인 프로필에서는 이 함수를 거치지 않고 isOwnProfile 분기로 직접 노출.
  */
 export function isWorkVisibleOnPublicFeed(w: Work): boolean {
+  if (w.linkedEventId != null) return false;
   return isWorkPublic(w);
 }

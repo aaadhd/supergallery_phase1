@@ -7,7 +7,7 @@
  * - 기획전(CuratedExhibition): 다수 운영 가능. 각 기획전 = 제목 + 부제(선택) + piece 참조 리스트(작품 단위, Policy §32.1 #8b).
  *   piece 참조는 (workId, pieceId) 페어로 저장 — 전시 내부 image 배열 인덱스 시프트(작가의 편집)에
  *   영향받지 않도록 안정 식별자(`Work.imagePieceIds`)를 그대로 보관한다.
- * - 추천 작가: 피드 상단 부스트 대상 작가 ID 집합
+ * - 추천 전시: 피드 상단 부스트 대상 전시 ID 집합
  * - 관리 UI: [/admin/curation](src/app/admin/CurationManagement.tsx) — localStorage `artier_curation_v1` 영속화
  */
 
@@ -29,7 +29,7 @@ export type CuratedExhibition = {
 
 export type CurationState = {
   curatedExhibitions: CuratedExhibition[];
-  featuredArtistIds: string[];
+  featuredExhibitionIds: string[];
 };
 
 const STORAGE_KEY = 'artier_curation_v1';
@@ -37,7 +37,7 @@ const CHANGED_EVENT = 'artier-curation-changed';
 
 const DEFAULT_STATE: CurationState = {
   curatedExhibitions: [],
-  featuredArtistIds: [],
+  featuredExhibitionIds: [],
 };
 
 function newCuratedExhibitionId(): string {
@@ -152,7 +152,7 @@ function readFromStorage(): CurationState {
 
     return {
       curatedExhibitions,
-      featuredArtistIds: Array.isArray(parsed?.featuredArtistIds) ? parsed.featuredArtistIds : [],
+      featuredExhibitionIds: Array.isArray(parsed?.featuredExhibitionIds) ? parsed.featuredExhibitionIds : [],
     };
   } catch {
     return DEFAULT_STATE;
@@ -187,8 +187,8 @@ export const curationStore = {
   getCuratedExhibitions(): CuratedExhibition[] {
     return getStable().curatedExhibitions;
   },
-  getFeaturedArtistIds(): string[] {
-    return getStable().featuredArtistIds;
+  getFeaturedExhibitionIds(): string[] {
+    return getStable().featuredExhibitionIds;
   },
   addCuratedExhibition(exh: Omit<CuratedExhibition, 'id'>): CuratedExhibition {
     const next: CuratedExhibition = { ...exh, id: newCuratedExhibitionId() };
@@ -210,12 +210,12 @@ export const curationStore = {
       curatedExhibitions: current.curatedExhibitions.filter((t) => t.id !== id),
     });
   },
-  toggleFeaturedArtist(artistId: string): void {
+  toggleFeaturedExhibition(workId: string): void {
     const current = readFromStorage();
-    const set = new Set(current.featuredArtistIds);
-    if (set.has(artistId)) set.delete(artistId);
-    else set.add(artistId);
-    writeToStorage({ ...current, featuredArtistIds: [...set] });
+    const set = new Set(current.featuredExhibitionIds);
+    if (set.has(workId)) set.delete(workId);
+    else set.add(workId);
+    writeToStorage({ ...current, featuredExhibitionIds: [...set] });
   },
   subscribe(listener: () => void): () => void {
     if (typeof window === 'undefined') return () => {};
@@ -231,4 +231,50 @@ export const curationStore = {
 
 export function useCuration(): CurationState {
   return useSyncExternalStore(curationStore.subscribe, getStable, () => DEFAULT_STATE);
+}
+
+/**
+ * 기획전 시드 — localStorage가 비어 있을 때 한 번만 실행.
+ * workStore가 마운트된 이후(PointsBootstrap)에 호출해야 한다.
+ */
+export function seedCurationIfEmpty(): void {
+  if (typeof window === 'undefined') return;
+  const current = readFromStorage();
+  if (current.curatedExhibitions.length > 0) return;
+
+  // 동적 import로 순환 의존성 없이 workStore 접근
+  import('../store').then(({ workStore }) => {
+    const works = workStore.getWorks();
+    if (works.length === 0) return;
+
+    // 수채화 작품전: 수채 관련 작품 우선, 없으면 앞 5개
+    const watercolorWorks = works.filter((w) => {
+      const name = (w.exhibitionName || w.title || '').toLowerCase();
+      return name.includes('수채') || name.includes('블룸') || name.includes('꽃') || name.includes('일러스트');
+    });
+    const targetWorks = (watercolorWorks.length >= 3 ? watercolorWorks : works).slice(0, 5);
+
+    const pieces = targetWorks.flatMap((w) => {
+      const ids = w.imagePieceIds ?? [];
+      if (ids.length === 0) return [];
+      return [{ workId: w.id, pieceId: ids[0] }];
+    }).slice(0, 5);
+
+    if (pieces.length === 0) return;
+
+    const refreshed = readFromStorage();
+    if (refreshed.curatedExhibitions.length > 0) return;
+
+    writeToStorage({
+      ...refreshed,
+      curatedExhibitions: [
+        {
+          id: 'seed-curation-1',
+          title: '수채화 작품전',
+          subtitle: '감성 넘치는 수채화 작가들의 작품을 만나보세요',
+          pieces,
+        },
+      ],
+    });
+  });
 }

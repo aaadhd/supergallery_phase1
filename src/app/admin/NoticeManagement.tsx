@@ -112,10 +112,10 @@ export default function NoticeManagement() {
           <Megaphone className="w-5 h-5 text-foreground" />
           <h1 className="text-xl font-bold text-foreground">{t('admin.notice.title')}</h1>
         </div>
-        <Button size="sm" onClick={openCreate} className="flex items-center gap-1.5">
+        <button type="button" onClick={openCreate} className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/30 flex items-center gap-1.5">
           <Plus className="w-4 h-4" />
           {t('admin.notice.new')}
-        </Button>
+        </button>
       </div>
 
       {/* 상태 필터 */}
@@ -293,8 +293,8 @@ export default function NoticeManagement() {
               )}
             </div>
             <div className="px-6 py-4 border-t border-border flex justify-end gap-2">
-              <Button variant="outline" onClick={closeEditor}>{t('admin.notice.cancel')}</Button>
-              <Button onClick={save}>{t('admin.notice.save')}</Button>
+              <button type="button" onClick={closeEditor} className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/30">{t('admin.notice.cancel')}</button>
+              <button type="button" onClick={save} className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90">{t('admin.notice.save')}</button>
             </div>
           </div>
         </div>

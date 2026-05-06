@@ -1,7 +1,8 @@
 import { useMemo, useState, useEffect, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { artists } from '../data';
 import { toast } from 'sonner';
-import { CheckCircle2, EyeOff, Trash2, XCircle, ExternalLink } from 'lucide-react';
+import { EyeOff, Trash2, XCircle, ExternalLink } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { openConfirm } from '../components/ConfirmDialog';
 import { workStore } from '../store';
@@ -24,45 +25,70 @@ import { buildVisibilityPatch } from '../utils/workVisibility';
 const ADMIN_TABLE_PAGE_SIZE = 20;
 
 type ReportState = '대기' | '비공개 유지' | '삭제' | '기각' | '처리완료';
-type ReportKind = '작품' | '댓글' | '프로필';
+
+const DEMO_ARTIST_ID = artists[0].id;
+
+function buildReporterNicknameMap(): Map<string, string> {
+  const map = new Map<string, string>();
+  // 시드 아티스트 이름 기본값
+  for (const a of artists) map.set(a.id, a.name);
+  // 데모 사용자는 artier_profile의 현재 닉네임 우선
+  try {
+    const raw = localStorage.getItem('artier_profile');
+    if (raw) {
+      const p = JSON.parse(raw) as { nickname?: string; name?: string };
+      const nick = p.nickname?.trim() || p.name?.trim();
+      if (nick) map.set(DEMO_ARTIST_ID, nick);
+    }
+  } catch { /* ignore */ }
+  // 어드민 회원 목록에서 추가 보완 (DEMO_ARTIST_ID 제외)
+  try {
+    const raw = localStorage.getItem('artier_admin_members_v1');
+    if (raw) {
+      const list = JSON.parse(raw) as { id: string; name: string }[];
+      for (const m of list) {
+        if (m.id !== DEMO_ARTIST_ID && m.name) map.set(m.id, m.name);
+      }
+    }
+  } catch { /* ignore */ }
+  return map;
+}
 
 type ReportRow = {
   id: string;
   target: string;
-  kind: ReportKind;
   reason: string;
   reportedAt: string;
+  reporterId?: string;
   status: ReportState;
   workId?: string;
   artistId?: string;
-  /** 신고된 작품(piece) 인덱스 — 다중 이미지 전시에서 사용자가 명시 선택한 것. */
   pieceIndex?: number;
 };
 
 function mapUserReportToRow(r: StoredUserReport): ReportRow {
-  const kind: ReportKind = r.targetType === 'work' ? '작품' : '프로필';
   const detail = r.detail?.trim() || '';
   const pieceTag = typeof r.pieceIndex === 'number' ? ` · ${r.pieceIndex + 1}번 작품` : '';
   const target =
     detail.length > 0
       ? `${r.targetName}${pieceTag} — ${detail.slice(0, 100)}${detail.length > 100 ? '…' : ''}`
       : `${r.targetName}${pieceTag}`;
-  const reportedAt = r.createdAt ? r.createdAt.slice(0, 10) : '';
+  const reportedAt = r.createdAt ? r.createdAt.slice(0, 16).replace('T', ' ') : '';
   const statusMap: Record<NonNullable<StoredUserReport['adminStatus']>, ReportState> = {
     pending: '대기',
     resolved: '처리완료',
     hidden: '비공개 유지',
     deleted: '삭제',
-    warned: '처리완료', // legacy data: "경고"는 Phase 2로 이관됨
+    warned: '처리완료',
     dismissed: '기각',
   };
   const status: ReportState = statusMap[r.adminStatus ?? 'pending'];
   return {
     id: r.id,
     target,
-    kind,
     reason: r.reason ?? r.reasonLabel ?? r.reasonKey ?? '',
     reportedAt,
+    reporterId: r.reporterId,
     status,
     workId: r.targetType === 'work' ? r.targetId : undefined,
     artistId: r.targetArtistId,
@@ -100,14 +126,6 @@ function stateBadge(s: ReportState) {
   }
 }
 
-function kindBadge(k: ReportKind) {
-  const map: Record<ReportKind, string> = {
-    작품: 'bg-blue-50 text-blue-800 border border-blue-200',
-    댓글: 'bg-violet-50 text-violet-800 border border-violet-200',
-    프로필: 'bg-orange-50 text-orange-800 border border-orange-200',
-  };
-  return map[k];
-}
 
 export default function ReportManagement() {
   const { t } = useI18n();
@@ -115,7 +133,6 @@ export default function ReportManagement() {
   const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState<ReportRow[]>(mergeReportRows);
   const [statusFilter, setStatusFilter] = useState('전체');
-  const [typeFilter, setTypeFilter] = useState('전체');
   // Policy §22.2 v2.20·§22.5 — Phase 1엔 SLA 자동 측정·시간 기반 우선순위 폐기. 운영팀 정성 판단으로 처리.
 
   // Policy §12.1 v2.20 「삭제」 사유 4종 한정 + audit_log 기록.
@@ -124,6 +141,7 @@ export default function ReportManagement() {
   const [deleteReason, setDeleteReason] = useState<DeleteReason>('copyright');
   const [deleteNote, setDeleteNote] = useState('');
 
+  const reporterNicknameMap = useMemo(() => buildReporterNicknameMap(), []);
   const refreshRows = useCallback(() => setRows(mergeReportRows()), []);
 
   useEffect(() => {
@@ -159,7 +177,6 @@ export default function ReportManagement() {
     return rows
       .filter((r) => {
         if (statusFilter !== '전체' && r.status !== statusFilter) return false;
-        if (typeFilter !== '전체' && r.kind !== typeFilter) return false;
         return true;
       })
       .sort((a, b) => {
@@ -171,13 +188,13 @@ export default function ReportManagement() {
         const bTime = new Date(b.reportedAt).getTime() || 0;
         return aTime - bTime;
       });
-  }, [rows, statusFilter, typeFilter]);
+  }, [rows, statusFilter]);
 
   // PRD_Admin §0.5.2: 어드민 테이블 50건/페이지. 필터 변경 시 1페이지로 리셋.
   const { page, setPage, pageCount, pageItems, totalCount } = usePagination(filtered, ADMIN_TABLE_PAGE_SIZE);
   useEffect(() => {
     setPage(1);
-  }, [statusFilter, typeFilter, setPage]);
+  }, [statusFilter, setPage]);
 
   /** 비공개 유지: 운영팀이 신고 판정 결과 전시를 비공개 유지로 전환 (Policy §12.1 v2.20). */
   const keepHidden = (id: string) => {
@@ -300,13 +317,6 @@ export default function ReportManagement() {
     toast.message('신고를 기각했습니다.');
   };
 
-  /** 목록에서만 제거 (레거시 무시 액션) */
-  const removeFromList = (id: string) => {
-    if (!loadUserReports().some((r) => r.id === id)) return;
-    removeUserReport(id);
-    toast.message('목록에서 제거했습니다.');
-  };
-
   if (loading) {
     return (
       <div>
@@ -334,17 +344,6 @@ export default function ReportManagement() {
           <option value="삭제">삭제</option>
           <option value="비공개 유지">비공개 유지</option>
           <option value="기각">기각</option>
-          <option value="처리완료">처리완료(레거시)</option>
-        </select>
-        <select
-          value={typeFilter}
-          onChange={(e) => setTypeFilter(e.target.value)}
-          className="border border-border rounded-lg px-3 py-2 text-sm bg-white min-w-[150px]"
-        >
-          <option value="전체">유형: 전체</option>
-          <option value="작품">작품</option>
-          <option value="댓글">댓글</option>
-          <option value="프로필">프로필</option>
         </select>
       </div>
 
@@ -354,15 +353,15 @@ export default function ReportManagement() {
         </div>
       ) : (
         <div className="border border-border rounded-lg overflow-hidden overflow-x-auto">
-          <table className="w-full text-sm min-w-[720px]">
+          <table className="w-full text-sm min-w-[1100px]">
             <thead>
               <tr className="bg-muted text-left text-foreground">
-                <th className="px-4 py-3 font-medium">신고대상</th>
-                <th className="px-4 py-3 font-medium">신고유형</th>
-                <th className="px-4 py-3 font-medium">신고사유</th>
-                <th className="px-4 py-3 font-medium">신고일</th>
-                <th className="px-4 py-3 font-medium">상태</th>
-                <th className="px-4 py-3 font-medium text-right">작업</th>
+                <th className="px-4 py-3 font-medium whitespace-nowrap">신고대상</th>
+                <th className="px-4 py-3 font-medium whitespace-nowrap">신고사유</th>
+                <th className="px-4 py-3 font-medium whitespace-nowrap">신고자</th>
+                <th className="px-4 py-3 font-medium whitespace-nowrap">신고일시</th>
+                <th className="px-4 py-3 font-medium whitespace-nowrap">상태</th>
+                <th className="px-4 py-3 font-medium text-right whitespace-nowrap">작업</th>
               </tr>
             </thead>
             <tbody>
@@ -371,7 +370,7 @@ export default function ReportManagement() {
                 const accumulated = targetKey ? reportCountByTarget.get(targetKey) ?? 0 : 0;
                 return (
                 <tr key={r.id} className="border-b border-border/40 transition-colors lg:hover:bg-muted/50">
-                  <td className="px-4 py-3 text-foreground max-w-[200px]">
+                  <td className="px-4 py-3 text-foreground whitespace-nowrap">
                     <div className="flex flex-col gap-1">
                       {r.workId ? (
                         <a
@@ -407,22 +406,18 @@ export default function ReportManagement() {
                       )}
                     </div>
                   </td>
-                  <td className="px-4 py-3">
-                    <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${kindBadge(r.kind)}`}>
-                      {r.kind}
+                  <td className="px-4 py-3 text-muted-foreground max-w-[220px] truncate">{r.reason}</td>
+                  <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
+                    {r.reporterId ? (reporterNicknameMap.get(r.reporterId) ?? r.reporterId) : '—'}
+                  </td>
+                  <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{r.reportedAt}</td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${stateBadge(r.status)}`}>
+                      {r.status}
                     </span>
                   </td>
-                  <td className="px-4 py-3 text-muted-foreground">{r.reason}</td>
-                  <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{r.reportedAt}</td>
-                  <td className="px-4 py-3">
-                    <div className="flex flex-wrap items-center gap-1.5">
-                      <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${stateBadge(r.status)}`}>
-                        {r.status}
-                      </span>
-                    </div>
-                  </td>
-                  <td className="px-4 py-3 text-right">
-                    <div className="flex flex-wrap justify-end gap-2">
+                  <td className="px-4 py-3 text-right whitespace-nowrap">
+                    <div className="flex flex-nowrap justify-end gap-2">
                       <Button
                         type="button"
                         disabled={r.status !== '대기'}
@@ -443,27 +438,16 @@ export default function ReportManagement() {
                         <XCircle className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
                         기각
                       </Button>
-                      <Button
+                      <button
                         type="button"
-                        variant="ghost"
                         disabled={r.status !== '대기'}
                         onClick={() => keepHidden(r.id)}
-                        className="text-sm px-3 py-1.5 rounded-lg text-muted-foreground"
+                        className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/40 disabled:opacity-50 disabled:pointer-events-none inline-flex items-center gap-1"
                         title="비공개 유지 — 운영자 확정 비공개로 전환"
                       >
-                        <EyeOff className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
+                        <EyeOff className="w-3.5 h-3.5" />
                         비공개 유지
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="ghost"
-                        onClick={() => removeFromList(r.id)}
-                        className="text-sm px-3 py-1.5 rounded-lg text-muted-foreground"
-                        title="목록에서만 제거 (삭제·경고·기각 액션은 적용 안 함)"
-                      >
-                        <CheckCircle2 className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
-                        목록에서 제거
-                      </Button>
+                      </button>
                     </div>
                   </td>
                 </tr>

@@ -7,7 +7,9 @@ import {
   authStore,
   performAccountWithdrawal,
   useAuthStore,
+  workStore,
 } from '../store';
+import { curationStore } from '../utils/curationStore';
 import { loadMockSession } from '../services/sessionTokens';
 import { Button } from '../components/ui/button';
 import { openConfirm } from '../components/ConfirmDialog';
@@ -36,7 +38,6 @@ export type NotificationSettingsState = {
   like: boolean;
   newFollower: boolean;
   groupExhibitionInvite: boolean;
-  followingNewWork: boolean;
   weeklyTheme: boolean;
   marketing: boolean;
 };
@@ -45,7 +46,6 @@ const defaultNotifications: NotificationSettingsState = {
   like: true,
   newFollower: true,
   groupExhibitionInvite: true,
-  followingNewWork: false,
   weeklyTheme: false,
   marketing: false,
 };
@@ -119,6 +119,7 @@ export default function Settings() {
   const [withdrawConsent, setWithdrawConsent] = useState(false);
   const [withdrawReason, setWithdrawReason] = useState<WithdrawReasonId | ''>('');
   const [withdrawBusy, setWithdrawBusy] = useState(false);
+  const [withdrawWarnings, setWithdrawWarnings] = useState<string[]>([]);
 
   const sessionSub = loadMockSession()?.sub;
   const isEmailShape = Boolean(sessionSub?.includes('@'));
@@ -267,11 +268,6 @@ export default function Settings() {
               onChange={(v) => handleToggle('groupExhibitionInvite', v)}
             />
             <ToggleRow
-              label={t('settings.notifFollowingWork')}
-              checked={notifications.followingNewWork}
-              onChange={(v) => handleToggle('followingNewWork', v)}
-            />
-            <ToggleRow
               label={t('settings.notifWeeklyTheme')}
               checked={notifications.weeklyTheme}
               onChange={(v) => handleToggle('weeklyTheme', v)}
@@ -333,7 +329,19 @@ export default function Settings() {
             <Button
               variant="outline"
               type="button"
-              onClick={() => setWithdrawOpen(true)}
+              onClick={() => {
+                const myWorks = workStore.getWorks().filter(w => w.artistId === currentArtistId);
+                const curations = curationStore.getCuratedExhibitions();
+                const warnings: string[] = [];
+                const hasPick = myWorks.some(w => w.pick === true || w.pickBadge === true);
+                const hasCuration = myWorks.some(w => curations.some(c => c.pieces.some(p => p.workId === w.id)));
+                const hasContest = myWorks.some(w => w.linkedEventId != null);
+                if (hasPick) warnings.push('Artier\'s Pick에 선정된 전시가 있어요. 탈퇴 시 즉시 미노출됩니다.');
+                if (hasCuration) warnings.push('기획전에 포함된 전시가 있어요. 탈퇴 시 즉시 미노출됩니다.');
+                if (hasContest) warnings.push('응모 중인 응모전이 있어요. 탈퇴 시 즉시 미노출됩니다.');
+                setWithdrawWarnings(warnings);
+                setWithdrawOpen(true);
+              }}
               className="w-full text-sm text-destructive border-destructive/30 hover:bg-destructive/5 min-h-[44px]"
             >
               {t('settings.withdraw')}
@@ -354,6 +362,14 @@ export default function Settings() {
               {t('settings.withdrawTitle')}
             </h2>
             <p className="text-sm text-muted-foreground leading-relaxed">{t('settings.withdrawBody')}</p>
+            {withdrawWarnings.length > 0 && (
+              <div className="rounded-lg border border-amber-200 bg-amber-50 px-3.5 py-3 space-y-1.5">
+                <p className="text-xs font-semibold text-amber-800">탈퇴 전 확인해 주세요</p>
+                {withdrawWarnings.map((msg, i) => (
+                  <p key={i} className="text-xs text-amber-700 leading-snug">· {msg}</p>
+                ))}
+              </div>
+            )}
             <div className="space-y-2">
               <p className="text-xs font-medium text-muted-foreground">{t('settings.withdrawReasonSection')}</p>
               <div className="space-y-2 max-h-[200px] overflow-y-auto pr-1">
@@ -398,6 +414,7 @@ export default function Settings() {
                   setWithdrawOpen(false);
                   setWithdrawConsent(false);
                   setWithdrawReason('');
+                  setWithdrawWarnings([]);
                 }}
                 className="min-h-[44px] px-4 py-2.5 text-sm font-medium rounded-lg border border-border lg:hover:bg-muted/50"
               >

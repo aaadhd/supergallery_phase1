@@ -188,6 +188,20 @@ export default function Profile() {
       });
       if (!ok) return;
     }
+    const work = workStore.getWork(workId);
+    const hasPick = work?.pick === true || work?.pickBadge === true;
+    const inCuration = curationStore.getCuratedExhibitions().some((c) => c.pieces.some((p) => p.workId === workId));
+    if (hasPick || inCuration) {
+      const title = hasPick && inCuration
+        ? t('profile.editPickWarnTitle' as never)
+        : hasPick ? t('profile.editPickWarnTitle' as never) : t('profile.editCurationWarnTitle' as never);
+      const description = hasPick && inCuration
+        ? t('profile.editPickAndCurationWarnDesc' as never)
+        : hasPick ? t('profile.editPickWarnDesc' as never) : t('profile.editCurationWarnDesc' as never);
+      const ok = await openConfirm({ title, description, destructive: true, confirmLabel: t('profile.editPendingConfirmAction') });
+      if (!ok) return;
+      if (hasPick) workStore.updateWork(workId, { pick: false, pickBadge: false });
+    }
     navigate(`/upload?edit=${workId}`);
   };
 
@@ -220,6 +234,7 @@ export default function Profile() {
   const artistWorks = useMemo(() => {
     const own = storeWorks
       .filter(w => w.artistId === profileArtist.id)
+      .filter(w => w.linkedEventId == null)
       .filter(w => isOwnProfile || isWorkPublic(w));
     const ownIds = new Set(own.map(w => w.id));
 
@@ -981,7 +996,7 @@ export default function Profile() {
                                         // Policy §32.2: 활성 Pick·기획전 게시 중이면 자가 삭제 시 명시 경고. cascade는 workStore.removeWork에서 처리.
                                         const hasNonMemberSlots = work.imageArtists?.some((a) => a.type === 'non-member');
                                         const inActiveCuration = curationStore.getCuratedExhibitions().some((c) => c.pieces.some((p) => p.workId === work.id));
-                                        const hasActiveCuration = work.pick === true || inActiveCuration;
+                                        const hasActiveCuration = work.pick === true || work.pickBadge === true || inActiveCuration;
                                         const descParts = [t('profile.deleteWorkPermanent')];
                                         if (hasNonMemberSlots) descParts.push(t('profile.deleteWorkHasPendingInvites'));
                                         if (hasActiveCuration) descParts.push(t('profile.deleteWorkActiveCuration'));

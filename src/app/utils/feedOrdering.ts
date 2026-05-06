@@ -135,7 +135,7 @@ function interleaveByPattern(
 /**
  * 피드 노출 순서 (Policy §15.1·§16.1 — 일반 피드는 전시 단위 카드).
  *
- *   Artier's Pick  →  추천 작가  →  팔로잉  →  신규(14일)  →  일반
+ *   Artier's Pick  →  추천 전시  →  팔로잉  →  신규(14일)  →  일반
  *
  * 각 작품은 **하나의 버킷에만** 배정 (중복 제거). 버킷 내부는 가중 랜덤.
  * 이미 본 작품은 각 버킷 내 뒤쪽으로.
@@ -151,7 +151,7 @@ export function orderWorksForBrowseFeed(
 ): Work[] {
   // 버킷 할당 전 순서를 섞어, 새로고침마다 동일한 작품만 앞에 고정되는 현상을 줄인다.
   const randomizedWorks = [...works].sort(() => Math.random() - 0.5);
-  const featuredArtistIdSet = new Set(curationStore.getFeaturedArtistIds());
+  const featuredExhibitionIdSet = new Set(curationStore.getFeaturedExhibitionIds());
 
   const used = new Set<string>();
   const assign = (pool: Work[], predicate: (w: Work) => boolean, source: FeedSource, limit?: number): Array<{ work: Work; source: FeedSource }> => {
@@ -169,7 +169,7 @@ export function orderWorksForBrowseFeed(
   // 2026-04-22: 기본 Pick 10개 가정에서 확장 — public/images_1 Featured 전시가 모두 pick:true로
   // 시드되므로, 이들이 일반 rest 버킷으로 밀리지 않도록 상한을 60으로 넓힌다.
   const picks = assign(randomizedWorks, isPickWork, 'pick', 60).map((x) => x.work);
-  const featured = assign(randomizedWorks, (w) => featuredArtistIdSet.has(w.artistId), 'featured').map((x) => x.work);
+  const featured = assign(randomizedWorks, (w) => featuredExhibitionIdSet.has(w.id), 'featured').map((x) => x.work);
   const personalized = assign(
     randomizedWorks,
     (w) => Boolean(ctx.followingArtistIds?.has(w.artistId)),

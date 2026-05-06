@@ -158,9 +158,7 @@ export default function ContentReview() {
       message: t('review.notifApproved'),
       workId: w.id,
     });
-    // 팔로잉 신작 알림은 Phase 1 미지원 (PRD §1 — 다중 사용자 데모 환경 부재로 가치 낮음, 토글 분리·발송 매트릭스 운영 부담).
-
-    // Policy §3 v2.14: 비회원 초대 토큰 활성화 (회사가 외부 채널 발송 안 함 — 작가가 본인 채널로 직접 공유).
+    // 비회원 초대 토큰 활성화 (회사가 외부 채널 발송 안 함 — 작가가 본인 채널로 직접 공유).
     const hasNonMember = w.imageArtists?.some((a) => a.type === 'non-member' && (a.displayName ?? '').trim()) ?? false;
     if (hasNonMember) activateInviteToken(w.id);
 

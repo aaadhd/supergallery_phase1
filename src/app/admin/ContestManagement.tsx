@@ -11,6 +11,7 @@ import {
   statusLabelKo,
   type ManagedEvent,
   type EventStatus,
+  type ContestSubtype,
 } from '../utils/eventStore';
 import { workStore } from '../store';
 import { appendAuditLog } from '../utils/adminAuditLog';
@@ -23,7 +24,7 @@ type DraftState = {
   startAt: string;
   endAt: string;
   worksPublic: boolean;
-  participantsLabel: string;
+  subtype: ContestSubtype;
   status: EventStatus | '';
   publicationOpen: boolean;
   publishedAt: string;
@@ -37,7 +38,7 @@ const emptyDraft: DraftState = {
   startAt: '',
   endAt: '',
   worksPublic: true,
-  participantsLabel: '',
+  subtype: 'irregular',
   status: '',
   publicationOpen: false,
   publishedAt: '',
@@ -49,9 +50,9 @@ function statusBadgeClass(s: EventStatus) {
   return 'bg-muted/50 text-muted-foreground border border-border';
 }
 
-export default function EventManagement() {
+export default function ContestManagement() {
   const [loading, setLoading] = useState(true);
-  const events = useManagedEvents();
+  const allEvents = useManagedEvents();
   const [showForm, setShowForm] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
   const [draft, setDraft] = useState<DraftState>(emptyDraft);
@@ -61,12 +62,12 @@ export default function EventManagement() {
     return () => window.clearTimeout(t);
   }, []);
 
+  const contests = useMemo(() => allEvents.filter((e) => e.type === 'contest'), [allEvents]);
+
   const sorted = useMemo(() => {
     const order: Record<EventStatus, number> = { active: 0, scheduled: 1, ended: 2 };
-    return [...events].sort(
-      (a, b) => order[deriveStatus(a)] - order[deriveStatus(b)],
-    );
-  }, [events]);
+    return [...contests].sort((a, b) => order[deriveStatus(a)] - order[deriveStatus(b)]);
+  }, [contests]);
 
   const startEdit = (ev: ManagedEvent) => {
     setEditingId(ev.id);
@@ -78,7 +79,7 @@ export default function EventManagement() {
       startAt: ev.startAt,
       endAt: ev.endAt,
       worksPublic: ev.worksPublic,
-      participantsLabel: ev.participantsLabel ?? '',
+      subtype: ev.subtype ?? 'irregular',
       status: ev.status ?? '',
       publicationOpen: ev.publicationOpen ?? false,
       publishedAt: ev.publishedAt ?? '',
@@ -101,7 +102,6 @@ export default function EventManagement() {
     });
     if (!ok) return;
     eventStore.remove(ev.id);
-    // Clear linkedEventId from orphaned works
     workStore.getWorks().forEach((w) => {
       if (w.linkedEventId?.toString() === ev.id) {
         workStore.updateWork(w.id, { linkedEventId: undefined });
@@ -126,13 +126,14 @@ export default function EventManagement() {
       toast.error('시작일이 종료일보다 늦을 수 없습니다.');
       return;
     }
-    // 발표 페이지 토글 ON 시 기존 선정작 0건이면 경고 (PRD AC-06) — 저장은 허용.
     const existing = editingId ? eventStore.get(editingId) : null;
     const selectedCount = existing?.selectedWorkIds?.length ?? 0;
     if (draft.publicationOpen && selectedCount === 0) {
-      toast.warning('선정작이 0건이라 발표 페이지가 빈 상태로 표시됩니다. ADM-EVT-03에서 선정작을 체크해 주세요.');
+      toast.warning('선정작이 0건이라 발표 페이지가 빈 상태로 표시됩니다. 응모자 현황에서 선정작을 체크해 주세요.');
     }
     const payload: Omit<ManagedEvent, 'id'> = {
+      type: 'contest',
+      subtype: draft.subtype,
       title,
       subtitle: draft.subtitle.trim() || undefined,
       description: desc,
@@ -140,7 +141,6 @@ export default function EventManagement() {
       startAt: start,
       endAt: end,
       worksPublic: draft.worksPublic,
-      participantsLabel: draft.participantsLabel.trim() || undefined,
       status: draft.status || undefined,
       publicationOpen: draft.publicationOpen,
       publishedAt: draft.publishedAt.trim() || undefined,
@@ -180,7 +180,7 @@ export default function EventManagement() {
         </Button>
       </div>
       <p className="text-sm text-muted-foreground mb-6">
-        등록된 응모전은 유저 목록(/events)과 상세(/events/:id)에 즉시 반영됩니다. 상태값은 시작/종료일 기준 자동 계산되며, 수동으로 덮어쓸 수도 있습니다.
+        등록된 응모전은 이벤트 목록(/events)과 상세(/events/:id)에 즉시 반영됩니다.
       </p>
 
       {showForm && (
@@ -214,12 +214,6 @@ export default function EventManagement() {
               onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
               className="border border-border rounded-lg px-3 py-2 text-sm bg-white sm:col-span-2 min-h-[80px]"
             />
-            <input
-              placeholder="참여자 안내 (예: 선착순 100명)"
-              value={draft.participantsLabel}
-              onChange={(e) => setDraft((d) => ({ ...d, participantsLabel: e.target.value }))}
-              className="border border-border rounded-lg px-3 py-2 text-sm bg-white sm:col-span-2"
-            />
             <label className="flex flex-col gap-1 text-xs text-muted-foreground">
               시작일 *
               <input
@@ -238,14 +232,14 @@ export default function EventManagement() {
                 className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground"
               />
             </label>
-            <label className="flex items-center gap-2 text-sm text-foreground px-1">
-              <input
-                type="checkbox"
-                checked={draft.worksPublic}
-                onChange={(e) => setDraft((d) => ({ ...d, worksPublic: e.target.checked }))}
-              />
-              참여작을 업로드 즉시 공개
-            </label>
+            <select
+              value={draft.subtype}
+              onChange={(e) => setDraft((d) => ({ ...d, subtype: e.target.value as ContestSubtype }))}
+              className="border border-border rounded-lg px-3 py-2 text-sm bg-white"
+            >
+              <option value="regular">정기 (Regular)</option>
+              <option value="irregular">비정기 (Irregular)</option>
+            </select>
             <select
               value={draft.status}
               onChange={(e) => setDraft((d) => ({ ...d, status: e.target.value as EventStatus | '' }))}
@@ -256,8 +250,15 @@ export default function EventManagement() {
               <option value="active">진행중 수동</option>
               <option value="ended">종료 수동</option>
             </select>
+            <label className="flex items-center gap-2 text-sm text-foreground px-1 sm:col-span-2">
+              <input
+                type="checkbox"
+                checked={draft.worksPublic}
+                onChange={(e) => setDraft((d) => ({ ...d, worksPublic: e.target.checked }))}
+              />
+              참여작을 업로드 즉시 공개
+            </label>
 
-            {/* 선정작 발표 페이지 (Policy §15.5 / PRD ADM-EVT-01 AC-05·06) */}
             <div className="sm:col-span-2 mt-2 pt-3 border-t border-border space-y-2">
               <p className="text-xs font-semibold text-foreground">선정작 발표 페이지</p>
               <label className="flex items-center gap-2 text-sm text-foreground">
@@ -278,7 +279,7 @@ export default function EventManagement() {
                 />
               </label>
               <p className="text-[11px] text-muted-foreground">
-                선정작은 ADM-EVT-03 응모자 현황의 선정 체크박스로 입력합니다. 발표 페이지 진입 배너는 ADM-BNR-01에서 별도로 게시할 수 있어요.
+                선정작은 응모자 현황에서 선정 체크박스로 입력합니다.
               </p>
             </div>
           </div>
@@ -286,20 +287,16 @@ export default function EventManagement() {
             <Button type="submit" className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white">
               {editingId ? '수정' : '저장'}
             </Button>
-            <Button
-              type="button"
-              onClick={cancelEdit}
-              className="text-sm px-3 py-1.5 rounded-lg border border-border"
-            >
+            <button type="button" onClick={cancelEdit} className="text-sm px-3 py-1.5 rounded-lg border border-border">
               취소
-            </Button>
+            </button>
           </div>
         </form>
       )}
 
       {sorted.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
-          등록된 응모전가 없습니다. 상단 "새 응모전" 버튼으로 등록해 보세요.
+          등록된 응모전이 없습니다. 상단 "새 응모전" 버튼으로 등록해 보세요.
         </div>
       ) : (
         <div className="border border-border rounded-lg overflow-hidden overflow-x-auto">
@@ -307,6 +304,7 @@ export default function EventManagement() {
             <thead>
               <tr className="bg-muted text-left text-foreground">
                 <th className="px-4 py-3 font-medium">응모전명</th>
+                <th className="px-4 py-3 font-medium">유형</th>
                 <th className="px-4 py-3 font-medium">기간</th>
                 <th className="px-4 py-3 font-medium">상태</th>
                 <th className="px-4 py-3 font-medium">참여작 공개</th>
@@ -321,6 +319,11 @@ export default function EventManagement() {
                     <td className="px-4 py-3 font-medium text-foreground">
                       {ev.title}
                       {ev.subtitle && <p className="text-xs text-muted-foreground mt-0.5">{ev.subtitle}</p>}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${ev.subtype === 'regular' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-purple-50 text-purple-700 border border-purple-200'}`}>
+                        {ev.subtype === 'regular' ? '정기' : '비정기'}
+                      </span>
                     </td>
                     <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{ev.startAt} ~ {ev.endAt}</td>
                     <td className="px-4 py-3">
@@ -338,22 +341,22 @@ export default function EventManagement() {
                         <Users className="w-3.5 h-3.5" />
                         응모자
                       </Link>
-                      <Button
+                      <button
                         type="button"
                         onClick={() => startEdit(ev)}
                         className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/30"
                       >
                         <Pencil className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
                         수정
-                      </Button>
-                      <Button
+                      </button>
+                      <button
                         type="button"
                         onClick={() => remove(ev)}
                         className="text-sm px-3 py-1.5 rounded-lg border border-red-200 text-red-700 lg:hover:bg-red-50 inline-flex items-center gap-1.5"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
                         삭제
-                      </Button>
+                      </button>
                     </td>
                   </tr>
                 );

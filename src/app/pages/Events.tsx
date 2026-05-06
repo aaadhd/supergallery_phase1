@@ -19,7 +19,7 @@ export default function Events() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { t } = useI18n();
-  const events = useManagedEvents();
+  const events = useManagedEvents().filter((e) => e.type === 'contest');
 
   const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, duration: 30 });
   const [currentBanner, setCurrentBanner] = useState(0);
@@ -282,13 +282,6 @@ export default function Events() {
               <Bell className="h-5 w-5" aria-hidden />
               {t('events.ctaNotify')}
             </Button>
-            <button
-              type="button"
-              onClick={openUnsubscribeModal}
-              className="text-sm text-white/90 underline underline-offset-4 min-h-[44px] px-2 rounded-md lg:hover:text-white focus:outline-none focus-visible:ring-2 focus-visible:ring-white/80"
-            >
-              {t('events.unsubscribeLink')}
-            </button>
           </div>
         </div>
       </div>

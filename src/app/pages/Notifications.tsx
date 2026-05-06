@@ -220,10 +220,7 @@ function passesPrefs(n: Notification, p: NotificationSettingsState): boolean {
   }
 }
 
-/**
- * 알림 칩 7종 (PRD USR-NTF-01 §2 정합). Phase 1엔 팔로잉 신작 미지원으로 칩에서 제외.
- * 칩 ↔ Notification.type 매핑은 N:1 — 큐레이션 칩 = pick + curation, 시스템 칩 = system + invite(초대 수락).
- */
+/** 칩 ↔ Notification.type 매핑은 N:1 — 큐레이션 칩 = pick + curation, 시스템 칩 = system + invite(초대 수락). */
 type ChipId = 'all' | 'like' | 'follow' | 'groupInvite' | 'curation' | 'event' | 'system';
 
 function chipMatches(chip: ChipId, n: Notification): boolean {

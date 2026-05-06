@@ -4,7 +4,7 @@
 
 **검토 일정**:
 - 사용자 모집 시작 **전** 확정본 게시 필수 ([Policy §21.0](./Policy_v1.md#21-0-법무-문서-단계별-마감-운영-가드))
-- 모집 시점 placeholder 상태로 진입 시 ADM-CKL-01 런칭 체크리스트에서 **자동 블로커**
+- 모집 시점 placeholder 상태로 진입 시 런칭 전 대시보드에서 **블로커**로 표시
 
 ---
 
@@ -226,7 +226,7 @@
 3. 영향이 정책에 미치면 [Policy_v1.md](./Policy_v1.md) §21·관련 절 함께 갱신
 4. 영향이 화면에 미치면 [PRD_User_v1.md](./PRD_User_v1.md) USR-INF-05·06·07 함께 갱신
 5. 변호사 확정 표기를 본 체크리스트 §3·§4 표에 기록 (LP-N · T-N · P-N별 결과)
-6. 사용자 모집 시작 전 [ADM-CKL-01](./IA_ScreenList_v1.md#adm-ckl-01-런칭-체크리스트) 런칭 체크리스트의 L-1·L-2 상태를 "확정"으로 전환
+6. 사용자 모집 시작 전 L-1·L-2 상태를 "확정"으로 전환 후 개발팀에 알림
 
 ---
 
@@ -270,4 +270,3 @@
 [USR-UPL-02]: PRD_User_v1.md#usr-upl-02-업로드-메인-이미지-작가-메타-입력
 [USR-EVT-04]: PRD_User_v1.md#usr-evt-04-응모전-응모-모달
 [Handoff_Event_Consent_v1.md]: Handoff_Event_Consent_v1.md
-[ADM-CKL-01]: IA_ScreenList_v1.md#adm-ckl-01-런칭-체크리스트

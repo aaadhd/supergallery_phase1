@@ -156,7 +156,6 @@ export function EventEntryModal({ open, onClose, eventId, eventTitle, eventStart
 
     setIsPublishing(true);
     const finalTitle = artworkTitle.trim().slice(0, TITLE_FIELD_MAX_LEN);
-    const autoApprove = !import.meta.env.PROD && import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true';
     const newWork: Work = {
       id: `user-${crypto.randomUUID()}`,
       title: finalTitle,
@@ -174,7 +173,7 @@ export function EventEntryModal({ open, onClose, eventId, eventTitle, eventStart
       imageArtists: [
         { type: 'member', memberId: currentUser.id, memberName: currentUser.name, memberAvatar: currentUser.avatar },
       ],
-      ...buildVisibilityPatch(autoApprove ? 'public' : 'pending_review'),
+      ...buildVisibilityPatch('public'),
       uploadedAt: todayLocalIso(),
       linkedEventId: eventId,
       coverImageIndex: 0,
@@ -197,56 +196,57 @@ export function EventEntryModal({ open, onClose, eventId, eventTitle, eventStart
 
   return (
     <Dialog open={open} onOpenChange={(o) => { if (!o && !isPublishing) onClose(); }}>
-      <DialogContent className="max-w-md sm:max-w-lg">
-        <DialogHeader>
-          <DialogTitle>{tn('evt.entryModalTitle', { eventName: eventTitle })}</DialogTitle>
-          {dateRange && <p className="text-xs text-muted-foreground">{dateRange}</p>}
-        </DialogHeader>
+      <DialogContent className="max-w-sm sm:max-w-md p-0 overflow-hidden gap-0">
+        {/* 헤더 */}
+        <div className="px-5 pt-5 pb-4 border-b border-border">
+          <p className="text-xs text-muted-foreground mb-0.5">{eventTitle}</p>
+          <DialogTitle className="text-base font-bold">응모하기</DialogTitle>
+          {dateRange && <p className="text-xs text-muted-foreground mt-0.5">{dateRange}</p>}
+        </div>
 
-        <div className="space-y-4">
-          {/* 이미지 1장 강제 */}
-          <div>
-            <input
-              ref={fileInputRef}
-              type="file"
-              accept="image/jpeg,image/png,image/webp,image/gif"
-              onChange={handleFileSelect}
-              className="hidden"
-            />
-            {imageUrl ? (
-              <div className="relative rounded-xl overflow-hidden border border-border/60">
-                <img src={imageUrl} alt="응모 작품" className="w-full aspect-square object-cover" />
-                <button
-                  type="button"
-                  onClick={() => setImageUrl(null)}
-                  className="absolute top-2 right-2 h-8 w-8 rounded-full bg-black/60 text-white flex items-center justify-center hover:bg-black/80"
-                  aria-label="이미지 제거"
-                >
-                  <X className="h-4 w-4" />
-                </button>
-              </div>
-            ) : (
-              <div
-                onClick={() => fileInputRef.current?.click()}
-                onDragOver={(e) => e.preventDefault()}
-                onDrop={handleDrop}
-                className="aspect-square rounded-xl border-2 border-dashed border-border/60 hover:border-primary hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-2 cursor-pointer"
+        <div className="px-5 py-4 space-y-4">
+          {/* 이미지 업로드 */}
+          <input
+            ref={fileInputRef}
+            type="file"
+            accept="image/jpeg,image/png,image/webp,image/gif"
+            onChange={handleFileSelect}
+            className="hidden"
+          />
+          {imageUrl ? (
+            <div className="relative rounded-xl overflow-hidden border border-border/60 h-52">
+              <img src={imageUrl} alt="응모 작품" className="w-full h-full object-cover" />
+              <button
+                type="button"
+                onClick={() => setImageUrl(null)}
+                className="absolute top-2 right-2 h-7 w-7 rounded-full bg-black/60 text-white flex items-center justify-center lg:hover:bg-black/80"
+                aria-label="이미지 제거"
               >
-                <ImageIcon className="h-8 w-8 text-muted-foreground" />
-                <p className="text-xs text-muted-foreground text-center px-4">{t('evt.entryModalImageHint')}</p>
-                <p className="text-[11px] text-muted-foreground">{t('evt.entryHelperSinglePiece')}</p>
+                <X className="h-3.5 w-3.5" />
+              </button>
+            </div>
+          ) : (
+            <div
+              onClick={() => fileInputRef.current?.click()}
+              onDragOver={(e) => e.preventDefault()}
+              onDrop={handleDrop}
+              className="h-40 rounded-xl border-2 border-dashed border-border/50 lg:hover:border-primary lg:hover:bg-primary/5 transition-all flex flex-col items-center justify-center gap-2 cursor-pointer"
+            >
+              <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
+                <ImageIcon className="h-5 w-5 text-muted-foreground" />
               </div>
-            )}
-            {cameraBlocked && (
-              <p className="text-xs text-amber-600 mt-2">{t('upload.cameraBlockTitle')} — {t('upload.cameraBlockDesc')}</p>
-            )}
-          </div>
+              <p className="text-sm text-muted-foreground">이미지 선택 또는 드래그</p>
+              <p className="text-xs text-muted-foreground/70">JPG · PNG · WEBP · 최대 10MB</p>
+            </div>
+          )}
+          {cameraBlocked && (
+            <p className="text-xs text-amber-600">{t('upload.cameraBlockTitle')} — {t('upload.cameraBlockDesc')}</p>
+          )}
 
           {/* 작품명 */}
-          <div className="space-y-1">
+          <div className="space-y-1.5">
             <label htmlFor="evt-entry-artwork" className="text-sm font-medium text-foreground">
-              {t('evt.entryModalArtworkLabel')}
-              <span className="ml-1 text-xs text-destructive">*</span>
+              작품명 <span className="text-destructive">*</span>
             </label>
             <Input
               id="evt-entry-artwork"
@@ -257,55 +257,55 @@ export function EventEntryModal({ open, onClose, eventId, eventTitle, eventStart
               onChange={(e) => setArtworkTitle(e.target.value.slice(0, TITLE_FIELD_MAX_LEN))}
               className="w-full"
             />
-            <div className="flex justify-end">
-              <span className="text-xs text-muted-foreground">{artworkTitle.length}/{TITLE_FIELD_MAX_LEN}</span>
-            </div>
+            <p className="text-right text-xs text-muted-foreground">{artworkTitle.length}/{TITLE_FIELD_MAX_LEN}</p>
           </div>
 
-          {/* 원작 확인 */}
-          <div className="bg-primary/5 rounded-xl p-3 border border-primary/10">
-            <label className="flex items-start gap-3 cursor-pointer">
+          {/* 동의 체크박스 2개 */}
+          <div className="space-y-2">
+            <label className="flex items-start gap-2.5 cursor-pointer">
               <input
                 type="checkbox"
                 checked={isOriginalChecked}
                 onChange={(e) => setIsOriginalChecked(e.target.checked)}
-                className="mt-1 h-5 w-5 rounded border-primary/30 text-primary focus:ring-primary"
+                className="mt-0.5 h-4 w-4 rounded accent-primary shrink-0"
               />
               <span className="text-sm text-foreground leading-snug select-none">
-                {t('upload.confirmOriginal')}<span className="ml-1 text-xs text-destructive">*</span>
+                {t('upload.confirmOriginal')} <span className="text-destructive text-xs">*</span>
               </span>
             </label>
-          </div>
-
-          {/* 응모 동의 */}
-          <div className="bg-amber-50 rounded-xl p-3 border border-amber-200">
-            <label className="flex items-start gap-3 cursor-pointer">
+            <label className="flex items-start gap-2.5 cursor-pointer">
               <input
                 type="checkbox"
                 checked={eventConsentChecked}
                 onChange={(e) => setEventConsentChecked(e.target.checked)}
-                className="mt-1 h-5 w-5 rounded border-amber-400 text-primary focus:ring-primary"
+                className="mt-0.5 h-4 w-4 rounded accent-primary shrink-0"
               />
-              <span className="text-sm text-amber-900 leading-snug select-none">
-                {t('upload.eventConsentLabel')}<span className="ml-1 text-xs text-destructive">*</span>
+              <span className="text-sm text-foreground leading-snug select-none">
+                {t('upload.eventConsentLabel')} <span className="text-destructive text-xs">*</span>
               </span>
             </label>
           </div>
         </div>
 
-        <DialogFooter className="gap-2 mt-2">
-          <Button variant="ghost" onClick={onClose} disabled={isPublishing}>
+        {/* 푸터 */}
+        <div className="px-5 pb-5 flex justify-end gap-2 border-t border-border pt-4">
+          <button
+            type="button"
+            onClick={onClose}
+            disabled={isPublishing}
+            className="px-4 py-2 rounded-lg border border-border text-sm text-foreground lg:hover:bg-muted/40 disabled:opacity-50"
+          >
             {t('evt.entryModalCancel')}
-          </Button>
+          </button>
           <Button
             onClick={handlePublish}
             disabled={!canSubmit}
-            className="bg-primary text-white hover:bg-primary/90 disabled:bg-muted disabled:text-muted-foreground"
+            className="px-4 py-2 rounded-lg bg-primary text-white text-sm disabled:opacity-50"
           >
-            <Upload className="h-4 w-4 mr-1" />
+            <Upload className="h-4 w-4 mr-1.5" />
             {isPublishing ? t('evt.entryModalSubmitting') : t('evt.entryModalSubmit')}
           </Button>
-        </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );

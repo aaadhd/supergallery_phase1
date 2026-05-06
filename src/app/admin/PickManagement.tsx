@@ -184,20 +184,20 @@ export default function PickManagement() {
     <div className="min-h-full">
       <h1 className="text-xl font-bold mb-6 text-foreground">Artier&apos;s Pick 관리</h1>
       <div className="mb-5 inline-flex rounded-lg border border-border p-1 bg-muted/30">
-        <Button
+        <button
           type="button"
           onClick={() => setActiveTab('current')}
           className={`min-h-9 px-3 text-sm rounded-md ${activeTab === 'current' ? 'bg-white text-foreground shadow-sm' : 'bg-transparent text-muted-foreground lg:hover:bg-white/70'}`}
         >
           현재 Pick ({pickIds.length})
-        </Button>
-        <Button
+        </button>
+        <button
           type="button"
           onClick={() => setActiveTab('history')}
           className={`min-h-9 px-3 text-sm rounded-md ${activeTab === 'history' ? 'bg-white text-foreground shadow-sm' : 'bg-transparent text-muted-foreground lg:hover:bg-white/70'}`}
         >
           Pick 이력 ({pickHistory.length})
-        </Button>
+        </button>
       </div>
       <div className="mb-6 space-y-1.5">
         <p className="text-sm text-muted-foreground">
@@ -282,14 +282,14 @@ export default function PickManagement() {
                     </div>
                     <p className="text-xs font-medium text-foreground truncate">{p.title}</p>
                     <p className="text-xs text-muted-foreground truncate">{p.artist}</p>
-                    <Button
+                    <button
                       type="button"
                       onClick={() => removePick(p.id)}
                       className="absolute top-2 right-2 p-1 rounded-md bg-white border border-border text-muted-foreground lg:hover:text-destructive opacity-100 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity"
                       aria-label="제거"
                     >
                       <X className="w-3.5 h-3.5" />
-                    </Button>
+                    </button>
                   </div>
                 );
               })}
@@ -308,13 +308,13 @@ export default function PickManagement() {
                     <span className="text-sm font-medium text-foreground">{p.title}</span>
                     <span className="text-sm text-muted-foreground"> · {p.artist}</span>
                   </div>
-                  <Button
+                  <button
                     type="button"
                     onClick={() => removePick(p.id)}
                     className="text-sm px-3 py-1.5 rounded-lg border border-border text-muted-foreground lg:hover:bg-white"
                   >
                     제거
-                  </Button>
+                  </button>
                 </li>
               );
             })}
@@ -361,9 +361,9 @@ export default function PickManagement() {
                       </div>
                       <div className="flex items-center gap-2">
                         {isCurrent ? (
-                          <Button type="button" onClick={() => removePick(work.id)} className="text-xs px-3 py-1.5 rounded-lg border border-border text-muted-foreground lg:hover:bg-muted">
+                          <button type="button" onClick={() => removePick(work.id)} className="text-xs px-3 py-1.5 rounded-lg border border-border text-muted-foreground lg:hover:bg-muted">
                             현재 Pick 해제
-                          </Button>
+                          </button>
                         ) : (
                           <Button
                             type="button"

@@ -171,7 +171,7 @@ Artier는 시니어·중장년 순수미술 작가를 주 고객으로 하는 **
 ```ts
 const koMessages = {
   'nav.browse': '둘러보기',
-  'nav.events': '응모전',
+  'nav.events': '이벤트',
   'nav.upload': '작품 올리기',
   'nav.uploadShort': '올리기',
   'nav.search': '검색',
@@ -226,7 +226,6 @@ const koMessages = {
     '상단의 「Phase 1 유저 플로우 — 화면 바로가기」에서 문서 14개 흐름별 URL을 한꺼번에 열 수 있어요. 아래 도구로 알림·초대·탈퇴는 데모 전용으로 시연합니다.',
   'demo.sectionNotif': '알림 시뮬',
   'demo.sectionNotifHint': '알림함에 샘플 알림을 추가합니다.',
-  'demo.btnNotifNewWork': '신작 알림',
   'demo.btnNotifFollow': '팔로우 알림',
   'demo.btnNotifGroup': '그룹 초대',
   'demo.linkOpenNotif': '알림함 열기',
@@ -243,7 +242,6 @@ const koMessages = {
   'demo.linkSettings': '설정으로 이동',
   'demo.toastNotifPushed': '알림함에 추가했어요.',
   'demo.sampleWorkTitle': '데모 작품',
-  'demo.notifNewWorkMsg': '팔로우한 작가의 신작이 등록됐어요: {title}',
   'demo.notifFollowMsg': '누군가 당신을 팔로우하기 시작했어요.',
   'demo.notifGroupInviteMsg': '그룹 초대가 도착했어요.',
   'demo.linkReferenceToolkit': '기획 검수: JWT·이메일 데모',
@@ -310,12 +308,7 @@ const koMessages = {
     '아래는 `SuperGallery Phase 1 유저 플로우` 문서 흐름과 대응하는 URL입니다(15번 블록은 기획 검수용 데모). 로그인이 필요한 화면은 GNB에서 로그인한 뒤 이용하세요.',
   'flowMap.section01': `1. 회원가입 / 로그인
 /login|이메일 매직 링크 로그인
-/signup|이메일 회원가입(매직 링크)
-/signup?demo=email_sent|인증 링크 발송 안내(시연)
-/signup?demo=email_expired|인증 링크 만료(시연)
-/signup?demo=region|국가별 가입 옵션 레이아웃(시연)
-/login?demo=suspended|계정 정지 적용(시연) — 이후 로그인 시 차단 메시지
-/login?demo=clear_suspension|정지 해제(시연)`,
+/signup|이메일 회원가입(매직 링크)`,
   'flowMap.section02': `2. 작품 업로드 → 전시
 /upload|업로드 에디터(로그인 필요)`,
   'flowMap.section03': `3. 둘러보기 → 작업물 상세 → 반응
@@ -471,15 +464,15 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'notifications.filterAll': '전체',
   'notifications.filterUnread': '읽지 않음',
   'notifications.empty': '알림이 없어요',
-  'events.title': '응모전',
-  'events.subtitle': 'Artier에서 진행 중인 다양한 응모전을 확인하세요',
+  'events.title': '이벤트',
+  'events.subtitle': 'Artier에서 진행 중인 다양한 이벤트를 확인하세요',
   'events.participate': '참여하기',
-  'events.noActiveEvents': '현재 진행 중인 응모전이 없어요',
-  'events.noUpcoming': '예정된 응모전이 없어요',
-  'events.upcomingSection': '예정된 응모전',
+  'events.noActiveEvents': '현재 진행 중인 이벤트가 없어요',
+  'events.noUpcoming': '예정된 이벤트가 없어요',
+  'events.upcomingSection': '예정된 이벤트',
   'events.comingSoonBadge': 'COMING SOON',
-  'events.ctaTitle': '응모전을 놓치지 마세요',
-  'events.ctaLead': '새로운 응모전 소식을 가장 먼저 받아보세요',
+  'events.ctaTitle': '이벤트를 놓치지 마세요',
+  'events.ctaLead': '새로운 이벤트 소식을 가장 먼저 받아보세요',
   'events.ctaNotify': '알림 받기',
   'events.notifyModalTitle': '응모전 알림 신청',
   'events.notifyModalLead':
@@ -525,7 +518,12 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'events.detailTarget': '참여 대상',
   'events.detailGuide': '응모전 안내',
   'events.detailEnded': '참여가 마감된 응모전이에요',
-  'events.detailBackLink': '응모전 목록으로 돌아가기',
+  'events.detailBackLink': '이벤트 목록으로 돌아가기',
+  'events.viewMyEntry': '내 응모작 보기',
+  'events.cancelEntry': '응모 취소',
+  'events.cancelEntryConfirmTitle': '응모를 취소할까요?',
+  'events.cancelEntryConfirmDesc': '응모 취소 시 제출한 작품이 삭제됩니다. 재응모는 가능합니다.',
+  'events.cancelEntrySuccess': '응모가 취소되었습니다.',
   'upload.errExhibitionNameRequired': '전시명을 입력해야 전시할 수 있어요.',
   'upload.errGroupNameRequired': '그룹 전시는 소속 그룹명을 입력해야 전시할 수 있어요.',
   'upload.errProfanityExhibitionName': '전시명에 부적절한 단어가 포함되어 있어요. 다른 표현으로 바꿔 주세요.',
@@ -738,15 +736,13 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'notifications.categoryLike': '좋아요',
   'notifications.categoryFollow': '팔로우',
   'notifications.categoryGroupInvite': '그룹 초대',
-  'notifications.categoryFollowing': '팔로잉 신작',
   'notifications.categoryCuration': '큐레이션',
   'notifications.categoryEvent': '응모전',
   'notifications.categorySystem': '시스템',
   'notifications.settingsLink': '알림 설정',
   'notifications.emptyUnread': '읽지 않은 알림이 없어요',
   'notifications.emptyHint': '새로운 소식이 생기면 여기에 표시돼요',
-  'eventDetail.notifHint': '응모전·초대 알림은 설정에서 끌 수 있어요.',
-  'eventDetail.backToList': '응모전 목록으로',
+  'eventDetail.backToList': '이벤트 목록으로',
   'eventDetail.statusActive': '진행중',
   'eventDetail.statusScheduled': '예정',
   'eventDetail.statusEnded': '종료',
@@ -1129,7 +1125,6 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'settings.notifLike': '내 작품에 좋아요',
   'settings.notifNewFollower': '새 팔로워',
   'settings.notifGroupInvite': '공동 전시(그룹전시) 초대',
-  'settings.notifFollowingWork': '팔로잉 작가 신작',
   'settings.notifMarketing': '마케팅 알림',
   'settings.notifRequiredGroup': '필수 알림',
   'settings.notifSystem': '시스템 공지',
@@ -1240,20 +1235,19 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'admin.sidebarNote': '명세상 이 화면은 운영팀 전용이에요. 단말 저장소와 동기화.',
   'admin.footerNote': 'Phase 1 · 사용자 메뉴에 링크 없음',
   'admin.nav.dashboard': '대시보드',
-  'admin.nav.issues': '미결 이슈',
-  'admin.nav.checklist': '런칭 체크리스트',
-  'admin.nav.contentReview': '검수 큐',
+  'admin.nav.contentReview': '검수',
+  'admin.nav.reports': '신고',
   'admin.nav.picks': 'Pick',
+  'admin.nav.featured': '추천 전시',
   'admin.nav.curation': '기획전',
+  'admin.nav.contests': '응모전',
   'admin.nav.banners': '배너',
-  'admin.nav.managedEvents': '응모전',
-  'admin.nav.reports': '신고 처리',
-  'admin.nav.members': '회원 관리',
-  'admin.nav.inquiries': '문의함',
+  'admin.nav.members': '회원',
+  'admin.nav.notices': '공지',
+  'admin.nav.inquiries': '문의',
   'admin.section.moderation': '모더레이션',
   'admin.section.contentOps': '콘텐츠 운영',
-  'admin.section.members': '회원',
-  'admin.section.operations': '운영',
+  'admin.section.members': '회원·커뮤니케이션',
   'splash.alt': 'Artier',
   'footer.qaNavTrigger': '검수 바로가기',
   'footer.qaGroupShareDeep': '공유·알림 (전시/비회원)',
@@ -1277,8 +1271,6 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'footer.qaAdminReports': '신고 관리',
   'footer.qaAdminMembers': '회원 관리',
   'footer.qaAdminInquiries': '문의함',
-  'footer.qaAdminIssues': '미결 이슈',
-  'footer.qaAdminChecklist': '런칭 체크리스트',
   'footer.qaAdminEventParticipants': '응모전 참여자',
   'footer.qaAdminPicks': "Artier's Pick",
   'footer.qaAdminCuration': '피드 큐레이션',
@@ -1387,7 +1379,6 @@ const enMessages: Record<MessageKey, string> = {
     'Use the flow index at the top to open every Phase 1 screen by URL. Below: demo-only tools for notifications, invites, and withdrawal.',
   'demo.sectionNotif': 'Notification simulation',
   'demo.sectionNotifHint': 'Adds sample items to your notification inbox.',
-  'demo.btnNotifNewWork': 'New work',
   'demo.btnNotifFollow': 'Follow',
   'demo.btnNotifGroup': 'Group invite',
   'demo.linkOpenNotif': 'Open notifications',
@@ -1404,7 +1395,6 @@ const enMessages: Record<MessageKey, string> = {
   'demo.linkSettings': 'Go to Settings',
   'demo.toastNotifPushed': 'Added to notifications.',
   'demo.sampleWorkTitle': 'Demo work',
-  'demo.notifNewWorkMsg': 'A followed artist posted new work: {title}',
   'demo.notifFollowMsg': 'Someone started following you.',
   'demo.notifGroupInviteMsg': 'You received a group invitation.',
   'demo.linkReferenceToolkit': 'PM review: JWT, email demo',
@@ -1471,12 +1461,7 @@ const enMessages: Record<MessageKey, string> = {
     'Each block maps to the Phase 1 user-flow doc (block 15 is a PM review demo). Log in from the header for pages that require auth.',
   'flowMap.section01': `1. Sign up / login
 /login|Email magic-link login
-/signup|Email sign-up (magic link)
-/signup?demo=email_sent|Magic-link sent (demo)
-/signup?demo=email_expired|Magic-link expired (demo)
-/signup?demo=region|KR vs intl options layout (demo)
-/login?demo=suspended|Apply suspension (demo) — then try login
-/login?demo=clear_suspension|Clear suspension (demo)`,
+/signup|Email sign-up (magic link)`,
   'flowMap.section02': `2. Upload → exhibition
 /upload|Upload editor (login required)`,
   'flowMap.section03': `3. Browse → work detail → reactions
@@ -1899,14 +1884,12 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'notifications.categoryLike': 'Likes',
   'notifications.categoryFollow': 'Follows',
   'notifications.categoryGroupInvite': 'Group invites',
-  'notifications.categoryFollowing': 'New from following',
   'notifications.categoryCuration': 'Curation',
   'notifications.categoryEvent': 'Events',
   'notifications.categorySystem': 'System',
   'notifications.settingsLink': 'Notification settings',
   'notifications.emptyUnread': 'No unread notifications',
   'notifications.emptyHint': 'New updates will show up here.',
-  'eventDetail.notifHint': 'You can turn off event and invite alerts in settings.',
   'eventDetail.backToList': 'Back to events',
   'eventDetail.statusActive': 'In Progress',
   'eventDetail.statusScheduled': 'Coming Soon',
@@ -2291,7 +2274,6 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'settings.notifLike': 'Likes on my work',
   'settings.notifNewFollower': 'New followers',
   'settings.notifGroupInvite': 'Group exhibition invites',
-  'settings.notifFollowingWork': 'New work from people I follow',
   'settings.notifMarketing': 'Marketing',
   'settings.notifRequiredGroup': 'Required',
   'settings.notifSystem': 'System notices',
@@ -2408,7 +2390,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'admin.nav.picks': 'Pick',
   'admin.nav.curation': 'Curation',
   'admin.nav.banners': 'Banners',
-  'admin.nav.managedEvents': 'Events',
+  'admin.nav.contests': 'Contests',
   'admin.nav.reports': 'Reports',
   'admin.nav.members': 'Members',
   'admin.nav.inquiries': 'Inquiries',
@@ -2439,8 +2421,6 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'footer.qaAdminReports': 'Reports',
   'footer.qaAdminMembers': 'Members',
   'footer.qaAdminInquiries': 'Inquiries',
-  'footer.qaAdminIssues': 'Open issues',
-  'footer.qaAdminChecklist': 'Launch checklist',
   'footer.qaAdminEventParticipants': 'Event participants',
   'footer.qaAdminPicks': "Artier's Pick",
   'footer.qaAdminCuration': 'Feed curation',
@@ -2612,8 +2592,9 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.15 | 2026-05-06 | PM × Claude | events.viewMyEntry·cancelEntry·cancelEntryConfirmTitle·Desc·Success 5키 추가 |
 | v1.14 | 2026-05-05 | PM × Claude | Handoff_Footer·Handoff_ServiceIntro 흡수 — §10 글로벌 푸터·§11 서비스 소개 신설 |
-| v1.13 | 2026-05-05 | PM × Claude | 자동 비공개 알림 폐기, 삭제 사유·신고 알림 변수. 이후 append — 문서 이력 단순화. 이후 append — 인용 본문 인라인 링크 |
+| v1.13 | 2026-05-05 | PM × Claude | 자동 비공개 알림 폐기, 삭제 사유·신고 알림 변수, 인라인 링크 정합 |
 | v1.12 | 2026-05-04 | PM × Claude | 응모·기획전·알림·응모전 표준어·발표 페이지 카피 |
 | v1.11 | 2026-04-30 | PM × Claude | 검수 SLA 문구, 매직 링크·토큰·FAQ·닉네임 정합 |
 | v1.10 | 2026-04-29 | PM × Claude | 알림·토스트 톤 일괄 정리 |

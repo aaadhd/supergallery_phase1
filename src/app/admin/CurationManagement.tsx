@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-import { Plus, Trash2, Star, Pencil, Check, X, Search, ArrowUp, ArrowDown, AlertTriangle } from 'lucide-react';
+import { Plus, Trash2, Pencil, Check, X, Search, ArrowUp, ArrowDown, AlertTriangle } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import {
   curationStore,
@@ -8,7 +8,6 @@ import {
   type CuratedExhibition,
   type CurationPieceRef,
 } from '../utils/curationStore';
-import { artists } from '../data';
 import { workStore, useWorkStore } from '../store';
 import { openConfirm } from '../components/ConfirmDialog';
 import { isWorkPublic } from '../utils/workVisibility';
@@ -91,7 +90,7 @@ function pushCurationSelectedNotification(
 
 export default function CurationManagement() {
   const { t } = useI18n();
-  const { curatedExhibitions, featuredArtistIds } = useCuration();
+  const { curatedExhibitions } = useCuration();
   useWorkStore(); // subscribe — 작품 변동 시 그리드 갱신
 
   const [loading, setLoading] = useState(true);
@@ -248,24 +247,20 @@ export default function CurationManagement() {
     toast.success('기획전이 삭제되었습니다.');
   };
 
-  const toggleFeatured = (artistId: string) => curationStore.toggleFeaturedArtist(artistId);
-
   if (loading) {
     return (
       <div>
-        <h1 className="text-xl font-bold mb-6 text-foreground">피드 큐레이션</h1>
+        <h1 className="text-xl font-bold mb-6 text-foreground">기획전</h1>
         <div className="rounded-lg border border-border py-16 text-center text-sm text-muted-foreground">불러오는 중…</div>
       </div>
     );
   }
 
-  const featuredSet = new Set(featuredArtistIds);
-
   return (
     <div className="min-h-full">
-      <h1 className="text-xl font-bold text-foreground mb-1">피드 큐레이션</h1>
+      <h1 className="text-xl font-bold text-foreground mb-1">기획전</h1>
       <p className="text-sm text-muted-foreground mb-6">
-        둘러보기 피드 노출 순서: <strong>Pick → 추천 작가 → 팔로잉 → 신규(14일) → 일반</strong>. 기획전은 [USR-CUR-01] 기획전 페이지에서만 작품(piece) 단위로 노출되며 일반 피드 부스트 대상이 아닙니다(Policy §15.1).
+        기획전은 기획전 페이지([USR-CUR-01])에서만 노출됩니다. 일반 피드 부스트 대상이 아닙니다.
       </p>
 
       {/* 기획전 목록 */}
@@ -298,7 +293,7 @@ export default function CurationManagement() {
                     <p className="text-xs text-muted-foreground mt-1">포함 piece <strong className="text-foreground">{c.pieces.length}</strong>개</p>
                   </div>
                   <div className="flex shrink-0 gap-1.5">
-                    <Button
+                    <button
                       type="button"
                       onClick={() => openEdit(c)}
                       disabled={isEditorOpen}
@@ -306,8 +301,8 @@ export default function CurationManagement() {
                       aria-label={`${c.title} 수정`}
                     >
                       <Pencil className="w-3.5 h-3.5" />수정
-                    </Button>
-                    <Button
+                    </button>
+                    <button
                       type="button"
                       onClick={() => removeCuratedExhibition(c)}
                       disabled={isEditorOpen}
@@ -315,7 +310,7 @@ export default function CurationManagement() {
                       aria-label={`${c.title} 삭제`}
                     >
                       <Trash2 className="w-3.5 h-3.5" />삭제
-                    </Button>
+                    </button>
                   </div>
                 </div>
               </li>
@@ -529,45 +524,17 @@ export default function CurationManagement() {
               <Check className="w-4 h-4" />
               {editor.mode === 'create' ? '기획전 추가' : '저장'}
             </Button>
-            <Button
+            <button
               type="button"
               onClick={closeEditor}
               className="text-sm px-4 py-2 rounded-lg border border-border text-foreground lg:hover:bg-muted/50 inline-flex items-center gap-1.5"
             >
               취소
-            </Button>
+            </button>
           </div>
         </section>
       )}
 
-      {/* 추천 작가 */}
-      <section>
-        <h2 className="text-base font-semibold text-foreground mb-3">추천 작가 (피드 부스트)</h2>
-        <p className="text-sm text-muted-foreground mb-4">
-          체크한 작가의 작품은 피드 추천 영역에서 부스트됩니다. 현재 <strong>{featuredArtistIds.length}</strong>명 활성.
-        </p>
-        <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-2">
-          {artists.map((a) => {
-            const active = featuredSet.has(a.id);
-            return (
-              <label
-                key={a.id}
-                className={`flex items-center gap-3 p-3 rounded-lg border cursor-pointer transition-colors ${
-                  active ? 'border-primary bg-primary/5' : 'border-border lg:hover:bg-muted/40'
-                }`}
-              >
-                <input type="checkbox" checked={active} onChange={() => toggleFeatured(a.id)} className="h-4 w-4" />
-                <img src={a.avatar} alt="" className="h-8 w-8 rounded-full object-cover border border-border" loading="lazy" />
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate">{a.name}</p>
-                  <p className="text-xs text-muted-foreground">ID: {a.id}</p>
-                </div>
-                {active && <Star className="w-4 h-4 text-primary fill-primary" />}
-              </label>
-            );
-          })}
-        </div>
-      </section>
     </div>
   );
 }

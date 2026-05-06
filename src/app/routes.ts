@@ -24,14 +24,13 @@ import NoticeDetail from './pages/NoticeDetail';
 import ServerError from './pages/ServerError';
 import AdminLayout from './admin/AdminLayout';
 import AdminDashboard from './admin/AdminDashboard';
-import UnresolvedIssues from './admin/UnresolvedIssues';
-import LaunchChecklist from './admin/LaunchChecklist';
 import EventParticipants from './admin/EventParticipants';
 import ContentReview from './admin/ContentReview';
 import PickManagement from './admin/PickManagement';
 import CurationManagement from './admin/CurationManagement';
+import FeaturedManagement from './admin/FeaturedManagement';
 import BannerManagement from './admin/BannerManagement';
-import EventManagement from './admin/EventManagement';
+import ContestManagement from './admin/ContestManagement';
 import ReportManagement from './admin/ReportManagement';
 import MemberManagement from './admin/MemberManagement';
 import AdminInquiries from './admin/AdminInquiries';
@@ -117,14 +116,13 @@ export const router = createBrowserRouter([
         Component: AdminLayout,
         children: [
           { index: true, Component: AdminDashboard },
-          { path: 'issues', Component: UnresolvedIssues },
-          { path: 'checklist', Component: LaunchChecklist },
           { path: 'events', Component: EventParticipants },
           { path: 'content-review', Component: ContentReview },
           { path: 'picks', Component: PickManagement },
           { path: 'curation', Component: CurationManagement },
+          { path: 'featured', Component: FeaturedManagement },
           { path: 'banners', Component: BannerManagement },
-          { path: 'managed-events', Component: EventManagement },
+          { path: 'contests', Component: ContestManagement },
           { path: 'reports', Component: ReportManagement },
           { path: 'members', Component: MemberManagement },
           { path: 'inquiries', Component: AdminInquiries },

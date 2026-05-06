@@ -23,14 +23,12 @@ const showQaNav =
 /** AdminLayout이 `canAccessAdminRoutes`로 막지 않도록 운영팀 역할을 켠 뒤 이동합니다. */
 const ADMIN_QA_PATHS: { path: string; labelKey: MessageKey }[] = [
   { path: '/admin', labelKey: 'footer.qaAdminDashboard' },
-  { path: '/admin/issues', labelKey: 'footer.qaAdminIssues' },
-  { path: '/admin/checklist', labelKey: 'footer.qaAdminChecklist' },
   { path: '/admin/events', labelKey: 'footer.qaAdminEventParticipants' },
   { path: '/admin/content-review', labelKey: 'footer.qaAdminContentReview' },
   { path: '/admin/picks', labelKey: 'footer.qaAdminPicks' },
   { path: '/admin/curation', labelKey: 'footer.qaAdminCuration' },
   { path: '/admin/banners', labelKey: 'footer.qaAdminBanners' },
-  { path: '/admin/managed-events', labelKey: 'footer.qaAdminManagedEvents' },
+  { path: '/admin/contests', labelKey: 'footer.qaAdminManagedEvents' },
   { path: '/admin/reports', labelKey: 'footer.qaAdminReports' },
   { path: '/admin/members', labelKey: 'footer.qaAdminMembers' },
   { path: '/admin/inquiries', labelKey: 'footer.qaAdminInquiries' },

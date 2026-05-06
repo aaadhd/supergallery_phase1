@@ -57,7 +57,7 @@ export default function CurationDetail() {
     return out;
   }, [curation, works, untitledLabel]);
 
-  if (!curation) {
+  if (!curation || resolved.length === 0) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-8">
         <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4">

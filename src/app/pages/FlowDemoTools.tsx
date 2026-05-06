@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FlaskConical, Bell, UserPlus, Sparkles, Map } from 'lucide-react';
+import { FlaskConical, Bell, UserPlus, Map } from 'lucide-react';
 import { toast } from 'sonner';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
@@ -70,19 +70,6 @@ export default function FlowDemoTools() {
   const { t } = useI18n();
   const [adminBrowserUnlocked, setAdminBrowserUnlocked] = useState(() => hasProdAdminBrowserUnlock());
 
-  const pushNewWork = () => {
-    const w = workStore.getWorks().find((x) => !x.isHidden) || workStore.getWorks()[0];
-    const artist = w?.artist || artists[1];
-    const title = w?.title || t('demo.sampleWorkTitle');
-    pushDemoNotification({
-      type: 'follow',
-      message: t('demo.notifNewWorkMsg').replace('{title}', title),
-      fromUser: { name: artist.name, avatar: artist.avatar, id: artist.id },
-      workId: w?.id,
-    });
-    toast.success(t('demo.toastNotifPushed'));
-  };
-
   const pushGroupInvite = () => {
     pushDemoNotification({
       type: 'event',
@@ -139,14 +126,6 @@ export default function FlowDemoTools() {
             </h2>
             <p className="text-xs text-muted-foreground mb-4">{t('demo.sectionNotifHint')}</p>
             <div className="flex flex-col sm:flex-row flex-wrap gap-2">
-              <Button variant="ghost"
-                type="button"
-                onClick={pushNewWork}
-                className="px-4 py-2.5 rounded-xl border border-border text-sm font-medium lg:hover:bg-muted/50 text-left"
-              >
-                <Sparkles className="inline h-4 w-4 mr-2 -mt-0.5 text-amber-500" />
-                {t('demo.btnNotifNewWork')}
-              </Button>
               <Button variant="ghost"
                 type="button"
                 onClick={pushFollowNotif}

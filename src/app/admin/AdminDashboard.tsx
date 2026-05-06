@@ -1,10 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertCircle, CheckSquare, AlertTriangle, Eye, Flag, Megaphone, RotateCcw, ShieldAlert, Trophy, Users } from 'lucide-react';
+import { AlertTriangle, Eye, Flag, Megaphone, RotateCcw, ShieldAlert, Trophy, Users } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
-import { Progress } from '../components/ui/progress';
-import { useIssueStore, useChecklistStore } from './adminStore';
 import { useNotices } from '../utils/noticeStore';
 import { STATUS_COLORS } from './constants';
 import { workStore, useWorkStore } from '../store';
@@ -13,12 +11,7 @@ import { isWorkHidden } from '../utils/workVisibility';
 import { useManagedEvents, deriveStatus } from '../utils/eventStore';
 
 export default function AdminDashboard() {
-  const issueStore = useIssueStore();
-  const checklistStore = useChecklistStore();
   useWorkStore(); // workStore 구독 — 작품 변화 시 지표 자동 갱신
-
-  const issues = issueStore.getAll();
-  const checklist = checklistStore.getAll();
 
   // 콘텐츠 운영 지표 (Policy §22 SLA 기반)
   const allWorks = workStore.getWorks();
@@ -60,31 +53,15 @@ export default function AdminDashboard() {
     (e) => e.publicationOpen === true && (e.selectedWorkIds?.length ?? 0) === 0,
   ).length;
 
-  // Issue stats
-  const issuesByStatus = issues.reduce((acc, i) => {
-    acc[i.status] = (acc[i.status] || 0) + 1;
-    return acc;
-  }, {} as Record<string, number>);
-
-  // Checklist stats
-  const checklistDone = checklist.filter(c => c.status === '완료').length;
-  const checklistTotal = checklist.length;
-  const checklistRate = checklistTotal > 0 ? Math.round((checklistDone / checklistTotal) * 100) : 0;
-
-  const checklistByCategory = checklist.reduce((acc, c) => {
-    if (!acc[c.category]) acc[c.category] = { total: 0, done: 0 };
-    acc[c.category].total++;
-    if (c.status === '완료') acc[c.category].done++;
-    return acc;
-  }, {} as Record<string, { total: number; done: number }>);
-
-  // Urgent blockers
-  const blockers = issues.filter(i => i.blocker && i.status !== '해결됨');
-
-  // Recent updates (sorted by updatedAt)
-  const recentIssues = [...issues]
-    .sort((a, b) => b.updatedAt.localeCompare(a.updatedAt))
-    .slice(0, 5);
+  // 미답변 문의 건수
+  const unansweredInquiryCount = (() => {
+    try {
+      const raw = localStorage.getItem('artier_inquiries');
+      if (!raw) return 0;
+      const list = JSON.parse(raw) as Array<{ status?: string }>;
+      return list.filter(i => !i.status || i.status === '신규' || i.status === '처리 중').length;
+    } catch { return 0; }
+  })();
 
   return (
     <div className="space-y-6">
@@ -184,7 +161,7 @@ export default function AdminDashboard() {
       <section>
         <h2 className="text-sm font-semibold text-muted-foreground mb-3">응모전 운영</h2>
         <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-          <Link to="/admin/managed-events">
+          <Link to="/admin/contests">
             <Card className="lg:hover:shadow-md transition-shadow cursor-pointer">
               <CardHeader className="pb-2">
                 <CardDescription className="flex items-center gap-2">
@@ -213,7 +190,7 @@ export default function AdminDashboard() {
             </Card>
           </Link>
           {pendingPublication > 0 && (
-            <Link to="/admin/managed-events">
+            <Link to="/admin/contests">
               <Card className="lg:hover:shadow-md transition-shadow cursor-pointer border-amber-200 bg-amber-50">
                 <CardHeader className="pb-2">
                   <CardDescription className="flex items-center gap-2 text-amber-900">
@@ -231,121 +208,37 @@ export default function AdminDashboard() {
         </div>
       </section>
 
-      <h2 className="text-sm font-semibold text-muted-foreground mb-3">런칭 준비</h2>
-      {/* Summary Cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-        <Link to="/admin/issues">
+      <h2 className="text-sm font-semibold text-muted-foreground mb-3">운영 현황</h2>
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <Link to="/admin/reports">
           <Card className="lg:hover:shadow-md transition-shadow cursor-pointer">
             <CardHeader className="pb-2">
               <CardDescription className="flex items-center gap-2">
-                <AlertCircle className="w-4 h-4" />
-                미결 이슈
+                <Flag className="w-4 h-4" />
+                신고 대기
               </CardDescription>
-              <CardTitle className="text-3xl">{issuesByStatus['미결'] || 0}</CardTitle>
+              <CardTitle className="text-3xl">{reportPendingCount}</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="flex gap-2 flex-wrap">
-                {Object.entries(issuesByStatus).map(([status, count]) => (
-                  <Badge key={status} className={STATUS_COLORS[status] || 'bg-muted/50 text-muted-foreground'} variant="outline">
-                    {status} {count}
-                  </Badge>
-                ))}
-              </div>
+              <p className="text-xs text-muted-foreground">미처리 신고 건수</p>
             </CardContent>
           </Card>
         </Link>
 
-        <Link to="/admin/checklist">
+        <Link to="/admin/inquiries">
           <Card className="lg:hover:shadow-md transition-shadow cursor-pointer">
             <CardHeader className="pb-2">
               <CardDescription className="flex items-center gap-2">
-                <CheckSquare className="w-4 h-4" />
-                런칭 체크리스트
+                <Megaphone className="w-4 h-4" />
+                미답변 문의
               </CardDescription>
-              <CardTitle className="text-3xl">{checklistRate}%</CardTitle>
+              <CardTitle className="text-3xl">{unansweredInquiryCount}</CardTitle>
             </CardHeader>
             <CardContent>
-              <Progress value={checklistRate} className="mb-2" />
-              <p className="text-xs text-muted-foreground">{checklistDone}/{checklistTotal} 항목 완료</p>
+              <p className="text-xs text-muted-foreground">신규·처리 중</p>
             </CardContent>
           </Card>
         </Link>
-
-      </div>
-
-      {/* Urgent Blockers */}
-      {blockers.length > 0 && (
-        <Card className="border-red-200 bg-red-50">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2 text-red-800">
-              <AlertTriangle className="w-5 h-5" />
-              긴급 차단 요소 ({blockers.length})
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {blockers.map(issue => (
-                <div key={issue.id} className="flex items-start gap-3 bg-white rounded-lg p-3 border border-red-100">
-                  <Badge className={STATUS_COLORS[issue.priority] || ''} variant="outline">
-                    {issue.priority}
-                  </Badge>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-medium text-foreground">{issue.title}</p>
-                    <p className="text-xs text-destructive mt-1">차단: {issue.blocker}</p>
-                    <p className="text-xs text-muted-foreground mt-0.5">담당: {issue.owner} · 기한: {issue.dueDate}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
-
-      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Checklist by Category */}
-        <Card>
-          <CardHeader>
-            <CardTitle>카테고리별 체크리스트 진행률</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {Object.entries(checklistByCategory).map(([category, { total, done }]) => {
-                const rate = Math.round((done / total) * 100);
-                return (
-                  <div key={category}>
-                    <div className="flex justify-between text-sm mb-1">
-                      <span className="font-medium">{category}</span>
-                      <span className="text-muted-foreground">{done}/{total}</span>
-                    </div>
-                    <Progress value={rate} />
-                  </div>
-                );
-              })}
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Recent Updates */}
-        <Card>
-          <CardHeader>
-            <CardTitle>최근 업데이트</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-3">
-              {recentIssues.map(issue => (
-                <div key={issue.id} className="flex items-center gap-3">
-                  <Badge className={STATUS_COLORS[issue.status] || ''} variant="outline">
-                    {issue.status}
-                  </Badge>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm text-foreground truncate">{issue.title}</p>
-                    <p className="text-xs text-muted-foreground">{issue.updatedAt} · {issue.owner}</p>
-                  </div>
-                </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
       </div>
     </div>
   );

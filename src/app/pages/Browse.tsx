@@ -614,19 +614,6 @@ function truncateArtistName(name: string, max: number = 10): string {
 // ===========================================================================
 // 상대 시간 헬퍼 (알림 페이지와 동일 키 재활용)
 // ===========================================================================
-function formatRelativeShort(dateStr: string | undefined, t: (k: MessageKey) => string): string {
-  if (!dateStr) return '';
-  const diff = Date.now() - new Date(dateStr).getTime();
-  if (diff < 0) return '';
-  const mins = Math.floor(diff / 60000);
-  if (mins < 1) return t('notifications.timeJustNow' as MessageKey);
-  if (mins < 60) return t('notifications.timeMinutes' as MessageKey).replace('{n}', String(mins));
-  const hours = Math.floor(mins / 60);
-  if (hours < 24) return t('notifications.timeHours' as MessageKey).replace('{n}', String(hours));
-  const days = Math.floor(hours / 24);
-  if (days <= 30) return t('notifications.timeDays' as MessageKey).replace('{n}', String(days));
-  return '';
-}
 
 // ===========================================================================
 // WorkCard -- clean, simple design with large text for 50s audience
@@ -751,7 +738,6 @@ function WorkCard({ work, index, onSelect, onArtistClick, isFollowing, onToggleF
           <h3 className="text-sm font-medium text-foreground leading-snug line-clamp-2 min-w-0">
             {exhibitionLabel}
           </h3>
-          {work.uploadedAt && (() => { const rel = formatRelativeShort(work.uploadedAt, t); return rel ? <span className="text-xs text-muted-foreground/60 shrink-0">{rel}</span> : null; })()}
         </div>
 
         {/* Artist row */}

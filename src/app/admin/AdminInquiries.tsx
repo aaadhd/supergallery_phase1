@@ -496,7 +496,7 @@ export default function AdminInquiries() {
                 {(['신규', '처리 중', '완료', '보류'] as const).map((s) => {
                   const active = (selected.status ?? '신규') === s;
                   return (
-                    <Button
+                    <button
                       key={s}
                       type="button"
                       onClick={() => changeStatus(selected.id, s)}
@@ -507,7 +507,7 @@ export default function AdminInquiries() {
                       }`}
                     >
                       {s}
-                    </Button>
+                    </button>
                   );
                 })}
               </div>
@@ -523,13 +523,13 @@ export default function AdminInquiries() {
                 rows={3}
                 className="w-full border border-border rounded-lg px-3 py-2 text-xs resize-y"
               />
-              <Button
+              <button
                 type="button"
                 onClick={saveInternalNote}
                 className="text-xs px-3 py-1.5 rounded-lg border border-border bg-white text-foreground lg:hover:bg-muted/50 min-h-[44px]"
               >
                 메모 저장
-              </Button>
+              </button>
             </div>
           </aside>
         ) : (

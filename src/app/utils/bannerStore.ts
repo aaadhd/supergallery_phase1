@@ -19,15 +19,71 @@ export type AdminBanner = {
   isActive: boolean;
 };
 
-const STORAGE_KEY = 'artier_admin_banners_v1';
+const STORAGE_KEY = 'artier_admin_banners_v3';
 const CHANGED_EVENT = 'artier-banners-changed';
 export const MAX_BANNERS = 5;
 
+const SEED_BANNERS: AdminBanner[] = [
+  {
+    id: 'bn-seed-contest-1',
+    title: '나의 첫 디지털 캔버스',
+    subtitle: '매일 그리는 나의 소확행',
+    imageUrl: 'https://images.unsplash.com/photo-1758923530822-3e58cf11011e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBhcnQlMjBleGhpYml0aW9uJTIwYmFubmVyfGVufDF8fHx8MTc3Mjc3MzI4OXww&ixlib=rb-4.1.0&q=80&w=1080',
+    linkUrl: '/events/1',
+    startAt: '2026-05-01',
+    endAt: '2026-05-31',
+    isActive: true,
+  },
+  {
+    id: 'bn-seed-contest-2',
+    title: '동호회 작품전 참여하기',
+    subtitle: '우리 동호회 작품을 세상에 알려보세요',
+    imageUrl: 'https://images.unsplash.com/photo-1597306957833-433de12c3af6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkaWdpdGFsJTIwYXJ0JTIwc2FsZSUyMHByb21vdGlvbnxlbnwxfHx8fDE3NzI3NzMyODl8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    linkUrl: '/events/2',
+    startAt: '2026-05-01',
+    endAt: '2026-06-30',
+    isActive: true,
+  },
+  {
+    id: 'bn-seed-1',
+    title: '수채화 작품전',
+    subtitle: '감성 넘치는 수채화 작가들의 작품을 만나보세요',
+    imageUrl: 'https://images.unsplash.com/photo-1713779490284-a81ff6a8ffae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcnQlMjBnYWxsZXJ5JTIwZXhoaWJpdGlvbnxlbnwxfHx8fDE3NzI3MTU0NTN8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    linkUrl: '/curations/seed-curation-1',
+    startAt: '2026-04-01',
+    endAt: '2026-04-30',
+    isActive: true,
+  },
+  {
+    id: 'bn-seed-2',
+    title: '디지털 드로잉 워크샵',
+    subtitle: '처음 시작하는 디지털 드로잉 기초 과정',
+    imageUrl: 'https://images.unsplash.com/photo-1702325597300-f3d68b5b9499?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBhcnQlMjBtdXNldW18ZW58MXx8fHwxNzcyNzIwMjk4fDA&ixlib=rb-4.1.0&q=80&w=1080',
+    linkUrl: 'https://forms.google.com',
+    startAt: '2026-04-15',
+    endAt: '2026-04-15',
+    isActive: true,
+  },
+  {
+    id: 'bn-seed-3',
+    title: '작가 네트워킹 데이',
+    subtitle: '작가들과 함께하는 소통의 시간',
+    imageUrl: 'https://images.unsplash.com/photo-1764709125089-740593af301d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcnQlMjBjb2xsZWN0aW9uJTIwZGlzcGxheXxlbnwxfHx8fDE3NzI3NzM1MDZ8MA&ixlib=rb-4.1.0&q=80&w=1080',
+    linkUrl: 'https://forms.google.com',
+    startAt: '2026-05-01',
+    endAt: '2026-05-01',
+    isActive: true,
+  },
+];
+
 function readFromStorage(): AdminBanner[] {
-  if (typeof window === 'undefined') return [];
+  if (typeof window === 'undefined') return SEED_BANNERS;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
+    if (!raw) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(SEED_BANNERS));
+      return SEED_BANNERS;
+    }
     const list = JSON.parse(raw);
     if (!Array.isArray(list)) return [];
     return list.map((b) => {

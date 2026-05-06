@@ -1,4 +1,4 @@
-import { useState, useEffect, type FormEvent } from 'react';
+import { useState, useEffect, useMemo, type FormEvent } from 'react';
 import { toast } from 'sonner';
 import { Plus, Trash2, GripVertical } from 'lucide-react';
 import { Button } from '../components/ui/button';
@@ -66,11 +66,30 @@ function formatPeriod(b: AdminBanner): string {
   return `${b.startAt || '시작일 미지정'} ~ ${b.endAt || '종료일 미지정'}`;
 }
 
+function isUpcoming(b: AdminBanner): boolean {
+  if (isExpired(b)) return false;
+  if (!b.startAt) return false;
+  return todayLocalIso() < b.startAt;
+}
+
+function isLive(b: AdminBanner): boolean {
+  return b.isActive && !isExpired(b) && !isUpcoming(b);
+}
+
+type BannerTab = 'live' | 'upcoming' | 'expired';
+
 export default function BannerManagement() {
   const [loading, setLoading] = useState(true);
   const banners = useAdminBanners();
   const [showForm, setShowForm] = useState(false);
   const [draft, setDraft] = useState<DraftState>(emptyDraft);
+  const [activeTab, setActiveTab] = useState<BannerTab>('live');
+
+  const grouped = useMemo(() => ({
+    live: banners.filter((b) => isLive(b)),
+    upcoming: banners.filter((b) => !isExpired(b) && !isLive(b)),
+    expired: banners.filter((b) => isExpired(b)),
+  }), [banners]);
 
   useEffect(() => {
     const t = window.setTimeout(() => setLoading(false), 240);
@@ -233,7 +252,7 @@ export default function BannerManagement() {
             <Button type="submit" className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white">
               저장
             </Button>
-            <Button
+            <button
               type="button"
               onClick={() => {
                 setShowForm(false);
@@ -242,24 +261,65 @@ export default function BannerManagement() {
               className="text-sm px-3 py-1.5 rounded-lg border border-border"
             >
               취소
-            </Button>
+            </button>
           </div>
         </form>
       )}
 
-      {banners.length === 0 ? (
+      {/* 탭 */}
+      <div className="flex gap-1 border-b border-border mb-4">
+        {([
+          { key: 'live', label: '게시 중', count: grouped.live.length },
+          { key: 'upcoming', label: '예정', count: grouped.upcoming.length },
+          { key: 'expired', label: '기간 종료', count: grouped.expired.length },
+        ] as const).map(({ key, label, count }) => (
+          <button
+            key={key}
+            type="button"
+            onClick={() => setActiveTab(key)}
+            className={`px-3 py-2 text-sm font-medium border-b-2 -mb-px transition-colors ${
+              activeTab === key
+                ? 'border-primary text-primary'
+                : 'border-transparent text-muted-foreground lg:hover:text-foreground'
+            }`}
+          >
+            {label}
+            <span className={`ml-1.5 text-xs px-1.5 py-0.5 rounded-full ${
+              activeTab === key ? 'bg-primary/10 text-primary' : 'bg-muted text-muted-foreground'
+            }`}>
+              {count}
+            </span>
+          </button>
+        ))}
+      </div>
+
+      {grouped[activeTab].length === 0 ? (
         <div className="rounded-lg border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
-          등록된 배너가 없습니다. 둘러보기에는 기본 더미 배너가 노출됩니다.
+          {activeTab === 'live' && '게시 중인 배너가 없습니다.'}
+          {activeTab === 'upcoming' && '예정된 배너가 없습니다.'}
+          {activeTab === 'expired' && '기간 종료된 배너가 없습니다.'}
         </div>
+      ) : activeTab === 'expired' ? (
+        <ol className="space-y-3">
+          {grouped.expired.map((b) => (
+            <SortableBannerRow
+              key={b.id}
+              banner={b}
+              index={banners.indexOf(b)}
+              onToggleActive={toggleActive}
+              onRemove={handleRemove}
+            />
+          ))}
+        </ol>
       ) : (
         <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
           <SortableContext items={banners.map((b) => b.id)} strategy={verticalListSortingStrategy}>
             <ol className="space-y-3">
-              {banners.map((b, idx) => (
+              {grouped[activeTab].map((b) => (
                 <SortableBannerRow
                   key={b.id}
                   banner={b}
-                  index={idx}
+                  index={banners.indexOf(b)}
                   onToggleActive={toggleActive}
                   onRemove={handleRemove}
                 />
@@ -324,23 +384,23 @@ function SortableBannerRow({ banner: b, index: idx, onToggleActive, onRemove }: 
           {expired ? '기간 종료' : b.isActive ? '활성' : '비활성'}
         </span>
       </div>
-      <div className="flex sm:flex-col gap-2 justify-end">
-        <Button
+      <div className="flex sm:flex-col gap-2 justify-end shrink-0">
+        <button
           type="button"
           onClick={() => onToggleActive(b.id, !b.isActive)}
           disabled={expired}
-          className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-white disabled:opacity-50 disabled:pointer-events-none"
+          className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground bg-white lg:hover:bg-muted/40 disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap"
         >
           {b.isActive ? '비활성으로' : '활성으로'}
-        </Button>
-        <Button
+        </button>
+        <button
           type="button"
           onClick={() => onRemove(b.id, b.title)}
-          className="text-sm px-3 py-1.5 rounded-lg border border-red-200 text-red-700 lg:hover:bg-red-50 inline-flex items-center gap-1.5"
+          className="text-sm px-3 py-1.5 rounded-lg border border-red-200 text-red-700 bg-white lg:hover:bg-red-50 inline-flex items-center justify-center gap-1.5 whitespace-nowrap"
         >
           <Trash2 className="w-3.5 h-3.5" />
           삭제
-        </Button>
+        </button>
       </div>
     </li>
   );

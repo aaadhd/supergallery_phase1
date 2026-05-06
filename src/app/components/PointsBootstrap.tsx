@@ -1,6 +1,7 @@
 import { useEffect } from 'react';
 import { artists } from '../data';
 import { pointsOnFollowerCount } from '../utils/pointsBackground';
+import { seedCurationIfEmpty } from '../utils/curationStore';
 
 /** 부트 시점에 더 이상 사용하지 않는 레거시 localStorage 키 정리 */
 const LEGACY_STORAGE_KEYS = [
@@ -15,6 +16,8 @@ const LEGACY_STORAGE_KEYS = [
   'artier_invite_messaging_log',    // 회사 발송 로그 폐기(2026-04-27, Policy §3 v2.14) 후 orphan
   'artier_invite_match_log',        // 자동 매칭 로그 폐기(2026-04-27) 후 orphan
   'artier_invite_decline_log',      // "초대 매칭 거부" 큐 폐기(2026-04-27) 후 orphan
+  'artier_admin_issues',            // 미결 이슈 UI 폐기(2026-05-06) 후 orphan
+  'artier_admin_checklist',         // 런칭 체크리스트 UI 폐기(2026-05-06) 후 orphan
 ];
 
 const LEGACY_SESSION_KEYS = [
@@ -42,6 +45,7 @@ function cleanupLegacyStorage() {
 export function PointsBootstrap() {
   useEffect(() => {
     cleanupLegacyStorage();
+    seedCurationIfEmpty();
     const demo = artists[0];
     if (demo?.followers != null) pointsOnFollowerCount(demo.followers);
   }, []);
