@@ -458,60 +458,87 @@ export default function Signup() {
             <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
               {/* 약관 동의 카드 */}
               <div className="rounded-xl border border-border/50 bg-card overflow-hidden">
-                {/* 전체 동의 헤더 */}
-                <label htmlFor="signup-agree-all" className="flex items-center gap-3 px-4 py-3.5 bg-muted/40 border-b border-border/40 cursor-pointer">
+                {/* 전체 동의 헤더 — 행 전체 클릭 */}
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => toggleMaster()}
+                  onKeyDown={(e) => e.key === ' ' && toggleMaster()}
+                  className="flex items-center gap-3 px-4 py-3.5 bg-muted/40 border-b border-border/40 cursor-pointer select-none"
+                >
                   <Checkbox
-                    id="signup-agree-all"
                     checked={allAgreed ? true : someAgreed ? 'indeterminate' : false}
                     onCheckedChange={() => toggleMaster()}
-                    className="border-border/50"
+                    className="border-border/50 pointer-events-none"
                   />
                   <span className="text-sm font-semibold text-foreground">{t('signup.agreeAll')}</span>
-                </label>
+                </div>
 
                 {/* 이용약관 */}
-                <div className="flex items-center gap-3 px-4 py-3.5 border-b border-border/30">
-                  <Checkbox id="signup-terms" checked={agreeTerms} onCheckedChange={(v) => setAgreeTerms(v === true)} className="border-border/50 shrink-0" />
-                  <label htmlFor="signup-terms" className="flex-1 flex items-center gap-2 cursor-pointer min-w-0">
+                <div className="flex items-center border-b border-border/30">
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => setAgreeTerms(!agreeTerms)}
+                    onKeyDown={(e) => e.key === ' ' && setAgreeTerms(!agreeTerms)}
+                    className="flex-1 flex items-center gap-3 px-4 py-3.5 cursor-pointer select-none min-w-0"
+                  >
+                    <Checkbox checked={agreeTerms} className="border-border/50 shrink-0 pointer-events-none" />
                     <span className="shrink-0 text-xs font-semibold text-destructive bg-destructive/8 px-1.5 py-0.5 rounded">필수</span>
                     <span className="text-sm text-foreground truncate">{t('signup.agreeTerms')}</span>
-                  </label>
-                  <button type="button" onClick={() => setViewingDoc('terms')} className="shrink-0 text-xs text-primary lg:hover:underline underline-offset-2 min-h-[44px] px-2 flex items-center">
+                  </div>
+                  <button type="button" onClick={() => setViewingDoc('terms')} className="shrink-0 text-xs text-primary lg:hover:underline underline-offset-2 min-h-[44px] px-4 flex items-center">
                     {t('signup.view')}
                   </button>
                 </div>
 
                 {/* 개인정보 */}
-                <div className="flex items-center gap-3 px-4 py-3.5 border-b border-border/30">
-                  <Checkbox id="signup-privacy" checked={agreePrivacy} onCheckedChange={(v) => setAgreePrivacy(v === true)} className="border-border/50 shrink-0" />
-                  <label htmlFor="signup-privacy" className="flex-1 flex items-center gap-2 cursor-pointer min-w-0">
+                <div className="flex items-center border-b border-border/30">
+                  <div
+                    role="button"
+                    tabIndex={0}
+                    onClick={() => setAgreePrivacy(!agreePrivacy)}
+                    onKeyDown={(e) => e.key === ' ' && setAgreePrivacy(!agreePrivacy)}
+                    className="flex-1 flex items-center gap-3 px-4 py-3.5 cursor-pointer select-none min-w-0"
+                  >
+                    <Checkbox checked={agreePrivacy} className="border-border/50 shrink-0 pointer-events-none" />
                     <span className="shrink-0 text-xs font-semibold text-destructive bg-destructive/8 px-1.5 py-0.5 rounded">필수</span>
                     <span className="text-sm text-foreground truncate">{t('signup.agreePrivacy')}</span>
-                  </label>
-                  <button type="button" onClick={() => setViewingDoc('privacy')} className="shrink-0 text-xs text-primary lg:hover:underline underline-offset-2 min-h-[44px] px-2 flex items-center">
+                  </div>
+                  <button type="button" onClick={() => setViewingDoc('privacy')} className="shrink-0 text-xs text-primary lg:hover:underline underline-offset-2 min-h-[44px] px-4 flex items-center">
                     {t('signup.view')}
                   </button>
                 </div>
 
                 {/* 만 14세 */}
-                <div className="flex items-center gap-3 px-4 py-3.5 border-b border-border/30">
-                  <Checkbox id="signup-age" checked={agreeAge} onCheckedChange={(v) => setAgreeAge(v === true)} className="border-border/50 shrink-0" />
-                  <label htmlFor="signup-age" className="flex-1 flex items-center gap-2 cursor-pointer">
-                    <span className="shrink-0 text-xs font-semibold text-destructive bg-destructive/8 px-1.5 py-0.5 rounded">필수</span>
-                    <span className="text-sm text-foreground">{t('signup.agreeAge')}</span>
-                  </label>
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setAgreeAge(!agreeAge)}
+                  onKeyDown={(e) => e.key === ' ' && setAgreeAge(!agreeAge)}
+                  className="flex items-center gap-3 px-4 py-3.5 border-b border-border/30 cursor-pointer select-none"
+                >
+                  <Checkbox checked={agreeAge} className="border-border/50 shrink-0 pointer-events-none" />
+                  <span className="shrink-0 text-xs font-semibold text-destructive bg-destructive/8 px-1.5 py-0.5 rounded">필수</span>
+                  <span className="text-sm text-foreground">{t('signup.agreeAge')}</span>
                 </div>
 
                 {/* 마케팅 */}
-                <div className="flex items-start gap-3 px-4 py-3.5">
-                  <Checkbox id="signup-marketing" checked={agreeMarketing} onCheckedChange={(v) => setAgreeMarketing(v === true)} className="mt-0.5 border-border/50 shrink-0" />
-                  <label htmlFor="signup-marketing" className="flex-1 cursor-pointer">
+                <div
+                  role="button"
+                  tabIndex={0}
+                  onClick={() => setAgreeMarketing(!agreeMarketing)}
+                  onKeyDown={(e) => e.key === ' ' && setAgreeMarketing(!agreeMarketing)}
+                  className="flex items-start gap-3 px-4 py-3.5 cursor-pointer select-none"
+                >
+                  <Checkbox checked={agreeMarketing} className="mt-0.5 border-border/50 shrink-0 pointer-events-none" />
+                  <div>
                     <div className="flex items-center gap-2 mb-0.5">
                       <span className="shrink-0 text-xs font-medium text-muted-foreground bg-muted px-1.5 py-0.5 rounded">선택</span>
                       <span className="text-sm text-foreground">{t('signup.agreeMarketing')}</span>
                     </div>
                     <p className="text-xs text-muted-foreground leading-relaxed">{t('signup.agreeMarketingHint')}</p>
-                  </label>
+                  </div>
                 </div>
               </div>
 
@@ -521,7 +548,7 @@ export default function Signup() {
                 <Button type="button" variant="outline" onClick={() => navigate('/signup?step=2')} className="w-1/3 min-h-[44px] rounded-lg text-sm">
                   {t('signup.previous')}
                 </Button>
-                <Button type="submit" disabled={!profileOk || !agreementsOk} className="flex-1 min-h-[44px] rounded-lg bg-primary text-white text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed">
+                <Button type="submit" disabled={!agreementsOk} className="flex-1 min-h-[44px] rounded-lg bg-primary text-white text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed">
                   {t('signup.submit')}
                 </Button>
               </div>
