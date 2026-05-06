@@ -981,23 +981,34 @@ export default function Upload() {
 
   /* ━━━━━━ 전시 생성 조건 체크리스트 (전체 항목 고정, done 플래그) ━━━━━━ */
   const publishChecklist = useMemo(() => {
-    const hasImages = contents.length > 0;
-    // 행동 순서: 전시 제목 → (그룹 전시) 그룹명 → 이미지 → (그룹 전시) 작가 지정
+    const validContents = contents.filter((c) => c.url);
+    const hasImages = validContents.length > 0;
+    const isGroup = uploadType === 'group';
+    const hasEnoughImages = isGroup ? validContents.length >= 2 : hasImages;
+
+    // 행동 순서: 전시 제목 → (그룹) 그룹명 → 이미지 → (그룹) 작가 2명 이상 → (그룹) 모든 작품 작가 지정
     const items: { key: string; label: string; done: boolean; disabled?: boolean }[] = [
       { key: 'title', label: t('upload.blockerExhibitionTitle'), done: !!exhibitionName.trim() },
     ];
-    if (uploadType === 'group') {
-      items.push({
-        key: 'groupName',
-        label: t('upload.blockerGroupName'),
-        done: !!groupName.trim(),
-      });
+    if (isGroup) {
+      items.push({ key: 'groupName', label: t('upload.blockerGroupName'), done: !!groupName.trim() });
     }
-    items.push({ key: 'image', label: t('upload.blockerImage'), done: hasImages });
-    if (uploadType === 'group') {
-      const allAssigned = hasImages && contents.filter((c) => c.url).every(
+    items.push({
+      key: 'image',
+      label: isGroup ? t('upload.blockerGroupMinImages') : t('upload.blockerImage'),
+      done: hasEnoughImages,
+    });
+    if (isGroup) {
+      const assignedIds = new Set(
+        validContents.map((c) =>
+          c.artist?.id ?? (c.nonMemberArtist?.displayName ? `nm::${c.nonMemberArtist.displayName}` : null)
+        ).filter(Boolean)
+      );
+      const hasTwoArtists = hasImages && assignedIds.size >= 2;
+      const allAssigned = hasImages && validContents.every(
         (c) => c.artist || !!c.nonMemberArtist?.displayName,
       );
+      items.push({ key: 'twoArtists', label: t('upload.blockerTwoArtists'), done: hasTwoArtists, disabled: !hasImages });
       items.push({ key: 'artist', label: t('upload.blockerArtist'), done: allAssigned, disabled: !hasImages });
     }
     return items;
