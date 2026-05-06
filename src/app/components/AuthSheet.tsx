@@ -185,18 +185,8 @@ export function AuthSheet({
         {t('login.signupEmail')}
       </Button>
 
-      {/* 하단: 로그인 링크 + 연령 고지 */}
+      {/* 하단: 연령 고지 */}
       <div className="flex flex-col items-center gap-3 pt-2">
-        <p className="text-sm text-muted-foreground">
-          {t('login.haveAccount')}{' '}
-          <button
-            type="button"
-            onClick={goLogin}
-            className="font-semibold text-primary underline-offset-2 lg:hover:underline"
-          >
-            {t('login.signIn')}
-          </button>
-        </p>
         <p className="text-center text-xs text-muted-foreground leading-relaxed px-2">
           {t('login.ageNotice')}
         </p>
