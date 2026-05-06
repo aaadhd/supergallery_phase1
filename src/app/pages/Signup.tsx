@@ -374,11 +374,12 @@ export default function Signup() {
               </div>
 
               <div>
-                <Label className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-foreground sm:text-sm">
+                <Label className="mb-0.5 flex items-center gap-1.5 text-sm font-semibold text-foreground sm:text-sm">
                   <Calendar className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={2} />
                   {t('signup.birthLabel')}
                   <span className="text-destructive ml-0.5">*</span>
                 </Label>
+                <p className="mb-2 text-xs text-muted-foreground">{t('signup.birthHint')}</p>
                 <div className="grid grid-cols-3 gap-2">
                   <div className="relative">
                     <input
