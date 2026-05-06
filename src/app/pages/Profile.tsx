@@ -740,26 +740,27 @@ export default function Profile() {
                 </p>
               )}
 
-              {/* 국가 + 관심 화풍 */}
-              <div className="mt-3 flex flex-wrap items-center gap-1.5 md:justify-center">
-                {viewProfile.location && (
-                  <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
-                    <MapPin className="h-3.5 w-3.5" />
-                    {locationDisplayLabel(viewProfile.location, t)}
-                  </span>
-                )}
-                {viewProfile.location && viewProfile.interests && viewProfile.interests.length > 0 && (
-                  <span className="text-border">·</span>
-                )}
-                {viewProfile.interests && viewProfile.interests.map((id) => (
-                  <span
-                    key={id}
-                    className="inline-flex items-center rounded-full bg-muted/60 px-2 py-0.5 text-xs text-foreground/70"
-                  >
-                    {t(`onboarding.tag.${id}` as any)}
-                  </span>
-                ))}
-              </div>
+              {/* 국가 */}
+              {viewProfile.location && (
+                <div className="mt-3 flex items-center gap-1 text-xs text-muted-foreground md:justify-center">
+                  <MapPin className="h-3.5 w-3.5 shrink-0" />
+                  <span>{locationDisplayLabel(viewProfile.location, t)}</span>
+                </div>
+              )}
+
+              {/* 관심 화풍 */}
+              {viewProfile.interests && viewProfile.interests.length > 0 && (
+                <div className="mt-2 flex flex-wrap gap-1.5 md:justify-center">
+                  {viewProfile.interests.map((id) => (
+                    <span
+                      key={id}
+                      className="inline-flex items-center rounded-full bg-muted/60 px-2 py-0.5 text-xs text-foreground/70"
+                    >
+                      {t(`onboarding.tag.${id}` as any)}
+                    </span>
+                  ))}
+                </div>
+              )}
 
               {/* 외부 링크 */}
               {viewProfile.externalLinks && viewProfile.externalLinks.length > 0 && (
