@@ -343,12 +343,6 @@ export default function Signup() {
             </Button>
           </form>
 
-          <p className="text-center mt-10 text-sm sm:text-sm text-muted-foreground">
-            {t('signup.hasAccount')}{' '}
-            <Link to="/login" className="text-primary font-semibold lg:hover:underline">
-              {t('signup.loginLink')}
-            </Link>
-          </p>
         </div>
       </div>
     );
