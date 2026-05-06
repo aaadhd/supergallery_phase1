@@ -578,7 +578,7 @@ export function buildLocalPublicWorks(paths: string[], artistsList: Artist[]): W
 
   const mergedWorks: Work[] = [...baseWorksAfterGroupMerge, ...groupMultiMocks, ...soloMultiMocks];
 
-  // Artier's Pick 목업:
+  // Proud's Pick 목업:
   // - 운영 5주 가정: 누적 Pick 이력 50개
   // - 이력 구성: 개인 25 + 그룹 25
   // - 현재 주간 활성 Pick 10개: 개인 5 + 그룹 5

@@ -32,7 +32,7 @@ export const UI_STRINGS = {
     navSettings: '설정',
     login: '로그인',
     logout: '로그아웃',
-    serviceName: 'Artier',
+    serviceName: 'Proud Gallery',
   },
   en: {
     navBrowse: 'Browse',
@@ -46,7 +46,7 @@ export const UI_STRINGS = {
     navSettings: 'Settings',
     login: 'Log in',
     logout: 'Log out',
-    serviceName: 'Artier',
+    serviceName: 'Proud Gallery',
   },
 } as const;
 

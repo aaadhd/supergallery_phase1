@@ -5,7 +5,7 @@ const ko = {
   effective: '시행일: 2026년 5월 1일',
   art1h: '제1조 (목적)',
   art1p:
-    '이 약관은 Artier(이하 "서비스")가 제공하는 디지털 갤러리 서비스의 이용조건 및 절차, 회사와 회원 간의 권리·의무 및 책임사항을 규정함을 목적으로 합니다.',
+    '이 약관은 Proud Gallery(이하 "서비스")가 제공하는 디지털 갤러리 서비스의 이용조건 및 절차, 회사와 회원 간의 권리·의무 및 책임사항을 규정함을 목적으로 합니다.',
   art2h: '제2조 (정의)',
   art2p:
     '"회원"이란 서비스에 가입하여 이용계약을 체결한 자를 말합니다. "작품"이란 회원이 서비스에 업로드한 이미지 및 관련 정보를 말합니다. "전시"란 하나 이상의 작품으로 구성된 갤러리 단위를 말합니다.',
@@ -32,7 +32,7 @@ const en: Record<keyof typeof ko, string> = {
   effective: 'Effective: May 1, 2026',
   art1h: 'Article 1 (Purpose)',
   art1p:
-    'These terms set forth the conditions and procedures for using the digital gallery service provided by Artier (the “Service”), and the rights, obligations, and responsibilities between the company and members.',
+    'These terms set forth the conditions and procedures for using the digital gallery service provided by Proud Gallery (the “Service”), and the rights, obligations, and responsibilities between the company and members.',
   art2h: 'Article 2 (Definitions)',
   art2p:
     '“Member” means a person who registers and enters into a use agreement with the Service. “Work” means images and related information uploaded by a member. “Exhibition” means a gallery unit consisting of one or more works.',

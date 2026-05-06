@@ -8,14 +8,14 @@ import { useI18n } from './i18n/I18nProvider';
 import { accountSuspensionStore, authStore } from './store';
 
 const TITLE_BY_PATH: { prefix: string; ko: string; en: string }[] = [
-  { prefix: '/search', ko: '검색 · Artier', en: 'Search · Artier' },
-  { prefix: '/events', ko: '이벤트 · Artier', en: 'Events · Artier' },
-  { prefix: '/upload', ko: '작품 올리기 · Artier', en: 'Upload · Artier' },
-  { prefix: '/settings', ko: '설정 · Artier', en: 'Settings · Artier' },
-  { prefix: '/notifications', ko: '알림 · Artier', en: 'Notifications · Artier' },
-  { prefix: '/about', ko: '소개 · Artier', en: 'About · Artier' },
-  { prefix: '/terms', ko: '이용약관 · Artier', en: 'Terms · Artier' },
-  { prefix: '/privacy', ko: '개인정보처리방침 · Artier', en: 'Privacy · Artier' },
+  { prefix: '/search', ko: '검색 · Proud Gallery', en: 'Search · Proud Gallery' },
+  { prefix: '/events', ko: '이벤트 · Proud Gallery', en: 'Events · Proud Gallery' },
+  { prefix: '/upload', ko: '작품 올리기 · Proud Gallery', en: 'Upload · Proud Gallery' },
+  { prefix: '/settings', ko: '설정 · Proud Gallery', en: 'Settings · Proud Gallery' },
+  { prefix: '/notifications', ko: '알림 · Proud Gallery', en: 'Notifications · Proud Gallery' },
+  { prefix: '/about', ko: '소개 · Proud Gallery', en: 'About · Proud Gallery' },
+  { prefix: '/terms', ko: '이용약관 · Proud Gallery', en: 'Terms · Proud Gallery' },
+  { prefix: '/privacy', ko: '개인정보처리방침 · Proud Gallery', en: 'Privacy · Proud Gallery' },
 ];
 
 export default function Layout() {
@@ -44,7 +44,7 @@ export default function Layout() {
   useEffect(() => {
     const loc = getStoredLocale();
     const hit = TITLE_BY_PATH.find((t) => pathname.startsWith(t.prefix));
-    document.title = hit ? (loc === 'en' ? hit.en : hit.ko) : loc === 'en' ? 'Artier — Digital art gallery' : 'Artier — 디지털 갤러리';
+    document.title = hit ? (loc === 'en' ? hit.en : hit.ko) : loc === 'en' ? 'Proud Gallery — Digital art gallery' : 'Proud Gallery — 디지털 갤러리';
   }, [pathname, localeTick]);
 
   if (browseDocked) {

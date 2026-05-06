@@ -98,11 +98,11 @@ function computeSlaTier(inq: StoredInquiry, now: number): SlaTier | null {
 
 const QUICK_REPLIES: Record<string, string[]> = {
   account: [
-    '안녕하세요, Artier 운영팀입니다. 계정 로그인 문제는 로그아웃 후 다시 로그인 링크를 요청해 주세요.',
+    '안녕하세요, Proud Gallery 운영팀입니다. 계정 로그인 문제는 로그아웃 후 다시 로그인 링크를 요청해 주세요.',
     '가입하신 이메일로 발송된 링크는 30분간 유효합니다. 만료되었다면 다시 요청해 주세요.',
   ],
   privacy: [
-    '안녕하세요, Artier 개인정보보호 책임자입니다. 본인 확인을 위해 가입하신 이메일에서 회신 주시면 감사하겠습니다.',
+    '안녕하세요, Proud Gallery 개인정보보호 책임자입니다. 본인 확인을 위해 가입하신 이메일에서 회신 주시면 감사하겠습니다.',
     '요청하신 개인정보 {type}을 첨부하여 회신드립니다. 처리 완료일: {date}.',
     '개인정보 삭제 요청은 접수일로부터 30일 이내 처리됩니다. 진행 상황은 별도 안내드리겠습니다.',
   ],
@@ -119,7 +119,7 @@ const QUICK_REPLIES: Record<string, string[]> = {
     '오류 제보 감사합니다. 재현 환경을 조사한 후 수정 일정을 안내드리겠습니다.',
   ],
   other: [
-    '안녕하세요, Artier 운영팀입니다. 문의 감사합니다.',
+    '안녕하세요, Proud Gallery 운영팀입니다. 문의 감사합니다.',
   ],
 };
 

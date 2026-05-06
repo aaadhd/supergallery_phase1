@@ -720,11 +720,11 @@ function WorkCard({ work, index, onSelect, onArtistClick, isFollowing, onToggleF
           </div>
         )}
 
-        {/* Artier's Pick badge */}
+        {/* Proud's Pick badge */}
         {isPick && (
           <div className="absolute left-3 bottom-3 z-10">
             <span className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-[#B8862F] text-white text-xs font-bold shadow-md backdrop-blur-sm">
-              ★ Artier&apos;s Pick
+              ★ Proud&apos;s Pick
             </span>
           </div>
         )}

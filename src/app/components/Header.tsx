@@ -85,7 +85,7 @@ export function Header() {
             >
               <img
                 src="/logo.png"
-                alt="Artier Logo"
+                alt="Proud Gallery Logo"
                 className="h-9 w-9 sm:h-10 sm:w-10 object-contain rounded-xl shadow-sm ring-1 ring-border/10"
               />
               <span className="text-base sm:text-lg font-semibold tracking-tight text-foreground">{t('brand.name')}</span>

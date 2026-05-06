@@ -145,7 +145,7 @@ export default function Login() {
             <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground text-lg font-bold">
               A
             </div>
-            <span className="text-xl font-bold text-foreground tracking-tight">Artier</span>
+            <span className="text-xl font-bold text-foreground tracking-tight">Proud Gallery</span>
           </div>
 
           {linkSent ? (

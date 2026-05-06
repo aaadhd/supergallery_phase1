@@ -311,7 +311,7 @@ export default function Settings() {
                 const hasPick = myWorks.some(w => w.pick === true || w.pickBadge === true);
                 const hasCuration = myWorks.some(w => curations.some(c => c.pieces.some(p => p.workId === w.id)));
                 const hasContest = myWorks.some(w => w.linkedEventId != null);
-                if (hasPick) warnings.push('Artier\'s Pick에 선정된 전시가 있어요. 탈퇴 시 즉시 미노출됩니다.');
+                if (hasPick) warnings.push('Proud Gallery\'s Pick에 선정된 전시가 있어요. 탈퇴 시 즉시 미노출됩니다.');
                 if (hasCuration) warnings.push('기획전에 포함된 전시가 있어요. 탈퇴 시 즉시 미노출됩니다.');
                 if (hasContest) warnings.push('응모 중인 응모전이 있어요. 탈퇴 시 즉시 미노출됩니다.');
                 setWithdrawWarnings(warnings);

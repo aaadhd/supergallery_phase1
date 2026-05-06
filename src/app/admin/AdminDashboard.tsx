@@ -67,7 +67,7 @@ export default function AdminDashboard() {
     <div className="space-y-6">
       <div>
         <h1 className="text-2xl font-bold text-foreground">운영 대시보드</h1>
-        <p className="text-sm text-muted-foreground mt-1">Artier Phase 1 운영 현황 · 런칭 준비</p>
+        <p className="text-sm text-muted-foreground mt-1">Proud Gallery Phase 1 운영 현황 · 런칭 준비</p>
       </div>
 
       {/* 콘텐츠 운영 지표 — 오늘 처리 우선순위 파악용 */}

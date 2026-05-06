@@ -189,7 +189,7 @@ export default function ExhibitionDetail() {
   // 동적 OG 메타 업데이트 (SPA 클라이언트 측)
   useEffect(() => {
     if (!exhibition || !primaryArtist) return;
-    const title = `${exhibition.title} — ${primaryArtist.name} | Artier`;
+    const title = `${exhibition.title} — ${primaryArtist.name} | Proud Gallery`;
     document.title = title;
     const setMeta = (prop: string, content: string) => {
       let el = document.querySelector(`meta[property="${prop}"]`) as HTMLMetaElement | null;
@@ -200,7 +200,7 @@ export default function ExhibitionDetail() {
     setMeta('og:description', `${primaryArtist.name}${t('exhibition.ogDesc')}`);
     setMeta('og:image', coverSrc);
     setMeta('og:url', window.location.href);
-    return () => { document.title = 'Artier'; };
+    return () => { document.title = 'Proud Gallery'; };
   }, [exhibition, primaryArtist, coverSrc, t]);
 
   const handleShare = async () => {

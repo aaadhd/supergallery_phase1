@@ -1,4 +1,4 @@
-/** 사용자 신고 큐 (localStorage). Artier 신고 ↔ /admin/reports 가 같은 데이터를 봅니다. */
+/** 사용자 신고 큐 (localStorage). Proud Gallery 신고 ↔ /admin/reports 가 같은 데이터를 봅니다. */
 
 import { workStore } from '../store';
 import { buildVisibilityPatch, isWorkHidden } from './workVisibility';

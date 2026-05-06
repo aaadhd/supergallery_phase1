@@ -329,7 +329,7 @@ export default function Onboarding() {
                   <div className="text-center">
                     <img
                       src="/logo.png"
-                      alt="Artier Logo"
+                      alt="Proud Gallery Logo"
                       className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl shadow-md object-contain"
                     />
                     <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-2">{welcomeTitle}</h1>

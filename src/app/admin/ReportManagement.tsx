@@ -215,7 +215,7 @@ export default function ReportManagement() {
         message: t('report.notifTargetWorkHidden').replace('{title}', raw.targetName),
         workId: raw.targetId,
       });
-      toast.success('작품 비공개를 유지했습니다. Artier 둘러보기·검색에서 제외됩니다.');
+      toast.success('작품 비공개를 유지했습니다. Proud Gallery 둘러보기·검색에서 제외됩니다.');
       return;
     }
     updateUserReport(id, { adminStatus: 'hidden' });
@@ -349,7 +349,7 @@ export default function ReportManagement() {
 
       {filtered.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
-          접수된 신고가 없습니다. Artier에서 로그인한 뒤 작품 ⋯ 메뉴에서 신고해 보세요.
+          접수된 신고가 없습니다. Proud Gallery에서 로그인한 뒤 작품 ⋯ 메뉴에서 신고해 보세요.
         </div>
       ) : (
         <div className="border border-border rounded-lg overflow-hidden overflow-x-auto">

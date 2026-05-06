@@ -139,7 +139,7 @@ export default function AdminLayout() {
           >
             <ArrowLeft className="w-4 h-4" />
           </Link>
-          <h1 className="text-base font-bold text-white">Artier Admin</h1>
+          <h1 className="text-base font-bold text-white">Proud Gallery 어드민</h1>
         </div>
         <nav className="flex-1 p-3 space-y-3">
           {navSections.map((section, sectionIdx) => (

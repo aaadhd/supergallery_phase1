@@ -13,6 +13,6 @@ export const CONTACT_EMAIL = 'contact@artier.kr';
 
 /** 브랜드 표기. TODO: Footer/About/OG태그에서 사용 예정 */
 export const BRAND = {
-  NAME: 'Artier',
+  NAME: 'Proud Gallery',
   PROJECT_NAME: 'SuperGallery',
 } as const;

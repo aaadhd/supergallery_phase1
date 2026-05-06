@@ -42,7 +42,7 @@ export interface Work {
   /** 소속·학과·동문 모임 등(예: 홍익대 미대동문). 그룹 전시 필수. */
   groupName?: string;
   owner?: any; // groupData.ts WorkOwner 타입 호환
-  /** 이번 주 Artier's Pick 활성 여부 (매주 교체) */
+  /** 이번 주 Proud's Pick 활성 여부 (매주 교체) */
   pick?: boolean;
   /** Pick 선정 이력 (한 번 선정되면 영구 배지) */
   pickBadge?: boolean;

@@ -3,7 +3,7 @@
 // ===== 정규 용어 (Canonical Labels) =====
 export const LABELS = {
   // 브랜드
-  SERVICE_NAME: 'Artier',
+  SERVICE_NAME: 'Proud Gallery',
   PROJECT_NAME: 'SuperGallery',
 
   // 네비게이션

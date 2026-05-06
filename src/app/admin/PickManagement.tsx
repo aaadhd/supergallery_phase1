@@ -174,7 +174,7 @@ export default function PickManagement() {
   if (loading) {
     return (
       <div>
-        <h1 className="text-xl font-bold mb-6 text-foreground">Artier&apos;s Pick 관리</h1>
+        <h1 className="text-xl font-bold mb-6 text-foreground">Proud&apos;s Pick 관리</h1>
         <div className="rounded-lg border border-border py-16 text-center text-sm text-muted-foreground">불러오는 중…</div>
       </div>
     );
@@ -182,7 +182,7 @@ export default function PickManagement() {
 
   return (
     <div className="min-h-full">
-      <h1 className="text-xl font-bold mb-6 text-foreground">Artier&apos;s Pick 관리</h1>
+      <h1 className="text-xl font-bold mb-6 text-foreground">Proud&apos;s Pick 관리</h1>
       <div className="mb-5 inline-flex rounded-lg border border-border p-1 bg-muted/30">
         <button
           type="button"
