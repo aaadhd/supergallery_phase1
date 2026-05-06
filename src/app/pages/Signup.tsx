@@ -337,8 +337,13 @@ export default function Signup() {
   return (
     <div className="min-h-screen bg-white flex items-center justify-center px-4 sm:px-6 py-10">
       <div className="w-full max-w-md">
-        <div className="mb-8">
-          <h1 className="text-xl sm:text-2xl font-bold text-foreground text-center">{t('signup.title')}</h1>
+        <div className="mb-8 text-center">
+          <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('signup.title')}</h1>
+          <p className="mt-1.5 text-sm text-muted-foreground">
+            {stepParam === 2
+              ? `1/2 · ${t('signup.stepProfileLabel')}`
+              : `2/2 · ${t('signup.stepTermsLabel')}`}
+          </p>
         </div>
 
         <form onSubmit={handleFinalSubmit} className="space-y-4">
