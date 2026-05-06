@@ -219,19 +219,13 @@ export function Header() {
                 </>
               ) : (
                 <>
-                  <button
-                    type="button"
-                    onClick={() => navigate(`/login?redirect=${encodeURIComponent('/upload')}`)}
-                    className="hidden md:inline-flex items-center text-sm font-medium text-muted-foreground lg:hover:text-foreground transition-colors px-2 py-1.5 rounded-md"
-                  >
-                    {t('nav.loginAsArtist')}
-                  </button>
                   <Button
                     size="default"
-                    className="hidden md:flex gap-2 text-sm px-6 py-2.5"
-                    onClick={handleLogin}
+                    className="hidden md:flex gap-2 text-sm px-5 py-2.5 rounded-full shadow-sm"
+                    onClick={() => navigate(`/login?redirect=${encodeURIComponent('/upload')}`)}
                   >
-                    {t('nav.login')}
+                    <Plus className="h-5 w-5" />
+                    {t('nav.upload')}
                   </Button>
                   <Tooltip>
                     <TooltipTrigger asChild>
