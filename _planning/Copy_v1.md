@@ -1,10 +1,10 @@
-# Copy Guide (UX Writing) · v1.13
+# Copy Guide (UX Writing) · v1.17
 
-Artier(SuperGallery Phase 1)의 UX 문구 가이드. 본 문서는 **톤·구조 기준(§1~5, §7~8)**과 **전체 i18n 사전(§6)**을 단일 소스로 제공한다. 구현은 §6의 한국어·영어 사전을 그대로 코드 i18n 사전으로 옮기고, §7 기술 규칙을 따른다.
+Proud Gallery(SuperGallery Phase 1)의 UX 문구 가이드. 본 문서는 **톤·구조 기준(§1~5, §7~8)**과 **전체 i18n 사전(§6)**을 단일 소스로 제공한다. 구현은 §6의 한국어·영어 사전을 그대로 코드 i18n 사전으로 옮기고, §7 기술 규칙을 따른다.
 
 **작성일**: 2026-04-20
-**최종 갱신**: 2026-05-05
-**버전**: v1.13
+**최종 갱신**: 2026-05-07
+**버전**: v1.17
 
 ---
 
@@ -43,7 +43,7 @@ Artier는 시니어·중장년 순수미술 작가를 주 고객으로 하는 **
 | 이미지 1장 | **작품** | "사진", "이미지" (사용자 대상) |
 | 작품 컨테이너 | **전시** | "Work", "갤러리" |
 | 작품 북마크 | **저장** | "컬렉션", "즐겨찾기" |
-| 추천 전시 | **Artier's Pick** | "에디터스 픽" |
+| 추천 전시 | **Proud's Pick** | "에디터스 픽" |
 | 업로드 전 심사 | **검수** | "심사", "심의", "검토" |
 
 > 사용자 카피에 노출되는 단위 명사는 **"전시"** 하나로 통일. 영문 "Work" 또는 "작품 묶음" 같은 다른 표기는 절대 노출 금지.
@@ -130,7 +130,7 @@ Artier는 시니어·중장년 순수미술 작가를 주 고객으로 하는 **
 | `system` | `'{workTitle}' 의 '{piece}' 슬롯이 작가 미상으로 전환되었어요. 필요 시 전시 편집에서 다시 초대해주세요.` |
 | `like` | `'{user}' 님이 '{workTitle}' 에 좋아요를 눌렀어요.` |
 | `follow` | `'{user}' 님이 회원님을 팔로우하기 시작했어요.` |
-| `pick` | `회원님의 '{workTitle}' 이 Artier's Pick에 선정되었어요!` |
+| `pick` | `회원님의 '{workTitle}' 이 Proud's Pick에 선정되었어요!` |
 | `event` | `{eventName} 응모가 시작되었어요.` |
 
 ### 4.5 Confirmation 토스트 (액션 직후 피드백)
@@ -185,7 +185,7 @@ const koMessages = {
   'nav.login': '로그인·가입',
   'nav.loginAsArtist': '작가이신가요? 작품 올리기',
   'nav.logout': '로그아웃',
-  'brand.name': 'Artier',
+  'brand.name': 'Proud Gallery',
   'app.offlineMessage': '인터넷 연결이 끊어졌어요. 일부 기능이 제한될 수 있어요.',
   'common.required': '(필수)',
   'common.requiredSr': '입력 필수',
@@ -276,9 +276,9 @@ const koMessages = {
   'refStub.tplSignInSubject': '[Artier] 로그인 링크를 보내드려요',
   'refStub.tplSignInBody':
     '안녕하세요.\n입력하신 이메일 주소로 Artier 로그인 요청이 들어왔어요.\n아래 버튼을 누르면 자동으로 로그인돼요.\n이 링크는 30분간 유효해요.\n본인이 요청하지 않으셨다면 이 이메일을 무시해주세요.\n\nCTA: 로그인하기 → {signin_url}',
-  'refStub.tplPickSubject': "🎉 내 작품이 이번 주 Artier's Pick에 선정됐어요!",
+  'refStub.tplPickSubject': "🎉 내 작품이 이번 주 Proud's Pick에 선정됐어요!",
   'refStub.tplPickBody':
-    "{nickname}님, 축하해요!\n'{work_title}'이(가) 이번 주 Artier's Pick에 선정되었어요.\n작품이 둘러보기 피드 상단에 노출되고, 더 많은 분들이 감상할 수 있게 됩니다.\n앞으로도 멋진 작품 기대할게요!\n\nCTA: 내 작품 보기 → {exhibition_url}",
+    "{nickname}님, 축하해요!\n'{work_title}'이(가) 이번 주 Proud's Pick에 선정되었어요.\n작품이 둘러보기 피드 상단에 노출되고, 더 많은 분들이 감상할 수 있게 됩니다.\n앞으로도 멋진 작품 기대할게요!\n\nCTA: 내 작품 보기 → {exhibition_url}",
   'refStub.tplWeeklySubject': '🏅 내 작품이 이번 주 위클리 베스트에 선정됐어요!',
   'refStub.tplWeeklyBody':
     "{nickname}님, 축하해요!\n'{work_title}'이(가) 이번 주 위클리 베스트로 뽑혔어요.\n많은 분들이 회원님의 작품에 관심을 보여주셨어요.\n앞으로도 멋진 작품 기대할게요!\n\nCTA: 내 작품 보기 → {exhibition_url}",
@@ -412,7 +412,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'about.feat1Desc': '당신의 작품을 아름다운 온라인 갤러리에 전시하고, 전 세계와 공유하세요.',
   'about.feat2Title': '커뮤니티',
   'about.feat2Desc': '같은 열정을 가진 작가들과 연결되고, 영감을 주고받으세요.',
-  'about.feat3Title': "Artier's Pick",
+  'about.feat3Title': "Proud's Pick",
   'about.feat3Desc': '매주 뽑히는 우수 작품을 통해 더 많은 관객을 만나보세요.',
   'about.feat4Title': '그룹 전시',
   'about.feat4Desc': '여러 작가가 함께하는 그룹 전시로 공동 작업의 결과를 공유하세요.',
@@ -822,7 +822,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'faq.q7': '그룹 전시는 어떻게 만드나요?',
   'faq.a7':
     '업로드할 때 "함께 올리기"를 선택하면 그룹명을 입력하고 참여 작가를 한 자리씩 추가할 수 있어요. Artier 회원이면 이름을 검색해 바로 연결되고, 회원이 아닌 분은 이름만 입력해 자리를 만들어 두면 검수 통과 후 초대 링크로 직접 알릴 수 있어요.',
-  'faq.q8': "Artier's Pick은 무엇인가요?",
+  'faq.q8': "Proud's Pick은 무엇인가요?",
   'faq.a8':
     '운영팀이 매주 우수 작품을 선정해 배지를 부여해요. 선정된 작품은 피드 상단에 노출되며, 작가에게 알림이 발송돼요.',
   'faq.q9': '부적절한 작품을 발견했어요.',
@@ -1243,7 +1243,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'admin.section.moderation': '모더레이션',
   'admin.section.contentOps': '콘텐츠 운영',
   'admin.section.members': '회원·커뮤니케이션',
-  'splash.alt': 'Artier',
+  'splash.alt': 'Proud Gallery',
   'footer.qaNavTrigger': '검수 바로가기',
   'footer.qaGroupShareDeep': '공유·알림 (전시/비회원)',
   'footer.qaExhibitionInvite': '전시 모달 열기 (샘플)',
@@ -1267,7 +1267,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'footer.qaAdminMembers': '회원 관리',
   'footer.qaAdminInquiries': '문의함',
   'footer.qaAdminEventParticipants': '응모전 참여자',
-  'footer.qaAdminPicks': "Artier's Pick",
+  'footer.qaAdminPicks': "Proud's Pick",
   'footer.qaAdminCuration': '피드 큐레이션',
   'footer.qaAdminBanners': '배너 관리',
   'footer.qaAdminManagedEvents': '응모전 관리',
@@ -1333,7 +1333,7 @@ const enMessages: Record<MessageKey, string> = {
   'nav.login': 'Sign in · Sign up',
   'nav.loginAsArtist': "Are you an artist? Upload your work",
   'nav.logout': 'Log out',
-  'brand.name': 'Artier',
+  'brand.name': 'Proud Gallery',
   'app.offlineMessage': 'You are offline. Some features may be limited.',
   'common.required': '(required)',
   'common.requiredSr': 'Required field',
@@ -1424,9 +1424,9 @@ const enMessages: Record<MessageKey, string> = {
   'refStub.tplSignInSubject': '[Artier] Here is your sign-in link',
   'refStub.tplSignInBody':
     'Hi,\nSomeone requested a sign-in for your Artier account.\nTap the button below to sign in automatically.\nThis link is valid for 30 minutes.\nIf you didn\'t request this, you can safely ignore this email.\n\nCTA: Sign in → {signin_url}',
-  'refStub.tplPickSubject': "🎉 Your work was selected as this week's Artier's Pick!",
+  'refStub.tplPickSubject': "🎉 Your work was selected as this week's Proud's Pick!",
   'refStub.tplPickBody':
-    "Congratulations, {nickname}!\nYour work '{work_title}' has been selected as this week's Artier's Pick.\nIt will be featured at the top of the Browse feed for more people to discover.\nKeep creating amazing work!\n\nCTA: View my work → {exhibition_url}",
+    "Congratulations, {nickname}!\nYour work '{work_title}' has been selected as this week's Proud's Pick.\nIt will be featured at the top of the Browse feed for more people to discover.\nKeep creating amazing work!\n\nCTA: View my work → {exhibition_url}",
   'refStub.tplWeeklySubject': "🏅 Your work was selected as this week's Weekly Best!",
   'refStub.tplWeeklyBody':
     "Congratulations, {nickname}!\nYour work '{work_title}' has been selected as this week's Weekly Best.\nMany people showed interest in your artwork.\nKeep up the great work!\n\nCTA: View my work → {exhibition_url}",
@@ -1560,7 +1560,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'about.feat1Desc': 'Present your work in a beautiful online gallery and share it with the world.',
   'about.feat2Title': 'Community',
   'about.feat2Desc': 'Connect with artists who share your passion and exchange inspiration.',
-  'about.feat3Title': "Artier's Pick",
+  'about.feat3Title': "Proud's Pick",
   'about.feat3Desc': 'Reach more viewers through weekly selections of outstanding work.',
   'about.feat4Title': 'Group exhibitions',
   'about.feat4Desc': 'Share collaborative outcomes through group exhibitions with fellow artists.',
@@ -1965,7 +1965,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'faq.q7': 'How do I create a group exhibition?',
   'faq.a7':
     "When uploading, choose 'Together' to set a group name and add participating artists one by one. Search by name for existing members; for non-members, just enter their name to reserve a spot — once your exhibition is approved, you can send them an invite link directly.",
-  'faq.q8': "What is Artier's Pick?",
+  'faq.q8': "What is Proud's Pick?",
   'faq.a8':
     'Our team selects outstanding works each week and awards a badge. Picked works appear higher in the feed and artists get a notification.',
   'faq.q9': 'I found inappropriate content.',
@@ -2174,7 +2174,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
 
   'notifications.seedLikedWork': ' liked your work "{work}"',
   'notifications.seedFollowed': ' followed you',
-  'notifications.seedPickSelected': "Congrats! \"{work}\" was selected as an Artier's Pick",
+  'notifications.seedPickSelected': "Congrats! \"{work}\" was selected as an Proud's Pick",
   'notifications.seedWelcome': "Welcome to Artier! Upload your first work.",
   'notifications.seedEventActive': "Event \"{event}\" is active — join now.",
   'profile.openProfileAria': "Open {name}'s profile",
@@ -2388,7 +2388,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'admin.section.contentOps': 'Content Ops',
   'admin.section.members': 'Members',
   'admin.section.operations': 'Operations',
-  'splash.alt': 'Artier',
+  'splash.alt': 'Proud Gallery',
   'footer.qaNavTrigger': 'QA shortcuts',
   'footer.qaGroupShareDeep': 'Share & notices (exhibition / credited)',
   'footer.qaExhibitionInvite': 'Open exhibition modal (sample)',
@@ -2412,7 +2412,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'footer.qaAdminMembers': 'Members',
   'footer.qaAdminInquiries': 'Inquiries',
   'footer.qaAdminEventParticipants': 'Event participants',
-  'footer.qaAdminPicks': "Artier's Pick",
+  'footer.qaAdminPicks': "Proud's Pick",
   'footer.qaAdminCuration': 'Feed curation',
   'footer.qaAdminBanners': 'Banners',
   'footer.qaAdminManagedEvents': 'Event management',
@@ -2565,7 +2565,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 | 구간 | 구성 요소 |
 |---|---|
 | 히어로 | 한 문장 가치 제안 + CTA 2종 (갤러리 둘러보기·작품 올리기) |
-| 기능 4종 | 작품 전시·커뮤니티·Artier's Pick·그룹 전시 카드 |
+| 기능 4종 | 작품 전시·커뮤니티·Proud's Pick·그룹 전시 카드 |
 | 미션 | 서비스 신념·세계관 본문 |
 | 하단 CTA | 가입 유도 종결 (첫 작품 올리기) |
 
@@ -2582,6 +2582,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.17 | 2026-05-07 | PM × Claude | 서비스명 Artier → Proud Gallery 전면 치환(brand.name·splash.alt·Artier's Pick → Proud's Pick); 헤더 버전 동기 |
 | v1.16 | 2026-05-06 | PM × Claude | profile.removePieceFromExhibition·Confirm·Success 4키 추가(전시에서 빼기 신규 기능); tabGuideWorks 내 작품 탭 진입점 반영; profile.tabHelpWorks 키 삭제(화면에서 단락 제거); nicknameLockedLabel·Hint·ContactCta·categoryNicknameChange·nicknameChangeNotice·nicknameNew·nicknameReason·errNicknameDuplicate 닉네임 변경 불가 관련 키 일괄 삭제(즉시 자율 변경으로 정책 개정) |
 | v1.15 | 2026-05-06 | PM × Claude | events.viewMyEntry·cancelEntry·cancelEntryConfirmTitle·Desc·Success 5키 추가 |
 | v1.14 | 2026-05-05 | PM × Claude | Handoff_Footer·Handoff_ServiceIntro 흡수 — §10 글로벌 푸터·§11 서비스 소개 신설 |
