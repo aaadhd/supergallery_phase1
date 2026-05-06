@@ -280,21 +280,6 @@ export default function Signup() {
     </div>
   );
 
-  const onboardStep = stepParam - 1; // 2→1, 3→2 (이메일 인증 완료 후 시작)
-  const progressBar = (
-    <div
-      className="mx-auto mt-4 flex max-w-[200px] items-center justify-center gap-2"
-      role="progressbar"
-      aria-valuenow={onboardStep}
-      aria-valuemin={1}
-      aria-valuemax={2}
-      aria-label={`${t('signup.title')} · ${onboardStep}/2`}
-    >
-      <div className={`h-2 w-14 rounded-full transition-colors ${onboardStep >= 1 ? 'bg-primary' : 'bg-muted'}`} />
-      <div className={`h-2 w-14 rounded-full transition-colors ${onboardStep >= 2 ? 'bg-primary' : 'bg-muted'}`} />
-      <span className="ml-2 text-sm font-medium text-muted-foreground tabular-nums">{onboardStep}/2</span>
-    </div>
-  );
 
   if (stepParam === 1) {
     return (
@@ -354,7 +339,6 @@ export default function Signup() {
       <div className="w-full max-w-md">
         <div className="mb-8">
           <h1 className="text-xl sm:text-2xl font-bold text-foreground text-center">{t('signup.title')}</h1>
-          {progressBar}
         </div>
 
         <form onSubmit={handleFinalSubmit} className="space-y-4">
