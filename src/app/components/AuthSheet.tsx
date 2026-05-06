@@ -154,8 +154,7 @@ export function AuthSheet({
     <div className="flex flex-col gap-5 px-4 pt-6 pb-8 sm:px-6">
       {/* 브랜드 영역 */}
       <div className="flex flex-col items-center gap-2 pt-2">
-        <p className="text-sm font-semibold tracking-wide text-primary">{t('login.tagline')}</p>
-        <div className="flex items-center gap-2">
+<div className="flex items-center gap-2">
           <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground text-lg font-bold">
             A
           </div>
