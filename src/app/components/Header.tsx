@@ -1,12 +1,11 @@
 import { Link, useNavigate, useLocation } from 'react-router-dom';
-import { Plus, Globe, Check, Search, Bell, Home, CalendarDays, User, Settings } from 'lucide-react';
+import { Plus, Search, Bell, Home, CalendarDays, User, Settings, Globe, Check } from 'lucide-react';
 import { Button } from './ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
 import {
   DropdownMenu,
   DropdownMenuContent,
   DropdownMenuItem,
-  DropdownMenuLabel,
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from './ui/dropdown-menu';
@@ -77,10 +76,12 @@ export function Header() {
       <TooltipProvider delayDuration={150}>
       <header className="sticky top-0 z-50 w-full border-b border-border/50 bg-white/80 backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-white/72">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-3 sm:py-3.5">
-          <div className="flex items-center justify-between gap-3 sm:gap-8">
+          <div className="flex items-center gap-3 sm:gap-4">
+            {/* 왼쪽: 로고 + 네비 */}
+            <div className="flex items-center gap-1 shrink-0">
             <Link
               to="/"
-              className="flex items-center gap-2.5 shrink-0 rounded-xl pr-2 -ml-1 pl-1 lg:hover:bg-muted/60 transition-colors"
+              className="flex items-center gap-2.5 rounded-xl pr-2 -ml-1 pl-1 lg:hover:bg-muted/60 transition-colors"
             >
               <img
                 src="/logo.png"
@@ -90,7 +91,7 @@ export function Header() {
               <span className="text-base sm:text-lg font-semibold tracking-tight text-foreground">{t('brand.name')}</span>
             </Link>
 
-            <nav className="hidden md:flex items-center gap-1">
+            <nav className="hidden md:flex items-center gap-1 ml-1">
               <Link
                 to="/"
                 className={`relative px-3 py-1.5 text-sm font-medium rounded-lg transition-colors ${
@@ -110,8 +111,10 @@ export function Header() {
                 {t('nav.events')}
               </Link>
             </nav>
+            </div>
 
-            <div className="flex items-center gap-1 sm:gap-3 ml-auto">
+
+            <div className="flex items-center gap-1 sm:gap-2 ml-auto">
               {loggedIn ? (
                 <>
                   {/* 업로드 CTA — 데스크톱만 */}
@@ -130,16 +133,10 @@ export function Header() {
                     {t('nav.upload')}
                   </Button>
 
-                  {/* 검색 — 데스크톱만 */}
+                  {/* 검색 */}
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        aria-label={t('nav.search')}
-                        className="hidden md:flex h-10 w-10 rounded-full text-muted-foreground lg:hover:text-foreground"
-                        onClick={() => navigate('/search')}
-                      >
+                      <Button variant="ghost" size="icon" aria-label={t('nav.search')} className="hidden md:flex h-9 w-9 rounded-full text-muted-foreground lg:hover:text-foreground" onClick={() => navigate('/search')}>
                         <Search className="h-5 w-5" />
                       </Button>
                     </TooltipTrigger>
@@ -175,7 +172,27 @@ export function Header() {
                     </TooltipContent>
                   </Tooltip>
 
-                  {/* 프로필 아바타 (드롭다운) — 프로필 / 설정 / 언어 흡수 */}
+                  {/* 언어 토글 */}
+                  <DropdownMenu>
+                    <DropdownMenuTrigger asChild>
+                      <Button variant="ghost" size="icon" className="hidden md:flex h-9 w-9 rounded-full text-muted-foreground lg:hover:text-foreground" aria-label={t('nav.language')}>
+                        <Globe className="h-4.5 w-4.5" />
+                      </Button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent align="end" className="w-32">
+                      <DropdownMenuItem onClick={() => pickLocale('ko')} className="flex items-center justify-between">
+                        <span>한국어</span>
+                        {locale === 'ko' && <Check className="h-3.5 w-3.5 text-primary" />}
+                      </DropdownMenuItem>
+                      <DropdownMenuSeparator />
+                      <DropdownMenuItem onClick={() => pickLocale('en')} className="flex items-center justify-between">
+                        <span>English</span>
+                        {locale === 'en' && <Check className="h-3.5 w-3.5 text-primary" />}
+                      </DropdownMenuItem>
+                    </DropdownMenuContent>
+                  </DropdownMenu>
+
+                  {/* 프로필 아바타 (드롭다운) */}
                   <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                       <Button
@@ -199,19 +216,6 @@ export function Header() {
                         <Settings className="h-4 w-4" />
                         <span>{t('nav.settings')}</span>
                       </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuLabel className="flex items-center gap-2 text-xs uppercase text-muted-foreground">
-                        <Globe className="h-3.5 w-3.5" />
-                        {t('nav.language')}
-                      </DropdownMenuLabel>
-                      <DropdownMenuItem onClick={() => pickLocale('ko')} className="flex items-center justify-between">
-                        <span>{t('nav.langKo')}</span>
-                        {locale === 'ko' && <Check className="h-4 w-4" />}
-                      </DropdownMenuItem>
-                      <DropdownMenuItem onClick={() => pickLocale('en')} className="flex items-center justify-between">
-                        <span>{t('nav.langEn')}</span>
-                        {locale === 'en' && <Check className="h-4 w-4" />}
-                      </DropdownMenuItem>
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </>
@@ -233,13 +237,7 @@ export function Header() {
                   </Button>
                   <Tooltip>
                     <TooltipTrigger asChild>
-                      <Button
-                        variant="ghost"
-                        size="icon"
-                        aria-label={t('nav.search')}
-                        className="hidden md:flex h-10 w-10 rounded-full text-muted-foreground lg:hover:text-foreground"
-                        onClick={() => navigate('/search')}
-                      >
+                      <Button variant="ghost" size="icon" aria-label={t('nav.search')} className="hidden md:flex h-9 w-9 rounded-full text-muted-foreground lg:hover:text-foreground" onClick={() => navigate('/search')}>
                         <Search className="h-5 w-5" />
                       </Button>
                     </TooltipTrigger>
@@ -248,28 +246,23 @@ export function Header() {
                 </>
               )}
 
-              {/* 게스트 전용 언어 토글 — 로그인 사용자는 아바타 드롭다운에 흡수 */}
+              {/* 비로그인 언어 토글 */}
               {!loggedIn && (
                 <DropdownMenu>
                   <DropdownMenuTrigger asChild>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      aria-label={t('nav.language')}
-                      title={t('nav.language')}
-                      className="hidden sm:flex h-9 w-9 rounded-full text-muted-foreground lg:hover:text-foreground"
-                    >
-                      <Globe className="h-5 w-5" />
+                    <Button variant="ghost" size="icon" className="hidden sm:flex h-9 w-9 rounded-full text-muted-foreground lg:hover:text-foreground" aria-label={t('nav.language')}>
+                      <Globe className="h-4.5 w-4.5" />
                     </Button>
                   </DropdownMenuTrigger>
                   <DropdownMenuContent align="end" className="w-32">
                     <DropdownMenuItem onClick={() => pickLocale('ko')} className="flex items-center justify-between">
-                      <span>{t('nav.langKo')}</span>
-                      {locale === 'ko' && <Check className="h-4 w-4" />}
+                      <span>한국어</span>
+                      {locale === 'ko' && <Check className="h-3.5 w-3.5 text-primary" />}
                     </DropdownMenuItem>
+                    <DropdownMenuSeparator />
                     <DropdownMenuItem onClick={() => pickLocale('en')} className="flex items-center justify-between">
-                      <span>{t('nav.langEn')}</span>
-                      {locale === 'en' && <Check className="h-4 w-4" />}
+                      <span>English</span>
+                      {locale === 'en' && <Check className="h-3.5 w-3.5 text-primary" />}
                     </DropdownMenuItem>
                   </DropdownMenuContent>
                 </DropdownMenu>

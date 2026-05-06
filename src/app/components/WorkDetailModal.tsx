@@ -337,19 +337,22 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
 
       {/* Main content — NoteFolio / Behance layout: 3 Columns. Only center is animated! */}
       <div
-        className="relative z-10 w-full max-w-[1280px] mx-auto h-[100dvh] sm:h-[96vh] sm:my-[2vh] flex items-stretch sm:gap-4 pointer-events-none"
+        className="relative z-10 w-full max-w-[1600px] mx-auto h-[100dvh] sm:h-[98vh] sm:my-[1vh] flex items-stretch sm:gap-4 pointer-events-none"
         onClick={(e) => e.stopPropagation()}
       >
         {/* ── Left sidebar (desktop) - Float Prev Button ── */}
-        <div className="hidden sm:flex flex-col items-center w-[60px] shrink-0 justify-end pointer-events-auto pb-4 pt-10">
+        <div className="hidden sm:flex flex-col items-center w-[60px] shrink-0 justify-end pointer-events-auto pb-6">
           {prevWork ? (
             <button
               type="button"
               onClick={(e) => { e.stopPropagation(); onNavigate?.(prevWork.id); }}
-              className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-[#111] text-white border border-white/10 shadow-lg lg:hover:bg-[#333] transition-all"
+              className="flex flex-col items-center gap-1.5 group"
               aria-label={t('workDetail.prevWork')}
             >
-              <ChevronLeft className="h-7 w-7 pr-1" />
+              <div className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-[#111] text-white border border-white/10 shadow-lg lg:group-hover:bg-[#333] transition-all">
+                <ChevronLeft className="h-7 w-7 pr-1" />
+              </div>
+              <span className="text-xs text-white/70 group-hover:text-white transition-colors">{t('workDetail.prev')}</span>
             </button>
           ) : <div className="h-[52px] w-[52px]" />}
         </div>
@@ -496,14 +499,14 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
             }}
           >
             {/* Images - 그림 소스에서 추출된 블러 배경 적용 (Notefolio Style: No extra padding) */}
-            <div className={`w-full flex-col flex ${workImages.length === 1 && !hasCoverPage ? 'min-h-[60vh] justify-center' : ''}`}>
+            <div className="w-full flex-col flex">
               {images.map((image, index) => {
                 const src = imageUrls[image] || image;
                 const isCoverSlide = hasCoverPage && index === 0;
                 const workImageIndex = hasCoverPage ? index - 1 : index;
                 const slideLabel = isCoverSlide ? (work.exhibitionName || t('work.untitled')) : displayPieceTitleAtIndex(work, workImageIndex, t('work.untitled'));
                 return (
-                <div key={index} data-piece-index={isCoverSlide ? undefined : workImageIndex} className={`relative w-full flex items-center justify-center overflow-hidden mb-0 ${isCoverSlide ? 'py-12 sm:py-16' : 'py-8 sm:py-10'}`}>
+                <div key={index} data-piece-index={isCoverSlide ? undefined : workImageIndex} className={`relative w-full flex items-center justify-center overflow-hidden mb-0 h-[80vh]`}>
 
                   {/* Background — 커버: 블랙, 작품: 블러 */}
                   {isCoverSlide ? (
@@ -517,7 +520,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
 
                   <div className="relative z-10 w-full flex flex-col items-center justify-center px-4 sm:px-6">
                     <div
-                      className={`relative w-full max-w-[1000px] flex justify-center text-center transition-transform duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] shadow-[0_15px_50px_rgba(0,0,0,0.2)] bg-black/5 ${isZoomed ? 'cursor-zoom-out' : 'cursor-zoom-in'}`}
+                      className={`relative flex justify-center text-center transition-transform duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] shadow-[0_15px_50px_rgba(0,0,0,0.2)] bg-black/5 ${isZoomed ? 'cursor-zoom-out' : 'cursor-zoom-in'}`}
                       onClick={handleZoomClick}
                       style={{
                         transform: `scale(${isZoomed ? 2.5 : 1})`,
@@ -529,17 +532,12 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                         alt={`${slideLabel}${totalImages > 1 ? ` - ${index + 1}` : ''}`}
                         preventRightClick
                         preventDrag
-                        className="mx-auto block max-w-full max-h-[85vh] w-auto h-auto object-contain"
+                        className="block h-[74vh] w-auto mx-auto"
                         onDoubleClick={() => setDeepZoomSrc(src)}
                       />
                     </div>
                   </div>
                   {/* Image index indicator — 우상단(원래 자리) */}
-                  {workImages.length > 1 && !isCoverSlide && (
-                    <div className="absolute top-4 right-4 z-20 bg-black/60 backdrop-blur-sm px-3.5 py-1.5 rounded-full shadow-md">
-                      <span className="text-white text-xs font-bold tracking-wider">{workImageIndex + 1} / {workImages.length}</span>
-                    </div>
-                  )}
 
                   {/* 이미지 하단: 작가 + 작품명 (가로 한줄) — 커버 슬라이드는 작가 오버레이 생략 */}
                   {!isCoverSlide && (() => {
@@ -549,9 +547,8 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                       : undefined;
                     const imgArtistName = imgArtist?.name
                       || (ia?.type === 'non-member' ? ia.displayName : undefined)
-                      || (ia?.type === 'unknown' ? t('work.unknownArtist') : undefined)
-                      || (totalImages === 1 ? work.artist.name : undefined);
-                    const imgArtistAvatar = imgArtist?.avatar || (totalImages === 1 ? work.artist.avatar : undefined);
+                      || (ia?.type === 'unknown' ? t('work.unknownArtist') : undefined);
+                    const imgArtistAvatar = imgArtist?.avatar;
                     const showFollow = imgArtist && imgArtist.id !== allArtists[0]?.id;
                     return (imgArtistName || slideLabel !== t('work.untitled')) ? (
                       <div className="absolute bottom-0 left-0 right-0 z-20 bg-gradient-to-t from-black/70 via-black/35 to-transparent px-4 sm:px-5 pb-3.5 pt-10">
@@ -608,7 +605,17 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                       if (ia.type === 'member' && ia.memberId && !seen.has(ia.memberId)) {
                         seen.add(ia.memberId);
                         const found = allArtists.find(a => a.id === ia.memberId);
-                        if (found) groupMemberArtists.push(found);
+                        groupMemberArtists.push(found ?? {
+                          id: ia.memberId,
+                          name: ia.memberName ?? '?',
+                          avatar: ia.memberAvatar,
+                        } as Artist);
+                      } else if (ia.type === 'non-member' && ia.displayName) {
+                        const key = `non-member::${ia.displayName}`;
+                        if (!seen.has(key)) {
+                          seen.add(key);
+                          groupMemberArtists.push({ id: key, name: ia.displayName } as Artist);
+                        }
                       }
                     });
                   }
@@ -617,12 +624,8 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                       if (!seen.has(co.id)) { seen.add(co.id); groupMemberArtists.push(co); }
                     });
                   }
-                  if (!seen.has(work.artistId)) {
-                    const found = allArtists.find(a => a.id === work.artistId);
-                    if (found) groupMemberArtists.push(found);
-                  }
                 }
-                return isGroupWork && groupMemberArtists.length > 0 ? (
+                return isGroupWork && groupMemberArtists.length > 1 ? (
                 <div className="bg-zinc-50 rounded-2xl border border-zinc-200 p-5 sm:p-6 shadow-sm">
                   <div className="text-center mb-6 pb-4 border-b border-zinc-200">
                     <h3 className="text-lg font-bold text-zinc-900 mb-2">
@@ -631,7 +634,11 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                   </div>
                   <div className="space-y-4">
                     {groupMemberArtists.map((member) => (
-                      <ArtistRow key={member.id} artist={member} onArtistClick={handleArtistClick} />
+                      <ArtistRow
+                        key={member.id}
+                        artist={member}
+                        onArtistClick={member.id.startsWith('non-member::') ? undefined : handleArtistClick}
+                      />
                     ))}
                   </div>
                 </div>
@@ -737,7 +744,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
         </motion.div>
 
         {/* ── Right sidebar (desktop) - Floating over Dim overlay! ── */}
-        <div className="hidden sm:flex flex-col items-center w-[72px] shrink-0 justify-center pointer-events-auto">
+        <div className="hidden sm:flex flex-col items-center w-[72px] shrink-0 justify-between pointer-events-auto py-6">
 
           {/* Close + More menu (전시 레벨 메뉴) */}
           <button
@@ -878,10 +885,13 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                <button
                  type="button"
                  onClick={(e) => { e.stopPropagation(); onNavigate?.(nextWork.id); }}
-                 className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-[#111] text-white border border-white/10 shadow-lg lg:hover:bg-[#333] transition-all"
+                 className="flex flex-col items-center gap-1.5 group"
                  aria-label={t('workDetail.nextWork')}
                >
-                 <ChevronRight className="h-7 w-7 pl-1" />
+                 <div className="flex h-[52px] w-[52px] items-center justify-center rounded-full bg-[#111] text-white border border-white/10 shadow-lg lg:group-hover:bg-[#333] transition-all">
+                   <ChevronRight className="h-7 w-7 pl-1" />
+                 </div>
+                 <span className="text-xs text-white/70 group-hover:text-white transition-colors">{t('workDetail.next')}</span>
                </button>
              ) : <div className="h-[52px] w-[52px]" />}
           </div>
@@ -1032,7 +1042,7 @@ function ArtistRow({ artist, onArtistClick }: { artist: Artist; onArtistClick?: 
         </div>
         {artist.bio && <p className="text-sm text-zinc-500 truncate">{artist.bio}</p>}
       </div>
-      {!isMe && (
+      {!isMe && !!onArtistClick && (
         <button
           type="button"
           onClick={handleFollow}

@@ -201,7 +201,7 @@ const _rawGroupWorks = [
   {
     id: 'gw1',
     title: '디지털 한국화 시리즈',
-    exhibitionName: '디지털 한국화 재해석 — 스튜디오 초대전',
+    exhibitionName: '디지털 한국화 재해석',
     primaryExhibitionType: 'group' as const,
     image: gwImgs(3),
     owner: { type: 'group' as const, data: groups[0] },
@@ -227,7 +227,7 @@ const _rawGroupWorks = [
   {
     id: 'gw2',
     title: '서울 야경 컬렉션',
-    exhibitionName: '도시의 빛 2026 — 야경 일러스트 전',
+    exhibitionName: '도시의 빛 2026',
     primaryExhibitionType: 'group' as const,
     image: gwImgs(4),
     owner: { type: 'group' as const, data: groups[1] },
@@ -252,7 +252,7 @@ const _rawGroupWorks = [
   {
     id: 'gw3',
     title: '사이버 감성 프로젝트',
-    exhibitionName: '사이버 감성 — 에이전시 아카이브',
+    exhibitionName: '사이버 감성',
     primaryExhibitionType: 'group' as const,
     image: gwImgs(2),
     owner: { type: 'group' as const, data: groups[2] },
@@ -276,7 +276,7 @@ const _rawGroupWorks = [
   {
     id: 'gw4',
     title: '봄날의 추억',
-    exhibitionName: '봄날의 기록 — 감성 드로잉 살롱',
+    exhibitionName: '봄날의 기록',
     primaryExhibitionType: 'group' as const,
     image: gwImgs(6),
     owner: { type: 'group' as const, data: groups[3] },
@@ -302,7 +302,7 @@ const _rawGroupWorks = [
   {
     id: 'gw5',
     title: '전통 매듭 현대화',
-    exhibitionName: '전통의 선 — 매듭·공예 실험전',
+    exhibitionName: '전통의 선',
     primaryExhibitionType: 'group' as const,
     image: gwImgs(8),
     owner: { type: 'group' as const, data: groups[4] },
@@ -326,7 +326,7 @@ const _rawGroupWorks = [
   {
     id: 'gw6',
     title: '한옥의 재발견',
-    exhibitionName: '한옥, 빛과 결 — 건축 드로잉 전',
+    exhibitionName: '한옥, 빛과 결',
     primaryExhibitionType: 'group' as const,
     image: gwImgs(5),
     owner: { type: 'group' as const, data: groups[4] },
@@ -350,7 +350,7 @@ const _rawGroupWorks = [
   {
     id: 'gw7',
     title: '캐릭터 IP 개발 시리즈',
-    exhibitionName: '캐릭터 IP 1기 — 쇼케이스',
+    exhibitionName: '캐릭터 IP 1기',
     primaryExhibitionType: 'group' as const,
     image: gwImgs(3),
     owner: { type: 'group' as const, data: groups[5] },
@@ -376,7 +376,7 @@ const _rawGroupWorks = [
   {
     id: 'gw8',
     title: '미식 비주얼 프로젝트',
-    exhibitionName: '테이블 위 미학 — 푸드 비주얼 전',
+    exhibitionName: '테이블 위 미학',
     primaryExhibitionType: 'group' as const,
     image: gwImgs(4),
     owner: { type: 'group' as const, data: groups[6] },
@@ -400,7 +400,7 @@ const _rawGroupWorks = [
   {
     id: 'gw9',
     title: '제품 렌더링 컬렉션',
-    exhibitionName: '프리미엄 라인 — 제품 비주얼 전',
+    exhibitionName: '프리미엄 라인',
     primaryExhibitionType: 'group' as const,
     image: gwImgs(5),
     owner: { type: 'group' as const, data: groups[7] },
@@ -426,7 +426,7 @@ const _rawGroupWorks = [
   {
     id: 'gw10',
     title: '한글 타이포 실험',
-    exhibitionName: '레터링 랩 — 한글 타이포 전',
+    exhibitionName: '레터링 랩',
     primaryExhibitionType: 'group' as const,
     image: gwImgs(3),
     owner: { type: 'group' as const, data: groups[8] },
@@ -450,7 +450,7 @@ const _rawGroupWorks = [
   {
     id: 'gw11',
     title: '패션 에디토리얼',
-    exhibitionName: 'S/S 에디토리얼 — 패션 드로잉 전',
+    exhibitionName: 'S/S 에디토리얼',
     primaryExhibitionType: 'group' as const,
     image: gwImgs(6),
     owner: { type: 'group' as const, data: groups[9] },
@@ -476,7 +476,7 @@ const _rawGroupWorks = [
   {
     id: 'gw12',
     title: '자연의 순간',
-    exhibitionName: '제주 사계 — 풍경 디지털 페인팅',
+    exhibitionName: '제주 사계',
     primaryExhibitionType: 'group' as const,
     image: gwImgs(9),
     owner: { type: 'group' as const, data: groups[10] },
@@ -502,7 +502,7 @@ const _rawGroupWorks = [
   {
     id: 'gw13',
     title: '공간의 재구성',
-    exhibitionName: '인테리어 비전 — 공간 스튜디오 전',
+    exhibitionName: '인테리어 비전',
     primaryExhibitionType: 'group' as const,
     image: gwImgs(5),
     owner: { type: 'group' as const, data: groups[11] },
@@ -527,7 +527,7 @@ const _rawGroupWorks = [
   {
     id: 'gw-kate-1',
     title: '빛과 감성의 대화',
-    exhibitionName: '빛과 감성 — 디지털캔버스 정기전',
+    exhibitionName: '빛과 감성',
     primaryExhibitionType: 'group' as const,
     image: gwImgs(5),
     owner: { type: 'group' as const, data: groups[1] },
@@ -546,7 +546,7 @@ const _rawGroupWorks = [
   {
     id: 'gw-kate-2',
     title: '일상 속 특별함',
-    exhibitionName: '우리의 하루 — 드로잉웍스 합동전',
+    exhibitionName: '우리의 하루',
     primaryExhibitionType: 'group' as const,
     image: gwImgs(4),
     owner: { type: 'group' as const, data: groups[2] },
@@ -564,7 +564,7 @@ const _rawGroupWorks = [
   {
     id: 'gw-kate-3',
     title: '계절의 색채',
-    exhibitionName: '계절이 남긴 것들 — 블룸팀 시즌전',
+    exhibitionName: '계절이 남긴 것들',
     primaryExhibitionType: 'group' as const,
     image: gwImgs(6),
     owner: { type: 'group' as const, data: groups[3] },
@@ -585,7 +585,7 @@ const _rawGroupWorks = [
   {
     id: 'gw-kate-4',
     title: '도시 풍경 릴레이',
-    exhibitionName: '도시의 표정 — 컬러스케치팀 릴레이전',
+    exhibitionName: '도시의 표정',
     primaryExhibitionType: 'group' as const,
     image: gwImgs(3),
     owner: { type: 'group' as const, data: groups[6] },
@@ -602,7 +602,7 @@ const _rawGroupWorks = [
   {
     id: 'gw-kate-5',
     title: '밤의 일러스트레이션',
-    exhibitionName: '야간 비행 — 픽셀아트랩 신작전',
+    exhibitionName: '야간 비행',
     primaryExhibitionType: 'group' as const,
     image: gwImgs(4),
     owner: { type: 'group' as const, data: groups[0] },
@@ -622,7 +622,7 @@ const _rawGroupWorks = [
   {
     id: 'gw-part-1',
     title: '수요 살롱 드로잉',
-    exhibitionName: '수요 살롱 — 일상의 색감을 그리다',
+    exhibitionName: '수요 살롱',
     primaryExhibitionType: 'group' as const,
     image: gwImgs(4),
     owner: { type: 'group' as const, data: groups[0] },
@@ -641,8 +641,8 @@ const _rawGroupWorks = [
   },
   {
     id: 'gw-part-2',
-    title: '도시와 계절 — 공동 기획전',
-    exhibitionName: '도시와 계절 — 9인 공동 기획전',
+    title: '도시와 계절',
+    exhibitionName: '도시와 계절',
     primaryExhibitionType: 'group' as const,
     image: gwImgs(5),
     owner: { type: 'group' as const, data: groups[1] },
@@ -663,7 +663,7 @@ const _rawGroupWorks = [
   {
     id: 'gw-part-3',
     title: '밤과 빛',
-    exhibitionName: '밤과 빛 — 5인 회화 연구회',
+    exhibitionName: '밤과 빛',
     primaryExhibitionType: 'group' as const,
     image: gwImgs(3),
     owner: { type: 'group' as const, data: groups[2] },
@@ -677,6 +677,62 @@ const _rawGroupWorks = [
       { type: 'member' as const, memberId: '3' },
       { type: 'member' as const, memberId: '1' },
       { type: 'member' as const, memberId: 'local-abstract' },
+    ],
+  },
+
+  // ── 비회원 슬롯 포함 샘플 (non-member 케이스 확인용) ──
+  {
+    id: 'gw-nonmember-1',
+    title: '봄날의 스케치',
+    exhibitionName: '봄날의 스케치',
+    primaryExhibitionType: 'group' as const,
+    image: gwImgs(4),
+    owner: { type: 'group' as const, data: groups[3] },
+    artistId: groups[3].id,
+    artist: { id: groups[3].id, name: groups[3].name, avatar: groups[3].avatar, bio: groups[3].bio, followers: groups[3].followers },
+    likes: 743, saves: 218,
+    feedReviewStatus: 'approved' as const,
+    _forceImageArtists: [
+      { type: 'member' as const, memberId: '1' },
+      { type: 'non-member' as const, displayName: '이다영' },
+      { type: 'member' as const, memberId: 'local-warm-palette' },
+      { type: 'non-member' as const, displayName: '박승우' },
+    ],
+  },
+  {
+    id: 'gw-nonmember-2',
+    title: '여름 풍경 릴레이',
+    exhibitionName: '여름 풍경',
+    primaryExhibitionType: 'group' as const,
+    image: gwImgs(3),
+    owner: { type: 'group' as const, data: groups[5] },
+    artistId: groups[5].id,
+    artist: { id: groups[5].id, name: groups[5].name, avatar: groups[5].avatar, bio: groups[5].bio, followers: groups[5].followers },
+    likes: 512, saves: 174,
+    feedReviewStatus: 'approved' as const,
+    _forceImageArtists: [
+      { type: 'non-member' as const, displayName: '한지훈' },
+      { type: 'member' as const, memberId: 'local-rilin' },
+      { type: 'non-member' as const, displayName: '최은지' },
+    ],
+  },
+  {
+    id: 'gw-nonmember-3',
+    title: '도심 속 소풍',
+    exhibitionName: '도심 속 소풍',
+    primaryExhibitionType: 'group' as const,
+    image: gwImgs(5),
+    owner: { type: 'group' as const, data: groups[4] },
+    artistId: groups[4].id,
+    artist: { id: groups[4].id, name: groups[4].name, avatar: groups[4].avatar, bio: groups[4].bio, followers: groups[4].followers },
+    likes: 1089, saves: 387,
+    feedReviewStatus: 'approved' as const,
+    _forceImageArtists: [
+      { type: 'member' as const, memberId: 'local-character' },
+      { type: 'non-member' as const, displayName: '조민서' },
+      { type: 'member' as const, memberId: '1' },
+      { type: 'non-member' as const, displayName: '송혜린' },
+      { type: 'non-member' as const, displayName: '권도윤' },
     ],
   },
 ];

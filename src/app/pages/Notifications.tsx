@@ -221,31 +221,6 @@ function passesPrefs(n: Notification, p: NotificationSettingsState): boolean {
 }
 
 /** 칩 ↔ Notification.type 매핑은 N:1 — 큐레이션 칩 = pick + curation, 시스템 칩 = system + invite(초대 수락). */
-type ChipId = 'all' | 'like' | 'follow' | 'groupInvite' | 'curation' | 'event' | 'system';
-
-function chipMatches(chip: ChipId, n: Notification): boolean {
-  switch (chip) {
-    case 'all':
-      return true;
-    case 'like':
-      return n.type === 'like';
-    case 'follow':
-      return n.type === 'follow';
-    case 'groupInvite':
-      return n.type === 'groupInvite';
-    case 'curation':
-      // Pick 선정 + 기획전 선정 (운영팀 직권 단발 큐레이션).
-      return n.type === 'pick' || n.type === 'curation';
-    case 'event':
-      // 응모전 선정 + 응모전 공지 — 본 코드 type 'event'.
-      return n.type === 'event';
-    case 'system':
-      // 검수 통과·반려 + 초대 수락(USR-AUT-10b 토큰 본인 작품 찾기 결과).
-      return n.type === 'system' || n.type === 'invite';
-    default:
-      return false;
-  }
-}
 
 export default function Notifications() {
   const navigate = useNavigate();
@@ -259,7 +234,6 @@ export default function Notifications() {
 
   const [notifications, setNotifications] = useState<Notification[]>(loadNotifications);
   const [readFilter, setReadFilter] = useState<'all' | 'unread'>('all');
-  const [categoryTab, setCategoryTab] = useState<ChipId>('all');
   const [prefs, setPrefs] = useState<NotificationSettingsState>(() => loadNotificationSettings());
 
   useEffect(() => {
@@ -285,9 +259,8 @@ export default function Notifications() {
   const filtered = useMemo(() => {
     let list = notifications;
     if (readFilter === 'unread') list = list.filter((n) => !n.read);
-    if (categoryTab !== 'all') list = list.filter((n) => chipMatches(categoryTab, n));
     return list.filter((n) => passesPrefs(n, prefs));
-  }, [notifications, readFilter, categoryTab, prefs]);
+  }, [notifications, readFilter, prefs]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -342,15 +315,6 @@ export default function Notifications() {
     else if (notif.fromUser) navigate(`/profile/${notif.fromUser.id}`);
   };
 
-  const categoryChips: { id: ChipId; label: string }[] = [
-    { id: 'all', label: t('notifications.categoryAll') },
-    { id: 'like', label: t('notifications.categoryLike') },
-    { id: 'follow', label: t('notifications.categoryFollow') },
-    { id: 'groupInvite', label: t('notifications.categoryGroupInvite') },
-    { id: 'curation', label: t('notifications.categoryCuration') },
-    { id: 'event', label: t('notifications.categoryEvent') },
-    { id: 'system', label: t('notifications.categorySystem') },
-  ];
 
   return (
     <div className="min-h-screen bg-white pb-20 md:pb-0">
@@ -410,23 +374,6 @@ export default function Notifications() {
             </Button>
           </div>
 
-          <div className="flex gap-2 mt-3 overflow-x-auto pb-1 scrollbar-hide -mx-1 px-1">
-            {categoryChips.map((c) => (
-              <Button
-                key={c.id}
-                type="button"
-                variant="ghost"
-                onClick={() => setCategoryTab(c.id)}
-                className={`shrink-0 px-4 py-2 rounded-full text-xs font-medium border transition-colors min-h-[44px] ${
-                  categoryTab === c.id
-                    ? 'border-foreground/80 bg-foreground/5 text-foreground'
-                    : 'border-border text-muted-foreground lg:hover:border-foreground/30 lg:hover:text-foreground'
-                }`}
-              >
-                {c.label}
-              </Button>
-            ))}
-          </div>
         </div>
       </div>
 

@@ -54,9 +54,11 @@ export function pieceTitlesEditableSnapshot(work: Work): string[] {
  * 전시(기획) 제목: exhibitionName → 레거시(groupName만 있는 데이터) → 그룹 owner → 폴백
  * (구버전은 전시명을 groupName에만 두었을 수 있음)
  */
+const stripEmdash = (s: string) => s.replace(/ — .*/, '').trim();
+
 export function displayExhibitionTitle(work: Work, fallbackLabel: string): string {
   const ex = work.exhibitionName?.trim();
-  if (ex) return ex;
+  if (ex) return stripEmdash(ex);
   const legacy = work.groupName?.trim();
   if (legacy) return legacy;
   const owner = work.owner;

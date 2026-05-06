@@ -159,9 +159,6 @@ export default function Events() {
 
                       <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 lg:p-14">
                         <div className="max-w-[800px]">
-                          <span className="inline-block px-3 py-1 text-xs sm:text-xs font-bold tracking-wider text-white bg-primary rounded-full mb-3.5 shadow-sm">
-                            {t('events.badge')}
-                          </span>
                           <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold text-white mb-2 sm:mb-3 leading-tight tracking-tight">
                             {event.title}
                           </h2>

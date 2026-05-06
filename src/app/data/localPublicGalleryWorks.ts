@@ -16,55 +16,55 @@ const BUCKET_ARTIST: Record<Bucket, string> = {
 
 /** 버킷 단위 그룹전(작품 성격에 맞는 전시 제목) */
 const BUCKET_GROUP_EXHIBITION: Record<Exclude<Bucket, 'fileview' | 'misc'>, string> = {
-  ahn: '유령 패션과 디지털 펜 — 안창홍 초대전',
-  web: '숨 쉬는 꽃 — 화훼 디지털 연작전',
-  se: '형태의 잔향 — 단색·공간 조형전',
-  ig: '일상의 한 컷 — 디지털 스케치 모음전',
-  imageye: '잔상과 붓터치 — 추상 매체전',
+  ahn: '유령 패션과 디지털 펜',
+  web: '숨 쉬는 꽃',
+  se: '형태의 잔향',
+  ig: '일상의 한 컷',
+  imageye: '잔상과 붓터치',
 };
 
 /** fileView 내보내기 묶음별 전시명 (시간 버킷으로 같은 배치 → 같은 전시) */
 const FILEVIEW_EXHIBITIONS = [
-  '밤의 유원지 — 겨울 일러스트레이션 전',
-  '스크린 너머 — 디지털 드로잉 살롱',
-  '파스텔과 모니터 — 일러스트 콜렉티브',
-  '겨울빛 캔버스 — 시즌 디지털 전',
-  '회전목마와 별 — 판타지 스케치 전',
-  '부드러운 선 — 캐릭터·풍경 드로잉',
-  '창가의 스케치북 — 일상 일러스트 모음',
-  '달빛 스튜디오 — 야간 작업 아카이브',
-  '수채 느낌 디지털 — 컬러 연습 전',
-  '도시의 틈 — 소품·풍경 일러스트',
-  '작은 동물원 — 크리처 일러스트 살롱',
-  '봄을 기다리며 — 계절 스케치 전',
-  '한 장의 편지 — 감성 일러스트 모음',
-  '종이 위의 여행 — 판타지 풍경전',
-  '무지개 톤 스터디 — 컬러 팔레트 전',
-  '고요한 오후 — 실내·정물 일러스트',
-  '바람에 실린 선 — 라이트 스케치 전',
-  '새벽 작업실 — 나이트 드로잉 아카이브',
-  '미니어처 월드 — 소형 풍경 일러스트',
-  '펜터치 기록 — 드로잉 저널 전',
+  '밤의 유원지',
+  '스크린 너머',
+  '파스텔과 모니터',
+  '겨울빛 캔버스',
+  '회전목마와 별',
+  '부드러운 선',
+  '창가의 스케치북',
+  '달빛 스튜디오',
+  '수채 느낌 디지털',
+  '도시의 틈',
+  '작은 동물원',
+  '봄을 기다리며',
+  '한 장의 편지',
+  '종이 위의 여행',
+  '무지개 톤 스터디',
+  '고요한 오후',
+  '바람에 실린 선',
+  '새벽 작업실',
+  '미니어처 월드',
+  '펜터치 기록',
 ] as const;
 
 /** 기타 파일(misc) 전시 제목 풀 */
 const MISC_GROUP_EXHIBITIONS = [
-  '로컬 아카이브 — 혼합 매체전',
-  '스튜디오 로컬 — 실험 작품 모음',
-  '이름 없는 드로잉 — 미분류 스케치전',
-  '갤러리 박스 — 단발 작품 큐레이션',
+  '로컬 아카이브',
+  '스튜디오 로컬',
+  '이름 없는 드로잉',
+  '갤러리 박스',
 ] as const;
 
 /** 직접 본 이미지·파일명 힌트 */
 const OVERRIDES: Record<string, { title: string; artistId?: string; exhibitionName?: string; groupName?: string }> = {
   '/images/서울전시회_안창홍.jpg': {
     title: '코트 위의 흐름',
-    exhibitionName: '호리아트 스페이스 초대전 — 패션 드로잉',
+    exhibitionName: '호리아트 스페이스 초대전',
     groupName: '안창홍 스튜디오',
   },
   '/images/_서울_전시회_안창홍_유령패션_갤럭시_노트_디지털펜화_호리아트스페이스_(17).jpg': {
     title: '유령 패션 스케치 17',
-    exhibitionName: '호리아트 스페이스 초대전 — 패션 드로잉',
+    exhibitionName: '호리아트 스페이스 초대전',
     groupName: '안창홍 스튜디오',
   },
   '/images/369702721_777125777748569_3573259619719392013_n.jpg': {
@@ -74,7 +74,7 @@ const OVERRIDES: Record<string, { title: string; artistId?: string; exhibitionNa
   '/images/fileView - 2026-04-03T144611.475.jpg': {
     title: '한밤의 회전목마',
     artistId: 'local-cozy-illus',
-    exhibitionName: '겨울 빛 디지털 살롱 — 판타지 일러스트',
+    exhibitionName: '겨울 빛 디지털 살롱',
   },
 };
 
@@ -432,6 +432,12 @@ export function buildLocalPublicWorks(paths: string[], artistsList: Artist[]): W
       .filter((src): src is string => Boolean(src));
     if (imageList.length < 2) {
       // 실제 이미지 수도 부족 → 강등
+      list.forEach((w) => downgradeToSoloIds.add(w.id));
+      continue;
+    }
+    const distinctArtistIds = new Set(picked.map((w) => w.artist.id));
+    if (distinctArtistIds.size < 2) {
+      // 모든 이미지가 같은 작가 → 그룹 전시 요건 미충족 → 강등
       list.forEach((w) => downgradeToSoloIds.add(w.id));
       continue;
     }

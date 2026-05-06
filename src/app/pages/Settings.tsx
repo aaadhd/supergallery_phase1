@@ -84,10 +84,10 @@ function ToggleRow({
   hint?: string;
 }) {
   return (
-    <div className="flex justify-between items-center py-4 border-b border-border/40 gap-3">
+    <div className="flex justify-between items-center py-3 gap-3">
       <div className="min-w-0">
-        <span className="text-base text-foreground">{label}</span>
-        {hint && <p className="text-xs text-muted-foreground mt-0.5">{hint}</p>}
+        <span className="text-sm text-foreground">{label}</span>
+        {hint && <p className="text-xs text-muted-foreground mt-0.5 leading-snug">{hint}</p>}
       </div>
       <Button
         type="button"
@@ -95,13 +95,13 @@ function ToggleRow({
         aria-checked={checked}
         disabled={disabled}
         onClick={() => !disabled && onChange(!checked)}
-        className={`relative h-6 w-11 shrink-0 rounded-full transition-colors ${
-          disabled ? 'opacity-50 cursor-not-allowed bg-muted' : checked ? 'bg-primary' : 'bg-muted'
+        className={`relative h-5 w-9 shrink-0 rounded-full transition-colors ${
+          disabled ? 'opacity-40 cursor-not-allowed bg-muted' : checked ? 'bg-primary' : 'bg-muted'
         }`}
       >
         <span
-          className={`absolute top-0.5 left-0.5 h-5 w-5 rounded-full bg-white shadow-sm transition-transform ${
-            checked ? 'translate-x-5' : 'translate-x-0'
+          className={`absolute top-0.5 left-0.5 h-4 w-4 rounded-full bg-white shadow-sm transition-transform ${
+            checked ? 'translate-x-4' : 'translate-x-0'
           }`}
         />
       </Button>
@@ -248,57 +248,34 @@ export default function Settings() {
           <p className="text-xs text-muted-foreground mb-3">{t('settings.notifIntro')}</p>
           <p className="text-xs text-muted-foreground mb-4 leading-relaxed">{t('settings.notifChannelPolicy')}</p>
 
-          <div className="rounded-lg border border-border/40 px-4 bg-white mb-4">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground pt-4 pb-1">
-              {t('settings.notifOptionalGroup')}
-            </p>
-            <ToggleRow
-              label={t('settings.notifLike')}
-              checked={notifications.like}
-              onChange={(v) => handleToggle('like', v)}
-            />
-            <ToggleRow
-              label={t('settings.notifNewFollower')}
-              checked={notifications.newFollower}
-              onChange={(v) => handleToggle('newFollower', v)}
-            />
-            <ToggleRow
-              label={t('settings.notifGroupInvite')}
-              checked={notifications.groupExhibitionInvite}
-              onChange={(v) => handleToggle('groupExhibitionInvite', v)}
-            />
-            <ToggleRow
-              label={t('settings.notifWeeklyTheme')}
-              checked={notifications.weeklyTheme}
-              onChange={(v) => handleToggle('weeklyTheme', v)}
-              hint={t('settings.notifWeeklyThemeHint')}
-            />
-            <ToggleRow
-              label={t('settings.notifMarketing')}
-              checked={notifications.marketing}
-              onChange={(v) => handleToggle('marketing', v)}
-            />
+          <div className="rounded-xl border border-border/50 bg-white divide-y divide-border/40 overflow-hidden mb-4">
+            <div className="px-4 py-2.5 bg-muted/30">
+              <p className="text-xs font-medium text-muted-foreground">{t('settings.notifOptionalGroup')}</p>
+            </div>
+            <div className="px-4">
+              <ToggleRow label={t('settings.notifLike')} checked={notifications.like} onChange={(v) => handleToggle('like', v)} />
+              <ToggleRow label={t('settings.notifNewFollower')} checked={notifications.newFollower} onChange={(v) => handleToggle('newFollower', v)} />
+              <ToggleRow label={t('settings.notifGroupInvite')} checked={notifications.groupExhibitionInvite} onChange={(v) => handleToggle('groupExhibitionInvite', v)} />
+              <ToggleRow label={t('settings.notifWeeklyTheme')} checked={notifications.weeklyTheme} onChange={(v) => handleToggle('weeklyTheme', v)} hint={t('settings.notifWeeklyThemeHint')} />
+              <ToggleRow label={t('settings.notifMarketing')} checked={notifications.marketing} onChange={(v) => handleToggle('marketing', v)} />
+            </div>
           </div>
 
-          <div className="rounded-lg border border-border/40 px-4 bg-white">
-            <p className="text-xs font-semibold uppercase tracking-wide text-muted-foreground pt-4 pb-1">
-              {t('settings.notifRequiredGroup')}
-            </p>
-            <ToggleRow
-              label={t('settings.notifSystem')}
-              checked
-              onChange={() => {}}
-              disabled
-              hint={t('settings.notifSystemHint')}
-            />
+          <div className="rounded-xl border border-border/50 bg-white divide-y divide-border/40 overflow-hidden mb-4">
+            <div className="px-4 py-2.5 bg-muted/30">
+              <p className="text-xs font-medium text-muted-foreground">{t('settings.notifRequiredGroup')}</p>
+            </div>
+            <div className="px-4">
+              <ToggleRow label={t('settings.notifSystem')} checked onChange={() => {}} disabled hint={t('settings.notifSystemHint')} />
+            </div>
           </div>
 
-          <div className="rounded-lg border border-border/40 px-4 py-4 bg-white">
-            <p className="text-sm font-medium text-foreground mb-1">{t('settings.eventUnsubscribeLabel')}</p>
-            <p className="text-xs text-muted-foreground mb-3">{t('settings.eventUnsubscribeHint')}</p>
+          <div className="rounded-xl border border-border/50 bg-white px-4 py-3.5">
+            <p className="text-sm font-medium text-foreground mb-0.5">{t('settings.eventUnsubscribeLabel')}</p>
+            <p className="text-xs text-muted-foreground mb-2.5">{t('settings.eventUnsubscribeHint')}</p>
             <Link
               to="/events?unsubscribe=1"
-              className="inline-flex min-h-[44px] items-center text-sm font-medium text-primary underline underline-offset-4 rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-ring"
+              className="inline-flex items-center text-sm font-medium text-primary lg:hover:underline underline-offset-4"
             >
               {t('events.unsubscribeLink')}
             </Link>
@@ -311,17 +288,15 @@ export default function Settings() {
           <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-3">
             {t('settings.sectionAccountActions')}
           </h2>
-          <div className="rounded-lg border border-border/40 overflow-hidden bg-white">
-            <div className="flex justify-between items-center py-4 px-4 border-b border-border/40">
-              <span className="text-base text-foreground">{t('settings.logoutRow')}</span>
-              <Button variant="ghost"
-                type="button"
-                onClick={handleLogout}
-                className="text-base font-medium text-primary lg:hover:opacity-90"
-              >
-                {t('nav.logout')}
-              </Button>
-            </div>
+          <div className="rounded-xl border border-border/50 overflow-hidden bg-white">
+            <button
+              type="button"
+              onClick={handleLogout}
+              className="w-full flex items-center justify-between px-4 py-3.5 text-sm font-medium text-primary lg:hover:bg-muted/40 transition-colors"
+            >
+              <span>{t('settings.logoutRow')}</span>
+              <span className="text-xs text-muted-foreground">→</span>
+            </button>
           </div>
 
           <div className="mt-8 pt-6 border-t border-destructive/20">

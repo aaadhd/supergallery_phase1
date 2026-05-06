@@ -6,12 +6,18 @@ interface CopyrightProtectedImageProps extends React.ImgHTMLAttributes<HTMLImage
   preventRightClick?: boolean;
   /** 드래그 방지 여부 */
   preventDrag?: boolean;
+  /** 외부 래퍼 div에 추가할 클래스 */
+  wrapperClassName?: string;
+  /** 래퍼가 부모를 꽉 채우게 함 (w-full h-full block) */
+  fill?: boolean;
 }
 
 export function CopyrightProtectedImage({
   preventRightClick = true,
   preventDrag = true,
   className = '',
+  wrapperClassName = '',
+  fill = false,
   ...imgProps
 }: CopyrightProtectedImageProps) {
   const handleContextMenu = useCallback(
@@ -34,7 +40,7 @@ export function CopyrightProtectedImage({
 
   return (
     <div
-      className="relative inline-block select-none"
+      className={`relative select-none ${fill ? 'block w-full h-full' : 'inline-block'} ${wrapperClassName}`}
       style={{
         userSelect: preventDrag ? 'none' : undefined,
         // Policy §26.1: 모바일 길게 누르기 시스템 메뉴(이미지 저장 등) 차단.
@@ -44,7 +50,7 @@ export function CopyrightProtectedImage({
       <div
         onContextMenu={handleContextMenu}
         onDragStart={handleDragStart}
-        className="relative"
+        className={`relative ${fill ? 'w-full h-full' : ''}`}
         style={{
           WebkitUserSelect: preventDrag ? 'none' : undefined,
           WebkitTouchCallout: preventDrag ? 'none' : undefined,

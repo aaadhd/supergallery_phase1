@@ -689,7 +689,7 @@ function WorkCard({ work, index, onSelect, onArtistClick, isFollowing, onToggleF
         .filter((a: Artist | undefined): a is Artist => Boolean(a));
       if (list.length > 0) return dedupeMembers(list);
     }
-    const raw: Artist[] = [artist, ...(coOwners ?? [])];
+    const raw: Artist[] = [...(coOwners ?? [])];
     const groupId = groupOwnerData?.id;
     const filtered = groupId ? raw.filter((a) => a.id !== groupId) : raw;
     return dedupeMembers(filtered);
@@ -753,7 +753,7 @@ function WorkCard({ work, index, onSelect, onArtistClick, isFollowing, onToggleF
                     className="flex items-center gap-2 min-h-10 min-w-0 text-sm text-muted-foreground transition-none touch-manipulation rounded-md px-1 -mx-1 lg:hover:bg-transparent lg:hover:text-muted-foreground active:bg-transparent cursor-default"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <Users className="h-4 w-4 shrink-0" />
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-zinc-200 shrink-0"><Users className="h-3 w-3" /></span>
                     <span>{truncateArtistName((groupName?.trim() || exhibitionLabel || '') as string)}</span>
                   </Button>
                 }
@@ -789,7 +789,7 @@ function WorkCard({ work, index, onSelect, onArtistClick, isFollowing, onToggleF
                     className="flex items-center gap-2 min-h-10 min-w-0 text-sm text-muted-foreground transition-none touch-manipulation rounded-md px-1 -mx-1 lg:hover:bg-transparent lg:hover:text-muted-foreground active:bg-transparent cursor-default"
                     onClick={(e) => e.stopPropagation()}
                   >
-                    <Users className="h-4 w-4 shrink-0" />
+                    <span className="flex h-5 w-5 items-center justify-center rounded-full bg-zinc-200 shrink-0"><Users className="h-3 w-3" /></span>
                     <span>{truncateArtistName(t('browse.groupArtistsLabel'))}</span>
                   </Button>
                 }
