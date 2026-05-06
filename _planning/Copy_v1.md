@@ -590,6 +590,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.toastOrderSaved': '순서가 저장되었어요.',
   'upload.confirmStudent': '참여 작가들의 동의를 얻었습니다',
   'upload.confirmOriginal': '본인이 직접 창작한 원작임을 확인합니다',
+  'upload.consentCurationLabel': "Proud's Pick·기획전에 선정될 경우 관련 페이지에 소개될 수 있음에 동의합니다.",
   'upload.cardDone': '완료',
   'upload.publishing': '전시 등록 중...',
   'upload.confirmDeleteImage': '이 이미지를 삭제할까요?',

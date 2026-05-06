@@ -229,6 +229,7 @@ export default function Upload() {
   const [groupSuggestOpen, setGroupSuggestOpen] = useState(false);
   const [workTick, setWorkTick] = useState(0);
   const [isOriginalWork, setIsOriginalWork] = useState(false);
+  const [consentCuration, setConsentCuration] = useState(true);
   const [artistInputTab, setArtistInputTab] = useState<'member' | 'non-member'>('member');
   /* ── 변환 프로그레스 ── */
 
@@ -1319,6 +1320,16 @@ export default function Upload() {
                         <input type="checkbox" checked={isOriginalWork} onChange={(e) => setIsOriginalWork(e.target.checked)} className="mt-1 flex-shrink-0 h-5 w-5 rounded border-primary/30 text-primary focus:ring-primary transition-all group-hover:border-primary/50 cursor-pointer" />
                         <span className="text-sm font-medium text-foreground leading-snug cursor-pointer select-none">
                           {confirmLabel}<RequiredMark />
+                        </span>
+                      </label>
+                    </div>
+
+                    {/* Pick·기획전 노출 동의 */}
+                    <div className="rounded-xl p-4 border border-border/60">
+                      <label className="flex items-start gap-3 cursor-pointer group">
+                        <input type="checkbox" checked={consentCuration} onChange={(e) => setConsentCuration(e.target.checked)} className="mt-1 flex-shrink-0 h-5 w-5 rounded border-border text-primary focus:ring-primary transition-all group-hover:border-primary/50 cursor-pointer" />
+                        <span className="text-sm text-foreground leading-snug cursor-pointer select-none">
+                          {t('upload.consentCurationLabel')}
                         </span>
                       </label>
                     </div>
