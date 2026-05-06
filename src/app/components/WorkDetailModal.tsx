@@ -151,10 +151,10 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
     hasCoOwners ||
     work.owner?.type === 'group';
   const displayArtistName = work.artist.name;
-  const uploaderArtist = allArtists.find(a => a.id === work.artistId);
-  const uploaderName = uploaderArtist?.name ?? displayArtistName;
+  const uploaderArtist = allArtists.find(a => a.id === work.artistId) ?? work.artist;
+  const uploaderName = uploaderArtist.name ?? displayArtistName;
   // 그룹 전시는 헤더에 그룹명만 나오므로 올린이를 별도 표시
-  const showUploaderLine = isGroupWork && !!uploaderArtist;
+  const showUploaderLine = isGroupWork;
 
   const workImages = Array.isArray(work.image) ? work.image : [work.image];
   const hasCoverPage = !!(work.customCoverUrl && work.coverImageIndex === -1);
@@ -682,6 +682,15 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                       <UserPlus className="h-4 w-4" />
                       {follows.isFollowing(work.artist.id) ? t('social.following') : t('social.follow')}
                     </button>
+                  )}
+                  {showUploaderLine && (
+                    <p className="mt-4 pt-4 border-t border-zinc-200 text-xs text-zinc-400 text-center">
+                      {t('profile.uploaderLabel')}: <button
+                        type="button"
+                        className="lg:hover:underline text-zinc-500"
+                        onClick={() => handleArtistClick(uploaderArtist.id)}
+                      >{uploaderName}</button>
+                    </p>
                   )}
                 </div>
               );
