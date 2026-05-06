@@ -750,7 +750,7 @@ export default function Profile() {
 
               {/* 관심 화풍 */}
               {viewProfile.interests && viewProfile.interests.length > 0 && (
-                <div className="mt-2 flex flex-wrap gap-1.5 md:justify-center">
+                <div className="mt-3.5 flex flex-wrap gap-1.5 md:justify-center">
                   {viewProfile.interests.map((id) => (
                     <span
                       key={id}
@@ -764,7 +764,7 @@ export default function Profile() {
 
               {/* 외부 링크 */}
               {viewProfile.externalLinks && viewProfile.externalLinks.length > 0 && (
-                <div className="mt-3 flex flex-wrap items-center gap-1.5 md:justify-center">
+                <div className="mt-4 flex flex-wrap items-center gap-1.5 md:justify-center">
                   {viewProfile.externalLinks.map((link) => {
                     const href = resolveExternalLinkUrl(link);
                     if (!href) return null;
