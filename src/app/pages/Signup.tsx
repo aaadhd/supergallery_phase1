@@ -2,6 +2,7 @@ import { useEffect, useMemo, useRef, useState, FormEvent, ReactNode } from 'reac
 import { toast } from 'sonner';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
 import { Mail, User, Calendar } from 'lucide-react';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import { useAuthStore } from '../store';
 import { pointsOnSignupComplete } from '../utils/pointsBackground';
 import { persistMockSession } from '../services/sessionTokens';
@@ -41,6 +42,7 @@ export default function Signup() {
   const [agreePrivacy, setAgreePrivacy] = useState(false);
   const [agreeAge, setAgreeAge] = useState(false);
   const [agreeMarketing, setAgreeMarketing] = useState(false);
+  const [viewingDoc, setViewingDoc] = useState<'terms' | 'privacy' | null>(null);
   const [touchedFields, setTouchedFields] = useState<Set<string>>(new Set());
 
   const [linkSent, setLinkSent] = useState(false);
@@ -453,93 +455,94 @@ export default function Signup() {
           )}
 
           {stepParam === 3 && (
-            <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
-              <div className="pt-2">
-                <p className="text-sm sm:text-sm font-semibold text-foreground mb-3">
-                  {t('signup.agreeSection')}
-                </p>
-                <div className="space-y-2.5 rounded-lg border border-border/40 p-4 bg-muted/50">
-                  <div className="mb-1 flex items-start gap-3 border-b border-border/40 pb-2">
-                    <Checkbox
-                      id="signup-agree-all"
-                      checked={allAgreed ? true : someAgreed ? 'indeterminate' : false}
-                      onCheckedChange={() => toggleMaster()}
-                      className="mt-0.5 border-border/40"
-                    />
-                    <Label
-                      htmlFor="signup-agree-all"
-                      className="cursor-pointer text-sm font-semibold text-foreground sm:text-sm"
-                    >
-                      {t('signup.agreeAll')}
-                    </Label>
-                  </div>
+            <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
+              {/* 약관 동의 카드 */}
+              <div className="rounded-xl border border-border/50 bg-card overflow-hidden">
+                {/* 전체 동의 헤더 */}
+                <label htmlFor="signup-agree-all" className="flex items-center gap-3 px-4 py-3.5 bg-muted/40 border-b border-border/40 cursor-pointer">
+                  <Checkbox
+                    id="signup-agree-all"
+                    checked={allAgreed ? true : someAgreed ? 'indeterminate' : false}
+                    onCheckedChange={() => toggleMaster()}
+                    className="border-border/50"
+                  />
+                  <span className="text-sm font-semibold text-foreground">{t('signup.agreeAll')}</span>
+                </label>
 
-                  {checkboxRow(
-                    'signup-terms',
-                    agreeTerms,
-                    setAgreeTerms,
-                    <>
-                      <span className="text-destructive font-medium">{t('signup.requiredTag')}</span>{' '}
-                      {t('signup.agreeTerms')} (
-                      <Link to="/terms" className="text-primary underline underline-offset-2">
-                        {t('signup.view')}
-                      </Link>
-                      )
-                    </>
-                  )}
-                  {checkboxRow(
-                    'signup-privacy',
-                    agreePrivacy,
-                    setAgreePrivacy,
-                    <>
-                      <span className="text-destructive font-medium">{t('signup.requiredTag')}</span>{' '}
-                      {t('signup.agreePrivacy')} (
-                      <Link to="/privacy" className="text-primary underline underline-offset-2">
-                        {t('signup.view')}
-                      </Link>
-                      )
-                    </>
-                  )}
-                  {checkboxRow(
-                    'signup-age',
-                    agreeAge,
-                    setAgreeAge,
-                    <>
-                      <span className="text-destructive font-medium">{t('signup.requiredTag')}</span>{' '}
-                      {t('signup.agreeAge')}
-                    </>
-                  )}
-                  {checkboxRow(
-                    'signup-marketing',
-                    agreeMarketing,
-                    setAgreeMarketing,
-                    <>
-                      <span className="text-muted-foreground font-medium">{t('signup.optionalTag')}</span>{' '}
-                      {t('signup.agreeMarketing')}
-                      <span className="block mt-0.5 text-xs text-muted-foreground">{t('signup.agreeMarketingHint')}</span>
-                    </>
-                  )}
+                {/* 이용약관 */}
+                <div className="flex items-center gap-3 px-4 py-3.5 border-b border-border/30">
+                  <Checkbox id="signup-terms" checked={agreeTerms} onCheckedChange={(v) => setAgreeTerms(v === true)} className="border-border/50 shrink-0" />
+                  <label htmlFor="signup-terms" className="flex-1 flex items-center gap-2 cursor-pointer min-w-0">
+                    <span className="shrink-0 text-xs font-semibold text-destructive bg-destructive/8 px-1.5 py-0.5 rounded">필수</span>
+                    <span className="text-sm text-foreground truncate">{t('signup.agreeTerms')}</span>
+                  </label>
+                  <button type="button" onClick={() => setViewingDoc('terms')} className="shrink-0 text-xs text-primary lg:hover:underline underline-offset-2 min-h-[44px] px-2 flex items-center">
+                    {t('signup.view')}
+                  </button>
                 </div>
-                <p className="mt-3 text-xs sm:text-sm text-muted-foreground leading-relaxed">{t('signup.ageRestrictionLead')}</p>
+
+                {/* 개인정보 */}
+                <div className="flex items-center gap-3 px-4 py-3.5 border-b border-border/30">
+                  <Checkbox id="signup-privacy" checked={agreePrivacy} onCheckedChange={(v) => setAgreePrivacy(v === true)} className="border-border/50 shrink-0" />
+                  <label htmlFor="signup-privacy" className="flex-1 flex items-center gap-2 cursor-pointer min-w-0">
+                    <span className="shrink-0 text-xs font-semibold text-destructive bg-destructive/8 px-1.5 py-0.5 rounded">필수</span>
+                    <span className="text-sm text-foreground truncate">{t('signup.agreePrivacy')}</span>
+                  </label>
+                  <button type="button" onClick={() => setViewingDoc('privacy')} className="shrink-0 text-xs text-primary lg:hover:underline underline-offset-2 min-h-[44px] px-2 flex items-center">
+                    {t('signup.view')}
+                  </button>
+                </div>
+
+                {/* 만 14세 */}
+                <div className="flex items-center gap-3 px-4 py-3.5 border-b border-border/30">
+                  <Checkbox id="signup-age" checked={agreeAge} onCheckedChange={(v) => setAgreeAge(v === true)} className="border-border/50 shrink-0" />
+                  <label htmlFor="signup-age" className="flex-1 flex items-center gap-2 cursor-pointer">
+                    <span className="shrink-0 text-xs font-semibold text-destructive bg-destructive/8 px-1.5 py-0.5 rounded">필수</span>
+                    <span className="text-sm text-foreground">{t('signup.agreeAge')}</span>
+                  </label>
+                </div>
+
+                {/* 마케팅 */}
+                <div className="flex items-start gap-3 px-4 py-3.5">
+                  <Checkbox id="signup-marketing" checked={agreeMarketing} onCheckedChange={(v) => setAgreeMarketing(v === true)} className="mt-0.5 border-border/50 shrink-0" />
+                  <label htmlFor="signup-marketing" className="flex-1 cursor-pointer">
+                    <div className="flex items-center gap-2 mb-0.5">
+                      <span className="shrink-0 text-xs font-medium text-muted-foreground bg-muted px-1.5 py-0.5 rounded">선택</span>
+                      <span className="text-sm text-foreground">{t('signup.agreeMarketing')}</span>
+                    </div>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{t('signup.agreeMarketingHint')}</p>
+                  </label>
+                </div>
               </div>
 
-              <div className="flex gap-2 mt-4">
-                <Button
-                  type="button"
-                  variant="outline"
-                  onClick={() => navigate('/signup?step=2')}
-                  className="w-1/3 min-h-[44px] rounded-lg text-foreground text-sm sm:text-sm"
-                >
+              <p className="text-xs text-muted-foreground leading-relaxed px-1">{t('signup.ageRestrictionLead')}</p>
+
+              <div className="flex gap-2">
+                <Button type="button" variant="outline" onClick={() => navigate('/signup?step=2')} className="w-1/3 min-h-[44px] rounded-lg text-sm">
                   {t('signup.previous')}
                 </Button>
-                <Button
-                  type="submit"
-                  disabled={!profileOk || !agreementsOk}
-                  className="flex-1 min-h-[44px] rounded-lg bg-primary text-white text-sm sm:text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed"
-                >
+                <Button type="submit" disabled={!profileOk || !agreementsOk} className="flex-1 min-h-[44px] rounded-lg bg-primary text-white text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed">
                   {t('signup.submit')}
                 </Button>
               </div>
+
+              {/* 약관 보기 Dialog */}
+              <Dialog open={!!viewingDoc} onOpenChange={(open) => { if (!open) setViewingDoc(null); }}>
+                <DialogContent className="max-w-2xl h-[80vh] flex flex-col p-0 gap-0">
+                  <DialogHeader className="px-6 py-4 border-b border-border shrink-0">
+                    <DialogTitle className="text-base font-semibold">
+                      {viewingDoc === 'terms' ? t('signup.agreeTerms') : t('signup.agreePrivacy')}
+                    </DialogTitle>
+                  </DialogHeader>
+                  <div className="flex-1 overflow-hidden">
+                    <iframe
+                      src={viewingDoc === 'terms' ? '/terms' : '/privacy'}
+                      className="w-full h-full border-0"
+                      title={viewingDoc === 'terms' ? t('signup.agreeTerms') : t('signup.agreePrivacy')}
+                    />
+                  </div>
+                </DialogContent>
+              </Dialog>
             </div>
           )}
         </form>
