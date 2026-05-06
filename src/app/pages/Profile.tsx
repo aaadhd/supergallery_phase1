@@ -844,46 +844,24 @@ export default function Profile() {
             {/* 오른쪽: 탭 컨텐츠 */}
             <div className="flex-1 py-4 sm:py-8">
               <Tabs value={profileTab} onValueChange={(v) => changeProfileTab(v as ProfileTabValue)} className="w-full">
-                <TabsList className="h-auto p-0 bg-transparent border-b border-border/40 rounded-none w-full justify-start gap-0 grid grid-cols-3 sm:flex sm:flex-row">
-                  <TabsTrigger
-                    value="exhibition"
-                    className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground py-3 min-h-[44px] text-sm px-4 text-muted-foreground"
-                  >
-                    {t('profile.exhibition')}
-                  </TabsTrigger>
-                  {isOwnProfile && (
+                <TabsList className="h-auto p-0 bg-transparent border-b border-border/40 rounded-none w-full justify-start flex flex-row gap-0 overflow-x-auto">
+                  {([
+                    { value: 'exhibition', label: t('profile.exhibition') },
+                    ...(isOwnProfile ? [
+                      { value: 'works', label: t('profile.tabWorkManage') },
+                      { value: 'likes', label: t('profile.tabLikes') },
+                      { value: 'saved', label: t('profile.tabSaves') },
+                      { value: 'drafts', label: t('profile.tabDrafts') + (drafts.length > 0 ? ` (${drafts.length})` : '') },
+                    ] : []),
+                  ] as { value: string; label: string }[]).map((tab) => (
                     <TabsTrigger
-                      value="works"
-                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground py-3 min-h-[44px] text-sm px-4 text-muted-foreground"
+                      key={tab.value}
+                      value={tab.value}
+                      className="shrink-0 rounded-none border-0 border-b-2 border-transparent bg-transparent shadow-none px-4 py-3 min-h-[44px] text-sm text-muted-foreground font-medium transition-colors data-[state=active]:border-b-foreground data-[state=active]:text-foreground data-[state=active]:bg-transparent data-[state=active]:shadow-none lg:hover:text-foreground"
                     >
-                      {t('profile.tabWorkManage')}
+                      {tab.label}
                     </TabsTrigger>
-                  )}
-                  {isOwnProfile && (
-                    <TabsTrigger
-                      value="likes"
-                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground py-3 min-h-[44px] text-sm px-4 text-muted-foreground"
-                    >
-                      {t('profile.tabLikes')}
-                    </TabsTrigger>
-                  )}
-                  {isOwnProfile && (
-                    <TabsTrigger
-                      value="saved"
-                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground py-3 min-h-[44px] text-sm px-4 text-muted-foreground"
-                    >
-                      {t('profile.tabSaves')}
-                    </TabsTrigger>
-                  )}
-                  {isOwnProfile && (
-                    <TabsTrigger
-                      value="drafts"
-                      className="rounded-none border-b-2 border-transparent data-[state=active]:border-foreground data-[state=active]:bg-transparent data-[state=active]:text-foreground py-3 min-h-[44px] text-sm px-4 text-muted-foreground"
-                    >
-                      {t('profile.tabDrafts')}
-                      {drafts.length > 0 ? ` (${drafts.length})` : ''}
-                    </TabsTrigger>
-                  )}
+                  ))}
                 </TabsList>
 
                 {guideOpen ? (
