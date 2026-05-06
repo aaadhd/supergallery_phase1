@@ -729,9 +729,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'profile.formInterests': '관심 화풍',
   'profile.formLinks': '웹사이트 설정',
   'profile.formLinksHint': '회원님이 활동하시는 웹사이트의 URL을 입력해주세요.',
-  'profile.nicknameLockedLabel': '닉네임 (변경 불가)',
-  'profile.nicknameLockedHint': '닉네임은 작품과 연결돼 다른 분이 사용할 수 없어요. 변경하시려면 1:1 문의로 신청해 주세요.',
-  'profile.nicknameContactCta': '닉네임 변경 문의하기',
+
   'notifications.categoryAll': '유형 전체',
   'notifications.categoryLike': '좋아요',
   'notifications.categoryFollow': '팔로우',
@@ -856,20 +854,13 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'contact.categoryPlaceholder': '문의 유형을 선택하세요',
   'contact.placeholderMessage': '문의 내용을 자세히 적어주세요',
   'contact.categoryAccount': '계정 관련',
-  'contact.categoryNicknameChange': '닉네임 변경 신청',
+
   'contact.categoryUpload': '업로드/전시 관련',
   'contact.categoryReport': '신고/저작권 관련',
   'contact.categoryPrivacy': '개인정보 열람·정정·삭제 요청',
   'contact.categorySuggestion': '제안/피드백',
   'contact.categoryBug': '오류 제보',
   'contact.categoryOther': '기타',
-  'contact.nicknameChangeNoticeTitle': '닉네임 변경 신청 안내',
-  'contact.nicknameChangeNoticeBody': '회신은 가입 이메일과 동일한 주소로만 발송돼요. 새 닉네임을 적어주시면 운영팀이 확인 후 변경해 드려요.',
-  'contact.nicknameNewLabel': '새 닉네임',
-  'contact.nicknameNewPlaceholder': '2~20자, 다른 분이 쓰지 않는 이름',
-  'contact.nicknameReasonLabel': '변경 사유 (선택)',
-  'contact.nicknameReasonPlaceholder': '오타·작명 변경 등 알려주세요',
-  'contact.errNicknameDuplicate': '이미 사용 중인 닉네임이에요',
   'contact.attachments': '파일 첨부',
   'contact.fileTooLarge': '파일 크기는 5MB 이하만 가능해요.',
   'contact.attachHint': '최대 3개, 각 5MB 이하',
@@ -1038,7 +1029,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'profile.errProfanity': '닉네임·한 줄 소개·자기소개에 부적절한 단어가 포함되어 있어요.',
   'profile.bioPlaceholderEmpty': '아직 소개가 없어요.',
   'profile.tabWorkManage': '내 작품',
-  'profile.tabHelpWorks': '내가 그린 작품(1점 단위)이 모이는 곳이에요. 초대로 자동 연결된 작품도 함께 보여요. 내가 올린 전시는 ‘전시’ 탭에서 볼 수 있어요.',
+
   'notifications.seedLikedWork': '님이 회원님의 작품 "{work}"을 좋아했어요',
   'notifications.seedFollowed': '님이 회원님을 팔로우하기 시작했어요',
   'notifications.seedPickSelected': '축하해요! "{work}"이(가) Artier’s Pick으로 뽑혔어요',
@@ -1058,7 +1049,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'profile.tabSaves': '저장',
   'profile.tabDrafts': '초안',
   'profile.tabGuideExhibition': '내가 올리거나 참여한 전시가 모여 있어요. 수정과 삭제는 내가 올린 전시만 할 수 있어요.',
-  'profile.tabGuideWorks': '내가 그린 그림이 한 장씩 모여 있어요. 제목을 눌러 바로 수정할 수 있어요.',
+  'profile.tabGuideWorks': '내가 그린 그림이 한 장씩 모여 있어요. 작품명 수정, 전시에서 빼기는 여기서 할 수 있어요.',
   'profile.tabGuideLikes': '좋아요를 누른 작품이 모여 있어요.',
   'profile.tabGuideSaves': '저장해 둔 작품이 모여 있어요.',
   'profile.tabGuideDrafts': '저장해 둔 초안을 다시 이어서 작업할 수 있어요.',
@@ -1085,6 +1076,10 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'profile.workMenuA11y': '작품 메뉴',
   'profile.renameWork': '작품명 수정',
   'profile.workTitleSaved': '작품명이 저장되었어요',
+  'profile.removePieceFromExhibition': '전시에서 빼기',
+  'profile.removePieceConfirmTitle': '이 작품을 전시에서 뺄까요?',
+  'profile.removePieceConfirmDesc': '전시에서 내 작품이 삭제돼요. 전시 자체는 유지되지만 되돌릴 수 없어요.',
+  'profile.removePieceSuccess': '내 작품을 전시에서 뺐어요',
   'profile.continueEditDraft': '이어서 편집',
   'profile.draftBadge': '초안',
   'profile.draftNoTitle': '제목 없음',
@@ -1877,9 +1872,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'profile.formInterests': 'Art interests',
   'profile.formLinks': 'Website settings',
   'profile.formLinksHint': 'Enter the URLs of websites where you are active.',
-  'profile.nicknameLockedLabel': 'Nickname (locked)',
-  'profile.nicknameLockedHint': 'Your nickname is tied to your works and cannot be used by others. To change it, please contact us.',
-  'profile.nicknameContactCta': 'Request a nickname change',
+
   'notifications.categoryAll': 'All types',
   'notifications.categoryLike': 'Likes',
   'notifications.categoryFollow': 'Follows',
@@ -2004,20 +1997,13 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'contact.categoryPlaceholder': 'Select a topic',
   'contact.placeholderMessage': 'Describe your inquiry',
   'contact.categoryAccount': 'Account',
-  'contact.categoryNicknameChange': 'Nickname change request',
+
   'contact.categoryUpload': 'Upload / exhibition',
   'contact.categoryReport': 'Report / copyright',
   'contact.categoryPrivacy': 'Personal data access / correction / deletion',
   'contact.categorySuggestion': 'Feedback',
   'contact.categoryBug': 'Bug report',
   'contact.categoryOther': 'Other',
-  'contact.nicknameChangeNoticeTitle': 'Nickname change request',
-  'contact.nicknameChangeNoticeBody': 'We will reply only to the email used at signup. Tell us your new nickname and our team will review and apply the change.',
-  'contact.nicknameNewLabel': 'New nickname',
-  'contact.nicknameNewPlaceholder': '2–20 chars, not in use by others',
-  'contact.nicknameReasonLabel': 'Reason (optional)',
-  'contact.nicknameReasonPlaceholder': 'Typo, name change, etc.',
-  'contact.errNicknameDuplicate': 'This nickname is already in use',
   'contact.attachments': 'Attachments',
   'contact.fileTooLarge': 'File size must be 5MB or less.',
   'contact.attachHint': 'Max 3 files, 5MB each',
@@ -2185,7 +2171,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'profile.errProfanity': 'Nickname, headline, or bio contains inappropriate language.',
   'profile.bioPlaceholderEmpty': 'No bio yet.',
   'profile.tabWorkManage': 'My Works',
-  'profile.tabHelpWorks': "Pieces you authored (one image at a time), including any linked from invites. Exhibitions you posted live in the 'Exhibitions' tab.",
+
   'notifications.seedLikedWork': ' liked your work "{work}"',
   'notifications.seedFollowed': ' followed you',
   'notifications.seedPickSelected': "Congrats! \"{work}\" was selected as an Artier's Pick",
@@ -2207,7 +2193,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'profile.tabGuideExhibition':
     'Exhibitions you uploaded or joined. You can only edit or delete ones you uploaded.',
   'profile.tabGuideWorks':
-    'Your artworks collected one by one. Tap the title to rename.',
+    'Your artworks collected one by one. Rename or remove each piece from here.',
   'profile.tabGuideLikes': 'Works you liked.',
   'profile.tabGuideSaves': 'Works you saved to view later.',
   'profile.tabGuideDrafts': 'Saved drafts you can resume working on.',
@@ -2234,6 +2220,10 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'profile.workMenuA11y': 'Work menu',
   'profile.renameWork': 'Rename work',
   'profile.workTitleSaved': 'Title saved',
+  'profile.removePieceFromExhibition': 'Remove from exhibition',
+  'profile.removePieceConfirmTitle': 'Remove this work from the exhibition?',
+  'profile.removePieceConfirmDesc': 'Your work will be removed from the exhibition. This cannot be undone.',
+  'profile.removePieceSuccess': 'Your work has been removed from the exhibition',
   'profile.continueEditDraft': 'Continue editing',
   'profile.draftBadge': 'Draft',
   'profile.draftNoTitle': 'Untitled',
@@ -2592,6 +2582,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.16 | 2026-05-06 | PM × Claude | profile.removePieceFromExhibition·Confirm·Success 4키 추가(전시에서 빼기 신규 기능); tabGuideWorks 내 작품 탭 진입점 반영; profile.tabHelpWorks 키 삭제(화면에서 단락 제거); nicknameLockedLabel·Hint·ContactCta·categoryNicknameChange·nicknameChangeNotice·nicknameNew·nicknameReason·errNicknameDuplicate 닉네임 변경 불가 관련 키 일괄 삭제(즉시 자율 변경으로 정책 개정) |
 | v1.15 | 2026-05-06 | PM × Claude | events.viewMyEntry·cancelEntry·cancelEntryConfirmTitle·Desc·Success 5키 추가 |
 | v1.14 | 2026-05-05 | PM × Claude | Handoff_Footer·Handoff_ServiceIntro 흡수 — §10 글로벌 푸터·§11 서비스 소개 신설 |
 | v1.13 | 2026-05-05 | PM × Claude | 자동 비공개 알림 폐기, 삭제 사유·신고 알림 변수, 인라인 링크 정합 |
