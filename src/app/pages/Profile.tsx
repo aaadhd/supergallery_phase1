@@ -691,27 +691,29 @@ export default function Profile() {
         <div className="mx-auto max-w-[1440px] px-4 sm:px-6">
             <div className="flex flex-col md:flex-row gap-5 md:gap-8">
             {/* 왼쪽: 프로필 정보 */}
-            <div className="w-full md:w-[280px] flex-shrink-0 pt-8 md:pt-12">
-              <div className="relative group">
-                <Avatar className="h-20 w-20 sm:h-24 sm:w-24 border-4 border-white shadow-lg">
+            <div className="w-full md:w-[260px] flex-shrink-0 pt-8 md:pt-10 flex flex-col md:items-center">
+
+              {/* 아바타 */}
+              <div className="relative self-start md:self-auto">
+                <Avatar className="h-24 w-24 sm:h-28 sm:w-28 ring-4 ring-background shadow-md">
                   <AvatarImage src={profileArtist.avatar} alt={profileArtist.name} />
-                  <AvatarFallback className="text-lg sm:text-xl">{profileArtist.name[0]}</AvatarFallback>
+                  <AvatarFallback className="text-2xl font-semibold bg-muted">{profileArtist.name[0]}</AvatarFallback>
                 </Avatar>
                 {isOwnProfile && (
-                  <Button
-                    variant="outline"
-                    size="icon"
+                  <button
+                    type="button"
                     onClick={() => setShowProfileImageModal(true)}
-                    className="absolute bottom-0 right-0 h-10 w-10 rounded-full bg-primary text-white border-2 border-white shadow-md hover:bg-primary/90"
+                    className="absolute bottom-0.5 right-0.5 h-8 w-8 rounded-full bg-foreground/80 text-background flex items-center justify-center shadow-sm lg:hover:bg-foreground transition-colors"
                     aria-label={t('profile.changePhoto')}
                   >
-                    <Camera className="h-5 w-5" />
-                  </Button>
+                    <Camera className="h-3.5 w-3.5" />
+                  </button>
                 )}
               </div>
 
-              <div className="mt-4 sm:mt-6 flex flex-wrap items-center gap-2">
-                <h1 className="text-xl sm:text-2xl font-semibold">{displayName}</h1>
+              {/* 이름 + 모바일 편집 아이콘 */}
+              <div className="mt-5 w-full flex items-start md:items-center md:justify-center gap-2">
+                <h1 className="text-2xl font-bold tracking-tight text-foreground">{displayName}</h1>
                 {isOwnProfile && (
                   <button
                     type="button"
@@ -719,54 +721,49 @@ export default function Profile() {
                     aria-label={t('profile.edit')}
                     className="sm:hidden ml-auto h-11 w-11 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-full text-muted-foreground hover:bg-muted/60 transition-colors"
                   >
-                    <Pencil className="h-5 w-5" />
+                    <Pencil className="h-4 w-4" />
                   </button>
                 )}
               </div>
 
-              {/* 한 줄 프로필 */}
+              {/* 한 줄 소개 */}
               {viewProfile.headline && (
-                <p className="mt-3 text-base text-muted-foreground font-medium">
+                <p className="mt-1 text-sm text-muted-foreground md:text-center">
                   {viewProfile.headline}
                 </p>
               )}
 
               {/* 소개글 */}
-              {viewProfile.bio ? (
-                <p className="mt-4 text-sm text-foreground leading-relaxed whitespace-pre-wrap">
-                  {viewProfile.bio}
-                </p>
-              ) : (
-                <p className="mt-4 text-sm text-foreground leading-relaxed">
-                  {profileArtist.bio || t('profile.bioPlaceholderEmpty')}
+              {(viewProfile.bio || profileArtist.bio) && (
+                <p className="mt-3 text-sm text-foreground/80 leading-relaxed md:text-center">
+                  {viewProfile.bio || profileArtist.bio}
                 </p>
               )}
 
-              {/* 국가 */}
-              {viewProfile.location && (
-                <div className="mt-3 flex items-center gap-2 text-sm text-muted-foreground">
-                  <MapPin className="h-4 w-4" />
-                  <span>{locationDisplayLabel(viewProfile.location, t)}</span>
-                </div>
-              )}
+              {/* 국가 + 관심 화풍 */}
+              <div className="mt-3 flex flex-wrap items-center gap-1.5 md:justify-center">
+                {viewProfile.location && (
+                  <span className="inline-flex items-center gap-1 text-xs text-muted-foreground">
+                    <MapPin className="h-3.5 w-3.5" />
+                    {locationDisplayLabel(viewProfile.location, t)}
+                  </span>
+                )}
+                {viewProfile.location && viewProfile.interests && viewProfile.interests.length > 0 && (
+                  <span className="text-border">·</span>
+                )}
+                {viewProfile.interests && viewProfile.interests.map((id) => (
+                  <span
+                    key={id}
+                    className="inline-flex items-center rounded-full bg-muted/60 px-2 py-0.5 text-xs text-foreground/70"
+                  >
+                    {t(`onboarding.tag.${id}` as any)}
+                  </span>
+                ))}
+              </div>
 
-              {/* 관심 화풍 */}
-              {viewProfile.interests && viewProfile.interests.length > 0 && (
-                <div className="mt-3 flex flex-wrap gap-1.5">
-                  {viewProfile.interests.map((id) => (
-                    <span
-                      key={id}
-                      className="inline-flex items-center rounded-full border border-border/60 bg-muted/40 px-2.5 py-0.5 text-xs font-medium text-foreground/80"
-                    >
-                      {t(`onboarding.tag.${id}` as any)}
-                    </span>
-                  ))}
-                </div>
-              )}
-
-              {/* 외부 링크 — 플랫폼 아이콘 버튼 */}
+              {/* 외부 링크 */}
               {viewProfile.externalLinks && viewProfile.externalLinks.length > 0 && (
-                <div className="mt-3 flex flex-wrap items-center gap-2">
+                <div className="mt-3 flex flex-wrap items-center gap-1.5 md:justify-center">
                   {viewProfile.externalLinks.map((link) => {
                     const href = resolveExternalLinkUrl(link);
                     if (!href) return null;
@@ -782,7 +779,7 @@ export default function Profile() {
                         rel="noopener noreferrer"
                         title={display.name}
                         aria-label={t('profile.openProfileAria').replace('{name}', display.name)}
-                        className="inline-flex h-11 w-11 min-h-[44px] min-w-[44px] items-center justify-center rounded-full border border-border/60 bg-white lg:hover:border-foreground/40 lg:hover:bg-muted/50 transition-colors"
+                        className="inline-flex h-9 w-9 items-center justify-center rounded-full bg-muted/50 text-muted-foreground lg:hover:bg-muted lg:hover:text-foreground transition-colors"
                       >
                         {display.icon}
                       </a>
@@ -791,51 +788,53 @@ export default function Profile() {
                 </div>
               )}
 
-              {/* 팔로워/팔로잉 */}
-              <div className="mt-4 flex items-center gap-2 text-sm">
+              {/* 팔로워/팔로잉 — 숫자 강조 */}
+              <div className="mt-5 flex items-center gap-5 md:justify-center">
                 <button
                   type="button"
                   onClick={() => { setFollowModalTab('followers'); setShowFollowersModal(true); }}
-                  className="flex items-center gap-1 min-h-[44px] px-2 -ml-2 rounded-lg lg:hover:bg-muted/40 transition-colors"
+                  className="flex flex-col items-center min-h-[44px] justify-center rounded-lg px-3 lg:hover:bg-muted/40 transition-colors"
                 >
-                  <span className="text-muted-foreground">{t('profile.followModalFollowers')}</span>
-                  <span className="font-semibold text-foreground">
+                  <span className="text-lg font-bold text-foreground tabular-nums leading-tight">
                     {getDisplayFollowerCount(profileArtist)}
                   </span>
+                  <span className="text-xs text-muted-foreground mt-0.5">{t('profile.followModalFollowers')}</span>
                 </button>
+                <div className="h-8 w-px bg-border/50" />
                 <button
                   type="button"
                   onClick={() => { setFollowModalTab('following'); setShowFollowersModal(true); }}
-                  className="flex items-center gap-1 min-h-[44px] px-2 rounded-lg lg:hover:bg-muted/40 transition-colors"
+                  className="flex flex-col items-center min-h-[44px] justify-center rounded-lg px-3 lg:hover:bg-muted/40 transition-colors"
                 >
-                  <span className="text-muted-foreground">{t('profile.followModalFollowing')}</span>
-                  <span className="font-semibold text-foreground">{profileArtist.following || 0}</span>
+                  <span className="text-lg font-bold text-foreground tabular-nums leading-tight">
+                    {profileArtist.following || 0}
+                  </span>
+                  <span className="text-xs text-muted-foreground mt-0.5">{t('profile.followModalFollowing')}</span>
                 </button>
               </div>
 
               {/* 팔로우 버튼 (타인 프로필) */}
               {!isOwnProfile && (
-                <div className="mt-4">
-                  <Button
-                    variant={follows.isFollowing(profileArtist.id) ? 'outline' : 'default'}
-                    className="w-full text-sm py-3"
-                    onClick={() => {
-                      if (!loginPrompt.tryProtectedAction('follow')) return;
-                      followStore.toggle(profileArtist.id);
-                    }}
-                  >
-                    {follows.isFollowing(profileArtist.id) ? t('social.following') : t('social.follow')}
-                  </Button>
-                </div>
+                <Button
+                  variant={follows.isFollowing(profileArtist.id) ? 'outline' : 'default'}
+                  className="mt-5 w-full text-sm min-h-[44px]"
+                  onClick={() => {
+                    if (!loginPrompt.tryProtectedAction('follow')) return;
+                    followStore.toggle(profileArtist.id);
+                  }}
+                >
+                  {follows.isFollowing(profileArtist.id) ? t('social.following') : t('social.follow')}
+                </Button>
               )}
 
-              {/* 프로필 편집 버튼 — 데스크톱 전용 (모바일은 이름 옆 아이콘 버튼으로 노출) */}
+              {/* 프로필 편집 버튼 — 데스크톱 전용 */}
               {isOwnProfile && (
                 <Button
+                  variant="outline"
                   onClick={openProfileEdit}
-                  className="hidden sm:flex mt-6 w-full bg-primary lg:hover:bg-primary/90 text-sm py-3 min-h-[44px]"
+                  className="hidden sm:flex mt-5 w-full text-sm min-h-[44px] gap-2 text-foreground"
                 >
-                  <Pencil className="h-4 w-4 mr-2" />
+                  <Pencil className="h-3.5 w-3.5" />
                   {t('profile.edit')}
                 </Button>
               )}
