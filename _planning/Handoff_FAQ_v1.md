@@ -27,7 +27,7 @@
 홈 화면에서 로그인 버튼을 클릭하면 간편하게 가입할 수 있어요. 소셜 로그인(카카오, 구글, 애플)과 이메일 가입을 지원해요.
 
 #### Q2. 로그인 링크 메일이 오지 않아요.
-Artier는 비밀번호 대신 이메일 인증 링크로 로그인해요. 이메일을 받지 못했다면 스팸함을 먼저 확인해 주시고, 로그인 화면에서 "로그인 링크 다시 보내기"를 눌러 주세요. 30초 쿨다운 후 다시 보낼 수 있어요. 링크는 30분 동안 유효해요.
+Proud Gallery는 비밀번호 대신 이메일 인증 링크로 로그인해요. 이메일을 받지 못했다면 스팸함을 먼저 확인해 주시고, 로그인 화면에서 "로그인 링크 다시 보내기"를 눌러 주세요. 30초 쿨다운 후 다시 보낼 수 있어요. 링크는 30분 동안 유효해요.
 
 #### Q3. 탈퇴하면 작품은 어떻게 되나요?
 탈퇴하면 업로드한 전시가 모두 삭제돼요. 복구할 수 없으니 남기고 싶은 작품은 탈퇴 전에 따로 저장해 두세요.
@@ -46,9 +46,9 @@ JPG, PNG, WEBP, GIF 형식을 지원하며, 파일당 최대 10MB까지 업로�
 ### 전시 카테고리
 
 #### Q7. 그룹 전시는 어떻게 만드나요?
-업로드할 때 "함께 올리기"를 선택하면 그룹명을 입력하고 참여 작가를 한 자리씩 추가할 수 있어요. Artier 회원이면 이름을 검색해 바로 연결되고, 회원이 아닌 분은 이름만 입력해 자리를 만들어 두면 검수 통과 후 초대 링크로 직접 알릴 수 있어요.
+업로드할 때 "함께 올리기"를 선택하면 그룹명을 입력하고 참여 작가를 한 자리씩 추가할 수 있어요. Proud Gallery 회원이면 이름을 검색해 바로 연결되고, 회원이 아닌 분은 이름만 입력해 자리를 만들어 두면 검수 통과 후 초대 링크로 직접 알릴 수 있어요.
 
-#### Q8. Artier's Pick은 무엇인가요?
+#### Q8. Proud's Pick은 무엇인가요?
 운영팀이 매주 우수 작품을 선정해 배지를 부여해요. 선정된 작품은 피드 상단에 노출되며, 작가에게 알림이 발송돼요.
 
 ### 기타 카테고리
@@ -57,7 +57,7 @@ JPG, PNG, WEBP, GIF 형식을 지원하며, 파일당 최대 10MB까지 업로�
 전시 상세 화면에서 신고 버튼(깃발 아이콘)을 눌러 신고할 수 있어요. 운영팀이 영업일 24시간 안에 확인해드려요.
 
 #### Q10. 서비스 이용료가 있나요?
-현재 Artier의 모든 기능은 무료로 이용하실 수 있어요.
+현재 Proud Gallery의 모든 기능은 무료로 이용하실 수 있어요.
 
 ### 비회원 초대 카테고리
 
@@ -83,7 +83,7 @@ JPG, PNG, WEBP, GIF 형식을 지원하며, 파일당 최대 10MB까지 업로�
 Tap the sign-in button on the home screen — it takes about a minute. We support social sign-in (Kakao, Google, Apple) and email sign-up.
 
 #### Q2. I didn't receive the sign-in link email.
-Artier uses email magic links instead of passwords. If you didn't receive the email, check your spam folder first, then tap "Resend sign-in link" on the sign-in screen. There's a 30-second cooldown, and the link is valid for 30 minutes.
+Proud Gallery uses email magic links instead of passwords. If you didn't receive the email, check your spam folder first, then tap "Resend sign-in link" on the sign-in screen. There's a 30-second cooldown, and the link is valid for 30 minutes.
 
 #### Q3. What happens to my works if I delete my account?
 All your uploaded exhibitions are deleted when you leave. This cannot be undone.
@@ -104,7 +104,7 @@ Open Profile → Works and use the ⋯ menu on a work to edit or delete it.
 #### Q7. How do I create a group exhibition?
 When uploading, choose "Group exhibition" to enter a group name and add participating artists one by one. Members are linked instantly by name search; for non-members, just type their name to reserve a spot — once review passes, you can send them an invite link directly through your own channels.
 
-#### Q8. What is Artier's Pick?
+#### Q8. What is Proud's Pick?
 Our team selects outstanding works each week and awards a badge. Picked works appear higher in the feed and artists get a notification.
 
 ### Other category
@@ -113,7 +113,7 @@ Our team selects outstanding works each week and awards a badge. Picked works ap
 Use the report button (flag) on the work detail screen. We review reports within 24 business hours.
 
 #### Q10. Is there a fee?
-All features of Artier are currently free to use.
+All features of Proud Gallery are currently free to use.
 
 ### Non-member invite category
 
@@ -150,6 +150,7 @@ Invite links are valid for 90 days from issue. If your friend hasn't signed up b
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v3 | 2026-05-07 | PM × Claude | Artier→Proud Gallery·Proud's Pick 브랜드 정합(KO·EN 전체 7곳) |
 | v2 | 2026-05-01 | PM × Claude | 본문 보강 — 14문항 ko/en 전문 게재. 카테고리별 묶음(계정/업로드/전시/기타/비회원 초대). **Q6 콘텐츠 결함 정정** — Phase 1엔 없는 회원용 비공개 토글을 약속하던 문장 ko/en 삭제. |
 <!-- 인용 정의 -->
 [Copy_v1.md]: Copy_v1.md

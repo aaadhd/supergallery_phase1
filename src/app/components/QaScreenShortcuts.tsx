@@ -5,6 +5,7 @@ import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
 import { authStore, workStore } from '../store';
 import { setOperatorRole } from '../utils/adminGate';
+import { clearMockSession } from '../services/sessionTokens';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -115,29 +116,37 @@ export function QaScreenShortcuts() {
           <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
             {t('footer.qaGroupAuthUrl')}
           </DropdownMenuLabel>
-          <DropdownMenuItem asChild>
-            <Link to="/login" className={linkCls}>
-              {t('footer.qaLogin')}
-            </Link>
+          <DropdownMenuItem
+            className="text-destructive focus:text-destructive cursor-pointer"
+            onSelect={() => {
+              // 소셜 가입 기록은 유지 — 재로그인 시 모달 없이 바로 진입
+              ['kakao', 'google', 'apple'].forEach((p) =>
+                localStorage.setItem(`artier_social_signed_up__${p}`, '1')
+              );
+              authStore.logout();
+              clearMockSession();
+              navigate('/login');
+            }}
+          >
+            로그아웃 → /login
           </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link to="/login?mode=email" className={linkCls}>
-              {t('footer.qaLoginEmail')}
-            </Link>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onSelect={() => {
+              ['kakao', 'google', 'apple'].forEach((p) =>
+                localStorage.removeItem(`artier_social_signed_up__${p}`)
+              );
+              authStore.logout();
+              clearMockSession();
+              navigate('/login');
+            }}
+          >
+            소셜 가입 기록 초기화 → /login
           </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link to="/signup?step=1" className={linkCls}>
-              {t('footer.qaSignup')}
-            </Link>
-          </DropdownMenuItem>
+          <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
             <Link to="/onboarding" className={linkCls}>
               {t('footer.qaOnboarding')}
-            </Link>
-          </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link to="/login?mode=email&demo=suspended" className={linkCls}>
-              {t('footer.qaLoginDemoSuspended')}
             </Link>
           </DropdownMenuItem>
           <DropdownMenuItem asChild>

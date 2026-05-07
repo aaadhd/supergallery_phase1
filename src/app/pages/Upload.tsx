@@ -1352,6 +1352,9 @@ export default function Upload() {
                     {!isOriginalWork && !isPublishing && (
                       <p className="text-xs text-amber-600 text-center mb-2">{t('upload.hintCheckOriginal')}</p>
                     )}
+                    {(!editingWorkId || editingRejectedWork) && (
+                      <p className="text-xs text-muted-foreground text-center mb-3">{t('upload.reviewNotice')}</p>
+                    )}
                     <div className="flex items-center justify-end gap-3">
                       <Button variant="ghost" onClick={() => setShowDetailsModal(false)} className="px-5 py-2.5 text-sm min-h-[44px]">{t('upload.close')}</Button>
                       <Button disabled={isPublishing || !isOriginalWork} onClick={handlePublish} className={`px-6 py-2.5 text-sm font-medium rounded-lg transition-colors min-h-[44px] ${isPublishing || !isOriginalWork ? 'bg-muted text-muted-foreground' : 'bg-primary text-white lg:hover:bg-primary/90'}`}>

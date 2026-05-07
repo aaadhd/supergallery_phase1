@@ -1,6 +1,6 @@
-# Artier — Planning Documents
+# Proud Gallery — Planning Documents
 
-**서비스명**: Artier (SuperGallery Phase 1)
+**서비스명**: Proud Gallery (SuperGallery Phase 1)
 **대상 사용자**: 시니어·중장년 순수미술 작가와 감상자
 **성격**: 시니어 친화 UX 중심의 웹 기반 디지털 아트 갤러리 플랫폼
 **최종 갱신**: 2026-05-02 (v1.11 Policy §23 · §31 N-5/N-11 · §21.0)
@@ -9,7 +9,7 @@
 
 ## 프로젝트 구성
 
-Artier Phase 1은 **2트랙 단일 프로젝트**로 구성된다.
+Proud Gallery Phase 1은 **2트랙 단일 프로젝트**로 구성된다.
 
 | 트랙 | 접두어 | 대상 사용자 |
 |---|---|---|
@@ -22,7 +22,7 @@ Phase 2에서 외부 주최자·파트너 작가 포털 등 새 트랙이 추가
 
 ## 기획 문서 목록
 
-이 폴더(`_planning/`)는 Artier 서비스의 **단일 기획 소스(Single Source of Truth)** 다. 외부로 전달하거나 외주 개발사와 공유할 때 이 폴더만 주면 된다.
+이 폴더(`_planning/`)는 Proud Gallery 서비스의 **단일 기획 소스(Single Source of Truth)** 다. 외부로 전달하거나 외주 개발사와 공유할 때 이 폴더만 주면 된다.
 
 ```
 _planning/
@@ -43,7 +43,7 @@ _planning/
 ├── PRD_User_v1.md            # 사용자 앱 화면별 카드(목적·입력·처리·출력·수용기준)
 ├── PRD_Admin_v1.md           # 어드민 화면별 카드(목적·입력·처리·출력·수용기준)
 └── _screen_specs/
-    └── Artier_Screen_Spec_v1.html  # PC 기준 화면 와이어프레임·플로우 설계서(시각 자료. 정책 원문은 Policy_v1.md 우선)
+    └── ProudGallery_Screen_Spec_v1.html  # PC 기준 화면 와이어프레임·플로우 설계서(시각 자료. 정책 원문은 Policy_v1.md 우선)
 ```
 
 > **본 폴더에서 다루지 않는 것**:
@@ -67,7 +67,7 @@ _planning/
 | [Handoff_Event_Consent_v1.md](./Handoff_Event_Consent_v1.md) | PM · 법무 · 외주 개발사 (응모전 응모 동의 문구 단일 소스) |
 | [PRD_User_v1.md](./PRD_User_v1.md) | 개발사 · QA |
 | [PRD_Admin_v1.md](./PRD_Admin_v1.md) | 개발사 · QA · 운영팀 |
-| [_screen_specs/Artier_Screen_Spec_v1.html](_screen_specs/Artier_Screen_Spec_v1.html) | PM · 디자이너 · 외주 개발사 (PC 와이어프레임·플로우) |
+| [_screen_specs/ProudGallery_Screen_Spec_v1.html](_screen_specs/ProudGallery_Screen_Spec_v1.html) | PM · 디자이너 · 외주 개발사 (PC 와이어프레임·플로우) |
 
 ---
 
@@ -79,7 +79,7 @@ _planning/
 - 설명 문서가 본 폴더의 정책과 충돌하면 **본 폴더가 이긴다**. 설명 문서는 후속 반영.
 - 새 문서를 추가할 때는 이 README의 "기획 문서 목록"에 파일을 등록한다.
 
-### 화면 스펙 HTML 동기화 의무 (`Artier_Screen_Spec_v1.html`)
+### 화면 스펙 HTML 동기화 의무 (`ProudGallery_Screen_Spec_v1.html`)
 
 PC 와이어프레임 HTML은 **정책·화면의 원문 단일 소스가 아니다**(`Policy_v1.md`·`IA_ScreenList_v1.md`·PRD가 우선).  
 하지만 HTML 안에는 슬라이드별 **구성 요소·Policy § 인용·와이어 텍스트**가 박혀 있어, 마크다운만 갱신하고 HTML을 내버려 두면 **다음 풀스캔·QA에서 옛 UI 전제가 되살아난 것처럼 보이는** 반복 결함이 발생한다.
@@ -131,7 +131,7 @@ PC 와이어프레임 HTML은 **정책·화면의 원문 단일 소스가 아니
 
 | 주제 (대표 트리거) | 같은 작업 범위에서 함께 볼 문서·산출물 |
 |---|---|
-| **신고·모더레이션** (Policy §12.* — 수치·액션·자동 비공개·알림 매트릭스) | `Policy_v1.md` · `PRD_User_v1.md`(CM-03, §12 플로우, 관련 EXH/PRF) · `PRD_Admin_v1.md`(ADM-RPT 등) · `IA_ScreenList_v1.md`(CM-03, USR-EXH-05 등) · `Copy_v1.md`(신고·시스템 알림 키) · `Handoff_Notifications_v1.md` · `_screen_specs/Artier_Screen_Spec_v1.html`(해당 슬라이드) |
+| **신고·모더레이션** (Policy §12.* — 수치·액션·자동 비공개·알림 매트릭스) | `Policy_v1.md` · `PRD_User_v1.md`(CM-03, §12 플로우, 관련 EXH/PRF) · `PRD_Admin_v1.md`(ADM-RPT 등) · `IA_ScreenList_v1.md`(CM-03, USR-EXH-05 등) · `Copy_v1.md`(신고·시스템 알림 키) · `Handoff_Notifications_v1.md` · `_screen_specs/ProudGallery_Screen_Spec_v1.html`(해당 슬라이드) |
 | **초대·토큰·본인 작품 찾기** (Policy §3) | `Policy_v1.md` · `PRD_User_v1.md`(USR-AUT-09~11 온보딩 다단, USR-AUT-10b 본인 작품 찾기, USR-EXH-03, §12 사용자 플로우 요약) · `IA_ScreenList_v1.md`(USR-EXH-03, USR-AUT-10b, 공유) · `Copy_v1.md` · `Handoff_Onboarding_v1.md` · `Handoff_Notifications_v1.md` · HTML 슬라이드 |
 | **검수·반려·재검수·업로드 자격** (Policy §12.1.*, §13) | `Policy_v1.md` · `PRD_User_v1.md`·`PRD_Admin_v1.md`(UPL·PRF·ADM-REV 등) · `IA_ScreenList_v1.md` · `Handoff_Notifications_v1.md`(검수 알림) · HTML |
 | **가입·인증·매직 링크** (Policy §2.*) | `Policy_v1.md` · `PRD_User_v1.md`(USR-AUT*) · `IA_ScreenList_v1.md`(USR-AUT*) · `Handoff_Signup_Consent_v1.md` · `Copy_v1.md` |
@@ -254,12 +254,12 @@ PC 와이어프레임 HTML은 **정책·화면의 원문 단일 소스가 아니
 | **닉네임 정책** (전역 unique·자율 변경 불가·1:1 문의 채널·탈퇴 시 영구 잠금·운영팀 변경 시 옛 닉네임 잠금) | `PRD_User_v1.md` USR-PRF-02 | Policy §4.4는 요약·한 줄. 상세·AC는 PRD SSoT |
 | **알림 종류 10종 + UI 매트릭스** (icon·color·메시지 템플릿. 토글 가능 4종 + 마케팅 + 시스템 강제 5종) | `PRD_User_v1.md` USR-NTF-01 매트릭스 | Handoff_Notifications는 prose 인용 |
 | 일반 정책/요건 (허용·금지·법무·운영) | `Policy_v1.md` | PRD는 화면에 반영한 구현 명세 + Policy 인용 |
-| PC 와이어·플로우 시각 | `_screen_specs/Artier_Screen_Spec_v1.html` | **원문이 아님** — IA·PRD의 시각 복제물. 변경 시 같은 작업 범위에서 갱신. 상세는 「화면 스펙 HTML 동기화 의무」 |
+| PC 와이어·플로우 시각 | `_screen_specs/ProudGallery_Screen_Spec_v1.html` | **원문이 아님** — IA·PRD의 시각 복제물. 변경 시 같은 작업 범위에서 갱신. 상세는 「화면 스펙 HTML 동기화 의무」 |
 | **일반 UI 카피 (i18n 키)** | `Copy_v1.md` — **엄격 SSoT** | **코드 동기화는 항상 Copy_v1.md 먼저 갱신 → 코드 반영**. 카피 사전 단독 lead 금지(예외: 코드↔Copy 일괄 정합 라운드). |
 | 사용자 노출 카피 prose 핸드오프본 | `Handoff_FAQ_v1.md`, `Handoff_Signup_Consent_v1.md`, `Handoff_UserInfo_Contact_v1.md`, `Handoff_Onboarding_v1.md`, `Handoff_Notifications_v1.md` | Copy_v1.md 동일 키의 prose 정리본. 변경 시 양측 동시 갱신 (푸터·About 원고는 Copy §10·§11로 흡수) |
 | 법무 전문 원문 | `Handoff_Terms_v1.md`, `Handoff_Privacy_v1.md` | Policy/PRD는 반영 위치와 요구사항만 기록 |
 
-> **표 이해**: 화면·AC·플로우의 **원문은 PRD**가 기본이다. 정책·수치·라벨 캐노니컬은 **Policy**. **PC 와이어**(`Artier_Screen_Spec_v1.html`)는 시각 파생물이며 IA·PRD와 동기화한다.
+> **표 이해**: 화면·AC·플로우의 **원문은 PRD**가 기본이다. 정책·수치·라벨 캐노니컬은 **Policy**. **PC 와이어**(`ProudGallery_Screen_Spec_v1.html`)는 시각 파생물이며 IA·PRD와 동기화한다.
 
 운영 원칙:
 - 화면 원문은 PRD, 정책 원문은 Policy, 카피는 Copy에서만 확장 관리. 나머지는 링크·요약·경로 참조.
@@ -327,7 +327,7 @@ CM-<번호>          공통 팝업·다이얼로그
 
 | 표준어 | 정의 | 옛 표현·금지 표기 |
 |---|---|---|
-| **회원** | Artier에 가입한 사용자 | — |
+| **회원** | Proud Gallery에 가입한 사용자 | — |
 | **비회원** | 가입 전 사용자, 또는 그룹 전시의 비회원 참여자 | ~~비가입자~~ |
 | **참여 작가** | 함께 올리기(그룹 전시)에서 같이 올라간 작가 | ~~참가자~~ |
 | **작가 미상** | 슬롯 수동 해제(§3.5) 시 표시되는 라벨. 탈퇴 시에는 슬롯 자체가 삭제됨(§4.2). | — |
@@ -365,7 +365,7 @@ CM-<번호>          공통 팝업·다이얼로그
 
 | 표준어 | 정의 | 비고 |
 |---|---|---|
-| **Pick** (Artier's Pick) | 운영팀이 매주 선정하는 우수 작품 | 주간 10건 상한, 영구 이력 배지 |
+| **Pick** (Proud's Pick) | 운영팀이 매주 선정하는 우수 작품 | 주간 10건 상한, 영구 이력 배지 |
 | **기획전** (영문: CuratedExhibition) | 운영팀이 묶은 주제별 전시 큐레이션 | 개수 제한 없음 ([Policy §15.4](./Policy_v1.md#15-4-pick-vs-기획전-경계)) |
 | **응모전** (영문: Contest) | 운영팀이 주제를 제시하고 사용자가 응모·운영팀이 선정하는 한시적 행사 | |
 
@@ -385,7 +385,7 @@ CM-<번호>          공통 팝업·다이얼로그
 |---|---|---|
 | **매직 링크** | 비밀번호 대신 이메일로 발송되는 일회용 30분 인증 링크 | 30초 재발송 쿨다운 |
 | **소셜 가입** | 카카오·구글·애플 OAuth 가입 | — |
-| **온보딩** | 가입 직후 다단 흐름 — Step 0 환영 · Step 0.5 전시 단위 안내 · Step 1 프로필 입력 · (조건부) Step 2 본인 작품 찾기 · Step 3 완료 축하 (USR-AUT-09 → USR-AUT-09b → USR-AUT-10 → USR-AUT-10b → USR-AUT-11) | — |
+| **온보딩** | 가입 직후 다단 흐름 — Step 0 환영 · Step 1 프로필 입력 · (조건부) Step 2 본인 작품 찾기 · Step 3 완료 축하 (USR-AUT-09 → USR-AUT-10 → USR-AUT-10b → USR-AUT-11) | — |
 
 ### 8) 비회원 초대 (Policy §3 v2.14 토큰 모델)
 
@@ -523,29 +523,12 @@ CM-<번호>          공통 팝업·다이얼로그
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.13 | 2026-05-07 | PM × Claude | 용어 사전 온보딩 정의 — Step 0.5·USR-AUT-09b 제거, 3단계 흐름으로 정정; 문서 제목·서비스명·본문 Artier→Proud Gallery 정합 |
 | v1.12 | 2026-05-05 | PM × Claude | 용어 사전 기획전·응모전 표준어, 피드 5버킷 정합, 문서 이력 간소화 규칙, 인용 인라인 링크 통일 |
 | v1.12 | 2026-05-05 | PM × Claude | Handoff_Footer·Handoff_ServiceIntro → Copy §10·§11 흡수, 참조 링크 정정 |
 | v1.11 | 2026-05-02 | PM × Claude | Policy §23.0·N-11·§21.0·§31 N-5, Handoff_Event_Consent 등록 |
 | v1.10 | 2026-05-02 | PM × Codex | 푸시 경계·연쇄 갱신 번들·SSoT 분담·상호 정합·Policy 앵커 규칙 명문화 |
 | v1.6 | 2026-05-01 | PM × Claude | **「용어 사전」 섹션 신설** — 사용자·역할·콘텐츠·검수 5상태·업로드 유형·큐레이션·사용자 행동·가입·인증·비회원 초대 8개 카테고리 표준어. 새 문서·카피·기획 변경 시 본 사전을 먼저 확인하는 운영 룰. |
-| v1.5 | 2026-05-01 | PM × Claude | **화면 스펙 HTML 등록** — `_screen_specs/Artier_Screen_Spec_v1.html`을 「기획 문서 목록」에 추가. **법무 검토용 체크리스트 등록** — `Handoff_LegalReview_Checklist_v1.md`를 「기획 문서 목록」에 추가. **핸드오프 신규 2종** — `Handoff_Onboarding_v1.md`(가입 후 4단계 + claim 흐름) · `Handoff_Notifications_v1.md`(인박스 + 검수·신고·Pick·초대 알림 + 채널 라우팅 매트릭스). |
+| v1.5 | 2026-05-01 | PM × Claude | **화면 스펙 HTML 등록** — `_screen_specs/ProudGallery_Screen_Spec_v1.html`을 「기획 문서 목록」에 추가. **법무 검토용 체크리스트 등록** — `Handoff_LegalReview_Checklist_v1.md`를 「기획 문서 목록」에 추가. **핸드오프 신규 2종** — `Handoff_Onboarding_v1.md`(가입 후 4단계 + claim 흐름) · `Handoff_Notifications_v1.md`(인박스 + 검수·신고·Pick·초대 알림 + 채널 라우팅 매트릭스). |
 | v1.4 | 2026-04-26 | PM × Claude | 핸드오프 문서 체계 보강 — `Handoff_*` 7종(가입 동의/약관/개인정보/푸터/FAQ/서비스 소개/사용자정보·문의) 추가. 일반 UI 원고의 단일 소스를 `Copy_v1.md`로 고정. 약관·개인정보는 `Handoff_Terms_v1.md`·`Handoff_Privacy_v1.md`로 분리. |
-| v1.0 | 2026-04-19 | PM × Claude | 최초 작성 — 기존 분산 문서를 `_planning/` 단일 소스로 재편. 2트랙 구조 · 화면 ID 체계 · 버전 규칙 · 핵심 결정 · 언어 정책 · 외부 참고 문서 연결 포함. |<!-- 인용 정의 -->
-[Copy_v1.md]: Copy_v1.md
-[DELTA.md]: DELTA.md
-[Handoff_FAQ_v1.md]: Handoff_FAQ_v1.md
-[Handoff_LegalReview_Checklist_v1.md]: Handoff_LegalReview_Checklist_v1.md
-[Handoff_Notifications_v1.md]: Handoff_Notifications_v1.md
-[Handoff_Onboarding_v1.md]: Handoff_Onboarding_v1.md
-[Handoff_Privacy_v1.md]: Handoff_Privacy_v1.md
-[Handoff_Signup_Consent_v1.md]: Handoff_Signup_Consent_v1.md
-[Handoff_Event_Consent_v1.md]: Handoff_Event_Consent_v1.md
-[Handoff_Terms_v1.md]: Handoff_Terms_v1.md
-[Handoff_UserInfo_Contact_v1.md]: Handoff_UserInfo_Contact_v1.md
-[IA_ScreenList_v1.md]: IA_ScreenList_v1.md
-[IA_ScreenList §1]: IA_ScreenList_v1.md#1-화면-id-체계
-[Policy_v1.md]: Policy_v1.md
-[Policy §1.1]: Policy_v1.md#1-1-채널-라우팅
-[PRD_User_v1.md]: PRD_User_v1.md
-[PRD_User §0.4.4]: PRD_User_v1.md#0-4-4-접근성-시니어-친화-ui-사양-ssot
-[PRD_Admin_v1.md]: PRD_Admin_v1.md
+| v1.0 | 2026-04-19 | PM × Claude | 최초 작성 — 기존 분산 문서를 `_planning/` 단일 소스로 재편. 2트랙 구조 · 화면 ID 체계 · 버전 규칙 · 핵심 결정 · 언어 정책 · 외부 참고 문서 연결 포함. |

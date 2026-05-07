@@ -2,7 +2,7 @@
 
 **작성**: 기획 · **독자**: 개발(구현·QA)
 
-가입 직후 온보딩 다단 흐름 — Step 0 환영(USR-AUT-09) · Step 0.5 전시 단위 개념 안내(USR-AUT-09b) · Step 1 프로필 입력(USR-AUT-10) · 조건부 Step 2 본인 작품 찾기(USR-AUT-10b, 활성 또는 비활성 토큰 보유 시) · Step 3 완료 축하(USR-AUT-11). **스텝·레이아웃**은 PRD, 세부 인터랙션은 구현 판단.
+가입 직후 온보딩 다단 흐름 — Step 0 환영(USR-AUT-09) · Step 1 프로필 입력(USR-AUT-10) · 조건부 Step 2 본인 작품 찾기(USR-AUT-10b, 활성 또는 비활성 토큰 보유 시) · Step 3 완료 축하(USR-AUT-11). **스텝·레이아웃**은 PRD, 세부 인터랙션은 구현 판단.
 
 > **단일 소스**
 > - 화면 문자열은 [Copy_v1.md](./Copy_v1.md) 온보딩·claim 관련 영역이 단일 소스다.
@@ -36,28 +36,6 @@
 - Title: **Welcome to {brand}**
 - Lead: Even one piece becomes your own exhibition
 - Primary CTA: Get started
-
----
-
-## 1.5) Step 0.5 — "전시 단위" 개념 안내 (USR-AUT-09b)
-
-시니어 사용자에게 "그림 한 점 = 전시 한 개" 개념을 시각 카드 2장으로 즉시 인지시킨다(P1).
-
-### 한국어
-- 제목: 여기는 디지털 갤러리예요
-- 보조: 게시판이 아니라 작품을 전시하는 공간이에요
-- 예시 카드 1: ○○○ 작가의 첫 전시 / 작품 1점
-- 예시 카드 2: △△△ 작가의 봄 전시 / 작품 6점
-- 보강: 한 점이어도 어엿한 전시예요. 작품을 올리시면 자동으로 나만의 전시가 열려요.
-- 네비게이션: 이전 / 다음
-
-### English
-- Title: This is a digital gallery
-- Lead: Not a feed — a space to exhibit your art
-- Example 1: An artist's first exhibition / 1 work
-- Example 2: An artist's spring exhibition / 6 works
-- Reinforce: Even one piece is a full exhibition. Upload your work and your own exhibition opens automatically.
-- Nav: Back / Next
 
 ---
 
@@ -258,6 +236,7 @@
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.1 | 2026-05-07 | PM × Claude | Step 0.5(USR-AUT-09b) 제거, 온보딩 3단계로 축소 |
 | v1 | 2026-05-01 | PM × Claude | 최초 작성 — 온보딩 카피(Step 0~3) + 본인 작품 찾기(Step 2) ko/en prose. Policy §3 토큰 모델 정합 + 시니어 친화 톤 + 법무·UX 검토 연결. 단일 소스 안내 문구 정리. **후속** — 독자=개발·작성=기획 명시, `(온보딩 카피 키)` 등 플레이스홀더·표 키 열 제거, 관심사 태그 표 복구, §「적용 키」→「문자열 출처」, 시니어 표·체크리스트·법무 절 자연어화. |
 <!-- 인용 정의 -->
 [Copy_v1.md]: Copy_v1.md

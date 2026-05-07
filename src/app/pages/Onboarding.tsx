@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Camera } from 'lucide-react';
+import { Camera, Palette } from 'lucide-react';
 import { profileStore, workStore, connectMemberToSlot } from '../store';
 import { artists } from '../data';
 import type { Work } from '../data';
@@ -21,7 +21,7 @@ import { ImageWithFallback } from '../components/ImageWithFallback';
 import { imageUrls } from '../imageUrls';
 import { getAllImages } from '../utils/imageHelper';
 
-const TOTAL_STEPS = 4;
+const TOTAL_STEPS = 3;
 const ACCENT = '#171717';
 
 type ClaimableSlot = {
@@ -327,11 +327,9 @@ export default function Onboarding() {
               {currentStep === 0 && (
                 <>
                   <div className="text-center">
-                    <img
-                      src="/logo.png"
-                      alt="Proud Gallery Logo"
-                      className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl shadow-md object-contain"
-                    />
+                    <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-sm ring-1 ring-border/10">
+                      <Palette className="h-7 w-7" />
+                    </div>
                     <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-2">{welcomeTitle}</h1>
                     <p className="text-sm text-muted-foreground mb-8">{t('onboarding.welcomeLead')}</p>
                     <Button
@@ -346,72 +344,8 @@ export default function Onboarding() {
                 </>
               )}
 
-              {/* Step 1: '전시 단위' 개념 안내 */}
-              {currentStep === 1 && (
-                <>
-                  <div className="text-center mb-6">
-                    <h2 className="text-lg sm:text-xl font-bold text-foreground mb-2">
-                      {t('onboarding.conceptTitle')}
-                    </h2>
-                    <p className="text-sm text-muted-foreground">
-                      {t('onboarding.conceptLead')}
-                    </p>
-                  </div>
-
-                  <div className="rounded-xl border border-border bg-muted/30 p-3 mb-3">
-                    <div className="aspect-[4/3] rounded-lg overflow-hidden mb-2 bg-gradient-to-br from-stone-100 via-amber-50 to-rose-100" />
-                    <p className="text-sm font-semibold text-foreground">
-                      {t('onboarding.conceptExampleSoloTitle')}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {t('onboarding.conceptExampleSoloMeta')}
-                    </p>
-                  </div>
-
-                  <div className="rounded-xl border border-border bg-muted/30 p-3 mb-6">
-                    <div className="grid grid-cols-3 gap-1 aspect-[4/3] rounded-lg overflow-hidden mb-2">
-                      <div className="bg-gradient-to-br from-amber-100 to-amber-200" />
-                      <div className="bg-gradient-to-br from-rose-100 to-rose-200" />
-                      <div className="bg-gradient-to-br from-emerald-100 to-emerald-200" />
-                      <div className="bg-gradient-to-br from-sky-100 to-sky-200" />
-                      <div className="bg-gradient-to-br from-violet-100 to-violet-200" />
-                      <div className="bg-gradient-to-br from-stone-100 to-stone-300" />
-                    </div>
-                    <p className="text-sm font-semibold text-foreground">
-                      {t('onboarding.conceptExampleMultiTitle')}
-                    </p>
-                    <p className="text-xs text-muted-foreground">
-                      {t('onboarding.conceptExampleMultiMeta')}
-                    </p>
-                  </div>
-
-                  <p className="text-center text-sm text-foreground/80 mb-6 leading-relaxed whitespace-pre-line">
-                    {t('onboarding.conceptReinforce')}
-                  </p>
-
-                  <div className="flex gap-3">
-                    <Button
-                      variant="ghost"
-                      type="button"
-                      onClick={goBack}
-                      className="flex-1 rounded-xl border border-border py-3.5 text-sm font-semibold text-foreground lg:hover:bg-muted/50"
-                    >
-                      {t('onboarding.back')}
-                    </Button>
-                    <Button
-                      type="button"
-                      onClick={goNext}
-                      className="flex-1 rounded-xl py-3.5 text-sm font-semibold text-white transition lg:hover:opacity-90"
-                      style={{ backgroundColor: ACCENT }}
-                    >
-                      {t('onboarding.next')}
-                    </Button>
-                  </div>
-                </>
-              )}
-
-              {/* Step 2A: 본인 작품 찾기 (토큰 기반, 조건부) */}
-              {currentStep === 2 && showClaimScreen && pendingToken && (
+              {/* Step 1A: 본인 작품 찾기 (토큰 기반, 조건부) */}
+              {currentStep === 1 && showClaimScreen && pendingToken && (
                 <>
                   <h2 className="text-lg font-bold text-foreground mb-2">{t('claim.findMyWorksTitle')}</h2>
                   {pendingToken.status === 'inactive' && (
@@ -419,7 +353,7 @@ export default function Onboarding() {
                       {t('claim.pendingHeader')}
                     </p>
                   )}
-                  <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900 leading-relaxed">
+                  <div className="mb-4 rounded-lg border border-border bg-muted/40 p-3 text-sm text-foreground/75 leading-relaxed">
                     {t('claim.findMyWorksWarning')}
                   </div>
 
@@ -479,8 +413,8 @@ export default function Onboarding() {
                 </>
               )}
 
-              {/* Step 2B: 프로필 설정 */}
-              {currentStep === 2 && !showClaimScreen && (
+              {/* Step 1B: 프로필 설정 */}
+              {currentStep === 1 && !showClaimScreen && (
                 <>
                   <h2 className="text-lg font-bold text-foreground mb-1">{t('onboarding.nicknameTitle')}</h2>
                   <p className="text-sm text-muted-foreground mb-4">{t('onboarding.nicknameLead')}</p>
@@ -544,8 +478,8 @@ export default function Onboarding() {
                 </>
               )}
 
-              {/* Step 3: 첫 작품 업로드 유도 + 완료 */}
-              {currentStep === 3 && (
+              {/* Step 2: 첫 작품 업로드 유도 + 완료 */}
+              {currentStep === 2 && (
                 <>
                   <div className="text-center">
                     <div className="relative mx-auto mb-6 h-28 w-28">

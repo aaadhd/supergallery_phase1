@@ -39,7 +39,7 @@
 
 **만 14세 안내 문구**
 
-> Artier는 만 14세 미만 회원 가입을 받지 않아요. (관련 법령 등 준수)
+> Proud Gallery는 만 14세 미만 회원 가입을 받지 않아요. (관련 법령 등 준수)
 
 **선택 동의 항목** (기본 OFF):
 
@@ -63,7 +63,7 @@
 
 **Age restriction notice**
 
-> Artier does not allow accounts for users under 14 (in compliance with related regulations).
+> Proud Gallery does not allow accounts for users under 14 (in compliance with related regulations).
 
 **Optional** (default OFF):
 
@@ -163,7 +163,7 @@
 - 닉네임 글자 수 카운터 노출 (온보딩과 동일 패턴)
 - 닉네임 prefill — 소셜 응답에서 받은 표시명을 자동 채움 (사용자 수정 가능)
 - 약관·개인정보 텍스트 옆 "보기" 버튼 → 각각 경로 /terms, 경로 /privacy 이동
-- 가입 완료 후 온보딩(USR-AUT-09 환영 → USR-AUT-09b → USR-AUT-10 프로필 입력)으로 이동 — 닉네임은 prefill 상태로 이어지며 "닉네임은 방금 적은 그대로 채워뒀어요" 안내 노출
+- 가입 완료 후 온보딩(USR-AUT-09 환영 → USR-AUT-10 프로필 입력)으로 이동 — 닉네임은 prefill 상태로 이어지며 "닉네임은 방금 적은 그대로 채워뒀어요" 안내 노출
 
 ---
 
@@ -212,6 +212,7 @@
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v2.1 | 2026-05-07 | PM × Claude | 온보딩 흐름 USR-AUT-09b 제거 반영 — 소셜 가입 후 경로 09→10 직결로 정정; 만 14세 안내 문구 KO·EN Artier→Proud Gallery 정합 |
 | v2 | 2026-05-01 | PM × Claude | 본문 보강 — 키 목록 + 체크 위주에서 이메일 가입 + 소셜 가입 모달 두 흐름 ko/en 전문 게재로 확장. 14세 미만 차단 안내·동의 정책 매트릭스·법무 검토 연결 신설. 핸드오프 보조본 성격 명시. 단일 소스 안내 문구 정리(중복 '키' 오타 제거). **후속** — 독자=개발·작성=기획 명시, `(카피 키)` 플레이스홀더 제거·§「적용 키」→「문자열 출처」, `{provider}` 안내를 자연어로 정리. |
 | v1 | 2026-04-26 | PM | 최초 작성 — 적용 키 목록 + 구현 체크. 본문은 `Copy_v1.md` 단일 소스 위임. |
 <!-- 인용 정의 -->

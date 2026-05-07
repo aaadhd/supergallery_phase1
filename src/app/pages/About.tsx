@@ -1,5 +1,5 @@
 import { Link } from 'react-router-dom';
-import { Palette, Users, Award, Globe, ArrowRight } from 'lucide-react';
+import { Palette, Users, Award, Globe, Trophy, ArrowRight } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { useI18n } from '../i18n/I18nProvider';
 import { useMemo } from 'react';
@@ -30,6 +30,11 @@ export default function About() {
           titleKey: 'about.feat4Title' as const,
           descKey: 'about.feat4Desc' as const,
         },
+        {
+          icon: Trophy,
+          titleKey: 'about.feat5Title' as const,
+          descKey: 'about.feat5Desc' as const,
+        },
       ] as const,
     [],
   );
@@ -43,7 +48,7 @@ export default function About() {
           <h1 className="text-xl sm:text-2xl font-bold leading-tight mb-4 sm:mb-6 whitespace-pre-line">
             {t('about.heroTitle')}
           </h1>
-          <p className="text-sm lg:text-lg text-white/80 max-w-[600px] mx-auto leading-relaxed mb-6 sm:mb-10">
+          <p className="text-sm lg:text-lg text-white/80 max-w-[600px] mx-auto leading-relaxed mb-6 sm:mb-10 break-keep break-words">
             {t('about.heroLead')}
           </p>
           <div className="flex flex-col sm:flex-row items-stretch sm:items-center justify-center gap-3 sm:gap-4 max-w-sm sm:max-w-none mx-auto">
@@ -75,7 +80,7 @@ export default function About() {
                 <f.icon className="h-6 w-6 sm:h-7 sm:w-7 text-primary" />
               </div>
               <h3 className="text-sm font-semibold mb-2 sm:mb-3">{t(f.titleKey)}</h3>
-              <p className="text-sm sm:text-sm text-muted-foreground leading-relaxed">{t(f.descKey)}</p>
+              <p className="text-sm sm:text-sm text-muted-foreground leading-relaxed break-keep break-words">{t(f.descKey)}</p>
             </div>
           ))}
         </div>
@@ -85,7 +90,7 @@ export default function About() {
       <div className="bg-white">
         <div className="mx-auto max-w-[800px] px-4 sm:px-6 py-10 sm:py-16 lg:py-20 text-center">
           <h2 className="text-lg font-bold mb-4 sm:mb-6">{t('about.missionTitle')}</h2>
-          <p className="text-sm sm:text-sm lg:text-base text-muted-foreground leading-relaxed whitespace-pre-line">
+          <p className="text-sm sm:text-sm lg:text-base text-muted-foreground leading-relaxed whitespace-pre-line break-keep break-words">
             {t('about.missionBody')}
           </p>
         </div>
@@ -94,7 +99,7 @@ export default function About() {
       {/* CTA */}
       <div className="mx-auto max-w-[800px] px-4 sm:px-6 py-10 sm:py-16 lg:py-20 text-center">
         <h2 className="text-lg lg:text-xl font-bold mb-3 sm:mb-4">{t('about.bottomTitle')}</h2>
-        <p className="text-sm sm:text-sm text-muted-foreground mb-6 sm:mb-8">{t('about.bottomLead')}</p>
+        <p className="text-sm sm:text-sm text-muted-foreground mb-6 sm:mb-8 break-keep break-words">{t('about.bottomLead')}</p>
         <Link to="/upload">
           <Button size="lg" className="bg-primary lg:hover:bg-primary/90 text-sm px-8 sm:px-10 py-3 sm:py-3.5 h-auto">
             {t('about.bottomCta')}

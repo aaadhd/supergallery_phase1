@@ -145,8 +145,8 @@
 
 ## 4) Pick 선정 알림
 
-- 한국어: 축하해요! '{title}'이(가) Artier's Pick으로 뽑혔어요
-- English: Congrats! '{title}' has been picked as Artier's Pick
+- 한국어: 축하해요! '{title}'이(가) Proud's Pick으로 뽑혔어요
+- English: Congrats! '{title}' has been picked as Proud's Pick
 
 → 운영팀이 매주 Pick 선정 시 작가에게 1건. 강제 발송(토글 없음). 카테고리: **큐레이션**. 단위: 전시.
 
@@ -209,8 +209,8 @@
 |---|---|---|
 | 좋아요 받음 | 님이 회원님의 작품 "{work}"을 좋아했어요 | liked your work "{work}" |
 | 팔로우 받음 | 님이 회원님을 팔로우하기 시작했어요 | followed you |
-| Pick 선정 | 축하해요! "{work}"이(가) Artier's Pick으로 뽑혔어요 | Congrats! "{work}" was selected as an Artier's Pick |
-| 환영 메시지 | Artier에 오신 것을 환영합니다! 첫 작품을 업로드해 보세요. | Welcome to Artier! Upload your first work. |
+| Pick 선정 | 축하해요! "{work}"이(가) Proud's Pick으로 뽑혔어요 | Congrats! "{work}" was selected as a Proud's Pick |
+| 환영 메시지 | Proud Gallery에 오신 것을 환영합니다! 첫 작품을 업로드해 보세요. | Welcome to Proud Gallery! Upload your first work. |
 | 응모전 진행 중 | 「{event}」 응모전이 진행 중이에요. 지금 참여해 보세요. | Event "{event}" is active — join now. |
 
 ---
@@ -291,6 +291,7 @@ ko/en 양측 동일 톤.
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v6 | 2026-05-07 | PM × Claude | Artier→Proud Gallery 브랜드 정합(Pick 알림 KO·EN, 환영 메시지 KO·EN, 시드 매트릭스 행) |
 | v5 | 2026-05-05 | PM × Claude | 신고 알림·자동 비공개 폐기·삭제 사유 변수·매트릭스 정합. 이후 append — 문서 이력 단순화 |
 | v4 | 2026-05-04 | PM × Claude | 기획전 선정 알림·카테고리 8종·응모전 표준어 |
 | v3 | 2026-05-02 | PM × Codex | 신고 알림 정책 표 정합·구현 체크·문자열 출처 정리 |

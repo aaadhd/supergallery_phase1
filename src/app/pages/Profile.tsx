@@ -695,18 +695,18 @@ export default function Profile() {
 
               {/* 아바타 */}
               <div className="relative self-start md:self-auto">
-                <Avatar className="h-24 w-24 sm:h-28 sm:w-28 ring-4 ring-background shadow-md">
+                <Avatar className="h-32 w-32 sm:h-36 sm:w-36 ring-4 ring-background shadow-md">
                   <AvatarImage src={profileArtist.avatar} alt={profileArtist.name} />
-                  <AvatarFallback className="text-2xl font-semibold bg-muted">{profileArtist.name[0]}</AvatarFallback>
+                  <AvatarFallback className="text-3xl font-semibold bg-muted">{profileArtist.name[0]}</AvatarFallback>
                 </Avatar>
                 {isOwnProfile && (
                   <button
                     type="button"
                     onClick={() => setShowProfileImageModal(true)}
-                    className="absolute bottom-0.5 right-0.5 h-8 w-8 rounded-full bg-foreground/80 text-background flex items-center justify-center shadow-sm lg:hover:bg-foreground transition-colors"
+                    className="absolute bottom-1 right-1 h-9 w-9 rounded-full bg-foreground/80 text-background flex items-center justify-center shadow-sm lg:hover:bg-foreground transition-colors"
                     aria-label={t('profile.changePhoto')}
                   >
-                    <Camera className="h-3.5 w-3.5" />
+                    <Camera className="h-4 w-4" />
                   </button>
                 )}
               </div>
@@ -864,7 +864,7 @@ export default function Profile() {
                   ))}
                 </TabsList>
 
-                {guideOpen ? (
+                {isOwnProfile && (guideOpen ? (
                   <div className="mt-3 relative rounded-lg border border-border/60 bg-muted/30 pl-3.5 pr-12 py-2.5 text-xs sm:text-sm text-muted-foreground">
                     {t(profileTabGuideKey as MessageKey)}
                     <button
@@ -886,7 +886,7 @@ export default function Profile() {
                     <CircleHelp className="h-3.5 w-3.5" />
                     <span>{t('profile.tabGuideShow')}</span>
                   </button>
-                )}
+                ))}
 
                 {/* ===== 전시 탭 ===== */}
                 <TabsContent value="exhibition" className="mt-6">

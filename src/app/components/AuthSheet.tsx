@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Palette } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { authStore } from '../store';
 import { persistMockSession } from '../services/sessionTokens';
@@ -32,7 +33,6 @@ export function AuthSheet({
     typeof window !== 'undefined' ? window.matchMedia('(min-width: 768px)').matches : false,
   );
   const [pendingSocial, setPendingSocial] = useState<SocialProvider | null>(null);
-  const [loading, setLoading] = useState(false);
 
   // 뷰포트 감지
   useEffect(() => {
@@ -64,8 +64,7 @@ export function AuthSheet({
   const handleSocialLogin = (provider: SocialProvider) => {
     const alreadySignedUp = localStorage.getItem(`artier_social_signed_up__${provider}`) === '1';
     if (alreadySignedUp) {
-      setLoading(true);
-      setTimeout(() => completeReturningSocialLogin(provider), 400);
+      completeReturningSocialLogin(provider);
     } else {
       setPendingSocial(provider);
     }
@@ -75,8 +74,7 @@ export function AuthSheet({
     const provider = pendingSocial;
     if (!provider) return;
     setPendingSocial(null);
-    setLoading(true);
-    setTimeout(() => completeFirstSocialSignup(provider, nickname, email), 400);
+    completeFirstSocialSignup(provider, nickname, email);
   };
 
   const goSignup = () => {
@@ -116,7 +114,7 @@ export function AuthSheet({
         key="kakao"
         type="button"
         onClick={() => handleSocialLogin(provider)}
-        disabled={loading}
+
         className={cn('h-12 min-h-12 w-full gap-3 text-base font-medium', 'border-0 bg-[#FEE500] text-[#3C1E1E] lg:hover:bg-[#FDD800]')}
       >
         {KakaoIcon}
@@ -129,7 +127,7 @@ export function AuthSheet({
         type="button"
         variant="outline"
         onClick={() => handleSocialLogin(provider)}
-        disabled={loading}
+
         className="h-12 min-h-12 w-full gap-3 text-base font-medium"
       >
         {GoogleIcon}
@@ -141,7 +139,7 @@ export function AuthSheet({
         key="apple"
         type="button"
         onClick={() => handleSocialLogin(provider)}
-        disabled={loading}
+
         className="h-12 min-h-12 w-full gap-3 bg-foreground text-base font-medium text-white lg:hover:bg-foreground/90"
       >
         {AppleIcon}
@@ -154,9 +152,9 @@ export function AuthSheet({
     <div className="flex flex-col gap-5 px-4 pt-6 pb-8 sm:px-6">
       {/* 브랜드 영역 */}
       <div className="flex flex-col items-center gap-2 pt-2">
-<div className="flex items-center gap-2">
-          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary text-primary-foreground text-lg font-bold">
-            A
+        <div className="flex items-center gap-2">
+          <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-primary/10 text-primary shadow-sm ring-1 ring-border/10">
+            <Palette className="h-5 w-5" />
           </div>
           <span className="text-2xl font-bold text-foreground tracking-tight">Proud Gallery</span>
         </div>

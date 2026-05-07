@@ -4,7 +4,7 @@
 <head>
 <meta charset="utf-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1" />
-<title>Artier 화면 상세 설계서 v1.5 (PC 기준)</title>
+<title>Proud Gallery 화면 상세 설계서 v1.6 (PC 기준)</title>
 <style>
  :root {
  --bg: #f5f5f5;
@@ -365,7 +365,7 @@
 <body>
 
 <aside class="toc">
- <h1>Artier 화면 상세 설계서</h1>
+ <h1>Proud Gallery 화면 상세 설계서</h1>
  <div class="ver">v1.5 · PC 기준 · 2026-04-30</div>
  <nav>
  <ul>
@@ -419,7 +419,7 @@
  <li><a href="#USR-AUT-06"><code>AUT-06</code><span>소셜 첫 가입</span></a></li>
  <li><a href="#USR-AUT-08"><code>AUT-08</code><span>매직 링크 콜백</span></a></li>
  <li><a href="#USR-AUT-09"><code>AUT-09</code><span>온보딩 환영</span></a></li>
- <li><a href="#USR-AUT-09b"><code>AUT-09b</code><span>온보딩 개념 안내 ⭐</span></a></li>
+ <li><a href="#USR-AUT-09b"><code>AUT-09b</code><span style="text-decoration:line-through;opacity:.45">온보딩 개념 안내 (제거됨)</span></a></li>
  <li><a href="#USR-AUT-10"><code>AUT-10</code><span>온보딩 프로필</span></a></li>
  <li><a href="#USR-AUT-10b"><code>AUT-10b</code><span>본인 작품 찾기 ⭐</span></a></li>
  <li><a href="#USR-AUT-11"><code>AUT-11</code><span>온보딩 완료</span></a></li>
@@ -590,7 +590,7 @@
  <!-- 표지 -->
  <section class="slide" id="cover">
  <div class="cover">
- <div class="kicker">Artier · 시니어 디지털 갤러리 · PC 버전</div>
+ <div class="kicker">Proud Gallery · 시니어 디지털 갤러리 · PC 버전</div>
  <h1>화면 상세 설계서</h1>
  <div class="sub">시니어·중장년 순수미술 작가를 위한 디지털 갤러리 플랫폼</div>
  <dl>
@@ -602,7 +602,7 @@
  <dt>총 화면 수</dt><dd>87개 (사용자 64 · 운영 23)</dd>
  </dl>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>표지</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>표지</span></div>
  </section>
 
  <!-- 변경 이력 -->
@@ -610,11 +610,16 @@
  <div class="slide-pad">
  <div class="slide-head">
  <div><div class="crumb">00 · 변경 이력</div><h2>History</h2></div>
- <div class="meta"><span class="device">PC</span><span class="ver">v1.5</span></div>
+ <div class="meta"><span class="device">PC</span><span class="ver">v1.6</span></div>
  </div>
  <table class="hx">
  <thead><tr><th class="ver">버전</th><th class="date">날짜</th><th>주요 변경</th></tr></thead>
  <tbody>
+ <tr>
+ <td class="ver">v1.6</td>
+ <td class="date">2026-05-07</td>
+ <td>USR-AUT-09b(온보딩 Step 0.5 개념 안내) deprecated 처리 · 온보딩 3단계 정합 · 브랜드명 Artier→Proud Gallery 전면 교체(UI 카피·About·NTF Pick 알림·UPL-07·AUT-06·약관·GNB·Admin)</td>
+ </tr>
  <tr>
  <td class="ver">v1.5</td>
  <td class="date">2026-04-30</td>
@@ -653,7 +658,7 @@
  본 v1.5는 <strong>PC 화면 기준</strong>. 1280px 기준 와이어프레임으로 그렸으며 데스크톱 브라우저에서 보는 사용자 흐름을 표현. 모바일 버전(390px 기준)은 별도 문서로 작성. 일부 화면(전시 상세 모달 등)은 PC·모바일 인터랙션이 다르므로 모바일 버전에서 별도 mockup 필요.
  </p>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>00 · History</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>00 · History</span></div>
  </section>
 
  <!-- 서비스 개요 -->
@@ -666,7 +671,7 @@
  <div class="overview">
  <div class="card">
  <h3>🎨 무엇을 하는 서비스인가</h3>
- <p>Artier는 시니어·중장년 순수미술 작가가 본인 작품을 디지털 갤러리에 전시하고, 가족·지인·동호회와 공유하는 플랫폼이다.</p>
+ <p>Proud Gallery는 시니어·중장년 순수미술 작가가 본인 작품을 디지털 갤러리에 전시하고, 가족·지인·동호회와 공유하는 플랫폼이다.</p>
  <p style="color: var(--ink); font-weight: 600; margin-top: 14px;">"여기는 게시판이 아니라 갤러리예요."</p>
  <p>업로드 단위는 <strong>전시(Exhibition)</strong>다. 작품 한 점만 올려도 시스템이 자동으로 전시 페이지를 만들어준다.</p>
  </div>
@@ -702,7 +707,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>01 · 서비스 개요</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>01 · 서비스 개요</span></div>
  </section>
 
  <!-- 페르소나 -->
@@ -758,7 +763,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>02 · 페르소나</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>02 · 페르소나</span></div>
  </section>
 
  <!-- 유저 플로우 -->
@@ -796,7 +801,7 @@
  <div class="step"><span class="num">5</span><h4>다른 전시</h4><p>같은 작가 또는 추천 전시로 이어짐.</p></div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>03 · 유저 플로우</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>03 · 유저 플로우</span></div>
  </section>
 
  <!-- 순서도 A: 발행·공유 -->
@@ -859,7 +864,7 @@
  <div class="flow-note">📍 핵심: 회사가 자동 발송하지 않는다. 작가 본인이 OS 공유 시트로 직접 공유한다.</div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>04-A · 발행·공유 순서도</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>04-A · 발행·공유 순서도</span></div>
  </section>
 
  <!-- 순서도 B: 자동 연결 -->
@@ -945,7 +950,7 @@
  <div class="flow-note">📍 핵심: 작가 승인 게이트 없음. 즉시 자동 연결 옵션도 없음(항상 명시 클릭). 잘못 연결 시 가입자가 카톡 등으로 작가에게 알리고, 작가가 마이페이지에서 풀기. 운영팀이 직접 판정한다.</div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>04-B · 자동 연결 순서도</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>04-B · 자동 연결 순서도</span></div>
  </section>
 
  <!-- 순서도 C: 둘러보기 -->
@@ -993,7 +998,7 @@
  <div class="flow-note">📍 비로그인 사용자도 SEO·공유 미리보기로 진입 가능. 단, 좋아요·저장·팔로우·신고 등 상호작용은 가입 요구.</div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>04-C · 둘러보기 순서도</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>04-C · 둘러보기 순서도</span></div>
  </section>
 
  <!-- IA -->
@@ -1012,7 +1017,7 @@
  <li>이메일 가입 (매직 링크) <code>AUT-03~05</code></li>
  <li>소셜 최초 가입 <code>AUT-06</code></li>
  <li>매직 링크 콜백 <code>AUT-08</code></li>
- <li>온보딩 0~3 (환영·개념·프로필·완료) <code>AUT-09~11</code></li>
+ <li>온보딩 0~2 (환영·프로필·완료) <code>AUT-09~11</code></li>
  </ul>
  <div class="grp-head">🏠 홈·둘러보기 <span class="role-tag role-user">USR-BRW</span></div>
  <ul><li>홈 피드 <code>BRW-01</code></li></ul>
@@ -1055,7 +1060,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>05 · 사용자 IA</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>05 · 사용자 IA</span></div>
  </section>
 
  <section class="slide" id="ia-admin">
@@ -1088,7 +1093,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>06 · 운영팀 IA</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>06 · 운영팀 IA</span></div>
  </section>
 
  <!-- 공통 정책 표지 -->
@@ -1098,7 +1103,7 @@
  <h2>공통 정책</h2>
  <p>모든 화면에 공통 적용되는 정책. 화면 ID 체계·인증·시니어 친화 UI·전시 단위·비회원 초대·신고·에러. 각 정책은 자체 완결되도록 작성.</p>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>07 · 공통 정책</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>07 · 공통 정책</span></div>
  </section>
 
  <!-- 공통 정책 (07-1 ~ 07-7 — v1.1과 동일하지만 디바이스 표기만 PC 적용 안 함) -->
@@ -1125,7 +1130,7 @@
  <div class="callout warn"><strong>"전시" = 컨테이너, "작품" = 그 안의 이미지</strong><br>한 번의 업로드 = 전시 1개 = 1~10장 이미지 묶음. 좋아요·저장·신고는 모두 <strong>전시 단위</strong>.</div>
  </div></div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>07-1 · 화면 ID</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>07-1 · 화면 ID</span></div>
  </section>
 
  <section class="slide" id="cp-auth">
@@ -1149,7 +1154,7 @@
  </div></div>
  <div class="policy"><div class="label">사용자 호칭</div><div class="body"><p>UI에서는 "회원" 대신 "작가"로 일관. 자부심 모먼트 보존.</p></div></div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>07-2 · 가입·인증</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>07-2 · 가입·인증</span></div>
  </section>
 
  <section class="slide" id="cp-senior">
@@ -1163,7 +1168,7 @@
  </div></div>
  <div class="policy"><div class="label">언어·톤</div><div class="body"><ul><li>친근하고 명료. 공식 어투 회피</li><li>중요 액션 직전 한 번 더 확인</li><li>실수 가능성 있는 액션엔 "되돌릴 수 있어요" 안내</li><li>전문 용어 회피</li></ul></div></div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>07-3 · 시니어 친화</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>07-3 · 시니어 친화</span></div>
  </section>
 
  <section class="slide" id="cp-exhibition">
@@ -1171,7 +1176,6 @@
  <div class="slide-head"><div><div class="crumb">07 · 공통 정책</div><h2>전시 단위</h2></div><div class="meta"><span class="ver">v1.2</span></div></div>
  <div class="policy"><div class="label">업로드 단위</div><div class="body">
  <p>업로드 단위는 <strong>전시</strong>. 작품 1점만 올려도 전시 1개로 다뤄짐. 게시판이 아니라 갤러리.</p>
- <div class="callout"><strong>온보딩에서 시각적 학습</strong><br>"여기는 디지털 갤러리예요" 화면에서 1점 전시 / 6점 전시 예시 카드 2개를 같은 형식·같은 무게로 보여줌.</div>
  </div></div>
  <div class="policy"><div class="label">전시 유형</div><div class="body">
  <ul><li><strong>혼자 올리기 (개인전)</strong> — 본인 작품만</li><li><strong>함께 올리기 (그룹전)</strong> — 동호회·모임·지인. 그룹명 필수</li></ul>
@@ -1184,7 +1188,7 @@
  <ul><li><strong>회원</strong> — 가입한 작가가 명시적으로 연결됨</li><li><strong>비회원</strong> — 작가의 표시명만</li><li><strong>작가 미상</strong> — 작가 정보가 풀린 상태</li></ul>
  </div></div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>07-4 · 전시 단위</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>07-4 · 전시 단위</span></div>
  </section>
 
  <section class="slide" id="cp-invite">
@@ -1217,7 +1221,7 @@
  <ul><li><strong>활성</strong> — 검수 승인된 전시. 정상 흐름</li><li><strong>비활성</strong> — 검수 대기·반려. 친구 링크 보존, 재승인 시 자동 활성</li><li><strong>취소</strong> — 전시 삭제·작가 탈퇴·만료</li></ul>
  </div></div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>07-5 · 비회원 초대</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>07-5 · 비회원 초대</span></div>
  </section>
 
  <section class="slide" id="cp-report">
@@ -1231,7 +1235,7 @@
  </div></div>
  <div class="policy"><div class="label">작가 알림</div><div class="body"><p>운영팀 처리 결과(삭제·비공개 유지·기각 후 복원)를 작가에게 시스템 알림. 「삭제」 알림에는 사유 라벨 동봉.</p></div></div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>07-6 · 신고·모더레이션</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>07-6 · 신고·모더레이션</span></div>
  </section>
 
  <section class="slide" id="cp-error">
@@ -1244,7 +1248,7 @@
  <div class="policy"><div class="label">비속어 차단</div><div class="body"><p>모든 사용자 입력 영역에서 작동. submit 시점 토스트 + 차단.</p></div></div>
  <div class="policy"><div class="label">중요 액션 확인</div><div class="body"><p>전시 삭제·계정 탈퇴 등 자체 다이얼로그로 한 번 더 확인. 빨간 톤·경고 아이콘.</p></div></div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>07-7 · 에러·예외</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>07-7 · 에러·예외</span></div>
  </section>
 
 
@@ -1261,14 +1265,14 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com</span>
+ <span class="url">proudgallery.com</span>
  </div>
  <div class="viewport" style="background: white; display: flex; align-items: center; justify-content: center; flex-direction: column; gap: 18px;">
  <div style="width: 96px; height: 96px; border-radius: 24px; background: var(--ink); position: relative;">
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">1</span>
  </div>
  <div style="font-size: 28px; font-weight: 800; color: var(--ink); letter-spacing: -.02em; position: relative;">
- Artier
+ Proud Gallery
  <span class="bub" style="position: absolute; top: -10px; right: -22px;">2</span>
  </div>
  <div style="display: flex; gap: 6px; margin-top: 12px; position: relative;">
@@ -1292,7 +1296,7 @@
  <h3>구성 요소</h3>
  <dl>
  <dt><span class="bub">1</span></dt><dd>로고 — 96×96, 둥근 사각형. 중앙 정렬</dd>
- <dt><span class="bub">2</span></dt><dd>서비스명 "Artier" — 28px Bold</dd>
+ <dt><span class="bub">2</span></dt><dd>서비스명 "Proud Gallery" — 28px Bold</dd>
  <dt><span class="bub">3</span></dt><dd>로딩 인디케이터 — 3-dot 깜빡임</dd>
  </dl>
 
@@ -1307,7 +1311,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-AUT-01 · 스플래시</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-AUT-01 · 스플래시</span></div>
  </section>
 
  <!-- ───────── 화면: 로그인·가입 시트 (AuthSheet) (PC) ───────── -->
@@ -1323,12 +1327,12 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/login</span>
+ <span class="url">proudgallery.com/login</span>
  </div>
  <div class="viewport" style="background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center;">
  <div style="background: white; width: 420px; border-radius: 14px; padding: 36px 32px; box-shadow: 0 20px 50px rgba(0,0,0,.25); position: relative;">
  <div style="text-align: center; font-size: 13px; color: var(--ink-3); margin-bottom: 6px; letter-spacing: .04em;">Live Artfully</div>
- <div style="text-align: center; font-size: 22px; font-weight: 800; color: var(--ink); margin-bottom: 28px; position: relative;">Artier
+ <div style="text-align: center; font-size: 22px; font-weight: 800; color: var(--ink); margin-bottom: 28px; position: relative;">Proud Gallery
  <span class="bub" style="position: absolute; top: -8px; right: 28%;">1</span>
  </div>
  <div style="display: flex; flex-direction: column; gap: 10px; position: relative;">
@@ -1392,7 +1396,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-AUT-02 · AuthSheet</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-AUT-02 · AuthSheet</span></div>
  </section>
 
  <!-- ───────── 화면: 이메일 로그인 (매직 링크 요청) (PC) ───────── -->
@@ -1408,7 +1412,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/login?mode=email</span>
+ <span class="url">proudgallery.com/login?mode=email</span>
  </div>
  <div class="viewport" style="background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center; gap: 24px; padding: 24px;">
  <!-- 좌: 입력 상태 -->
@@ -1479,7 +1483,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-AUT-02b · 매직 링크 로그인</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-AUT-02b · 매직 링크 로그인</span></div>
  </section>
 
  <!-- ───────── 화면: 이메일 가입 Step 1 · 이메일 입력 (PC) ───────── -->
@@ -1495,7 +1499,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/signup?step=1</span>
+ <span class="url">proudgallery.com/signup?step=1</span>
  </div>
  <div class="viewport" style="background: white; display: flex; align-items: flex-start; justify-content: center; padding: 50px 40px;">
  <div style="width: 420px; position: relative;">
@@ -1556,7 +1560,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-AUT-03 · 가입 Step 1</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-AUT-03 · 가입 Step 1</span></div>
  </section>
 
  <!-- ───────── 화면: 이메일 가입 Step 2 · 닉네임·생년월일 (PC) ───────── -->
@@ -1572,7 +1576,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/signup?step=2</span>
+ <span class="url">proudgallery.com/signup?step=2</span>
  </div>
  <div class="viewport" style="background: white; display: flex; align-items: flex-start; justify-content: center; padding: 40px 40px;">
  <div style="width: 480px; position: relative;">
@@ -1643,7 +1647,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-AUT-04 · 가입 Step 2</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-AUT-04 · 가입 Step 2</span></div>
  </section>
 
  <!-- ───────── 화면: 회원가입 Step 3 · 약관 동의 (PC) ───────── -->
@@ -1659,7 +1663,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/signup?step=3</span>
+ <span class="url">proudgallery.com/signup?step=3</span>
  </div>
  <div class="viewport" style="background: white; display: flex; align-items: flex-start; justify-content: center; padding: 40px 40px;">
  <div style="width: 480px; position: relative;">
@@ -1747,7 +1751,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-AUT-05 · 약관 동의</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-AUT-05 · 약관 동의</span></div>
  </section>
 
  <!-- ───────── 화면: 소셜 최초 가입 모달 (PC) ───────── -->
@@ -1763,7 +1767,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/login</span>
+ <span class="url">proudgallery.com/login</span>
  </div>
  <div class="viewport" style="background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center;">
  <div style="background: white; width: 460px; border-radius: 14px; padding: 32px 32px; box-shadow: 0 20px 50px rgba(0,0,0,.3); position: relative;">
@@ -1771,7 +1775,7 @@
  <div style="width: 32px; height: 32px; border-radius: 8px; background: #FEE500; display: flex; align-items: center; justify-content: center; font-size: 14px; font-weight: 700;">K</div>
  <div>
  <div style="font-size: 16px; font-weight: 700;">카카오로 가입하기</div>
- <div style="font-size: 11px; color: var(--ink-3);">Artier에 처음 오셨네요</div>
+ <div style="font-size: 11px; color: var(--ink-3);">Proud Gallery에 처음 오셨네요</div>
  </div>
  </div>
  <div style="border-top: 1px solid var(--line); margin: 18px 0;"></div>
@@ -1834,7 +1838,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-AUT-06 · 소셜 첫 가입</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-AUT-06 · 소셜 첫 가입</span></div>
  </section>
 
  <!-- ───────── 화면: 이메일 매직 링크 콜백 (PC) ───────── -->
@@ -1850,7 +1854,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/auth/verify?token=…</span>
+ <span class="url">proudgallery.com/auth/verify?token=…</span>
  </div>
  <div class="viewport" style="background: white; padding: 32px 40px;">
  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 18px;">
@@ -1908,7 +1912,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-AUT-08 · 매직 콜백</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-AUT-08 · 매직 콜백</span></div>
  </section>
  <!-- ───────── 화면: 온보딩 환영 (PC) ───────── -->
  <section class="slide" id="USR-AUT-09">
@@ -1923,7 +1927,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/onboarding</span>
+ <span class="url">proudgallery.com/onboarding</span>
  </div>
  <div class="viewport" style="display: flex; align-items: center; justify-content: center; padding: 60px 40px; flex-direction: column; gap: 18px; background: linear-gradient(180deg, white 0%, #fafafa 100%);">
  <div style="height: 6px; width: 240px; background: var(--line); border-radius: 3px; position: relative; align-self: center; margin-bottom: 32px;">
@@ -1934,7 +1938,7 @@
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">1</span>
  </div>
  <div style="font-size: 24px; font-weight: 700; color: var(--ink); position: relative; text-align: center;">
- Artier에 오신 것을 환영합니다
+ Proud Gallery에 오신 것을 환영합니다
  <span class="bub" style="position: absolute; top: -10px; right: -28px;">2</span>
  </div>
  <div style="font-size: 14px; color: var(--ink-3); text-align: center; max-width: 360px; position: relative;">
@@ -1955,20 +1959,20 @@
  <dl>
  <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> 가입 직후 자동 진입하는 온보딩 첫 화면</dd>
  <dt></dt><dd><strong>레이아웃</strong> 중앙 정렬. PC에서도 모바일과 비슷한 세로 흐름 (콘텐츠 자체가 작음)</dd>
- <dt></dt><dd><strong>목적</strong> Artier가 어떤 곳인지 한 줄로 인식 + 시작 동기 부여</dd>
+ <dt></dt><dd><strong>목적</strong> Proud Gallery가 어떤 곳인지 한 줄로 인식 + 시작 동기 부여</dd>
  </dl>
 
  <h3>구성 요소</h3>
  <dl>
  <dt><span class="bub">1</span></dt><dd>로고 — 64×64, 둥근 모서리</dd>
- <dt><span class="bub">2</span></dt><dd>제목 — "Artier에 오신 것을 환영합니다"</dd>
+ <dt><span class="bub">2</span></dt><dd>제목 — "Proud Gallery에 오신 것을 환영합니다"</dd>
  <dt><span class="bub">3</span></dt><dd>리드 카피 — "그림 한 점만 올려도 나만의 전시가 열려요"</dd>
  <dt><span class="bub">4</span></dt><dd>1차 CTA "시작하기"</dd>
- <dt><span class="bub">5</span></dt><dd>진행 표시 — 4단계 중 1단계</dd>
+ <dt><span class="bub">5</span></dt><dd>진행 표시 — 3단계 중 1단계</dd>
  </dl>
 
  <div class="copy"><h4>주요 카피</h4>
- <span class="copy-line">"Artier에 오신 것을 환영합니다"</span>
+ <span class="copy-line">"Proud Gallery에 오신 것을 환영합니다"</span>
  <span class="copy-line">"그림 한 점만 올려도 나만의 전시가 열려요"</span>
  <span class="copy-line">버튼: "시작하기"</span>
  </div>
@@ -1984,15 +1988,15 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-AUT-09 · 온보딩 환영</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-AUT-09 · 온보딩 환영</span></div>
  </section>
 
- <!-- ───────── 화면: 온보딩 개념 안내 (PC) ───────── -->
- <section class="slide" id="USR-AUT-09b">
+ <!-- ───────── 화면: 온보딩 개념 안내 (PC) — 제거됨 ───────── -->
+ <section class="slide" id="USR-AUT-09b" style="opacity:.4;pointer-events:none">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">08 · 인증·온보딩</div><h2>온보딩 Step 1 · "전시 단위" 개념 안내 ⭐</h2></div>
- <div class="meta"><span class="role">USR</span><span class="id">USR-AUT-09b</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
+ <div><div class="crumb">08 · 인증·온보딩</div><h2>온보딩 Step 0.5 · "전시 단위" 개념 안내 <span style="color:#dc2626">[제거됨 2026-05-07]</span></h2></div>
+ <div class="meta"><span class="role">USR</span><span class="id">USR-AUT-09b</span><span class="device">PC</span><span class="ver">v1.2 REMOVED</span></div>
  </div>
 
  <div class="screen">
@@ -2000,7 +2004,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/onboarding</span>
+ <span class="url">proudgallery.com/onboarding</span>
  </div>
  <div class="viewport" style="padding: 50px 40px; background: linear-gradient(180deg, white 0%, #fafafa 100%); display: flex; flex-direction: column; align-items: center;">
  <div style="height: 6px; width: 240px; background: var(--line); border-radius: 3px; position: relative;">
@@ -2055,7 +2059,7 @@
  <dl>
  <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> 온보딩 Step 1 (Step 0 환영 → Step 1 개념 → Step 2 프로필 → Step 3 완료)</dd>
  <dt></dt><dd><strong>PC 차이</strong> 모바일은 1열로 카드 세로 나열, PC는 2열로 카드 가로 나란히 — 같은 형식·같은 무게가 더 명확</dd>
- <dt></dt><dd><strong>핵심 가치</strong> "그림 한 장 = 전시 한 개"라는 Artier만의 개념을 시각적으로 즉시 이해</dd>
+ <dt></dt><dd><strong>핵심 가치</strong> "그림 한 장 = 전시 한 개"라는 Proud Gallery만의 개념을 시각적으로 즉시 이해</dd>
  </dl>
 
  <h3>구성 요소</h3>
@@ -2085,7 +2089,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-AUT-09b · 개념 안내</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-AUT-09b · 개념 안내</span></div>
  </section>
 
 
@@ -2102,7 +2106,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/onboarding</span>
+ <span class="url">proudgallery.com/onboarding</span>
  </div>
  <div class="viewport" style="background: linear-gradient(180deg, white 0%, #fafafa 100%); padding: 36px 40px;">
  <div style="max-width: 480px; margin: 0 auto; position: relative;">
@@ -2148,7 +2152,7 @@
  <div class="desc">
  <h3>화면 정보</h3>
  <dl>
- <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> USR-AUT-09 (환영) → USR-AUT-09b (개념 안내) → 본 화면</dd>
+ <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> USR-AUT-09 (환영) → 본 화면</dd>
  <dt></dt><dd><strong>역할</strong> 갤러리에 노출될 닉네임·생년월일·프로필 사진 받기. AP +30 적립(UI 미노출)</dd>
  <dt></dt><dd><strong>다음 분기</strong> 초대 토큰 보유 → USR-AUT-10b (본인 작품 찾기) / 없음 → USR-AUT-11 (완료 축하)</dd>
  </dl>
@@ -2178,7 +2182,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-AUT-10 · 온보딩 프로필</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-AUT-10 · 온보딩 프로필</span></div>
  </section>
  <!-- ───────── 화면: 본인 작품 찾기 (PC) ───────── -->
  <section class="slide" id="USR-AUT-10b">
@@ -2193,7 +2197,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/onboarding</span>
+ <span class="url">proudgallery.com/onboarding</span>
  </div>
  <div class="viewport" style="padding: 40px 60px; background: white;">
  <div style="font-size: 22px; font-weight: 700; text-align: center; position: relative; margin-bottom: 12px;">
@@ -2287,7 +2291,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-AUT-10b · 본인 작품 찾기</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-AUT-10b · 본인 작품 찾기</span></div>
  </section>
 
 
@@ -2304,7 +2308,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/onboarding</span>
+ <span class="url">proudgallery.com/onboarding</span>
  </div>
  <div class="viewport" style="background: linear-gradient(180deg, white 0%, #fafafa 100%); display: flex; align-items: center; justify-content: center; padding: 50px 40px;">
  <div style="max-width: 460px; text-align: center; position: relative;">
@@ -2343,7 +2347,7 @@
  <dl>
  <dt><span class="bub">1</span></dt><dd>컨페티 애니메이션 — 진입 시 한 번 재생, 1.5s</dd>
  <dt><span class="bub">2</span></dt><dd>호명 인사 — 닉네임 + "작가님" 호칭</dd>
- <dt><span class="bub">3</span></dt><dd>리드 카피 — Artier 핵심 가치 재강조</dd>
+ <dt><span class="bub">3</span></dt><dd>리드 카피 — Proud Gallery 핵심 가치 재강조</dd>
  <dt><span class="bub">4</span></dt><dd>1차 CTA "첫 작품 업로드" → USR-UPL-01. 2차 "먼저 둘러볼게요" → USR-BRW-01</dd>
  </dl>
 
@@ -2364,7 +2368,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-AUT-11 · 온보딩 완료</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-AUT-11 · 온보딩 완료</span></div>
  </section>
 
  <!-- ───────── 화면: 계정 정지 안내 · 보류 (PC) ───────── -->
@@ -2380,7 +2384,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/login</span>
+ <span class="url">proudgallery.com/login</span>
  </div>
  <div class="viewport" style="background: white; display: flex; align-items: center; justify-content: center; padding: 60px 40px;">
  <div style="max-width: 420px; text-align: center;">
@@ -2409,7 +2413,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-AUT-12 · 정지(보류)</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-AUT-12 · 정지(보류)</span></div>
  </section>
  <!-- ───────── 화면: 홈 피드 (PC) ───────── -->
  <section class="slide" id="USR-BRW-01">
@@ -2424,11 +2428,11 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com</span>
+ <span class="url">proudgallery.com</span>
  </div>
  <div class="viewport">
  <div class="pc-header" style="position: relative;">
- <span class="logo">Artier</span>
+ <span class="logo">Proud Gallery</span>
  <div class="nav"><span class="active">홈</span><span>둘러보기</span><span>이벤트</span><span>공지</span></div>
  <div class="actions"><span>🔍</span><span>🔔</span><span>👤</span></div>
  <span class="bub" style="position: absolute; top: -10px; right: 0;">1</span>
@@ -2517,7 +2521,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-BRW-01 · 홈 피드</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-BRW-01 · 홈 피드</span></div>
  </section>
 
  <!-- ───────── 화면: 전시 상세 (PC) ───────── -->
@@ -2533,7 +2537,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/exhibitions/exh-001</span>
+ <span class="url">proudgallery.com/exhibitions/exh-001</span>
  </div>
  <div class="viewport" style="background: rgba(0,0,0,.4);">
  <div class="pc-modal" style="inset: 4% 8%;">
@@ -2613,7 +2617,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-EXH-01 · 전시 상세</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-EXH-01 · 전시 상세</span></div>
  </section>
 
  <!-- ───────── 화면: 전시 상세 — 본인·배지 변형 (PC) ───────── -->
@@ -2629,7 +2633,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/exhibitions/exh-009</span>
+ <span class="url">proudgallery.com/exhibitions/exh-009</span>
  </div>
  <div class="viewport" style="background: rgba(0,0,0,.4);">
  <div class="pc-modal" style="inset: 4% 8%; display: flex; flex-direction: column;">
@@ -2696,11 +2700,11 @@
  <li>본인엔 신고 진입점 비노출, 외부엔 노출</li>
  </ol></div>
 
- <div class="pol"><h4>관련 정책</h4>검수 처리 24시간 이내 목표 · Pick 선정 (운영팀 직접 배지 부여)</div>
+ <div class="pol"><h4>관련 정책</h4>검수 처리 1~24시간 · Pick 선정 (운영팀 직접 배지 부여)</div>
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-EXH-01 · 본인·배지 변형</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-EXH-01 · 본인·배지 변형</span></div>
  </section>
 
 
@@ -2717,7 +2721,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/exhibitions/cur-2026-04</span>
+ <span class="url">proudgallery.com/exhibitions/cur-2026-04</span>
  </div>
  <div class="viewport" style="background: white; overflow-y: auto;">
  <div style="height: 200px; background: linear-gradient(135deg, #fef3c7, #fecaca, #ddd6fe); position: relative; padding: 26px 32px; display: flex; flex-direction: column; justify-content: flex-end;">
@@ -2786,7 +2790,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-EXH-02 · 큐레이션</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-EXH-02 · 큐레이션</span></div>
  </section>
  <!-- ───────── 화면: 초대장 랜딩 (PC) ───────── -->
  <section class="slide" id="USR-EXH-03">
@@ -2801,7 +2805,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/exhibitions/exh-001?invite=...</span>
+ <span class="url">proudgallery.com/exhibitions/exh-001?invite=...</span>
  </div>
  <div class="viewport" style="display: grid; grid-template-columns: 1.2fr 1fr; gap: 0; background: white;">
  <div style="background: linear-gradient(135deg, #fef3c7, #fecaca, #ddd6fe); display: flex; align-items: center; justify-content: center; position: relative;">
@@ -2873,7 +2877,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-EXH-03 · 초대장 랜딩</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-EXH-03 · 초대장 랜딩</span></div>
  </section>
 
 
@@ -2891,7 +2895,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/exhibitions/exh-001</span>
+ <span class="url">proudgallery.com/exhibitions/exh-001</span>
  </div>
  <div class="viewport" style="background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center;">
  <div style="background: white; width: 440px; border-radius: 12px; padding: 26px 28px; box-shadow: 0 20px 50px rgba(0,0,0,.3); position: relative;">
@@ -2934,7 +2938,7 @@
  <dl>
  <dt><span class="bub">1</span></dt><dd>단일 사유 안내 블록 — 고정 라벨(라디오·분기 없음)</dd>
  <dt><span class="bub">2</span></dt><dd>상세 텍스트 — 최대 200자, 실시간 카운터, 선택 입력</dd>
- <dt><span class="bub">3</span></dt><dd>제출 — 접수 토스트 "신고가 접수되었어요. 24시간 내 검토합니다"</dd>
+ <dt><span class="bub">3</span></dt><dd>제출 — 접수 토스트 "신고가 도착했어요."</dd>
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
@@ -2948,7 +2952,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-EXH-05 · 신고</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-EXH-05 · 신고</span></div>
  </section>
 
  <!-- ───────── 화면: 공유 시트 / 클립보드 복사 (PC) ───────── -->
@@ -2964,7 +2968,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/exhibitions/exh-001</span>
+ <span class="url">proudgallery.com/exhibitions/exh-001</span>
  </div>
  <div class="viewport" style="background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; padding: 24px;">
  <div style="background: white; width: 480px; border-radius: 12px; padding: 26px 28px; box-shadow: 0 20px 50px rgba(0,0,0,.3); position: relative;">
@@ -2975,7 +2979,7 @@
 
  <div style="background: #fafafa; border: 1px dashed var(--line-2); padding: 14px; border-radius: 8px; font-size: 12.5px; color: var(--ink-2); line-height: 1.7; margin-bottom: 16px; position: relative;">
  ○○○님이 회원님을 <strong>봄날의 풍경</strong> 전시에 초대했어요. 작품 보러 와주세요!<br>
- <span style="color: var(--primary); text-decoration: underline; font-family: ui-monospace, monospace; font-size: 11px;">https://artier.com/exhibitions/exh-001?invite=ab12cd34</span>
+ <span style="color: var(--primary); text-decoration: underline; font-family: ui-monospace, monospace; font-size: 11px;">https://proudgallery.com/exhibitions/exh-001?invite=ab12cd34</span>
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">2</span>
  </div>
 
@@ -3028,7 +3032,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-EXH-06 · 공유 시트</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-EXH-06 · 공유 시트</span></div>
  </section>
 
  <!-- ───────── 화면: 업로드 유형 선택 모달 (PC) ───────── -->
@@ -3044,7 +3048,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/upload</span>
+ <span class="url">proudgallery.com/upload</span>
  </div>
  <div class="viewport" style="background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center;">
  <div style="background: white; width: 540px; border-radius: 14px; padding: 32px 36px; box-shadow: 0 20px 50px rgba(0,0,0,.3); position: relative;">
@@ -3095,7 +3099,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-UPL-01 · 유형 선택</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-UPL-01 · 유형 선택</span></div>
  </section>
 
  <!-- ───────── 화면: 업로드 메인 (PC) ───────── -->
@@ -3111,11 +3115,11 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/upload</span>
+ <span class="url">proudgallery.com/upload</span>
  </div>
  <div class="viewport">
  <div class="pc-header" style="position: relative;">
- <span class="logo">Artier</span>
+ <span class="logo">Proud Gallery</span>
  <div class="nav"><span>홈</span><span class="active">전시 만들기</span></div>
  <div class="actions"><div class="btn">전시하기</div></div>
  <span class="bub" style="position: absolute; top: -10px; right: 0;">1</span>
@@ -3185,7 +3189,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-UPL-02 · 업로드 메인</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-UPL-02 · 업로드 메인</span></div>
  </section>
 
  <!-- ───────── 화면: 업로드 메인 — 반려 편집 모드 변형 (PC) ───────── -->
@@ -3201,7 +3205,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/upload?edit=exh-009</span>
+ <span class="url">proudgallery.com/upload?edit=exh-009</span>
  </div>
  <div class="viewport" style="background: white; padding: 0; display: flex; flex-direction: column;">
  <!-- 빨강 인라인 배너 -->
@@ -3277,7 +3281,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-UPL-02 · 반려 편집 변형</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-UPL-02 · 반려 편집 변형</span></div>
  </section>
 
 
@@ -3294,7 +3298,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/upload</span>
+ <span class="url">proudgallery.com/upload</span>
  </div>
  <div class="viewport" style="background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center;">
  <div style="background: white; width: 560px; max-height: 92%; overflow-y: auto; border-radius: 12px; padding: 26px 30px; box-shadow: 0 20px 50px rgba(0,0,0,.3); position: relative;">
@@ -3364,7 +3368,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-UPL-04 · 세부정보</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-UPL-04 · 세부정보</span></div>
  </section>
 
  <!-- ───────── 화면: 이미지 재정렬 모드 (PC) ───────── -->
@@ -3380,7 +3384,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/upload</span>
+ <span class="url">proudgallery.com/upload</span>
  </div>
  <div class="viewport" style="background: white; padding: 24px 32px;">
  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; position: relative;">
@@ -3441,7 +3445,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-UPL-05 · 재정렬</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-UPL-05 · 재정렬</span></div>
  </section>
 
  <!-- ───────── 화면: 작가 지정 사이드패널 (PC) ───────── -->
@@ -3457,7 +3461,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/upload</span>
+ <span class="url">proudgallery.com/upload</span>
  </div>
  <div class="viewport" style="background: white; display: grid; grid-template-columns: 1fr 320px;">
  <div style="padding: 20px 24px; border-right: 1px solid var(--line);">
@@ -3534,7 +3538,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-UPL-06 · 작가 지정</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-UPL-06 · 작가 지정</span></div>
  </section>
 
  <!-- ───────── 화면: 카메라 사진 차단 배너 (PC) ───────── -->
@@ -3550,14 +3554,14 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/upload</span>
+ <span class="url">proudgallery.com/upload</span>
  </div>
  <div class="viewport" style="background: white; padding: 0;">
  <div style="background: #fff7ed; border-bottom: 1.5px solid #ea580c; padding: 14px 24px; display: flex; gap: 12px; align-items: flex-start; position: relative;">
  <div style="font-size: 22px;">📷</div>
  <div style="flex: 1;">
  <div style="font-size: 13px; font-weight: 700; color: #7c2d12; margin-bottom: 4px;">카메라 사진이 감지되었습니다</div>
- <div style="font-size: 11.5px; color: #7c2d12; line-height: 1.6;">Artier는 디지털 드로잉 전용 갤러리예요. 사진 작품은 업로드할 수 없어요. 직접 그리신 그림 파일(PNG·JPG 디지털 작업물)을 올려주세요.</div>
+ <div style="font-size: 11.5px; color: #7c2d12; line-height: 1.6;">Proud Gallery는 디지털 드로잉 전용 갤러리예요. 사진 작품은 업로드할 수 없어요. 직접 그리신 그림 파일(PNG·JPG 디지털 작업물)을 올려주세요.</div>
  </div>
  <div style="font-size: 12px; color: #7c2d12;">✕</div>
  <span class="bub" style="position: absolute; top: -10px; right: 50px;">1</span>
@@ -3587,7 +3591,7 @@
  <h3>화면 정보</h3>
  <dl>
  <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> USR-UPL-03에서 이미지 추가 시 — JPEG EXIF에 Make/Model 메타데이터 감지 시 자동</dd>
- <dt></dt><dd><strong>왜 막나</strong> Artier는 디지털 드로잉 작품 전용. 카메라 사진 업로드 정책 위반</dd>
+ <dt></dt><dd><strong>왜 막나</strong> Proud Gallery는 디지털 드로잉 작품 전용. 카메라 사진 업로드 정책 위반</dd>
  </dl>
 
  <h3>구성 요소</h3>
@@ -3598,7 +3602,7 @@
 
  <div class="copy"><h4>주요 카피</h4>
  <span class="copy-line">"카메라 사진이 감지되었습니다"</span>
- <span class="copy-line">"Artier는 디지털 드로잉 전용 갤러리예요. 사진 작품은 업로드할 수 없어요."</span>
+ <span class="copy-line">"Proud Gallery는 디지털 드로잉 전용 갤러리예요. 사진 작품은 업로드할 수 없어요."</span>
  <span class="copy-line">"직접 그리신 그림 파일(PNG·JPG 디지털 작업물)을 올려주세요."</span>
  </div>
 
@@ -3613,7 +3617,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-UPL-07 · 카메라 차단</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-UPL-07 · 카메라 차단</span></div>
  </section>
 
 
@@ -3631,7 +3635,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/upload</span>
+ <span class="url">proudgallery.com/upload</span>
  </div>
  <div class="viewport" style="background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center;">
  <div style="background: white; width: 400px; border-radius: 12px; padding: 24px 28px; box-shadow: 0 20px 50px rgba(0,0,0,.3); position: relative;">
@@ -3676,7 +3680,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-UPL-09 · 이탈 방지</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-UPL-09 · 이탈 방지</span></div>
  </section>
  <!-- ───────── 화면: 전시 완료 확인 (PC) ───────── -->
  <section class="slide" id="USR-UPL-03">
@@ -3691,7 +3695,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/upload</span>
+ <span class="url">proudgallery.com/upload</span>
  </div>
  <div class="viewport" style="background: linear-gradient(180deg, white 0%, #fafafa 100%); display: flex; align-items: center; justify-content: center; padding: 50px 40px;">
  <div style="max-width: 480px; text-align: center; position: relative;">
@@ -3733,7 +3737,7 @@
 
  <h3>구성 요소</h3>
  <dl>
- <dt><span class="bub">1</span></dt><dd>제목 — 신규 vs 재발행 구분 (재발행 시 "다시 검수 요청이 접수되었어요")</dd>
+ <dt><span class="bub">1</span></dt><dd>제목 — 신규 vs 재발행 구분 (재발행 시 "다시 검수 요청이 도착했어요")</dd>
  <dt><span class="bub">2</span></dt><dd>상태별 메시지 — pending/auto-approve/재검수/비회원 포함 4종</dd>
  <dt><span class="bub">3</span></dt><dd>비회원 안내 — 회원 직접 공유 책임 강조 (회사 발송 X)</dd>
  <dt><span class="bub">4</span></dt><dd>1차 "내 전시 보기" → USR-PRF-05 / 2차 "둘러보기" → USR-BRW-01</dd>
@@ -3757,7 +3761,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-UPL-03 · 발행 완료</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-UPL-03 · 발행 완료</span></div>
  </section>
  <!-- ───────── 화면: 프로필 헤더 (PC) ───────── -->
  <section class="slide" id="USR-PRF-01">
@@ -3772,10 +3776,10 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/me</span>
+ <span class="url">proudgallery.com/me</span>
  </div>
  <div class="viewport">
- <div class="pc-header"><span class="logo">Artier</span><div class="nav"><span>홈</span><span>둘러보기</span><span class="active">마이페이지</span></div><div class="actions"><span>🔔</span><span>👤</span></div></div>
+ <div class="pc-header"><span class="logo">Proud Gallery</span><div class="nav"><span>홈</span><span>둘러보기</span><span class="active">마이페이지</span></div><div class="actions"><span>🔔</span><span>👤</span></div></div>
  <div style="background: linear-gradient(180deg, #fafafa 0%, #fef3c7 60%, white 100%); padding: 32px 60px; position: relative;">
  <div style="display: flex; gap: 24px; align-items: flex-start;">
  <div style="width: 100px; height: 100px; background: var(--ink); border-radius: 50%; flex-shrink: 0; position: relative;">
@@ -3850,7 +3854,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-PRF-01 · 프로필 헤더</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-PRF-01 · 프로필 헤더</span></div>
  </section>
 
 
@@ -3867,7 +3871,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/me</span>
+ <span class="url">proudgallery.com/me</span>
  </div>
  <div class="viewport" style="background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center;">
  <div style="background: white; width: 540px; max-height: 92%; overflow-y: auto; border-radius: 12px; padding: 26px 28px; box-shadow: 0 20px 50px rgba(0,0,0,.3); position: relative;">
@@ -3947,7 +3951,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-PRF-02 · 편집</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-PRF-02 · 편집</span></div>
  </section>
 
  <!-- ───────── 화면: 프로필 사진 모달 (PC) ───────── -->
@@ -3963,7 +3967,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/me</span>
+ <span class="url">proudgallery.com/me</span>
  </div>
  <div class="viewport" style="background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center;">
  <div style="background: white; width: 380px; border-radius: 12px; padding: 26px 28px; box-shadow: 0 20px 50px rgba(0,0,0,.3); position: relative;">
@@ -4009,7 +4013,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-PRF-03 · 사진</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-PRF-03 · 사진</span></div>
  </section>
 
  <!-- ───────── 화면: 팔로워·팔로잉 모달 (PC) ───────── -->
@@ -4025,7 +4029,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/me</span>
+ <span class="url">proudgallery.com/me</span>
  </div>
  <div class="viewport" style="background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center;">
  <div style="background: white; width: 460px; max-height: 80%; border-radius: 12px; padding: 22px 0 0; box-shadow: 0 20px 50px rgba(0,0,0,.3); position: relative; display: flex; flex-direction: column;">
@@ -4081,7 +4085,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-PRF-04 · 팔로워</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-PRF-04 · 팔로워</span></div>
  </section>
 
  <!-- ───────── 화면: 전시 탭 (exhibition) (PC) ───────── -->
@@ -4097,7 +4101,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/me?tab=exhibition</span>
+ <span class="url">proudgallery.com/me?tab=exhibition</span>
  </div>
  <div class="viewport" style="background: white;">
  <div style="padding: 16px 24px; border-bottom: 1px solid var(--line); display: flex; gap: 14px; align-items: center;">
@@ -4167,11 +4171,11 @@
  <li>승인된 전시 + 비회원 슬롯이 있는 카드에서 초대 링크 공유 버튼 활성화, 만료 임박 시 잔여일 표시</li>
  </ol></div>
 
- <div class="pol"><h4>관련 정책</h4>작품명 편집 · 검수 처리 24시간 이내 목표 · 신고 (07-6) · 비회원 초대 (07-5)</div>
+ <div class="pol"><h4>관련 정책</h4>작품명 편집 · 검수 처리 1~24시간 · 신고 (07-6) · 비회원 초대 (07-5)</div>
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-PRF-05 · 전시 탭</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-PRF-05 · 전시 탭</span></div>
  </section>
 
  <!-- ───────── 화면: 내 작품 탭 (works) (PC) ───────── -->
@@ -4187,7 +4191,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/me?tab=works</span>
+ <span class="url">proudgallery.com/me?tab=works</span>
  </div>
  <div class="viewport" style="background: white;">
  <div style="padding: 16px 24px; border-bottom: 1px solid var(--line); display: flex; gap: 14px; align-items: center;">
@@ -4249,7 +4253,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-PRF-06 · 내 작품</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-PRF-06 · 내 작품</span></div>
  </section>
 
  <!-- ───────── 화면: 좋아요 탭 (likes) (PC) ───────── -->
@@ -4265,7 +4269,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/me?tab=likes</span>
+ <span class="url">proudgallery.com/me?tab=likes</span>
  </div>
  <div class="viewport" style="background: white;">
  <div style="padding: 16px 24px; border-bottom: 1px solid var(--line); display: flex; gap: 14px; align-items: center;">
@@ -4327,7 +4331,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-PRF-08 · 좋아요</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-PRF-08 · 좋아요</span></div>
  </section>
 
  <!-- ───────── 화면: 저장 탭 (saved) (PC) ───────── -->
@@ -4343,7 +4347,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/me?tab=saved</span>
+ <span class="url">proudgallery.com/me?tab=saved</span>
  </div>
  <div class="viewport" style="background: white;">
  <div style="padding: 16px 24px; border-bottom: 1px solid var(--line); display: flex; gap: 14px; align-items: center;">
@@ -4402,7 +4406,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-PRF-09 · 저장</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-PRF-09 · 저장</span></div>
  </section>
 
  <!-- ───────── 화면: 초안 탭 (drafts) (PC) ───────── -->
@@ -4418,7 +4422,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/me?tab=drafts</span>
+ <span class="url">proudgallery.com/me?tab=drafts</span>
  </div>
  <div class="viewport" style="background: white;">
  <div style="padding: 16px 24px; border-bottom: 1px solid var(--line); display: flex; gap: 14px; align-items: center;">
@@ -4487,7 +4491,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-PRF-10 · 초안</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-PRF-10 · 초안</span></div>
  </section>
 
  <!-- ───────── 화면: 작품명 인라인 편집 모달 (PC) ───────── -->
@@ -4503,7 +4507,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/me?tab=exhibition</span>
+ <span class="url">proudgallery.com/me?tab=exhibition</span>
  </div>
  <div class="viewport" style="background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center;">
  <div style="background: white; width: 440px; border-radius: 12px; padding: 24px 26px; box-shadow: 0 20px 50px rgba(0,0,0,.3); position: relative;">
@@ -4555,7 +4559,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-PRF-11 · 작품명 편집</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-PRF-11 · 작품명 편집</span></div>
  </section>
 
  <!-- ───────── 화면: 반려 사유 모달 (PC) ───────── -->
@@ -4571,7 +4575,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/me?tab=exhibition</span>
+ <span class="url">proudgallery.com/me?tab=exhibition</span>
  </div>
  <div class="viewport" style="background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center;">
  <div style="background: white; width: 480px; border-radius: 12px; padding: 24px 28px; box-shadow: 0 20px 50px rgba(0,0,0,.3); position: relative;">
@@ -4627,7 +4631,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-PRF-12 · 반려 사유</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-PRF-12 · 반려 사유</span></div>
  </section>
 
  <!-- ───────── 화면: 전시 삭제 확인 다이얼로그 (CM-01) (PC) ───────── -->
@@ -4643,7 +4647,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/me?tab=exhibition</span>
+ <span class="url">proudgallery.com/me?tab=exhibition</span>
  </div>
  <div class="viewport" style="background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center;">
  <div style="background: white; width: 400px; border-radius: 12px; padding: 24px 28px; box-shadow: 0 20px 50px rgba(0,0,0,.3); position: relative;">
@@ -4701,7 +4705,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-PRF-13 · 삭제 확인</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-PRF-13 · 삭제 확인</span></div>
  </section>
 
  <!-- ───────── 화면: 내 작품 전용 뷰어 (다크 배경) (PC) ───────── -->
@@ -4717,7 +4721,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/me?tab=works</span>
+ <span class="url">proudgallery.com/me?tab=works</span>
  </div>
  <div class="viewport" style="background: #0a0a0a; padding: 0; position: relative;">
  <div style="position: absolute; top: 16px; right: 20px; color: rgba(255,255,255,.7); font-size: 18px;">✕</div>
@@ -4762,7 +4766,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-PRF-14 · 내 작품 뷰어</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-PRF-14 · 내 작품 뷰어</span></div>
  </section>
 <!-- ───────── 화면: 응모전 목록 (PC) ───────── -->
  <section class="slide" id="USR-EVT-01">
@@ -4777,11 +4781,11 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/events</span>
+ <span class="url">proudgallery.com/events</span>
  </div>
  <div class="viewport" style="background: white; display: flex; flex-direction: column; padding: 0;">
  <div style="padding: 11px 22px; border-bottom: 1px solid var(--line); display: flex; align-items: center; gap: 18px;">
- <div style="font-weight: 800; font-size: 14px;">Artier</div>
+ <div style="font-weight: 800; font-size: 14px;">Proud Gallery</div>
  <div style="display: flex; gap: 16px; flex: 1; font-size: 11.5px;">
  <span style="color: var(--ink-3);">둘러보기</span>
  <span style="color: var(--ink-3);">검색</span>
@@ -4851,7 +4855,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-EVT-01 · 응모전 목록</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-EVT-01 · 응모전 목록</span></div>
  </section>
 
  <!-- ───────── 화면: 응모전 상세 (PC) ───────── -->
@@ -4867,7 +4871,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/events/event-2026-spring</span>
+ <span class="url">proudgallery.com/events/event-2026-spring</span>
  </div>
  <div style="background: white; padding: 0; overflow-y: auto;">
  <div style="aspect-ratio: 16/4; background: linear-gradient(135deg, #fef3c7, #fecaca, #ddd6fe);"></div>
@@ -4928,7 +4932,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-EVT-02 · 응모전 상세</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-EVT-02 · 응모전 상세</span></div>
  </section>
 
  <!-- ───────── 화면: 이메일 구독 모달 (PC) ───────── -->
@@ -4944,7 +4948,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/events</span>
+ <span class="url">proudgallery.com/events</span>
  </div>
  <div class="viewport" style="background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center;">
  <div style="background: white; width: 380px; border-radius: 12px; padding: 24px 26px; box-shadow: 0 20px 50px rgba(0,0,0,.3); position: relative;">
@@ -4975,7 +4979,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-EVT-03 · 이메일 구독</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-EVT-03 · 이메일 구독</span></div>
  </section>
 
  <!-- ───────── 화면: 검색 홈 (PC) ───────── -->
@@ -4991,7 +4995,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/search</span>
+ <span class="url">proudgallery.com/search</span>
  </div>
  <div style="background: white; padding: 60px 40px; height: 100%;">
  <div style="max-width: 640px; margin: 0 auto; position: relative;">
@@ -5039,7 +5043,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-SRC-01 · 검색 홈</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-SRC-01 · 검색 홈</span></div>
  </section>
 
  <!-- ───────── 화면: 검색 결과 (PC) ───────── -->
@@ -5055,7 +5059,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/search?q=봄+풍경</span>
+ <span class="url">proudgallery.com/search?q=봄+풍경</span>
  </div>
  <div style="background: white; padding: 24px 32px; height: 100%; overflow-y: auto;">
  <div style="border: 1.5px solid var(--ink); padding: 11px 16px; border-radius: 10px; display: flex; align-items: center; gap: 8px; margin-bottom: 18px;">
@@ -5113,7 +5117,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-SRC-02 · 검색 결과</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-SRC-02 · 검색 결과</span></div>
  </section>
 
  <!-- ───────── 화면: 알림 센터 (PC) ───────── -->
@@ -5129,7 +5133,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/notifications</span>
+ <span class="url">proudgallery.com/notifications</span>
  </div>
  <div style="background: white; padding: 22px 28px; height: 100%; overflow-y: auto;">
  <div style="display: flex; justify-content: space-between; margin-bottom: 14px;">
@@ -5196,7 +5200,7 @@
  <span class="copy-line">좋아요: "[작가명]님이 '작품명'을 좋아합니다"</span>
  <span class="copy-line">팔로우: "[작가명]님이 회원님을 팔로우합니다"</span>
  <span class="copy-line">그룹 초대: "[작가명]님이 회원님을 '전시명' 그룹 전시에 초대했어요"</span>
- <span class="copy-line">큐레이션 — Pick 선정: "축하해요! '전시명'이(가) Artier's Pick으로 뽑혔어요"</span>
+ <span class="copy-line">큐레이션 — Pick 선정: "축하해요! '전시명'이(가) Proud's Pick으로 뽑혔어요"</span>
  <span class="copy-line">큐레이션 — 기획전 선정: "회원님의 작품 '작품명'이(가) '기획전명' 기획전에 선정됐어요"</span>
  <span class="copy-line">응모전 — 선정: "축하해요! '전시명'이(가) '응모전명' 선정작으로 뽑혔어요"</span>
  <span class="copy-line">응모전 — 공지: 운영팀 작성 메시지</span>
@@ -5216,7 +5220,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-NTF-01 · 알림 센터</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-NTF-01 · 알림 센터</span></div>
  </section>
 
  <!-- ───────── 화면: 설정 홈 (PC) ───────── -->
@@ -5232,7 +5236,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/settings</span>
+ <span class="url">proudgallery.com/settings</span>
  </div>
  <div style="background: white; padding: 22px 28px; height: 100%; overflow-y: auto;">
  <div style="font-size: 18px; font-weight: 700; margin-bottom: 18px;">설정</div>
@@ -5273,7 +5277,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-STG-01 · 설정 홈</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-STG-01 · 설정 홈</span></div>
  </section>
 
 
@@ -5290,7 +5294,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/settings#font</span>
+ <span class="url">proudgallery.com/settings#font</span>
  </div>
  <div style="background: white; padding: 22px 28px; height: 100%; overflow-y: auto;">
  <div style="font-size: 12px; color: var(--ink-3); margin-bottom: 4px;">← 설정</div>
@@ -5325,7 +5329,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-STG-04 · 글꼴 크기 조절</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-STG-04 · 글꼴 크기 조절</span></div>
  </section>
 
 
@@ -5342,7 +5346,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/settings#notifications</span>
+ <span class="url">proudgallery.com/settings#notifications</span>
  </div>
  <div style="background: white; padding: 22px 28px; height: 100%; overflow-y: auto;">
  <div style="font-size: 12px; color: var(--ink-3); margin-bottom: 4px;">← 설정</div>
@@ -5358,7 +5362,7 @@
  <div style="font-size: 10.5px; color: var(--ink-3); margin-top: 12px;">큐레이션(Pick·기획전 선정)·응모전(응모전 선정·공지)·시스템(검수 결과·초대 수락)은 본인 전시·계정에 직접 영향이라 끌 수 없는 강제 알림으로 발송돼요.</div>
  </div>
  </div>
- <div class="placeholder-note">5 토글 (좋아요·팔로우·그룹 초대·기획전 Pick·마케팅) — 일부 ON, 일부 OFF 기본값. 시스템 알림 5종은 토글 없음</div>
+ <div class="placeholder-note">5 토글 (좋아요·팔로우·그룹 초대·기획전 · Pick·마케팅) — 일부 ON, 일부 OFF 기본값. 시스템 알림 5종은 토글 없음</div>
  </div>
 
  <div class="desc">
@@ -5369,7 +5373,7 @@
 
  <h3>구성 요소</h3>
  <dl>
- <dt>—</dt><dd>5 토글 — 좋아요·팔로우·그룹 초대·기획전 Pick·마케팅 (시스템 알림 5종은 토글 없음 — 검수·Pick·응모전 선정·응모전 공지·초대 수락)</dd>
+ <dt>—</dt><dd>5 토글 — 좋아요·팔로우·그룹 초대·기획전 · Pick·마케팅 (시스템 알림 5종은 토글 없음 — 검수·Pick·응모전 선정·응모전 공지·초대 수락)</dd>
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
@@ -5379,7 +5383,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-STG-05 · 알림 설정</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-STG-05 · 알림 설정</span></div>
  </section>
 
  <!-- ───────── 화면: 로그아웃 확인 다이얼로그 (PC) ───────── -->
@@ -5395,7 +5399,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/settings</span>
+ <span class="url">proudgallery.com/settings</span>
  </div>
  <div class="viewport" style="background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center;">
  <div style="background: white; width: 380px; border-radius: 12px; padding: 24px 26px; box-shadow: 0 20px 50px rgba(0,0,0,.3);">
@@ -5424,7 +5428,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-STG-06 · 로그아웃</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-STG-06 · 로그아웃</span></div>
  </section>
 
  <!-- ───────── 화면: 탈퇴 모달 (PC) ───────── -->
@@ -5440,7 +5444,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/settings</span>
+ <span class="url">proudgallery.com/settings</span>
  </div>
  <div class="viewport" style="background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center;">
  <div style="background: white; width: 460px; max-height: 92%; overflow-y: auto; border-radius: 12px; padding: 24px 26px; box-shadow: 0 20px 50px rgba(0,0,0,.3); position: relative;">
@@ -5497,7 +5501,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-STG-03 · 탈퇴</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-STG-03 · 탈퇴</span></div>
  </section>
 
  <!-- ───────── 화면: 소개 (About) (PC) ───────── -->
@@ -5513,16 +5517,16 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/about</span>
+ <span class="url">proudgallery.com/about</span>
  </div>
  <div style="background: white; padding: 0; height: 100%; overflow-y: auto;">
  <div style="aspect-ratio: 16/5; background: linear-gradient(135deg, #fef3c7, #fecaca, #ddd6fe); padding: 36px 40px; display: flex; flex-direction: column; justify-content: center;">
  <div style="font-size: 12px; color: var(--ink-3); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px;">Live Artfully</div>
- <div style="font-size: 32px; font-weight: 800; line-height: 1.2;">시니어 작가의<br>디지털 갤러리, Artier</div>
+ <div style="font-size: 32px; font-weight: 800; line-height: 1.2;">시니어 작가의<br>디지털 갤러리, Proud Gallery</div>
  </div>
  <div style="padding: 32px 40px;">
  <div style="font-size: 14px; color: var(--ink-2); line-height: 1.8; margin-bottom: 28px;">
- Artier는 시니어·중장년 순수미술 작가가 본인 작품을 디지털 갤러리에 전시하고 가족·지인·동호회와 공유하는 플랫폼입니다.<br>
+ Proud Gallery는 시니어·중장년 순수미술 작가가 본인 작품을 디지털 갤러리에 전시하고 가족·지인·동호회와 공유하는 플랫폼입니다.<br>
  여기는 게시판이 아니라 작품을 위한 공간입니다.
  </div>
  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 28px;">
@@ -5550,7 +5554,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-INF-01 · 소개</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-INF-01 · 소개</span></div>
  </section>
 
  <!-- ───────── 화면: FAQ (PC) ───────── -->
@@ -5566,7 +5570,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/faq</span>
+ <span class="url">proudgallery.com/faq</span>
  </div>
  <div style="background: white; padding: 24px 32px; height: 100%; overflow-y: auto;">
  <div style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">자주 묻는 질문</div>
@@ -5583,7 +5587,7 @@
  <div style="display: flex; flex-direction: column; gap: 8px; position: relative;">
  <div style="padding: 14px 16px; border: 1px solid var(--line); border-radius: 8px;">
  <div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600;">전시 한 점만 올려도 되나요?<span>−</span></div>
- <div style="font-size: 12px; color: var(--ink-2); line-height: 1.7; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line);">네, 그림 한 점도 어엿한 전시예요. Artier에서는 작품 1점도 시스템이 자동으로 전시 페이지를 만들어드립니다.</div>
+ <div style="font-size: 12px; color: var(--ink-2); line-height: 1.7; margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--line);">네, 그림 한 점도 어엿한 전시예요. Proud Gallery에서는 작품 1점도 시스템이 자동으로 전시 페이지를 만들어드립니다.</div>
  </div>
  <div style="padding: 14px 16px; border: 1px solid var(--line); border-radius: 8px;"><div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600;">검수는 얼마나 걸리나요?<span style="color: var(--ink-3);">+</span></div></div>
  <div style="padding: 14px 16px; border: 1px solid var(--line); border-radius: 8px;"><div style="display: flex; justify-content: space-between; font-size: 13px; font-weight: 600;">친구를 그룹전에 어떻게 초대하나요?<span style="color: var(--ink-3);">+</span></div></div>
@@ -5610,7 +5614,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-INF-02 · FAQ</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-INF-02 · FAQ</span></div>
  </section>
 
  <!-- ───────── 화면: 공지 목록 (PC) ───────── -->
@@ -5626,7 +5630,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/notices</span>
+ <span class="url">proudgallery.com/notices</span>
  </div>
  <div style="background: white; padding: 24px 32px; height: 100%; overflow-y: auto;">
  <div style="font-size: 18px; font-weight: 700; margin-bottom: 18px;">공지사항</div>
@@ -5666,7 +5670,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-INF-03 · 공지 목록</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-INF-03 · 공지 목록</span></div>
  </section>
 
  <!-- ───────── 화면: 공지 상세 (PC) ───────── -->
@@ -5682,15 +5686,15 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/notices/notice-2026-04-05</span>
+ <span class="url">proudgallery.com/notices/notice-2026-04-05</span>
  </div>
  <div style="background: white; padding: 26px 36px; height: 100%; overflow-y: auto;">
  <div style="font-size: 12px; color: var(--ink-3); margin-bottom: 12px;">← 공지 목록</div>
  <span style="background: #dbeafe; color: #1e40af; padding: 3px 10px; border-radius: 4px; font-size: 10.5px; font-weight: 600;">업데이트</span>
  <div style="font-size: 22px; font-weight: 800; margin: 8px 0 4px;">검수 SLA를 1~24시간으로 명시했습니다</div>
- <div style="font-size: 11.5px; color: var(--ink-3); margin-bottom: 22px;">2026.04.05 · Artier 운영팀</div>
+ <div style="font-size: 11.5px; color: var(--ink-3); margin-bottom: 22px;">2026.04.05 · Proud Gallery 운영팀</div>
  <div style="font-size: 13.5px; color: var(--ink-2); line-height: 1.85; padding-bottom: 24px; border-bottom: 1px solid var(--line);">
- 안녕하세요, Artier 운영팀입니다.<br><br>
+ 안녕하세요, Proud Gallery 운영팀입니다.<br><br>
  전시 발행 후 검수 처리에 걸리는 시간을 <strong>1~24시간</strong>으로 명시했습니다. 결과는 알림 센터와 가입 시 등록한 이메일로 전달됩니다.<br><br>
  <strong>주요 변경:</strong><br>
  • 발행 직후 안내 메시지에 SLA 명시<br>
@@ -5719,7 +5723,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-INF-04 · 공지 상세</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-INF-04 · 공지 상세</span></div>
  </section>
 
  <!-- ───────── 화면: 이용약관 (PC) ───────── -->
@@ -5735,7 +5739,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/terms</span>
+ <span class="url">proudgallery.com/terms</span>
  </div>
  <div style="background: white; padding: 24px 36px; height: 100%; overflow-y: auto; display: grid; grid-template-columns: 1fr 200px; gap: 24px;">
  <div>
@@ -5743,7 +5747,7 @@
  <div style="font-size: 22px; font-weight: 800; margin-bottom: 18px;">이용약관</div>
  <div style="background: #fef2f2; border-left: 3px solid #dc2626; padding: 10px 12px; font-size: 11.5px; color: #7f1d1d; border-radius: 0 4px 4px 0; margin-bottom: 20px;">⚠️ 본 약관 본문은 placeholder. <strong>런칭 전 법무 확정 필수</strong> (N-10)</div>
  <h4 style="font-size: 14px; margin: 0 0 8px; padding-top: 12px; border-top: 1px solid var(--line);">제1조 (목적)</h4>
- <div style="font-size: 12.5px; color: var(--ink-2); line-height: 1.85; margin-bottom: 18px;">본 약관은 Artier(이하 "회사")가 제공하는 디지털 갤러리 서비스의 이용 조건과 절차, 회사와 회원의 권리·의무·책임 사항을 정함을 목적으로 한다.</div>
+ <div style="font-size: 12.5px; color: var(--ink-2); line-height: 1.85; margin-bottom: 18px;">본 약관은 Proud Gallery(이하 "회사")가 제공하는 디지털 갤러리 서비스의 이용 조건과 절차, 회사와 회원의 권리·의무·책임 사항을 정함을 목적으로 한다.</div>
  <h4 style="font-size: 14px; margin: 0 0 8px;">제2조 (정의)</h4>
  <div style="font-size: 12.5px; color: var(--ink-2); line-height: 1.85;">"회원"이란 본 약관에 따라 회사와 이용 계약을 체결하고 서비스를 이용하는 자를 말한다. ...</div>
  </div>
@@ -5774,7 +5778,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-INF-05 · 이용약관</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-INF-05 · 이용약관</span></div>
  </section>
 
  <!-- ───────── 화면: 개인정보처리방침 (PC) ───────── -->
@@ -5790,7 +5794,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/privacy</span>
+ <span class="url">proudgallery.com/privacy</span>
  </div>
  <div style="background: white; padding: 24px 36px; height: 100%; overflow-y: auto; display: grid; grid-template-columns: 1fr 200px; gap: 24px;">
  <div>
@@ -5798,7 +5802,7 @@
  <div style="font-size: 22px; font-weight: 800; margin-bottom: 14px;">개인정보처리방침</div>
  <div style="background: #fafafa; border: 1px solid var(--line); padding: 12px 14px; border-radius: 6px; margin-bottom: 18px; font-size: 11.5px; color: var(--ink-2); line-height: 1.7;">
  <strong>개인정보보호 책임자(DPO)</strong><br>
- 성명: 홍길동 · 이메일: privacy@artier.com<br>
+ 성명: 홍길동 · 이메일: privacy@proudgallery.com<br>
  데이터 내보내기·삭제 요청은 위 이메일로 보내주세요.
  </div>
  <h4 style="font-size: 14px; margin: 0 0 8px;">1. 수집하는 개인정보 항목</h4>
@@ -5837,7 +5841,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-INF-06 · 개인정보</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-INF-06 · 개인정보</span></div>
  </section>
 
  <!-- ───────── 화면: 문의하기 (PC) ───────── -->
@@ -5853,11 +5857,11 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/contact</span>
+ <span class="url">proudgallery.com/contact</span>
  </div>
  <div style="background: white; padding: 24px 32px; height: 100%; overflow-y: auto;">
  <div style="font-size: 18px; font-weight: 700; margin-bottom: 4px;">문의하기</div>
- <div style="font-size: 12px; color: var(--ink-3); margin-bottom: 22px;">평일 24시간 내 답변드려요</div>
+ <div style="font-size: 12px; color: var(--ink-3); margin-bottom: 22px;">영업일 5일 안에 답변드려요</div>
  <div style="max-width: 640px; display: flex; flex-direction: column; gap: 12px;">
  <div><div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">이메일</div><div style="border: 1.5px solid var(--ink); padding: 9px 12px; border-radius: 6px; font-size: 12.5px;">name@example.com</div></div>
  <div><div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">카테고리 <span style="color: #dc2626;">*</span></div><div style="border: 1px solid var(--line-2); padding: 9px 12px; border-radius: 6px; font-size: 12.5px; color: var(--ink-3); display: flex; justify-content: space-between;">계정 관련<span>▼</span></div><div style="font-size: 10px; color: var(--ink-4); margin-top: 4px;">계정·닉네임 변경 신청·업로드/전시·신고/저작권·개인정보 권리·제안/피드백·오류 제보·기타 (8종)</div></div>
@@ -5889,7 +5893,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>USR-INF-07 · 문의</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>USR-INF-07 · 문의</span></div>
  </section>
 
 
@@ -5906,11 +5910,11 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/admin</span>
+ <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
- <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
+ <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Proud Gallery Admin</div>
  <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
@@ -5954,7 +5958,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-DSH-01 · 대시보드</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>ADM-DSH-01 · 대시보드</span></div>
  </section>
 
  <!-- ───────── 화면: 검수 큐 (PC) ───────── -->
@@ -5970,11 +5974,11 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/admin</span>
+ <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
- <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
+ <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Proud Gallery Admin</div>
  <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
@@ -6033,7 +6037,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-REV-01 · 검수 큐</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>ADM-REV-01 · 검수 큐</span></div>
  </section>
 
  <!-- ───────── 화면: 검수 상세·판정 (PC) ───────── -->
@@ -6049,11 +6053,11 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/admin</span>
+ <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
- <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
+ <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Proud Gallery Admin</div>
  <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
@@ -6112,11 +6116,11 @@
  <li>응모전 연결된 경우 응모 카운트 갱신</li>
  </ol></div>
 
- <div class="pol"><h4>관련 정책</h4>검수 처리 24시간 이내 목표 · 신고 처리 (07-6)</div>
+ <div class="pol"><h4>관련 정책</h4>검수 처리 1~24시간 · 신고 처리 (07-6)</div>
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-REV-02 · 검수 판정</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>ADM-REV-02 · 검수 판정</span></div>
  </section>
 
  <!-- ───────── 화면: 반려 사유 선택 모달 (PC) ───────── -->
@@ -6132,7 +6136,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/admin/content-review</span>
+ <span class="url">proudgallery.com/admin/content-review</span>
  </div>
  <div class="viewport" style="background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center;">
  <div style="background: white; width: 460px; border-radius: 12px; padding: 24px 28px; box-shadow: 0 20px 50px rgba(0,0,0,.3); position: relative;">
@@ -6175,7 +6179,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-REV-03 · 반려 사유</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>ADM-REV-03 · 반려 사유</span></div>
  </section>
 
  <!-- ───────── 화면: 현재 Pick 대시보드 (PC) ───────── -->
@@ -6191,11 +6195,11 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/admin</span>
+ <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
- <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
+ <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Proud Gallery Admin</div>
  <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
@@ -6239,7 +6243,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-PCK-01 · Pick 대시보드</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>ADM-PCK-01 · Pick 대시보드</span></div>
  </section>
 
  <!-- ───────── 화면: Pick 추가 검색 (PC) ───────── -->
@@ -6255,11 +6259,11 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/admin</span>
+ <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
- <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
+ <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Proud Gallery Admin</div>
  <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
@@ -6315,7 +6319,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-PCK-02 · Pick 추가</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>ADM-PCK-02 · Pick 추가</span></div>
  </section>
 
  <!-- ───────── 화면: Pick 이력 열람 (PC) ───────── -->
@@ -6331,11 +6335,11 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/admin</span>
+ <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
- <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
+ <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Proud Gallery Admin</div>
  <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
@@ -6378,7 +6382,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-PCK-03 · Pick 이력</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>ADM-PCK-03 · Pick 이력</span></div>
  </section>
 
  <!-- ───────── 화면: 기획전 관리 (PC) ───────── -->
@@ -6394,11 +6398,11 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/admin</span>
+ <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
- <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
+ <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Proud Gallery Admin</div>
  <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
@@ -6456,7 +6460,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-CUR-01 · 기획전</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>ADM-CUR-01 · 기획전</span></div>
  </section>
 
  <!-- ───────── 화면: 추천 전시 관리 (PC) ───────── -->
@@ -6472,11 +6476,11 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/admin/featured</span>
+ <span class="url">proudgallery.com/admin/featured</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
- <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
+ <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Proud Gallery Admin</div>
  <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
@@ -6524,7 +6528,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-CUR-02 · 추천 전시</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>ADM-CUR-02 · 추천 전시</span></div>
  </section>
 
  <!-- ───────── 화면: 배너 목록 (PC) ───────── -->
@@ -6540,11 +6544,11 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/admin</span>
+ <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
- <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
+ <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Proud Gallery Admin</div>
  <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
@@ -6607,7 +6611,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-BNR-01 · 배너 목록</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>ADM-BNR-01 · 배너 목록</span></div>
  </section>
 
  <!-- ───────── 화면: 배너 편집 폼 (PC) ───────── -->
@@ -6623,11 +6627,11 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/admin</span>
+ <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
- <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
+ <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Proud Gallery Admin</div>
  <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
@@ -6649,7 +6653,7 @@
  </div>
  <div>
  <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">이미지 URL <span style="color: #dc2626;">*</span></div>
- <div style="border: 1.5px solid var(--ink); padding: 9px 12px; border-radius: 6px; font-size: 11px; color: var(--ink-3); margin-bottom: 8px;">https://cdn.artier.com/banners/spring-2026.jpg</div>
+ <div style="border: 1.5px solid var(--ink); padding: 9px 12px; border-radius: 6px; font-size: 11px; color: var(--ink-3); margin-bottom: 8px;">https://cdn.proudgallery.com/banners/spring-2026.jpg</div>
  <div style="aspect-ratio: 3/1; background: linear-gradient(135deg, #fef3c7, #fecaca); border-radius: 6px; margin-bottom: 12px;"></div>
  <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">링크 URL</div>
  <div style="border: 1px solid var(--line-2); padding: 9px 12px; border-radius: 6px; font-size: 11px; color: var(--ink-3);">/events/event-2026-spring</div>
@@ -6679,7 +6683,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-BNR-02 · 배너 편집</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>ADM-BNR-02 · 배너 편집</span></div>
  </section>
 
  <!-- ───────── 화면: 응모전 목록 (PC) ───────── -->
@@ -6695,11 +6699,11 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/admin</span>
+ <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
- <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
+ <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Proud Gallery Admin</div>
  <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
@@ -6749,7 +6753,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-EVT-01 · 응모전 목록</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>ADM-EVT-01 · 응모전 목록</span></div>
  </section>
 
  <!-- ───────── 화면: 응모전 편집 폼 (PC) ───────── -->
@@ -6765,11 +6769,11 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/admin</span>
+ <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
- <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
+ <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Proud Gallery Admin</div>
  <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
@@ -6792,7 +6796,7 @@
  </div>
  <div>
  <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">배너 URL <span style="color: #dc2626;">*</span></div>
- <div style="border: 1.5px solid var(--ink); padding: 9px 12px; border-radius: 6px; font-size: 11px; color: var(--ink-3); margin-bottom: 8px;">https://cdn.artier.com/...</div>
+ <div style="border: 1.5px solid var(--ink); padding: 9px 12px; border-radius: 6px; font-size: 11px; color: var(--ink-3); margin-bottom: 8px;">https://cdn.proudgallery.com/...</div>
  <div style="aspect-ratio: 3/1; background: linear-gradient(135deg, #d1fae5, #dbeafe); border-radius: 6px; margin-bottom: 12px;"></div>
  <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">참여 안내</div>
  <div style="border: 1px solid var(--line-2); padding: 9px 12px; border-radius: 6px; font-size: 12px; color: var(--ink-3); margin-bottom: 12px; min-height: 60px;">업로드 시 "응모전 응모" 옵션 선택...</div>
@@ -6823,7 +6827,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-EVT-02 · 응모전 편집</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>ADM-EVT-02 · 응모전 편집</span></div>
  </section>
 
  <!-- ───────── 화면: 응모전 참여자 현황 (PC) ───────── -->
@@ -6839,11 +6843,11 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/admin</span>
+ <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
- <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
+ <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Proud Gallery Admin</div>
  <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
@@ -6884,7 +6888,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-EVT-03 · 참여자</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>ADM-EVT-03 · 참여자</span></div>
  </section>
 
  <!-- ───────── 화면: 신고 큐 (PC) ───────── -->
@@ -6900,11 +6904,11 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/admin</span>
+ <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
- <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
+ <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Proud Gallery Admin</div>
  <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
@@ -6968,7 +6972,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-RPT-01 · 신고 큐</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>ADM-RPT-01 · 신고 큐</span></div>
  </section>
 
  <!-- ───────── 화면: 신고 상세·처리 (PC) ───────── -->
@@ -6984,11 +6988,11 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/admin</span>
+ <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
- <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
+ <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Proud Gallery Admin</div>
  <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
@@ -7036,7 +7040,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-RPT-02 · 신고 처리</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>ADM-RPT-02 · 신고 처리</span></div>
  </section>
 
  <!-- ───────── 화면: 처리 액션 확인 다이얼로그 (4 변형) (PC) ───────── -->
@@ -7052,7 +7056,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/admin/reports</span>
+ <span class="url">proudgallery.com/admin/reports</span>
  </div>
  <div class="viewport" style="background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; padding: 20px;">
  <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 14px; max-width: 800px; width: 100%;">
@@ -7103,7 +7107,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-RPT-03 · 처리 확인</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>ADM-RPT-03 · 처리 확인</span></div>
  </section>
 
  <!-- ───────── 화면: 회원 목록 (PC) ───────── -->
@@ -7119,11 +7123,11 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/admin</span>
+ <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
- <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
+ <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Proud Gallery Admin</div>
  <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
@@ -7176,7 +7180,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-MBR-01 · 회원 목록</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>ADM-MBR-01 · 회원 목록</span></div>
  </section>
 
  <!-- ───────── 화면: 회원 상세 (PC) ───────── -->
@@ -7192,11 +7196,11 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/admin</span>
+ <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
- <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
+ <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Proud Gallery Admin</div>
  <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
@@ -7235,7 +7239,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-MBR-02 · 회원 상세</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>ADM-MBR-02 · 회원 상세</span></div>
  </section>
 
  <!-- ───────── 화면: 정지 모달 · 보류 (PC) ───────── -->
@@ -7251,11 +7255,11 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/admin</span>
+ <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
- <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
+ <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Proud Gallery Admin</div>
  <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
@@ -7277,7 +7281,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-MBR-03 · 정지(보류)</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>ADM-MBR-03 · 정지(보류)</span></div>
  </section>
 
 
@@ -7295,11 +7299,11 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/admin</span>
+ <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
- <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
+ <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Proud Gallery Admin</div>
  <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
@@ -7360,7 +7364,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-INQ-01 · 문의함</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>ADM-INQ-01 · 문의함</span></div>
  </section>
 
  <!-- ───────── 화면: 공지 관리 (PC) ───────── -->
@@ -7374,10 +7378,10 @@
  <div class="screen">
  <div class="mock">
  <div class="pc-frame">
- <div class="chrome"><span class="dots"><span></span><span></span><span></span></span><span class="url">artier.com/admin/notices</span></div>
+ <div class="chrome"><span class="dots"><span></span><span></span><span></span></span><span class="url">proudgallery.com/admin/notices</span></div>
  <div style="background: white; height: 100%; display: flex;">
  <aside style="width: 160px; background: #fafafa; border-right: 1px solid var(--line); padding: 14px 10px;">
- <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Artier Admin</div>
+ <div style="font-size: 12px; font-weight: 800; padding: 4px 8px; margin-bottom: 12px;">Proud Gallery Admin</div>
  <div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">대시보드</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">검수</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">신고</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">Pick</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">추천 전시</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">기획전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">응모전</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">배너</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">회원</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; background: var(--ink); color: white;">공지</div><div style="padding: 6px 10px; border-radius: 4px; font-size: 11px; cursor: pointer; color: var(--ink-2);">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto; padding: 18px 22px;">
@@ -7401,9 +7405,9 @@
  <div style="display: grid; grid-template-columns: 1fr 80px 90px 90px 140px; padding: 10px 14px; border-bottom: 1px solid var(--line); font-size: 12px; align-items: center;">
  <div>
  <div style="display: flex; align-items: center; gap: 5px; font-weight: 600;">
- <span style="font-size: 10px; color: #f59e0b;">📌</span> Artier 그랜드 오픈 안내
+ <span style="font-size: 10px; color: #f59e0b;">📌</span> Proud Gallery 그랜드 오픈 안내
  </div>
- <div style="font-size: 10.5px; color: var(--ink-3); margin-top: 2px;">Artier Grand Opening</div>
+ <div style="font-size: 10.5px; color: var(--ink-3); margin-top: 2px;">Proud Gallery Grand Opening</div>
  </div>
  <div style="font-size: 10.5px; color: var(--ink-3);">서비스</div>
  <div><span style="background: #ecfdf5; color: #047857; border: 1px solid #a7f3d0; padding: 2px 7px; border-radius: 8px; font-size: 10px; font-weight: 500;">게시 중</span></div>
@@ -7450,7 +7454,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>ADM-NTC-01 · 공지 관리</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>ADM-NTC-01 · 공지 관리</span></div>
  </section>
 
  <!-- ───────── 화면: CM-02 로그인 유도 모달 (PC) ───────── -->
@@ -7466,7 +7470,7 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">artier.com/exhibitions/exh-001</span>
+ <span class="url">proudgallery.com/exhibitions/exh-001</span>
  </div>
  <div class="viewport" style="background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; gap: 24px; padding: 24px;">
  <!-- 상태 A: 첫 시도 → 모달 -->
@@ -7535,7 +7539,7 @@
  </div>
  </div>
  </div>
- <div class="slide-foot"><span>Artier 화면 설계서 v1.5 (PC)</span><span>CM-02 · 로그인 유도</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>CM-02 · 로그인 유도</span></div>
  </section>
 
 

@@ -43,7 +43,7 @@ PM 결정이 영향을 받는 작업(카피 작성·정책 정정·기획 변경
   - 사용자 기능·AC → `PRD_User_v1.md` · 어드민 기능 → `PRD_Admin_v1.md`
   - UX 문구·i18n 키 → `Copy_v1.md`
   - 엔티티·스토어·컴포넌트 계약·환경 플래그·시각 토큰 등 기술/디자인 자산 — `_planning` 외부에서 관리(코드·디자인 도구가 단일 소스). 변경 시 영향이 정책·요구사항·화면 카드에 미치면 그쪽 문서만 갱신한다.
-  - `_planning/_screen_specs/Artier_Screen_Spec_v1.html` 동기화 트리거·작업 단위는 **`_planning/README.md` 「문서 갱신 규칙」·「화면 스펙 HTML 동기화 의무」**를 따른다(본 파일에 중복 서술 없음).
+  - `_planning/_screen_specs/ProudGallery_Screen_Spec_v1.html` 동기화 트리거·작업 단위는 **`_planning/README.md` 「문서 갱신 규칙」·「화면 스펙 HTML 동기화 의무」**를 따른다(본 파일에 중복 서술 없음).
   - 기획 문서만 수정할 때도 **주제별로 연관 파일을 한 작업 범위에서 묶는다**. 번들 체크리스트는 **`_planning/README.md` 「주제별 연쇄 갱신 번들」** (신고·초대·검수·가입·문의·용어 등).
 
 ### 2) 문서 버전 표기 (push 단위)

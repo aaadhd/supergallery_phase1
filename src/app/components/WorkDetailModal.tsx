@@ -53,6 +53,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
   const [zoomOrigin, setZoomOrigin] = useState('center center');
   const [deepZoomSrc, setDeepZoomSrc] = useState<string | null>(null);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
+  const [loginPromptAction, setLoginPromptAction] = useState<import('./LoginPromptModal').LoginPromptAction>('general');
   const [showReport, setShowReport] = useState(false);
   const [showInquiry, setShowInquiry] = useState(false);
 
@@ -64,8 +65,9 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
     navigate(`/profile/${artistId}`);
   };
 
-  const requireAuth = (action: () => void) => {
+  const requireAuth = (action: () => void, promptAction: import('./LoginPromptModal').LoginPromptAction = 'general') => {
     if (!authStore.isLoggedIn()) {
+      setLoginPromptAction(promptAction);
       setShowLoginPrompt(true);
       return;
     }
@@ -381,7 +383,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end" sideOffset={6} className="z-[140]">
                   <DropdownMenuItem
-                    onClick={() => requireAuth(() => setShowInquiry(true))}
+                    onClick={() => requireAuth(() => setShowInquiry(true), 'general')}
                     className="min-h-[44px]"
                   >
                     <MessageSquare className="h-4 w-4 mr-2" />
@@ -389,7 +391,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                   </DropdownMenuItem>
                   <DropdownMenuSeparator />
                   <DropdownMenuItem
-                    onClick={() => requireAuth(() => setShowReport(true))}
+                    onClick={() => requireAuth(() => setShowReport(true), 'report')}
                     className="text-destructive focus:text-destructive min-h-[44px]"
                   >
                     <Flag className="h-4 w-4 mr-2" />
@@ -537,7 +539,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                           {showFollow && (
                             <button
                               type="button"
-                              onClick={(e) => { e.stopPropagation(); requireAuth(() => followStore.toggle(imgArtist.id)); }}
+                              onClick={(e) => { e.stopPropagation(); requireAuth(() => followStore.toggle(imgArtist.id), 'follow'); }}
                               className={`min-h-[44px] text-sm font-bold px-4 py-2 rounded-full shrink-0 transition-colors ${
                                 follows.isFollowing(imgArtist.id)
                                   ? 'bg-white/20 text-white/80'
@@ -563,7 +565,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                 <div className="flex gap-3 w-full max-w-[520px]">
                   <button
                     type="button"
-                    onClick={() => requireAuth(handleLike)}
+                    onClick={() => requireAuth(handleLike, 'like')}
                     className={`flex-1 flex items-center justify-center gap-2 min-h-[52px] rounded-full text-sm font-bold transition-all ${
                       isLiked ? 'bg-[#FF2E63] text-white' : 'bg-white/10 text-white lg:hover:bg-white/20'
                     }`}
@@ -573,7 +575,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                   </button>
                   <button
                     type="button"
-                    onClick={() => requireAuth(handleSave)}
+                    onClick={() => requireAuth(handleSave, 'save')}
                     className={`flex-1 flex items-center justify-center gap-2 min-h-[52px] rounded-full text-sm font-bold transition-all ${
                       isSaved ? 'bg-primary text-white' : 'bg-white/10 text-white lg:hover:bg-white/20'
                     }`}
@@ -672,7 +674,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                   {!isPreview && work.artist.id !== allArtists[0]?.id && (
                     <button
                       type="button"
-                      onClick={() => requireAuth(() => followStore.toggle(work.artist.id))}
+                      onClick={() => requireAuth(() => followStore.toggle(work.artist.id), 'follow')}
                       className={`inline-flex items-center gap-2 min-h-[44px] px-6 rounded-full text-sm font-bold border transition-all ${
                         follows.isFollowing(work.artist.id)
                           ? 'bg-zinc-100 text-zinc-500 border-zinc-200'
@@ -801,7 +803,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
               </DropdownMenuTrigger>
               <DropdownMenuContent align="start" sideOffset={6} className="z-[140]">
                 <DropdownMenuItem
-                  onClick={() => requireAuth(() => setShowInquiry(true))}
+                  onClick={() => requireAuth(() => setShowInquiry(true), 'general')}
                   className="min-h-[44px]"
                 >
                   <MessageSquare className="h-4 w-4 mr-2" />
@@ -809,7 +811,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem
-                  onClick={() => requireAuth(() => setShowReport(true))}
+                  onClick={() => requireAuth(() => setShowReport(true), 'report')}
                   className="text-destructive focus:text-destructive min-h-[44px]"
                 >
                   <Flag className="h-4 w-4 mr-2" />
@@ -855,7 +857,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
             {/* Like */}
             <button
               type="button"
-              onClick={() => requireAuth(handleLike)}
+              onClick={() => requireAuth(handleLike, 'like')}
               className="flex h-auto min-h-0 flex-col items-center gap-1.5 py-1 text-white group"
               aria-label={t('workDetail.like')}
             >
@@ -877,7 +879,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
             {/* Save */}
             <button
               type="button"
-              onClick={() => requireAuth(handleSave)}
+              onClick={() => requireAuth(handleSave, 'save')}
               className="flex h-auto min-h-0 flex-col items-center gap-1.5 py-1 text-white group"
               aria-label={t('workDetail.save')}
             >
@@ -954,7 +956,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
         <div className="flex items-center justify-around px-4 py-3">
           <button
             type="button"
-            onClick={() => requireAuth(handleLike)}
+            onClick={() => requireAuth(handleLike, 'like')}
             className="flex flex-col items-center gap-1 p-1.5 -m-1 border-0 bg-transparent shadow-none cursor-pointer"
           >
             <Heart className={`h-6 w-6 ${isLiked ? 'text-[#FF2E63] fill-[#FF2E63]' : 'text-white'}`} />
@@ -962,7 +964,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
           </button>
           <button
             type="button"
-            onClick={() => requireAuth(handleSave)}
+            onClick={() => requireAuth(handleSave, 'save')}
             className="flex flex-col items-center gap-1 p-1.5 -m-1 border-0 bg-transparent shadow-none cursor-pointer"
           >
             <Bookmark className={`h-6 w-6 ${isSaved ? 'text-white fill-white' : 'text-white'}`} />
@@ -980,7 +982,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
           {!isGroupWork && work.artist.id !== allArtists[0]?.id && (
             <button
               type="button"
-              onClick={() => requireAuth(() => followStore.toggle(work.artist.id))}
+              onClick={() => requireAuth(() => followStore.toggle(work.artist.id), 'follow')}
               className="flex flex-col items-center gap-1 p-1.5 -m-1 border-0 bg-transparent shadow-none cursor-pointer"
             >
               <UserPlus className={`h-6 w-6 ${follows.isFollowing(work.artist.id) ? 'text-primary' : 'text-white'}`} />
@@ -994,7 +996,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
       </div>
 
       {/* Login prompt modal */}
-      <LoginPromptModal open={showLoginPrompt} onClose={() => setShowLoginPrompt(false)} action="like" />
+      <LoginPromptModal open={showLoginPrompt} onClose={() => setShowLoginPrompt(false)} action={loginPromptAction} />
       <ReportModal
         open={showReport}
         onClose={() => setShowReport(false)}

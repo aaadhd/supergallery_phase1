@@ -12,7 +12,7 @@ Proud Gallery(SuperGallery Phase 1)의 UX 문구 가이드. 본 문서는 **톤�
 
 ### 1.1 서비스 페르소나
 
-Artier는 시니어·중장년 순수미술 작가를 주 고객으로 하는 **조용하고 정중한 갤러리**다. 친구 같은 친근함보다 **전시장 큐레이터 같은 품위**를 목표로 한다.
+Proud Gallery는 시니어·중장년 순수미술 작가를 주 고객으로 하는 **조용하고 정중한 갤러리**다. 친구 같은 친근함보다 **전시장 큐레이터 같은 품위**를 목표로 한다.
 
 | 속성 | 표현 |
 |---|---|
@@ -30,7 +30,7 @@ Artier는 시니어·중장년 순수미술 작가를 주 고객으로 하는 **
 | **오류·차단** | 차분·해결 지향 | "~할 수 없어요. ~을 확인해주세요." |
 | **정지·제재** | 담담·책임 명확 | "~일까지 이용이 제한됩니다. 이의제기를 원하시면…" |
 | **삭제·취소 확인** | 무겁고 신중 | "영구 삭제되며 되돌릴 수 없어요." |
-| **정책·약관 안내** | 투명·객관 | "Artier는 ~에 대해 다음과 같이 처리합니다." |
+| **정책·약관 안내** | 투명·객관 | "Proud Gallery는 ~에 대해 다음과 같이 처리합니다." |
 
 ---
 
@@ -152,7 +152,7 @@ Artier는 시니어·중장년 순수미술 작가를 주 고객으로 하는 **
 ## 5. 시니어 친화 카피 원칙
 
 1. **한자어 허용, 외래어 주의**: "가입(O)", "등록(O)", "로그인(O 관용화됨)" / "로그아웃(애매 — 맥락에서 '나가기'나 '종료' 권장)"
-2. **부정보다 긍정**: `사진은 차단돼요` → `Artier는 디지털 드로잉 작품 전용이에요.`
+2. **부정보다 긍정**: `사진은 차단돼요` → `Proud Gallery는 디지털 드로잉 작품 전용이에요.`
 3. **2중 부정 금지**: `~하지 않으면 ~할 수 없어요` → `~해야 ~할 수 있어요`
 4. **약어 금지**: "AP", "PP", "PRD" 등 내부 약어 노출 금지(어드민은 예외).
 5. **아이콘 단독 의존 금지**: 모든 아이콘 버튼에 스크린리더 안내 라벨 + 시각 레이블 병기 권장.
@@ -267,33 +267,33 @@ const koMessages = {
   'refStub.tplTitle': '2. 이메일 알림 템플릿 (미리보기 · PRD 9종)',
   'refStub.tplLead':
     '기능 모음 「이메일 알림 템플릿」과 동일한 9종이에요. 실제 발송 없이 문구만 확인합니다. 좋아요·팔로우 등은 인앱(및 옵트인 이메일)로 별도 정의돼요. 비밀번호 재설정·변경 템플릿은 §2.5 매직 링크 전환으로 폐기됐어요.',
-  'refStub.tplWelcomeSubject': 'Artier에 오신 것을 환영합니다 🎨',
+  'refStub.tplWelcomeSubject': 'Proud Gallery에 오신 것을 환영합니다 🎨',
   'refStub.tplWelcomeBody':
-    '{nickname}님, 환영해요!\nArtier는 나의 그림이 전시가 되는 디지털 갤러리예요.\n작품을 올리면 자동으로 나만의 전시가 열리고, 다른 작가들의 작품도 감상할 수 있어요.\n먼저 프로필을 완성해보세요!\n\nCTA: 프로필 완성하기 → /me/edit',
-  'refStub.tplVerifySubject': '[Artier] 이메일 주소를 인증해주세요',
+    '{nickname}님, 환영해요!\nProud Gallery는 나의 그림이 전시가 되는 디지털 갤러리예요.\n작품을 올리면 자동으로 나만의 전시가 열리고, 다른 작가들의 작품도 감상할 수 있어요.\n먼저 프로필을 완성해보세요!\n\nCTA: 프로필 완성하기 → /me/edit',
+  'refStub.tplVerifySubject': '[Proud Gallery] 이메일 주소를 인증해주세요',
   'refStub.tplVerifyBody':
-    '안녕하세요, {nickname}님.\nArtier 계정의 이메일 인증을 완료해주세요.\n아래 버튼을 누르면 인증이 완료돼요.\n이 링크는 30분간 유효해요.\n만료된 경우 로그인 후 재발송을 요청해주세요.\n\nCTA: 이메일 인증하기 → {verify_url}',
-  'refStub.tplSignInSubject': '[Artier] 로그인 링크를 보내드려요',
+    '안녕하세요, {nickname}님.\nProud Gallery 계정의 이메일 인증을 완료해주세요.\n아래 버튼을 누르면 인증이 완료돼요.\n이 링크는 30분간 유효해요.\n만료된 경우 로그인 후 재발송을 요청해주세요.\n\nCTA: 이메일 인증하기 → {verify_url}',
+  'refStub.tplSignInSubject': '[Proud Gallery] 로그인 링크를 보내드려요',
   'refStub.tplSignInBody':
-    '안녕하세요.\n입력하신 이메일 주소로 Artier 로그인 요청이 들어왔어요.\n아래 버튼을 누르면 자동으로 로그인돼요.\n이 링크는 30분간 유효해요.\n본인이 요청하지 않으셨다면 이 이메일을 무시해주세요.\n\nCTA: 로그인하기 → {signin_url}',
+    '안녕하세요.\n입력하신 이메일 주소로 Proud Gallery 로그인 요청이 들어왔어요.\n아래 버튼을 누르면 자동으로 로그인돼요.\n이 링크는 30분간 유효해요.\n본인이 요청하지 않으셨다면 이 이메일을 무시해주세요.\n\nCTA: 로그인하기 → {signin_url}',
   'refStub.tplPickSubject': "🎉 내 작품이 이번 주 Proud's Pick에 선정됐어요!",
   'refStub.tplPickBody':
     "{nickname}님, 축하해요!\n'{work_title}'이(가) 이번 주 Proud's Pick에 선정되었어요.\n작품이 둘러보기 피드 상단에 노출되고, 더 많은 분들이 감상할 수 있게 됩니다.\n앞으로도 멋진 작품 기대할게요!\n\nCTA: 내 작품 보기 → {exhibition_url}",
   'refStub.tplWeeklySubject': '🏅 내 작품이 이번 주 위클리 베스트에 선정됐어요!',
   'refStub.tplWeeklyBody':
     "{nickname}님, 축하해요!\n'{work_title}'이(가) 이번 주 위클리 베스트로 뽑혔어요.\n많은 분들이 회원님의 작품에 관심을 보여주셨어요.\n앞으로도 멋진 작품 기대할게요!\n\nCTA: 내 작품 보기 → {exhibition_url}",
-  'refStub.tplPolicySubject': '[Artier] 이용약관 및 개인정보처리방침 변경 안내',
+  'refStub.tplPolicySubject': '[Proud Gallery] 이용약관 및 개인정보처리방침 변경 안내',
   'refStub.tplPolicyBody':
-    '안녕하세요, Artier입니다.\n이용약관 및 개인정보처리방침이 아래와 같이 변경될 예정이에요.\n• 시행일: {effective_date}\n• 주요 변경 내용: (운영팀이 작성)\n변경 전문은 아래에서 확인하실 수 있어요.\n계속 이용하시면 변경된 약관에 동의하신 것으로 간주돼요.\n\nCTA: 변경 내용 확인하기 → {policy_url}',
+    '안녕하세요, Proud Gallery입니다.\n이용약관 및 개인정보처리방침이 아래와 같이 변경될 예정이에요.\n• 시행일: {effective_date}\n• 주요 변경 내용: (운영팀이 작성)\n변경 전문은 아래에서 확인하실 수 있어요.\n계속 이용하시면 변경된 약관에 동의하신 것으로 간주돼요.\n\nCTA: 변경 내용 확인하기 → {policy_url}',
   'refStub.tplMarketingSubject': '(캠페인별 운영팀 작성)',
   'refStub.tplMarketingBody':
     '(캠페인별 본문 — 수신 거부 링크 필수, 정보통신망법)\n푸터: 본 메일은 마케팅 정보 수신에 동의하신 분께 발송돼요. 수신을 원하지 않으시면 [수신 거부]를 클릭해주세요.',
-  'refStub.tplSuspendSubject': '[Artier] 계정 이용이 제한됐어요',
+  'refStub.tplSuspendSubject': '[Proud Gallery] 계정 이용이 제한됐어요',
   'refStub.tplSuspendBody':
     '안녕하세요, {nickname}님.\n커뮤니티 가이드라인 위반으로 인해 계정 이용이 제한됐어요.\n• 사유: {reason}\n• 기간: {period}\n이의가 있으신 경우 문의하기를 통해 연락해주세요.\n\nCTA: 문의하기 → /contact',
-  'refStub.tplWithdrawSubject': '[Artier] 회원 탈퇴가 완료됐어요',
+  'refStub.tplWithdrawSubject': '[Proud Gallery] 회원 탈퇴가 완료됐어요',
   'refStub.tplWithdrawBody':
-    '안녕하세요.\n{date}에 Artier 탈퇴가 완료됐어요.\n• 올리신 작품이 모두 삭제됐어요. 다른 작가의 작품이 있는 전시는 계속 공개돼요.\n• 닉네임은 영구적으로 잠금 처리되어 다른 분이 사용할 수 없어요.\n• 개인정보는 관련 법령에 따라 처리돼요.\n다시 만날 수 있기를 바랍니다.',
+    '안녕하세요.\n{date}에 Proud Gallery 탈퇴가 완료됐어요.\n• 올리신 작품이 모두 삭제됐어요. 다른 작가의 작품이 있는 전시는 계속 공개돼요.\n• 닉네임은 영구적으로 잠금 처리되어 다른 분이 사용할 수 없어요.\n• 개인정보는 관련 법령에 따라 처리돼요.\n다시 만날 수 있기를 바랍니다.',
   'refStub.rulesTitle': '3. 이메일 발송 목록 (기능 모음 마스터 표)',
   'refStub.rulesLead':
     '「이메일 알림 템플릿」문서의 트리거·필수 여부와 동일합니다. 인앱 알림은 「알림 통합 트리거 표」를 참고하세요.',
@@ -302,7 +302,7 @@ const koMessages = {
   'refStub.rulesColTrigger': '발송 트리거',
   'refStub.rulesColReq': '필수/선택',
   'refStub.emailMasterBlock':
-    '1|회원가입 환영|회원가입 완료 시|필수\n2|가입 인증 링크|이메일 가입 직후|필수 (매직 링크 30분)\n3|로그인 인증 링크|이메일 로그인 요청 시|필수 (매직 링크 30분)\n4|Artier\'s Pick 선정|어드민이 Pick 배지 부여 시|필수\n5|위클리 베스트 선정|어드민이 위클리 베스트 배지 부여 시|필수\n6|공지사항 (정책 변경)|이용약관/개인정보처리방침 변경 시|법적 의무\n7|마케팅 이메일|응모전/캠페인 (수신 동의자만)|선택 동의자\n8|계정 정지 안내|어드민이 계정 정지 처리 시|필수\n9|회원 탈퇴 완료|탈퇴 처리 완료 시|권장',
+    '1|회원가입 환영|회원가입 완료 시|필수\n2|가입 인증 링크|이메일 가입 직후|필수 (매직 링크 30분)\n3|로그인 인증 링크|이메일 로그인 요청 시|필수 (매직 링크 30분)\n4|Proud\'s Pick 선정|어드민이 Pick 배지 부여 시|필수\n5|위클리 베스트 선정|어드민이 위클리 베스트 배지 부여 시|필수\n6|공지사항 (정책 변경)|이용약관/개인정보처리방침 변경 시|법적 의무\n7|마케팅 이메일|응모전/캠페인 (수신 동의자만)|선택 동의자\n8|계정 정지 안내|어드민이 계정 정지 처리 시|필수\n9|회원 탈퇴 완료|탈퇴 처리 완료 시|권장',
   'flowMap.heading': 'Phase 1 유저 플로우 — 화면 바로가기',
   'flowMap.intro':
     '아래는 `SuperGallery Phase 1 유저 플로우` 문서 흐름과 대응하는 URL입니다(15번 블록은 기획 검수용 데모). 로그인이 필요한 화면은 GNB에서 로그인한 뒤 이용하세요.',
@@ -391,21 +391,23 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'social.following': '팔로잉',
   'about.heroTitle': '모든 작가를 위한\n온라인 갤러리',
   'about.heroLead':
-    'Artier는 세대와 장르를 넘어 모든 작가가 자유롭게 작품을 전시하고, 발견하고, 연결될 수 있는 디지털 갤러리 플랫폼이에요.',
+    'Proud Gallery는 세대와 장르를 넘어 모든 작가가 자유롭게 작품을 전시하고, 발견하고, 연결될 수 있는 디지털 갤러리 플랫폼이에요.',
   'about.ctaBrowse': '갤러리 둘러보기',
   'about.ctaUpload': '작품 올리기',
-  'about.featuresHeading': 'Artier에서 할 수 있는 것',
+  'about.featuresHeading': 'Proud Gallery에서 할 수 있는 것',
   'about.feat1Title': '작품 전시',
   'about.feat1Desc': '당신의 작품을 아름다운 온라인 갤러리에 전시하고, 전 세계와 공유하세요.',
   'about.feat2Title': '커뮤니티',
-  'about.feat2Desc': '같은 열정을 가진 작가들과 연결되고, 영감을 주고받으세요.',
+  'about.feat2Desc': '마음에 드는 작가를 팔로우하고, 서로의 작품을 감상하며 연결되어 보세요.',
   'about.feat3Title': "Proud's Pick",
   'about.feat3Desc': '매주 뽑히는 우수 작품을 통해 더 많은 관객을 만나보세요.',
   'about.feat4Title': '그룹 전시',
-  'about.feat4Desc': '여러 작가가 함께하는 그룹 전시로 공동 작업의 결과를 공유하세요.',
+  'about.feat4Desc': '동호회·친구·가족과 함께하는 그룹 전시로 추억과 작품을 공유하세요.',
+  'about.feat5Title': '응모전',
+  'about.feat5Desc': '운영팀이 주제를 제시하는 응모전에 참여하고, 선정되어 더 많은 관객과 만나보세요.',
   'about.missionTitle': '우리의 미션',
   'about.missionBody':
-    '예술은 나이, 경력, 장르에 관계없이 누구나 창작하고 공유할 수 있어야 합니다.\nArtier는 디지털 시대에 작가와 감상자를 연결하는 다리가 되어, 모든 작품이 세상과 만날 기회를 만들어 갑니다.',
+    '예술은 나이, 경력, 장르에 관계없이 누구나 창작하고 공유할 수 있어야 합니다.\nProud Gallery는 디지털 시대에 작가와 감상자를 연결하는 다리가 되어, 모든 작품이 세상과 만날 기회를 만들어 갑니다.',
   'about.bottomTitle': '지금 시작하세요',
   'about.bottomLead': '가입은 무료이며, 첫 작품 업로드까지 1분이면 돼요.',
   'about.bottomCta': '첫 작품 올리기',
@@ -454,7 +456,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'notifications.filterUnread': '읽지 않음',
   'notifications.empty': '알림이 없어요',
   'events.title': '이벤트',
-  'events.subtitle': 'Artier에서 진행 중인 다양한 이벤트를 확인하세요',
+  'events.subtitle': 'Proud Gallery에서 진행 중인 다양한 이벤트를 확인하세요',
   'events.participate': '참여하기',
   'events.noActiveEvents': '현재 진행 중인 이벤트가 없어요',
   'events.noUpcoming': '예정된 이벤트가 없어요',
@@ -534,7 +536,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.errProfanityExhibitionName': '전시명에 부적절한 단어가 포함되어 있어요. 다른 표현으로 바꿔 주세요.',
   'upload.errProfanityGroupName': '그룹명에 부적절한 단어가 포함되어 있어요. 다른 표현으로 바꿔 주세요.',
   'upload.cameraBlockTitle': '사진은 올릴 수 없어요',
-  'upload.cameraBlockDesc': 'Artier는 디지털 드로잉 작품 전용 플랫폼이에요. 카메라로 촬영한 사진은 업로드할 수 없어요.',
+  'upload.cameraBlockDesc': 'Proud Gallery는 디지털 드로잉 작품 전용 플랫폼이에요. 카메라로 촬영한 사진은 업로드할 수 없어요.',
   'upload.toastEditLoaded': '작품을 불러왔어요. 수정 후 전시하세요.',
   'upload.toastDraftLoaded': '초안을 불러왔어요.',
   'upload.errMaxImages': '이미지는 최대 10장까지 업로드할 수 있어요.',
@@ -577,7 +579,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'review.notifApproved': '올리신 작품이 승인됐어요. 둘러보기에서 다른 분들이 볼 수 있어요.',
   'review.notifNewWork': '님이 새 전시를 올렸어요',
   // 신고 처리 결과 알림 — 대상 작가/신고자에게 운영팀 조치를 공지
-  'pick.notifSelected': '회원님의 전시 \'{title}\'이 Artier\'s Pick으로 뽑혔어요. 축하드려요!',
+  'pick.notifSelected': '회원님의 전시 \'{title}\'이 Proud\'s Pick으로 뽑혔어요. 축하드려요!',
   'invite.notifAutoMatched': '\'{name}\' 님이 \'{title}\' 전시에 본인 자리를 등록했어요. 잘못 연결됐다면 전시 편집에서 풀 수 있어요.',
   'report.notifTargetWorkDeleted': '회원님의 전시 \'{title}\'이 신고 처리로 삭제됐어요. 사유: {reason}. 자세한 내용은 문의하기로 연락 주세요.',
   'report.deleteReason.copyright': '저작권 침해 확정',
@@ -611,6 +613,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.reviewInfoEditImg': '이미지를 바꾸면 다시 검수 대기로 돌아가요.',
   'upload.reviewInfoEditMeta': '제목·그룹명만 고치는 건 즉시 반영돼요.',
   'upload.reviewInfoReject': '반려되면 사유를 함께 알려드려요. 수정 후 다시 전시하면 새로 검수해 드려요.',
+  'upload.reviewNotice': '전시하기 후 운영팀 검수를 거쳐 둘러보기에 공개돼요.',
   'notif.workPublished': '"{title}" 전시가 공개됐어요. 내 작품을 확인해 보세요.',
   'notif.curationSelected': '"{pieceTitle}" 작품이 "{curationTitle}" 기획전에 선정됐어요. 페이지에서 확인해 보세요.',
   'notif.contestSelected': '축하해요! "{title}"이(가) "{event}" 응모전 선정작으로 뽑혔어요.',
@@ -658,7 +661,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.memberSearchPh': '플랫폼에 가입된 작가 검색',
   'upload.nonMemberNamePh': '초대 메시지에 표시할 이름',
   'upload.nonMemberNameLabel2': '작가 이름',
-  'upload.nonMemberNameHelper': '이름만 적어주세요. Artier가 자동으로 알리지 않아요 — 발행 후 작가님이 직접 카톡·문자로 링크를 보내실 수 있어요.',
+  'upload.nonMemberNameHelper': '이름만 적어주세요. Proud Gallery가 자동으로 알리지 않아요 — 발행 후 작가님이 직접 카톡·문자로 링크를 보내실 수 있어요.',
   'invite.shareCta': '친구에게 알리기',
   'invite.shareNotReady': '검수 통과 후 친구가 가입할 수 있어요',
   'invite.shareDialogTitle': '초대 링크 보내기',
@@ -770,14 +773,6 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'onboarding.welcomeTitle': '{brand}에 오신 것을 환영합니다',
   'onboarding.welcomeLead': '그림 한 점만 올려도 나만의 전시가 열려요',
   'onboarding.start': '시작하기',
-  // ── concept step (전시 단위 개념 안내) ──
-  'onboarding.conceptTitle': '여기는 디지털 갤러리예요',
-  'onboarding.conceptLead': '게시판이 아니라 작품을 전시하는 공간이에요',
-  'onboarding.conceptExampleSoloTitle': '○○○ 작가의 첫 전시',
-  'onboarding.conceptExampleSoloMeta': '작품 1점',
-  'onboarding.conceptExampleMultiTitle': '△△△ 작가의 봄 전시',
-  'onboarding.conceptExampleMultiMeta': '작품 6점',
-  'onboarding.conceptReinforce': '한 점이어도 어엿한 전시예요.\n작품을 올리시면 자동으로 나만의 전시가 열려요.',
   'onboarding.nicknameTitle': '프로필 설정',
   'onboarding.nicknameLead': '기본 정보를 입력해주세요',
   'onboarding.errEmailRequired': '연락 가능한 이메일을 입력해주세요',
@@ -825,7 +820,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
     '홈 화면에서 로그인 버튼을 클릭하면 간편하게 가입할 수 있어요. 소셜 로그인(카카오, 구글, 애플)과 이메일 가입을 지원해요.',
   'faq.q2': '로그인 링크 메일이 오지 않아요.',
   'faq.a2':
-    'Artier는 비밀번호 대신 이메일 인증 링크로 로그인해요. 이메일을 받지 못했다면 스팸함을 먼저 확인해 주시고, 로그인 화면에서 "로그인 링크 다시 보내기"를 눌러 주세요. 30초 쿨다운 후 다시 보낼 수 있어요. 링크는 30분 동안 유효해요.',
+    'Proud Gallery는 비밀번호 대신 이메일 인증 링크로 로그인해요. 이메일을 받지 못했다면 스팸함을 먼저 확인해 주시고, 로그인 화면에서 "로그인 링크 다시 보내기"를 눌러 주세요. 30초 쿨다운 후 다시 보낼 수 있어요. 링크는 30분 동안 유효해요.',
   'faq.q3': '탈퇴하면 작품은 어떻게 되나요?',
   'faq.a3':
     '탈퇴하면 내 작품이 모든 전시에서 삭제돼요. 다른 작가의 작품이 있는 전시는 계속 공개돼요. 복구할 수 없으니 탈퇴 전에 따로 저장해 두세요.',
@@ -840,7 +835,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
     '프로필 > 작품 탭에서 작품 우측 상단 메뉴(⋯)를 눌러 수정·삭제할 수 있어요.',
   'faq.q7': '그룹 전시는 어떻게 만드나요?',
   'faq.a7':
-    '업로드할 때 "함께 올리기"를 선택하면 그룹명을 입력하고 참여 작가를 한 자리씩 추가할 수 있어요. Artier 회원이면 이름을 검색해 바로 연결되고, 회원이 아닌 분은 이름만 입력해 자리를 만들어 두면 검수 통과 후 초대 링크로 직접 알릴 수 있어요.',
+    '업로드할 때 "함께 올리기"를 선택하면 그룹명을 입력하고 참여 작가를 한 자리씩 추가할 수 있어요. Proud Gallery 회원이면 이름을 검색해 바로 연결되고, 회원이 아닌 분은 이름만 입력해 자리를 만들어 두면 검수 통과 후 초대 링크로 직접 알릴 수 있어요.',
   'faq.q8': "Proud's Pick은 무엇인가요?",
   'faq.a8':
     '운영팀이 매주 우수 작품을 선정해 배지를 부여해요. 선정된 작품은 피드 상단에 노출되며, 작가에게 알림이 발송돼요.',
@@ -862,7 +857,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'faq.a14':
     '초대 링크는 발급일로부터 90일 동안 유효해요. 그 안에 친구가 가입하지 않으면 만료되고, 작가님이 마이페이지에서 새 링크를 다시 만들 수 있어요. 검수 대기·반려 중에는 링크가 일시 비활성 상태가 되고, 재승인되면 자동으로 다시 활성화돼요.',
   'meta.ogDescription':
-    '디지털 드로잉·아트 작품을 전시하고 발견하는 온라인 갤러리. 그룹 전시, Artier\'s Pick, 응모전을 한곳에서.',
+    '디지털 드로잉·아트 작품을 전시하고 발견하는 온라인 갤러리. 그룹 전시, Proud\'s Pick, 응모전을 한곳에서.',
   'contact.title': '문의하기',
   'contact.leadBeforeFaq': '궁금한 점이 있으시면 아래 양식으로 보내주세요. 먼저 ',
   'contact.leadAfterFaq': '를 확인해 보시면 빠르게 답을 찾을 수 있어요.',
@@ -955,13 +950,13 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
     '내 전시에 초대합니다.\n\n{artist} — 「{title}」\n{url}\n\n— {brand}',
   'workDetail.inspireCtaTitle': '함께 전시하고 싶으신가요?',
   'workDetail.inspireCtaBody': '{artist}님의 그림에서 영감을 받으셨나요? 당신의 아트웍도 공유해 보세요.',
-  'workDetail.inspireCtaButton': 'Artier 바로가기',
+  'workDetail.inspireCtaButton': 'Proud Gallery 바로가기',
   'workDetail.coWork': '공동 작업',
   'workDetail.participants': '참여',
   'invite.invalid': '유효하지 않은 초대 링크예요.',
   'invite.browse': '둘러보기',
   'invite.deletedTitle': '이 전시는 삭제됐어요',
-  'invite.deletedBody': '게시자가 전시를 삭제했어요. Artier에서 다른 전시를 둘러보거나 계정을 만들어 내 그림을 올려볼 수 있어요.',
+  'invite.deletedBody': '게시자가 전시를 삭제했어요. Proud Gallery에서 다른 전시를 둘러보거나 계정을 만들어 내 그림을 올려볼 수 있어요.',
   'invite.hiddenTitle': '이 전시는 운영팀 검토 중이에요',
   'invite.hiddenBody': '검토가 완료되면 다시 확인할 수 있어요. 잠시 후 다시 방문해주세요.',
   'invite.pendingNotice': '공개 승인 전 링크예요',
@@ -1016,14 +1011,14 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'signup.agreePrivacy': '개인정보 수집·이용 동의',
   'signup.agreeAge': '만 14세 이상이에요',
   'signup.ageRestrictionLead':
-    'Artier는 만 14세 미만 회원 가입을 받지 않아요. (관련 법령 등 준수)',
+    'Proud Gallery는 만 14세 미만 회원 가입을 받지 않아요. (관련 법령 등 준수)',
   'signup.agreeMarketing': '마케팅 정보 수신 동의',
   'signup.agreeMarketingHint': '이메일·알림톡·문자 중 보유한 채널로 보내드려요.',
   'events.badge': 'EVENT',
   'profile.deletedUser': '작가 미상',
   'profile.notFound': '존재하지 않는 프로필이에요.',
   'profile.withdrawnTitle': '탈퇴한 작가예요',
-  'profile.withdrawnDesc': '이 작가는 Artier를 떠났어요.',
+  'profile.withdrawnDesc': '이 작가는 Proud Gallery를 떠났어요.',
   'profile.formDisplayName': '사용자 이름',
   'profile.formDisplayNamePh': '이름을 입력해주세요',
   'profile.formHeadline': '한 줄 프로필',
@@ -1052,8 +1047,8 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
 
   'notifications.seedLikedWork': '님이 회원님의 작품 "{work}"을 좋아했어요',
   'notifications.seedFollowed': '님이 회원님을 팔로우하기 시작했어요',
-  'notifications.seedPickSelected': '축하해요! "{work}"이(가) Artier’s Pick으로 뽑혔어요',
-  'notifications.seedWelcome': 'Artier에 오신 것을 환영합니다! 첫 작품을 업로드해 보세요.',
+  'notifications.seedPickSelected': '축하해요! "{work}"이(가) Proud’s Pick으로 뽑혔어요',
+  'notifications.seedWelcome': 'Proud Gallery에 오신 것을 환영합니다! 첫 작품을 업로드해 보세요.',
   'notifications.seedEventActive': '「{event}」 응모전이 진행 중이에요. 지금 참여해 보세요.',
   'profile.openProfileAria': '{name} 프로필 열기',
   'profile.linksUrlPlaceholder': '나머지 URL을 입력해 주세요.',
@@ -1190,7 +1185,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'report.okClose': '확인',
   'cookie.title': '쿠키 사용 안내',
   'cookie.body':
-    "Artier는 서비스 이용에 필요한 필수 쿠키를 사용합니다. '전체 동의'를 선택하시면 서비스 개선을 위한 분석 쿠키도 함께 사용됩니다. 자세한 내용은 ",
+    "Proud Gallery는 서비스 이용에 필요한 필수 쿠키를 사용합니다. '전체 동의'를 선택하시면 서비스 개선을 위한 분석 쿠키도 함께 사용됩니다. 자세한 내용은 ",
   'cookie.privacyLink': '개인정보처리방침',
   'cookie.bodyAfter': '을 참고해 주세요.',
   'cookie.acceptAll': '전체 동의',
@@ -1223,7 +1218,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'exhibition.worksHeading': '전시 작품',
   'exhibition.otherHeading': '다른 전시',
   'exhibition.likeAdded': '좋아요',
-  'exhibition.ogDesc': '의 전시 — Artier 디지털 갤러리',
+  'exhibition.ogDesc': '의 전시 — Proud Gallery 디지털 갤러리',
   'exhibition.shareManual': '링크를 수동으로 복사해 주세요.',
   'exhibition.shareFail': '공유를 완료하지 못했어요.',
   'exhibition.soloLightTitle': '빛의 서사',
@@ -1315,7 +1310,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'signup.linkSentBody': '{email}으로 인증 링크를 보냈어요. 메일의 버튼을 눌러 계속해 주세요. (30분 내 유효)',
   'signup.linkSentHelpTitle': '메일이 안 와요?',
   'signup.linkSentSpam': '받은편지함에 없으면 스팸함과 프로모션 탭도 확인해 주세요.',
-  'signup.linkSentSenderHint': '보낸 사람에 ‘Artier’가 들어간 메일을 찾으시면 돼요.',
+  'signup.linkSentSenderHint': '보낸 사람에 ‘Proud Gallery’가 들어간 메일을 찾으시면 돼요.',
   'signup.linkSentAutoFlow': '지금 이메일 앱을 열어 Proud Gallery 메일을 찾아 버튼을 눌러 주세요. (30분 내 유효)',
   'signup.resendLink': '인증 메일 다시 보내기',
   'signup.resendCooldown': '{sec}초 후 다시 보낼 수 있어요',
@@ -1452,33 +1447,33 @@ const enMessages: Record<MessageKey, string> = {
   'refStub.tplTitle': '2. Email templates (preview · PRD set of 9)',
   'refStub.tplLead':
     'Same 9 templates as the feature doc. No sending. Likes/follows use in-app (and opt-in email) per the notification matrix. Password reset/changed templates were removed when §2.5 magic-link sign-in replaced passwords.',
-  'refStub.tplWelcomeSubject': 'Welcome to Artier 🎨',
+  'refStub.tplWelcomeSubject': 'Welcome to Proud Gallery 🎨',
   'refStub.tplWelcomeBody':
-    'Hi {nickname},\nWelcome to Artier — a digital gallery where your art becomes an exhibition.\nUpload your work and it automatically becomes your own exhibition. You can also discover and enjoy other artists\' works.\nStart by completing your profile!\n\nCTA: Complete your profile → /me/edit',
-  'refStub.tplVerifySubject': '[Artier] Please verify your email address',
+    'Hi {nickname},\nWelcome to Proud Gallery — a digital gallery where your art becomes an exhibition.\nUpload your work and it automatically becomes your own exhibition. You can also discover and enjoy other artists\' works.\nStart by completing your profile!\n\nCTA: Complete your profile → /me/edit',
+  'refStub.tplVerifySubject': '[Proud Gallery] Please verify your email address',
   'refStub.tplVerifyBody':
-    'Hi {nickname},\nPlease verify your email for your Artier account.\nClick the button below to complete verification.\nThis link is valid for 30 minutes.\nIf it has expired, log in and request a new one.\n\nCTA: Verify email → {verify_url}',
-  'refStub.tplSignInSubject': '[Artier] Here is your sign-in link',
+    'Hi {nickname},\nPlease verify your email for your Proud Gallery account.\nClick the button below to complete verification.\nThis link is valid for 30 minutes.\nIf it has expired, log in and request a new one.\n\nCTA: Verify email → {verify_url}',
+  'refStub.tplSignInSubject': '[Proud Gallery] Here is your sign-in link',
   'refStub.tplSignInBody':
-    'Hi,\nSomeone requested a sign-in for your Artier account.\nTap the button below to sign in automatically.\nThis link is valid for 30 minutes.\nIf you didn\'t request this, you can safely ignore this email.\n\nCTA: Sign in → {signin_url}',
+    'Hi,\nSomeone requested a sign-in for your Proud Gallery account.\nTap the button below to sign in automatically.\nThis link is valid for 30 minutes.\nIf you didn\'t request this, you can safely ignore this email.\n\nCTA: Sign in → {signin_url}',
   'refStub.tplPickSubject': "🎉 Your work was selected as this week's Proud's Pick!",
   'refStub.tplPickBody':
     "Congratulations, {nickname}!\nYour work '{work_title}' has been selected as this week's Proud's Pick.\nIt will be featured at the top of the Browse feed for more people to discover.\nKeep creating amazing work!\n\nCTA: View my work → {exhibition_url}",
   'refStub.tplWeeklySubject': "🏅 Your work was selected as this week's Weekly Best!",
   'refStub.tplWeeklyBody':
     "Congratulations, {nickname}!\nYour work '{work_title}' has been selected as this week's Weekly Best.\nMany people showed interest in your artwork.\nKeep up the great work!\n\nCTA: View my work → {exhibition_url}",
-  'refStub.tplPolicySubject': '[Artier] Updates to our Terms and Privacy Policy',
+  'refStub.tplPolicySubject': '[Proud Gallery] Updates to our Terms and Privacy Policy',
   'refStub.tplPolicyBody':
-    "Hello,\nWe're updating our Terms of Service and Privacy Policy.\n• Effective date: {effective_date}\n• Key changes: (written by ops team)\nYou can review the full updated terms below.\nContinued use of Artier after the effective date constitutes acceptance.\n\nCTA: Review changes → {policy_url}",
+    "Hello,\nWe're updating our Terms of Service and Privacy Policy.\n• Effective date: {effective_date}\n• Key changes: (written by ops team)\nYou can review the full updated terms below.\nContinued use of Proud Gallery after the effective date constitutes acceptance.\n\nCTA: Review changes → {policy_url}",
   'refStub.tplMarketingSubject': '(Per campaign, by ops team)',
   'refStub.tplMarketingBody':
     '(Campaign body — unsubscribe link required)\nFooter: You opted in to marketing emails. [Unsubscribe] to stop receiving these.',
-  'refStub.tplSuspendSubject': '[Artier] Your account has been restricted',
+  'refStub.tplSuspendSubject': '[Proud Gallery] Your account has been restricted',
   'refStub.tplSuspendBody':
     'Hi {nickname},\nYour account has been restricted due to a community guidelines violation.\n• Reason: {reason}\n• Duration: {period}\nIf you believe this is an error, please contact us.\n\nCTA: Contact → /contact',
-  'refStub.tplWithdrawSubject': '[Artier] Your account has been deleted',
+  'refStub.tplWithdrawSubject': '[Proud Gallery] Your account has been deleted',
   'refStub.tplWithdrawBody':
-    "Hello,\nYour Artier account was deleted on {date}.\n• Your image slots have been removed from all exhibitions. Exhibitions with other artists' works remain visible.\n• Your nickname is permanently locked and cannot be reused.\n• Personal data is handled per applicable law.\nWe hope to see you again.",
+    "Hello,\nYour Proud Gallery account was deleted on {date}.\n• Your image slots have been removed from all exhibitions. Exhibitions with other artists' works remain visible.\n• Your nickname is permanently locked and cannot be reused.\n• Personal data is handled per applicable law.\nWe hope to see you again.",
   'refStub.rulesTitle': '3. Email send list (feature doc master table)',
   'refStub.rulesLead':
     'Same triggers and required/optional flags as the email template doc. In-app notifications: see the integrated trigger table.',
@@ -1487,7 +1482,7 @@ const enMessages: Record<MessageKey, string> = {
   'refStub.rulesColTrigger': 'Trigger',
   'refStub.rulesColReq': 'Required / optional',
   'refStub.emailMasterBlock':
-    '1|Welcome email|After signup completes|Required\n2|Sign-up magic link|Right after email sign-up|Required (30-min link)\n3|Login magic link|On email login request|Required (30-min link)\n4|Artier\'s Pick selected|Admin assigns Pick badge|Required\n5|Weekly Best selected|Admin assigns Weekly Best badge|Required\n6|Policy change notice|Terms/Privacy policy change|Legal obligation\n7|Marketing email|Events/campaigns (marketing opt-in only)|Opt-in\n8|Account suspension notice|Admin suspends account|Required\n9|Account deletion complete|After withdrawal completes|Recommended',
+    '1|Welcome email|After signup completes|Required\n2|Sign-up magic link|Right after email sign-up|Required (30-min link)\n3|Login magic link|On email login request|Required (30-min link)\n4|Proud\'s Pick selected|Admin assigns Pick badge|Required\n5|Weekly Best selected|Admin assigns Weekly Best badge|Required\n6|Policy change notice|Terms/Privacy policy change|Legal obligation\n7|Marketing email|Events/campaigns (marketing opt-in only)|Opt-in\n8|Account suspension notice|Admin suspends account|Required\n9|Account deletion complete|After withdrawal completes|Recommended',
   'flowMap.heading': 'Phase 1 user flows — screen index',
   'flowMap.intro':
     'Each block maps to the Phase 1 user-flow doc (block 15 is a PM review demo). Log in from the header for pages that require auth.',
@@ -1576,21 +1571,23 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'social.following': 'Following',
   'about.heroTitle': 'An online gallery\nfor every artist',
   'about.heroLead':
-    'Artier is a digital gallery where artists of every generation and genre can exhibit, discover, and connect freely.',
+    'Proud Gallery is a digital gallery where artists of every generation and genre can exhibit, discover, and connect freely.',
   'about.ctaBrowse': 'Browse the gallery',
   'about.ctaUpload': 'Upload work',
-  'about.featuresHeading': 'What you can do on Artier',
+  'about.featuresHeading': 'What you can do on Proud Gallery',
   'about.feat1Title': 'Show your work',
   'about.feat1Desc': 'Present your work in a beautiful online gallery and share it with the world.',
   'about.feat2Title': 'Community',
-  'about.feat2Desc': 'Connect with artists who share your passion and exchange inspiration.',
+  'about.feat2Desc': 'Follow artists you love and stay connected by enjoying each other\'s work.',
   'about.feat3Title': "Proud's Pick",
   'about.feat3Desc': 'Reach more viewers through weekly selections of outstanding work.',
   'about.feat4Title': 'Group exhibitions',
-  'about.feat4Desc': 'Share collaborative outcomes through group exhibitions with fellow artists.',
+  'about.feat4Desc': 'Share memories and artworks with club members, friends, and family through group exhibitions.',
+  'about.feat5Title': 'Contests',
+  'about.feat5Desc': 'Enter themed contests curated by our team, and reach a wider audience if selected.',
   'about.missionTitle': 'Our mission',
   'about.missionBody':
-    'Art should be something anyone can create and share, regardless of age, experience, or genre.\nArtier bridges artists and audiences in the digital age so every work can meet the world.',
+    'Art should be something anyone can create and share, regardless of age, experience, or genre.\nProud Gallery bridges artists and audiences in the digital age so every work can meet the world.',
   'about.bottomTitle': 'Start now',
   'about.bottomLead': 'Sign-up is free, and you can upload your first work in about a minute.',
   'about.bottomCta': 'Upload your first work',
@@ -1639,7 +1636,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'notifications.filterUnread': 'Unread',
   'notifications.empty': 'No notifications yet',
   'events.title': 'Events',
-  'events.subtitle': 'See what is happening on Artier',
+  'events.subtitle': 'See what is happening on Proud Gallery',
   'events.participate': 'Participate',
   'events.noActiveEvents': 'No events currently in progress',
   'events.noUpcoming': 'No upcoming events',
@@ -1719,7 +1716,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'upload.errProfanityExhibitionName': 'Exhibition title contains inappropriate language. Please rephrase.',
   'upload.errProfanityGroupName': 'Group name contains inappropriate language. Please rephrase.',
   'upload.cameraBlockTitle': 'Photos cannot be uploaded',
-  'upload.cameraBlockDesc': 'Artier is a platform exclusively for digital artwork. Photos taken with cameras or smartphones cannot be uploaded.',
+  'upload.cameraBlockDesc': 'Proud Gallery is a platform exclusively for digital artwork. Photos taken with cameras or smartphones cannot be uploaded.',
   'upload.toastEditLoaded': 'Work loaded. Edit and exhibit.',
   'upload.toastDraftLoaded': 'Draft loaded.',
   'upload.errMaxImages': 'You can upload up to 10 images.',
@@ -1760,7 +1757,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'review.notifSubmitted': "Your exhibition '{title}' is now under review. We'll let you know the result.",
   'review.notifRejected': 'Your upload was not approved. Reason: {reason}',
   'review.notifApproved': 'Your upload was approved and is now shown on Browse.',
-  'pick.notifSelected': 'Your exhibition \'{title}\' was selected as Artier\'s Pick. Congrats!',
+  'pick.notifSelected': 'Your exhibition \'{title}\' was selected as Proud\'s Pick. Congrats!',
   'invite.notifAutoMatched': "'{name}' claimed their slot in '{title}'. If it's the wrong link, you can unlink it from the exhibition editor.",
   'report.notifTargetWorkDeleted': 'Your exhibition \'{title}\' has been removed following a report. Reason: {reason}. Contact support for details.',
   'report.deleteReason.copyright': 'Confirmed copyright infringement',
@@ -1794,6 +1791,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'upload.reviewInfoEditImg': 'Editing images puts the work back in the review queue.',
   'upload.reviewInfoEditMeta': 'Editing only title or group name is reflected immediately.',
   'upload.reviewInfoReject': 'If rejected, we share the reason. You can edit and resubmit for a new review.',
+  'upload.reviewNotice': 'After submitting, our team reviews your work before it appears on Browse.',
   'notif.workPublished': 'Your work in “{title}” is now public.',
   'notif.curationSelected': 'Your work “{pieceTitle}” was selected for the “{curationTitle}” curation. View it on the page.',
   'notif.contestSelected': 'Congrats! “{title}” was selected as a winner of “{event}”.',
@@ -1840,9 +1838,9 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'upload.tabDirectInput': 'Enter manually',
   'upload.memberSearchPh': 'Search registered artists',
   'upload.nonMemberNamePh': 'Name to show in the invite message',
-  // (kept) Helper updated to reflect Policy §3 — Artier does not auto-notify, artist sends directly
+  // (kept) Helper updated to reflect Policy §3 — Proud Gallery does not auto-notify, artist sends directly
   'upload.nonMemberNameLabel2': 'Artist name',
-  'upload.nonMemberNameHelper': "Just the name. Artier won't auto-notify them — after publishing, you can send them the link directly via your own channel.",
+  'upload.nonMemberNameHelper': "Just the name. Proud Gallery won't auto-notify them — after publishing, you can send them the link directly via your own channel.",
   'invite.shareCta': 'Tell a friend',
   'invite.shareNotReady': 'Friends can sign up after review approval',
   'invite.shareDialogTitle': 'Send invite link',
@@ -1954,14 +1952,6 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'onboarding.welcomeTitle': 'Welcome to {brand}',
   'onboarding.welcomeLead': 'Even one piece becomes your own exhibition',
   'onboarding.start': 'Get started',
-  // ── concept step (exhibition-as-unit explanation) ──
-  'onboarding.conceptTitle': 'This is a digital gallery',
-  'onboarding.conceptLead': "Not a feed — a space to exhibit your art",
-  'onboarding.conceptExampleSoloTitle': "An artist's first exhibition",
-  'onboarding.conceptExampleSoloMeta': '1 work',
-  'onboarding.conceptExampleMultiTitle': "An artist's spring exhibition",
-  'onboarding.conceptExampleMultiMeta': '6 works',
-  'onboarding.conceptReinforce': 'Even one piece is a full exhibition.\nUpload your work and your own exhibition opens automatically.',
   'onboarding.nicknameTitle': 'Profile setup',
   'onboarding.nicknameLead': 'Enter your basic information',
   'onboarding.errEmailRequired': 'Please enter a contact email',
@@ -2009,7 +1999,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
     'Tap Log in on the home screen to sign up. We support social sign-in (Kakao, Google, Apple) and email sign-up.',
   'faq.q2': "I didn't receive the sign-in link email.",
   'faq.a2':
-    'Artier uses email sign-in links instead of passwords. If you did not receive the email, check your spam folder first, then tap “Resend sign-in link” on the log-in screen. You can resend after a 30-second cooldown. The link is valid for 30 minutes.',
+    'Proud Gallery uses email sign-in links instead of passwords. If you did not receive the email, check your spam folder first, then tap “Resend sign-in link” on the log-in screen. You can resend after a 30-second cooldown. The link is valid for 30 minutes.',
   'faq.q3': 'What happens to my works if I delete my account?',
   'faq.a3':
     "When you leave, your image slots are removed from all exhibitions. Exhibitions with other artists' works stay public. This cannot be undone.",
@@ -2046,7 +2036,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'faq.a14':
     "Invite links are valid for 90 days from issue. If your friend hasn't signed up by then, the link expires and you can create a new one from My page. While the exhibition is under review or rejected, the link is temporarily inactive — once re-approved, it becomes active again automatically.",
   'meta.ogDescription':
-    'Discover and exhibit digital drawing and art online. Group shows, Artier\'s Pick, and events in one place.',
+    'Discover and exhibit digital drawing and art online. Group shows, Proud\'s Pick, and events in one place.',
   'contact.title': 'Contact us',
   'contact.leadBeforeFaq': 'If you have questions, send them using the form below. Check the ',
   'contact.leadAfterFaq': ' first for faster answers.',
@@ -2136,16 +2126,16 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'workDetail.relatedMore': 'See more',
   'workDetail.toastLinkCopied': 'Link copied to clipboard',
   'workDetail.inviteCardBody':
-    "You're invited to my exhibition on Artier.\n\n{artist} — \"{title}\"\n{url}\n\n— {brand}",
+    "You're invited to my exhibition on Proud Gallery.\n\n{artist} — \"{title}\"\n{url}\n\n— {brand}",
   'workDetail.inspireCtaTitle': 'Want to exhibit too?',
   'workDetail.inspireCtaBody': "Inspired by {artist}'s work? Share your artwork too.",
-  'workDetail.inspireCtaButton': 'Explore Artier',
+  'workDetail.inspireCtaButton': 'Explore Proud Gallery',
   'workDetail.coWork': 'Collaboration',
   'workDetail.participants': 'Participants',
   'invite.invalid': 'This invitation link is invalid.',
   'invite.browse': 'Browse the gallery',
   'invite.deletedTitle': 'This exhibition has been deleted',
-  'invite.deletedBody': 'The host removed this exhibition. Explore other exhibitions on Artier, or create an account to share your own work.',
+  'invite.deletedBody': 'The host removed this exhibition. Explore other exhibitions on Proud Gallery, or create an account to share your own work.',
   'invite.hiddenTitle': 'Under review by our team',
   'invite.hiddenBody': 'This exhibition is temporarily under review. Please check back again a little later.',
   'invite.pendingNotice': 'This link is pending public approval',
@@ -2167,7 +2157,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'error500.home': 'Home',
   'maintenance.title': 'Under maintenance',
   'maintenance.body':
-    'We are improving Artier.\nYou will be able to return when maintenance is complete.',
+    'We are improving Proud Gallery.\nYou will be able to return when maintenance is complete.',
   'maintenance.eta': 'Estimated completion:',
   'maintenance.etaPlaceholder': '— (to be announced)',
   'maintenance.contact': 'Contact:',
@@ -2199,14 +2189,14 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'signup.agreePrivacy': 'Privacy policy',
   'signup.agreeAge': 'I am 14 years or older',
   'signup.ageRestrictionLead':
-    'Artier does not allow accounts for users under 14 (in compliance with related regulations).',
+    'Proud Gallery does not allow accounts for users under 14 (in compliance with related regulations).',
   'signup.agreeMarketing': 'Receive marketing messages',
   'signup.agreeMarketingHint': "We'll use whichever channel you have — email, KakaoTalk, or SMS.",
   'events.badge': 'EVENT',
   'profile.deletedUser': 'Unknown artist',
   'profile.notFound': 'This profile does not exist.',
   'profile.withdrawnTitle': 'Artist has left',
-  'profile.withdrawnDesc': 'This artist has left Artier.',
+  'profile.withdrawnDesc': 'This artist has left Proud Gallery.',
   'profile.formDisplayName': 'Display name',
   'profile.formDisplayNamePh': 'Enter your name',
   'profile.formHeadline': 'Headline',
@@ -2236,7 +2226,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'notifications.seedLikedWork': ' liked your work "{work}"',
   'notifications.seedFollowed': ' followed you',
   'notifications.seedPickSelected': "Congrats! \"{work}\" was selected as an Proud's Pick",
-  'notifications.seedWelcome': "Welcome to Artier! Upload your first work.",
+  'notifications.seedWelcome': "Welcome to Proud Gallery! Upload your first work.",
   'notifications.seedEventActive': "Event \"{event}\" is active — join now.",
   'profile.openProfileAria': "Open {name}'s profile",
   'profile.linksUrlPlaceholder': "Enter the rest of the URL.",
@@ -2375,7 +2365,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'report.okClose': 'OK',
   'cookie.title': 'Cookies',
   'cookie.body':
-    'Artier uses essential cookies to run the service. If you accept all, we also use analytics cookies to improve the product. See our ',
+    'Proud Gallery uses essential cookies to run the service. If you accept all, we also use analytics cookies to improve the product. See our ',
   'cookie.privacyLink': 'Privacy Policy',
   'cookie.bodyAfter': ' for details.',
   'cookie.acceptAll': 'Accept all',
@@ -2409,7 +2399,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'exhibition.otherHeading': 'More exhibitions',
   'exhibition.likeAdded': 'You liked this.',
   'exhibition.shareManual': 'Please copy the link manually.',
-  'exhibition.ogDesc': "'s exhibition — Artier digital gallery",
+  'exhibition.ogDesc': "'s exhibition — Proud Gallery digital gallery",
   'exhibition.shareFail': 'Sharing could not be completed.',
   'exhibition.soloLightTitle': 'Narrative of Light',
   'exhibition.soloLightDesc':
@@ -2500,7 +2490,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'signup.linkSentBody': 'We sent a verification link to {email}. Click the button in the email to continue (valid for 30 minutes).',
   'signup.linkSentHelpTitle': "Email not arriving?",
   'signup.linkSentSpam': "If it's not in your inbox, check your spam and promotions folders too.",
-  'signup.linkSentSenderHint': "Look for an email from a sender that includes ‘Artier’.",
+  'signup.linkSentSenderHint': "Look for an email from a sender that includes ‘Proud Gallery’.",
   'signup.linkSentAutoFlow': "Once you tap the button in the email, we'll continue automatically. You can leave this screen open.",
   'signup.resendLink': 'Resend verification email',
   'signup.resendCooldown': 'Available in {sec}s',
@@ -2659,7 +2649,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.17 | 2026-05-07 | PM × Claude | 서비스명 Artier → Proud Gallery 전면 치환(brand.name·splash.alt·Artier's Pick → Proud's Pick); 헤더 버전 동기; messages.ts ↔ Copy 사전 동기화 — points·admin 잔재·social·event·onboarding·faq 키 삭제, curation·events.results·evt.admin·notif.contestSelected·notifications.category·profile.editWarn·upload.groupRole·upload.roleInfo·badge·settings.notifWeeklyTheme·admin.notice 그룹 KO·EN 추가 |
+| v1.17 | 2026-05-07 | PM × Claude | 서비스명 Artier → Proud Gallery 전면 치환(brand.name·splash.alt·Proud's Pick → Proud's Pick); 헤더 버전 동기; messages.ts ↔ Copy 사전 동기화 — points·admin 잔재·social·event·onboarding·faq 키 삭제, curation·events.results·evt.admin·notif.contestSelected·notifications.category·profile.editWarn·upload.groupRole·upload.roleInfo·badge·settings.notifWeeklyTheme·admin.notice 그룹 KO·EN 추가; upload.reviewNotice 신설; about feat2Desc·feat4Desc·feat5 정합; onboarding concept step 7키 KO·EN 제거 |
 | v1.16 | 2026-05-06 | PM × Claude | profile.removePieceFromExhibition·Confirm·Success 4키 추가(전시에서 빼기 신규 기능); tabGuideWorks 내 작품 탭 진입점 반영; profile.tabHelpWorks 키 삭제(화면에서 단락 제거); nicknameLockedLabel·Hint·ContactCta·categoryNicknameChange·nicknameChangeNotice·nicknameNew·nicknameReason·errNicknameDuplicate 닉네임 변경 불가 관련 키 일괄 삭제(즉시 자율 변경으로 정책 개정) |
 | v1.15 | 2026-05-06 | PM × Claude | events.viewMyEntry·cancelEntry·cancelEntryConfirmTitle·Desc·Success 5키 추가 |
 | v1.14 | 2026-05-05 | PM × Claude | Handoff_Footer·Handoff_ServiceIntro 흡수 — §10 글로벌 푸터·§11 서비스 소개 신설 |
