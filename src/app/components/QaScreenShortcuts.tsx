@@ -5,7 +5,7 @@ import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
 import { authStore, workStore } from '../store';
 import { setOperatorRole } from '../utils/adminGate';
-import { clearMockSession } from '../services/sessionTokens';
+import { clearMockSession, persistMockSession } from '../services/sessionTokens';
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -59,12 +59,12 @@ export function QaScreenShortcuts() {
   if (!showQaNav) return null;
 
   const goAdmin = (path: string) => {
-    setOperatorRole(true);
-    if (authStore.isLoggedIn()) {
-      navigate(path);
-      return;
+    if (!authStore.isLoggedIn()) {
+      authStore.login();
+      persistMockSession('qa-admin-auto');
     }
-    navigate(`/login?redirect=${encodeURIComponent(path)}`);
+    setOperatorRole(true);
+    navigate(path);
   };
 
   const linkCls = 'cursor-pointer';
@@ -119,16 +119,17 @@ export function QaScreenShortcuts() {
           <DropdownMenuItem
             className="text-destructive focus:text-destructive cursor-pointer"
             onSelect={() => {
-              // 소셜 가입 기록은 유지 — 재로그인 시 모달 없이 바로 진입
               ['kakao', 'google', 'apple'].forEach((p) =>
                 localStorage.setItem(`artier_social_signed_up__${p}`, '1')
               );
               authStore.logout();
               clearMockSession();
-              navigate('/login');
+              authStore.login();
+              persistMockSession('qa-relogin-auto');
+              navigate('/');
             }}
           >
-            로그아웃 → /login
+            재로그인 → 둘러보기
           </DropdownMenuItem>
           <DropdownMenuItem
             className="cursor-pointer"
