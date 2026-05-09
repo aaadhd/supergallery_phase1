@@ -179,6 +179,23 @@ export function pointsOnFollowerCount(count: number) {
   saveState(s);
 }
 
+/** 어드민 신고 처리로 작품 강제 삭제 시 업로드 AP 회수 (24h 조건 없음) */
+export function pointsRecallOnAdminDelete(workId: string) {
+  let times: Record<string, string> = {};
+  try {
+    times = JSON.parse(localStorage.getItem(PUBLISH_TIMES_KEY) || '{}');
+  } catch {
+    return;
+  }
+  const t = times[workId];
+  if (!t) return;
+  delete times[workId];
+  localStorage.setItem(PUBLISH_TIMES_KEY, JSON.stringify(times));
+  const s = loadState();
+  award(s, -20, 'admin_delete_revoke', '신고 처리 삭제로 업로드 AP 회수');
+  saveState(s);
+}
+
 /** 업로드 후 24시간 이내 삭제 시 해당 작품 관련 업로드 AP 회수(간이) */
 export function pointsRecallIfQuickDelete(workId: string) {
   let times: Record<string, string> = {};

@@ -17,6 +17,7 @@ import {
 } from '../utils/reportsStore';
 import { pushDemoNotification } from '../utils/pushDemoNotification';
 import { logWorkDeletion, appendAuditLog, type DeletedWorkLogPayload } from '../utils/adminAuditLog';
+import { pointsRecallOnAdminDelete } from '../utils/pointsBackground';
 import { useI18n } from '../i18n/I18nProvider';
 import { usePagination } from '../hooks/usePagination';
 import { PaginationBar } from './components/PaginationBar';
@@ -268,6 +269,7 @@ export default function ReportManagement() {
     });
 
     // 작품 영구 삭제 (cascade는 workStore.removeWork에서 처리 — 기획전 piece·응모전 selectedWorkIds 등)
+    pointsRecallOnAdminDelete(workId);
     workStore.removeWork(workId);
     updateUserReport(reportId, { adminStatus: 'deleted' });
 

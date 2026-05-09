@@ -46,7 +46,7 @@ const defaultNotifications: NotificationSettingsState = {
   like: true,
   newFollower: true,
   groupExhibitionInvite: true,
-  weeklyTheme: false,
+  weeklyTheme: true,
   marketing: false,
 };
 
