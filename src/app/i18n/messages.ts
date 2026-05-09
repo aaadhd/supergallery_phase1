@@ -684,7 +684,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'faq.a14':
     '초대 링크는 발급일로부터 90일 동안 유효해요. 그 안에 친구가 가입하지 않으면 만료되고, 작가님이 마이페이지에서 새 링크를 다시 만들 수 있어요. 검수 대기·반려 중에는 링크가 일시 비활성 상태가 되고, 재승인되면 자동으로 다시 활성화돼요.',
   'meta.ogDescription':
-    '디지털 드로잉·아트 작품을 전시하고 발견하는 온라인 갤러리. 그룹 전시, Proud Gallery\'s Pick, 응모전을 한곳에서.',
+    '디지털 드로잉·아트 작품을 전시하고 발견하는 온라인 갤러리. 그룹 전시, Proud\'s Pick, 응모전을 한곳에서.',
   'contact.title': '문의하기',
   'contact.leadBeforeFaq': '궁금한 점이 있으시면 아래 양식으로 보내주세요. 먼저 ',
   'contact.leadAfterFaq': '를 확인해 보시면 빠르게 답을 찾을 수 있어요.',
@@ -1412,7 +1412,7 @@ const enMessages: Record<MessageKey, string> = {
     'Hi {nickname},\nYour account has been restricted due to a community guidelines violation.\n• Reason: {reason}\n• Duration: {period}\nIf you believe this is an error, please contact us.\n\nCTA: Contact → /contact',
   'refStub.tplWithdrawSubject': '[Proud Gallery] Your account has been deleted',
   'refStub.tplWithdrawBody':
-    "Hello,\nYour Proud Gallery account was deleted on {date}.\n• Your works have been removed from all exhibitions. Exhibitions with other artists' works remain visible.\n• Your nickname is permanently locked and cannot be reused.\n• Personal data is handled per applicable law.\nWe hope to see you again.",
+    "Hello,\nYour Proud Gallery account was deleted on {date}.\n• Your image slots have been removed from all exhibitions. Exhibitions with other artists' works remain visible.\n• Your nickname is permanently locked and cannot be reused.\n• Personal data is handled per applicable law.\nWe hope to see you again.",
   'refStub.rulesTitle': '3. Email send list (feature doc master table)',
   'refStub.rulesLead':
     'Same triggers and required/optional flags as the email template doc. In-app notifications: see the integrated trigger table.',
@@ -1938,7 +1938,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
     'Proud Gallery uses email sign-in links instead of passwords. If you did not receive the email, check your spam folder first, then tap “Resend sign-in link” on the log-in screen. You can resend after a 30-second cooldown. The link is valid for 30 minutes.',
   'faq.q3': 'What happens to my works if I delete my account?',
   'faq.a3':
-    "When you leave, your works are removed from all exhibitions. Exhibitions with other artists' works stay public. This cannot be undone.",
+    "When you leave, your image slots are removed from all exhibitions. Exhibitions with other artists' works stay public. This cannot be undone.",
   'faq.q4': 'Which file formats are supported?',
   'faq.a4':
     'We support JPG, PNG, WEBP, and GIF up to 10MB per file, with up to 10 images per exhibition.',
@@ -2123,7 +2123,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'signup.agreePrivacy': 'Privacy policy',
   'signup.agreeAge': 'I am 14 years or older',
   'signup.ageRestrictionLead':
-    'Proud Gallery does not allow accounts for users under 14 (consumer protection and related regulations).',
+    'Proud Gallery does not allow accounts for users under 14 (in compliance with related regulations).',
   'signup.agreeMarketing': 'Receive marketing messages',
   'signup.agreeMarketingHint': "We'll use whichever channel you have — email, KakaoTalk, or SMS.",
   'events.badge': 'EVENT',
@@ -2260,7 +2260,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'settings.withdraw': 'Delete account',
   'settings.withdrawTitle': 'Delete your account?',
   'settings.withdrawBody':
-    "This cannot be undone. Your works will be removed from all exhibitions. Exhibitions with no remaining works will also be deleted. Your account, likes, and follows will be removed.",
+    "This cannot be undone. Your image slots will be removed from all exhibitions. Exhibitions with no remaining works will also be deleted. Your account, likes, and follows will be removed.",
   'settings.withdrawSubmit': 'Delete account',
   'settings.withdrawBusy': 'Processing…',
   'settings.withdrawReasonSection': 'Why are you leaving?',
@@ -2279,7 +2279,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'report.titleWork': 'Report work',
   'report.leadWork': 'You are reporting {name}.',
   'report.policyNote':
-    'We will review your report within 24 business hours.',
+    'Our team will review your report.',
   'report.reasonHeading': 'This work isn\'t the artist\'s own',
   'report.reasonHelp': 'Looks like someone else\'s work posted as their own. If you have the original source, please include it in the message.',
   'report.otherReasonsHint': "For other concerns (copyright, abuse, explicit content, etc.), please contact us via My page → Help.",
@@ -2295,7 +2295,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'report.errWithdrawnArtist': 'This artist has left the service — reports are not accepted.',
   'report.step2Title': 'Report received',
   'report.step2Body':
-    'Our team will review within 24 business hours. Urgent cases required by law are prioritized. False reports may be penalized.',
+    'Our team will review. Urgent cases required by law are prioritized. Please report based on facts.',
   'report.okClose': 'OK',
   'cookie.title': 'Cookies',
   'cookie.body':
