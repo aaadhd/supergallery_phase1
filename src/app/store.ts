@@ -317,7 +317,7 @@ export const workStore = {
     currentWorks = currentWorks.filter(w => w.id !== id);
     userInteractionStore.removeWorkId(id);
     cleanupOrphanedWorkId(id); // 기획전(artier_curation_v1) workIds 정리
-    cleanupOrphanedSelectedWorkId(id); // 응모전(artier_managed_events_v1) selectedWorkIds cascade — Policy §32.1 #10
+    cleanupOrphanedSelectedWorkId(id); // 응모전(artier_managed_events_v4) selectedWorkIds cascade — Policy §32.1 #10
     forgetSeenWork(id); // 이미 본 작품 목록에서 제거
     cleanupReportRefsForWork(id); // 신고 중복 서명·신고자 숨김 참조 정리
 
