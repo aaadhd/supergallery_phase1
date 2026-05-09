@@ -48,6 +48,19 @@ function cleanupOrphanedWorkId(workId: string) {
         changed = true;
       }
     }
+    // piece가 모두 제거된 빈 기획전 정리 (Policy §32.1 #8b)
+    const beforeLen = list.length;
+    list.splice(
+      0,
+      list.length,
+      ...list.filter((exh: { pieces?: unknown[]; workIds?: unknown[] }) => {
+        const pieces = Array.isArray(exh?.pieces) ? exh.pieces : [];
+        const workIds = Array.isArray(exh?.workIds) ? exh.workIds : [];
+        return pieces.length > 0 || workIds.length > 0;
+      }),
+    );
+    if (list.length !== beforeLen) changed = true;
+
     if (changed) {
       localStorage.setItem('artier_curation_v1', JSON.stringify(state));
       window.dispatchEvent(new Event('artier-curation-changed'));

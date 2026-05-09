@@ -1,5 +1,6 @@
 import type { Work } from '../data';
 import { curationStore } from './curationStore';
+import { isWorkVisibleOnPublicFeed } from './feedVisibility';
 
 export type FeedRankContext = {
   /** 현재 로그인 유저가 팔로우 중인 작가 ID 집합 (팔로우 신호 가중치용) */
@@ -150,7 +151,8 @@ export function orderWorksForBrowseFeed(
   ctx: FeedRankContext = {},
 ): Work[] {
   // 버킷 할당 전 순서를 섞어, 새로고침마다 동일한 작품만 앞에 고정되는 현상을 줄인다.
-  const randomizedWorks = [...works].sort(() => Math.random() - 0.5);
+  // hidden/pending 작품이 rest 버킷으로 유입되지 않도록 공개 작품만 추린다.
+  const randomizedWorks = [...works].filter(isWorkVisibleOnPublicFeed).sort(() => Math.random() - 0.5);
   const featuredExhibitionIdSet = new Set(curationStore.getFeaturedExhibitionIds());
 
   const used = new Set<string>();
