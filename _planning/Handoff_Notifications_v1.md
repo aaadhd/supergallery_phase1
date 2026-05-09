@@ -56,10 +56,10 @@
 | 유형 전체 | 유형 전체 | All types | — |
 | 좋아요 | 좋아요 | Likes | 좋아요 |
 | 팔로우 | 팔로우 | Follows | 팔로우 |
-| 그룹 초대 | 그룹 초대 | Group invites | 그룹 초대 (그룹 전시 슬롯 추가) |
+| 그룹 전시 게시 | 그룹 전시 게시 | Group post | 다른 작가가 내 작품을 그룹 전시에 포함시킨 경우 |
 | 큐레이션 | 큐레이션 | Curation | Pick 선정 + 기획전 선정 (운영팀 직권 큐레이션) |
 | 응모전 | 응모전 | Events | 응모전 선정 + 응모전 공지 (응모전) |
-| 시스템 | 시스템 | System | 검수 통과 + 검수 반려 + 초대 수락 (시스템 운영) |
+| 시스템 | 시스템 | System | 검수 통과 + 검수 반려 + 작품 연결 + 신고 처리 결과(작가 수신) |
 
 ### 1.4 시간 표기
 
@@ -113,31 +113,22 @@
 
 ## 3) 신고 알림
 
-신고 처리 결과를 신고 대상 작가·신고자에게 양방향 안내. 자동 비공개 트리거는 [Policy §12.2 v2.20](./Policy_v1.md#12-2-폐기-자동-비공개-정책)에 따라 폐기 — 모든 처리는 운영팀이 직접 판정.
+신고 처리 결과를 **작품 작가에게만** 안내. 신고자에게는 처리 결과 알림을 발송하지 않는다 ([Policy §12.1.3](./Policy_v1.md#12-1-3-신고-처리-알림)). 자동 비공개 트리거는 [Policy §12.2 v2.20](./Policy_v1.md#12-2-폐기-자동-비공개-정책)에 따라 폐기 — 모든 처리는 운영팀이 직접 판정.
 
 ### 3.1 작품 삭제 (작가에게)
 
-- 한국어: 회원님의 전시 '{title}'이 신고 처리로 삭제됐어요. 사유: {reason}.
-- English: Your exhibition '{title}' has been removed following a report. Reason: {reason}.
-
-→ 사유 변수는 [Policy §12.1 v2.20](./Policy_v1.md#12-1-신고-처리-액션-어드민) 4종(저작권 침해 / 위법 콘텐츠 / 청소년 유해 / 어뷰즈) 중 운영자가 선택한 라벨. 카피 키 ko/en 단일 문자열에 변수 주입.
+- 한국어: 회원님의 전시 '{title}'이 운영 정책 위반으로 삭제됐어요. 자세한 내용은 문의하기로 연락 주세요.
+- English: Your exhibition '{title}' has been removed due to a policy violation. Contact support for details.
 
 ### 3.2 비공개 전환 (작가에게)
 
 - 한국어: 회원님의 전시 '{title}'이 신고 검토 결과 비공개로 전환됐어요. 피드와 검색에서 제외돼요.
 - English: Your exhibition '{title}' has been hidden from Browse/Search after review.
 
-### 3.3 신고 기각 (신고자에게)
+### 3.3 비공개 → 복원 (작가에게)
 
-- 한국어: 접수하신 신고는 운영팀 검토 결과 받아들여지지 않았어요.
-- English: Your report was dismissed after review.
-
-→ 신고자에게 처리 결과 회신. 친근체로 안내(시니어 친화 톤).
-
-### 3.4 비공개 → 복원 (작가에게)
-
-- 한국어: '{title}' 전시가 검토 결과 정상 복원됐어요.
-- English: '{title}' has been restored after review.
+- 한국어: 회원님의 전시 '{title}'이 검토 결과 정상 복원됐어요.
+- English: Your exhibition '{title}' has been restored following review.
 
 → 비공개 유지 상태였던 전시가 운영팀 기각 판정으로 복원될 때 작가에게 1건. 시스템 강제 발송.
 
@@ -187,22 +178,22 @@
 |---|---|---|---|
 | 좋아요 | 가능 | ON | `settings.notifLike` |
 | 팔로우 | 가능 | ON | `settings.notifNewFollower` |
-| 그룹 초대 | 가능 | ON | `settings.notifGroupInvite` |
+| 그룹 전시 게시 | 가능 | ON | `settings.notifGroupInvite` |
 | 기획전·Pick | 가능 | ON | `settings.notifWeeklyTheme` |
 | 마케팅 | 가능 | OFF | `settings.notifMarketing` |
 | 검수(승인·반려·접수) | 불가 | 항상 | 시스템 강제 |
-| 신고 처리 결과 | 불가 | 항상 | 시스템 강제 |
+| 신고 처리 결과(작가 수신) | 불가 | 항상 | 시스템 강제 |
 | 초대 클레임 | 불가 | 항상 | 시스템 강제 |
 | 응모전 선정·공지 | 불가 | 항상 | 시스템 강제 |
 
 ---
 
-## 4.6) 그룹 초대 알림 (회원에게, 다른 작가가 그룹 슬롯에 추가했을 때)
+## 4.6) 그룹 전시 게시 알림 (포함된 회원 작가에게)
 
-- 한국어: '{artist}'님이 회원님을 '{title}' 그룹 전시에 초대했어요
-- English: '{artist}' invited you to the group exhibition '{title}'
+- 한국어: '{uploader}'님이 회원님의 작품을 '{title}' 전시에 함께 게시했어요.
+- English: '{uploader}' included your work in the exhibition '{title}'.
 
-→ 다른 작가가 USR-UPL-02에서 회원 슬롯으로 직접 지정한 시점에 1건. 토글 가능 (USR-STG-01 "그룹 초대").
+→ 다른 작가가 USR-UPL-02에서 회원 슬롯으로 직접 지정한 시점에 1건. 토글 가능 (USR-STG-01 "그룹 전시 게시 알림").
 
 ---
 
@@ -212,8 +203,8 @@
 
 ### 5.1 친구가 본인 자리 등록 (작가에게)
 
-- 한국어: '{name}' 님이 '{title}' 전시에 본인 자리를 등록했어요. 잘못 연결됐다면 전시 편집에서 풀 수 있어요.
-- English: '{name}' claimed their slot in '{title}'. If it's the wrong link, you can unlink it from the exhibition editor.
+- 한국어: '{name}'님이 '{title}' 전시에서 본인 작품을 연결했어요. 잘못 연결됐다면 전시 편집에서 풀 수 있어요.
+- English: '{name}' linked their work in '{title}'. If it's wrong, you can unlink it from the exhibition editor.
 
 → 친구가 가입 직후 "본인 작품 찾기"에서 자리 클레임 시 작가에게 1건. 정보용. 별도 액션 진입점 없음(잘못 연결됐을 때 작가가 마이페이지 슬롯 편집으로 처리, [Policy §3.5](./Policy_v1.md#3-5-잘못-연결됐을-때)).
 
@@ -283,7 +274,7 @@ ko/en 양측 동일 톤.
 
 ## 10) 구현 체크
 
-- [ ] 인박스 카테고리 필터 7종 동작 (전체·좋아요·팔로우·그룹 초대·큐레이션·응모전·시스템)
+- [ ] 인박스 카테고리 필터 7종 동작 (전체·좋아요·팔로우·그룹 전시 게시·큐레이션·응모전·시스템)
 - [ ] 빈 상태 메시지 3종 (전체 빈 상태·미독 빈 상태·빈 상태 안내)
 - [ ] 시간 표기 4종 (방금·n분·n시간·n일)
 - [ ] 일괄 처리 확인 다이얼로그 2종 (모두 읽음·읽은 알림 삭제)
@@ -309,7 +300,7 @@ ko/en 양측 동일 톤.
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v7 | 2026-05-09 | PM × Claude | Pick·기획전 토글 기본 ON 정비, §4.5.3 요약표 신설; §10 필터 칩 명칭 정합(Pick→큐레이션, 초대→그룹 초대) |
+| v7 | 2026-05-09 | PM × Claude | Pick·기획전 토글 기본 ON 정비, §4.5.3 요약표 신설; §10 필터 칩 명칭 정합(Pick→큐레이션, 초대→그룹 초대); §3 신고자 기각 알림 제거 — 작가 수신 3종만 유지, 섹션 번호 정합; §4.5.3 토글 표·§10 체크리스트 잔존 "그룹 초대"→"그룹 전시 게시" 정정 |
 | v6 | 2026-05-07 | PM × Claude | Artier→Proud Gallery 브랜드 정합(Pick 알림 KO·EN, 환영 메시지 KO·EN, 시드 매트릭스 행) |
 | v5 | 2026-05-05 | PM × Claude | 신고 알림·자동 비공개 폐기·삭제 사유 변수·매트릭스 정합. 이후 append — 문서 이력 단순화 |
 | v4 | 2026-05-04 | PM × Claude | 기획전 선정 알림·카테고리 8종·응모전 표준어 |

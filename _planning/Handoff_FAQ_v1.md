@@ -54,7 +54,7 @@ JPG, PNG, WEBP, GIF 형식을 지원하며, 파일당 최대 10MB까지 업로�
 ### 기타 카테고리
 
 #### Q9. 부적절한 작품을 발견했어요.
-전시 상세 화면에서 신고 버튼(깃발 아이콘)을 눌러 신고할 수 있어요. 운영팀이 영업일 24시간 안에 확인해드려요.
+전시 상세 화면에서 신고 버튼(깃발 아이콘)을 눌러 신고할 수 있어요. 운영팀이 모든 신고를 직접 검토해요. 정책 위반이 확인되면 해당 작품을 비공개하거나 삭제 처리해요.
 
 #### Q10. 서비스 이용료가 있나요?
 현재 Proud Gallery의 모든 기능은 무료로 이용하실 수 있어요.
@@ -110,7 +110,7 @@ Our team selects outstanding works each week and awards a badge. Picked works ap
 ### Other category
 
 #### Q9. I found inappropriate content.
-Use the report button (flag) on the work detail screen. We review reports within 24 business hours.
+Use the report button (flag) on the work detail screen. Our team reviews every report personally. If a violation is confirmed, the work will be hidden or removed.
 
 #### Q10. Is there a fee?
 All features of Proud Gallery are currently free to use.
@@ -150,6 +150,7 @@ Invite links are valid for 90 days from issue. If your friend hasn't signed up b
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v4 | 2026-05-09 | PM × Claude | Q9 신고 처리 문구 완화 — SLA 제거, 운영팀 직접 검토·비공개·삭제 처리 안내로 교체(KO·EN) |
 | v3 | 2026-05-07 | PM × Claude | Artier→Proud Gallery·Proud's Pick 브랜드 정합(KO·EN 전체 7곳) |
 | v2 | 2026-05-01 | PM × Claude | 본문 보강 — 14문항 ko/en 전문 게재. 카테고리별 묶음(계정/업로드/전시/기타/비회원 초대). **Q6 콘텐츠 결함 정정** — Phase 1엔 없는 회원용 비공개 토글을 약속하던 문장 ko/en 삭제. |
 <!-- 인용 정의 -->

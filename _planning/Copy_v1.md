@@ -3,8 +3,8 @@
 Proud Gallery(SuperGallery Phase 1)의 UX 문구 가이드. 본 문서는 **톤·구조 기준(§1~5, §7~8)**과 **전체 i18n 사전(§6)**을 단일 소스로 제공한다. 구현은 §6의 한국어·영어 사전을 그대로 코드 i18n 사전으로 옮기고, §7 기술 규칙을 따른다.
 
 **작성일**: 2026-04-20
-**최종 갱신**: 2026-05-07
-**버전**: v1.17
+**최종 갱신**: 2026-05-09
+**버전**: v1.18
 
 ---
 
@@ -227,7 +227,7 @@ const koMessages = {
   'demo.sectionNotif': '알림 시뮬',
   'demo.sectionNotifHint': '알림함에 샘플 알림을 추가합니다.',
   'demo.btnNotifFollow': '팔로우 알림',
-  'demo.btnNotifGroup': '그룹 초대',
+  'demo.btnNotifGroup': '그룹 전시 게시',
   'demo.linkOpenNotif': '알림함 열기',
   'demo.sectionWithdraw': '탈퇴 플로우',
   'demo.sectionWithdrawHint': '설정에서 사유 선택 후 탈퇴 확인까지 진행할 수 있어요.',
@@ -243,7 +243,7 @@ const koMessages = {
   'demo.toastNotifPushed': '알림함에 추가했어요.',
   'demo.sampleWorkTitle': '데모 작품',
   'demo.notifFollowMsg': '누군가 당신을 팔로우하기 시작했어요.',
-  'demo.notifGroupInviteMsg': '그룹 초대가 도착했어요.',
+  'demo.notifGroupInviteMsg': '회원님의 작품이 그룹 전시에 함께 게시됐어요.',
   'demo.linkReferenceToolkit': '기획 검수: JWT·이메일 데모',
   'refStub.title': 'Reference 도구 — 로컬 검수',
   'refStub.lead':
@@ -456,7 +456,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'notifications.filterUnread': '읽지 않음',
   'notifications.filterLike': '좋아요',
   'notifications.filterFollow': '팔로우',
-  'notifications.filterGroupInvite': '그룹 초대',
+  'notifications.filterGroupInvite': '그룹 전시 게시',
   'notifications.filterCuration': '큐레이션',
   'notifications.filterEvent': '응모전',
   'notifications.filterSystem': '시스템',
@@ -565,17 +565,16 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'review.notifRejected': '올리신 작품이 검수를 통과하지 못했어요. 사유: {reason}',
   'review.notifApproved': '올리신 작품이 승인됐어요. 둘러보기에서 다른 분들이 볼 수 있어요.',
   'review.notifNewWork': '님이 새 전시를 올렸어요',
-  // 신고 처리 결과 알림 — 대상 작가/신고자에게 운영팀 조치를 공지
   'pick.notifSelected': '회원님의 전시 \'{title}\'이 Proud\'s Pick으로 뽑혔어요. 축하드려요!',
-  'invite.notifAutoMatched': '\'{name}\' 님이 \'{title}\' 전시에 본인 자리를 등록했어요. 잘못 연결됐다면 전시 편집에서 풀 수 있어요.',
+  'invite.notifAutoMatched': '\'{name}\'님이 \'{title}\' 전시에서 본인 작품을 연결했어요. 잘못 연결됐다면 전시 편집에서 풀 수 있어요.',
+  'groupInvite.notif': '\'{uploader}\'님이 회원님의 작품을 \'{title}\' 전시에 함께 게시했어요.',
   'report.notifTargetWorkDeleted': '회원님의 전시 \'{title}\'이 운영 정책 위반으로 삭제됐어요. 자세한 내용은 문의하기로 연락 주세요.',
+  'report.notifTargetWorkHidden': '회원님의 전시 \'{title}\'이 신고 검토 결과 비공개로 전환됐어요. 피드와 검색에서 제외돼요.',
+  'report.notifTargetWorkRestored': '회원님의 전시 \'{title}\'이 검토 결과 정상 복원됐어요.',
   'report.deleteReason.copyright': '저작권 침해 확정',
   'report.deleteReason.illegal': '위법 콘텐츠',
   'report.deleteReason.minor_harmful': '청소년 유해',
   'report.deleteReason.abuse': '어뷰즈',
-  'report.notifTargetWorkHidden': '회원님의 전시 \'{title}\'이 신고 검토 결과 비공개로 전환됐어요. 피드와 검색에서 제외돼요.',
-  'report.notifTargetWorkRestored': '회원님의 전시 \'{title}\'이 검토 결과 정상 복원됐어요.',
-  'report.notifReporterDismissed': '접수하신 신고는 운영팀 검토 결과 받아들여지지 않았어요.',
   'upload.toastPublishedImmediate': '작품이 등록됐어요. 둘러보기 피드에서 바로 보여요.',
   'upload.toastDraftSaved': '초안이 저장되었어요.',
   'upload.toastOrderSaved': '순서가 저장되었어요.',
@@ -750,7 +749,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'notifications.categoryAll': '유형 전체',
   'notifications.categoryLike': '좋아요',
   'notifications.categoryFollow': '팔로우',
-  'notifications.categoryGroupInvite': '그룹 초대',
+  'notifications.categoryGroupInvite': '그룹 전시 게시',
   'notifications.categoryCuration': '큐레이션',
   'notifications.categoryPick': 'Pick',
   'notifications.categoryEvent': '응모전',
@@ -837,7 +836,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
     '운영팀이 매주 우수 작품을 선정해 배지를 부여해요. 선정된 작품은 피드 상단에 노출되며, 작가에게 알림이 발송돼요.',
   'faq.q9': '부적절한 작품을 발견했어요.',
   'faq.a9':
-    '전시 상세 화면에서 신고 버튼(깃발 아이콘)을 눌러 신고할 수 있어요. 운영팀이 영업일 24시간 안에 확인해드려요.',
+    '전시 상세 화면에서 신고 버튼(깃발 아이콘)을 눌러 신고할 수 있어요. 운영팀이 모든 신고를 직접 검토해요. 정책 위반이 확인되면 해당 작품을 비공개하거나 삭제 처리해요.',
   'faq.q10': '서비스 이용료가 있나요?',
   'faq.a10': '현재 {brand}의 모든 기능은 무료로 이용하실 수 있어요.',
   'faq.q11': '함께 올린 비회원 친구는 어떻게 초대하나요?',
@@ -1129,7 +1128,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'settings.notifOptionalGroup': '선택 알림',
   'settings.notifLike': '내 작품에 좋아요',
   'settings.notifNewFollower': '새 팔로워',
-  'settings.notifGroupInvite': '공동 전시(그룹전시) 초대',
+  'settings.notifGroupInvite': '그룹 전시 게시 알림',
   'settings.notifWeeklyTheme': '기획전 · Pick 알림',
   'settings.notifWeeklyThemeHint': "Proud's Pick 선정, 기획전 등 하이라이트 알림을 받어요.",
   'settings.notifMarketing': '마케팅 알림',
@@ -1520,7 +1519,7 @@ const enMessages: Record<MessageKey, string> = {
   'demo.sectionNotif': 'Notification simulation',
   'demo.sectionNotifHint': 'Adds sample items to your notification inbox.',
   'demo.btnNotifFollow': 'Follow',
-  'demo.btnNotifGroup': 'Group invite',
+  'demo.btnNotifGroup': 'Group post',
   'demo.linkOpenNotif': 'Open notifications',
   'demo.sectionWithdraw': 'Account deletion',
   'demo.sectionWithdrawHint': 'In Settings, pick a reason and complete the withdrawal flow.',
@@ -1536,7 +1535,7 @@ const enMessages: Record<MessageKey, string> = {
   'demo.toastNotifPushed': 'Added to notifications.',
   'demo.sampleWorkTitle': 'Demo work',
   'demo.notifFollowMsg': 'Someone started following you.',
-  'demo.notifGroupInviteMsg': 'You received a group invitation.',
+  'demo.notifGroupInviteMsg': 'Your work has been included in a group exhibition.',
   'demo.linkReferenceToolkit': 'PM review: JWT, email demo',
   'refStub.title': 'Reference toolkit — local review',
   'refStub.lead':
@@ -1749,7 +1748,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'notifications.filterUnread': 'Unread',
   'notifications.filterLike': 'Likes',
   'notifications.filterFollow': 'Following',
-  'notifications.filterGroupInvite': 'Group Invite',
+  'notifications.filterGroupInvite': 'Group post',
   'notifications.filterCuration': 'Curation',
   'notifications.filterEvent': 'Events',
   'notifications.filterSystem': 'System',
@@ -1858,15 +1857,15 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'review.notifRejected': 'Your upload was not approved. Reason: {reason}',
   'review.notifApproved': 'Your upload was approved and is now shown on Browse.',
   'pick.notifSelected': 'Your exhibition \'{title}\' was selected as Proud\'s Pick. Congrats!',
-  'invite.notifAutoMatched': "'{name}' claimed their slot in '{title}'. If it's the wrong link, you can unlink it from the exhibition editor.",
+  'invite.notifAutoMatched': "'{name}' linked their work in '{title}'. If it's wrong, you can unlink it from the exhibition editor.",
+  'groupInvite.notif': "'{uploader}' included your work in the exhibition '{title}'.",
   'report.notifTargetWorkDeleted': 'Your exhibition \'{title}\' has been removed due to a policy violation. Contact support for details.',
+  'report.notifTargetWorkHidden': 'Your exhibition \'{title}\' has been hidden from Browse/Search after review.',
+  'report.notifTargetWorkRestored': 'Your exhibition \'{title}\' has been restored following review.',
   'report.deleteReason.copyright': 'Confirmed copyright infringement',
   'report.deleteReason.illegal': 'Illegal content',
   'report.deleteReason.minor_harmful': 'Harmful to minors',
   'report.deleteReason.abuse': 'Abuse',
-  'report.notifTargetWorkHidden': 'Your exhibition \'{title}\' has been hidden from Browse/Search after review.',
-  'report.notifTargetWorkRestored': 'Your exhibition \'{title}\' has been restored following review.',
-  'report.notifReporterDismissed': 'Your report was dismissed after review.',
   'review.notifNewWork': 'has posted a new exhibition',
   'upload.toastPublishedImmediate': 'Exhibited and shown on Browse immediately.',
   'upload.toastDraftSaved': 'Draft saved.',
@@ -2043,7 +2042,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'notifications.categoryAll': 'All types',
   'notifications.categoryLike': 'Likes',
   'notifications.categoryFollow': 'Follows',
-  'notifications.categoryGroupInvite': 'Group invites',
+  'notifications.categoryGroupInvite': 'Group posts',
   'notifications.categoryCuration': 'Curation',
   'notifications.categoryPick': 'Pick',
   'notifications.categoryEvent': 'Events',
@@ -2130,7 +2129,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
     'Our team selects outstanding works each week and awards a badge. Picked works appear higher in the feed and artists get a notification.',
   'faq.q9': 'I found inappropriate content.',
   'faq.a9':
-    'Use the report button (flag) on the work detail screen. Our team will review it.',
+    'Use the report button (flag) on the work detail screen. Our team reviews every report personally. If a violation is confirmed, the work will be hidden or removed.',
   'faq.q10': 'Is there a fee?',
   'faq.a10': 'All features of {brand} are currently free to use.',
   'faq.q11': 'How do I invite non-member friends to my group exhibition?',
@@ -2423,7 +2422,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'settings.notifOptionalGroup': 'Optional',
   'settings.notifLike': 'Likes on my work',
   'settings.notifNewFollower': 'New followers',
-  'settings.notifGroupInvite': 'Group exhibition invites',
+  'settings.notifGroupInvite': 'Group exhibition posts',
   'settings.notifWeeklyTheme': 'Curated show & Pick alerts',
   'settings.notifWeeklyThemeHint': "Includes Proud's Pick, curated shows, and other highlight notifications.",
   'settings.notifMarketing': 'Marketing',
@@ -2876,7 +2875,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.18 | 2026-05-09 | PM × Claude | upload.nonMemberPreview* 추가, signup.birthHint 중복 제거, settings.withdrawWarn* 추가, admin.report·notice·curation·contest i18n 키 신설; contactEmailValue iproud@i-screammedia.com 확정; EN 누락 키 추가(upload.consentCurationLabel·admin.nav.featured), KO 누락 키 추가(admin.section.operations); messages.ts 8건 정합(pick.notifSelected·events.subtitle·removePieceConfirmDesc·falseReportNotice·unknownSlotHint·qaAdminEventParticipants·qaAdminManagedEvents·linkSentBody) |
+| v1.18 | 2026-05-09 | PM × Claude | upload.nonMemberPreview* 추가, signup.birthHint 중복 제거, settings.withdrawWarn* 추가, admin.report·notice·curation·contest i18n 키 신설; contactEmailValue iproud@i-screammedia.com 확정; EN 누락 키 추가(upload.consentCurationLabel·admin.nav.featured), KO 누락 키 추가(admin.section.operations); messages.ts 8건 정합; faq.a9 SLA 제거; 헤더 v1.18 정합; report.notifReporterDismissed 삭제; invite.notifAutoMatched 문구 정정("본인 작품을 연결"); groupInvite.notif 신규("작품을 함께 게시"), settings.notifGroupInvite·notifications.categoryGroupInvite "그룹 전시 게시"로 개념 정정; notifications.filterGroupInvite KO "그룹 초대"→"그룹 전시 게시", EN "Group Invite"→"Group post"; demo.btnNotifGroup KO "그룹 초대"→"그룹 전시 게시" 정정(messages.ts 동기화) |
 | v1.17 | 2026-05-07 | PM × Claude | 서비스명 Artier → Proud Gallery 전면 치환(brand.name·splash.alt·Proud's Pick → Proud's Pick); 헤더 버전 동기; messages.ts ↔ Copy 사전 동기화 — points·admin 잔재·social·event·onboarding·faq 키 삭제, curation·events.results·evt.admin·notif.contestSelected·notifications.category·profile.editWarn·upload.groupRole·upload.roleInfo·badge·settings.notifWeeklyTheme·admin.notice 그룹 KO·EN 추가; upload.reviewNotice 신설; about feat2Desc·feat4Desc·feat5 정합; onboarding concept step 7키 KO·EN 제거 |
 | v1.16 | 2026-05-06 | PM × Claude | profile.removePieceFromExhibition·Confirm·Success 4키 추가(전시에서 빼기 신규 기능); tabGuideWorks 내 작품 탭 진입점 반영; profile.tabHelpWorks 키 삭제(화면에서 단락 제거); nicknameLockedLabel·Hint·ContactCta·categoryNicknameChange·nicknameChangeNotice·nicknameNew·nicknameReason·errNicknameDuplicate 닉네임 변경 불가 관련 키 일괄 삭제(즉시 자율 변경으로 정책 개정) |
 | v1.15 | 2026-05-06 | PM × Claude | events.viewMyEntry·cancelEntry·cancelEntryConfirmTitle·Desc·Success 5키 추가 |
