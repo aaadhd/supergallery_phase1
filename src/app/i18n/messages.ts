@@ -47,7 +47,7 @@ const koMessages = {
   'footer.mailOrderValue': '제2026-서울강남-00000호',
   'footer.privacyOfficerValue': '조가영',
   'footer.addressValue': '서울특별시 강남구 테헤란로 000, 0층',
-  'footer.contactEmailValue': 'contact@artier.kr',
+  'footer.contactEmailValue': 'iproud@i-screammedia.com',
   'footer.phoneValue': '02-0000-0000',
   'footer.jurisdictionValue': '서울중앙지방법원',
   'footer.emailCollectionNotice':
@@ -1334,7 +1334,7 @@ const enMessages: Record<MessageKey, string> = {
   'footer.mailOrderValue': 'No. 2026-Seoul Gangnam-00000',
   'footer.privacyOfficerValue': 'Jo Ga-young',
   'footer.addressValue': '000 Teheran-ro, Gangnam-gu, Seoul (Floor 0)',
-  'footer.contactEmailValue': 'contact@artier.kr',
+  'footer.contactEmailValue': 'iproud@i-screammedia.com',
   'footer.phoneValue': '+82-2-0000-0000',
   'footer.jurisdictionValue': 'Seoul Central District Court',
   'footer.emailCollectionNotice':

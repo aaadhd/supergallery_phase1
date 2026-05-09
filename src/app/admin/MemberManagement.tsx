@@ -32,7 +32,7 @@ const DEMO_USER_ID = artists[0].id;
 const demoUserMember: MemberRow = {
   id: DEMO_USER_ID,
   name: `${artists[0].name} (데모 사용자)`,
-  email: 'artist@artier.kr',
+  email: 'artist@proudgallery.com',
   joinedAt: '2025-09-01',
   avatar: artists[0].name[0] ?? 'D',
 };

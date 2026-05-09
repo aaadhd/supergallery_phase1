@@ -214,7 +214,7 @@ const koMessages = {
   'footer.mailOrderValue': '제2026-서울강남-00000호',
   'footer.privacyOfficerValue': '조가영',
   'footer.addressValue': '서울특별시 강남구 테헤란로 000, 0층',
-  'footer.contactEmailValue': 'contact@artier.kr',
+  'footer.contactEmailValue': 'iproud@i-screammedia.com',
   'footer.phoneValue': '02-0000-0000',
   'footer.jurisdictionValue': '서울중앙지방법원',
   'footer.emailCollectionNotice':
@@ -1505,7 +1505,7 @@ const enMessages: Record<MessageKey, string> = {
   'footer.mailOrderValue': 'No. 2026-Seoul Gangnam-00000',
   'footer.privacyOfficerValue': 'Jo Ga-young',
   'footer.addressValue': '000 Teheran-ro, Gangnam-gu, Seoul (Floor 0)',
-  'footer.contactEmailValue': 'contact@artier.kr',
+  'footer.contactEmailValue': 'iproud@i-screammedia.com',
   'footer.phoneValue': '+82-2-0000-0000',
   'footer.jurisdictionValue': 'Seoul Central District Court',
   'footer.emailCollectionNotice':
@@ -2831,7 +2831,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 | 통신판매업 신고 | 제2026-서울강남-00000호 | No. 2026-Seoul Gangnam-00000 |
 | 개인정보보호책임자 | 조가영 | Jo Ga-young |
 | 주소 | 서울특별시 강남구 테헤란로 000, 0층 | 000 Teheran-ro, Gangnam-gu, Seoul (Floor 0) |
-| 이메일 | contact@artier.kr | contact@artier.kr |
+| 이메일 | iproud@i-screammedia.com | iproud@i-screammedia.com |
 | 전화 | 02-0000-0000 | +82-2-0000-0000 |
 | 관할 법원 | 서울중앙지방법원 | Seoul Central District Court |
 
@@ -2871,7 +2871,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.18 | 2026-05-09 | PM × Claude | upload.nonMemberPreview* 7개 키 KO·EN 추가 (발행 전 확인 모달); signup.birthHint KO·EN 중복 키 제거 — 개인정보 용도 안내 포함 긴 버전으로 단일화; settings.withdrawWarnPick·Curation·Contest 3키 KO·EN 추가; admin.report.memo* 7키 + admin.report.toast* 7키 KO·EN 추가 (toastDeleted 포함); admin.notice.* 17키·admin.loading·admin.curation.* 26키·admin.contest.* 33키 KO·EN 추가 (NoticeManagement·CurationManagement·ContestManagement 하드코딩 i18n 전환) |
+| v1.18 | 2026-05-09 | PM × Claude | upload.nonMemberPreview* 추가, signup.birthHint 중복 제거, settings.withdrawWarn* 추가, admin.report·notice·curation·contest i18n 키 신설; contactEmailValue iproud@i-screammedia.com 확정 |
 | v1.17 | 2026-05-07 | PM × Claude | 서비스명 Artier → Proud Gallery 전면 치환(brand.name·splash.alt·Proud's Pick → Proud's Pick); 헤더 버전 동기; messages.ts ↔ Copy 사전 동기화 — points·admin 잔재·social·event·onboarding·faq 키 삭제, curation·events.results·evt.admin·notif.contestSelected·notifications.category·profile.editWarn·upload.groupRole·upload.roleInfo·badge·settings.notifWeeklyTheme·admin.notice 그룹 KO·EN 추가; upload.reviewNotice 신설; about feat2Desc·feat4Desc·feat5 정합; onboarding concept step 7키 KO·EN 제거 |
 | v1.16 | 2026-05-06 | PM × Claude | profile.removePieceFromExhibition·Confirm·Success 4키 추가(전시에서 빼기 신규 기능); tabGuideWorks 내 작품 탭 진입점 반영; profile.tabHelpWorks 키 삭제(화면에서 단락 제거); nicknameLockedLabel·Hint·ContactCta·categoryNicknameChange·nicknameChangeNotice·nicknameNew·nicknameReason·errNicknameDuplicate 닉네임 변경 불가 관련 키 일괄 삭제(즉시 자율 변경으로 정책 개정) |
 | v1.15 | 2026-05-06 | PM × Claude | events.viewMyEntry·cancelEntry·cancelEntryConfirmTitle·Desc·Success 5키 추가 |

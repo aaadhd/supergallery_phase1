@@ -15,7 +15,7 @@ const ko = {
   s4h: '4. 개인정보의 제3자 제공',
   s4p: '회원의 동의 없이 개인정보를 제3자에게 제공하지 않습니다. 다만, 법령에 의해 요구되는 경우에는 예외로 합니다.',
   s5h: '5. 개인정보 보호책임자',
-  s5p: '개인정보 보호에 관한 문의는 support@artier.com으로 연락해 주시기 바랍니다.',
+  s5p: '개인정보 보호에 관한 문의는 iproud@i-screammedia.com으로 연락해 주시기 바랍니다.',
   footer: '본 방침은 서비스 정식 런칭 전 초안이며, 법무 검토를 거쳐 최종 확정됩니다.',
 } as const;
 
@@ -37,7 +37,7 @@ const en: Record<PrivacyContentKey, string> = {
   s4p:
     'We do not share personal information with third parties without consent, except where required by law.',
   s5h: '5. Data protection contact',
-  s5p: 'For privacy inquiries, contact support@artier.com.',
+  s5p: 'For privacy inquiries, contact iproud@i-screammedia.com.',
   footer:
     'This policy is a draft prior to official launch and will be finalized after legal review.',
 };
