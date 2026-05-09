@@ -3,7 +3,6 @@ import { Outlet, NavLink, Link, Navigate, useLocation } from 'react-router-dom';
 import { toast, Toaster } from 'sonner';
 import {
   LayoutDashboard,
-  Users,
   CalendarDays,
   ArrowLeft,
   FileSearch,
@@ -31,7 +30,6 @@ import type { MessageKey } from '../i18n/messages';
 type NavItem = { to: string; icon: typeof LayoutDashboard; labelKey: MessageKey; end?: boolean };
 type NavSection = { sectionLabelKey?: MessageKey; items: NavItem[] };
 
-// PRD_Admin §0.3: 5섹션 그룹화 (시니어 운영자 멘탈 모델 단순화).
 const navSections: NavSection[] = [
   {
     items: [
@@ -46,12 +44,23 @@ const navSections: NavSection[] = [
     ],
   },
   {
-    sectionLabelKey: 'admin.section.contentOps',
+    sectionLabelKey: 'admin.section.curation',
     items: [
       { to: '/admin/picks', icon: Star, labelKey: 'admin.nav.picks' },
-      { to: '/admin/featured', icon: Telescope, labelKey: 'admin.nav.featured' },
       { to: '/admin/curation', icon: Sparkles, labelKey: 'admin.nav.curation' },
+      { to: '/admin/featured', icon: Telescope, labelKey: 'admin.nav.featured' },
+    ],
+  },
+  {
+    sectionLabelKey: 'admin.section.events',
+    items: [
       { to: '/admin/contests', icon: CalendarRange, labelKey: 'admin.nav.contests' },
+      { to: '/admin/general-events', icon: CalendarDays, labelKey: 'admin.nav.generalEvents' },
+    ],
+  },
+  {
+    sectionLabelKey: 'admin.section.banners',
+    items: [
       { to: '/admin/banners', icon: PanelTop, labelKey: 'admin.nav.banners' },
     ],
   },
@@ -67,7 +76,7 @@ const navSections: NavSection[] = [
 
 // 폐기·통합 화면(PRD §9·§10): /admin/works·/admin/partners 라우트는 2026-04-26 제거됨.
 // 운영자는 ADM-RPT-01(신고 큐) / ADM-MBR-01(회원 관리)에서 접근.
-void ImageIcon; void Users;
+void ImageIcon;
 
 export default function AdminLayout() {
   const { t } = useI18n();

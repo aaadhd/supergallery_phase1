@@ -8,7 +8,7 @@ import {
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '../components/ui/select';
-import { eventStore, useManagedEvents, type ManagedEvent } from '../utils/eventStore';
+import { eventsStore, useManagedEvents, type ManagedEvent } from '../utils/eventsStore';
 import { workStore } from '../store';
 import { useSyncExternalStore } from 'react';
 import { useI18n } from '../i18n/I18nProvider';
@@ -29,7 +29,7 @@ interface EventParticipant {
 
 /**
  * 참여자 시드 — Phase 2에서 실 DB 연결 예정.
- * eventId는 eventStore의 ManagedEvent.id(string)와 일치.
+ * eventId는 contestStore의 ManagedContest.id(string)와 일치.
  */
 const seedParticipants: EventParticipant[] = [
   { id: 'EP-001', eventId: '1', name: '카테', email: 'cho.gayoung@email.com', status: '참여 완료', participatedAt: '2026-05-02' },
@@ -79,7 +79,7 @@ function useParticipantsFromWorks(): EventParticipant[] {
   }, [works]);
 }
 
-export default function EventParticipants() {
+export default function EventParticipants({ compact = false }: { compact?: boolean }) {
   const { t } = useI18n();
   const [searchParams] = useSearchParams();
   const [filterEvent, setFilterEvent] = useState(searchParams.get('event') ?? 'all');
@@ -119,7 +119,7 @@ export default function EventParticipants() {
     const ev = events.find((e) => e.id === eventId);
     const w = workStore.getWork(workId);
     if (!ev || !w) return;
-    const result = eventStore.toggleSelected(eventId, workId);
+    const result = eventsStore.toggleSelected(eventId, workId);
     if (result.added) {
       sendContestSelectedNotification(ev.id, ev.title, workId);
       appendAuditLog({ action: 'contest_selected', targetId: workId, targetSnapshot: { eventId, eventTitle: ev.title }, actorId: 'admin', actorRole: 'admin' });
@@ -156,7 +156,7 @@ export default function EventParticipants() {
     for (const [eventId, workIds] of byEvent) {
       const ev = events.find((e) => e.id === eventId);
       if (!ev) continue;
-      const { addedIds } = eventStore.bulkSelect(eventId, workIds);
+      const { addedIds } = eventsStore.bulkSelect(eventId, workIds);
       for (const wid of addedIds) sendContestSelectedNotification(eventId, ev.title, wid);
       totalAdded += addedIds.length;
     }
@@ -176,7 +176,7 @@ export default function EventParticipants() {
       byEvent.get(eventId)!.push(workId);
     }
     for (const [eventId, workIds] of byEvent) {
-      eventStore.bulkUnselect(eventId, workIds);
+      eventsStore.bulkUnselect(eventId, workIds);
     }
     appendAuditLog({ action: 'contest_unselected', targetId: 'bulk', targetSnapshot: { count: bulkSelected.size }, actorId: 'admin', actorRole: 'admin' });
     toast(`${bulkSelected.size}건 선정 해제 (알림은 보존)`);
@@ -190,10 +190,10 @@ export default function EventParticipants() {
     [realParticipants],
   );
 
-  // 참여자가 하나라도 있는 이벤트만 관리 대상으로 노출
+  // 응모전(type=contest) 중 참여자가 있는 이벤트만 관리 대상으로 노출
   const relevantEvents = useMemo(() => {
     const withParticipants = new Set(allParticipants.map((p) => p.eventId));
-    return events.filter((e) => withParticipants.has(e.id));
+    return events.filter((e) => e.type === 'contest' && withParticipants.has(e.id));
   }, [events, allParticipants]);
 
   const filtered = allParticipants.filter(p => {
@@ -210,10 +210,12 @@ export default function EventParticipants() {
 
   return (
     <div className="space-y-6">
-      <div>
-        <h1 className="text-2xl font-bold text-foreground">응모전 참여자 관리</h1>
-        <p className="text-sm text-muted-foreground mt-1">런칭 응모전 참여 현황 및 참여자 목록</p>
-      </div>
+      {!compact && (
+        <div>
+          <h1 className="text-2xl font-bold text-foreground">응모전 참여자 관리</h1>
+          <p className="text-sm text-muted-foreground mt-1">런칭 응모전 참여 현황 및 참여자 목록</p>
+        </div>
+      )}
 
       {/* Event summary cards */}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">

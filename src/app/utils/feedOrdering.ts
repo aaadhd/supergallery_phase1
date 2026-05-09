@@ -1,5 +1,5 @@
 import type { Work } from '../data';
-import { curationStore } from './curationStore';
+import { featuredStore } from './featuredStore';
 import { isWorkVisibleOnPublicFeed } from './feedVisibility';
 
 export type FeedRankContext = {
@@ -153,7 +153,7 @@ export function orderWorksForBrowseFeed(
   // 버킷 할당 전 순서를 섞어, 새로고침마다 동일한 작품만 앞에 고정되는 현상을 줄인다.
   // hidden/pending 작품이 rest 버킷으로 유입되지 않도록 공개 작품만 추린다.
   const randomizedWorks = [...works].filter(isWorkVisibleOnPublicFeed).sort(() => Math.random() - 0.5);
-  const featuredExhibitionIdSet = new Set(curationStore.getFeaturedExhibitionIds());
+  const featuredExhibitionIdSet = new Set(featuredStore.getAll());
 
   const used = new Set<string>();
   const assign = (pool: Work[], predicate: (w: Work) => boolean, source: FeedSource, limit?: number): Array<{ work: Work; source: FeedSource }> => {

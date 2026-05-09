@@ -9,9 +9,10 @@ import { useLoginPrompt } from '../hooks/useLoginPrompt';
 import { useI18n } from '../i18n/I18nProvider';
 import { Button } from '../components/ui/button';
 import { toast } from 'sonner';
-import { eventStore, deriveStatus, isPublicationVisible, useManagedEvents } from '../utils/eventStore';
+import { eventsStore, deriveEventStatus, isPublicationVisible, useManagedEvents } from '../utils/eventsStore';
 import { EventEntryModal } from '../components/EventEntryModal';
 import { openConfirm } from '../components/ConfirmDialog';
+import { displayExhibitionTitle } from '../utils/workDisplay';
 
 export default function EventDetail() {
   const { id } = useParams();
@@ -24,13 +25,13 @@ export default function EventDetail() {
 
   // store 구독 (변경 시 재렌더)
   useManagedEvents();
-  const event = id ? eventStore.get(id) : null;
+  const event = id ? eventsStore.get(id) : null;
 
   useEffect(() => {
     if (id) analytics.eventDetailView(id);
   }, [id]);
 
-  const eventStatus = event ? deriveStatus(event) : null;
+  const eventStatus = event ? deriveEventStatus(event) : null;
   const isEnded = eventStatus === 'ended';
 
   const myEntry = useMemo(() => {
@@ -64,7 +65,7 @@ export default function EventDetail() {
       setSearchParams(next, { replace: true });
       return;
     }
-    if (!loginPrompt.tryProtectedAction('upload')) {
+    if (!loginPrompt.tryProtectedAction('contest')) {
       const next = new URLSearchParams(searchParams);
       next.delete('entry');
       setSearchParams(next, { replace: true });
@@ -78,7 +79,7 @@ export default function EventDetail() {
   }, [event?.id, isEnded, alreadySubmitted]);
 
   const handleParticipate = () => {
-    if (!loginPrompt.tryProtectedAction('upload')) return;
+    if (!loginPrompt.tryProtectedAction('contest')) return;
     if (alreadySubmitted) {
       toast.error(t('events.alreadySubmitted'));
       return;
@@ -241,3 +242,4 @@ export default function EventDetail() {
     </div>
   );
 }
+

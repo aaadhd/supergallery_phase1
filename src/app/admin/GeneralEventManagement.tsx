@@ -1,0 +1,325 @@
+import { useMemo, useState, useEffect, type FormEvent } from 'react';
+import { toast } from 'sonner';
+import { Pencil, Plus, Trash2 } from 'lucide-react';
+import { Button } from '../components/ui/button';
+import { openConfirm } from '../components/ConfirmDialog';
+import {
+  eventsStore,
+  useManagedEvents,
+  deriveEventStatus,
+  statusLabelKo,
+  type ManagedEvent,
+  type EventStatus,
+} from '../utils/eventsStore';
+import { appendAuditLog } from '../utils/adminAuditLog';
+import { useI18n } from '../i18n/I18nProvider';
+
+type DraftState = {
+  title: string;
+  subtitle: string;
+  description: string;
+  bannerImageUrl: string;
+  startAt: string;
+  endAt: string;
+  displayStartAt: string;
+  displayEndAt: string;
+  status: EventStatus | '';
+};
+
+const emptyDraft: DraftState = {
+  title: '',
+  subtitle: '',
+  description: '',
+  bannerImageUrl: '',
+  startAt: '',
+  endAt: '',
+  displayStartAt: '',
+  displayEndAt: '',
+  status: '',
+};
+
+function statusBadgeClass(s: EventStatus) {
+  if (s === 'active') return 'bg-primary/10 text-primary border border-border';
+  if (s === 'scheduled') return 'bg-amber-50 text-amber-800 border border-amber-200';
+  return 'bg-muted/50 text-muted-foreground border border-border';
+}
+
+export default function GeneralEventManagement() {
+  const { t } = useI18n();
+  const [loading, setLoading] = useState(true);
+  const allEvents = useManagedEvents();
+  const [showForm, setShowForm] = useState(false);
+  const [editingId, setEditingId] = useState<string | null>(null);
+  const [draft, setDraft] = useState<DraftState>(emptyDraft);
+
+  useEffect(() => {
+    const timer = window.setTimeout(() => setLoading(false), 240);
+    return () => window.clearTimeout(timer);
+  }, []);
+
+  const generalEvents = useMemo<ManagedEvent[]>(() => {
+    const order: Record<EventStatus, number> = { active: 0, scheduled: 1, ended: 2 };
+    return allEvents
+      .filter((e) => e.type === 'general')
+      .sort((a, b) => order[deriveEventStatus(a)] - order[deriveEventStatus(b)]);
+  }, [allEvents]);
+
+  const startEdit = (ev: ManagedEvent) => {
+    setEditingId(ev.id);
+    setDraft({
+      title: ev.title,
+      subtitle: ev.subtitle ?? '',
+      description: ev.description,
+      bannerImageUrl: ev.bannerImageUrl,
+      startAt: ev.startAt,
+      endAt: ev.endAt,
+      displayStartAt: ev.displayStartAt ?? '',
+      displayEndAt: ev.displayEndAt ?? '',
+      status: ev.status ?? '',
+    });
+    setShowForm(true);
+  };
+
+  const cancelEdit = () => {
+    setEditingId(null);
+    setDraft(emptyDraft);
+    setShowForm(false);
+  };
+
+  const removeEvent = async (ev: ManagedEvent) => {
+    const ok = await openConfirm({
+      title: `"${ev.title}"을(를) 삭제하시겠습니까?`,
+      description: '삭제 후 복구할 수 없습니다.',
+      destructive: true,
+      confirmLabel: t('admin.notice.delete'),
+    });
+    if (!ok) return;
+    eventsStore.remove(ev.id);
+    appendAuditLog({ action: 'event_deleted', targetId: ev.id, targetSnapshot: { title: ev.title }, actorId: 'admin', actorRole: 'admin' });
+    toast.success('일반 이벤트가 삭제되었습니다.');
+  };
+
+  const submit = (e: FormEvent) => {
+    e.preventDefault();
+    const title = draft.title.trim();
+    const img = draft.bannerImageUrl.trim();
+    const start = draft.startAt.trim();
+    const end = draft.endAt.trim();
+    const desc = draft.description.trim();
+
+    if (!title || !img || !start || !end || !desc) {
+      toast.error('제목·배너 이미지·기간·내용은 필수입니다.');
+      return;
+    }
+    if (start > end) {
+      toast.error(t('admin.contest.errDateOrder'));
+      return;
+    }
+    const displayStart = draft.displayStartAt.trim() || undefined;
+    const displayEnd = draft.displayEndAt.trim() || undefined;
+    if (displayStart && displayEnd && displayStart > displayEnd) {
+      toast.error('게시 기간 시작일이 종료일보다 늦을 수 없습니다.');
+      return;
+    }
+    const payload: Omit<ManagedEvent, 'id'> = {
+      type: 'general',
+      title,
+      subtitle: draft.subtitle.trim() || undefined,
+      description: desc,
+      bannerImageUrl: img,
+      startAt: start,
+      endAt: end,
+      displayStartAt: displayStart,
+      displayEndAt: displayEnd,
+      worksPublic: false,
+      status: draft.status || undefined,
+    };
+    if (editingId) {
+      eventsStore.update(editingId, payload);
+      appendAuditLog({ action: 'event_saved', targetId: editingId, targetSnapshot: { title }, actorId: 'admin', actorRole: 'admin' });
+      toast.success('일반 이벤트가 수정되었습니다.');
+    } else {
+      const created = eventsStore.add(payload);
+      appendAuditLog({ action: 'event_saved', targetId: created.id, targetSnapshot: { title }, actorId: 'admin', actorRole: 'admin' });
+      toast.success('일반 이벤트가 등록되었습니다.');
+    }
+    cancelEdit();
+  };
+
+  if (loading) {
+    return (
+      <div>
+        <h1 className="text-xl font-bold mb-6 text-foreground">일반 이벤트 관리</h1>
+        <div className="rounded-lg border border-border py-16 text-center text-sm text-muted-foreground">{t('admin.loading')}</div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="min-h-full">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-1">
+        <h1 className="text-xl font-bold text-foreground">일반 이벤트 관리</h1>
+        <Button
+          type="button"
+          onClick={() => { setEditingId(null); setDraft(emptyDraft); setShowForm((v) => !v); }}
+          className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90 inline-flex items-center gap-1.5"
+        >
+          <Plus className="w-4 h-4" />
+          새 이벤트
+        </Button>
+      </div>
+      <p className="text-sm text-muted-foreground mb-6">
+        기간 한정 이벤트를 등록합니다. 응모전은 <a href="/admin/contests" className="text-primary lg:hover:underline">응모전 관리</a>에서 별도로 등록합니다.
+      </p>
+
+      {showForm && (
+        <form
+          onSubmit={submit}
+          className="mb-6 border border-border rounded-lg p-4 space-y-4 bg-muted/50"
+        >
+          <p className="text-sm font-medium text-foreground">{editingId ? '이벤트 수정' : '새 이벤트 등록'}</p>
+
+          <div className="grid sm:grid-cols-2 gap-3">
+            <input
+              placeholder="이벤트명 *"
+              value={draft.title}
+              onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
+              className="border border-border rounded-lg px-3 py-2 text-sm bg-white"
+            />
+            <input
+              placeholder="부제목 (선택)"
+              value={draft.subtitle}
+              onChange={(e) => setDraft((d) => ({ ...d, subtitle: e.target.value }))}
+              className="border border-border rounded-lg px-3 py-2 text-sm bg-white"
+            />
+            <input
+              placeholder="배너 이미지 URL *"
+              value={draft.bannerImageUrl}
+              onChange={(e) => setDraft((d) => ({ ...d, bannerImageUrl: e.target.value }))}
+              className="border border-border rounded-lg px-3 py-2 text-sm bg-white sm:col-span-2"
+            />
+            <textarea
+              placeholder="이벤트 내용 *"
+              value={draft.description}
+              onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
+              className="border border-border rounded-lg px-3 py-2 text-sm bg-white sm:col-span-2 min-h-[80px]"
+            />
+
+            {/* 실행 기간 */}
+            <div className="sm:col-span-2">
+              <p className="text-xs font-semibold text-foreground mb-2">실행 기간 *</p>
+              <div className="grid sm:grid-cols-2 gap-3">
+                <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+                  시작일
+                  <input type="date" value={draft.startAt} onChange={(e) => setDraft((d) => ({ ...d, startAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground" />
+                </label>
+                <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+                  종료일
+                  <input type="date" value={draft.endAt} onChange={(e) => setDraft((d) => ({ ...d, endAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground" />
+                </label>
+              </div>
+            </div>
+
+            {/* 게시 기간 */}
+            <div className="sm:col-span-2">
+              <p className="text-xs font-semibold text-foreground mb-2">게시 기간 <span className="font-normal text-muted-foreground">(미입력 시 실행 기간과 동일)</span></p>
+              <div className="grid sm:grid-cols-2 gap-3">
+                <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+                  게시 시작일
+                  <input type="date" value={draft.displayStartAt} onChange={(e) => setDraft((d) => ({ ...d, displayStartAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground" />
+                </label>
+                <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+                  게시 종료일
+                  <input type="date" value={draft.displayEndAt} onChange={(e) => setDraft((d) => ({ ...d, displayEndAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground" />
+                </label>
+              </div>
+            </div>
+
+            <select
+              value={draft.status}
+              onChange={(e) => setDraft((d) => ({ ...d, status: e.target.value as EventStatus | '' }))}
+              className="border border-border rounded-lg px-3 py-2 text-sm bg-white sm:col-span-2 sm:max-w-xs"
+            >
+              <option value="">{t('admin.contest.statusAuto')}</option>
+              <option value="scheduled">{t('admin.contest.statusScheduled')}</option>
+              <option value="active">{t('admin.contest.statusActive')}</option>
+              <option value="ended">{t('admin.contest.statusEnded')}</option>
+            </select>
+          </div>
+
+          <div className="flex gap-2">
+            <Button type="submit" className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white">
+              {editingId ? '수정' : '저장'}
+            </Button>
+            <button type="button" onClick={cancelEdit} className="text-sm px-3 py-1.5 rounded-lg border border-border">
+              {t('admin.contest.cancel')}
+            </button>
+          </div>
+        </form>
+      )}
+
+      {generalEvents.length === 0 ? (
+        <div className="rounded-lg border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
+          등록된 일반 이벤트가 없습니다.
+        </div>
+      ) : (
+        <div className="border border-border rounded-lg overflow-hidden overflow-x-auto">
+          <table className="w-full text-sm min-w-[640px]">
+            <thead>
+              <tr className="bg-muted text-left text-foreground">
+                <th className="px-4 py-3 font-medium">이벤트명</th>
+                <th className="px-4 py-3 font-medium">실행 기간</th>
+                <th className="px-4 py-3 font-medium">게시 기간</th>
+                <th className="px-4 py-3 font-medium">상태</th>
+                <th className="px-4 py-3 font-medium text-right">작업</th>
+              </tr>
+            </thead>
+            <tbody>
+              {generalEvents.map((ev) => {
+                const s = deriveEventStatus(ev);
+                return (
+                  <tr key={ev.id} className="border-b border-border/40 lg:hover:bg-muted/50 transition-colors">
+                    <td className="px-4 py-3 font-medium text-foreground">
+                      {ev.title}
+                      {ev.subtitle && <p className="text-xs text-muted-foreground mt-0.5">{ev.subtitle}</p>}
+                    </td>
+                    <td className="px-4 py-3 text-muted-foreground whitespace-nowrap text-xs">{ev.startAt} ~ {ev.endAt}</td>
+                    <td className="px-4 py-3 text-muted-foreground whitespace-nowrap text-xs">
+                      {ev.displayStartAt || ev.displayEndAt
+                        ? `${ev.displayStartAt ?? ev.startAt} ~ ${ev.displayEndAt ?? ev.endAt}`
+                        : <span className="text-border">—</span>}
+                    </td>
+                    <td className="px-4 py-3">
+                      <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${statusBadgeClass(s)}`}>
+                        {statusLabelKo(s)}
+                        {ev.status && <span className="ml-1 text-xs opacity-70">{t('admin.contest.manual')}</span>}
+                      </span>
+                    </td>
+                    <td className="px-4 py-3 text-right space-x-2 whitespace-nowrap">
+                      <button
+                        type="button"
+                        onClick={() => startEdit(ev)}
+                        className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/30"
+                      >
+                        <Pencil className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
+                        수정
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => removeEvent(ev)}
+                        className="text-sm px-3 py-1.5 rounded-lg border border-red-200 text-red-700 lg:hover:bg-red-50 inline-flex items-center gap-1.5"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        {t('admin.notice.delete')}
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        </div>
+      )}
+    </div>
+  );
+}

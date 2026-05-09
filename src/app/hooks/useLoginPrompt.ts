@@ -6,7 +6,7 @@ import { useI18n } from '../i18n/I18nProvider';
 
 const SESSION_DISMISS_KEY = 'artier_login_prompt_dismissed';
 
-export type ProtectedAction = 'like' | 'save' | 'follow' | 'upload' | 'report' | 'general';
+export type ProtectedAction = 'like' | 'save' | 'follow' | 'upload' | 'report' | 'general' | 'contest';
 
 /**
  * 비로그인 보호 액션 시 로그인 유도 정책(IA CM-02 / PRD AC-14):

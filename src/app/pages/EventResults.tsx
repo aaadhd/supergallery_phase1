@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import { ChevronLeft } from 'lucide-react';
 import { useI18n } from '../i18n/I18nProvider';
-import { eventStore, isPublicationVisible, useManagedEvents } from '../utils/eventStore';
+import { eventsStore, isPublicationVisible, useManagedEvents } from '../utils/eventsStore';
 import { useWorkStore } from '../store';
 import { isWorkPublic } from '../utils/workVisibility';
 import { CopyrightProtectedImage } from '../components/work/CopyrightProtectedImage';
@@ -25,11 +25,11 @@ type ResolvedSelected = {
 export default function EventResults() {
   const { id } = useParams<{ id: string }>();
   const { t } = useI18n();
-  useManagedEvents(); // subscribe — 이벤트 변동 시 갱신
+  useManagedEvents(); // subscribe — 변동 시 갱신
   const store = useWorkStore();
   const works = store.getWorks();
 
-  const ev = useMemo(() => (id ? eventStore.get(id) : null), [id]);
+  const ev = useMemo(() => (id ? eventsStore.get(id) : null), [id]);
   const visible = ev ? isPublicationVisible(ev) : false;
 
   const untitledLabel = t('work.untitled');

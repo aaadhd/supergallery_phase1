@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Star, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { curationStore, useCuration } from '../utils/curationStore';
+import { featuredStore, useFeaturedExhibitions } from '../utils/featuredStore';
 import { workStore, useWorkStore } from '../store';
 import { isWorkPublic } from '../utils/workVisibility';
 import { displayExhibitionTitle } from '../utils/workDisplay';
@@ -9,7 +9,7 @@ import { appendAuditLog } from '../utils/adminAuditLog';
 
 export default function FeaturedManagement() {
   const [loading, setLoading] = useState(true);
-  const { featuredExhibitionIds } = useCuration();
+  const featuredExhibitionIds = useFeaturedExhibitions();
   useWorkStore();
 
   useEffect(() => {
@@ -18,7 +18,7 @@ export default function FeaturedManagement() {
   }, []);
 
   const toggleFeatured = (workId: string) => {
-    curationStore.toggleFeaturedExhibition(workId);
+    featuredStore.toggle(workId);
     appendAuditLog({ action: 'curation_saved', targetId: workId, targetSnapshot: { featured: true }, actorId: 'admin', actorRole: 'admin' });
   };
 

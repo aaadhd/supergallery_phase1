@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { AlertTriangle, Eye, Flag, Megaphone, RotateCcw, ShieldAlert, Trophy, Users } from 'lucide-react';
+import { AlertTriangle, Eye, Flag, Megaphone, RotateCcw, ShieldAlert, Star, Trophy, Users } from 'lucide-react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '../components/ui/card';
 import { Badge } from '../components/ui/badge';
 import { useNotices } from '../utils/noticeStore';
@@ -8,7 +8,8 @@ import { STATUS_COLORS } from './constants';
 import { workStore, useWorkStore } from '../store';
 import { loadUserReports, REPORTS_CHANGED_EVENT } from '../utils/reportsStore';
 import { isWorkHidden } from '../utils/workVisibility';
-import { useManagedEvents, deriveStatus } from '../utils/eventStore';
+import { useManagedEvents, deriveEventStatus } from '../utils/eventsStore';
+import { usePickSessions, derivePickStatus } from '../utils/pickStore';
 
 export default function AdminDashboard() {
   useWorkStore(); // workStore 구독 — 작품 변화 시 지표 자동 갱신
@@ -47,11 +48,16 @@ export default function AdminDashboard() {
   const noticePinnedCount = allNotices.filter((n) => n.status === 'published' && n.isPinned).length;
 
   // 응모전 운영 지표 (PRD ADM-EVT-03 트리거 정합 — 대시보드에서 진입)
-  const events = useManagedEvents();
-  const activeEventsCount = events.filter((e) => deriveStatus(e) === 'active').length;
-  const pendingPublication = events.filter(
+  const managedEvents = useManagedEvents();
+  const contests = managedEvents.filter((e) => e.type === 'contest');
+  const activeEventsCount = contests.filter((e) => deriveEventStatus(e) === 'active').length;
+  const pendingPublication = contests.filter(
     (e) => e.publicationOpen === true && (e.selectedWorkIds?.length ?? 0) === 0,
   ).length;
+
+  // Proud's Pick 현황
+  const pickSessions = usePickSessions();
+  const activePickSession = pickSessions.find((s) => s.publicationOpen === true && derivePickStatus(s) !== 'ended') ?? null;
 
   // 미답변 문의 건수
   const unansweredInquiryCount = (() => {
@@ -69,6 +75,46 @@ export default function AdminDashboard() {
         <h1 className="text-2xl font-bold text-foreground">운영 대시보드</h1>
         <p className="text-sm text-muted-foreground mt-1">Proud Gallery Phase 1 운영 현황 · 런칭 준비</p>
       </div>
+
+      {/* Proud's Pick 현황 */}
+      <section>
+        <h2 className="text-sm font-semibold text-muted-foreground mb-3">Proud&apos;s Pick</h2>
+        <Link to="/admin/picks">
+          {activePickSession ? (
+            <Card className="lg:hover:shadow-md transition-shadow cursor-pointer border-[#B8862F]/30 bg-gradient-to-r from-[#FBF7EE] to-white">
+              <CardHeader className="pb-2">
+                <CardDescription className="flex items-center gap-2 text-[#8B6914]">
+                  <Star className="w-4 h-4" />
+                  이번 픽 세션
+                </CardDescription>
+                <CardTitle className="text-base font-semibold text-foreground leading-snug">
+                  {activePickSession.title}
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs text-muted-foreground">
+                  {activePickSession.startAt} ~ {activePickSession.endAt}
+                  {' · '}
+                  선정 작품 {activePickSession.selectedWorkIds?.length ?? 0} / 10개
+                </p>
+              </CardContent>
+            </Card>
+          ) : (
+            <Card className="lg:hover:shadow-md transition-shadow cursor-pointer border-amber-200 bg-amber-50">
+              <CardHeader className="pb-2">
+                <CardDescription className="flex items-center gap-2 text-amber-900">
+                  <AlertTriangle className="w-4 h-4" />
+                  활성화된 Pick이 없습니다
+                </CardDescription>
+                <CardTitle className="text-sm font-medium text-amber-900">픽 관리에서 새 세션을 만들어 주세요</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-xs text-amber-800">픽이 없으면 홈 배너 및 Browse 피드 상위 노출이 없습니다</p>
+              </CardContent>
+            </Card>
+          )}
+        </Link>
+      </section>
 
       {/* 콘텐츠 운영 지표 — 오늘 처리 우선순위 파악용 */}
       <section>
@@ -175,14 +221,14 @@ export default function AdminDashboard() {
               </CardContent>
             </Card>
           </Link>
-          <Link to="/admin/events">
+          <Link to="/admin/contests?tab=participants">
             <Card className="lg:hover:shadow-md transition-shadow cursor-pointer">
               <CardHeader className="pb-2">
                 <CardDescription className="flex items-center gap-2">
                   <Users className="w-4 h-4" />
                   응모자 현황
                 </CardDescription>
-                <CardTitle className="text-3xl">{events.reduce((acc, e) => acc + (e.selectedWorkIds?.length ?? 0), 0)}</CardTitle>
+                <CardTitle className="text-3xl">{contests.reduce((acc, e) => acc + (e.selectedWorkIds?.length ?? 0), 0)}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-xs text-muted-foreground">선정 처리·일괄 선정·작품 검토</p>

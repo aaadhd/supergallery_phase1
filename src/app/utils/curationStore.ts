@@ -1,14 +1,8 @@
 /**
- * 피드 큐레이션 레이어 store (Policy §15.1·§15.4: 기획전 — 운영팀이 기존 전시에서 작품(piece) 단위로
- * 선별·구성한 컬렉션, 개수 제한 없음).
- * Pick 상단 → **기획전·작가 추천 큐레이션** → 일반 랜덤 순서의 중간 레이어를 관리.
- *
- * Phase 1 데모 scope:
- * - 기획전(CuratedExhibition): 다수 운영 가능. 각 기획전 = 제목 + 부제(선택) + piece 참조 리스트(작품 단위, Policy §32.1 #8b).
- *   piece 참조는 (workId, pieceId) 페어로 저장 — 전시 내부 image 배열 인덱스 시프트(작가의 편집)에
- *   영향받지 않도록 안정 식별자(`Work.imagePieceIds`)를 그대로 보관한다.
- * - 추천 전시: 피드 상단 부스트 대상 전시 ID 집합
- * - 관리 UI: [/admin/curation](src/app/admin/CurationManagement.tsx) — localStorage `artier_curation_v1` 영속화
+ * 기획전 store (Policy §15.1·§15.4).
+ * 운영팀이 기존 전시에서 작품(piece) 단위로 선별·구성한 컬렉션. 개수 제한 없음.
+ * 관리 UI: /admin/curation (CurationManagement.tsx) — localStorage `artier_curation_v1` 영속화.
+ * 추천 전시(피드 부스트)는 featuredStore.ts에서 별도 관리.
  */
 
 import { useSyncExternalStore } from 'react';
@@ -24,12 +18,17 @@ export type CuratedExhibition = {
   id: string;
   title: string;
   subtitle?: string;
+  /** 기획전 대표 이미지 URL (선택). Events 페이지 카드에 노출 */
+  bannerImageUrl?: string;
+  /** YYYY-MM-DD. 미입력 시 상시 운영 */
+  startAt?: string;
+  /** YYYY-MM-DD. 미입력 시 상시 운영 */
+  endAt?: string;
   pieces: CurationPieceRef[];
 };
 
 export type CurationState = {
   curatedExhibitions: CuratedExhibition[];
-  featuredExhibitionIds: string[];
 };
 
 const STORAGE_KEY = 'artier_curation_v1';
@@ -37,7 +36,6 @@ const CHANGED_EVENT = 'artier-curation-changed';
 
 const DEFAULT_STATE: CurationState = {
   curatedExhibitions: [],
-  featuredExhibitionIds: [],
 };
 
 function newCuratedExhibitionId(): string {
@@ -127,10 +125,15 @@ function readFromStorage(): CurationState {
           const pieces = Array.isArray(t.pieces)
             ? parsePieces(t.pieces)
             : migrateLegacyWorkIds(t.workIds);
+          const rawTitle = typeof t.title === 'string' ? (t.title as string) : '';
+          const title = rawTitle === '수채화 작품전' ? '봄 수채화 기획전' : rawTitle;
           return {
             id: typeof t.id === 'string' && t.id ? (t.id as string) : newCuratedExhibitionId(),
-            title: typeof t.title === 'string' ? (t.title as string) : '',
+            title,
             subtitle: typeof t.subtitle === 'string' ? (t.subtitle as string) : undefined,
+            bannerImageUrl: typeof t.bannerImageUrl === 'string' ? (t.bannerImageUrl as string) : undefined,
+            startAt: typeof t.startAt === 'string' ? (t.startAt as string) : undefined,
+            endAt: typeof t.endAt === 'string' ? (t.endAt as string) : undefined,
             pieces,
           };
         })
@@ -150,10 +153,7 @@ function readFromStorage(): CurationState {
       ];
     }
 
-    return {
-      curatedExhibitions,
-      featuredExhibitionIds: Array.isArray(parsed?.featuredExhibitionIds) ? parsed.featuredExhibitionIds : [],
-    };
+    return { curatedExhibitions };
   } catch {
     return DEFAULT_STATE;
   }
@@ -187,9 +187,6 @@ export const curationStore = {
   getCuratedExhibitions(): CuratedExhibition[] {
     return getStable().curatedExhibitions;
   },
-  getFeaturedExhibitionIds(): string[] {
-    return getStable().featuredExhibitionIds;
-  },
   addCuratedExhibition(exh: Omit<CuratedExhibition, 'id'>): CuratedExhibition {
     const next: CuratedExhibition = { ...exh, id: newCuratedExhibitionId() };
     const current = readFromStorage();
@@ -209,13 +206,6 @@ export const curationStore = {
       ...current,
       curatedExhibitions: current.curatedExhibitions.filter((t) => t.id !== id),
     });
-  },
-  toggleFeaturedExhibition(workId: string): void {
-    const current = readFromStorage();
-    const set = new Set(current.featuredExhibitionIds);
-    if (set.has(workId)) set.delete(workId);
-    else set.add(workId);
-    writeToStorage({ ...current, featuredExhibitionIds: [...set] });
   },
   subscribe(listener: () => void): () => void {
     if (typeof window === 'undefined') return () => {};
@@ -270,7 +260,7 @@ export function seedCurationIfEmpty(): void {
       curatedExhibitions: [
         {
           id: 'seed-curation-1',
-          title: '수채화 작품전',
+          title: '봄 수채화 기획전',
           subtitle: '감성 넘치는 수채화 작가들의 작품을 만나보세요',
           pieces,
         },

@@ -1,51 +1,50 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Calendar, Bell } from 'lucide-react';
+import { Calendar, Bell, ChevronDown } from 'lucide-react';
 import { ImageWithFallback } from '../components/ImageWithFallback';
 import { useNavigate, useSearchParams } from 'react-router-dom';
 import { LoginPromptModal } from '../components/LoginPromptModal';
 import { useI18n } from '../i18n/I18nProvider';
 import { Button } from '../components/ui/button';
-import { useManagedEvents, deriveStatus, type ManagedEvent } from '../utils/eventStore';
-import useEmblaCarousel from 'embla-carousel-react';
-import { ChevronRight, ChevronLeft } from 'lucide-react';
+import { useManagedEvents, deriveEventStatus, type ManagedEvent } from '../utils/eventsStore';
 import { toast } from 'sonner';
 import { useEventSubscription, setEventSubscribed } from '../utils/eventSubscriptionStore';
 import { authStore } from '../store';
-import { useCuration, type CuratedExhibition } from '../utils/curationStore';
+import { todayLocalIso } from '../utils/localDate';
 
-type EventTab = 'contest' | 'curation' | 'general';
+// Events 페이지: 응모전(contest) + 일반이벤트(general)만 표출.
+// Pick은 pickStore + 배너에서 관리. 기획전은 curationStore + 배너에서 관리.
 
 export default function Events() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { t } = useI18n();
-  const allEvents = useManagedEvents();
-  const contestEvents = useMemo(() => allEvents.filter((e) => e.type === 'contest'), [allEvents]);
-  const generalEvents = useMemo(() => allEvents.filter((e) => e.type === 'general'), [allEvents]);
-  const { curatedExhibitions: curations } = useCuration();
+  const allContests = useManagedEvents();
 
-  const [activeTab, setActiveTab] = useState<EventTab>('contest');
+  const today = todayLocalIso();
 
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, duration: 30 });
-  const [currentBanner, setCurrentBanner] = useState(0);
+  /** 게시 기간(displayStartAt/endAt) 기준으로 표시 여부 판단 */
+  function isDisplayVisible(e: ManagedEvent): boolean {
+    const dispStart = e.displayStartAt ?? e.startAt;
+    const dispEnd = e.displayEndAt ?? e.endAt;
+    return today >= dispStart && today <= dispEnd;
+  }
 
-  useEffect(() => {
-    if (!emblaApi) return;
-    const onSelect = () => setCurrentBanner(emblaApi.selectedScrollSnap());
-    emblaApi.on('select', onSelect);
-    onSelect();
-    return () => { emblaApi.off('select', onSelect); };
-  }, [emblaApi]);
-
-  const promotionBanners = useMemo<ManagedEvent[]>(
-    () => contestEvents.filter((e) => deriveStatus(e) === 'active'),
-    [contestEvents],
+  const activeEvents = useMemo<ManagedEvent[]>(
+    () => allContests.filter((e) => deriveEventStatus(e) === 'active' && isDisplayVisible(e)),
+    [allContests, today],
   );
 
-  const upcomingContests = useMemo<ManagedEvent[]>(
-    () => contestEvents.filter((e) => deriveStatus(e) === 'scheduled'),
-    [contestEvents],
+  const upcomingItems = useMemo<ManagedEvent[]>(
+    () => allContests.filter((e) => deriveEventStatus(e) === 'scheduled' && isDisplayVisible(e)),
+    [allContests, today],
   );
+
+  const endedItems = useMemo<ManagedEvent[]>(
+    () => allContests.filter((e) => deriveEventStatus(e) === 'ended'),
+    [allContests, today],
+  );
+
+  const [showEnded, setShowEnded] = useState(false);
 
   const [subscribed, setSubscription] = useEventSubscription();
   const [loginPromptOpen, setLoginPromptOpen] = useState(false);
@@ -74,234 +73,81 @@ export default function Events() {
     }
   };
 
-  const tabs: { key: EventTab; label: string }[] = [
-    { key: 'contest', label: t('events.tabContest') },
-    { key: 'curation', label: t('events.tabCuration') },
-    { key: 'general', label: t('events.tabGeneral') },
-  ];
-
   return (
-    <div className="min-h-screen bg-background">
-      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 pt-4 sm:pt-8 pb-2">
-        <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-4">{t('events.title')}</h1>
+    <div className="min-h-screen bg-background pb-20 md:pb-0">
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-6 pt-6 sm:pt-10">
+        <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-8">{t('events.title')}</h1>
 
-        {/* 탭 */}
-        <div className="flex gap-1 border-b border-border mb-6">
-          {tabs.map(({ key, label }) => (
-            <button
-              key={key}
-              type="button"
-              onClick={() => setActiveTab(key)}
-              className={`px-4 py-2.5 text-sm font-semibold border-b-2 transition-colors min-h-[44px] ${
-                activeTab === key
-                  ? 'border-foreground text-foreground'
-                  : 'border-transparent text-muted-foreground lg:hover:text-foreground'
-              }`}
-            >
-              {label}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* 응모전 탭 */}
-      {activeTab === 'contest' && (
-        <>
-          <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-4 sm:py-6">
-            {promotionBanners.length === 0 ? (
-              <div className="rounded-2xl bg-muted/50 h-[200px] flex flex-col items-center justify-center gap-2 text-muted-foreground">
-                <Calendar className="h-8 w-8" />
-                <p className="text-sm font-medium">{t('events.noActiveEvents')}</p>
-              </div>
-            ) : (
-              <div className="relative group">
-                <div className="overflow-hidden rounded-2xl" ref={emblaRef}>
-                  <div className="flex">
-                    {promotionBanners.map((event) => (
-                      <div
-                        key={event.id}
-                        className="min-w-0 flex-[0_0_100%] relative group/item cursor-pointer"
-                        onClick={() => navigate(`/events/${event.id}`)}
-                      >
-                        <div className="relative h-[240px] sm:h-[320px] lg:h-[420px]">
-                          <ImageWithFallback
-                            src={event.bannerImageUrl}
-                            alt={event.title}
-                            className="w-full h-full object-cover transition-transform duration-700 lg:group-hover/item:scale-[1.03]"
-                          />
-                          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/30 to-transparent" />
-                          <div className="absolute inset-x-0 bottom-0 p-6 sm:p-10 lg:p-14">
-                            <div className="max-w-[800px]">
-                              <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold text-white mb-2 sm:mb-3 leading-tight tracking-tight">
-                                {event.title}
-                              </h2>
-                              {event.subtitle && (
-                                <p className="text-sm sm:text-base text-white/90 mb-4 max-w-2xl leading-relaxed font-medium">
-                                  {event.subtitle}
-                                </p>
-                              )}
-                              <div className="flex items-center gap-4 flex-wrap text-white/80">
-                                <div className="flex items-center gap-2 text-xs sm:text-sm font-medium bg-white/10 backdrop-blur-md px-3 py-1.5 rounded-full border border-white/20">
-                                  <Calendar className="h-4 w-4" />
-                                  <span>{event.startAt} ~ {event.endAt}</span>
-                                </div>
-                                {event.participantsLabel && (
-                                  <span className="text-xs sm:text-sm font-medium opacity-80">
-                                    · {event.participantsLabel}
-                                  </span>
-                                )}
-                              </div>
-                            </div>
-                          </div>
-                        </div>
-                      </div>
-                    ))}
-                  </div>
-                </div>
-
-                {promotionBanners.length > 1 && (
-                  <>
-                    <Button
-                      variant="ghost"
-                      onClick={(e) => { e.stopPropagation(); emblaApi?.scrollPrev(); }}
-                      className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 h-10 w-10 sm:h-12 sm:w-12 hidden sm:flex items-center justify-center bg-white text-foreground rounded-full shadow-lg border border-black/5 transition-all hover:scale-110 active:scale-95 z-20"
-                    >
-                      <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      onClick={(e) => { e.stopPropagation(); emblaApi?.scrollNext(); }}
-                      className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 h-10 w-10 sm:h-12 sm:w-12 hidden sm:flex items-center justify-center bg-white text-foreground rounded-full shadow-lg border border-black/5 transition-all hover:scale-110 active:scale-95 z-20"
-                    >
-                      <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
-                    </Button>
-                    <div className="absolute bottom-4 sm:bottom-6 left-1/2 -translate-x-1/2 flex items-center gap-2">
-                      {promotionBanners.map((_, i) => (
-                        <button
-                          key={i}
-                          onClick={(e) => { e.stopPropagation(); emblaApi?.scrollTo(i); }}
-                          className={`h-1.5 rounded-full transition-all ${
-                            currentBanner === i ? 'w-8 bg-white' : 'w-1.5 bg-white/40 hover:bg-white/60'
-                          }`}
-                        />
-                      ))}
-                    </div>
-                  </>
-                )}
-              </div>
-            )}
-          </div>
-
-          <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-6 sm:py-10 pb-20 md:pb-12">
-            <h2 className="text-lg sm:text-xl font-bold text-foreground mb-4 sm:mb-6">{t('events.upcomingSection')}</h2>
-            {upcomingContests.length === 0 ? (
-              <div className="rounded-3xl border-2 border-dashed border-border bg-muted/30 py-20 flex flex-col items-center justify-center text-muted-foreground">
-                <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
-                  <Calendar className="h-8 w-8 opacity-60" />
-                </div>
-                <p className="text-base font-semibold text-foreground mb-1">{t('events.noUpcoming')}</p>
-              </div>
-            ) : (
-              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-                {upcomingContests.map((event) => (
-                  <div
-                    key={event.id}
-                    onClick={() => navigate(`/events/${event.id}`)}
-                    className="group cursor-pointer overflow-hidden rounded-xl border border-border transition-all duration-300 ease-out lg:hover:-translate-y-1 lg:hover:shadow-md"
-                  >
-                    <div className="relative h-[160px] sm:h-[180px] overflow-hidden">
-                      <ImageWithFallback
-                        src={event.bannerImageUrl}
-                        alt={event.title}
-                        className="w-full h-full object-cover transition-transform duration-500 lg:group-hover:scale-[1.03]"
-                      />
-                      <div className="absolute top-3 right-3">
-                        <span className="px-2.5 py-1 text-xs font-bold text-white bg-foreground/80 backdrop-blur-sm rounded-full">
-                          {t('events.comingSoonBadge')}
-                        </span>
-                      </div>
-                    </div>
-                    <div className="p-4">
-                      <h3 className="text-base font-bold text-foreground mb-1.5 leading-snug">{event.title}</h3>
-                      <div className="flex items-center gap-1.5 text-sm text-muted-foreground mb-2">
-                        <Calendar className="h-3.5 w-3.5" />
-                        <span>{event.startAt} ~ {event.endAt}</span>
-                      </div>
-                      <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">{event.description}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-
-          <div className="bg-foreground text-white">
-            <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-10 sm:py-12 text-center">
-              <h2 className="text-xl sm:text-2xl font-bold mb-3">{t('events.ctaTitle')}</h2>
-              <p className="text-base text-white/80 mb-8">{t('events.ctaLead')}</p>
-              <div className="flex flex-col items-center gap-4">
-                <Button
-                  variant="secondary"
-                  onClick={handleNotifyCta}
-                  className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold text-foreground bg-white lg:hover:bg-muted min-h-[44px]"
-                >
-                  <Bell className="h-5 w-5" aria-hidden />
-                  {subscribed ? t('events.ctaUnsubscribe') : t('events.ctaNotify')}
-                </Button>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
-
-      {/* 기획전 탭 */}
-      {activeTab === 'curation' && (
-        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 pb-20">
-          {curations.length === 0 ? (
-            <div className="rounded-3xl border-2 border-dashed border-border bg-muted/30 py-20 flex flex-col items-center justify-center text-muted-foreground">
-              <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
-                <Calendar className="h-8 w-8 opacity-60" />
-              </div>
-              <p className="text-base font-semibold text-foreground">{t('events.noCurations')}</p>
+        {/* 진행 중 이벤트 */}
+        <section className="mb-12 sm:mb-16">
+          <h2 className="text-base sm:text-lg font-semibold text-foreground mb-4">{t('events.activeSection')}</h2>
+          {activeEvents.length === 0 ? (
+            <div className="rounded-2xl bg-muted/40 h-[140px] flex flex-col items-center justify-center gap-2 text-muted-foreground">
+              <Calendar className="h-7 w-7" />
+              <p className="text-sm font-medium">{t('events.noActiveEvents')}</p>
             </div>
           ) : (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-              {curations.map((curation: CuratedExhibition) => (
+            <div className="flex flex-col gap-3 sm:gap-4">
+              {activeEvents.map((event) => (
                 <div
-                  key={curation.id}
-                  onClick={() => navigate(`/curation/${curation.id}`)}
-                  className="group cursor-pointer overflow-hidden rounded-xl border border-border transition-all duration-300 ease-out lg:hover:-translate-y-1 lg:hover:shadow-md"
+                  key={event.id}
+                  onClick={() => navigate(`/events/${event.id}`)}
+                  className="group cursor-pointer relative overflow-hidden rounded-2xl"
                 >
-                  <div className="p-5">
-                    <h3 className="text-base font-bold text-foreground mb-1.5 leading-snug">{curation.title}</h3>
-                    {curation.subtitle && (
-                      <p className="text-sm text-muted-foreground leading-relaxed line-clamp-2">{curation.subtitle}</p>
-                    )}
+                  <div className="relative h-[200px] sm:h-[260px] lg:h-[320px] w-full overflow-hidden">
+                    <ImageWithFallback
+                      src={event.bannerImageUrl}
+                      alt={event.title}
+                      className="w-full h-full object-cover transition-transform duration-700 lg:group-hover:scale-[1.03]"
+                    />
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                    <div className="absolute inset-x-0 bottom-0 p-5 sm:p-8">
+                      <div className="flex items-center gap-2 mb-2">
+                        <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-emerald-500/90 backdrop-blur-sm text-white text-xs font-bold">
+                          <span className="w-1.5 h-1.5 rounded-full bg-white animate-pulse" />
+                          {t('events.activeBadge')}
+                        </span>
+                      </div>
+                      <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white leading-tight mb-1.5">
+                        {event.title}
+                      </h3>
+                      {event.subtitle && (
+                        <p className="text-sm sm:text-base text-white/80 leading-relaxed mb-2 max-w-2xl">
+                          {event.subtitle}
+                        </p>
+                      )}
+                      <div className="flex items-center gap-2 text-xs sm:text-sm text-white/70">
+                        <Calendar className="h-3.5 w-3.5 shrink-0" />
+                        <span>{event.startAt} ~ {event.endAt}</span>
+                        {event.participantsLabel && (
+                          <span className="opacity-80">· {event.participantsLabel}</span>
+                        )}
+                      </div>
+                    </div>
                   </div>
                 </div>
               ))}
             </div>
           )}
-        </div>
-      )}
+        </section>
 
-      {/* 일반 이벤트 탭 */}
-      {activeTab === 'general' && (
-        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 pb-20">
-          {generalEvents.length === 0 ? (
-            <div className="rounded-3xl border-2 border-dashed border-border bg-muted/30 py-20 flex flex-col items-center justify-center text-muted-foreground">
-              <div className="h-16 w-16 rounded-full bg-muted flex items-center justify-center mb-4">
-                <Calendar className="h-8 w-8 opacity-60" />
+        {/* 예정된 이벤트 */}
+        <section className="mb-12 sm:mb-16">
+          <h2 className="text-base sm:text-lg font-semibold text-foreground mb-4">{t('events.upcomingSection')}</h2>
+          {upcomingItems.length === 0 ? (
+            <div className="rounded-3xl border-2 border-dashed border-border bg-muted/30 py-16 flex flex-col items-center justify-center text-muted-foreground">
+              <div className="h-14 w-14 rounded-full bg-muted flex items-center justify-center mb-4">
+                <Calendar className="h-7 w-7 opacity-60" />
               </div>
-              <p className="text-base font-semibold text-foreground">{t('events.noGeneralEvents')}</p>
+              <p className="text-base font-semibold text-foreground mb-1">{t('events.noUpcoming')}</p>
             </div>
           ) : (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-              {generalEvents.map((event) => (
+              {upcomingItems.map((event) => (
                 <div
-                  key={event.id}
+                  key={`event-${event.id}`}
                   onClick={() => navigate(`/events/${event.id}`)}
-                  className="group cursor-pointer overflow-hidden rounded-xl border border-border transition-all duration-300 ease-out lg:hover:-translate-y-1 lg:hover:shadow-md"
+                  className="group cursor-pointer overflow-hidden rounded-xl border border-border bg-card transition-all duration-300 lg:hover:-translate-y-1 lg:hover:shadow-md"
                 >
                   <div className="relative h-[160px] sm:h-[180px] overflow-hidden">
                     <ImageWithFallback
@@ -309,6 +155,11 @@ export default function Events() {
                       alt={event.title}
                       className="w-full h-full object-cover transition-transform duration-500 lg:group-hover:scale-[1.03]"
                     />
+                    <div className="absolute top-3 right-3">
+                      <span className="px-2.5 py-1 text-xs font-bold text-white bg-foreground/80 backdrop-blur-sm rounded-full">
+                        {t('events.comingSoonBadge')}
+                      </span>
+                    </div>
                   </div>
                   <div className="p-4">
                     <h3 className="text-base font-bold text-foreground mb-1.5 leading-snug">{event.title}</h3>
@@ -322,8 +173,71 @@ export default function Events() {
               ))}
             </div>
           )}
+        </section>
+        {/* 지난 이벤트 */}
+        {endedItems.length > 0 && (
+          <section className="mb-12 sm:mb-16">
+            <button
+              type="button"
+              onClick={() => setShowEnded((v) => !v)}
+              className="flex items-center gap-2 text-base sm:text-lg font-semibold text-muted-foreground lg:hover:text-foreground transition-colors mb-4 min-h-[44px]"
+            >
+              {t('events.endedSection')}
+              <span className="text-sm font-normal opacity-60">({endedItems.length})</span>
+              <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${showEnded ? 'rotate-180' : ''}`} />
+            </button>
+            {showEnded && (
+              <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+                {endedItems.map((event) => (
+                  <div
+                    key={`ended-event-${event.id}`}
+                    onClick={() => navigate(`/events/${event.id}`)}
+                    className="group cursor-pointer overflow-hidden rounded-xl border border-border bg-card opacity-70 lg:hover:opacity-100 transition-all duration-300 lg:hover:shadow-md"
+                  >
+                    <div className="relative h-[140px] sm:h-[160px] overflow-hidden grayscale lg:group-hover:grayscale-0 transition-all duration-300">
+                      <ImageWithFallback
+                        src={event.bannerImageUrl}
+                        alt={event.title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute top-3 right-3">
+                        <span className="px-2.5 py-1 text-xs font-bold text-white bg-black/60 backdrop-blur-sm rounded-full">
+                          {t('events.endedBadge')}
+                        </span>
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <h3 className="text-sm font-bold text-foreground mb-1 leading-snug">{event.title}</h3>
+                      <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                        <Calendar className="h-3 w-3" />
+                        <span>{event.startAt} ~ {event.endAt}</span>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </section>
+        )}
+      </div>
+
+      {/* 알림 구독 CTA */}
+      <div className="bg-foreground text-white">
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-10 sm:py-12 text-center">
+          <h2 className="text-xl sm:text-2xl font-bold mb-3">{t('events.ctaTitle')}</h2>
+          <p className="text-base text-white/80 mb-8">{t('events.ctaLead')}</p>
+          <div className="flex flex-col items-center gap-4">
+            <Button
+              variant="secondary"
+              onClick={handleNotifyCta}
+              className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold text-foreground bg-white lg:hover:bg-muted min-h-[44px]"
+            >
+              <Bell className="h-5 w-5" aria-hidden />
+              {subscribed ? t('events.ctaUnsubscribe') : t('events.ctaNotify')}
+            </Button>
+          </div>
         </div>
-      )}
+      </div>
 
       <LoginPromptModal open={loginPromptOpen} onClose={() => setLoginPromptOpen(false)} action="upload" />
     </div>

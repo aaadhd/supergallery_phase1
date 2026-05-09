@@ -35,7 +35,7 @@ import { getHiddenWorkIdsForReporter, migrateLegacyReportHiddenOnce } from '../u
 import { displayExhibitionTitle } from '../utils/workDisplay';
 import useEmblaCarousel from 'embla-carousel-react';
 import { useVisibleAdminBanners } from '../utils/bannerStore';
-import { useManagedEvents, deriveStatus } from '../utils/eventStore';
+import { useManagedEvents, deriveEventStatus } from '../utils/eventsStore';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -89,9 +89,9 @@ export default function Browse() {
         image: ev.bannerImageUrl,
         title: ev.title,
         subtitle: ev.subtitle || '',
-        tag: deriveStatus(ev) === 'active'
+        tag: deriveEventStatus(ev) === 'active'
           ? t('eventDetail.statusActive')
-          : deriveStatus(ev) === 'scheduled'
+          : deriveEventStatus(ev) === 'scheduled'
             ? t('eventDetail.statusScheduled')
             : t('eventDetail.statusEnded'),
         linkUrl: `/events/${ev.id}`,

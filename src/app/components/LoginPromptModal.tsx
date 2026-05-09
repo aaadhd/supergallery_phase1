@@ -12,7 +12,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
 
-export type LoginPromptAction = 'like' | 'save' | 'follow' | 'upload' | 'report' | 'general';
+export type LoginPromptAction = 'like' | 'save' | 'follow' | 'upload' | 'report' | 'general' | 'contest';
 
 const ACTION_KEYS: Record<LoginPromptAction, MessageKey> = {
   like: 'loginPrompt.like',
@@ -21,6 +21,7 @@ const ACTION_KEYS: Record<LoginPromptAction, MessageKey> = {
   upload: 'loginPrompt.upload',
   report: 'loginPrompt.report',
   general: 'loginPrompt.general',
+  contest: 'loginPrompt.contest',
 };
 
 interface LoginPromptModalProps {
