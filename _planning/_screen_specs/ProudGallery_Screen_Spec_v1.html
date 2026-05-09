@@ -695,7 +695,7 @@
  <tr>
  <td class="ver">v1.8</td>
  <td class="date">2026-05-09</td>
- <td>USR-NTF-01 알림 메시지 템플릿 13종 정합(신고 처리 결과 작가 수신 3종 — 삭제·비공개 유지·복원; 신고자 기각 알림 제거) · Last synced 갱신(Copy v1.18) · USR-EVT-01 3탭 구조(응모전·기획전·일반 이벤트) 반영 · CM-TOS 약관 변경 강제 동의 모달 슬라이드 신설 · TOC에 CM-TOS 등록</td>
+ <td>USR-NTF-01 알림 메시지 템플릿 13종 정합(신고 처리 결과 작가 수신 3종 — 삭제·비공개 유지·복원; 신고자 기각 알림 제거) · Last synced 갱신(Copy v1.18) · USR-EVT-01 3탭 구조(응모전·기획전·일반 이벤트) 반영 · CM-TOS 약관 변경 강제 동의 모달 슬라이드 신설 · TOC에 CM-TOS 등록 · cp-auth 카카오 수집 정보 정정(전화번호 거부 가능·이메일 조건부) · AUT-06 이메일 프리필 조건부 명시(Policy §2.1)</td>
  </tr>
  <tr>
  <td class="ver">v1.7</td>
@@ -1221,7 +1221,7 @@
  <div class="policy"><div class="label">가입 옵션</div><div class="body">
  <p>모든 사용자에게 동일한 4가지 옵션. 한국·해외 분기 없음.</p>
  <ul>
- <li><strong>카카오</strong> — 동의 시 전화·생년월일·이메일 자동 수집</li>
+ <li><strong>카카오</strong> — 생년월일 자동 수집. 전화번호는 카카오 동의 항목 수락 시(거부 가능). 이메일은 카카오 계정에 등록된 경우에만 수집 — 전화번호만으로 만든 카카오 계정은 이메일 없음 (Policy §2.1)</li>
  <li><strong>구글</strong> — 이메일만 자동 수집</li>
  <li><strong>애플</strong> — 이메일만 (릴레이 옵션)</li>
  <li><strong>이메일 매직 링크</strong> — 이메일 입력 후 일회용 링크. 비밀번호 불필요</li>
@@ -1229,7 +1229,7 @@
  <div class="callout info">PASS 본인인증 도입하지 않음. 만 14세 검증은 자가 입력 + 약관 자기 명시 + 사후 신고로 갈음.</div>
  </div></div>
  <div class="policy"><div class="label">필수 수집</div><div class="body">
- <ul><li>이메일</li><li>닉네임 (2~20자, 비속어 불가)</li><li>생년월일 (만 14세 검증용)</li><li>약관 동의 (만 14세 자기 명시 포함)</li></ul>
+ <ul><li>이메일 (카카오 전화번호 전용 계정은 이메일 없음 — Policy §2.1)</li><li>닉네임 (2~20자, 비속어 불가)</li><li>생년월일 (만 14세 검증용)</li><li>약관 동의 (만 14세 자기 명시 포함)</li></ul>
  </div></div>
  <div class="policy"><div class="label">매직 링크</div><div class="body">
  <ul><li>일회용 토큰, 30분 유효</li><li>새 토큰 발급 시 기존 즉시 무효화</li><li>스팸함 안내 + 30초 쿨다운 재전송</li><li>다른 브라우저·기기 모두 가능 (같은 브라우저 안내)</li></ul>
@@ -2046,14 +2046,14 @@
  </div>
  </div>
  </div>
- <div class="placeholder-note">소셜 인증 후 미가입자 — 이메일·닉네임 자동 프리필</div>
+ <div class="placeholder-note">소셜 인증 후 미가입자 — 닉네임 자동 프리필. 이메일은 소셜 계정에 등록된 경우에만 프리필 (카카오 전화번호 전용 계정은 이메일 없음)</div>
  </div>
 
  <div class="desc">
  <h3>화면 정보</h3>
  <dl>
  <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> USR-AUT-02 소셜 인증 성공 + 미가입자 판정 → 오버레이</dd>
- <dt></dt><dd><strong>역할</strong> 소셜 로그인으로 받은 정보(이메일·닉네임)를 프리필 — 사용자가 수정 가능</dd>
+ <dt></dt><dd><strong>역할</strong> 소셜 로그인으로 받은 정보(닉네임, 이메일은 있을 경우)를 프리필 — 사용자가 수정 가능. 카카오 전화번호 전용 계정은 이메일 없을 수 있음 (Policy §2.1)</dd>
  </dl>
 
      <h3 class="components">구성 요소</h3>
