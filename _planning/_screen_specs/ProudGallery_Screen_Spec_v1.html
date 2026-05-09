@@ -353,6 +353,43 @@
  }
  html { scroll-behavior: smooth; scroll-padding-top: 40px; }
 
+ /* ── 어드민 사이드바 토글 ── */
+ .adm-sidebar {
+   width: 140px;
+   background: #0f172a;
+   border-right: 1px solid #1e293b;
+   padding: 12px 8px;
+   flex-shrink: 0;
+   transition: width .2s ease;
+   overflow: hidden;
+   position: relative;
+   white-space: nowrap;
+ }
+ .adm-sidebar.collapsed {
+   width: 44px;
+   padding: 12px 4px;
+ }
+ .adm-sidebar.collapsed > *:not(.adm-toggle) {
+   opacity: 0;
+   pointer-events: none;
+ }
+ .adm-sidebar .adm-toggle {
+   display: flex; align-items: center; justify-content: center;
+   width: 28px; height: 28px;
+   background: none; border: 1px solid #334155;
+   border-radius: 6px; cursor: pointer;
+   color: #94a3b8; font-size: 14px; line-height: 1;
+   margin-bottom: 12px; flex-shrink: 0;
+ }
+ .adm-sidebar .adm-toggle:hover { background: #1e293b; color: white; }
+ /* 어드민 그리드 테이블 overflow 방지 */
+ .adm-sidebar ~ main { overflow-x: auto; min-width: 0; }
+ .adm-sidebar ~ main > div { min-width: 640px; }
+ /* 그리드 행이 들어있는 컨테이너의 overflow:hidden 해소 */
+ .adm-sidebar ~ main [style*="overflow: hidden"] { overflow: visible !important; }
+ /* 그리드 컬럼이 squish되지 않도록 */
+ .adm-sidebar ~ main [style*="grid-template-columns"] { white-space: nowrap; }
+
  /* PC mockup 내부 컴포넌트 */
  .pc-header {
  display: flex; align-items: center; padding: 12px 24px;
@@ -512,9 +549,9 @@
  </ul>
  </li>
  <li>
- <div class="group">🎉 응모전</div>
+ <div class="group">🎉 이벤트</div>
  <ul>
- <li><a href="#USR-EVT-01"><code>EVT-01</code><span>응모전 목록</span></a></li>
+ <li><a href="#USR-EVT-01"><code>EVT-01</code><span>이벤트 목록</span></a></li>
  <li><a href="#USR-EVT-02"><code>EVT-02</code><span>응모전 상세</span></a></li>
  <li><a href="#USR-EVT-03"><code>EVT-03</code><span>알림 구독·해지</span></a></li>
  <li><a href="#USR-EVT-04"><code>EVT-04</code><span>응모 모달 ⭐</span></a></li>
@@ -550,7 +587,7 @@
  </li>
 
  <li>
- <div class="group">📑 정보·약관·문의</div>
+ <div class="group">📑 공지·약관·문의</div>
  <ul>
  <li><a href="#USR-INF-01"><code>INF-01</code><span>소개</span></a></li>
  <li><a href="#USR-INF-02"><code>INF-02</code><span>FAQ</span></a></li>
@@ -1095,8 +1132,8 @@
  </ul>
  <div class="grp-head">🔍 검색 <span class="role-tag role-user">USR-SRC</span></div>
  <ul><li>검색 홈·결과 <code>SRC-01·02</code></li></ul>
- <div class="grp-head">🎪 응모전 <span class="role-tag role-user">USR-EVT</span></div>
- <ul><li>응모전 목록·상세·이메일 구독 <code>EVT-01~03</code></li></ul>
+ <div class="grp-head">🎪 이벤트 <span class="role-tag role-user">USR-EVT</span></div>
+ <ul><li>이벤트 목록·응모전 상세·이메일 구독 <code>EVT-01~03</code></li></ul>
  <div class="grp-head">🔔 알림·설정·정보</div>
  <ul>
  <li>알림 센터 <code>NTF-01</code></li>
@@ -5094,11 +5131,11 @@
  </div>
  <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.8 (PC)</span><span>USR-PRF-14 · 내 작품 뷰어</span></div>
  </section>
-<!-- ───────── 화면: 응모전 목록 (PC) ───────── -->
+<!-- ───────── 화면: 이벤트 목록 (PC) ───────── -->
  <section class="slide" id="USR-EVT-01">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">15 · 응모전</div><h2>응모전 목록</h2></div>
+ <div><div class="crumb">15 · 이벤트</div><h2>이벤트 목록</h2></div>
  <div class="meta"><span class="role">USR</span><span class="id">USR-EVT-01</span><span class="device">PC</span><span class="ver">v1.4</span></div>
  </div>
 
@@ -5182,14 +5219,14 @@
  </ol>
  </div>
  </div>
- <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.8 (PC)</span><span>USR-EVT-01 · 응모전 목록</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.8 (PC)</span><span>USR-EVT-01 · 이벤트 목록</span></div>
  </section>
 
  <!-- ───────── 화면: 응모전 상세 (PC) ───────── -->
  <section class="slide" id="USR-EVT-02">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">15 · 응모전</div><h2>응모전 상세</h2></div>
+ <div><div class="crumb">15 · 이벤트</div><h2>응모전 상세</h2></div>
  <div class="meta"><span class="role">USR</span><span class="id">USR-EVT-02</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -5270,7 +5307,7 @@
  <section class="slide" id="USR-EVT-03">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">15 · 응모전</div><h2>이메일 구독 모달</h2></div>
+ <div><div class="crumb">15 · 이벤트</div><h2>이메일 구독 모달</h2></div>
  <div class="meta"><span class="role">USR</span><span class="id">USR-EVT-03</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -5316,7 +5353,7 @@
  <section class="slide" id="USR-EVT-04">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">15 · 응모전</div><h2>응모전 응모 모달</h2></div>
+ <div><div class="crumb">15 · 이벤트</div><h2>응모전 응모 모달</h2></div>
  <div class="meta"><span class="role">USR</span><span class="id">USR-EVT-04</span><span class="device">PC</span><span class="ver">v1.6 NEW</span></div>
  </div>
 
@@ -5412,7 +5449,7 @@
  <section class="slide" id="USR-EVT-05">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">15 · 응모전</div><h2>선정작 발표 페이지</h2></div>
+ <div><div class="crumb">15 · 이벤트</div><h2>선정작 발표 페이지</h2></div>
  <div class="meta"><span class="role">USR</span><span class="id">USR-EVT-05</span><span class="device">PC</span><span class="ver">v1.6 NEW</span></div>
  </div>
 
@@ -5620,7 +5657,7 @@
  <section class="slide" id="USR-SRC-01">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">16 · 검색</div><h2>검색 홈</h2></div>
+ <div><div class="crumb">17 · 검색</div><h2>검색 홈</h2></div>
  <div class="meta"><span class="role">USR</span><span class="id">USR-SRC-01</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -5690,7 +5727,7 @@
  <section class="slide" id="USR-SRC-02">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">16 · 검색</div><h2>검색 결과</h2></div>
+ <div><div class="crumb">17 · 검색</div><h2>검색 결과</h2></div>
  <div class="meta"><span class="role">USR</span><span class="id">USR-SRC-02</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -5763,7 +5800,7 @@
  <section class="slide" id="USR-NTF-01">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">17 · 알림</div><h2>알림 센터</h2></div>
+ <div><div class="crumb">18 · 알림</div><h2>알림 센터</h2></div>
  <div class="meta"><span class="role">USR</span><span class="id">USR-NTF-01</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -5868,7 +5905,7 @@
  <section class="slide" id="USR-STG-01">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">18 · 설정</div><h2>설정 홈</h2></div>
+ <div><div class="crumb">19 · 설정</div><h2>설정 홈</h2></div>
  <div class="meta"><span class="role">USR</span><span class="id">USR-STG-01</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -5925,7 +5962,7 @@
  <section class="slide" id="USR-STG-03">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">18 · 설정</div><h2>탈퇴 모달</h2></div>
+ <div><div class="crumb">19 · 설정</div><h2>탈퇴 모달</h2></div>
  <div class="meta"><span class="role">USR</span><span class="id">USR-STG-03</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -5997,7 +6034,7 @@
  <section class="slide" id="USR-STG-04">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">18 · 설정</div><h2>글꼴 크기 조절</h2></div>
+ <div><div class="crumb">19 · 설정</div><h2>글꼴 크기 조절</h2></div>
  <div class="meta"><span class="role">USR</span><span class="id">USR-STG-04</span><span class="device">PC</span><span class="ver">v1.5 NEW</span></div>
  </div>
 
@@ -6048,7 +6085,7 @@
  <section class="slide" id="USR-STG-05">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">18 · 설정</div><h2>알림 설정</h2></div>
+ <div><div class="crumb">19 · 설정</div><h2>알림 설정</h2></div>
  <div class="meta"><span class="role">USR</span><span class="id">USR-STG-05</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -6100,7 +6137,7 @@
  <section class="slide" id="USR-STG-06">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">18 · 설정</div><h2>로그아웃 확인 다이얼로그</h2></div>
+ <div><div class="crumb">19 · 설정</div><h2>로그아웃 확인 다이얼로그</h2></div>
  <div class="meta"><span class="role">USR</span><span class="id">USR-STG-06</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -6144,7 +6181,7 @@
  <section class="slide" id="USR-INF-01">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">19 · 정보·약관·문의</div><h2>소개 (About)</h2></div>
+ <div><div class="crumb">20 · 공지·약관·문의</div><h2>소개 (About)</h2></div>
  <div class="meta"><span class="role">USR</span><span class="id">USR-INF-01</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -6196,7 +6233,7 @@
  <section class="slide" id="USR-INF-02">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">19 · 정보·약관·문의</div><h2>FAQ</h2></div>
+ <div><div class="crumb">20 · 공지·약관·문의</div><h2>FAQ</h2></div>
  <div class="meta"><span class="role">USR</span><span class="id">USR-INF-02</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -6255,7 +6292,7 @@
  <section class="slide" id="USR-INF-03">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">19 · 정보·약관·문의</div><h2>공지 목록</h2></div>
+ <div><div class="crumb">20 · 공지·약관·문의</div><h2>공지 목록</h2></div>
  <div class="meta"><span class="role">USR</span><span class="id">USR-INF-03</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -6310,7 +6347,7 @@
  <section class="slide" id="USR-INF-04">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">19 · 정보·약관·문의</div><h2>공지 상세</h2></div>
+ <div><div class="crumb">20 · 공지·약관·문의</div><h2>공지 상세</h2></div>
  <div class="meta"><span class="role">USR</span><span class="id">USR-INF-04</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -6362,7 +6399,7 @@
  <section class="slide" id="USR-INF-05">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">19 · 정보·약관·문의</div><h2>이용약관</h2></div>
+ <div><div class="crumb">20 · 공지·약관·문의</div><h2>이용약관</h2></div>
  <div class="meta"><span class="role">USR</span><span class="id">USR-INF-05</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -6416,7 +6453,7 @@
  <section class="slide" id="USR-INF-06">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">19 · 정보·약관·문의</div><h2>개인정보처리방침</h2></div>
+ <div><div class="crumb">20 · 공지·약관·문의</div><h2>개인정보처리방침</h2></div>
  <div class="meta"><span class="role">USR</span><span class="id">USR-INF-06</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -6478,7 +6515,7 @@
  <section class="slide" id="USR-INF-07">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">19 · 정보·약관·문의</div><h2>문의하기</h2></div>
+ <div><div class="crumb">20 · 공지·약관·문의</div><h2>문의하기</h2></div>
  <div class="meta"><span class="role">USR</span><span class="id">USR-INF-07</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -6530,7 +6567,7 @@
  <section class="slide" id="ADM-DSH-01">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">20 · 운영 — 대시보드</div><h2>운영 대시보드</h2></div>
+ <div><div class="crumb">21 · 운영 — 대시보드</div><h2>운영 대시보드</h2></div>
  <div class="meta"><span class="role">ADM</span><span class="id">ADM-DSH-01</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -6542,7 +6579,8 @@
  <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
- <aside style="width: 140px; background: #0f172a; border-right: 1px solid #1e293b; padding: 12px 8px; flex-shrink:0;">
+ <aside class="adm-sidebar">
+ <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div>
  <div style="font-size: 9px; color: #475569; padding: 8px 10px 4px; text-transform: uppercase; letter-spacing:.06em;">모더레이션</div>
@@ -6607,7 +6645,7 @@
  <section class="slide" id="ADM-REV-01">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">21 · 운영 — 검수</div><h2>검수 큐</h2></div>
+ <div><div class="crumb">22 · 운영 — 검수</div><h2>검수 큐</h2></div>
  <div class="meta"><span class="role">ADM</span><span class="id">ADM-REV-01</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -6619,7 +6657,8 @@
  <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
- <aside style="width: 140px; background: #0f172a; border-right: 1px solid #1e293b; padding: 12px 8px; flex-shrink:0;">
+ <aside class="adm-sidebar">
+ <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
@@ -6700,7 +6739,7 @@
  <section class="slide" id="ADM-REV-02">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">21 · 운영 — 검수</div><h2>검수 상세·판정</h2></div>
+ <div><div class="crumb">22 · 운영 — 검수</div><h2>검수 상세·판정</h2></div>
  <div class="meta"><span class="role">ADM</span><span class="id">ADM-REV-02</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -6712,7 +6751,8 @@
  <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
- <aside style="width: 140px; background: #0f172a; border-right: 1px solid #1e293b; padding: 12px 8px; flex-shrink:0;">
+ <aside class="adm-sidebar">
+ <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
@@ -6782,7 +6822,7 @@
  <section class="slide" id="ADM-REV-03">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">21 · 운영 — 검수</div><h2>반려 사유 선택 모달</h2></div>
+ <div><div class="crumb">22 · 운영 — 검수</div><h2>반려 사유 선택 모달</h2></div>
  <div class="meta"><span class="role">ADM</span><span class="id">ADM-REV-03</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -6840,7 +6880,7 @@
  <section class="slide" id="ADM-PCK-01">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">22 · 운영 — Pick</div><h2>현재 Pick 대시보드</h2></div>
+ <div><div class="crumb">23 · 운영 — Pick</div><h2>현재 Pick 대시보드</h2></div>
  <div class="meta"><span class="role">ADM</span><span class="id">ADM-PCK-01</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -6852,7 +6892,8 @@
  <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
- <aside style="width: 140px; background: #0f172a; border-right: 1px solid #1e293b; padding: 12px 8px; flex-shrink:0;">
+ <aside class="adm-sidebar">
+ <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
@@ -6903,7 +6944,7 @@
  <section class="slide" id="ADM-PCK-02">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">22 · 운영 — Pick</div><h2>Pick 추가 검색</h2></div>
+ <div><div class="crumb">23 · 운영 — Pick</div><h2>Pick 추가 검색</h2></div>
  <div class="meta"><span class="role">ADM</span><span class="id">ADM-PCK-02</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -6915,7 +6956,8 @@
  <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
- <aside style="width: 140px; background: #0f172a; border-right: 1px solid #1e293b; padding: 12px 8px; flex-shrink:0;">
+ <aside class="adm-sidebar">
+ <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
@@ -6978,7 +7020,7 @@
  <section class="slide" id="ADM-PCK-03">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">22 · 운영 — Pick</div><h2>Pick 이력 열람</h2></div>
+ <div><div class="crumb">23 · 운영 — Pick</div><h2>Pick 이력 열람</h2></div>
  <div class="meta"><span class="role">ADM</span><span class="id">ADM-PCK-03</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -6990,7 +7032,8 @@
  <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
- <aside style="width: 140px; background: #0f172a; border-right: 1px solid #1e293b; padding: 12px 8px; flex-shrink:0;">
+ <aside class="adm-sidebar">
+ <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
@@ -7040,7 +7083,7 @@
  <section class="slide" id="ADM-CUR-01">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">23 · 운영 — 추천 전시·기획전</div><h2>기획전 관리</h2></div>
+ <div><div class="crumb">24 · 운영 — 추천 전시·기획전</div><h2>기획전 관리</h2></div>
  <div class="meta"><span class="role">ADM</span><span class="id">ADM-CUR-01</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -7052,7 +7095,8 @@
  <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
- <aside style="width: 140px; background: #0f172a; border-right: 1px solid #1e293b; padding: 12px 8px; flex-shrink:0;">
+ <aside class="adm-sidebar">
+ <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
@@ -7117,7 +7161,7 @@
  <section class="slide" id="ADM-CUR-02">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">23 · 운영 — 추천 전시·기획전</div><h2>추천 전시 관리</h2></div>
+ <div><div class="crumb">24 · 운영 — 추천 전시·기획전</div><h2>추천 전시 관리</h2></div>
  <div class="meta"><span class="role">ADM</span><span class="id">ADM-CUR-02</span><span class="device">PC</span><span class="ver">v1.5 NEW</span></div>
  </div>
 
@@ -7129,7 +7173,8 @@
  <span class="url">proudgallery.com/admin/featured</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
- <aside style="width: 140px; background: #0f172a; border-right: 1px solid #1e293b; padding: 12px 8px; flex-shrink:0;">
+ <aside class="adm-sidebar">
+ <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
@@ -7184,7 +7229,7 @@
  <section class="slide" id="ADM-BNR-01">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">24 · 운영 — 배너</div><h2>배너 목록</h2></div>
+ <div><div class="crumb">25 · 운영 — 배너</div><h2>배너 목록</h2></div>
  <div class="meta"><span class="role">ADM</span><span class="id">ADM-BNR-01</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -7196,7 +7241,8 @@
  <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
- <aside style="width: 140px; background: #0f172a; border-right: 1px solid #1e293b; padding: 12px 8px; flex-shrink:0;">
+ <aside class="adm-sidebar">
+ <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
@@ -7275,7 +7321,7 @@
  <section class="slide" id="ADM-BNR-02">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">24 · 운영 — 배너</div><h2>배너 편집 폼</h2></div>
+ <div><div class="crumb">25 · 운영 — 배너</div><h2>배너 편집 폼</h2></div>
  <div class="meta"><span class="role">ADM</span><span class="id">ADM-BNR-02</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -7287,7 +7333,8 @@
  <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
- <aside style="width: 140px; background: #0f172a; border-right: 1px solid #1e293b; padding: 12px 8px; flex-shrink:0;">
+ <aside class="adm-sidebar">
+ <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
@@ -7346,7 +7393,7 @@
  <section class="slide" id="ADM-EVT-01">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">25 · 운영 — 응모전</div><h2>응모전 목록</h2></div>
+ <div><div class="crumb">26 · 운영 — 응모전</div><h2>응모전 목록</h2></div>
  <div class="meta"><span class="role">ADM</span><span class="id">ADM-EVT-01</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -7358,7 +7405,8 @@
  <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
- <aside style="width: 140px; background: #0f172a; border-right: 1px solid #1e293b; padding: 12px 8px; flex-shrink:0;">
+ <aside class="adm-sidebar">
+ <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
@@ -7410,7 +7458,7 @@
  <section class="slide" id="ADM-EVT-02">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">25 · 운영 — 응모전</div><h2>응모전 편집 폼</h2></div>
+ <div><div class="crumb">26 · 운영 — 응모전</div><h2>응모전 편집 폼</h2></div>
  <div class="meta"><span class="role">ADM</span><span class="id">ADM-EVT-02</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -7422,7 +7470,8 @@
  <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
- <aside style="width: 140px; background: #0f172a; border-right: 1px solid #1e293b; padding: 12px 8px; flex-shrink:0;">
+ <aside class="adm-sidebar">
+ <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
@@ -7483,7 +7532,7 @@
  <section class="slide" id="ADM-EVT-03">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">25 · 운영 — 응모전</div><h2>응모전 참여자 현황</h2></div>
+ <div><div class="crumb">26 · 운영 — 응모전</div><h2>응모전 참여자 현황</h2></div>
  <div class="meta"><span class="role">ADM</span><span class="id">ADM-EVT-03</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -7495,7 +7544,8 @@
  <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
- <aside style="width: 140px; background: #0f172a; border-right: 1px solid #1e293b; padding: 12px 8px; flex-shrink:0;">
+ <aside class="adm-sidebar">
+ <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
@@ -7543,7 +7593,7 @@
  <section class="slide" id="ADM-RPT-01">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">26 · 운영 — 신고</div><h2>신고 큐</h2></div>
+ <div><div class="crumb">27 · 운영 — 신고</div><h2>신고 큐</h2></div>
  <div class="meta"><span class="role">ADM</span><span class="id">ADM-RPT-01</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -7555,7 +7605,8 @@
  <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
- <aside style="width: 140px; background: #0f172a; border-right: 1px solid #1e293b; padding: 12px 8px; flex-shrink:0;">
+ <aside class="adm-sidebar">
+ <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
@@ -7623,7 +7674,7 @@
  <section class="slide" id="ADM-RPT-02">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">26 · 운영 — 신고</div><h2>신고 상세·처리</h2></div>
+ <div><div class="crumb">27 · 운영 — 신고</div><h2>신고 상세·처리</h2></div>
  <div class="meta"><span class="role">ADM</span><span class="id">ADM-RPT-02</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -7635,7 +7686,8 @@
  <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
- <aside style="width: 140px; background: #0f172a; border-right: 1px solid #1e293b; padding: 12px 8px; flex-shrink:0;">
+ <aside class="adm-sidebar">
+ <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
@@ -7689,7 +7741,7 @@
  <section class="slide" id="ADM-RPT-03">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">26 · 운영 — 신고</div><h2>처리 액션 확인 다이얼로그 (3 변형)</h2></div>
+ <div><div class="crumb">27 · 운영 — 신고</div><h2>처리 액션 확인 다이얼로그 (3 변형)</h2></div>
  <div class="meta"><span class="role">ADM</span><span class="id">ADM-RPT-03</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -7751,7 +7803,7 @@
  <section class="slide" id="ADM-MBR-01">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">27 · 운영 — 회원</div><h2>회원 목록</h2></div>
+ <div><div class="crumb">28 · 운영 — 회원</div><h2>회원 목록</h2></div>
  <div class="meta"><span class="role">ADM</span><span class="id">ADM-MBR-01</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -7763,7 +7815,8 @@
  <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
- <aside style="width: 140px; background: #0f172a; border-right: 1px solid #1e293b; padding: 12px 8px; flex-shrink:0;">
+ <aside class="adm-sidebar">
+ <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
@@ -7823,7 +7876,7 @@
  <section class="slide" id="ADM-MBR-02">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">27 · 운영 — 회원</div><h2>회원 상세</h2></div>
+ <div><div class="crumb">28 · 운영 — 회원</div><h2>회원 상세</h2></div>
  <div class="meta"><span class="role">ADM</span><span class="id">ADM-MBR-02</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -7835,7 +7888,8 @@
  <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
- <aside style="width: 140px; background: #0f172a; border-right: 1px solid #1e293b; padding: 12px 8px; flex-shrink:0;">
+ <aside class="adm-sidebar">
+ <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
@@ -7881,7 +7935,7 @@
  <section class="slide" id="ADM-MBR-03">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">27 · 운영 — 회원</div><h2>정지 모달 · 보류</h2></div>
+ <div><div class="crumb">28 · 운영 — 회원</div><h2>정지 모달 · 보류</h2></div>
  <div class="meta"><span class="role">ADM</span><span class="id">ADM-MBR-03</span><span class="device">PC</span><span class="ver">v1.2 SKIP</span></div>
  </div>
 
@@ -7893,7 +7947,8 @@
  <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
- <aside style="width: 140px; background: #0f172a; border-right: 1px solid #1e293b; padding: 12px 8px; flex-shrink:0;">
+ <aside class="adm-sidebar">
+ <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
@@ -7924,7 +7979,7 @@
  <section class="slide" id="ADM-INQ-01">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">28 · 운영 — 문의</div><h2>문의함</h2></div>
+ <div><div class="crumb">29 · 운영 — 문의</div><h2>문의함</h2></div>
  <div class="meta"><span class="role">ADM</span><span class="id">ADM-INQ-01</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
  </div>
 
@@ -7936,7 +7991,8 @@
  <span class="url">proudgallery.com/admin</span>
  </div>
  <div style="background: white; height: 100%; display: flex;">
- <aside style="width: 140px; background: #0f172a; border-right: 1px solid #1e293b; padding: 12px 8px; flex-shrink:0;">
+ <aside class="adm-sidebar">
+ <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">문의</div>
  </aside>
@@ -7995,7 +8051,7 @@
  <section class="slide" id="ADM-NTC-01">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">29 · 운영 — 공지</div><h2>공지 관리</h2></div>
+ <div><div class="crumb">30 · 운영 — 공지</div><h2>공지 관리</h2></div>
  <div class="meta"><span class="role">ADM</span><span class="id">ADM-NTC-01</span><span class="device">PC</span><span class="ver">v1.5 NEW</span></div>
  </div>
 
@@ -8004,7 +8060,8 @@
  <div class="pc-frame">
  <div class="chrome"><span class="dots"><span></span><span></span><span></span></span><span class="url">proudgallery.com/admin/notices</span></div>
  <div style="background: white; height: 100%; display: flex;">
- <aside style="width: 140px; background: #0f172a; border-right: 1px solid #1e293b; padding: 12px 8px; flex-shrink:0;">
+ <aside class="adm-sidebar">
+ <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
@@ -8087,7 +8144,7 @@
  <section class="slide" id="CM-02">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">28 · 공통 다이얼로그</div><h2>CM-02 · 로그인 유도 모달</h2></div>
+ <div><div class="crumb">31 · 공통 다이얼로그</div><h2>CM-02 · 로그인 유도 모달</h2></div>
  <div class="meta"><span class="role">CM</span><span class="id">CM-02</span><span class="device">PC</span><span class="ver">v1.4</span></div>
  </div>
 
@@ -8186,6 +8243,27 @@
  });
  }, { rootMargin: '-30% 0px -60% 0px' });
  slides.forEach(s => observer.observe(s));
+
+ /* ── 어드민 사이드바 토글 ── */
+ // ADM-DSH-01 = 어드민 메뉴 소개 첫 슬라이드 → 펼침(expanded) 기본값
+ // 나머지 ADM 슬라이드 → 닫힘(collapsed) 기본값
+ const ADM_INTRO_SLIDE = 'ADM-DSH-01';
+ document.querySelectorAll('.adm-sidebar').forEach(sidebar => {
+   const slide = sidebar.closest('.slide');
+   if (!slide) return;
+   if (slide.id !== ADM_INTRO_SLIDE) {
+     sidebar.classList.add('collapsed');
+     const btn = sidebar.querySelector('.adm-toggle');
+     if (btn) btn.textContent = '›';
+   }
+ });
+
+ function admToggle(btn) {
+   const sidebar = btn.closest('.adm-sidebar');
+   if (!sidebar) return;
+   const isCollapsed = sidebar.classList.toggle('collapsed');
+   btn.textContent = isCollapsed ? '›' : '☰';
+ }
 </script>
 </body>
 </html>
