@@ -1589,7 +1589,6 @@
  </div>
  <div class="viewport" style="background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center;">
  <div style="background: white; width: 420px; border-radius: 14px; padding: 36px 32px; box-shadow: 0 20px 50px rgba(0,0,0,.25); position: relative;">
- <div style="text-align: center; font-size: 13px; color: var(--ink-3); margin-bottom: 6px; letter-spacing: .04em;">Live Artfully</div>
  <div style="text-align: center; font-size: 22px; font-weight: 800; color: var(--ink); margin-bottom: 28px; position: relative;">Proud Gallery
  <span class="bub" style="position: absolute; top: -8px; right: 28%;">1</span>
  </div>
@@ -1609,8 +1608,7 @@
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">3</span>
  </div>
 
- <div style="text-align: center; font-size: 11px; color: var(--ink-3); margin-top: 14px; position: relative;">이미 계정이 있으신가요? <span style="text-decoration:underline;">로그인하기</span><span class="bub" style="position: absolute; top: -10px; right: -10px;">4</span></div>
- <div style="text-align: center; font-size: 11px; color: var(--ink-4); margin-top: 8px;">만 14세 미만은 가입·이용할 수 없어요.</div>
+ <div style="text-align: center; font-size: 11px; color: var(--ink-4); margin-top: 14px;">만 14세 미만은 가입·이용할 수 없어요.</div>
  </div>
  </div>
  </div>
@@ -1627,16 +1625,13 @@
 
      <h3 class="components">구성 요소</h3>
  <dl>
- <dt><span class="bub">1</span></dt><dd>브랜드 영역 — 태그라인 "Live Artfully" + 서비스명 로고</dd>
+ <dt><span class="bub">1</span></dt><dd>브랜드 영역 — 서비스명 로고</dd>
  <dt><span class="bub">2</span></dt><dd>소셜 로그인 3종 — KO: 카카오·구글·애플 순 / EN: 구글·애플·카카오 순. 첫 가입 → USR-AUT-06, 기존 회원 → redirect</dd>
- <dt><span class="bub">3</span></dt><dd>이메일 CTA (outline) — "이메일로 계속하기" → USR-AUT-03 매직 링크 플로우 진입</dd>
- <dt><span class="bub">4</span></dt><dd>로그인 링크 — "이미 계정이 있으신가요? 로그인하기" → USR-AUT-02b</dd>
+ <dt><span class="bub">3</span></dt><dd>이메일 CTA (outline) — "이메일로 계속하기" → USR-AUT-03 이메일 가입 플로우 진입. 기존 회원은 USR-AUT-03 이메일 입력 시 "이미 가입된 이메일이에요" 안내로 로그인 유도</dd>
  </dl>
 
- <div class="copy"><h4>주요 카피</h4><span class="copy-line">"Live Artfully"</span>
- <span class="copy-line">소셜: "[제공자]로 계속하기"</span>
+ <div class="copy"><h4>주요 카피</h4><span class="copy-line">소셜: "[제공자]로 계속하기"</span>
  <span class="copy-line">이메일 CTA: "이메일로 계속하기"</span>
- <span class="copy-line">"이미 계정이 있으신가요? 로그인 하기"</span>
  <span class="copy-line">"만 14세 미만은 가입·이용할 수 없어요."</span></div>
 
  <div class="ac"><h4>완성 기준</h4><ol>
@@ -1780,19 +1775,19 @@
 
      <h3 class="components">구성 요소</h3>
  <dl>
- <dt><span class="bub">1</span></dt><dd>진행 표시 — 1/3 스텝. 검정 채움 1 + 회색 2</dd>
- <dt><span class="bub">2</span></dt><dd>이메일 입력 필드 — 형식 검증 + 중복 가입 차단. 기가입 이메일 → 로그인 안내 분기</dd>
- <dt><span class="bub">3</span></dt><dd>발송 CTA — "인증 메일 보내기". 발송 후 USR-AUT-02b 메일 확인 안내 상태로 전환</dd>
+ <dt><span class="bub">1</span></dt><dd>헤딩 — "이메일로 계속하기" / 부제 — "이메일 주소를 입력하시면 인증 링크를 보내드려요. 비밀번호는 따로 만들 필요 없어요." (진행바 없음)</dd>
+ <dt><span class="bub">2</span></dt><dd>이메일 입력 필드 — 형식 검증 + 중복 가입 차단. 기가입 이메일 → "이미 가입된 이메일이에요. 로그인해 주세요." 인라인 에러</dd>
+ <dt><span class="bub">3</span></dt><dd>발송 CTA — "인증 메일 보내기". 발송 후 USR-AUT-04 메일 확인 안내 상태로 전환 (이메일 아이콘 + 재발송 + 이메일 수정 버튼)</dd>
  </dl>
 
- <div class="copy"><h4>주요 카피</h4><span class="copy-line">"이메일을 알려주세요"</span>
- <span class="copy-line">"받은편지함에서 인증 메일을 확인하실 수 있어요"</span>
- <span class="copy-line">"중복 가입은 차단됩니다"</span>
- <span class="copy-line">버튼: "인증 메일 보내기"</span></div>
+ <div class="copy"><h4>주요 카피</h4><span class="copy-line">헤딩: "이메일로 계속하기"</span>
+ <span class="copy-line">부제: "이메일 주소를 입력하시면 인증 링크를 보내드려요. 비밀번호는 따로 만들 필요 없어요."</span>
+ <span class="copy-line">버튼: "인증 메일 보내기"</span>
+ <span class="copy-line">중복 에러: "이미 가입된 이메일이에요. 로그인해 주세요."</span></div>
 
  <div class="ac"><h4>완성 기준</h4><ol>
  <li>이메일 형식 검증 통과 시에만 CTA 활성</li>
- <li>이미 가입된 이메일은 즉시 안내 ("이미 가입된 계정이에요. 로그인 하기")</li>
+ <li>이미 가입된 이메일은 즉시 인라인 에러 안내 ("이미 가입된 이메일이에요. 로그인해 주세요.")</li>
  <li>발송 후 30초 쿨다운, 데모용 "받은 링크 열기" 버튼 노출</li>
  <li>뒤로가기 → USR-AUT-02</li>
  </ol></div>
@@ -1822,11 +1817,10 @@
  <div style="width: 480px; position: relative;">
  <div style="display: flex; gap: 6px; margin-bottom: 24px;">
  <div style="flex: 1; height: 4px; background: var(--ink); border-radius: 2px;"></div>
- <div style="flex: 1; height: 4px; background: var(--ink); border-radius: 2px;"></div>
  <div style="flex: 1; height: 4px; background: var(--line); border-radius: 2px;"></div>
  </div>
- <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">2 / 3</div>
- <div style="font-size: 22px; font-weight: 700; margin-bottom: 6px;">기본 정보를 입력해주세요</div>
+ <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">1/2 · 프로필 설정</div>
+ <div style="font-size: 22px; font-weight: 700; margin-bottom: 6px;">회원가입</div>
  <div style="font-size: 12px; color: var(--ink-3); margin-bottom: 22px;">name@example.com 으로 가입 진행 중</div>
 
  <div style="margin-bottom: 18px; position: relative;">
@@ -1909,10 +1903,9 @@
  <div style="display: flex; gap: 6px; margin-bottom: 24px;">
  <div style="flex: 1; height: 4px; background: var(--ink); border-radius: 2px;"></div>
  <div style="flex: 1; height: 4px; background: var(--ink); border-radius: 2px;"></div>
- <div style="flex: 1; height: 4px; background: var(--ink); border-radius: 2px;"></div>
  </div>
- <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">3 / 3</div>
- <div style="font-size: 22px; font-weight: 700; margin-bottom: 6px;">약관에 동의해주세요</div>
+ <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">2/2 · 마지막 단계예요</div>
+ <div style="font-size: 22px; font-weight: 700; margin-bottom: 6px;">회원가입</div>
  <div style="font-size: 12px; color: var(--ink-3); margin-bottom: 22px;">서비스 이용을 위해 다음 항목을 확인해주세요</div>
 
  <div style="border: 1.5px solid var(--ink); padding: 14px; border-radius: 8px; margin-bottom: 14px; display: flex; align-items: center; gap: 12px; position: relative;">
@@ -2021,9 +2014,12 @@
  <div style="border: 1.5px solid var(--ink); padding: 10px 12px; border-radius: 6px; font-size: 13px;">홍길동</div>
  <span class="bub" style="position: absolute; top: 18px; right: -22px;">1</span>
  </div>
- <div style="margin-bottom: 18px;">
- <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">이메일</div>
- <div style="border: 1px solid var(--line); padding: 10px 12px; border-radius: 6px; font-size: 13px; color: var(--ink-3); background: #fafafa;">name@kakao.com (수정 가능)</div>
+ <div style="display: flex; align-items: center; gap: 10px; border: 1px solid var(--line-2); border-radius: 8px; padding: 10px 12px; margin-bottom: 18px; background: #f8fafc;">
+ <div style="width: 32px; height: 32px; background: #FEE500; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0;">K</div>
+ <div style="min-width: 0;">
+ <div style="font-size: 9px; color: var(--ink-4); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 1px;">카카오</div>
+ <div style="font-size: 12px; color: var(--ink-2); overflow: hidden; text-overflow: ellipsis;">demo@kakao.com</div>
+ </div>
  </div>
 
  <div style="border-top: 1px solid var(--line); padding-top: 14px; position: relative;">
@@ -2694,9 +2690,9 @@
  <span class="tab">그룹전시</span>
  <span class="bub" style="position: absolute; top: -10px; right: 14px;">3</span>
  </div>
- <!-- 4열 카드 그리드 -->
+ <!-- 3열 카드 그리드 -->
  <div class="pc-content" style="position: relative;">
- <div class="pc-grid-4">
+ <div class="pc-grid-3">
  <div class="pc-card">
  <div class="img" style="background: linear-gradient(135deg, #fef3c7, #fecaca, #ddd6fe);"></div>
  <div class="body"><div class="t">봄날의 풍경</div><div class="s">○○○ 작가 · 5점</div></div>
@@ -2709,23 +2705,19 @@
  <div class="img" style="background: linear-gradient(135deg, #ddd6fe, #fed7aa);"></div>
  <div class="body"><div class="t">고요한 정물</div><div class="s">정해숙 작가 · 3점</div></div>
  </div>
- <div class="pc-card">
- <div class="img" style="background: linear-gradient(135deg, #e7e5e4, #fef3c7);"></div>
- <div class="body"><div class="t">길 위의 시간</div><div class="s">박정자 작가 · 8점</div></div>
- </div>
  </div>
  <span class="bub" style="position: absolute; top: 4px; left: -10px;">4</span>
  </div>
  </div>
  </div>
- <div class="placeholder-note">PC: 헤더(로고+둘러보기·이벤트+작품올리기 CTA+아이콘) + hero 캐러셀 배너 + 탭(전체/개인전시/그룹전시) + 4열 카드 그리드</div>
+ <div class="placeholder-note">PC: 헤더(로고+둘러보기·이벤트+작품올리기 CTA+아이콘) + hero 캐러셀 배너 + 탭(전체/개인전시/그룹전시) + 3열 카드 그리드(정사각 커버)</div>
  </div>
 
  <div class="desc">
  <h3>화면 정보</h3>
  <dl>
  <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> 홈 (서비스 진입 시 첫 화면)</dd>
- <dt></dt><dd><strong>PC 레이아웃</strong> 와이드 헤더(가로 nav) + 탭 + 4열 그리드 카드. 모바일은 1열 세로 스크롤</dd>
+ <dt></dt><dd><strong>PC 레이아웃</strong> 와이드 헤더(가로 nav) + 탭 + 3열 그리드 카드. 모바일은 1열 세로 스크롤</dd>
  <dt></dt><dd><strong>접근</strong> 비로그인·로그인 모두</dd>
  </dl>
 
@@ -2734,12 +2726,12 @@
  <dt><span class="bub">1</span></dt><dd>헤더 — 좌측 로고 + 가로 nav(둘러보기·이벤트) + 우측 "작품 올리기" CTA + 검색·알림·언어·프로필 아이콘</dd>
  <dt><span class="bub">2</span></dt><dd>hero 캐러셀 배너 — 전체 가로폭 다크 배너. 이벤트·기획전 슬라이드. 하단 닷 인디케이터. 어드민 등록</dd>
  <dt><span class="bub">3</span></dt><dd>탭 필터 — 전체·개인전시·그룹전시 가로 배치. 선택 탭 하단 밑줄 강조</dd>
- <dt><span class="bub">4</span></dt><dd>카드 그리드 — PC 4열. 카드 = 커버(4:3) + 전시명 + 작가명·작품 수. 클릭 → USR-EXH-01</dd>
+ <dt><span class="bub">4</span></dt><dd>카드 그리드 — PC 3열. 카드 = 커버(정사각 1:1) + 전시명 + 작가명·작품 수. 클릭 → USR-EXH-01</dd>
  </dl>
 
  <h3>카드 표시 규칙</h3>
  <dl>
- <dt>→</dt><dd>커버 이미지 (4:3 비율)</dd>
+ <dt>→</dt><dd>커버 이미지 (정사각 1:1 비율)</dd>
  <dt>→</dt><dd>전시명 + 작가명 (or 그룹명)</dd>
  <dt>→</dt><dd>작품 수 표기 ("작품 1점" / "작품 12점")</dd>
  <dt>→</dt><dd>호버 시 좋아요·저장 아이콘 노출 (PC 한정 인터랙션). 모바일은 카드 하단 고정 노출</dd>
@@ -2750,7 +2742,7 @@
  <li>탭 선택 시 즉시 필터 + URL 갱신</li>
  <li>스크롤 위치 복원 — 카드 클릭 후 뒤로 가기 시 위치 유지</li>
  <li>비공개·반려 전시는 피드 제외</li>
- <li>반응형: 1280px=4열, 1024px=3열, 768px=2열</li>
+ <li>반응형: 1024px+=3열(lg), 640px=2열(sm), 640px 미만=1열</li>
  </ol></div>
 
  <div class="pol"><h4>관련 정책</h4>전시 단위 (07-4) · 신고 (07-6)
@@ -2814,11 +2806,11 @@
  </div>
  <!-- 관련 작품 그리드 -->
  <div style="padding: 12px 20px; flex-shrink: 0; position: relative;">
- <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 8px;">이 작가의 다른 전시</div>
+ <div style="font-size: 14px; font-weight: 700; margin-bottom: 12px;">관련 작품</div>
  <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px;">
- <div style="aspect-ratio: 4/3; background: linear-gradient(135deg,#d1fae5,#dbeafe); border-radius: 4px;"></div>
- <div style="aspect-ratio: 4/3; background: linear-gradient(135deg,#ddd6fe,#fed7aa); border-radius: 4px;"></div>
- <div style="aspect-ratio: 4/3; background: linear-gradient(135deg,#fecaca,#fef3c7); border-radius: 4px;"></div>
+ <div style="aspect-ratio: 1; background: linear-gradient(135deg,#d1fae5,#dbeafe); border-radius: 8px;"></div>
+ <div style="aspect-ratio: 1; background: linear-gradient(135deg,#ddd6fe,#fed7aa); border-radius: 8px;"></div>
+ <div style="aspect-ratio: 1; background: linear-gradient(135deg,#fecaca,#fef3c7); border-radius: 8px;"></div>
  </div>
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">4</span>
  </div>
@@ -2855,7 +2847,7 @@
  <dt><span class="bub">1</span></dt><dd>이미지 슬라이더 — blur 배경 + 원본 이미지 센터. 좌우 키·스와이프. 좌상단 "N / 전체" 카운터. 하단에 이미지별 작가명 오버레이</dd>
  <dt><span class="bub">2</span></dt><dd>우 사이드바 액션 — 원형 버튼(44px) 세로 스택: 좋아요·저장·공유. 각 버튼 아래 카운트 숫자. 비로그인 시 CM-02 트리거</dd>
  <dt><span class="bub">3</span></dt><dd>작가 프로필 카드 — 아바타 + 닉네임 + 한줄 소개 + 팔로우 버튼. 그룹전은 참여 작가 전원 카드 나열</dd>
- <dt><span class="bub">4</span></dt><dd>관련 작품 그리드 — 같은 작가의 다른 전시 최대 3개 2열 격자. "더 보기" → USR-PRF-01</dd>
+ <dt><span class="bub">4</span></dt><dd>"관련 작품" 그리드 — 같은 작가의 다른 전시 최대 3개, 정사각 커버. "더보기" 링크 → USR-PRF-01</dd>
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
@@ -3369,8 +3361,8 @@
  <dt><span class="bub">2</span></dt><dd>"여러 작가 함께 올리기" 카드 — 동호회·클래스·지인 등 다수 작가. 클릭 → USR-UPL-02 그룹 모드</dd>
  </dl>
 
- <div class="copy"><h4>주요 카피</h4><span class="copy-line">"어떻게 올리시겠어요?"</span>
- <span class="copy-line">"한 분 또는 여러 분의 작품을 하나의 전시로 묶을 수 있어요"</span></div>
+ <div class="copy"><h4>주요 카피</h4><span class="copy-line">"어떤 전시를 만드시나요?"</span>
+ <span class="copy-line">"내 작품 올리기" / "여러 작가 함께 올리기"</span></div>
 
  <div class="pol"><h4>관련 정책</h4>업로드 유형·역할
  </div>
@@ -3639,7 +3631,7 @@
  <div class="slide-pad">
  <div class="slide-head">
  <div><div class="crumb">11 · 업로드</div><h2>세부정보 모달</h2></div>
- <div class="meta"><span class="role">USR</span><span class="id">USR-UPL-04</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
+ <div class="meta"><span class="role">USR</span><span class="id">USR-UPL-04</span><span class="device">PC</span><span class="ver">v1.3</span></div>
  </div>
 
  <div class="screen">
@@ -3649,71 +3641,97 @@
  <span class="dots"><span></span><span></span><span></span></span>
  <span class="url">proudgallery.com/upload</span>
  </div>
- <div class="viewport" style="background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center;">
- <div style="background: white; width: 560px; max-height: 92%; overflow-y: auto; border-radius: 12px; padding: 26px 30px; box-shadow: 0 20px 50px rgba(0,0,0,.3); position: relative;">
- <div style="display: flex; justify-content: space-between; margin-bottom: 18px;">
- <div style="font-size: 17px; font-weight: 700;">전시 세부정보</div>
- <span style="font-size: 14px; color: var(--ink-3);">✕</span>
+ <div class="viewport" style="background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center;">
+ <div style="background: white; width: 560px; max-height: 92%; overflow-y: auto; border-radius: 16px; box-shadow: 0 20px 50px rgba(0,0,0,.3); display: flex; flex-direction: column;">
+ <!-- 헤더 -->
+ <div style="display: flex; align-items: center; justify-content: space-between; padding: 16px 24px; border-bottom: 1px solid #e5e7eb;">
+ <div style="display: flex; align-items: center; gap: 4px; position: relative;">
+ <span style="font-size: 17px; font-weight: 700;">세부 정보 설정</span>
+ <span style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: #9ca3af; cursor: pointer; position: relative;">
+ <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 16v-4M12 8h.01"/></svg>
+ <span class="bub" style="position: absolute; top: -6px; right: -6px;">i</span>
+ </span>
  </div>
- <div style="margin-bottom: 14px; position: relative;">
- <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">전시명 <span style="color: #dc2626;">*</span></div>
- <div style="border: 1.5px solid var(--ink); padding: 10px 12px; border-radius: 6px; display: flex; justify-content: space-between;"><span style="font-size: 13px;">봄날의 풍경</span><span style="font-size: 11px; color: var(--ink-3);">7 / 20</span></div>
- <span class="bub" style="position: absolute; top: 18px; right: -22px;">1</span>
+ <span style="width: 44px; height: 44px; display: flex; align-items: center; justify-content: center; border-radius: 50%; color: #6b7280; cursor: pointer;">✕</span>
  </div>
- <div style="margin-bottom: 14px; position: relative;">
- <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">그룹명 <span style="color: var(--ink-4);">(그룹 전시 필수)</span></div>
- <div style="border: 1px solid var(--line-2); padding: 10px 12px; border-radius: 6px; font-size: 13px; color: var(--ink-3);">예: 봄봄 동호회</div>
- <div style="font-size: 11px; color: var(--ink-4); margin-top: 4px;">자동완성: 내 최근 1 + 작품 기반 30</div>
- <span class="bub" style="position: absolute; top: 18px; right: -22px;">2</span>
- </div>
- <div style="margin-bottom: 14px; position: relative;">
- <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 6px;">커버 이미지</div>
- <div style="display: flex; gap: 6px;">
- <div style="width: 64px; aspect-ratio: 1; background: var(--ink); border-radius: 4px; position: relative;"><span style="position: absolute; bottom: 2px; right: 2px; background: white; color: var(--ink); font-size: 9px; padding: 1px 4px; border-radius: 2px;">✓</span></div>
- <div style="width: 64px; aspect-ratio: 1; background: linear-gradient(135deg, #fef3c7, #fecaca); border-radius: 4px;"></div>
- <div style="width: 64px; aspect-ratio: 1; background: linear-gradient(135deg, #d1fae5, #dbeafe); border-radius: 4px;"></div>
- <div style="width: 64px; aspect-ratio: 1; border: 2px dashed var(--line-2); border-radius: 4px; display: flex; align-items: center; justify-content: center; color: var(--ink-3); font-size: 16px;">+</div>
- </div>
- <span class="bub" style="position: absolute; top: 18px; right: -22px;">3</span>
- </div>
- <div style="display: flex; align-items: flex-start; gap: 8px; padding: 10px; background: #fafafa; border-radius: 6px; margin-bottom: 14px; position: relative;">
- <div style="width: 16px; height: 16px; background: var(--ink); border-radius: 3px; color: white; font-size: 10px; display: flex; align-items: center; justify-content: center; flex-shrink: 0; margin-top: 1px;">✓</div>
- <div style="font-size: 11.5px; color: var(--ink-2); line-height: 1.6;">제가 직접 그린 작품이며, 다른 작가 작품을 무단 도용하지 않았습니다.</div>
- <span class="bub" style="position: absolute; top: 4px; right: -10px;">4</span>
- </div>
- <div style="display: flex; gap: 8px;">
- <div style="flex: 1; border: 1px solid var(--line-2); padding: 11px; border-radius: 8px; font-size: 13px; text-align: center; color: var(--ink-2);">닫기</div>
- <div style="flex: 1; background: var(--ink); color: white; padding: 11px; border-radius: 8px; font-size: 13px; font-weight: 600; text-align: center;">저장</div>
+ <!-- 본문 -->
+ <div style="padding: 20px 24px; display: flex; flex-direction: column; gap: 20px;">
+ <!-- 커버 이미지 -->
+ <div style="position: relative;">
+ <div style="font-size: 13px; font-weight: 500; margin-bottom: 12px;">커버 이미지</div>
+ <div style="display: flex; gap: 8px; align-items: center;">
+ <div style="width: 64px; height: 64px; background: #374151; border-radius: 8px; position: relative; box-shadow: 0 0 0 2px #4f46e5, 0 0 0 4px white;">
+ <div style="position: absolute; inset: 0; background: rgba(79,70,229,.1); border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+ <span style="background: #4f46e5; color: white; border-radius: 50%; width: 16px; height: 16px; font-size: 8px; display: flex; align-items: center; justify-content: center;">★</span>
  </div>
  </div>
+ <div style="width: 64px; height: 64px; background: linear-gradient(135deg, #fef3c7, #fecaca); border-radius: 8px; border: 2px solid #d1d5db; opacity: .7;"></div>
+ <div style="width: 64px; height: 64px; background: linear-gradient(135deg, #d1fae5, #dbeafe); border-radius: 8px; border: 2px solid #d1d5db; opacity: .7;"></div>
+ <div style="width: 64px; height: 64px; border: 2px dashed #d1d5db; border-radius: 8px; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 2px; color: #9ca3af; font-size: 11px;">
+ <span style="font-size: 16px;">+</span><span>추가</span>
  </div>
  </div>
- <div class="placeholder-note">전시명 + 그룹명 + 커버 + 원작 동의</div>
+ <span class="bub" style="position: absolute; top: 0; right: -22px;">1</span>
+ </div>
+ <!-- 원작 확인 (필수) -->
+ <div style="background: #f5f3ff; border: 1px solid #ede9fe; border-radius: 12px; padding: 16px; position: relative;">
+ <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer;">
+ <input type="checkbox" checked style="margin-top: 2px; width: 18px; height: 18px; accent-color: #4f46e5; flex-shrink: 0;" />
+ <span style="font-size: 13px; font-weight: 500; color: #111827; line-height: 1.5;">본인이 직접 창작한 원작임을 확인합니다 <span style="color: #dc2626;">*</span></span>
+ </label>
+ <span class="bub" style="position: absolute; top: 8px; right: -22px;">2</span>
+ </div>
+ <!-- Pick·기획전 동의 (선택) -->
+ <div style="border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; position: relative;">
+ <label style="display: flex; align-items: flex-start; gap: 12px; cursor: pointer;">
+ <input type="checkbox" style="margin-top: 2px; width: 18px; height: 18px; accent-color: #4f46e5; flex-shrink: 0;" />
+ <span style="font-size: 13px; color: #374151; line-height: 1.5;">Proud's Pick·기획전에 선정될 경우 관련 페이지에 소개될 수 있음에 동의합니다.</span>
+ </label>
+ <span class="bub" style="position: absolute; top: 8px; right: -22px;">3</span>
+ </div>
+ </div>
+ <!-- 푸터 -->
+ <div style="border-top: 1px solid #e5e7eb; padding: 16px 24px;">
+ <div style="font-size: 11px; color: #6b7280; text-align: center; margin-bottom: 12px;">전시하기 후 운영팀 검수를 거쳐 둘러보기에 공개돼요.</div>
+ <div style="display: flex; justify-content: flex-end; gap: 12px;">
+ <div style="padding: 10px 20px; border-radius: 8px; font-size: 13px; color: #6b7280; cursor: pointer;">닫기</div>
+ <div style="padding: 10px 24px; background: #4f46e5; color: white; border-radius: 8px; font-size: 13px; font-weight: 600; cursor: pointer;">전시하기</div>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ <div class="placeholder-note">커버 이미지 · 원작 확인(필수) · Pick·기획전 동의(선택) · 전시하기</div>
  </div>
 
  <div class="desc">
  <h3>화면 정보</h3>
  <dl>
- <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> USR-UPL-02 "세부 정보" 버튼</dd>
- <dt></dt><dd><strong>모드</strong> 혼자/함께 동일 모달, 보이는 필드만 다름</dd>
+ <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> Step 1 메인 캔버스 "세부 정보" 버튼 클릭</dd>
+ <dt></dt><dd><strong>모드</strong> 혼자/함께 동일 모달. 원작 확인 레이블만 다름 (혼자: "본인이 직접 창작한 원작임을 확인합니다" / 함께: "참여 작가들의 동의를 얻었습니다")</dd>
+ <dt></dt><dd><strong>비고</strong> 전시명·그룹명은 Step 1 메인 캔버스 입력. 이 모달에 없음.</dd>
+ </dl>
+
+ <h3>헤더 팝오버 <span class="bub outline">i</span></h3>
+ <dl>
+ <dt></dt><dd>CircleHelp 아이콘 버튼 탭 시 검수 안내 팝오버 표시: 검수 소요 시간·이미지 수정·메타 수정·반려 안내 4항목</dd>
  </dl>
 
      <h3 class="components">구성 요소</h3>
  <dl>
- <dt><span class="bub">1</span></dt><dd>전시명 입력 필드 — 최대 20자. (필수)</dd>
- <dt><span class="bub">2</span></dt><dd>그룹명 입력 필드 — 그룹 전시 필수. 자동완성: 내 최근 1개 + 작품 기반 30개</dd>
- <dt><span class="bub">3</span></dt><dd>비공개 설정 체크박스</dd>
- <dt><span class="bub">4</span></dt><dd>저작권 동의 체크박스 — "직접 그린 작품이며 무단 도용 아님" 확인. (필수)</dd>
+ <dt><span class="bub">1</span></dt><dd>커버 이미지 — 업로드한 이미지 중 선택(★ 표시), 또는 별도 이미지 추가 버튼. 미선택 시 첫 번째 이미지 자동 사용.</dd>
+ <dt><span class="bub">2</span></dt><dd>원작 확인 체크박스(필수) — 미체크 시 "전시하기" 버튼 비활성 + 힌트 텍스트 표시</dd>
+ <dt><span class="bub">3</span></dt><dd>Pick·기획전 노출 동의 체크박스(선택) — 미체크여도 발행 가능</dd>
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
- <li>전시명 20자 초과 차단</li>
- <li>그룹명 자동완성 중복 허용 (2026-04-17 정책)</li>
+ <li>원작 확인 미체크 시 "전시하기" 비활성 + "위의 원작 확인을 체크해 주세요" 힌트</li>
  <li>커버 미선택 시 첫 번째 이미지 자동 사용</li>
- <li>원작 동의 체크 안 하면 발행 차단</li>
+ <li>Pick·기획전 동의는 선택 — 미체크여도 발행 가능</li>
+ <li>발행 후 "전시하기 후 운영팀 검수를 거쳐 둘러보기에 공개돼요." 안내 표시</li>
  </ol></div>
 
- <div class="pol"><h4>관련 정책</h4>전시명·그룹명 · 커버 이미지
+ <div class="pol"><h4>관련 정책</h4>커버 이미지 · 원작 확인 · Pick·기획전 노출 동의
  </div>
  </div>
  <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.8 (PC)</span><span>USR-UPL-04 · 세부정보</span></div>
@@ -3737,8 +3755,7 @@
  <div class="viewport" style="background: white; padding: 24px 32px;">
  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 18px; position: relative;">
  <div>
- <div style="font-size: 17px; font-weight: 700;">순서를 바꿔주세요</div>
- <div style="font-size: 12px; color: var(--ink-3); margin-top: 2px;">드래그해서 작품 순서를 정할 수 있어요. 첫 번째가 대표 이미지가 됩니다.</div>
+ <div style="font-size: 14px; font-weight: 600;">재정렬 모드</div>
  </div>
  <div style="background: var(--ink); color: white; padding: 9px 22px; border-radius: 8px; font-size: 13px; font-weight: 600;">완료</div>
  <span class="bub" style="position: absolute; top: -10px; right: 90px;">1</span>
@@ -3772,7 +3789,7 @@
  <div class="desc">
  <h3>화면 정보</h3>
  <dl>
- <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> USR-UPL-02 "순서 변경" 버튼 (이미지 2장 이상일 때만)</dd>
+ <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> USR-UPL-02 우측 사이드바 "한눈에 보고 정렬" 버튼 (이미지 2장 이상일 때만)</dd>
  <dt></dt><dd><strong>레이아웃</strong> 4열 그리드(PC). 모바일 2열</dd>
  </dl>
 
@@ -4165,7 +4182,7 @@
  </div>
  <!-- 카드 그리드 미리보기 -->
  <div style="padding:16px 48px;">
- <div class="pc-grid-4">
+ <div class="pc-grid-3">
  <div class="pc-card"><div class="img" style="background:linear-gradient(135deg,#fef3c7,#fecaca,#ddd6fe);"></div><div class="body"><div class="t">카페 작전</div><div class="s">○○○ 작가</div></div></div>
  <div class="pc-card"><div class="img" style="background:linear-gradient(135deg,#d1fae5,#dbeafe);"></div><div class="body"><div class="t">카페 작전</div><div class="s">○○○ 작가</div></div></div>
  <div class="pc-card"><div class="img" style="background:linear-gradient(135deg,#ddd6fe,#fed7aa);"></div><div class="body"><div class="t">카페 작전</div><div class="s">○○○ 작가</div></div></div>
@@ -4173,7 +4190,7 @@
  </div>
  </div>
  </div>
- <div class="placeholder-note">헤더 + 프로필(아바타·이름·통계·프로필편집) + 탭(전시/내 작품/좋아요/저장/포인트) + 카드 그리드</div>
+ <div class="placeholder-note">헤더 + 프로필(아바타·이름·통계·프로필편집) + 탭(전시/내 작품/좋아요/저장/초안) + 카드 그리드(3열 정사각)</div>
  </div>
 
  <div class="desc">
@@ -5212,7 +5229,7 @@
  <dl>
  <dt><span class="bub">1</span></dt><dd>3탭 바 — 응모전 / 기획전 / 일반 이벤트 (기본: 응모전)</dd>
  <dt><span class="bub">2</span></dt><dd>응모전 탭 — hero 캐러셀(진행 중) + 예정 카드 그리드. CTA "참여하기 →" → USR-EVT-04 / "자세히 보기" → USR-EVT-02</dd>
- <dt><span class="bub">3</span></dt><dd>알림 구독 CTA 띠 — "알림 받기"·"알림 해지" 토글 → USR-EVT-03</dd>
+ <dt><span class="bub">3</span></dt><dd>알림 구독 CTA 띠 — "알림 받기"·"알림 해지" 인라인 토글. 클릭 시 가입 이메일로 자동 구독/해제 + 토스트. 비로그인 → CM-02 (USR-EVT-03)</dd>
  <dt><span class="bub">4</span></dt><dd>기획전 탭 — 기획전 카드 그리드</dd>
  <dt><span class="bub">5</span></dt><dd>일반 이벤트 탭 — 이벤트 카드 목록</dd>
  </dl>
@@ -5308,12 +5325,12 @@
  <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.8 (PC)</span><span>USR-EVT-02 · 응모전 상세</span></div>
  </section>
 
- <!-- ───────── 화면: 이메일 구독 모달 (PC) ───────── -->
+ <!-- ───────── 화면: 이벤트 알림 구독 UX (PC) ───────── -->
  <section class="slide" id="USR-EVT-03">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">15 · 이벤트</div><h2>이메일 구독 모달</h2></div>
- <div class="meta"><span class="role">USR</span><span class="id">USR-EVT-03</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
+ <div><div class="crumb">15 · 이벤트</div><h2>이벤트 알림 구독 버튼</h2></div>
+ <div class="meta"><span class="role">USR</span><span class="id">USR-EVT-03</span><span class="device">PC</span><span class="ver">v2.0 NEW</span></div>
  </div>
 
  <div class="screen">
@@ -5323,35 +5340,65 @@
  <span class="dots"><span></span><span></span><span></span></span>
  <span class="url">proudgallery.com/events</span>
  </div>
- <div class="viewport" style="background: rgba(0,0,0,.4); display: flex; align-items: center; justify-content: center;">
- <div style="background: white; width: 380px; border-radius: 12px; padding: 24px 26px; box-shadow: 0 20px 50px rgba(0,0,0,.3); position: relative;">
- <div style="display: flex; justify-content: space-between; margin-bottom: 12px;"><div style="font-size: 16px; font-weight: 700;">🔔 알림 받기</div><span style="font-size: 14px; color: var(--ink-3);">✕</span></div>
- <div style="font-size: 12px; color: var(--ink-2); line-height: 1.6; margin-bottom: 16px;"><strong>여름 컨테스트</strong>가 시작되면 이메일로 알려드릴게요.</div>
- <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">이메일</div>
- <div style="border: 1.5px solid var(--ink); padding: 10px 12px; border-radius: 6px; font-size: 12.5px; color: var(--ink-3); margin-bottom: 16px;">name@example.com</div>
- <div style="background: var(--ink); color: white; padding: 11px; border-radius: 8px; font-size: 13px; font-weight: 600; text-align: center;">알림 받기</div>
- <div style="font-size: 10.5px; color: var(--ink-4); text-align: center; margin-top: 10px;">중복 등록 안 됨 · 해지는 메일 하단 링크</div>
+ <div class="viewport" style="background: white; padding: 20px; display: flex; flex-direction: column; gap: 16px;">
+ <!-- 상태 A: 미구독 -->
+ <div style="font-size: 10px; color: var(--ink-4); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 2px;">상태 A — 미구독</div>
+ <div style="background: #f8fafc; border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; position: relative;">
+ <div>
+ <div style="font-size: 12px; font-weight: 600; color: var(--ink);">이벤트 알림 받기</div>
+ <div style="font-size: 11px; color: var(--ink-3); margin-top: 2px;">새 이벤트 소식을 가장 먼저 받아보세요</div>
+ </div>
+ <div style="background: var(--ink); color: white; padding: 6px 14px; border-radius: 6px; font-size: 12px; font-weight: 600;">🔔 알림 받기</div>
+ <span class="bub" style="position: absolute; top: -10px; right: -10px;">1</span>
+ </div>
+ <!-- 상태 B: 구독 완료 -->
+ <div style="font-size: 10px; color: var(--ink-4); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 2px;">상태 B — 구독 완료</div>
+ <div style="background: #f8fafc; border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; position: relative;">
+ <div>
+ <div style="font-size: 12px; font-weight: 600; color: var(--ink);">이벤트 알림 받기</div>
+ <div style="font-size: 11px; color: var(--ink-3); margin-top: 2px;">새 이벤트 소식을 가장 먼저 받아보세요</div>
+ </div>
+ <div style="background: white; color: var(--ink-2); border: 1px solid var(--line-2); padding: 6px 14px; border-radius: 6px; font-size: 12px;">알림 해지</div>
+ <span class="bub" style="position: absolute; top: -10px; right: -10px;">2</span>
+ </div>
+ <!-- 토스트 -->
+ <div style="background: #1e293b; color: white; padding: 10px 14px; border-radius: 8px; font-size: 12px; max-width: 240px; align-self: flex-end;">알림 신청을 받았어요
+ <span class="bub" style="position: relative; margin-left: 6px; top: 0; right: 0;">3</span></div>
  </div>
  </div>
  </div>
- <div class="placeholder-note">2초 후 자동 닫힘 + 중복 등록 방지</div>
+ <div class="placeholder-note">모달 없음 — 버튼 인라인 토글. 비로그인 → 로그인 유도 모달(CM-02). 가입 이메일 자동 사용</div>
  </div>
 
  <div class="desc">
  <h3>화면 정보</h3>
  <dl>
- <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> USR-EVT-01 "알림 받기" 클릭</dd>
+ <dt><span class="bub outline">i</span></dt><dd><strong>트리거</strong> USR-EVT-01 이벤트 목록 하단 "알림 받기" / "알림 해지" 버튼 클릭</dd>
+ <dt></dt><dd><strong>이메일 수집 없음</strong> 가입 시 등록된 계정 이메일을 자동 사용. 별도 이메일 입력·모달 없음</dd>
+ <dt></dt><dd><strong>비로그인 시</strong> CM-02 로그인 유도 모달 표시 (구독 처리 안 함)</dd>
  </dl>
 
  <h3 class="components">구성 요소</h3>
  <dl>
- <dt>—</dt><dd>이메일 입력 + 형식 검증 + 저장 → 토스트 → 2초 자동 닫힘</dd>
+ <dt><span class="bub">1</span></dt><dd>미구독 상태 버튼 — "🔔 알림 받기" 클릭 → 구독(boolean true) + 토스트 "알림 신청을 받았어요"</dd>
+ <dt><span class="bub">2</span></dt><dd>구독 완료 상태 버튼 — "알림 해지" 클릭 → 구독 해제(boolean false) + 토스트 "알림 해지했어요"</dd>
+ <dt><span class="bub">3</span></dt><dd>구독 완료 토스트 — 버튼 클릭 즉시 표시, 자동 소멸</dd>
  </dl>
 
- <div class="callout warn">구독 해지 UI는 런칭 전 필수 (N-5).
+ <div class="copy"><h4>주요 카피</h4>
+ <span class="copy-line">버튼(미구독): "알림 받기"</span>
+ <span class="copy-line">버튼(구독): "알림 해지"</span>
+ <span class="copy-line">구독 토스트: "알림 신청을 받았어요"</span>
+ <span class="copy-line">해지 토스트: "알림 해지했어요"</span>
  </div>
+
+ <div class="ac"><h4>완성 기준</h4><ol>
+ <li>로그인 상태에서 "알림 받기" 클릭 → boolean 플래그 저장 + 토스트 표시</li>
+ <li>버튼 즉시 "알림 해지" 상태로 전환 (리로드 없이)</li>
+ <li>비로그인 시 CM-02 로그인 유도 모달 표시</li>
+ </ol></div>
  </div>
- <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.8 (PC)</span><span>USR-EVT-03 · 이메일 구독</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.8 (PC)</span><span>USR-EVT-03 · 이벤트 알림 구독</span></div>
  </section>
 
  <!-- ───────── 화면: 응모전 응모 모달 (PC) ───────── -->
@@ -5922,40 +5969,68 @@
  <span class="url">proudgallery.com/settings</span>
  </div>
  <div style="background: white; padding: 22px 28px; height: 100%; overflow-y: auto;">
- <div style="font-size: 18px; font-weight: 700; margin-bottom: 18px;">설정</div>
- <div style="background: #fafafa; border: 1px solid var(--line); border-radius: 8px; padding: 16px; margin-bottom: 18px; position: relative;">
- <div style="font-size: 11px; color: var(--ink-3); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 10px;">계정 정보</div>
- <div style="display: grid; grid-template-columns: 100px 1fr; gap: 6px 14px; font-size: 12.5px;">
- <div style="color: var(--ink-3);">닉네임</div><div>홍길동</div>
- <div style="color: var(--ink-3);">이메일</div><div>name@example.com</div>
- <div style="color: var(--ink-3);">가입 경로</div><div>이메일 (매직 링크)</div>
- <div style="color: var(--ink-3);">가입일</div><div>2026.04.01</div>
- </div>
+ <div style="font-size: 18px; font-weight: 700; margin-bottom: 28px;">설정</div>
+
+ <!-- 글자 크기 (인라인 3-버튼 세그먼트) -->
+ <div style="font-size: 11px; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600;">글자 크기</div>
+ <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; border: 1px solid var(--line-2); border-radius: 8px; padding: 4px; margin-bottom: 24px; position: relative;">
+ <div style="padding: 10px; border-radius: 6px; text-align: center; font-size: 12px; color: var(--ink-3);">작게</div>
+ <div style="padding: 10px; border-radius: 6px; text-align: center; font-size: 13px; background: #f3e8ff; border: 1px solid #a855f7; font-weight: 600;">보통</div>
+ <div style="padding: 10px; border-radius: 6px; text-align: center; font-size: 14px; color: var(--ink-3);">크게</div>
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">1</span>
  </div>
- <div style="display: flex; flex-direction: column; gap: 6px; position: relative;">
- <div style="padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; display: flex; align-items: center; gap: 12px;"><span style="font-size: 16px;">🔤</span><div style="flex: 1;"><div style="font-size: 13px; font-weight: 600;">글꼴 크기</div><div style="font-size: 10.5px; color: var(--ink-3);">보통 (1.1)</div></div><span style="color: var(--ink-3);">›</span></div>
- <div style="padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; display: flex; align-items: center; gap: 12px;"><span style="font-size: 16px;">🔔</span><div style="flex: 1;"><div style="font-size: 13px; font-weight: 600;">알림 설정</div><div style="font-size: 10.5px; color: var(--ink-3);">5 토글</div></div><span style="color: var(--ink-3);">›</span></div>
- <div style="padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; display: flex; align-items: center; gap: 12px;"><span style="font-size: 16px;">🚪</span><div style="flex: 1;"><div style="font-size: 13px; font-weight: 600;">로그아웃</div></div><span style="color: var(--ink-3);">›</span></div>
- <div style="padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; display: flex; align-items: center; gap: 12px; color: #dc2626;"><span style="font-size: 16px;">⚠️</span><div style="flex: 1;"><div style="font-size: 13px; font-weight: 600;">탈퇴</div><div style="font-size: 10.5px; color: var(--ink-3);">계정 영구 삭제</div></div><span>›</span></div>
+
+ <!-- 화면 테마 (인라인 2-버튼 세그먼트) -->
+ <div style="font-size: 11px; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600;">화면 테마</div>
+ <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px; border: 1px solid var(--line-2); border-radius: 8px; padding: 4px; margin-bottom: 24px; position: relative;">
+ <div style="padding: 10px; border-radius: 6px; text-align: center; font-size: 13px; background: #f3e8ff; border: 1px solid #a855f7; font-weight: 600;">밝게</div>
+ <div style="padding: 10px; border-radius: 6px; text-align: center; font-size: 13px; color: var(--ink-3);">어둡게</div>
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">2</span>
  </div>
+
+ <!-- 알림 설정 (인라인 토글 5개) -->
+ <div style="font-size: 11px; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600;">알림 설정</div>
+ <div style="border: 1px solid var(--line-2); border-radius: 10px; overflow: hidden; margin-bottom: 28px; position: relative;">
+ <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--line-2);"><span style="font-size: 12.5px;">내 작품에 좋아요</span><div style="width: 36px; height: 20px; background: #7c3aed; border-radius: 10px;"></div></div>
+ <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--line-2);"><span style="font-size: 12.5px;">새 팔로워</span><div style="width: 36px; height: 20px; background: #7c3aed; border-radius: 10px;"></div></div>
+ <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--line-2);"><span style="font-size: 12.5px;">그룹 전시 게시 알림</span><div style="width: 36px; height: 20px; background: #7c3aed; border-radius: 10px;"></div></div>
+ <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px; border-bottom: 1px solid var(--line-2);"><span style="font-size: 12.5px;">기획전 · Pick 알림</span><div style="width: 36px; height: 20px; background: #7c3aed; border-radius: 10px;"></div></div>
+ <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px;"><span style="font-size: 12.5px;">마케팅 알림</span><div style="width: 36px; height: 20px; background: var(--line-2); border-radius: 10px;"></div></div>
+ <span class="bub" style="position: absolute; top: -10px; right: -10px;">3</span>
+ </div>
+
+ <!-- 계정 (로그아웃 + 탈퇴) -->
+ <div style="font-size: 11px; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600;">계정</div>
+ <div style="border: 1px solid var(--line-2); border-radius: 10px; overflow: hidden; margin-bottom: 16px; position: relative;">
+ <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px;"><span style="font-size: 12.5px; color: #7c3aed; font-weight: 500;">로그아웃</span><span style="color: var(--ink-3); font-size: 11px;">→</span></div>
+ <span class="bub" style="position: absolute; top: -10px; right: -10px;">4</span>
+ </div>
+ <div style="border-top: 1px solid #fecaca; padding-top: 14px; text-align: center;">
+ <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 10px;">탈퇴하면 모든 데이터가 삭제되며 되돌릴 수 없어요.</div>
+ <div style="padding: 11px; border: 1px solid #fca5a5; border-radius: 8px; font-size: 13px; color: #dc2626; text-align: center; font-weight: 500; position: relative;">회원 탈퇴
+ <span class="bub" style="position: absolute; top: -10px; right: -10px;">5</span>
  </div>
  </div>
- <div class="placeholder-note">계정 정보 + 4 항목(글꼴·알림·로그아웃·탈퇴). 비밀번호 항목 없음</div>
+ </div>
+ </div>
+ <div class="placeholder-note">단일 스크롤 페이지 — 글자 크기(3버튼) · 화면 테마(2버튼) · 알림(5토글 인라인) · 계정(로그아웃 행 + 탈퇴 버튼). 메뉴 드릴다운 없음</div>
  </div>
 
  <div class="desc">
  <h3>화면 정보</h3>
  <dl>
- <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> 경로 /settings (해시 앵커 `#notifications` 등)</dd>
- <dt></dt><dd><strong>비밀번호 없음</strong> 매직 링크 단일</dd>
+ <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> 경로 /settings</dd>
+ <dt></dt><dd><strong>단일 페이지</strong> 모든 설정이 한 화면에 인라인. 별도 서브페이지 없음</dd>
+ <dt></dt><dd><strong>비밀번호 없음</strong> 매직 링크 단일. 계정 이메일 표시는 이메일 가입자만</dd>
  </dl>
 
      <h3 class="components">구성 요소</h3>
  <dl>
- <dt><span class="bub">1</span></dt><dd>계정 정보 섹션 — 닉네임·이메일·가입 경로·가입일. 읽기 전용</dd>
- <dt><span class="bub">2</span></dt><dd>설정 메뉴 목록 — 글꼴 크기·알림 설정·로그아웃·탈퇴</dd>
+ <dt><span class="bub">1</span></dt><dd>글자 크기 — 작게·보통·크게 인라인 3-버튼 세그먼트. 선택 즉시 적용</dd>
+ <dt><span class="bub">2</span></dt><dd>화면 테마 — 밝게·어둡게 인라인 2-버튼 세그먼트. 시스템 자동 감지 없음 (Policy §19.4)</dd>
+ <dt><span class="bub">3</span></dt><dd>알림 설정 — 5개 토글 인라인. 내 작품에 좋아요·새 팔로워·그룹 전시 게시 알림·기획전·Pick 알림·마케팅 알림(기본 off). 즉시 저장</dd>
+ <dt><span class="bub">4</span></dt><dd>로그아웃 — 확인 다이얼로그 후 로그아웃</dd>
+ <dt><span class="bub">5</span></dt><dd>회원 탈퇴 — 경고 문구 + 탈퇴 버튼 클릭 시 탈퇴 사유(5종 라디오) + 동의 체크박스 인라인 모달</dd>
  </dl>
  </div>
  </div>
@@ -6039,8 +6114,8 @@
  <section class="slide" id="USR-STG-04">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">19 · 설정</div><h2>글꼴 크기 조절</h2></div>
- <div class="meta"><span class="role">USR</span><span class="id">USR-STG-04</span><span class="device">PC</span><span class="ver">v1.5 NEW</span></div>
+ <div><div class="crumb">19 · 설정</div><h2>글자 크기 (설정 인라인 섹션)</h2></div>
+ <div class="meta"><span class="role">USR</span><span class="id">USR-STG-04</span><span class="device">PC</span><span class="ver">v1.6</span></div>
  </div>
 
  <div class="screen">
@@ -6048,41 +6123,40 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">proudgallery.com/settings#font</span>
+ <span class="url">proudgallery.com/settings</span>
  </div>
  <div style="background: white; padding: 22px 28px; height: 100%; overflow-y: auto;">
- <div style="font-size: 12px; color: var(--ink-3); margin-bottom: 4px;">← 설정</div>
- <div style="font-size: 18px; font-weight: 700; margin-bottom: 6px;">글꼴 크기</div>
- <div style="font-size: 12px; color: var(--ink-3); margin-bottom: 16px;">선택 즉시 적용돼요</div>
- <div style="display: flex; flex-direction: column; gap: 8px;">
- <label style="display: flex; padding: 14px 16px; border: 1px solid var(--line); border-radius: 8px; align-items: center; gap: 12px; cursor: pointer;"><input type="radio" name="font" style="accent-color: var(--ink);"> <div><div style="font-size: 12px; font-weight: 600;">작게</div><div style="font-size: 10.5px; color: var(--ink-3);">1.0</div></div></label>
- <label style="display: flex; padding: 14px 16px; border: 2px solid var(--ink); border-radius: 8px; align-items: center; gap: 12px; cursor: pointer; background: #fafafa;"><input type="radio" name="font" checked style="accent-color: var(--ink);"> <div><div style="font-size: 13px; font-weight: 600;">보통</div><div style="font-size: 10.5px; color: var(--ink-3);">1.1 (기본값)</div></div></label>
- <label style="display: flex; padding: 14px 16px; border: 1px solid var(--line); border-radius: 8px; align-items: center; gap: 12px; cursor: pointer;"><input type="radio" name="font" style="accent-color: var(--ink);"> <div><div style="font-size: 14px; font-weight: 600;">크게</div><div style="font-size: 10.5px; color: var(--ink-3);">1.2</div></div></label>
+ <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); margin-bottom: 8px;">글자 크기</div>
+ <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 8px; border: 1px solid var(--line-2); border-radius: 8px; padding: 6px; background: #f9f9f9;">
+ <button style="padding: 12px 8px; border-radius: 6px; border: 1px solid var(--line-2); background: white; font-size: 12px; color: var(--ink-3); cursor: pointer;">작게</button>
+ <button style="padding: 12px 8px; border-radius: 6px; border: 2px solid var(--ink); background: rgba(99,91,255,.08); font-size: 13px; font-weight: 600; color: var(--ink); cursor: pointer;">보통</button>
+ <button style="padding: 12px 8px; border-radius: 6px; border: 1px solid var(--line-2); background: white; font-size: 14px; color: var(--ink-3); cursor: pointer;">크게</button>
  </div>
  </div>
  </div>
- <div class="placeholder-note">3단 라디오 (작게 1.0 / 보통 1.1 / 크게 1.2) — 보통 기본 선택, 선택 즉시 반영·저장</div>
+ <div class="placeholder-note">USR-STG-01 인라인 섹션 — 3-버튼 세그먼트 (작게/보통/크게). 별도 드릴다운 없음. 선택 즉시 반영·저장.</div>
  </div>
 
  <div class="desc">
  <h3>화면 정보</h3>
  <dl>
- <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> 설정 홈 내 글꼴 크기 항목 진입</dd>
+ <dt><span class="bub outline">i</span></dt><dd><strong>위치</strong> 설정 페이지 <code>USR-STG-01</code> 내 "글자 크기" 인라인 섹션 (별도 드릴다운 없음)</dd>
+ <dt></dt><dd><strong>URL</strong> proudgallery.com/settings (변경 없음)</dd>
  </dl>
 
  <h3 class="components">구성 요소</h3>
  <dl>
- <dt>—</dt><dd>3단 라디오 — 작게(1.0) / 보통(1.1, 기본) / 크게(1.2). 선택 즉시 저장</dd>
+ <dt>—</dt><dd>3-버튼 세그먼트 — 작게 / 보통(기본) / 크게. 선택 즉시 전체 UI 폰트 배율 반영·저장 (별도 저장 버튼 X)</dd>
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
- <li>라디오 선택 즉시 전체 UI 폰트 배율 반영 (별도 저장 버튼 X)</li>
- <li>기본값: 보통(1.1)</li>
+ <li>버튼 클릭 즉시 전체 UI 폰트 배율 반영 (별도 저장 버튼 X)</li>
+ <li>기본값: 보통</li>
  <li>재방문 시 저장된 선택 유지</li>
  </ol>
  </div>
  </div>
- <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.8 (PC)</span><span>USR-STG-04 · 글꼴 크기 조절</span></div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.8 (PC)</span><span>USR-STG-04 · 글자 크기</span></div>
  </section>
 
 
@@ -6090,8 +6164,8 @@
  <section class="slide" id="USR-STG-05">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">19 · 설정</div><h2>알림 설정</h2></div>
- <div class="meta"><span class="role">USR</span><span class="id">USR-STG-05</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
+ <div><div class="crumb">19 · 설정</div><h2>알림 설정 (설정 인라인 섹션)</h2></div>
+ <div class="meta"><span class="role">USR</span><span class="id">USR-STG-05</span><span class="device">PC</span><span class="ver">v1.3</span></div>
  </div>
 
  <div class="screen">
@@ -6099,39 +6173,37 @@
  <div class="pc-frame">
  <div class="chrome">
  <span class="dots"><span></span><span></span><span></span></span>
- <span class="url">proudgallery.com/settings#notifications</span>
+ <span class="url">proudgallery.com/settings</span>
  </div>
  <div style="background: white; padding: 22px 28px; height: 100%; overflow-y: auto;">
- <div style="font-size: 12px; color: var(--ink-3); margin-bottom: 4px;">← 설정</div>
- <div style="font-size: 18px; font-weight: 700; margin-bottom: 6px;">알림 설정</div>
- <div style="font-size: 12px; color: var(--ink-3); margin-bottom: 16px;">받고 싶은 알림만 켜두세요</div>
- <div style="display: flex; flex-direction: column; gap: 8px;">
- <div style="display: flex; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; align-items: center;"><div style="flex: 1;"><div style="font-size: 13px; font-weight: 600;">좋아요</div><div style="font-size: 10.5px; color: var(--ink-3);">내 작품에 좋아요가 달리면</div></div><div style="width: 36px; height: 20px; background: var(--ink); border-radius: 12px; position: relative;"><div style="position: absolute; right: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></div></div></div>
- <div style="display: flex; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; align-items: center;"><div style="flex: 1;"><div style="font-size: 13px; font-weight: 600;">팔로우</div><div style="font-size: 10.5px; color: var(--ink-3);">새 팔로워가 생기면</div></div><div style="width: 36px; height: 20px; background: var(--ink); border-radius: 12px; position: relative;"><div style="position: absolute; right: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></div></div></div>
- <div style="display: flex; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; align-items: center;"><div style="flex: 1;"><div style="font-size: 13px; font-weight: 600;">그룹 전시 게시 알림</div><div style="font-size: 10.5px; color: var(--ink-3);">내 작품이 그룹 전시에 포함됐을 때</div></div><div style="width: 36px; height: 20px; background: var(--ink); border-radius: 12px; position: relative;"><div style="position: absolute; right: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></div></div></div>
- <div style="display: flex; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; align-items: center;"><div style="flex: 1;"><div style="font-size: 13px; font-weight: 600;">기획전 · Pick</div><div style="font-size: 10.5px; color: var(--ink-3);">Pick 선정, 기획전 등 하이라이트 알림</div></div><div style="width: 36px; height: 20px; background: var(--ink); border-radius: 12px; position: relative;"><div style="position: absolute; right: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></div></div></div>
- <div style="display: flex; padding: 12px 14px; border: 1px solid var(--line); border-radius: 8px; align-items: center;"><div style="flex: 1;"><div style="font-size: 13px; font-weight: 600;">마케팅</div><div style="font-size: 10.5px; color: var(--ink-3);">응모전·프로모션 안내 (보유 채널 자동 라우팅 — Policy §1.1)</div></div><div style="width: 36px; height: 20px; background: var(--line); border-radius: 12px; position: relative;"><div style="position: absolute; left: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></div></div></div>
- </div>
- <div style="font-size: 10.5px; color: var(--ink-3); margin-top: 12px;">큐레이션(Pick·기획전 선정)·응모전(응모전 선정·공지)·시스템(검수 결과·작품 연결)은 본인 전시·계정에 직접 영향이라 끌 수 없는 강제 알림으로 발송돼요.</div>
+ <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); margin-bottom: 8px;">알림 설정</div>
+ <div style="border: 1px solid var(--line-2); border-radius: 10px; overflow: hidden; background: white;">
+ <div style="display: flex; padding: 14px 16px; border-bottom: 1px solid var(--line-2); align-items: center; justify-content: space-between;"><span style="font-size: 13px;">내 작품에 좋아요</span><div style="width: 36px; height: 20px; background: var(--ink); border-radius: 12px; position: relative;"><div style="position: absolute; right: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></div></div></div>
+ <div style="display: flex; padding: 14px 16px; border-bottom: 1px solid var(--line-2); align-items: center; justify-content: space-between;"><span style="font-size: 13px;">새 팔로워</span><div style="width: 36px; height: 20px; background: var(--ink); border-radius: 12px; position: relative;"><div style="position: absolute; right: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></div></div></div>
+ <div style="display: flex; padding: 14px 16px; border-bottom: 1px solid var(--line-2); align-items: center; justify-content: space-between;"><span style="font-size: 13px;">그룹 전시 게시 알림</span><div style="width: 36px; height: 20px; background: var(--ink); border-radius: 12px; position: relative;"><div style="position: absolute; right: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></div></div></div>
+ <div style="display: flex; padding: 14px 16px; border-bottom: 1px solid var(--line-2); align-items: center; justify-content: space-between;"><span style="font-size: 13px;">기획전 · Pick 알림</span><div style="width: 36px; height: 20px; background: var(--ink); border-radius: 12px; position: relative;"><div style="position: absolute; right: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></div></div></div>
+ <div style="display: flex; padding: 14px 16px; align-items: center; justify-content: space-between;"><span style="font-size: 13px;">마케팅 알림</span><div style="width: 36px; height: 20px; background: var(--line-2); border-radius: 12px; position: relative;"><div style="position: absolute; left: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></div></div></div>
  </div>
  </div>
- <div class="placeholder-note">5 토글 (좋아요·팔로우·그룹 전시 게시·기획전 · Pick·마케팅) — 좋아요·팔로우·그룹 전시 게시·기획전 · Pick ON, 마케팅 OFF 기본값. 시스템 알림 4종은 토글 없음</div>
+ </div>
+ <div class="placeholder-note">USR-STG-01 인라인 섹션 — 5 토글 (내 작품에 좋아요·새 팔로워·그룹 전시 게시 알림·기획전 · Pick 알림·마케팅 알림). 별도 드릴다운 없음.</div>
  </div>
 
  <div class="desc">
  <h3>화면 정보</h3>
  <dl>
- <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> 설정 홈 내 알림 설정 진입</dd>
+ <dt><span class="bub outline">i</span></dt><dd><strong>위치</strong> 설정 페이지 <code>USR-STG-01</code> 내 "알림 설정" 인라인 섹션 (별도 드릴다운 없음)</dd>
+ <dt></dt><dd><strong>URL</strong> proudgallery.com/settings (변경 없음)</dd>
  </dl>
 
  <h3 class="components">구성 요소</h3>
  <dl>
- <dt>—</dt><dd>5 토글 — 좋아요·팔로우·그룹 전시 게시·기획전 · Pick·마케팅 (시스템 알림 4종은 토글 없음 — 검수 결과·작품 연결·응모전 선정·응모전 공지. Pick·기획전은 기획전 · Pick 토글로 이동)</dd>
+ <dt>—</dt><dd>5 토글 — 내 작품에 좋아요 / 새 팔로워 / 그룹 전시 게시 알림 / 기획전 · Pick 알림 / 마케팅 알림. 시스템 알림(검수 결과·작품 연결 등)은 토글 없음 — 강제 발송.</dd>
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
  <li>토글 클릭 즉시 저장 (별도 저장 버튼 X)</li>
- <li>기본값: 좋아요·팔로우·그룹 전시 게시·기획전 · Pick ON, 마케팅 OFF</li>
+ <li>기본값: 좋아요·새 팔로워·그룹 전시 게시·기획전 · Pick ON, 마케팅 OFF</li>
  </ol>
  </div>
  </div>
@@ -6155,8 +6227,7 @@
  </div>
  <div class="viewport" style="background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center;">
  <div style="background: white; width: 380px; border-radius: 12px; padding: 24px 26px; box-shadow: 0 20px 50px rgba(0,0,0,.3);">
- <div style="font-size: 16px; font-weight: 700; margin-bottom: 6px;">로그아웃하시겠어요?</div>
- <div style="font-size: 12px; color: var(--ink-2); margin-bottom: 22px;">다음에 다시 로그인하실 수 있어요.</div>
+ <div style="font-size: 16px; font-weight: 700; margin-bottom: 22px;">로그아웃할까요?</div>
  <div style="display: flex; gap: 8px;">
  <div style="flex: 1; border: 1px solid var(--line-2); padding: 11px; border-radius: 8px; font-size: 13px; text-align: center; color: var(--ink-2);">취소</div>
  <div style="flex: 1; background: var(--ink); color: white; padding: 11px; border-radius: 8px; font-size: 13px; font-weight: 600; text-align: center;">로그아웃</div>
@@ -6198,25 +6269,30 @@
  <span class="url">proudgallery.com/about</span>
  </div>
  <div style="background: white; padding: 0; height: 100%; overflow-y: auto;">
- <div style="aspect-ratio: 16/5; background: linear-gradient(135deg, #fef3c7, #fecaca, #ddd6fe); padding: 36px 40px; display: flex; flex-direction: column; justify-content: center;">
- <div style="font-size: 12px; color: var(--ink-3); letter-spacing: .12em; text-transform: uppercase; margin-bottom: 8px;">Live Artfully</div>
- <div style="font-size: 32px; font-weight: 800; line-height: 1.2;">시니어 작가의<br>디지털 갤러리, Proud Gallery</div>
- </div>
- <div style="padding: 32px 40px;">
- <div style="font-size: 14px; color: var(--ink-2); line-height: 1.8; margin-bottom: 28px;">
- Proud Gallery는 시니어·중장년 순수미술 작가가 본인 작품을 디지털 갤러리에 전시하고 가족·지인·동호회와 공유하는 플랫폼입니다.<br>
- 여기는 게시판이 아니라 작품을 위한 공간입니다.
- </div>
- <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 28px;">
- <div style="padding: 16px; background: #fafafa; border-radius: 8px;"><div style="font-size: 22px; margin-bottom: 6px;">🖼️</div><div style="font-size: 12px; font-weight: 700; margin-bottom: 4px;">전시 단위</div><div style="font-size: 11px; color: var(--ink-3); line-height: 1.6;">한 점이어도 전시. 갤러리의 격을 그대로</div></div>
- <div style="padding: 16px; background: #fafafa; border-radius: 8px;"><div style="font-size: 22px; margin-bottom: 6px;">👥</div><div style="font-size: 12px; font-weight: 700; margin-bottom: 4px;">함께 올리기</div><div style="font-size: 11px; color: var(--ink-3); line-height: 1.6;">동호회·모임 그룹전을 손쉽게</div></div>
- <div style="padding: 16px; background: #fafafa; border-radius: 8px;"><div style="font-size: 22px; margin-bottom: 6px;">🎨</div><div style="font-size: 12px; font-weight: 700; margin-bottom: 4px;">시니어 친화</div><div style="font-size: 11px; color: var(--ink-3); line-height: 1.6;">큰 글자·명확한 1차 CTA</div></div>
- </div>
- <div style="font-size: 12px; color: var(--ink-3); border-top: 1px solid var(--line); padding-top: 16px;">서비스 문의는 <span style="text-decoration: underline; color: var(--ink);">문의하기</span> 페이지로 연락 주세요.</div>
+ <div style="background: #1e293b; padding: 40px 40px; display: flex; flex-direction: column; justify-content: center; position: relative; overflow: hidden;">
+ <div style="position: absolute; inset: 0; background: linear-gradient(135deg, rgba(120,80,200,.15), transparent, rgba(120,80,200,.2));"></div>
+ <div style="position: relative; text-align: center;">
+ <div style="font-size: 26px; font-weight: 800; color: white; line-height: 1.25; margin-bottom: 12px;">모든 작가를 위한<br>온라인 갤러리</div>
+ <div style="font-size: 12px; color: rgba(255,255,255,.7); line-height: 1.7; margin-bottom: 20px; max-width: 360px; margin-left: auto; margin-right: auto;">Proud Gallery는 세대와 장르를 넘어 모든 작가가 자유롭게 작품을 전시하고, 발견하고, 연결될 수 있는 디지털 갤러리 플랫폼이에요.</div>
+ <div style="display: flex; gap: 10px; justify-content: center;">
+ <div style="background: #7c3aed; color: white; padding: 10px 20px; border-radius: 8px; font-size: 12px; font-weight: 600;">갤러리 둘러보기 →</div>
+ <div style="background: transparent; color: white; border: 1px solid rgba(255,255,255,.4); padding: 10px 20px; border-radius: 8px; font-size: 12px;">작품 올리기</div>
  </div>
  </div>
  </div>
- <div class="placeholder-note">히어로 + 미션 + 핵심 가치 카드 3종</div>
+ <div style="padding: 28px 32px;">
+ <div style="font-size: 14px; font-weight: 700; text-align: center; margin-bottom: 16px;">Proud Gallery에서 할 수 있는 것</div>
+ <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px;">
+ <div style="padding: 14px; border: 1px solid var(--line); border-radius: 10px;"><div style="font-size: 13px; font-weight: 700; margin-bottom: 4px;">작품 전시</div><div style="font-size: 11px; color: var(--ink-3); line-height: 1.6;">아름다운 온라인 갤러리에 전시하고 전 세계와 공유하세요.</div></div>
+ <div style="padding: 14px; border: 1px solid var(--line); border-radius: 10px;"><div style="font-size: 13px; font-weight: 700; margin-bottom: 4px;">커뮤니티</div><div style="font-size: 11px; color: var(--ink-3); line-height: 1.6;">작가를 팔로우하고 서로의 작품을 감상하며 연결되어 보세요.</div></div>
+ <div style="padding: 14px; border: 1px solid var(--line); border-radius: 10px;"><div style="font-size: 13px; font-weight: 700; margin-bottom: 4px;">Proud's Pick</div><div style="font-size: 11px; color: var(--ink-3); line-height: 1.6;">운영팀 선정 Pick·기획전에 소개되어 더 넓은 관객과 만나세요.</div></div>
+ <div style="padding: 14px; border: 1px solid var(--line); border-radius: 10px;"><div style="font-size: 13px; font-weight: 700; margin-bottom: 4px;">그룹 전시</div><div style="font-size: 11px; color: var(--ink-3); line-height: 1.6;">동호회·친구·가족과 함께하는 그룹 전시로 추억과 작품을 공유하세요.</div></div>
+ <div style="padding: 14px; border: 1px solid var(--line); border-radius: 10px;"><div style="font-size: 13px; font-weight: 700; margin-bottom: 4px;">응모전</div><div style="font-size: 11px; color: var(--ink-3); line-height: 1.6;">주제 응모전에 참여하고 선정되어 더 많은 관객과 만나보세요.</div></div>
+ </div>
+ </div>
+ </div>
+ </div>
+ <div class="placeholder-note">히어로(다크) + 핵심 가치 카드 5종(2열) + 미션 + CTA</div>
  </div>
 
  <div class="desc">
@@ -6604,30 +6680,78 @@
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
- <div style="font-size: 17px; font-weight: 700; margin-bottom: 14px;">대시보드</div>
+ <div style="font-size: 17px; font-weight: 700; margin-bottom: 4px;">대시보드</div>
+ <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 14px;">Proud Gallery Phase 1 운영 현황 · 런칭 준비</div>
  <div style="background: #fef2f2; border-left: 3px solid #dc2626; padding: 12px 14px; border-radius: 0 4px 4px 0; margin-bottom: 18px; position: relative;">
  <div style="font-size: 11px; color: #991b1b; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 4px;">⚠ 차단 요소 2건</div>
  <div style="font-size: 12px; color: #7f1d1d; line-height: 1.6;">• 약관·개인정보 법무 확정<br>• 이메일 매직 링크 발송 서비스 연동</div>
  <div style="font-size: 11px; color: #b45309; line-height: 1.6; margin-top: 4px;">※ 링크 공유: 서비스 공통 이미지 노출 (전시별 동적 이미지는 Phase 2 이관)</div>
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">1</span>
  </div>
- <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; position: relative;">
+ <!-- 콘텐츠 운영 섹션 -->
+ <div style="font-size: 10px; color: var(--ink-4); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px;">콘텐츠 운영</div>
+ <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; position: relative;">
+ <div style="border: 1px solid var(--line); border-radius: 8px; padding: 12px;">
+ <div style="font-size: 10px; color: var(--ink-3); margin-bottom: 2px;">👁 검수 대기</div>
+ <div style="font-size: 22px; font-weight: 800;">5</div>
+ <div style="font-size: 10px; color: var(--ink-3);">SLA 24시간 내 처리</div>
+ </div>
+ <div style="border: 1px solid var(--line); border-radius: 8px; padding: 12px;">
+ <div style="font-size: 10px; color: var(--ink-3); margin-bottom: 2px;">↩ 반려 상태</div>
+ <div style="font-size: 22px; font-weight: 800;">2</div>
+ <div style="font-size: 10px; color: var(--ink-3);">작가 수정 대기 중</div>
+ </div>
+ <div style="border: 1px solid var(--line); border-radius: 8px; padding: 12px;">
+ <div style="font-size: 10px; color: var(--ink-3); margin-bottom: 2px;">🚩 미결 신고</div>
+ <div style="font-size: 22px; font-weight: 800;">3</div>
+ <div style="font-size: 10px; color: var(--ink-3);">긴급 건은 24시간 SLA</div>
+ </div>
+ <div style="border: 1px solid var(--line); border-radius: 8px; padding: 12px;">
+ <div style="font-size: 10px; color: var(--ink-3); margin-bottom: 2px;">🛡 비공개 전시</div>
+ <div style="font-size: 22px; font-weight: 800;">1</div>
+ <div style="font-size: 10px; color: var(--ink-3);">운영팀 비공개 처리 수</div>
+ </div>
+ <div style="border: 1px solid var(--line); border-radius: 8px; padding: 12px; grid-column: span 2;">
+ <div style="font-size: 10px; color: var(--ink-3); margin-bottom: 2px;">📢 공지 일감</div>
+ <div style="font-size: 22px; font-weight: 800;">4</div>
+ <div style="font-size: 10px; color: var(--ink-3);">게시 중 4건 · 고정 1/2 · 임시저장 0건</div>
+ </div>
+ <span class="bub" style="position: absolute; top: -10px; right: -10px;">2</span>
+ </div>
+ <!-- 응모전 운영 섹션 -->
+ <div style="font-size: 10px; color: var(--ink-4); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px;">응모전 운영</div>
+ <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 18px; position: relative;">
+ <div style="border: 1px solid var(--line); border-radius: 8px; padding: 12px;">
+ <div style="font-size: 10px; color: var(--ink-3); margin-bottom: 2px;">🏆 진행 중 응모전</div>
+ <div style="font-size: 22px; font-weight: 800;">1</div>
+ <div style="font-size: 10px; color: var(--ink-3);">참여작·기간·발표 토글</div>
+ </div>
+ <div style="border: 1px solid var(--line); border-radius: 8px; padding: 12px;">
+ <div style="font-size: 10px; color: var(--ink-3); margin-bottom: 2px;">👥 응모자 현황</div>
+ <div style="font-size: 22px; font-weight: 800;">24</div>
+ <div style="font-size: 10px; color: var(--ink-3);">선정 처리·일괄 선정</div>
+ </div>
+ <span class="bub" style="position: absolute; top: -10px; right: -10px;">3</span>
+ </div>
+ <!-- 운영 현황 섹션 -->
+ <div style="font-size: 10px; color: var(--ink-4); font-weight: 700; letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px;">운영 현황</div>
+ <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px; margin-bottom: 12px; position: relative;">
  <div style="border: 1px solid var(--line); border-radius: 8px; padding: 14px;">
- <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">신고 대기</div>
+ <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">🚩 신고 대기</div>
  <div style="font-size: 26px; font-weight: 800; color: #dc2626;">3</div>
  <div style="font-size: 11px; color: var(--ink-3);">미처리 신고 건수</div>
  </div>
  <div style="border: 1px solid var(--line); border-radius: 8px; padding: 14px;">
- <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">미답변 문의</div>
+ <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">📢 미답변 문의</div>
  <div style="font-size: 26px; font-weight: 800;">7</div>
  <div style="font-size: 11px; color: var(--ink-3);">신규 · 처리 중</div>
  </div>
- <span class="bub" style="position: absolute; top: -10px; right: -10px;">2</span>
+ <span class="bub" style="position: absolute; top: -10px; right: -10px;">4</span>
  </div>
  </div></main>
  </div>
  </div>
- <div class="placeholder-note">차단 요소 + 운영 현황 카드</div>
+ <div class="placeholder-note">차단 요소 + 콘텐츠 운영(5카드) + 응모전 운영(2카드) + 운영 현황(2카드)</div>
  </div>
 
  <div class="desc">
@@ -6638,8 +6762,10 @@
 
      <h3 class="components">구성 요소</h3>
  <dl>
- <dt><span class="bub">1</span></dt><dd>런칭 전 미완 항목 — 법무 확정·OAuth·이메일 발송 등 잔여 작업 체크리스트</dd>
- <dt><span class="bub">2</span></dt><dd>운영 KPI 요약 카드 — 신고 대기·미답변 문의 등 처리 필요 수</dd>
+ <dt><span class="bub">1</span></dt><dd>런칭 전 차단 요소 배너 — 법무 확정·이메일 발송 연동 등 잔여 작업 (빨간 경고 박스)</dd>
+ <dt><span class="bub">2</span></dt><dd>콘텐츠 운영 카드 — 검수 대기·반려·미결 신고·비공개 전시·공지 일감 (5종, 각 페이지 링크)</dd>
+ <dt><span class="bub">3</span></dt><dd>응모전 운영 카드 — 진행 중 응모전·응모자 현황 (2종. 발표 미작성 시 경고 카드 조건부 추가)</dd>
+ <dt><span class="bub">4</span></dt><dd>운영 현황 카드 — 신고 대기·미답변 문의 처리 필요 수 (2종)</dd>
  </dl>
  </div>
  </div>
@@ -8217,7 +8343,7 @@
  <div class="slide-pad">
  <div class="slide-head">
  <div><div class="crumb">31 · 공통 다이얼로그</div><h2>CM-02 · 로그인 유도 모달</h2></div>
- <div class="meta"><span class="role">CM</span><span class="id">CM-02</span><span class="device">PC</span><span class="ver">v1.4</span></div>
+ <div class="meta"><span class="role">CM</span><span class="id">CM-02</span><span class="device">PC</span><span class="ver">v1.5</span></div>
  </div>
 
  <div class="screen">
@@ -8227,35 +8353,23 @@
  <span class="dots"><span></span><span></span><span></span></span>
  <span class="url">proudgallery.com/exhibitions/exh-001</span>
  </div>
- <div class="viewport" style="background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; gap: 24px; padding: 24px;">
- <!-- 상태 A: 첫 시도 → 모달 -->
- <div style="background: white; width: 360px; border-radius: 12px; padding: 26px 28px; box-shadow: 0 20px 50px rgba(0,0,0,.3); position: relative;">
- <div style="font-size: 11px; color: var(--ink-3); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 6px;">상태 A · 첫 시도</div>
- <div style="font-size: 36px; margin-bottom: 12px;">♡</div>
- <div style="font-size: 16px; font-weight: 700; margin-bottom: 8px; position: relative;">로그인하면 좋아요를 누를 수 있어요
- <span class="bub" style="position: absolute; top: -8px; right: -10px;">1</span>
+ <div class="viewport" style="background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; padding: 24px;">
+ <div style="background: white; width: 400px; border-radius: 16px; padding: 28px; box-shadow: 0 20px 50px rgba(0,0,0,.3);">
+ <!-- 아이콘 + 제목 -->
+ <div style="display: flex; flex-direction: column; align-items: center; text-align: center; margin-bottom: 20px; position: relative;">
+ <div style="width: 44px; height: 44px; background: rgba(99,91,255,.1); border-radius: 50%; display: flex; align-items: center; justify-content: center; margin-bottom: 10px; font-size: 20px; color: #4f46e5;">↗</div>
+ <div style="font-size: 18px; font-weight: 700; margin-bottom: 8px; position: relative;">로그인이 필요해요<span class="bub" style="position: absolute; top: -8px; right: -20px;">1</span></div>
+ <div style="font-size: 13px; color: var(--ink-2); line-height: 1.6;">좋아요 기능을 이용하려면 로그인해 주세요.</div>
  </div>
- <div style="font-size: 12px; color: var(--ink-2); line-height: 1.7; margin-bottom: 18px;">작가에게 좋아요를 보내주세요. 가입 1분이면 끝나요.</div>
+ <!-- 버튼 -->
  <div style="display: flex; flex-direction: column; gap: 8px; position: relative;">
- <div style="background: var(--ink); color: white; padding: 11px; border-radius: 8px; font-size: 13px; font-weight: 600; text-align: center;">로그인 · 가입하기</div>
- <div style="font-size: 12px; color: var(--ink-3); text-align: center; padding: 8px;">나중에</div>
- <span class="bub" style="position: absolute; top: -10px; right: -10px;">2</span>
- </div>
- </div>
- <!-- 상태 B: 재시도 → 토스트 -->
- <div style="background: white; width: 360px; border-radius: 12px; padding: 22px 26px; box-shadow: 0 20px 50px rgba(0,0,0,.3); position: relative; align-self: flex-start; margin-top: 60px;">
- <div style="font-size: 11px; color: var(--ink-3); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 6px;">상태 B · 재시도(같은 세션)</div>
- <div style="display: flex; gap: 12px; align-items: center; padding: 12px 14px; background: var(--ink); color: white; border-radius: 8px; position: relative;">
- <span style="font-size: 16px;">💡</span>
- <div style="flex: 1; font-size: 12px; line-height: 1.5;">로그인하면 좋아요·저장·팔로우를 사용할 수 있어요</div>
- <span style="background: white; color: var(--ink); padding: 4px 10px; border-radius: 4px; font-size: 11px; font-weight: 700;">로그인</span>
- <span class="bub" style="position: absolute; top: -10px; right: -10px;">3</span>
- </div>
- <div style="font-size: 11px; color: var(--ink-3); margin-top: 14px; line-height: 1.6;">시니어 친화 — 같은 세션에서 모달 반복 차단. 토스트로만 리마인드.</div>
+ <div style="background: var(--ink); color: white; padding: 13px; border-radius: 8px; font-size: 13px; font-weight: 600; text-align: center; position: relative;">로그인<span class="bub" style="position: absolute; top: -10px; right: -10px;">2</span></div>
+ <div style="font-size: 13px; color: var(--ink-3); text-align: center; padding: 10px; cursor: pointer;">취소</div>
  </div>
  </div>
  </div>
- <div class="placeholder-note">A: 첫 시도 풀 모달 / B: 재시도 토스트만</div>
+ </div>
+ <div class="placeholder-note">로그인이 필요해요 + 액션별 설명 + 로그인 / 취소</div>
  </div>
 
  <div class="desc">
@@ -8263,28 +8377,25 @@
  <dl>
  <dt><span class="bub outline">i</span></dt><dd><strong>호출</strong> 비로그인 보호 액션 — 좋아요·저장·팔로우·신고·신작 업로드</dd>
  <dt></dt><dd><strong>리다이렉트</strong> "로그인" 버튼 → 경로 /login?redirect=&lt;현재 경로&gt;</dd>
- <dt></dt><dd><strong>시니어 UX 규칙</strong> 같은 세션 내 모달은 1회만. 두 번째부턴 토스트로만 리마인드</dd>
  </dl>
 
     <h3 class="components">구성 요소</h3>
  <dl>
- <dt><span class="bub">1</span></dt><dd>로그인하면 좋아요를 누를 수 있어요 <span</dd>
- <dt><span class="bub">2</span></dt><dd>로그인 · 가입하기 나중에 <span</dd>
- <dt><span class="bub">3</span></dt><dd>💡 로그인하면 좋아요·저장·팔로우를 사용할 수 있어요 로그인 <span</dd>
+ <dt><span class="bub">1</span></dt><dd>제목 "로그인이 필요해요" + 액션별 설명 텍스트 (아래 카피 참조)</dd>
+ <dt><span class="bub">2</span></dt><dd>"로그인" 버튼 (primary) + "취소" (ghost). 취소 시 모달 닫기</dd>
  </dl>
 
- <div class="copy"><h4>주요 카피</h4><h4>주요 카피 (액션별 분기)</h4>
- <span class="copy-line">좋아요: "로그인하면 좋아요를 누를 수 있어요"</span>
- <span class="copy-line">저장: "로그인하면 마음에 드는 작품을 저장할 수 있어요"</span>
- <span class="copy-line">팔로우: "로그인하면 작가를 팔로우할 수 있어요"</span>
- <span class="copy-line">신고: "로그인하면 신고를 보낼 수 있어요"</span>
- <span class="copy-line">업로드: "로그인하면 작품을 올릴 수 있어요"</span>
- <span class="copy-line">토스트: "로그인하면 좋아요·저장·팔로우를 사용할 수 있어요"</span></div>
+ <div class="copy"><h4>주요 카피 (액션별 분기)</h4>
+ <span class="copy-line">좋아요: "좋아요 기능을 이용하려면 로그인해 주세요."</span>
+ <span class="copy-line">저장: "저장 기능을 이용하려면 로그인해 주세요."</span>
+ <span class="copy-line">팔로우: "팔로우 기능을 이용하려면 로그인해 주세요."</span>
+ <span class="copy-line">신고: "신고 기능을 이용하려면 로그인해 주세요."</span>
+ <span class="copy-line">업로드: "작품을 업로드하려면 로그인해 주세요."</span>
+ <span class="copy-line">일반: "이 기능을 이용하려면 로그인해 주세요."</span></div>
 
  <div class="ac"><h4>완성 기준</h4><ol>
- <li>같은 세션 내 1회만 모달, 그 다음부터 토스트</li>
- <li>호출 시점의 액션을 카피에 자동 반영</li>
- <li>"나중에" 닫아도 redirect 파라미터 보존</li>
+ <li>호출 시점의 액션에 따라 설명 텍스트 자동 분기</li>
+ <li>"로그인" 버튼 → /login?redirect=&lt;현재 경로&gt;</li>
  <li>로그인 후 원래 페이지로 자동 복귀</li>
  <li>최소 클릭 영역 44×44</li>
  </ol></div>
