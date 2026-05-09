@@ -285,6 +285,14 @@ const koMessages = {
   'refStub.tplPolicySubject': '[Proud Gallery] 이용약관 및 개인정보처리방침 변경 안내',
   'refStub.tplPolicyBody':
     '안녕하세요, Proud Gallery입니다.\n이용약관 및 개인정보처리방침이 아래와 같이 변경될 예정이에요.\n• 시행일: {effective_date}\n• 주요 변경 내용: (운영팀이 작성)\n변경 전문은 아래에서 확인하실 수 있어요.\n계속 이용하시면 변경된 약관에 동의하신 것으로 간주돼요.\n\nCTA: 변경 내용 확인하기 → {policy_url}',
+  // CM-TOS 약관 변경 강제 동의 모달 (Policy §1.3)
+  'tosModal.title': '약관이 변경돼요',
+  'tosModal.effectiveDate': '{date}부터 아래 내용이 바뀝니다.',
+  'tosModal.viewFull': '전체 내용 보기',
+  'tosModal.agree': '동의하고 계속',
+  'tosModal.disagree': '동의하지 않음',
+  'tosModal.disagreeHint': '동의하지 않으시면 회원 탈퇴로 처리됩니다.',
+  'tosModal.impliedConsent': '{date} 이후 서비스 이용 시 변경된 약관에 동의한 것으로 간주돼요.',
   'refStub.tplMarketingSubject': '(캠페인별 운영팀 작성)',
   'refStub.tplMarketingBody':
     '(캠페인별 본문 — 수신 거부 링크 필수, 정보통신망법)\n푸터: 본 메일은 마케팅 정보 수신에 동의하신 분께 발송돼요. 수신을 원하지 않으시면 [수신 거부]를 클릭해주세요.',
@@ -1582,6 +1590,14 @@ const enMessages: Record<MessageKey, string> = {
   'refStub.tplPolicySubject': '[Proud Gallery] Updates to our Terms and Privacy Policy',
   'refStub.tplPolicyBody':
     "Hello,\nWe're updating our Terms of Service and Privacy Policy.\n• Effective date: {effective_date}\n• Key changes: (written by ops team)\nYou can review the full updated terms below.\nContinued use of Proud Gallery after the effective date constitutes acceptance.\n\nCTA: Review changes → {policy_url}",
+  // CM-TOS 약관 변경 강제 동의 모달 (Policy §1.3)
+  'tosModal.title': 'Our terms are changing',
+  'tosModal.effectiveDate': 'The following changes take effect on {date}.',
+  'tosModal.viewFull': 'View full details',
+  'tosModal.agree': 'Agree and continue',
+  'tosModal.disagree': 'Decline',
+  'tosModal.disagreeHint': 'Declining will delete your account.',
+  'tosModal.impliedConsent': 'Continued use after {date} means you accept the updated terms.',
   'refStub.tplMarketingSubject': '(Per campaign, by ops team)',
   'refStub.tplMarketingBody':
     '(Campaign body — unsubscribe link required)\nFooter: You opted in to marketing emails. [Unsubscribe] to stop receiving these.',
