@@ -996,7 +996,6 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'signup.errNickname': '닉네임은 2~20자로 입력해 주세요.',
   'signup.errProfanity': '부적절한 단어가 포함되어 있어요. 다른 표현으로 바꿔 주세요.',
   'signup.birthLabel': '생년월일',
-  'signup.birthHint': '만 14세 이상만 가입할 수 있어요.',
   'signup.birthHint': '만 14세 이상만 가입할 수 있어요. 입력한 날짜는 나이 확인 외 용도로 사용되지 않아요.',
   'signup.birthYear': '년',
   'signup.birthMonth': '월',
@@ -2168,7 +2167,6 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'signup.errNickname': 'Nickname must be 2–20 characters.',
   'signup.errProfanity': 'Please avoid inappropriate language.',
   'signup.birthLabel': 'Date of birth',
-  'signup.birthHint': 'You must be at least 14 years old to join.',
   'signup.birthHint': 'You must be 14 or older to sign up. This date is only used for age verification.',
   'signup.birthYear': 'Year',
   'signup.birthMonth': 'Month',
@@ -2637,7 +2635,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.18 | 2026-05-09 | PM × Claude | upload.nonMemberPreview* 7개 키 KO·EN 추가 (발행 전 확인 모달) |
+| v1.18 | 2026-05-09 | PM × Claude | upload.nonMemberPreview* 7개 키 KO·EN 추가 (발행 전 확인 모달); signup.birthHint KO·EN 중복 키 제거 — 개인정보 용도 안내 포함 긴 버전으로 단일화 |
 | v1.17 | 2026-05-07 | PM × Claude | 서비스명 Artier → Proud Gallery 전면 치환(brand.name·splash.alt·Proud's Pick → Proud's Pick); 헤더 버전 동기; messages.ts ↔ Copy 사전 동기화 — points·admin 잔재·social·event·onboarding·faq 키 삭제, curation·events.results·evt.admin·notif.contestSelected·notifications.category·profile.editWarn·upload.groupRole·upload.roleInfo·badge·settings.notifWeeklyTheme·admin.notice 그룹 KO·EN 추가; upload.reviewNotice 신설; about feat2Desc·feat4Desc·feat5 정합; onboarding concept step 7키 KO·EN 제거 |
 | v1.16 | 2026-05-06 | PM × Claude | profile.removePieceFromExhibition·Confirm·Success 4키 추가(전시에서 빼기 신규 기능); tabGuideWorks 내 작품 탭 진입점 반영; profile.tabHelpWorks 키 삭제(화면에서 단락 제거); nicknameLockedLabel·Hint·ContactCta·categoryNicknameChange·nicknameChangeNotice·nicknameNew·nicknameReason·errNicknameDuplicate 닉네임 변경 불가 관련 키 일괄 삭제(즉시 자율 변경으로 정책 개정) |
 | v1.15 | 2026-05-06 | PM × Claude | events.viewMyEntry·cancelEntry·cancelEntryConfirmTitle·Desc·Success 5키 추가 |
