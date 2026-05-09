@@ -15,6 +15,7 @@ import {
 } from '../utils/eventStore';
 import { workStore } from '../store';
 import { appendAuditLog } from '../utils/adminAuditLog';
+import { useI18n } from '../i18n/I18nProvider';
 
 type DraftState = {
   title: string;
@@ -51,6 +52,7 @@ function statusBadgeClass(s: EventStatus) {
 }
 
 export default function ContestManagement() {
+  const { t } = useI18n();
   const [loading, setLoading] = useState(true);
   const allEvents = useManagedEvents();
   const [showForm, setShowForm] = useState(false);
@@ -95,10 +97,10 @@ export default function ContestManagement() {
 
   const remove = async (ev: ManagedEvent) => {
     const ok = await openConfirm({
-      title: `"${ev.title}" 응모전을 삭제할까요?`,
-      description: '되돌릴 수 없습니다. 유저 목록·상세에서 즉시 제거됩니다.',
+      title: t('admin.contest.confirmDelete').replace('{title}', ev.title),
+      description: t('admin.contest.confirmDeleteDesc'),
       destructive: true,
-      confirmLabel: '삭제',
+      confirmLabel: t('admin.notice.delete'),
     });
     if (!ok) return;
     eventStore.remove(ev.id);
@@ -108,7 +110,7 @@ export default function ContestManagement() {
       }
     });
     appendAuditLog({ action: 'event_deleted', targetId: ev.id, targetSnapshot: { title: ev.title }, actorId: 'admin', actorRole: 'admin' });
-    toast.success('응모전이 삭제되었습니다.');
+    toast.success(t('admin.contest.toastDeleted'));
   };
 
   const submit = (e: FormEvent) => {
@@ -119,17 +121,17 @@ export default function ContestManagement() {
     const start = draft.startAt.trim();
     const end = draft.endAt.trim();
     if (!title || !desc || !img || !start || !end) {
-      toast.error('제목·설명·배너 이미지·기간은 필수입니다.');
+      toast.error(t('admin.contest.errRequired'));
       return;
     }
     if (start > end) {
-      toast.error('시작일이 종료일보다 늦을 수 없습니다.');
+      toast.error(t('admin.contest.errDateOrder'));
       return;
     }
     const existing = editingId ? eventStore.get(editingId) : null;
     const selectedCount = existing?.selectedWorkIds?.length ?? 0;
     if (draft.publicationOpen && selectedCount === 0) {
-      toast.warning('선정작이 0건이라 발표 페이지가 빈 상태로 표시됩니다. 응모자 현황에서 선정작을 체크해 주세요.');
+      toast.warning(t('admin.contest.warnEmptySelected'));
     }
     const payload: Omit<ManagedEvent, 'id'> = {
       type: 'contest',
@@ -148,11 +150,11 @@ export default function ContestManagement() {
     if (editingId) {
       eventStore.update(editingId, payload);
       appendAuditLog({ action: 'event_saved', targetId: editingId, targetSnapshot: { title }, actorId: 'admin', actorRole: 'admin' });
-      toast.success('응모전이 수정되었습니다.');
+      toast.success(t('admin.contest.toastUpdated'));
     } else {
       const created = eventStore.add(payload);
       appendAuditLog({ action: 'event_saved', targetId: created.id, targetSnapshot: { title }, actorId: 'admin', actorRole: 'admin' });
-      toast.success('응모전이 등록되었습니다.');
+      toast.success(t('admin.contest.toastAdded'));
     }
     cancelEdit();
   };
@@ -160,8 +162,8 @@ export default function ContestManagement() {
   if (loading) {
     return (
       <div>
-        <h1 className="text-xl font-bold mb-6 text-foreground">응모전 관리</h1>
-        <div className="rounded-lg border border-border py-16 text-center text-sm text-muted-foreground">불러오는 중…</div>
+        <h1 className="text-xl font-bold mb-6 text-foreground">{t('admin.contest.title')}</h1>
+        <div className="rounded-lg border border-border py-16 text-center text-sm text-muted-foreground">{t('admin.loading')}</div>
       </div>
     );
   }
@@ -169,18 +171,18 @@ export default function ContestManagement() {
   return (
     <div className="min-h-full">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-1">
-        <h1 className="text-xl font-bold text-foreground">응모전 관리</h1>
+        <h1 className="text-xl font-bold text-foreground">{t('admin.contest.title')}</h1>
         <Button
           type="button"
           onClick={() => { setEditingId(null); setDraft(emptyDraft); setShowForm((v) => !v); }}
           className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90 inline-flex items-center gap-1.5"
         >
           <Plus className="w-4 h-4" />
-          새 응모전
+          {t('admin.contest.new')}
         </Button>
       </div>
       <p className="text-sm text-muted-foreground mb-6">
-        등록된 응모전은 이벤트 목록(/events)과 상세(/events/:id)에 즉시 반영됩니다.
+        {t('admin.contest.subtitle')}
       </p>
 
       {showForm && (
@@ -188,34 +190,34 @@ export default function ContestManagement() {
           onSubmit={submit}
           className="mb-6 border border-border rounded-lg p-4 space-y-3 bg-muted/50"
         >
-          <p className="text-sm font-medium text-foreground">{editingId ? '응모전 수정' : '새 응모전 등록'}</p>
+          <p className="text-sm font-medium text-foreground">{editingId ? t('admin.contest.editorEdit') : t('admin.contest.editorCreate')}</p>
           <div className="grid sm:grid-cols-2 gap-3">
             <input
-              placeholder="제목 *"
+              placeholder={t('admin.contest.placeholderTitle')}
               value={draft.title}
               onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
               className="border border-border rounded-lg px-3 py-2 text-sm bg-white"
             />
             <input
-              placeholder="부제 (선택)"
+              placeholder={t('admin.contest.placeholderSubtitle')}
               value={draft.subtitle}
               onChange={(e) => setDraft((d) => ({ ...d, subtitle: e.target.value }))}
               className="border border-border rounded-lg px-3 py-2 text-sm bg-white"
             />
             <input
-              placeholder="배너 이미지 URL *"
+              placeholder={t('admin.contest.placeholderBannerUrl')}
               value={draft.bannerImageUrl}
               onChange={(e) => setDraft((d) => ({ ...d, bannerImageUrl: e.target.value }))}
               className="border border-border rounded-lg px-3 py-2 text-sm bg-white sm:col-span-2"
             />
             <textarea
-              placeholder="상세 설명 *"
+              placeholder={t('admin.contest.placeholderDesc')}
               value={draft.description}
               onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
               className="border border-border rounded-lg px-3 py-2 text-sm bg-white sm:col-span-2 min-h-[80px]"
             />
             <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-              시작일 *
+              {t('admin.contest.labelStartAt')}
               <input
                 type="date"
                 value={draft.startAt}
@@ -224,7 +226,7 @@ export default function ContestManagement() {
               />
             </label>
             <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-              종료일 *
+              {t('admin.contest.labelEndAt')}
               <input
                 type="date"
                 value={draft.endAt}
@@ -237,18 +239,18 @@ export default function ContestManagement() {
               onChange={(e) => setDraft((d) => ({ ...d, subtype: e.target.value as ContestSubtype }))}
               className="border border-border rounded-lg px-3 py-2 text-sm bg-white"
             >
-              <option value="regular">정기 (Regular)</option>
-              <option value="irregular">비정기 (Irregular)</option>
+              <option value="regular">{t('admin.contest.subtypeRegular')}</option>
+              <option value="irregular">{t('admin.contest.subtypeIrregular')}</option>
             </select>
             <select
               value={draft.status}
               onChange={(e) => setDraft((d) => ({ ...d, status: e.target.value as EventStatus | '' }))}
               className="border border-border rounded-lg px-3 py-2 text-sm bg-white"
             >
-              <option value="">상태: 자동 (기간 기준)</option>
-              <option value="scheduled">예정 수동</option>
-              <option value="active">진행중 수동</option>
-              <option value="ended">종료 수동</option>
+              <option value="">{t('admin.contest.statusAuto')}</option>
+              <option value="scheduled">{t('admin.contest.statusScheduled')}</option>
+              <option value="active">{t('admin.contest.statusActive')}</option>
+              <option value="ended">{t('admin.contest.statusEnded')}</option>
             </select>
             <label className="flex items-center gap-2 text-sm text-foreground px-1 sm:col-span-2">
               <input
@@ -256,21 +258,21 @@ export default function ContestManagement() {
                 checked={draft.worksPublic}
                 onChange={(e) => setDraft((d) => ({ ...d, worksPublic: e.target.checked }))}
               />
-              참여작을 업로드 즉시 공개
+              {t('admin.contest.worksPublicLabel')}
             </label>
 
             <div className="sm:col-span-2 mt-2 pt-3 border-t border-border space-y-2">
-              <p className="text-xs font-semibold text-foreground">선정작 발표 페이지</p>
+              <p className="text-xs font-semibold text-foreground">{t('admin.contest.publicationTitle')}</p>
               <label className="flex items-center gap-2 text-sm text-foreground">
                 <input
                   type="checkbox"
                   checked={draft.publicationOpen}
                   onChange={(e) => setDraft((d) => ({ ...d, publicationOpen: e.target.checked }))}
                 />
-                선정작 발표 페이지를 사용자에게 게시 (USR-EVT-05)
+                {t('admin.contest.publicationOpenLabel')}
               </label>
               <label className="flex flex-col gap-1 text-xs text-muted-foreground sm:max-w-xs">
-                발표일 (선택 — 비우면 토글 ON 즉시 노출)
+                {t('admin.contest.publishedAtLabel')}
                 <input
                   type="date"
                   value={draft.publishedAt}
@@ -279,16 +281,16 @@ export default function ContestManagement() {
                 />
               </label>
               <p className="text-[11px] text-muted-foreground">
-                선정작은 응모자 현황에서 선정 체크박스로 입력합니다.
+                {t('admin.contest.selectedWorkHint')}
               </p>
             </div>
           </div>
           <div className="flex gap-2">
             <Button type="submit" className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white">
-              {editingId ? '수정' : '저장'}
+              {editingId ? t('admin.contest.edit') : t('admin.contest.save')}
             </Button>
             <button type="button" onClick={cancelEdit} className="text-sm px-3 py-1.5 rounded-lg border border-border">
-              취소
+              {t('admin.contest.cancel')}
             </button>
           </div>
         </form>
@@ -296,19 +298,19 @@ export default function ContestManagement() {
 
       {sorted.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
-          등록된 응모전이 없습니다. 상단 "새 응모전" 버튼으로 등록해 보세요.
+          {t('admin.contest.empty')}
         </div>
       ) : (
         <div className="border border-border rounded-lg overflow-hidden overflow-x-auto">
           <table className="w-full text-sm min-w-[720px]">
             <thead>
               <tr className="bg-muted text-left text-foreground">
-                <th className="px-4 py-3 font-medium">응모전명</th>
-                <th className="px-4 py-3 font-medium">유형</th>
-                <th className="px-4 py-3 font-medium">기간</th>
-                <th className="px-4 py-3 font-medium">상태</th>
-                <th className="px-4 py-3 font-medium">참여작 공개</th>
-                <th className="px-4 py-3 font-medium text-right">작업</th>
+                <th className="px-4 py-3 font-medium">{t('admin.contest.colName')}</th>
+                <th className="px-4 py-3 font-medium">{t('admin.contest.colType')}</th>
+                <th className="px-4 py-3 font-medium">{t('admin.contest.colPeriod')}</th>
+                <th className="px-4 py-3 font-medium">{t('admin.contest.colStatus')}</th>
+                <th className="px-4 py-3 font-medium">{t('admin.contest.colWorksPublic')}</th>
+                <th className="px-4 py-3 font-medium text-right">{t('admin.contest.colActions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -322,24 +324,24 @@ export default function ContestManagement() {
                     </td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${ev.subtype === 'regular' ? 'bg-blue-50 text-blue-700 border border-blue-200' : 'bg-purple-50 text-purple-700 border border-purple-200'}`}>
-                        {ev.subtype === 'regular' ? '정기' : '비정기'}
+                        {ev.subtype === 'regular' ? t('admin.contest.subtypeRegularLabel') : t('admin.contest.subtypeIrregularLabel')}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{ev.startAt} ~ {ev.endAt}</td>
                     <td className="px-4 py-3">
                       <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${statusBadgeClass(s)}`}>
                         {statusLabelKo(s)}
-                        {ev.status && <span className="ml-1 text-xs opacity-70">· 수동</span>}
+                        {ev.status && <span className="ml-1 text-xs opacity-70">{t('admin.contest.manual')}</span>}
                       </span>
                     </td>
-                    <td className="px-4 py-3 text-muted-foreground">{ev.worksPublic ? '즉시' : '종료 후'}</td>
+                    <td className="px-4 py-3 text-muted-foreground">{ev.worksPublic ? t('admin.contest.worksPublicImmediate') : t('admin.contest.worksPublicAfterEnd')}</td>
                     <td className="px-4 py-3 text-right space-x-2 whitespace-nowrap">
                       <Link
                         to={`/admin/events?event=${ev.id}`}
                         className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/30 inline-flex items-center gap-1.5"
                       >
                         <Users className="w-3.5 h-3.5" />
-                        응모자
+                        {t('admin.contest.participants')}
                       </Link>
                       <button
                         type="button"
@@ -347,7 +349,7 @@ export default function ContestManagement() {
                         className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/30"
                       >
                         <Pencil className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
-                        수정
+                        {t('admin.contest.edit')}
                       </button>
                       <button
                         type="button"
@@ -355,7 +357,7 @@ export default function ContestManagement() {
                         className="text-sm px-3 py-1.5 rounded-lg border border-red-200 text-red-700 lg:hover:bg-red-50 inline-flex items-center gap-1.5"
                       >
                         <Trash2 className="w-3.5 h-3.5" />
-                        삭제
+                        {t('admin.notice.delete')}
                       </button>
                     </td>
                   </tr>

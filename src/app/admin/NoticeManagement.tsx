@@ -50,8 +50,8 @@ export default function NoticeManagement() {
 
   const save = () => {
     if (!editor) return;
-    if (!editor.title.trim()) { toast.error('제목(한국어)을 입력해 주세요.'); return; }
-    if (!editor.content.trim()) { toast.error('본문(한국어)을 입력해 주세요.'); return; }
+    if (!editor.title.trim()) { toast.error(t('admin.notice.errTitleRequired')); return; }
+    if (!editor.content.trim()) { toast.error(t('admin.notice.errContentRequired')); return; }
     if (editor.isPinned) {
       const pinnedCount = noticeStore.getPinnedCount();
       const alreadyPinned = editor.mode === 'edit' && notices.find((n) => n.id === editor.id)?.isPinned;
@@ -63,11 +63,11 @@ export default function NoticeManagement() {
     if (editor.mode === 'edit' && editor.id) {
       noticeStore.update(editor.id, { title: editor.title.trim(), titleEn: editor.titleEn.trim(), content: editor.content.trim(), contentEn: editor.contentEn.trim(), category: editor.category, isPinned: editor.isPinned });
       appendAuditLog({ action: 'notice_saved', targetId: editor.id, targetSnapshot: { title: editor.title.trim(), status: editor.status }, actorId: 'admin', actorRole: 'admin' });
-      toast.success('공지가 수정되었습니다.');
+      toast.success(t('admin.notice.toastUpdated'));
     } else {
       const created = noticeStore.add({ title: editor.title.trim(), titleEn: editor.titleEn.trim(), content: editor.content.trim(), contentEn: editor.contentEn.trim(), category: editor.category, isPinned: editor.isPinned, status: editor.status });
       appendAuditLog({ action: 'notice_saved', targetId: created.id, targetSnapshot: { title: editor.title.trim(), status: editor.status }, actorId: 'admin', actorRole: 'admin' });
-      toast.success('공지가 저장되었습니다.');
+      toast.success(t('admin.notice.toastSaved'));
     }
     closeEditor();
   };
@@ -78,13 +78,13 @@ export default function NoticeManagement() {
     }
     noticeStore.update(n.id, { status: 'published' });
     appendAuditLog({ action: 'notice_published', targetId: n.id, targetSnapshot: { title: n.title }, actorId: 'admin', actorRole: 'admin' });
-    toast.success('공지가 게시됐어요. 사용자측 공지사항에 즉시 반영됩니다.');
+    toast.success(t('admin.notice.toastPublished'));
   };
 
   const stopPublish = (n: AdminNotice) => {
     noticeStore.update(n.id, { status: 'stopped', isPinned: false });
     appendAuditLog({ action: 'notice_stopped', targetId: n.id, targetSnapshot: { title: n.title }, actorId: 'admin', actorRole: 'admin' });
-    toast.message('게시가 중단됐어요. 사용자측에서 즉시 제거됩니다.');
+    toast.message(t('admin.notice.toastStopped'));
   };
 
   const deleteNotice = async (n: AdminNotice) => {
@@ -92,11 +92,11 @@ export default function NoticeManagement() {
       toast.error(t('admin.notice.publishedOnly'));
       return;
     }
-    const ok = await openConfirm({ title: `'${n.title}' 공지를 삭제할까요?`, description: '되돌릴 수 없습니다.', destructive: true, confirmLabel: '삭제' });
+    const ok = await openConfirm({ title: t('admin.notice.confirmDelete').replace('{title}', n.title), description: t('admin.notice.confirmDeleteDesc'), destructive: true, confirmLabel: t('admin.notice.delete') });
     if (!ok) return;
     noticeStore.remove(n.id);
     appendAuditLog({ action: 'notice_deleted', targetId: n.id, targetSnapshot: { title: n.title }, actorId: 'admin', actorRole: 'admin' });
-    toast.success('공지가 삭제됐어요.');
+    toast.success(t('admin.notice.toastDeleted'));
   };
 
   const statusLabel: Record<NoticeStatus, string> = {
@@ -126,7 +126,7 @@ export default function NoticeManagement() {
             onClick={() => setStatusFilter(s)}
             className={`px-3 py-1.5 rounded-full text-xs font-medium transition-colors ${statusFilter === s ? 'bg-foreground text-background' : 'bg-muted text-muted-foreground hover:bg-muted/80'}`}
           >
-            {s === 'all' ? '전체' : statusLabel[s]}
+            {s === 'all' ? t('admin.notice.filterAll') : statusLabel[s]}
           </button>
         ))}
       </div>
@@ -139,10 +139,10 @@ export default function NoticeManagement() {
           <table className="w-full text-sm">
             <thead>
               <tr className="bg-muted/50 border-b border-border">
-                <th className="text-left px-4 py-3 font-semibold text-xs text-muted-foreground">제목</th>
-                <th className="text-left px-4 py-3 font-semibold text-xs text-muted-foreground w-20">카테고리</th>
-                <th className="text-left px-4 py-3 font-semibold text-xs text-muted-foreground w-24">상태</th>
-                <th className="text-left px-4 py-3 font-semibold text-xs text-muted-foreground w-28">게시일</th>
+                <th className="text-left px-4 py-3 font-semibold text-xs text-muted-foreground">{t('admin.notice.colTitle')}</th>
+                <th className="text-left px-4 py-3 font-semibold text-xs text-muted-foreground w-20">{t('admin.notice.colCategory')}</th>
+                <th className="text-left px-4 py-3 font-semibold text-xs text-muted-foreground w-24">{t('admin.notice.colStatus')}</th>
+                <th className="text-left px-4 py-3 font-semibold text-xs text-muted-foreground w-28">{t('admin.notice.colPublishedAt')}</th>
                 <th className="px-4 py-3 w-36"></th>
               </tr>
             </thead>
@@ -235,7 +235,7 @@ export default function NoticeManagement() {
                   type="text"
                   value={editor.title}
                   onChange={(e) => setEditor((p) => p && ({ ...p, title: e.target.value }))}
-                  placeholder="공지 제목"
+                  placeholder={t('admin.notice.placeholderTitle')}
                   className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background"
                 />
               </div>
@@ -255,7 +255,7 @@ export default function NoticeManagement() {
                 <textarea
                   value={editor.content}
                   onChange={(e) => setEditor((p) => p && ({ ...p, content: e.target.value }))}
-                  placeholder="공지 본문"
+                  placeholder={t('admin.notice.placeholderContent')}
                   rows={5}
                   className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background resize-y"
                 />
@@ -273,7 +273,7 @@ export default function NoticeManagement() {
               {/* 상태 (신규 작성 시만) */}
               {editor.mode === 'create' && (
                 <div>
-                  <label className="block text-xs font-semibold text-muted-foreground mb-1">게시 상태</label>
+                  <label className="block text-xs font-semibold text-muted-foreground mb-1">{t('admin.notice.labelStatus')}</label>
                   <div className="flex gap-3">
                     {(['draft', 'published'] as NoticeStatus[]).map((s) => (
                       <label key={s} className="flex items-center gap-1.5 text-sm cursor-pointer">

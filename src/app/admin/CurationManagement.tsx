@@ -160,11 +160,11 @@ export default function CurationManagement() {
     if (!editor) return;
     const title = editor.title.trim();
     if (!title) {
-      toast.error('기획전 제목을 입력해 주세요.');
+      toast.error(t('admin.curation.errTitleRequired'));
       return;
     }
     if (editor.pieces.length === 0) {
-      toast.error('포함할 작품을 1점 이상 선택해 주세요.');
+      toast.error(t('admin.curation.errPieceRequired'));
       return;
     }
     // 같은 제목 중복 체크 (편집 모드는 본인 제외)
@@ -172,7 +172,7 @@ export default function CurationManagement() {
       (c) => c.title.trim() === title && (editor.mode === 'create' || c.id !== editor.editingId),
     );
     if (dup) {
-      toast.error('같은 제목의 기획전이 이미 있어요.');
+      toast.error(t('admin.curation.errDuplicateTitle'));
       return;
     }
     // 비공개·검수 미통과 piece 경고 (AC-02) — 저장은 허용
@@ -181,9 +181,7 @@ export default function CurationManagement() {
       return !w || !isWorkPublic(w);
     });
     if (nonPublic.length > 0) {
-      toast.warning(
-        `비공개·검수 미통과 작품 ${nonPublic.length}점이 포함되었어요. 검수 통과 시 자동으로 기획전 페이지에 노출됩니다.`,
-      );
+      toast.warning(t('admin.curation.warnNonPublic').replace('{n}', String(nonPublic.length)));
     }
 
     // 저장 + 새 piece 알림 발송
@@ -211,7 +209,7 @@ export default function CurationManagement() {
         pushCurationSelectedNotification(w.artistId, pieceTitle, title, template, p.workId, editor.editingId);
       }
       appendAuditLog({ action: 'curation_saved', targetId: editor.editingId, targetSnapshot: { title, pieceCount: pieces.length }, actorId: 'admin', actorRole: 'admin' });
-      toast.success('기획전이 수정되었습니다.');
+      toast.success(t('admin.curation.toastUpdated'));
     } else {
       const created = curationStore.addCuratedExhibition({
         title,
@@ -229,58 +227,58 @@ export default function CurationManagement() {
         pushCurationSelectedNotification(w.artistId, pieceTitle, title, template, p.workId, created.id);
       }
       appendAuditLog({ action: 'curation_saved', targetId: created.id, targetSnapshot: { title, pieceCount: pieces.length }, actorId: 'admin', actorRole: 'admin' });
-      toast.success('기획전이 추가되었습니다.');
+      toast.success(t('admin.curation.toastAdded'));
     }
     closeEditor();
   };
 
   const removeCuratedExhibition = async (c: CuratedExhibition) => {
     const ok = await openConfirm({
-      title: `'${c.title}' 기획전을 삭제할까요?`,
-      description: '삭제하면 [USR-CUR-01] 기획전 페이지에서 즉시 사라집니다.',
+      title: t('admin.curation.confirmDelete').replace('{title}', c.title),
+      description: t('admin.curation.confirmDeleteDesc'),
       destructive: true,
-      confirmLabel: '삭제',
+      confirmLabel: t('admin.curation.delete'),
     });
     if (!ok) return;
     curationStore.removeCuratedExhibition(c.id);
     appendAuditLog({ action: 'curation_deleted', targetId: c.id, targetSnapshot: { title: c.title }, actorId: 'admin', actorRole: 'admin' });
-    toast.success('기획전이 삭제되었습니다.');
+    toast.success(t('admin.curation.toastDeleted'));
   };
 
   if (loading) {
     return (
       <div>
-        <h1 className="text-xl font-bold mb-6 text-foreground">기획전</h1>
-        <div className="rounded-lg border border-border py-16 text-center text-sm text-muted-foreground">불러오는 중…</div>
+        <h1 className="text-xl font-bold mb-6 text-foreground">{t('admin.curation.title')}</h1>
+        <div className="rounded-lg border border-border py-16 text-center text-sm text-muted-foreground">{t('admin.loading')}</div>
       </div>
     );
   }
 
   return (
     <div className="min-h-full">
-      <h1 className="text-xl font-bold text-foreground mb-1">기획전</h1>
+      <h1 className="text-xl font-bold text-foreground mb-1">{t('admin.curation.title')}</h1>
       <p className="text-sm text-muted-foreground mb-6">
-        기획전은 기획전 페이지([USR-CUR-01])에서만 노출됩니다. 일반 피드 부스트 대상이 아닙니다.
+        {t('admin.curation.subtitle')}
       </p>
 
       {/* 기획전 목록 */}
       <section className="mb-10">
         <div className="flex items-center justify-between mb-3">
-          <h2 className="text-base font-semibold text-foreground">기획전 ({curatedExhibitions.length}개)</h2>
+          <h2 className="text-base font-semibold text-foreground">{t('admin.curation.listTitle').replace('{n}', String(curatedExhibitions.length))}</h2>
           {!isEditorOpen && (
             <Button
               type="button"
               onClick={openCreate}
               className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white inline-flex items-center gap-1.5"
             >
-              <Plus className="w-4 h-4" />새 기획전
+              <Plus className="w-4 h-4" />{t('admin.curation.new')}
             </Button>
           )}
         </div>
 
         {curatedExhibitions.length === 0 ? (
           <div className="mb-3 rounded-lg border border-dashed border-border bg-muted/20 px-4 py-6 text-center text-sm text-muted-foreground">
-            아직 운영 중인 기획전이 없습니다. 새 기획전을 추가하세요.
+            {t('admin.curation.empty')}
           </div>
         ) : (
           <ul className="mb-4 space-y-3">
@@ -290,7 +288,7 @@ export default function CurationManagement() {
                   <div className="flex-1 min-w-0">
                     <p className="text-sm font-semibold text-foreground">{c.title}</p>
                     {c.subtitle && <p className="text-xs text-muted-foreground mt-0.5">{c.subtitle}</p>}
-                    <p className="text-xs text-muted-foreground mt-1">포함 piece <strong className="text-foreground">{c.pieces.length}</strong>개</p>
+                    <p className="text-xs text-muted-foreground mt-1">{t('admin.curation.pieceCount').replace('{n}', String(c.pieces.length))}</p>
                   </div>
                   <div className="flex shrink-0 gap-1.5">
                     <button
@@ -298,18 +296,18 @@ export default function CurationManagement() {
                       onClick={() => openEdit(c)}
                       disabled={isEditorOpen}
                       className="text-xs px-2.5 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/50 inline-flex items-center gap-1 disabled:opacity-50"
-                      aria-label={`${c.title} 수정`}
+                      aria-label={`${c.title} ${t('admin.curation.edit')}`}
                     >
-                      <Pencil className="w-3.5 h-3.5" />수정
+                      <Pencil className="w-3.5 h-3.5" />{t('admin.curation.edit')}
                     </button>
                     <button
                       type="button"
                       onClick={() => removeCuratedExhibition(c)}
                       disabled={isEditorOpen}
                       className="text-xs px-2.5 py-1.5 rounded-lg border border-red-200 text-red-700 lg:hover:bg-red-50 inline-flex items-center gap-1 disabled:opacity-50"
-                      aria-label={`${c.title} 삭제`}
+                      aria-label={`${c.title} ${t('admin.curation.delete')}`}
                     >
-                      <Trash2 className="w-3.5 h-3.5" />삭제
+                      <Trash2 className="w-3.5 h-3.5" />{t('admin.curation.delete')}
                     </button>
                   </div>
                 </div>
@@ -324,26 +322,26 @@ export default function CurationManagement() {
         <section className="mb-10 rounded-lg border-2 border-primary/30 bg-primary/[0.02] p-5">
           <div className="flex items-center justify-between mb-4">
             <h3 className="text-base font-semibold text-foreground">
-              {editor.mode === 'create' ? '새 기획전 추가' : '기획전 수정'}
+              {editor.mode === 'create' ? t('admin.curation.editorCreate') : t('admin.curation.editorEdit')}
             </h3>
             <button
               type="button"
               onClick={closeEditor}
               className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
             >
-              <X className="w-3.5 h-3.5" />닫기
+              <X className="w-3.5 h-3.5" />{t('admin.curation.close')}
             </button>
           </div>
 
           <div className="grid sm:grid-cols-2 gap-3 mb-4">
             <input
-              placeholder="기획전 제목 *"
+              placeholder={t('admin.curation.placeholderTitle')}
               value={editor.title}
               onChange={(e) => setEditor((prev) => prev && { ...prev, title: e.target.value })}
               className="border border-border rounded-lg px-3 py-2 text-sm bg-white"
             />
             <input
-              placeholder="부제 (선택)"
+              placeholder={t('admin.curation.placeholderSubtitle')}
               value={editor.subtitle}
               onChange={(e) => setEditor((prev) => prev && { ...prev, subtitle: e.target.value })}
               className="border border-border rounded-lg px-3 py-2 text-sm bg-white"
@@ -357,18 +355,18 @@ export default function CurationManagement() {
                 <Search className="w-4 h-4 text-muted-foreground" />
                 <input
                   type="search"
-                  placeholder="전시·작가·ID 검색"
+                  placeholder={t('admin.curation.searchPlaceholder')}
                   value={editor.search}
                   onChange={(e) => setEditor((prev) => prev && { ...prev, search: e.target.value })}
                   className="flex-1 border border-border rounded-lg px-3 py-1.5 text-sm bg-white"
                 />
               </div>
               <p className="text-xs text-muted-foreground mb-2">
-                전시를 클릭해서 piece(작품 1장)를 골라 주세요. 다중 이미지 전시는 펼쳐서 piece별로 체크.
+                {t('admin.curation.pieceSelectHint')}
               </p>
               <ul className="max-h-[480px] overflow-auto rounded-lg border border-border bg-white divide-y divide-border/60">
                 {filteredWorks.length === 0 ? (
-                  <li className="px-4 py-6 text-center text-sm text-muted-foreground">검색 결과가 없어요.</li>
+                  <li className="px-4 py-6 text-center text-sm text-muted-foreground">{t('admin.curation.searchEmpty')}</li>
                 ) : (
                   filteredWorks.map((w) => {
                     const images = getWorkImages(w);
@@ -397,12 +395,12 @@ export default function CurationManagement() {
                               <p className="text-sm font-medium text-foreground truncate">{exhTitle}</p>
                               <p className="text-xs text-muted-foreground truncate">
                                 {w.artist?.name} · {images.length}장 · ID {w.id}
-                                {!isPublic && <span className="ml-1 text-amber-600">(비공개·검수 미통과)</span>}
+                                {!isPublic && <span className="ml-1 text-amber-600">{t('admin.curation.badgeNonPublic')}</span>}
                               </p>
                             </div>
                             {selectedFromThisWork > 0 && (
                               <span className="shrink-0 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                                선택 {selectedFromThisWork}점
+                                {t('admin.curation.selectedBadge').replace('{n}', String(selectedFromThisWork))}
                               </span>
                             )}
                           </button>
@@ -446,11 +444,11 @@ export default function CurationManagement() {
             {/* 우: 선택된 piece 리스트 + 순서 */}
             <div>
               <p className="text-sm font-medium text-foreground mb-2">
-                선택된 작품 <strong className="text-primary">{editor.pieces.length}</strong>점
+                {t('admin.curation.selectedCount').replace('{n}', String(editor.pieces.length))}
               </p>
               <ul className="max-h-[480px] overflow-auto rounded-lg border border-border bg-white divide-y divide-border/60">
                 {editor.pieces.length === 0 ? (
-                  <li className="px-4 py-8 text-center text-sm text-muted-foreground">왼쪽에서 작품을 골라 주세요.</li>
+                  <li className="px-4 py-8 text-center text-sm text-muted-foreground">{t('admin.curation.selectedEmpty')}</li>
                 ) : (
                   editor.pieces.map((p, idx) => {
                     const w = workStore.getWork(p.workId);
@@ -458,8 +456,8 @@ export default function CurationManagement() {
                       return (
                         <li key={pieceKey(p)} className="px-3 py-2.5 text-xs text-amber-700 flex items-center gap-2">
                           <AlertTriangle className="w-3.5 h-3.5" />
-                          삭제된 작품 (ID {p.workId})
-                          <button onClick={() => removeSelected(pieceKey(p))} className="ml-auto text-red-700">제거</button>
+                          {t('admin.curation.deletedWork').replace('{id}', p.workId)}
+                          <button onClick={() => removeSelected(pieceKey(p))} className="ml-auto text-red-700">{t('admin.curation.removeSelected')}</button>
                         </li>
                       );
                     }
@@ -476,7 +474,7 @@ export default function CurationManagement() {
                           <p className="text-sm font-medium text-foreground truncate">{pieceTitle}</p>
                           <p className="text-xs text-muted-foreground truncate">
                             {w.artist?.name} · {displayExhibitionTitle(w, t('work.untitled'))}
-                            {!isPublic && <span className="ml-1 text-amber-600">(비공개)</span>}
+                            {!isPublic && <span className="ml-1 text-amber-600">{t('admin.curation.badgeHidden')}</span>}
                           </p>
                         </div>
                         <div className="shrink-0 flex items-center gap-1">
@@ -485,7 +483,7 @@ export default function CurationManagement() {
                             onClick={() => movePiece(pieceKey(p), -1)}
                             disabled={idx === 0}
                             className="h-7 w-7 inline-flex items-center justify-center rounded border border-border lg:hover:bg-muted/40 disabled:opacity-30"
-                            aria-label="위로"
+                            aria-label={t('admin.curation.moveUp')}
                           >
                             <ArrowUp className="w-3.5 h-3.5" />
                           </button>
@@ -494,7 +492,7 @@ export default function CurationManagement() {
                             onClick={() => movePiece(pieceKey(p), 1)}
                             disabled={idx === editor.pieces.length - 1}
                             className="h-7 w-7 inline-flex items-center justify-center rounded border border-border lg:hover:bg-muted/40 disabled:opacity-30"
-                            aria-label="아래로"
+                            aria-label={t('admin.curation.moveDown')}
                           >
                             <ArrowDown className="w-3.5 h-3.5" />
                           </button>
@@ -502,7 +500,7 @@ export default function CurationManagement() {
                             type="button"
                             onClick={() => removeSelected(pieceKey(p))}
                             className="h-7 w-7 inline-flex items-center justify-center rounded border border-red-200 text-red-700 lg:hover:bg-red-50"
-                            aria-label="제거"
+                            aria-label={t('admin.curation.removeSelected')}
                           >
                             <X className="w-3.5 h-3.5" />
                           </button>
@@ -522,14 +520,14 @@ export default function CurationManagement() {
               className="text-sm px-4 py-2 rounded-lg bg-primary text-white inline-flex items-center gap-1.5"
             >
               <Check className="w-4 h-4" />
-              {editor.mode === 'create' ? '기획전 추가' : '저장'}
+              {editor.mode === 'create' ? t('admin.curation.saveAdd') : t('admin.curation.save')}
             </Button>
             <button
               type="button"
               onClick={closeEditor}
               className="text-sm px-4 py-2 rounded-lg border border-border text-foreground lg:hover:bg-muted/50 inline-flex items-center gap-1.5"
             >
-              취소
+              {t('admin.curation.cancel')}
             </button>
           </div>
         </section>
