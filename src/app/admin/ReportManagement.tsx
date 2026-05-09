@@ -58,6 +58,7 @@ function buildReporterNicknameMap(): Map<string, string> {
 type ReportRow = {
   id: string;
   target: string;
+  targetName: string;
   reason: string;
   reportedAt: string;
   reporterId?: string;
@@ -87,6 +88,7 @@ function mapUserReportToRow(r: StoredUserReport): ReportRow {
   return {
     id: r.id,
     target,
+    targetName: r.targetName ?? '',
     reason: r.reason ?? r.reasonLabel ?? r.reasonKey ?? '',
     reportedAt,
     reporterId: r.reporterId,
@@ -141,6 +143,8 @@ export default function ReportManagement() {
   const [deleteDialog, setDeleteDialog] = useState<{ reportId: string; workId: string; targetName: string } | null>(null);
   const [deleteReason, setDeleteReason] = useState<DeleteReason>('copyright');
   const [deleteNote, setDeleteNote] = useState('');
+  const [memoDialog, setMemoDialog] = useState<{ reportId: string; action: 'dismiss' | 'keepHidden'; targetName: string } | null>(null);
+  const [memoNote, setMemoNote] = useState('');
 
   const reporterNicknameMap = useMemo(() => buildReporterNicknameMap(), []);
   const refreshRows = useCallback(() => setRows(mergeReportRows()), []);
@@ -198,7 +202,7 @@ export default function ReportManagement() {
   }, [statusFilter, setPage]);
 
   /** 비공개 유지: 운영팀이 신고 판정 결과 전시를 비공개 유지로 전환 (Policy §12.1 v2.20). */
-  const keepHidden = (id: string) => {
+  const keepHidden = (id: string, note?: string) => {
     const raw = loadUserReports().find((r) => r.id === id);
     if (!raw) return;
     if (raw.targetType === 'work' && raw.targetId) {
@@ -207,7 +211,7 @@ export default function ReportManagement() {
       appendAuditLog({
         action: 'report_kept_hidden',
         targetId: raw.targetId,
-        targetSnapshot: { reportId: id, targetName: raw.targetName },
+        targetSnapshot: { reportId: id, targetName: raw.targetName, ...(note ? { note } : {}) },
         actorId: 'admin',
         actorRole: 'admin',
       });
@@ -285,18 +289,32 @@ export default function ReportManagement() {
     setDeleteDialog(null);
   };
 
+  const openMemoDialog = (reportId: string, action: 'dismiss' | 'keepHidden', targetName: string) => {
+    setMemoDialog({ reportId, action, targetName });
+    setMemoNote('');
+  };
+
+  const confirmMemoAction = () => {
+    if (!memoDialog) return;
+    const note = memoNote.trim() || undefined;
+    if (memoDialog.action === 'dismiss') dismissReport(memoDialog.reportId, note);
+    else keepHidden(memoDialog.reportId, note);
+    setMemoDialog(null);
+    setMemoNote('');
+  };
+
   /**
    * 기각: 신고 부당 판정. 운영팀이 비공개 유지로 처리했다면 즉시 복원 (Policy §12.1 v2.20).
    * Phase 1은 신고자 카운트 없음 (Policy §12.3).
    */
-  const dismissReport = (id: string) => {
+  const dismissReport = (id: string, note?: string) => {
     const raw = loadUserReports().find((r) => r.id === id);
     if (!raw) return;
     updateUserReport(id, { adminStatus: 'dismissed' });
     appendAuditLog({
       action: 'report_dismissed',
       targetId: raw.targetId ?? id,
-      targetSnapshot: { reportId: id, targetName: raw.targetName, targetType: raw.targetType },
+      targetSnapshot: { reportId: id, targetName: raw.targetName, targetType: raw.targetType, ...(note ? { note } : {}) },
       actorId: 'admin',
       actorRole: 'admin',
     });
@@ -433,7 +451,7 @@ export default function ReportManagement() {
                         type="button"
                         variant="outline"
                         disabled={r.status !== '대기'}
-                        onClick={() => dismissReport(r.id)}
+                        onClick={() => openMemoDialog(r.id, 'dismiss', r.targetName)}
                         className="text-sm px-3 py-1.5 rounded-lg"
                         title="신고 기각 — 비공개 유지 상태였다면 즉시 복원"
                       >
@@ -443,7 +461,7 @@ export default function ReportManagement() {
                       <button
                         type="button"
                         disabled={r.status !== '대기'}
-                        onClick={() => keepHidden(r.id)}
+                        onClick={() => openMemoDialog(r.id, 'keepHidden', r.targetName)}
                         className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/40 disabled:opacity-50 disabled:pointer-events-none inline-flex items-center gap-1"
                         title="비공개 유지 — 운영자 확정 비공개로 전환"
                       >
@@ -530,6 +548,50 @@ export default function ReportManagement() {
               >
                 <Trash2 className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
                 영구 삭제
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* 기각·비공개유지 메모 모달 (Policy §12.1 v2.20 · §22.7) */}
+      {memoDialog && (
+        <div
+          role="dialog"
+          aria-modal="true"
+          className="fixed inset-0 z-50 flex items-center justify-center bg-black/40 p-4"
+          onClick={() => setMemoDialog(null)}
+        >
+          <div
+            className="bg-white rounded-xl border border-border shadow-xl w-full max-w-md p-5 space-y-4"
+            onClick={(e) => e.stopPropagation()}
+          >
+            <div>
+              <h3 className="text-base font-bold text-foreground">
+                "{memoDialog.targetName}" — {memoDialog.action === 'dismiss' ? '신고 기각' : '비공개 유지'}
+              </h3>
+              <p className="text-xs text-muted-foreground mt-1">
+                메모는 운영자 감사 로그에 보관됩니다 (Policy §22.7).
+              </p>
+            </div>
+            <div className="space-y-1.5">
+              <label className="text-sm font-medium text-foreground">메모 (선택)</label>
+              <textarea
+                value={memoNote}
+                onChange={(e) => setMemoNote(e.target.value)}
+                placeholder="판단 근거 등 (감사 로그에 함께 보관)"
+                className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white min-h-[72px]"
+                maxLength={500}
+                autoFocus
+              />
+              <p className="text-[11px] text-muted-foreground text-right">{memoNote.length}/500</p>
+            </div>
+            <div className="flex gap-2 justify-end pt-1">
+              <Button type="button" variant="outline" onClick={() => setMemoDialog(null)} className="text-sm">
+                취소
+              </Button>
+              <Button type="button" onClick={confirmMemoAction} className="text-sm">
+                {memoDialog.action === 'dismiss' ? '기각 확정' : '비공개 유지 확정'}
               </Button>
             </div>
           </div>
