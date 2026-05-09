@@ -221,18 +221,18 @@ export default function ReportManagement() {
         message: t('report.notifTargetWorkHidden').replace('{title}', raw.targetName),
         workId: raw.targetId,
       });
-      toast.success('작품 비공개를 유지했습니다. Proud Gallery 둘러보기·검색에서 제외됩니다.');
+      toast.success(t('admin.report.toastHidden'));
       return;
     }
     updateUserReport(id, { adminStatus: 'hidden' });
-    toast.message('이 신고는 비공개 유지로 마감했습니다.');
+    toast.message(t('admin.report.toastHiddenClosed'));
   };
 
   /** 삭제 다이얼로그 오픈: 사유 선택을 위해 별도 모달로 진입 (Policy §12.1 v2.20). */
   const openDeleteDialog = (id: string) => {
     const raw = loadUserReports().find((r) => r.id === id);
     if (!raw || raw.targetType !== 'work' || !raw.targetId) {
-      toast.error('작품 신고에 한해 삭제할 수 있습니다.');
+      toast.error(t('admin.report.toastErrWorkOnly'));
       return;
     }
     setDeleteDialog({ reportId: id, workId: raw.targetId, targetName: raw.targetName });
@@ -246,7 +246,7 @@ export default function ReportManagement() {
     const { reportId, workId, targetName } = deleteDialog;
     const work = workStore.getWork(workId);
     if (!work) {
-      toast.error('작품을 찾을 수 없습니다 (이미 삭제됨).');
+      toast.error(t('admin.report.toastErrNotFound'));
       setDeleteDialog(null);
       return;
     }
@@ -332,11 +332,11 @@ export default function ReportManagement() {
           message: `'${raw.targetName}' 전시가 검토 결과 정상 복원되었습니다.`,
           workId: raw.targetId,
         });
-        toast.message('기각 처리 — 비공개 유지 상태였던 전시를 복원했습니다.');
+        toast.message(t('admin.report.toastDismissedRestored'));
         return;
       }
     }
-    toast.message('신고를 기각했습니다.');
+    toast.message(t('admin.report.toastDismissed'));
   };
 
   if (loading) {
@@ -570,18 +570,18 @@ export default function ReportManagement() {
           >
             <div>
               <h3 className="text-base font-bold text-foreground">
-                "{memoDialog.targetName}" — {memoDialog.action === 'dismiss' ? '신고 기각' : '비공개 유지'}
+                "{memoDialog.targetName}" — {memoDialog.action === 'dismiss' ? t('admin.report.memoTitleDismiss') : t('admin.report.memoTitleHide')}
               </h3>
               <p className="text-xs text-muted-foreground mt-1">
-                메모는 운영자 감사 로그에 보관됩니다 (Policy §22.7).
+                {t('admin.report.memoAuditNote')}
               </p>
             </div>
             <div className="space-y-1.5">
-              <label className="text-sm font-medium text-foreground">메모 (선택)</label>
+              <label className="text-sm font-medium text-foreground">{t('admin.report.memoLabel')}</label>
               <textarea
                 value={memoNote}
                 onChange={(e) => setMemoNote(e.target.value)}
-                placeholder="판단 근거 등 (감사 로그에 함께 보관)"
+                placeholder={t('admin.report.memoPlaceholder')}
                 className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white min-h-[72px]"
                 maxLength={500}
                 autoFocus
@@ -590,10 +590,10 @@ export default function ReportManagement() {
             </div>
             <div className="flex gap-2 justify-end pt-1">
               <Button type="button" variant="outline" onClick={() => setMemoDialog(null)} className="text-sm">
-                취소
+                {t('admin.notice.cancel')}
               </Button>
               <Button type="button" onClick={confirmMemoAction} className="text-sm">
-                {memoDialog.action === 'dismiss' ? '기각 확정' : '비공개 유지 확정'}
+                {memoDialog.action === 'dismiss' ? t('admin.report.memoConfirmDismiss') : t('admin.report.memoConfirmHide')}
               </Button>
             </div>
           </div>

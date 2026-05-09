@@ -1152,6 +1152,9 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'settings.withdrawReasonExpDifficult': '이용이 불편해요',
   'settings.withdrawReasonOther': '기타',
   'settings.withdrawReasonPickErr': '탈퇴 사유를 선택해 주세요.',
+  'settings.withdrawWarnPick': "Proud's Pick에 선정된 전시가 있어요. 탈퇴 시 즉시 미노출됩니다.",
+  'settings.withdrawWarnCuration': '기획전에 포함된 전시가 있어요. 탈퇴 시 즉시 미노출됩니다.',
+  'settings.withdrawWarnContest': '응모 중인 응모전이 있어요. 탈퇴 시 즉시 미노출됩니다.',
   'settings.confirmLogout': '로그아웃할까요?',
   'settings.toastLogout': '로그아웃되었어요.',
   'settings.toastWithdrawDone': '탈퇴가 완료되었어요.',
@@ -1268,6 +1271,19 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'admin.section.moderation': '모더레이션',
   'admin.section.contentOps': '콘텐츠 운영',
   'admin.section.members': '회원·커뮤니케이션',
+  'admin.report.memoTitleDismiss': '신고 기각',
+  'admin.report.memoTitleHide': '비공개 유지',
+  'admin.report.memoAuditNote': '메모는 운영자 감사 로그에 보관됩니다 (Policy §22.7).',
+  'admin.report.memoLabel': '메모 (선택)',
+  'admin.report.memoPlaceholder': '판단 근거 등 (감사 로그에 함께 보관)',
+  'admin.report.memoConfirmDismiss': '기각 확정',
+  'admin.report.memoConfirmHide': '비공개 유지 확정',
+  'admin.report.toastHidden': "작품 비공개를 유지했습니다. Proud Gallery 둘러보기·검색에서 제외됩니다.",
+  'admin.report.toastHiddenClosed': '이 신고는 비공개 유지로 마감했습니다.',
+  'admin.report.toastErrWorkOnly': '작품 신고에 한해 삭제할 수 있습니다.',
+  'admin.report.toastErrNotFound': '작품을 찾을 수 없습니다 (이미 삭제됨).',
+  'admin.report.toastDismissedRestored': '기각 처리 — 비공개 유지 상태였던 전시를 복원했습니다.',
+  'admin.report.toastDismissed': '신고를 기각했습니다.',
   'splash.alt': 'Proud Gallery',
   'footer.qaNavTrigger': '검수 바로가기',
   'footer.qaGroupShareDeep': '공유·알림 (전시/비회원)',
@@ -2325,6 +2341,9 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'settings.withdrawReasonExpDifficult': 'The experience is inconvenient',
   'settings.withdrawReasonOther': 'Other',
   'settings.withdrawReasonPickErr': 'Please select a reason.',
+  'settings.withdrawWarnPick': "You have a Proud's Pick exhibition. It will be hidden immediately upon withdrawal.",
+  'settings.withdrawWarnCuration': 'You have an exhibition in a curated show. It will be hidden immediately upon withdrawal.',
+  'settings.withdrawWarnContest': 'You have an active contest entry. It will be hidden immediately upon withdrawal.',
   'settings.confirmLogout': 'Log out?',
   'settings.toastLogout': 'You have been logged out.',
   'settings.toastWithdrawDone': 'Your account has been deleted.',
@@ -2441,6 +2460,19 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'admin.section.contentOps': 'Content Ops',
   'admin.section.members': 'Members',
   'admin.section.operations': 'Operations',
+  'admin.report.memoTitleDismiss': 'Dismiss report',
+  'admin.report.memoTitleHide': 'Keep hidden',
+  'admin.report.memoAuditNote': 'This memo will be saved to the operator audit log.',
+  'admin.report.memoLabel': 'Memo (optional)',
+  'admin.report.memoPlaceholder': 'Reason or notes (saved to audit log)',
+  'admin.report.memoConfirmDismiss': 'Confirm dismiss',
+  'admin.report.memoConfirmHide': 'Confirm keep hidden',
+  'admin.report.toastHidden': 'Exhibition kept hidden. Removed from browse and search.',
+  'admin.report.toastHiddenClosed': 'Report closed — exhibition kept hidden.',
+  'admin.report.toastErrWorkOnly': 'Only work reports can be deleted.',
+  'admin.report.toastErrNotFound': 'Exhibition not found (already deleted).',
+  'admin.report.toastDismissedRestored': 'Dismissed — exhibition restored from hidden state.',
+  'admin.report.toastDismissed': 'Report dismissed.',
   'splash.alt': 'Proud Gallery',
   'footer.qaNavTrigger': 'QA shortcuts',
   'footer.qaGroupShareDeep': 'Share & notices (exhibition / credited)',
@@ -2635,7 +2667,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.18 | 2026-05-09 | PM × Claude | upload.nonMemberPreview* 7개 키 KO·EN 추가 (발행 전 확인 모달); signup.birthHint KO·EN 중복 키 제거 — 개인정보 용도 안내 포함 긴 버전으로 단일화 |
+| v1.18 | 2026-05-09 | PM × Claude | upload.nonMemberPreview* 7개 키 KO·EN 추가 (발행 전 확인 모달); signup.birthHint KO·EN 중복 키 제거 — 개인정보 용도 안내 포함 긴 버전으로 단일화; settings.withdrawWarnPick·Curation·Contest 3키 KO·EN 추가; admin.report.memo* 7키 + admin.report.toast* 6키 KO·EN 추가 |
 | v1.17 | 2026-05-07 | PM × Claude | 서비스명 Artier → Proud Gallery 전면 치환(brand.name·splash.alt·Proud's Pick → Proud's Pick); 헤더 버전 동기; messages.ts ↔ Copy 사전 동기화 — points·admin 잔재·social·event·onboarding·faq 키 삭제, curation·events.results·evt.admin·notif.contestSelected·notifications.category·profile.editWarn·upload.groupRole·upload.roleInfo·badge·settings.notifWeeklyTheme·admin.notice 그룹 KO·EN 추가; upload.reviewNotice 신설; about feat2Desc·feat4Desc·feat5 정합; onboarding concept step 7키 KO·EN 제거 |
 | v1.16 | 2026-05-06 | PM × Claude | profile.removePieceFromExhibition·Confirm·Success 4키 추가(전시에서 빼기 신규 기능); tabGuideWorks 내 작품 탭 진입점 반영; profile.tabHelpWorks 키 삭제(화면에서 단락 제거); nicknameLockedLabel·Hint·ContactCta·categoryNicknameChange·nicknameChangeNotice·nicknameNew·nicknameReason·errNicknameDuplicate 닉네임 변경 불가 관련 키 일괄 삭제(즉시 자율 변경으로 정책 개정) |
 | v1.15 | 2026-05-06 | PM × Claude | events.viewMyEntry·cancelEntry·cancelEntryConfirmTitle·Desc·Success 5키 추가 |
