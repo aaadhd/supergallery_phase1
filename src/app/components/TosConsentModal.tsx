@@ -1,5 +1,4 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
 import { toast } from 'sonner';
 import { tosConsentStore, type PendingTos } from '../utils/tosConsentStore';
 import { useAuthStore, performAccountWithdrawal } from '../store';
@@ -40,7 +39,7 @@ export function TosConsentModal() {
 
   return (
     <div
-      className="fixed inset-0 z-[200] flex items-center justify-center bg-background/95 backdrop-blur-sm p-4"
+      className="fixed inset-0 z-[49] flex items-center justify-center bg-background/95 backdrop-blur-sm p-4"
       role="dialog"
       aria-modal="true"
       aria-labelledby="tos-modal-title"
@@ -64,12 +63,14 @@ export function TosConsentModal() {
           ))}
         </ul>
 
-        <Link
-          to={pending.fullUrl}
+        <a
+          href={pending.fullUrl}
+          target="_blank"
+          rel="noopener noreferrer"
           className="text-sm font-medium text-primary lg:hover:underline"
         >
           {t('tosModal.viewFull')} →
-        </Link>
+        </a>
 
         {pending.isImplied && (
           <p className="text-xs text-muted-foreground bg-muted rounded-xl px-4 py-3 leading-relaxed">
