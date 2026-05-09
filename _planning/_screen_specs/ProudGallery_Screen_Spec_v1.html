@@ -8193,12 +8193,14 @@
  <dl>
  <dt>—</dt><dd>제목(tosModal.title) + 시행일 안내(tosModal.effectiveDate) + 변경 요점 3~5줄 + "전체 내용 보기" 링크</dd>
  <dt>—</dt><dd>[동의하고 계속](tosModal.agree) / [동의하지 않음](tosModal.disagree) 버튼 — 동등 비중, 동의 유도 패턴 금지</dd>
- <dt>—</dt><dd>동의하지 않음 경고: tosModal.disagreeHint → 탈퇴 확인 다이얼로그(CM-01)</dd>
+ <dt>—</dt><dd>동의하지 않음 경고: tosModal.disagreeHint (버튼 하단 상시 노출)</dd>
+ <dt>—</dt><dd>[동의하지 않음] 클릭 시 확인 다이얼로그(CM-01 패턴): 제목 tosModal.disagreeConfirmTitle / 설명 tosModal.disagreeConfirmDesc</dd>
+ <dt>—</dt><dd>[동의하고 계속] 클릭 시 토스트: tosModal.toastAgreed</dd>
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
- <li>[동의하고 계속] → 동의 기록 저장 + 모달 해제 + 서비스 진입</li>
- <li>[동의하지 않음] → disagreeHint 노출 + CM-01 탈퇴 확인 → 탈퇴 처리</li>
+ <li>[동의하고 계속] → 동의 기록 저장 + 모달 해제 + 서비스 진입 + tosModal.toastAgreed</li>
+ <li>[동의하지 않음] → tosModal.disagreeConfirmTitle/Desc 확인 다이얼로그 → 확인 시 탈퇴 처리</li>
  <li>배경 클릭·ESC로 닫기 불가</li>
  <li>시행일 이후 미접속자 재접속 시 동일 모달 재표시 + tosModal.impliedConsent 문구</li>
  </ol>
