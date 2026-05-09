@@ -9,13 +9,13 @@
 - **그룹 전시 편집 → 개인 전환 알림 구현** (Policy §13.6.1 신설):
   - 업로더가 수정 모드에서 참여 작가를 모두 제거해 혼자 남기면, 발행 시 편집 전용 확인 다이얼로그 노출("그룹 전시를 개인 전시로 전환할까요?"). 기존 신규 업로드용 `soloSuggestion` 카피와 분리.
   - 전환 확인 시 제거된 **회원 참여 작가 각각에게 시스템 알림** push("참여하시던 전시가 개인 전시로 전환됐어요. 작품이 제거됐어요.").
-  - 파일: `Upload.tsx`(편집 모드 분기 + 알림 push), `messages.ts`·`Copy_v1.md`(신규 키 4개 KO/EN), `Policy_v1.md`(§13.6.1 신설).
+  - 갱신 문서: `Copy_v1.md`(신규 키 4개 KO/EN), `Policy_v1.md`(§13.6.1 신설).
 
 ## 2026-05-09 (4차)
 
 - **PM 결정 5건 문서화 + D-6 코드 정합**:
   - Policy §12.1 비공개 유지 기한: **영구 보존** (작가 삭제·재검수 승인 전까지 유지).
-  - Policy §12.1.3 삭제 알림 사유: **일반화** — "운영 정책 위반으로 삭제됐어요" 고정, 내부 4종 사유 미노출. messages.ts·Copy_v1.md 동시 반영.
+  - Policy §12.1.3 삭제 알림 사유: **일반화** — "운영 정책 위반으로 삭제됐어요" 고정, 내부 4종 사유 미노출. Copy_v1.md 동시 반영.
   - Policy §13.6 그룹 전시 유형: **성립 조건 ≠ 지속 조건** 명시, 자동 강등 없음 의도 명확화.
   - Policy §32.2 응모전 삭제 시 선정 배지: **배지 유지** (§15.2 영구 배지 원칙 정합).
   - Policy §16.1 인터리빙 "(최대 2사이클)" → "모든 항목 배치까지 반복" 코드 실제 동작으로 수정.
@@ -29,16 +29,16 @@
   - Policy §15.6: Pick 재선정 시 알림 재발송 없음 명시.
   - PRD_User USR-EXH-03: claim 완료 후 복귀 경로(USR-AUT-11 → USR-BRW-01) EC-02 추가, 의존 화면 보완.
   - PRD_Admin ADM-REV-02: AC-04 반려 재검수 표현에 메타만 변경 강제 재검수 포함 명시; 토큰 활성화 = 비활성 → 활성 전환 각주 추가.
-  - messages.ts: `notifications.filterEvent` EN `Contest`→`Events`, `notifications.filterCuration` EN `Curated`→`Curation`.
+  - Copy_v1.md: `notifications.filterEvent` EN `Contest`→`Events`, `notifications.filterCuration` EN `Curated`→`Curation`.
   - Copy_v1.md: `notifications.filter*` 6개 키 신설(KO/EN); `events.ctaUnsubscribe` 추가; 이메일 입력 구독 관련 구식 키 14개 제거; `settings.eventUnsubscribe*` 제거.
 - **감사 false positive 확인**: §23.3·§24·USR-CUR-01·USR-EXH-01b·§1.1·§2.1.1 — 에이전트 한계로 오보됐으나 실제 완전 정의됨.
 
 ## 2026-05-09 (2차)
 
 - **응모전 알림 구독 — 계정 이메일 자동 연동으로 전환**: 별도 이메일 입력 방식 폐기. 가입 시 수집된 계정 이메일 자동 사용. 이메일 입력 모달 제거 → 버튼 토글(알림 받기/알림 해지) + 토스트로 단순화. 비로그인 시 LoginPromptModal.
-  - `eventSubscriptionStore.ts`: 이메일 목록 → boolean 플래그로 전면 교체.
-  - `Events.tsx`: 이메일 입력 상태·핸들러·모달 JSX 제거, `authStore` 연동, 구독 상태 버튼에 반영.
-  - `messages.ts`: 이메일 입력 관련 키 14개 제거, `events.ctaUnsubscribe` 신설.
+  - `eventSubscriptionStore`: 이메일 목록 → boolean 플래그로 전면 교체.
+  - 응모전 이벤트 화면: 이메일 입력 상태·핸들러·모달 JSX 제거, `authStore` 연동, 구독 상태 버튼에 반영.
+  - Copy_v1.md: 이메일 입력 관련 키 14개 제거, `events.ctaUnsubscribe` 신설.
   - PRD USR-EVT-03 전면 재작성, §0.4.2 구독 수치 갱신.
 
 ## 2026-05-09
@@ -66,29 +66,29 @@
 
 - **강사(instructor) 기능 완전 제거** — Upload·Profile·Browse·data·groupData·store·WorkDetailModal·pointsBackground 코드 전체, Policy §13·PRD_User·PRD_Admin·IA·Copy·HTML 스펙 전수 반영. 그룹 전시 업로드 시 본인 작품 포함 예외 없이 항상 필수 → 이후 그룹 전시 정의 변경으로 대체됨.
 - **그룹 전시 정의 변경** — 총 작가 2명 이상(= 게시자 외 참여 작가 1명 이상)이면 그룹 전시 성립. 게시자 본인 작품 포함 여부 무관. 발행 검증 분기: 게시자 본인만(타인 0명) → 개인전 전환 다이얼로그, 총 1명이고 게시자 아닌 경우 → 차단(errGroupNeedsTwoArtists). Policy §13.2·§13.3·§13.6, PRD E.표, Copy, CLAUDE.md, README, HTML 전수 갱신.
-- **탈퇴 정책 변경** — 탈퇴 시 본인 이미지 슬롯 삭제, 전시 컨테이너 유지(다른 작가 작품 남아있으면 계속 공개). 이미지 0장이 된 전시만 cascade 삭제. 커버 이미지가 삭제된 경우 첫 번째 이미지로 fallback. Policy §4.2·§23.3, PRD_User USR-STG-03, PRD_Admin ADM-MBR-02, Copy 탈퇴 문구, store.ts performAccountWithdrawal 전면 재작성.
+- **탈퇴 정책 변경** — 탈퇴 시 본인 이미지 슬롯 삭제, 전시 컨테이너 유지(다른 작가 작품 남아있으면 계속 공개). 이미지 0장이 된 전시만 cascade 삭제. 커버 이미지가 삭제된 경우 첫 번째 이미지로 fallback. Policy §4.2·§23.3, PRD_User USR-STG-03, PRD_Admin ADM-MBR-02, Copy 탈퇴 문구 전면 갱신.
 - **§13.6 그룹 전시 사후 유지** — 탈퇴로 참여 작가 감소해도 자동 강등 없음. 이미지 0장 시에만 전시 삭제.
-- **문의하기(USR-INF-07) 이름 필드 제거** — Contact.tsx 이름 필드 삭제, 로그인 사용자 이메일 프리필 추가. PRD·IA·Policy §30.1 정합.
-- **어드민 검수 SLA 배지 제거** — ContentReview.tsx 24h 초과 빨강 배지 및 tickNow interval 제거. 사용자 안내 "24시간 이내 공개" 문구는 유지. Policy §22 헤딩 수정.
+- **문의하기(USR-INF-07) 이름 필드 제거** — 이름 필드 삭제, 로그인 사용자 이메일 프리필 추가. PRD·IA·Policy §30.1 정합.
+- **어드민 검수 SLA 배지 제거** — 24h 초과 빨강 배지 및 tickNow interval 제거. 사용자 안내 "24시간 이내 공개" 문구는 유지. Policy §22 헤딩 수정.
 - **ADM-MBR-01 닉네임·AP 컬럼** — 어드민 회원 목록 "이름" → "닉네임" 헤더, 누적 AP 열 추가. 시드 데이터 실명→닉네임 전환.
 - **NoticeDetail 구독 버그 수정** — 1회성 스냅샷 읽기 → useSyncExternalStore 구독으로 교체.
-- **report.notifTargetWorkRestored 키 추가** — Policy §12.1.3 "기각→복원" 알림 정의 대비 i18n 키 누락 해소(messages.ts + Copy_v1.md).
+- **report.notifTargetWorkRestored 키 추가** — Policy §12.1.3 "기각→복원" 알림 정의 대비 i18n 키 누락 해소(Copy_v1.md).
 - **문서 품질 개선** — Policy TMI 6건(§2.3·§7.2·§12.1.2·§19.4·§33.1·§10.3) 압축·정리. IA deprecated 섹션(ADM-WRK·ADM-PTN·CM-04) 한 줄 주석으로 압축. Copy 무관 링크 제거. 풀스캔 18건(탈퇴·교차참조·§23.3 충돌 등) 수정.
-- **코드 잔재 정리** — ReportManagement.tsx autoHiddenAt dead code, Profile.tsx 강사 주석, imagesV1Works.ts isInstructor 타입 필드, imagesV1Manifest.json 37개 항목 isInstructor 데이터 제거.
+- **코드 잔재 정리** — autoHiddenAt dead code, 강사 주석, isInstructor 타입 필드, 37개 항목 isInstructor 데이터 제거.
 
 ---
 
 ## 2026-05-05
 
 - **자동 비공개 트리거 폐기 전문서 정합 (Policy §12.2 v2.20, B-6 후속)** — 이전 사이클(05-04)에 코드·Policy 정합이 완료된 자동 비공개 트리거 폐기를 나머지 기획 문서 전체로 확산. PRD_Admin v1.24·PRD_User v2.10·IA v1.11·Copy v1.13·Handoff_Notifications v5·Handoff_LegalReview v3·HTML 화면 스펙에서 "2회 자동 비공개" 배너·정책 박스·SLA 4단계 배지·24h 에스컬레이션 카운트·채널 매트릭스 행 등 잔재 제거.
-- **「삭제」 액션 사유 변수 카피 전문서 반영** — `report.notifAutoHidden` ko/en 폐기, `report.notifTargetWorkDeleted`에 `{reason}` 변수 추가, 사유 라벨 4종(`deleteReason.*`) Copy·Handoff_Notifications·messages.ts 정합.
+- **「삭제」 액션 사유 변수 카피 전문서 반영** — `report.notifAutoHidden` ko/en 폐기, `report.notifTargetWorkDeleted`에 `{reason}` 변수 추가, 사유 라벨 4종(`deleteReason.*`) Copy·Handoff_Notifications 정합.
 - **ADM-MBR-01 회원 단위 자동 검토 배지 폐기** — 24h 신고 카운트 트리거 제거, 운영팀 신고 큐 직접 정성 판단으로 전환(§22.5 v2.20 정합).
 - **Handoff_LegalReview LP-5 재기술** — "2회 신고 자동 비공개 법적 리스크" → "「삭제」 액션 사유 4종 한정 법적 근거"로 전면 재기술(정통망법 §44의2·저작권법 §103·청소년보호법 §16 검토 포인트).
-- **코드 주석 정합** — `data.ts` autoHiddenAt @deprecated, `ReportManagement.tsx`·`reportsStore.ts`·`feedVisibility.ts` 등 src 9개 파일의 "자동 비공개" 잔재 주석·토스트 문자열 정정.
+- **코드 주석 정합** — autoHiddenAt @deprecated 처리, 구현 내 9개 파일의 "자동 비공개" 잔재 주석·토스트 문자열 정정.
 - **§0.6.1 감사 로그 전 어드민 액션 연결** — Pick·기획전·배너·응모전·선정작·문의·공지 핸들러에 appendAuditLog 추가. AuditAction 5종 → 21종.
-- **ADM-NTC-01 공지 관리 화면 구현** — `utils/noticeStore.ts`(localStorage CRUD, draft/published/stopped 상태, 고정 최대 2개, 기존 시드 자동 적재) + `admin/NoticeManagement.tsx`(목록·생성/수정 모달·게시·게시중단·삭제 + audit_log). 사용자측 `pages/Notices.tsx`·`NoticeDetail.tsx`를 정적 배열 → noticeStore 동적 읽기로 전환. 대시보드 공지 일감 카드 신설(게시 중·고정·임시저장 카운트).
+- **ADM-NTC-01 공지 관리 화면 구현** — `noticeStore`(localStorage CRUD, draft/published/stopped 상태, 고정 최대 2개, 기존 시드 자동 적재) + 공지 관리 어드민 화면(목록·생성/수정 모달·게시·게시중단·삭제 + audit_log). 사용자 공지 목록·상세 화면을 정적 배열 → `noticeStore` 동적 읽기로 전환. 대시보드 공지 일감 카드 신설(게시 중·고정·임시저장 카운트).
 - **기획 문서 가독성 전면 개선** — 코드 경로·구현 세부·프로토타입 임시 처리 설명 제거(총 45건). 정책 수치 정합(피드 24건·폰트 1.0/1.1/1.2·어드민 20건). 화면 ID 정합(PRD 누락 11개 스텁 추가: USR-EXH-05/06·USR-SRC-02·USR-STG-04/05/06·ADM-PCK-02/03·ADM-CUR-02·ADM-BNR-02·ADM-EVT-02). IA·PRD·Policy에서 URL 경로·쿼리 파라미터 20건 제거. 과잉 명세 정리(권한 매트릭스 26행→1줄·ADM-CKL-01 33항목→6카테고리). HTML 화면 스펙 동기화(USR-STG-04 글꼴 크기 조절 신규 추가·nav 코드 정정·110%→1.1 표기).
-- **코드 단순화** — `pointsBackground.ts` stale read 버그 수정(award 함수를 상태 파라미터로 전환, 이중 loadState 제거). `inviteTokenStore.ts` revokeInviteToken 1줄 단순화·connectMemberToSlot store.ts 이동.
+- **코드 단순화** — `pointsBackground` stale read 버그 수정(award 함수를 상태 파라미터로 전환, 이중 loadState 제거). `inviteTokenStore` revokeInviteToken 1줄 단순화·`connectMemberToSlot` `workStore` 이동.
 
 ---
 
