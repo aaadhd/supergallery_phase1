@@ -286,7 +286,7 @@ export default function ReportManagement() {
         .replace('{title}', targetName)
         .replace('{reason}', reasonLabel),
     });
-    toast.success(`작품 삭제 + 감사 로그 기록 (사유: ${reasonLabel})`);
+    toast.success(t('admin.report.toastDeleted').replace('{reason}', reasonLabel));
     setDeleteDialog(null);
   };
 

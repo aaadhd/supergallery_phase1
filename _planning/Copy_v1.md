@@ -1284,6 +1284,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'admin.report.toastErrNotFound': '작품을 찾을 수 없습니다 (이미 삭제됨).',
   'admin.report.toastDismissedRestored': '기각 처리 — 비공개 유지 상태였던 전시를 복원했습니다.',
   'admin.report.toastDismissed': '신고를 기각했습니다.',
+  'admin.report.toastDeleted': '작품 삭제 + 감사 로그 기록 (사유: {reason})',
   'splash.alt': 'Proud Gallery',
   'footer.qaNavTrigger': '검수 바로가기',
   'footer.qaGroupShareDeep': '공유·알림 (전시/비회원)',
@@ -2473,6 +2474,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'admin.report.toastErrNotFound': 'Exhibition not found (already deleted).',
   'admin.report.toastDismissedRestored': 'Dismissed — exhibition restored from hidden state.',
   'admin.report.toastDismissed': 'Report dismissed.',
+  'admin.report.toastDeleted': 'Work deleted + audit log saved (reason: {reason})',
   'splash.alt': 'Proud Gallery',
   'footer.qaNavTrigger': 'QA shortcuts',
   'footer.qaGroupShareDeep': 'Share & notices (exhibition / credited)',
@@ -2667,7 +2669,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.18 | 2026-05-09 | PM × Claude | upload.nonMemberPreview* 7개 키 KO·EN 추가 (발행 전 확인 모달); signup.birthHint KO·EN 중복 키 제거 — 개인정보 용도 안내 포함 긴 버전으로 단일화; settings.withdrawWarnPick·Curation·Contest 3키 KO·EN 추가; admin.report.memo* 7키 + admin.report.toast* 6키 KO·EN 추가 |
+| v1.18 | 2026-05-09 | PM × Claude | upload.nonMemberPreview* 7개 키 KO·EN 추가 (발행 전 확인 모달); signup.birthHint KO·EN 중복 키 제거 — 개인정보 용도 안내 포함 긴 버전으로 단일화; settings.withdrawWarnPick·Curation·Contest 3키 KO·EN 추가; admin.report.memo* 7키 + admin.report.toast* 7키 KO·EN 추가 (toastDeleted 포함) |
 | v1.17 | 2026-05-07 | PM × Claude | 서비스명 Artier → Proud Gallery 전면 치환(brand.name·splash.alt·Proud's Pick → Proud's Pick); 헤더 버전 동기; messages.ts ↔ Copy 사전 동기화 — points·admin 잔재·social·event·onboarding·faq 키 삭제, curation·events.results·evt.admin·notif.contestSelected·notifications.category·profile.editWarn·upload.groupRole·upload.roleInfo·badge·settings.notifWeeklyTheme·admin.notice 그룹 KO·EN 추가; upload.reviewNotice 신설; about feat2Desc·feat4Desc·feat5 정합; onboarding concept step 7키 KO·EN 제거 |
 | v1.16 | 2026-05-06 | PM × Claude | profile.removePieceFromExhibition·Confirm·Success 4키 추가(전시에서 빼기 신규 기능); tabGuideWorks 내 작품 탭 진입점 반영; profile.tabHelpWorks 키 삭제(화면에서 단락 제거); nicknameLockedLabel·Hint·ContactCta·categoryNicknameChange·nicknameChangeNotice·nicknameNew·nicknameReason·errNicknameDuplicate 닉네임 변경 불가 관련 키 일괄 삭제(즉시 자율 변경으로 정책 개정) |
 | v1.15 | 2026-05-06 | PM × Claude | events.viewMyEntry·cancelEntry·cancelEntryConfirmTitle·Desc·Success 5키 추가 |
