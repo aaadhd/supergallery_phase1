@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- Last synced: Policy v2.19 / PRD_User v2.12 / PRD_Admin v1.25 / IA v1.12 / Copy v1.18 (2026-05-09) -->
+<!-- Last synced: Policy v2.22 / PRD_User v2.15 / PRD_Admin v1.25 / IA v1.14 / Copy v1.18 (2026-05-09) -->
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
@@ -654,6 +654,7 @@
  <li>
  <div class="group">🔁 공통 다이얼로그 (CM)</div>
  <ul>
+ <li><a href="#CM-TOS"><code>CM-TOS</code><span>약관 변경 강제 동의 모달</span></a></li>
  <li><a href="#CM-02"><code>CM-02</code><span>로그인 유도 모달 ⭐</span></a></li>
  </ul>
  </li>
@@ -694,7 +695,7 @@
  <tr>
  <td class="ver">v1.8</td>
  <td class="date">2026-05-09</td>
- <td>USR-NTF-01 알림 메시지 템플릿 13종 정합(신고 처리 결과 작가 수신 3종 — 삭제·비공개 유지·복원; 신고자 기각 알림 제거) · Last synced 갱신(Copy v1.18)</td>
+ <td>USR-NTF-01 알림 메시지 템플릿 13종 정합(신고 처리 결과 작가 수신 3종 — 삭제·비공개 유지·복원; 신고자 기각 알림 제거) · Last synced 갱신(Copy v1.18) · USR-EVT-01 3탭 구조(응모전·기획전·일반 이벤트) 반영 · CM-TOS 약관 변경 강제 동의 모달 슬라이드 신설 · TOC에 CM-TOS 등록</td>
  </tr>
  <tr>
  <td class="ver">v1.7</td>
@@ -5201,21 +5202,25 @@
  <h3>화면 정보</h3>
  <dl>
  <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> 경로 /events</dd>
- <dt></dt><dd><strong>상태별 섹션</strong> 진행 중(상단 캐러셀) → 예정 → 종료</dd>
+ <dt></dt><dd><strong>탭 구조</strong> 응모전(기본) | 기획전 | 일반 이벤트 — 3탭. 탭 전환 시 URL hash 또는 query 변경</dd>
+ <dt></dt><dd><strong>응모전 탭</strong> 상단 캐러셀(진행 중 응모전) → 예정 → 종료 섹션 순</dd>
+ <dt></dt><dd><strong>기획전 탭</strong> USR-CUR-01 기획전 목록과 동일 컨텐츠(링크 이동 또는 인라인)</dd>
+ <dt></dt><dd><strong>일반 이벤트 탭</strong> 공지 성격의 비응모전 이벤트 카드 목록</dd>
  </dl>
 
      <h3 class="components">구성 요소</h3>
  <dl>
- <dt><span class="bub">3</span></dt><dd>CTA 2종 — "참여하기 →" (→ USR-EVT-04 응모 모달) / "자세히 보기" → USR-EVT-02</dd>
- <dt><span class="bub">1</span></dt><dd>hero 캐러셀 배너 — 진행 중 응모전만. embla 슬라이더 + 닷 인디케이터</dd>
- <dt><span class="bub">4</span></dt><dd>하단 알림 구독 CTA 띠 — "알림 받기"·"알림 해지" 토글 → USR-EVT-03 구독|해지 모달</dd>
- <dt><span class="bub">2</span></dt><dd>예정 응모전 카드 — 시작일 + "🔔 알림 받기" → USR-EVT-03 구독 모달</dd>
+ <dt><span class="bub">1</span></dt><dd>3탭 바 — 응모전 / 기획전 / 일반 이벤트 (기본: 응모전)</dd>
+ <dt><span class="bub">2</span></dt><dd>응모전 탭 — hero 캐러셀(진행 중) + 예정 카드 그리드. CTA "참여하기 →" → USR-EVT-04 / "자세히 보기" → USR-EVT-02</dd>
+ <dt><span class="bub">3</span></dt><dd>알림 구독 CTA 띠 — "알림 받기"·"알림 해지" 토글 → USR-EVT-03</dd>
+ <dt><span class="bub">4</span></dt><dd>기획전 탭 — 기획전 카드 그리드</dd>
+ <dt><span class="bub">5</span></dt><dd>일반 이벤트 탭 — 이벤트 카드 목록</dd>
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
- <li>"참여하기" → USR-EVT-04 응모 모달 오픈</li>
- <li>"알림 받기"·"알림 해지" → USR-EVT-03 모달</li>
- <li>종료 응모전은 회색 + 클릭 시 결과 페이지 (추후 지원 예정)</li>
+ <li>탭 전환 시 각 탭 컨텐츠 표시, 기본 탭은 응모전</li>
+ <li>응모전 탭 — "참여하기" → USR-EVT-04, "알림 받기"·"알림 해지" → USR-EVT-03</li>
+ <li>종료 응모전은 회색 + 클릭 시 결과 페이지 (USR-EVT-05)</li>
  </ol>
  </div>
  </div>
@@ -8138,6 +8143,71 @@
  </div>
  </div>
  <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.8 (PC)</span><span>ADM-NTC-01 · 공지 관리</span></div>
+ </section>
+
+ <!-- ───────── 화면: CM-TOS 약관 변경 강제 동의 모달 (PC) ───────── -->
+ <section class="slide" id="CM-TOS">
+ <div class="slide-pad">
+ <div class="slide-head">
+ <div><div class="crumb">31 · 공통 다이얼로그</div><h2>CM-TOS · 약관·처리방침 변경 강제 동의 모달</h2></div>
+ <div class="meta"><span class="role">CM</span><span class="id">CM-TOS</span><span class="device">PC</span><span class="ver">v1.0 NEW</span></div>
+ </div>
+
+ <div class="screen">
+ <div class="mock">
+ <div class="pc-frame">
+ <div class="chrome">
+ <span class="dots"><span></span><span></span><span></span></span>
+ <span class="url">proudgallery.com — 풀스크린 오버레이</span>
+ </div>
+ <div style="background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; height: 100%; padding: 24px;">
+ <div style="background: white; border-radius: 14px; padding: 28px; max-width: 420px; width: 100%;">
+ <div style="font-size: 17px; font-weight: 700; margin-bottom: 8px;">약관이 변경돼요</div>
+ <div style="font-size: 12px; color: var(--ink-2); margin-bottom: 12px;">2026-06-01부터 아래 내용이 바뀝니다.</div>
+ <div style="background: #f8fafc; border-radius: 8px; padding: 12px 14px; font-size: 12px; color: var(--ink); margin-bottom: 8px; line-height: 1.7;">
+ · 수집 항목에 서비스 이용 기록이 추가됩니다.<br>
+ · 개인정보 보관 기간이 3년에서 5년으로 변경됩니다.<br>
+ · 마케팅 정보 수신 동의 채널이 확대됩니다.
+ </div>
+ <div style="font-size: 11px; color: var(--ink-2); margin-bottom: 16px; text-align: right;"><span style="text-decoration: underline; cursor: pointer;">전체 내용 보기</span></div>
+ <div style="display: flex; gap: 8px;">
+ <div style="flex: 1; padding: 12px; background: var(--ink); color: white; border-radius: 8px; text-align: center; font-size: 13px; font-weight: 600;">동의하고 계속</div>
+ <div style="flex: 1; padding: 12px; background: white; color: var(--ink); border: 1px solid var(--line-2); border-radius: 8px; text-align: center; font-size: 13px;">동의하지 않음</div>
+ </div>
+ <div style="font-size: 11px; color: var(--ink-3); margin-top: 10px; text-align: center;">동의하지 않으시면 회원 탈퇴로 처리됩니다.</div>
+ </div>
+ </div>
+ </div>
+ </div>
+ <div class="placeholder-note">풀스크린 강제 오버레이 — 배경 스크롤·닫기 불가. 동의하고 계속 / 동의하지 않음 동등 비중</div>
+ </div>
+
+ <div class="desc">
+ <h3>화면 정보</h3>
+ <dl>
+ <dt><span class="bub outline">i</span></dt><dd><strong>트리거</strong> 로그인 완료 직후 미동의 강제 변경 감지 시 자동 표시 — 건너뛰기 불가</dd>
+ <dt></dt><dd><strong>대상</strong> 외부 채널 없는 인앱 전용 사용자 포함 전 회원 (외부 채널 보유자도 모달 병행)</dd>
+ </dl>
+
+     <h3 class="components">구성 요소</h3>
+ <dl>
+ <dt>—</dt><dd>제목(tosModal.title) + 시행일 안내(tosModal.effectiveDate) + 변경 요점 3~5줄 + "전체 내용 보기" 링크</dd>
+ <dt>—</dt><dd>[동의하고 계속](tosModal.agree) / [동의하지 않음](tosModal.disagree) 버튼 — 동등 비중, 동의 유도 패턴 금지</dd>
+ <dt>—</dt><dd>동의하지 않음 경고: tosModal.disagreeHint → 탈퇴 확인 다이얼로그(CM-01)</dd>
+ </dl>
+
+ <div class="ac"><h4>완성 기준</h4><ol>
+ <li>[동의하고 계속] → 동의 기록 저장 + 모달 해제 + 서비스 진입</li>
+ <li>[동의하지 않음] → disagreeHint 노출 + CM-01 탈퇴 확인 → 탈퇴 처리</li>
+ <li>배경 클릭·ESC로 닫기 불가</li>
+ <li>시행일 이후 미접속자 재접속 시 동일 모달 재표시 + tosModal.impliedConsent 문구</li>
+ </ol>
+ </div>
+
+ <div class="pol"><h4>관련 정책</h4><a href="#Policy-§1.3">Policy §1.3</a> 약관·처리방침 변경 고지 정책
+ </div>
+ </div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.8 (PC)</span><span>CM-TOS · 약관 변경 강제 동의 모달</span></div>
  </section>
 
  <!-- ───────── 화면: CM-02 로그인 유도 모달 (PC) ───────── -->
