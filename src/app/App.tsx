@@ -8,6 +8,7 @@ import { PointsBootstrap } from './components/PointsBootstrap';
 import { WorksStorageSync } from './components/WorksStorageSync';
 import { ConfirmDialogRoot } from './components/ConfirmDialog';
 import { OfflineBanner } from './components/OfflineBanner';
+import { TosConsentModal } from './components/TosConsentModal';
 import { applyFontScale } from './utils/fontScale';
 import { ErrorBoundary } from './components/ErrorBoundary';
 
@@ -29,6 +30,7 @@ export default function App() {
           <PointsBootstrap />
           <WorksStorageSync />
           <OfflineBanner />
+          <TosConsentModal />
           <RouterProvider router={router} />
           <Toaster position="top-center" richColors toastOptions={{ duration: 5000 }} />
           <ConfirmDialogRoot />

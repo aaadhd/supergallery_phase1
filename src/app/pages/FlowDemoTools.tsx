@@ -1,11 +1,12 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
-import { FlaskConical, Bell, UserPlus, Map } from 'lucide-react';
+import { FlaskConical, Bell, UserPlus, Map, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
 import { pushDemoNotification } from '../utils/pushDemoNotification';
 import { setProdAdminBrowserUnlock, hasProdAdminBrowserUnlock } from '../utils/adminGate';
+import { tosConsentStore } from '../utils/tosConsentStore';
 import { artists } from '../data';
 import { workStore } from '../store';
 import { Button } from '../components/ui/button';
@@ -184,6 +185,57 @@ export default function FlowDemoTools() {
             {adminBrowserUnlocked && (
               <p className="mt-3 text-xs text-emerald-700">{t('demo.operatorRoleActive')}</p>
             )}
+          </section>
+
+          <section className="rounded-2xl border border-border bg-white p-5 sm:p-6 shadow-sm">
+            <h2 className="text-sm font-semibold text-foreground flex items-center gap-2 mb-3">
+              <FileText className="h-4 w-4 text-foreground" />
+              {t('demo.sectionTos')}
+            </h2>
+            <p className="text-xs text-muted-foreground mb-4">{t('demo.sectionTosHint')}</p>
+            <div className="flex flex-col sm:flex-row flex-wrap gap-2">
+              <Button
+                variant="ghost"
+                type="button"
+                onClick={() => {
+                  tosConsentStore.setPending({
+                    version: '1.1',
+                    effectiveDate: '2026. 6. 1.',
+                    summary: [
+                      '마케팅 수신 동의 항목이 이메일·알림톡·문자로 세분화됩니다.',
+                      '개인정보 보관 기간이 탈퇴 후 30일로 단축됩니다.',
+                      '이용약관 제7조(금지 행위) 항목이 구체화됩니다.',
+                    ],
+                    isImplied: false,
+                    fullUrl: '/terms',
+                  });
+                  toast.success(t('demo.toastTosTriggered'));
+                }}
+                className="px-4 py-2.5 rounded-xl border border-border text-sm font-medium lg:hover:bg-muted/50 text-left"
+              >
+                {t('demo.btnTosTrigger')}
+              </Button>
+              <Button
+                variant="ghost"
+                type="button"
+                onClick={() => {
+                  tosConsentStore.setPending({
+                    version: '1.1',
+                    effectiveDate: '2026. 6. 1.',
+                    summary: [
+                      '마케팅 수신 동의 항목이 이메일·알림톡·문자로 세분화됩니다.',
+                      '개인정보 보관 기간이 탈퇴 후 30일로 단축됩니다.',
+                    ],
+                    isImplied: true,
+                    fullUrl: '/terms',
+                  });
+                  toast.success(t('demo.toastTosTriggered'));
+                }}
+                className="px-4 py-2.5 rounded-xl border border-border text-sm font-medium lg:hover:bg-muted/50 text-left"
+              >
+                {t('demo.btnTosImpliedTrigger')}
+              </Button>
+            </div>
           </section>
 
           <section className="rounded-2xl border border-border bg-white p-5 sm:p-6 shadow-sm">
