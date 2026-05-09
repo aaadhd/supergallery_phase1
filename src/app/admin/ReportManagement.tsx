@@ -18,6 +18,7 @@ import {
 import { pushDemoNotification } from '../utils/pushDemoNotification';
 import { logWorkDeletion, appendAuditLog, type DeletedWorkLogPayload } from '../utils/adminAuditLog';
 import { pointsRecallOnAdminDelete } from '../utils/pointsBackground';
+import { activateInviteToken } from '../utils/inviteTokenStore';
 import { useI18n } from '../i18n/I18nProvider';
 import { usePagination } from '../hooks/usePagination';
 import { PaginationBar } from './components/PaginationBar';
@@ -325,6 +326,7 @@ export default function ReportManagement() {
     if (raw.targetType === 'work' && raw.targetId) {
       const restored = maybeRestoreAfterDismiss(raw.targetId);
       if (restored) {
+        activateInviteToken(raw.targetId);
         pushDemoNotification({
           type: 'system',
           message: `'${raw.targetName}' 전시가 검토 결과 정상 복원되었습니다.`,
