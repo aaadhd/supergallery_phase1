@@ -8,7 +8,7 @@ const koMessages = {
   'nav.upload': '작품 올리기',
   'nav.uploadShort': '올리기',
   'nav.search': '검색',
-  'nav.profile': '마이 프로필',
+  'nav.profile': '프로필',
   'nav.my': '로그인·가입',
   'nav.settings': '설정',
   'nav.notifications': '알림',
@@ -64,7 +64,7 @@ const koMessages = {
   'demo.sectionWithdrawHint': '설정에서 사유 선택 후 탈퇴 확인까지 진행할 수 있어요.',
   'demo.sectionAdminGate': '운영팀 역할 (어드민 접근)',
   'demo.sectionAdminGateHint':
-    '명세상 /admin은 "운영팀" 역할만 접근 가능합니다. 아래 버튼으로 이 브라우저의 운영팀 역할을 활성화/해제하세요. 로그인 + 운영팀 활성 시에만 어드민 화면이 열립니다. 환경 변수 VITE_ADMIN_OPEN=true 를 쓰면 전체 우회돼요.',
+    '명세상 /admin은 "운영팀" 역할만 접근 가능합니다. 아래 버튼으로 이 브라우저의 운영팀 역할을 활성화/해제하세요. 로그인 + 운영팀 활성 시에만 어드민 화면이 열립니다. CI·프리뷰 환경 플래그를 쓰면 전체 우회돼요.',
   'demo.btnAdminUnlock': '운영팀 역할 활성화',
   'demo.btnAdminLock': '운영팀 역할 해제',
   'demo.toastAdminUnlocked': '운영팀 역할이 활성화됐어요. /admin 접근이 허용돼요.',
@@ -78,7 +78,7 @@ const koMessages = {
   'demo.linkReferenceToolkit': '기획 검수: JWT·이메일 데모',
   'refStub.title': 'Reference 도구 — 로컬 검수',
   'refStub.lead':
-    'JWT 세션(모의), 이메일 템플릿 미리보기, 이메일 발송 조건 표를 한 화면에서 확인합니다. 실서비스 토큰 검증·메일 발송은 포함되지 않어요.',
+    'JWT 세션(모의), 이메일 템플릿 미리보기, 이메일 발송 조건 표를 한 화면에서 확인합니다. 실서비스 토큰 검증·메일 발송은 포함되지 않아요.',
   'refStub.backDemo': '← 플로우 데모로',
   'refStub.jwtTitle': '1. 세션 / JWT (모의)',
   'refStub.jwtLead':
@@ -133,21 +133,13 @@ const koMessages = {
   'refStub.rulesColTrigger': '발송 트리거',
   'refStub.rulesColReq': '필수/선택',
   'refStub.emailMasterBlock':
-    '1|회원가입 환영|회원가입 완료 시|필수\n2|이메일 인증|이메일 가입 후 인증 요청 시|필수\n3|비밀번호 재설정|비밀번호 찾기 요청 시|필수\n4|비밀번호 변경 완료|비밀번호 변경 성공 시|권장\n5|Proud Gallery\'s Pick 선정|어드민이 Pick 배지 부여 시|필수\n6|위클리 베스트 선정|어드민이 위클리 베스트 배지 부여 시|필수\n7|공지사항 (정책 변경)|이용약관/개인정보처리방침 변경 시|법적 의무\n8|마케팅 이메일|이벤트/캠페인 (수신 동의자만)|선택 동의자\n9|계정 정지 안내|어드민이 계정 정지 처리 시|필수\n10|회원 탈퇴 완료|탈퇴 처리 완료 시|권장',
+    '1|회원가입 환영|회원가입 완료 시|필수\n2|가입 인증 링크|이메일 가입 직후|필수 (매직 링크 30분)\n3|로그인 인증 링크|이메일 로그인 요청 시|필수 (매직 링크 30분)\n4|Proud\'s Pick 선정|어드민이 Pick 배지 부여 시|필수\n5|위클리 베스트 선정|어드민이 위클리 베스트 배지 부여 시|필수\n6|공지사항 (정책 변경)|이용약관/개인정보처리방침 변경 시|법적 의무\n7|마케팅 이메일|응모전/캠페인 (수신 동의자만)|선택 동의자\n8|계정 정지 안내|어드민이 계정 정지 처리 시|필수\n9|회원 탈퇴 완료|탈퇴 처리 완료 시|권장',
   'flowMap.heading': 'Phase 1 유저 플로우 — 화면 바로가기',
   'flowMap.intro':
     '아래는 `SuperGallery Phase 1 유저 플로우` 문서 흐름과 대응하는 URL입니다(15번 블록은 기획 검수용 데모). 로그인이 필요한 화면은 GNB에서 로그인한 뒤 이용하세요.',
   'flowMap.section01': `1. 회원가입 / 로그인
-/login|이메일·비밀번호 로그인
-/signup|이메일 회원가입
-/signup?demo=email_sent|이메일 인증 발송 안내(시연)
-/signup?demo=email_expired|인증 링크 만료(시연)
-/signup?demo=region|국가별 가입 옵션 레이아웃(시연)
-/reset-password|비밀번호 찾기
-/reset-password?demo=link_expired|재설정 링크 만료(시연)
-/reset-password?demo=new_password|새 비밀번호 입력(시연)
-/login?demo=suspended|계정 정지 적용(시연) — 이후 로그인 시 차단 메시지
-/login?demo=clear_suspension|정지 해제(시연)`,
+/login|이메일 매직 링크 로그인
+/signup|이메일 회원가입(매직 링크)`,
   'flowMap.section02': `2. 작품 업로드 → 전시
 /upload|업로드 에디터(로그인 필요)`,
   'flowMap.section03': `3. 둘러보기 → 작업물 상세 → 반응
@@ -160,7 +152,7 @@ const koMessages = {
 /profile|내 프로필 (동일 화면, 예전 경로)
 /profile/2|타인 프로필 예시
 /me/edit|프로필 편집 → 설정으로 연결(PRD)
-/settings|계정 설정 · 탈퇴(사유·비밀번호 확인)
+/settings|계정 설정 · 탈퇴(사유·동의 체크박스)
 /settings/notifications|푸시·알림 종류 설정`,
   'flowMap.section06': `6. 검색
 /search|통합 검색(작품명·작가명·전시명·그룹명, PRD P1)`,
@@ -179,12 +171,12 @@ const koMessages = {
 /onboarding|가입 직후 온보딩(동일 경로)`,
   'flowMap.section12': `12. 비회원 초대 (Policy §3 v2.14 토큰 모델)
 /exhibitions/{workId}?invite={token}|작가가 보낸 초대 링크의 랜딩 화면 (4상태 분기: 활성·검수 중·취소·만료)
-(토큰은 InviteShareButton에서 생성. 친구가 가입하면 본인 작품 찾기 화면으로 자동 진입)`,
+(토큰은 마이페이지 "친구에게 알리기" 버튼에서 생성. 친구가 가입하면 본인 작품 찾기 화면으로 자동 진입)`,
   'flowMap.section13': `13. 응모전 참여
 /events|응모전 목록
 /events/1|응모전 상세 예시`,
-  'flowMap.section14': `14. 포인트 적립
-Phase 1: 백그라운드 적립만(Policy §7.1). 사용자 노출 UI 없음. 로컬 적립 로직은 가입·온보딩·둘러보기·업로드 등에서 계속 동작하며 원장은 그대로 누적.`,
+  'flowMap.section14': `14. 포인트 적립 · 조회
+Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 는 런칭 전 백엔드 연동 후. 로컬 적립 로직은 가입·온보딩·둘러보기·업로드 등에서 계속 동작.`,
   'flowMap.section15': `15. 기획 검수 — reference 도구
 /demo/reference|모의 JWT·이메일 템플릿·발송 조건 표`,
   'loginDemo.suspendReason': '콘텐츠·신고 정책 위반 (시연)',
@@ -390,7 +382,7 @@ Phase 1: 백그라운드 적립만(Policy §7.1). 사용자 노출 UI 없음. �
   'review.notifApproved': '올리신 작품이 승인됐어요. 둘러보기에서 다른 분들이 볼 수 있어요.',
   'review.notifNewWork': '님이 새 전시를 올렸어요',
   // 신고 처리 결과 알림 — 대상 작가/신고자에게 운영팀 조치를 공지
-  'pick.notifSelected': '회원님의 전시 \'{title}\'이 Proud Gallery\'s Pick으로 뽑혔어요. 축하드려요!',
+  'pick.notifSelected': '회원님의 전시 \'{title}\'이 Proud\'s Pick으로 뽑혔어요. 축하드려요!',
   'invite.notifAutoMatched': '\'{name}\' 님이 \'{title}\' 전시에 본인 자리를 등록했어요. 잘못 연결됐다면 전시 편집에서 풀 수 있어요.',
   'report.notifTargetWorkDeleted': '회원님의 전시 \'{title}\'이 운영 정책 위반으로 삭제됐어요. 자세한 내용은 문의하기로 연락 주세요.',
   'report.deleteReason.copyright': '저작권 침해 확정',
@@ -602,7 +594,7 @@ Phase 1: 백그라운드 적립만(Policy §7.1). 사용자 노출 UI 없음. �
   'eventDetail.statusActive': '진행중',
   'eventDetail.statusScheduled': '예정',
   'eventDetail.statusEnded': '종료',
-  'onboarding.errImageTooLarge': '이미지 크기는 5MB 이하여야 합니다.',
+  'onboarding.errImageTooLarge': '이미지 크기는 5MB 이하여야 해요.',
   'onboarding.errProfanityNickname': '닉네임에 부적절한 단어가 포함되어 있어요.',
   'onboarding.welcomeTitle': '{brand}에 오신 것을 환영합니다',
   'onboarding.welcomeLead': '그림 한 점만 올려도 나만의 전시가 열려요',
@@ -655,7 +647,7 @@ Phase 1: 백그라운드 적립만(Policy §7.1). 사용자 노출 UI 없음. �
     '홈 화면에서 로그인 버튼을 클릭하면 간편하게 가입할 수 있어요. 소셜 로그인(카카오, 구글, 애플)과 이메일 가입을 지원해요.',
   'faq.q2': '로그인 링크 메일이 오지 않아요.',
   'faq.a2':
-    'Proud Gallery는 비밀번호 대신 이메일 인증 링크로 로그인합니다. 이메일을 받지 못했다면 스팸함을 먼저 확인해 주시고, 로그인 화면에서 "로그인 링크 다시 보내기"를 눌러 주세요. 30초 쿨다운 후 재발송이 가능합니다. 링크는 30분 동안 유효합니다.',
+    'Proud Gallery는 비밀번호 대신 이메일 인증 링크로 로그인해요. 이메일을 받지 못했다면 스팸함을 먼저 확인해 주시고, 로그인 화면에서 "로그인 링크 다시 보내기"를 눌러 주세요. 30초 쿨다운 후 다시 보낼 수 있어요. 링크는 30분 동안 유효해요.',
   'faq.q3': '탈퇴하면 작품은 어떻게 되나요?',
   'faq.a3':
     '탈퇴하면 내 작품이 모든 전시에서 삭제돼요. 다른 작가의 작품이 있는 전시는 계속 공개돼요. 복구할 수 없으니 탈퇴 전에 따로 저장해 두세요.',
@@ -753,8 +745,8 @@ Phase 1: 백그라운드 적립만(Policy §7.1). 사용자 노출 UI 없음. �
   'workDetail.shareTitle': '{artist} 님의 전시 초대',
   'workDetail.report': '신고',
   'workDetail.more': '더보기',
-  'workDetail.askAboutWork': '문의',
-  'workInquiry.title': '문의',
+  'workDetail.askAboutWork': '이 작품에 대한 문의',
+  'workInquiry.title': '이 작품에 대한 문의',
   'workInquiry.lead': '운영팀이 영업일 5일 안에 확인해드려요. 작가에게 직접 전달되지 않아요.',
   'workInquiry.catPurchase': '작품 구입·소장 문의',
   'workInquiry.catPurchaseHint': '이 작품을 구입하거나 소장할 수 있나요',
@@ -787,13 +779,13 @@ Phase 1: 백그라운드 적립만(Policy §7.1). 사용자 노출 UI 없음. �
   'workDetail.inspireCtaButton': 'Proud Gallery 바로가기',
   'workDetail.coWork': '공동 작업',
   'workDetail.participants': '참여',
-  'invite.invalid': '유효하지 않은 초대 링크이에요.',
+  'invite.invalid': '유효하지 않은 초대 링크예요.',
   'invite.browse': '둘러보기',
   'invite.deletedTitle': '이 전시는 삭제됐어요',
   'invite.deletedBody': '게시자가 전시를 삭제했어요. Proud Gallery에서 다른 전시를 둘러보거나 계정을 만들어 내 그림을 올려볼 수 있어요.',
   'invite.hiddenTitle': '이 전시는 운영팀 검토 중이에요',
   'invite.hiddenBody': '검토가 완료되면 다시 확인할 수 있어요. 잠시 후 다시 방문해주세요.',
-  'invite.pendingNotice': '공개 승인 전 링크이에요',
+  'invite.pendingNotice': '공개 승인 전 링크예요',
   'invite.clipboardOk': '링크가 복사되었어요',
   'invite.clipboardFail': '링크를 복사할 수 없어요',
   'invite.inviteByline': '{name}님의 초대',
@@ -844,13 +836,13 @@ Phase 1: 백그라운드 적립만(Policy §7.1). 사용자 노출 UI 없음. �
   'signup.agreePrivacy': '개인정보 수집·이용 동의',
   'signup.agreeAge': '만 14세 이상이에요',
   'signup.ageRestrictionLead':
-    'Proud Gallery는 만 14세 미만 회원 가입을 받지 않어요. (전자상거래 등에서의 소비자보호에 관한 법률 등 준수)',
+    'Proud Gallery는 만 14세 미만 회원 가입을 받지 않아요. (관련 법령 등 준수)',
   'signup.agreeMarketing': '마케팅 정보 수신 동의',
   'signup.agreeMarketingHint': '이메일·알림톡·문자 중 보유한 채널로 보내드려요.',
   'events.badge': 'EVENT',
   'profile.deletedUser': '작가 미상',
   'profile.notFound': '존재하지 않는 프로필이에요.',
-  'profile.withdrawnTitle': '탈퇴한 작가이에요',
+  'profile.withdrawnTitle': '탈퇴한 작가예요',
   'profile.withdrawnDesc': '이 작가는 Proud Gallery를 떠났어요.',
   'profile.formDisplayName': '사용자 이름',
   'profile.formDisplayNamePh': '이름을 입력해주세요',
@@ -878,9 +870,9 @@ Phase 1: 백그라운드 적립만(Policy §7.1). 사용자 노출 UI 없음. �
   'profile.bioPlaceholderEmpty': '아직 소개가 없어요.',
   'profile.tabWorkManage': '내 작품',
 
-  'notifications.seedLikedWork': '님이 회원님의 작품 "{work}"을 좋아합니다',
-  'notifications.seedFollowed': '님이 회원님을 팔로우합니다',
-  'notifications.seedPickSelected': '축하해요! "{work}"이(가) Proud Gallery’s Pick으로 뽑혔어요',
+  'notifications.seedLikedWork': '님이 회원님의 작품 "{work}"을 좋아했어요',
+  'notifications.seedFollowed': '님이 회원님을 팔로우하기 시작했어요',
+  'notifications.seedPickSelected': '축하해요! "{work}"이(가) Proud’s Pick으로 뽑혔어요',
   'notifications.seedWelcome': 'Proud Gallery에 오신 것을 환영합니다! 첫 작품을 업로드해 보세요.',
   'notifications.seedEventActive': '「{event}」 응모전이 진행 중이에요. 지금 참여해 보세요.',
   'profile.openProfileAria': '{name} 프로필 열기',
@@ -911,11 +903,11 @@ Phase 1: 백그라운드 적립만(Policy §7.1). 사용자 노출 UI 없음. �
   'profile.publishedBannerDesc': '운영팀이 24시간 이내에 검수한 뒤 둘러보기에 공개돼요. 검수 중에는 배지로 상태를 확인할 수 있고, 공개되면 알림으로 알려드려요.',
   'profile.publishedBannerDismiss': '닫기',
   'profile.uploaderLabel': '게시자',
-  'profile.deleteWorkConfirm': '"{title}" 전시를 삭제할까요?',
-  'profile.deleteWorkPermanent': '이 전시는 영구적으로 삭제되며 되돌릴 수 없어요.',
-  'profile.deleteWorkHasPendingInvites': '이 전시에 초대된 비회원이 있어요. 삭제하면 초대가 무효화돼요.',
+  'profile.deleteWorkConfirm': '"{title}" 작품을 삭제할까요?',
+  'profile.deleteWorkPermanent': '이 작품은 영구적으로 삭제되며 되돌릴 수 없어요.',
+  'profile.deleteWorkHasPendingInvites': '이 작품에 초대된 비회원이 있어요. 삭제하면 초대가 무효화돼요.',
   'profile.deleteWorkActiveCuration': '현재 활성 Pick/기획전에 게시 중이에요. 삭제하면 발표에서도 빠집니다.',
-  'profile.toastWorkDeleted': '전시가 삭제되었어요.',
+  'profile.toastWorkDeleted': '작품이 삭제되었어요.',
   'profile.toastDraftDeleted': '초안이 삭제되었어요.',
   'profile.errEmptyTitle': '작품명을 입력해 주세요.',
   'profile.changePhoto': '프로필 사진 변경',
@@ -926,7 +918,7 @@ Phase 1: 백그라운드 적립만(Policy §7.1). 사용자 노출 UI 없음. �
   'profile.workTitleSaved': '작품명이 저장되었어요',
   'profile.removePieceFromExhibition': '전시에서 빼기',
   'profile.removePieceConfirmTitle': '이 작품을 전시에서 뺄까요?',
-  'profile.removePieceConfirmDesc': '전시에서 내 작품이 삭제돼요. 되돌릴 수 없어요.',
+  'profile.removePieceConfirmDesc': '전시에서 내 작품이 삭제돼요. 전시 자체는 유지되지만 되돌릴 수 없어요.',
   'profile.removePieceSuccess': '내 작품을 전시에서 뺐어요',
   'profile.continueEditDraft': '이어서 편집',
   'profile.draftBadge': '초안',
@@ -952,12 +944,12 @@ Phase 1: 백그라운드 적립만(Policy §7.1). 사용자 노출 UI 없음. �
   'settings.sectionAccount': '계정 정보',
   'settings.emailLabel': '이메일',
   'settings.sectionFontScale': '글자 크기',
-  'settings.fontScaleIntro': '화면 전체 글자 크기를 조정합니다. 변경 사항은 즉시 적용돼요.',
+  'settings.fontScaleIntro': '화면 전체 글자 크기를 조정해요. 변경 사항은 즉시 적용돼요.',
   'settings.fontScale_small': '작게',
   'settings.fontScale_medium': '보통',
   'settings.fontScale_large': '크게',
   'settings.sectionTheme': '화면 테마',
-  'settings.themeIntro': '화면을 밝게 또는 어둡게 표시합니다. 변경 사항은 즉시 적용돼요.',
+  'settings.themeIntro': '화면을 밝게 또는 어둡게 표시해요. 변경 사항은 즉시 적용돼요.',
   'settings.theme_light': '밝게',
   'settings.theme_dark': '어둡게',
   'settings.sectionNotif': '알림 설정',
@@ -995,14 +987,14 @@ Phase 1: 백그라운드 적립만(Policy §7.1). 사용자 노출 UI 없음. �
   'settings.toastLogout': '로그아웃되었어요.',
   'settings.toastWithdrawDone': '탈퇴가 완료되었어요.',
   'report.titleWork': '작품 신고',
-  'report.leadWork': '{name}을(를) 신고합니다.',
+  'report.leadWork': '{name}을(를) 신고해요.',
   'report.policyNote':
-    '접수 후 운영팀이 영업일 24시간 안에 확인해드려요.',
+    '접수 후 운영팀이 확인해드려요.',
   'report.reasonHeading': '이 작품은 작가 본인의 그림이 아니에요',
   'report.reasonHelp': '다른 사람의 작품을 본인 것처럼 올린 것 같아요. 원본 출처가 있다면 메시지에 함께 적어주세요.',
   'report.otherReasonsHint': '다른 종류의 신고(저작권·욕설·음란 등)는 마이페이지 → 1:1 문의로 알려주세요.',
   'report.errOwnWork': '본인의 전시는 신고할 수 없어요.',
-  'report.falseReportNotice': '허위 신고가 확인되면 운영팀이 별도 조치할 수 있어요. 사실에 근거해 신고해주세요.',
+  'report.falseReportNotice': '사실에 근거해 신고해주세요. 운영팀이 모든 신고를 검토해요.',
   'report.piecePickerLabel': '신고할 작품을 선택해주세요',
   'report.piecePickerAria': '{n}번 작품 선택',
   'report.errPieceRequired': '신고할 작품을 선택해주세요.',
@@ -1013,7 +1005,7 @@ Phase 1: 백그라운드 적립만(Policy §7.1). 사용자 노출 UI 없음. �
   'report.errWithdrawnArtist': '탈퇴한 작가의 작품에는 신고할 수 없어요.',
   'report.step2Title': '신고가 도착했어요',
   'report.step2Body':
-    '운영팀이 영업일 24시간 안에 확인해드려요. 관련 법에 따른 긴급 건은 우선 처리돼요. 허위 신고는 제재될 수 있어요.',
+    '운영팀이 확인해드려요. 관련 법에 따른 긴급 건은 우선 처리돼요. 사실에 근거해 신고해주세요.',
   'report.okClose': '확인',
   'cookie.title': '쿠키 사용 안내',
   'cookie.body':
@@ -1024,7 +1016,7 @@ Phase 1: 백그라운드 적립만(Policy §7.1). 사용자 노출 UI 없음. �
   'cookie.essentialOnly': '필수만 동의',
   'cookie.close': '닫기',
   'profilePhoto.title': '프로필 사진',
-  'profilePhoto.lead': '갤러리에서 보이는 프로필 이미지를 변경합니다',
+  'profilePhoto.lead': '갤러리에서 보이는 프로필 이미지를 변경해요',
   'profilePhoto.change': '사진 변경',
   'profilePhoto.reset': '기본 이미지로 변경',
   'profilePhoto.save': '저장',
@@ -1058,10 +1050,10 @@ Phase 1: 백그라운드 적립만(Policy §7.1). 사용자 노출 UI 없음. �
     '일상 속 빛과 그림자의 순간을 모은 카테 작가의 개인전이에요. 디지털 회화로 기록한 창가, 계절, 그리고 도시의 아침을 한 공간에서 만나 보실 수 있어요.',
   'exhibition.groupNatureTitle': '자연의 결 — 연합전',
   'exhibition.groupNatureDesc':
-    '동양화, 수묵, 섬유·도자, 패션 일러스트를 아우르는 여섯 명의 작가가 자연의 질감과 리듬을 각자의 언어로 풀어냅니다. 전통과 현대가 만나는 갤러리형 연합 전시이에요.',
+    '동양화, 수묵, 섬유·도자, 패션 일러스트를 아우르는 여섯 명의 작가가 자연의 질감과 리듬을 각자의 언어로 풀어냅니다. 전통과 현대가 만나는 갤러리형 연합 전시예요.',
   'exhibition.soloCeramicTitle': '도자, 빛을 담다',
   'exhibition.soloCeramicDesc':
-    '강미란 작가의 도자 시리즈를 중심으로 한 소규모 전시이에요. 유약과 형태가 만들어내는 은은한 반사와 공간감을 강조합니다.',
+    '강미란 작가의 도자 시리즈를 중심으로 한 소규모 전시예요. 유약과 형태가 만들어내는 은은한 반사와 공간감을 강조합니다.',
   'error.title': '문제가 발생했어요',
   'error.description': '일시적인 오류가 발생했어요.\n다시 시도하거나 홈으로 돌아가 주세요.',
   'error.retry': '다시 시도',
@@ -1071,7 +1063,7 @@ Phase 1: 백그라운드 적립만(Policy §7.1). 사용자 노출 UI 없음. �
   'confirm.ok': '확인',
   'invite.fallbackPieceIndex': '{n}번 작품',
   'work.unknownArtist': '작가 미상',
-  'upload.unknownSlotHint': '초대받은 작가가 연결을 끊어 작가 미상으로 표시돼요. 이 상태로 두거나, 아래 버튼으로 다시 지정할 수 있어요.',
+  'upload.unknownSlotHint': '연결이 풀려 작가 미상으로 표시돼요. 이 상태로 두거나, 아래 버튼으로 다시 지정할 수 있어요.',
   'upload.unknownSlotReassign': '작가 다시 지정하기',
   'admin.nav.dashboard': '대시보드',
   'admin.nav.contentReview': '검수',
@@ -1106,7 +1098,7 @@ Phase 1: 백그라운드 적립만(Policy §7.1). 사용자 노출 UI 없음. �
   'admin.notice.empty': '등록된 공지가 없어요.',
   'admin.section.moderation': '모더레이션',
   'admin.section.contentOps': '콘텐츠 운영',
-  'admin.section.members': '회원',
+  'admin.section.members': '회원·커뮤니케이션',
   'admin.section.operations': '운영',
   'admin.report.memoTitleDismiss': '신고 기각',
   'admin.report.memoTitleHide': '비공개 유지',
@@ -1153,7 +1145,7 @@ Phase 1: 백그라운드 적립만(Policy §7.1). 사용자 노출 UI 없음. �
   'signup.linkSendCta': '인증 메일 보내기',
   'signup.linkSending': '발송 중…',
   'signup.linkSentTitle': '인증 메일을 보냈어요',
-  'signup.linkSentBody': '{email}으로 인증 링크를 보냈어요.',
+  'signup.linkSentBody': '{email}으로 인증 링크를 보냈어요. 메일의 버튼을 눌러 계속해 주세요. (30분 내 유효)',
   'signup.linkSentHelpTitle': '메일이 안 와요?',
   'signup.linkSentSpam': '받은편지함에 없으면 스팸함과 프로모션 탭도 확인해 주세요.',
   'signup.linkSentSenderHint': '보낸 사람에 ‘Proud Gallery’가 들어간 메일을 찾으시면 돼요.',
@@ -1165,7 +1157,7 @@ Phase 1: 백그라운드 적립만(Policy §7.1). 사용자 노출 UI 없음. �
   'signup.openMockLink': '데모: 받은 링크 열기',
   'signup.openMockLinkHint': '실서비스에선 이메일로 받은 링크를 눌러 주세요.',
   'signup.linkExpiredTitle': '인증 링크가 만료됐어요',
-  'signup.linkExpiredBody': '30분이 지난 링크이에요. 아래에서 다시 발송을 요청할 수 있어요.',
+  'signup.linkExpiredBody': '30분이 지난 링크예요. 아래에서 다시 발송을 요청할 수 있어요.',
   'signup.emailStepTitle': '이메일로 계속하기',
   'signup.emailStepDesc': '이메일 주소를 입력하시면 인증 링크를 보내드려요. 비밀번호는 따로 만들 필요 없어요.',
   'login.emailHeading': '이메일로 로그인',
@@ -1180,11 +1172,11 @@ Phase 1: 백그라운드 적립만(Policy §7.1). 사용자 노출 UI 없음. �
   'login.openMockLink': '데모: 받은 로그인 링크 열기',
   'verify.checkingTitle': '인증 중이에요…',
   'verify.successLoginTitle': '로그인이 완료되었어요',
-  'verify.successLoginBody': '잠시 후 이동합니다.',
+  'verify.successLoginBody': '잠시 후 이동해요.',
   'verify.successSignupTitle': '이메일 인증이 완료되었어요',
   'verify.successSignupBody': '프로필 정보를 입력해 가입을 마쳐주세요.',
   'verify.expiredTitle': '링크가 만료됐어요',
-  'verify.expiredBody': '30분이 지난 링크이에요.\n가입 또는 로그인을 다시 시도해 주세요.',
+  'verify.expiredBody': '30분이 지난 링크예요.\n가입 또는 로그인을 다시 시도해 주세요.',
   'verify.invalidTitle': '유효하지 않은 링크예요',
   'verify.invalidBody': '링크가 올바르지 않아요. 메일에서 다시 열어봐 주세요.',
   'verify.retrySignup': '가입 다시 시작',
@@ -1258,7 +1250,7 @@ const enMessages: Record<MessageKey, string> = {
   'demo.operatorRoleActive': 'Operator role is active for this browser.',
   'demo.sectionAdminGate': 'Operator role (admin access)',
   'demo.sectionAdminGateHint':
-    'Per spec, /admin is only accessible to the Operator role. Activate it for this browser below — admin pages open only when logged in AND operator is active. Set VITE_ADMIN_OPEN=true to bypass entirely.',
+    'Per spec, /admin is only accessible to the Operator role. Activate it for this browser below — admin pages open only when logged in AND operator is active. The CI / preview environment flag bypasses this entirely.',
   'demo.btnAdminUnlock': 'Activate operator role',
   'demo.btnAdminLock': 'Deactivate operator role',
   'demo.toastAdminUnlocked': 'Operator role activated. /admin is now accessible.',
@@ -1269,7 +1261,7 @@ const enMessages: Record<MessageKey, string> = {
   'demo.notifFollowMsg': 'Someone started following you.',
   'demo.notifGroupInviteMsg': 'You received a group invitation.',
   'demo.linkReferenceToolkit': 'PM review: JWT, email demo',
-  'refStub.title': 'Reference ❌ items — local review toolkit',
+  'refStub.title': 'Reference toolkit — local review',
   'refStub.lead':
     'Mock JWT session, email template previews, and an email trigger matrix in one place. No real token verification or mail delivery.',
   'refStub.backDemo': '← Back to flow demo',
@@ -1326,21 +1318,13 @@ const enMessages: Record<MessageKey, string> = {
   'refStub.rulesColTrigger': 'Trigger',
   'refStub.rulesColReq': 'Required / optional',
   'refStub.emailMasterBlock':
-    '1|Welcome email|After signup completes|Required\n2|Email verification|After email signup requests verification|Required\n3|Password reset|Forgot-password request|Required\n4|Password changed|After password change succeeds|Recommended\n5|Proud Gallery\'s Pick selected|Admin assigns Pick badge|Required\n6|Weekly Best selected|Admin assigns Weekly Best badge|Required\n7|Policy change notice|Terms/Privacy policy change|Legal obligation\n8|Marketing email|Events/campaigns (marketing opt-in only)|Opt-in\n9|Account suspension notice|Admin suspends account|Required\n10|Account deletion complete|After withdrawal completes|Recommended',
+    '1|Welcome email|After signup completes|Required\n2|Sign-up magic link|Right after email sign-up|Required (30-min link)\n3|Login magic link|On email login request|Required (30-min link)\n4|Proud\'s Pick selected|Admin assigns Pick badge|Required\n5|Weekly Best selected|Admin assigns Weekly Best badge|Required\n6|Policy change notice|Terms/Privacy policy change|Legal obligation\n7|Marketing email|Events/campaigns (marketing opt-in only)|Opt-in\n8|Account suspension notice|Admin suspends account|Required\n9|Account deletion complete|After withdrawal completes|Recommended',
   'flowMap.heading': 'Phase 1 user flows — screen index',
   'flowMap.intro':
     'Each block maps to the Phase 1 user-flow doc (block 15 is a PM review demo). Log in from the header for pages that require auth.',
   'flowMap.section01': `1. Sign up / login
-/login|Email & password login
-/signup|Email sign-up form
-/signup?demo=email_sent|Email verification sent (demo)
-/signup?demo=email_expired|Verification link expired (demo)
-/signup?demo=region|KR vs intl options layout (demo)
-/reset-password|Forgot password
-/reset-password?demo=link_expired|Reset link expired (demo)
-/reset-password?demo=new_password|Set new password (demo)
-/login?demo=suspended|Apply suspension (demo) — then try login
-/login?demo=clear_suspension|Clear suspension (demo)`,
+/login|Email magic-link login
+/signup|Email sign-up (magic link)`,
   'flowMap.section02': `2. Upload → exhibition
 /upload|Upload editor (login required)`,
   'flowMap.section03': `3. Browse → work detail → reactions
@@ -1372,12 +1356,12 @@ Use the buttons above to push demo notifications`,
 /onboarding|Post sign-up onboarding`,
   'flowMap.section12': `12. Non-member invite (Policy §3 v2.14 token model)
 /exhibitions/{workId}?invite={token}|Invite landing for the recipient (4 states: active / under review / revoked / expired)
-(Tokens are generated by InviteShareButton. After signup, the recipient lands on Find my work.)`,
+(Tokens are generated by the My-page "Tell a friend" button. After signup, the recipient lands on Find my work.)`,
   'flowMap.section13': `13. Events
 /events|Event list
 /events/1|Sample event detail`,
-  'flowMap.section14': `14. Points earn
-Phase 1: background earn only (Policy §7.1). No user-facing UI. Local earn hooks still run on signup, onboarding, browse, upload, etc., and the ledger keeps accumulating.`,
+  'flowMap.section14': `14. Points earn / view
+Phase 1: background earn only (PRD & user flow). Points UI and /points come after backend integration. Local earn hooks still run on signup, onboarding, browse, upload, etc.`,
   'flowMap.section15': `15. PM review — reference demo
 /demo/reference|Mock JWT, email templates, send-rule table`,
   'loginDemo.suspendReason': 'Policy violation (demo suspension)',
@@ -1507,8 +1491,8 @@ Phase 1: background earn only (Policy §7.1). No user-facing UI. Local earn hook
   'events.ctaUnsubscribe': 'Unsubscribe',
   'events.notifyToastSubscribed': 'Notifications on',
   'events.unsubscribeToastDone': 'Notifications off',
-  'events.detailNotFound': 'This contest could not be found.',
-  'events.alreadySubmitted': 'You have already submitted to this contest.',
+  'events.detailNotFound': 'This event could not be found.',
+  'events.alreadySubmitted': 'You have already submitted to this event.',
   'events.alreadySubmittedShort': 'Already participated',
   'events.viewMyEntry': 'View My Entry',
   'events.cancelEntry': 'Cancel Entry',
@@ -1523,19 +1507,19 @@ Phase 1: background earn only (Policy §7.1). No user-facing UI. Local earn hook
   'evt.entryModalSubmitting': 'Submitting…',
   'evt.entryModalCancel': 'Close',
   'evt.entrySubmittedToast': 'Your entry was received and will appear after review.',
-  'evt.errAlreadyEntered': 'You have already entered this contest.',
+  'evt.errAlreadyEntered': 'You have already entered this event.',
   'evt.errEntryImageRequired': 'Please add 1 image.',
   'evt.errEntryArtworkRequired': 'Please enter an artwork title.',
   'evt.entryHelperSinglePiece': 'Only one work (one image) per entry.',
-  'upload.eventEndedBlocked': "This contest has ended, so new entries can't be accepted.",
+  'upload.eventEndedBlocked': "This event has ended, so new entries can't be accepted.",
   'upload.eventConsentLabel': 'I agree that if selected, my work may be displayed on the results page.',
   'upload.eventConsentReadMore': 'Read more about the entry consent',
-  'upload.errEventConsentRequired': 'Please check the display retention consent to enter the contest.',
+  'upload.errEventConsentRequired': 'Please check the display retention consent to enter the event.',
   'events.detailBackLink': 'Back to events',
   'events.detailPeriod': 'Period',
   'events.detailTarget': 'Participants',
-  'events.detailGuide': 'Contest details',
-  'events.detailEnded': 'This contest has ended',
+  'events.detailGuide': 'Event details',
+  'events.detailEnded': 'This event has ended',
   'upload.errExhibitionNameRequired': 'An exhibition title is required.',
   'upload.errGroupNameRequired': 'Group exhibitions require a group or circle name.',
   'upload.errProfanityExhibitionName': 'Exhibition title contains inappropriate language. Please rephrase.',
@@ -1552,9 +1536,9 @@ Phase 1: background earn only (Policy §7.1). No user-facing UI. Local earn hook
   'upload.errCheckGroupConsent': "Please confirm you have the participating artists' consent.",
   'upload.errCheckOriginal': 'Please confirm this is your own work.',
   'upload.toastPublished':
-    'Your work has been submitted. It will be published within 24 business hours (excluding weekends and holidays). We will notify you of the result.',
+    'Your work has been submitted. We will notify you of the result.',
   'review.badgePending': 'Under Review',
-  'review.badgePendingHint': 'Under review. Usually published within 24 business hours (excluding weekends and holidays).',
+  'review.badgePendingHint': "Under review. We'll notify you of the result.",
   'review.badgePendingHintForParticipant': "This exhibition is under review. Once approved, others will see it too.",
   'review.notifApprovedForParticipant': "'{title}' that you joined has been published. You can find it in the Browse feed.",
   'review.badgeRejected': 'Needs Edit',
@@ -1592,10 +1576,10 @@ Phase 1: background earn only (Policy §7.1). No user-facing UI. Local earn hook
   'report.notifTargetWorkRestored': 'Your exhibition \'{title}\' has been restored following review.',
   'report.notifReporterDismissed': 'Your report was dismissed after review.',
   'review.notifNewWork': 'has posted a new exhibition',
-  'upload.toastPublishedImmediate': 'Exhibited and shown on Browse immediately. (auto-approve mode)',
+  'upload.toastPublishedImmediate': 'Exhibited and shown on Browse immediately.',
   'upload.toastDraftSaved': 'Draft saved.',
   'upload.toastOrderSaved': 'Order saved.',
-  'upload.confirmStudent': 'I confirm consent to upload students’ work',
+  'upload.confirmStudent': 'I confirm consent from all participating artists',
   'upload.confirmOriginal': 'I confirm this is my own original work',
   'upload.consentCurationLabel': "I agree that my work may be featured on related pages if selected for Proud’s Pick or a curated exhibition.",
   'upload.cardDone': 'Done',
@@ -1721,13 +1705,13 @@ Phase 1: background earn only (Policy §7.1). No user-facing UI. Local earn hook
   'upload.errMinShortSide800': 'Image is too small. Please use a larger image. (min 800×800px)',
   'upload.toastImageReplaced': 'The image has been replaced.',
   'upload.errMissingArtistAt': 'Image {positions} is missing an artist assignment.',
-  'upload.errGroupNeedsTwoArtists': 'Group exhibitions need at least 2 artists total. Please add your own work or more participating artists.',
-  'upload.errDuplicateEvent': 'You already have a submission for this contest.',
+  'upload.errGroupNeedsTwoArtists': 'Group exhibitions need at least 2 artists. Please add your own work or more participating artists.',
+  'upload.errDuplicateEvent': 'You already have a submission for this event.',
   'upload.errWorkNotFound': 'The work you are trying to edit could not be found.',
   'upload.publishedConfirmTitle': 'Your exhibition has been submitted',
   'upload.publishedConfirmTitleApproved': 'Your exhibition is live',
   'upload.publishedConfirmTitleResubmit': 'Resubmitted for review',
-  'upload.publishedConfirmDescPending': 'Under review. We\'ll notify you of the result within 1~24 hours. Once approved, it appears on Browse and Search.',
+  'upload.publishedConfirmDescPending': "Under review. We'll notify you of the result. Once approved, it appears on Browse and Search.",
   'upload.publishedConfirmDescApproved': 'Your exhibition is now live on Browse.',
   'upload.publishedConfirmDescResubmit': 'Your edits have been submitted for review. We\'ll notify you of the result.',
   'upload.nonMemberPreviewTitle': 'Before Publishing',
@@ -1738,7 +1722,7 @@ Phase 1: background earn only (Policy §7.1). No user-facing UI. Local earn hook
   'upload.nonMemberPreviewBack': 'Back to editing',
   'upload.nonMemberPreviewConfirm': 'Confirm & Publish',
   'upload.publishedConfirmInviteNote': 'Send the link to non-member artists yourself via KakaoTalk or text. You can do it right now.',
-  'upload.publishedConfirmSlaNote': 'Review usually takes 1~24 hours. Results (approval or rejection) are delivered via the Notifications center and your registered channel.',
+  'upload.publishedConfirmSlaNote': 'Results (approval or rejection) are delivered via the Notifications center and your registered channel.',
   'upload.publishedConfirmGoProfile': 'View my exhibitions',
   'upload.publishedConfirmGoBrowse': 'Browse',
   'upload.existingDraftNotice': 'You have a saved draft.',
@@ -1785,7 +1769,7 @@ Phase 1: background earn only (Policy §7.1). No user-facing UI. Local earn hook
   'notifications.categoryGroupInvite': 'Group invites',
   'notifications.categoryCuration': 'Curation',
   'notifications.categoryPick': 'Pick',
-  'notifications.categoryEvent': 'Contests',
+  'notifications.categoryEvent': 'Events',
   'notifications.categoryInvite': 'Invite',
   'notifications.categorySystem': 'System',
   'notifications.settingsLink': 'Notification settings',
@@ -1860,7 +1844,7 @@ Phase 1: background earn only (Policy §7.1). No user-facing UI. Local earn hook
     'To protect copyright, camera photos (with camera metadata in EXIF) may be blocked. Please upload work you created digitally.',
   'faq.q6': 'Can I edit or delete a work?',
   'faq.a6':
-    'Open Profile → Works and use the ⋯ menu on a work to edit or delete. Setting a work to private hides it from the feed only.',
+    'Open Profile → Works and use the ⋯ menu on a work to edit or delete it.',
   'faq.q7': 'How do I create a group exhibition?',
   'faq.a7':
     "When uploading, choose 'Together' to set a group name and add participating artists one by one. Search by name for existing members; for non-members, just enter their name to reserve a spot — once your exhibition is approved, you can send them an invite link directly.",
@@ -1869,12 +1853,12 @@ Phase 1: background earn only (Policy §7.1). No user-facing UI. Local earn hook
     'Our team selects outstanding works each week and awards a badge. Picked works appear higher in the feed and artists get a notification.',
   'faq.q9': 'I found inappropriate content.',
   'faq.a9':
-    'Use the report button (flag) on the work detail screen. We review reports within 24 business hours.',
+    'Use the report button (flag) on the work detail screen. Our team will review it.',
   'faq.q10': 'Is there a fee?',
   'faq.a10': 'All features of {brand} are currently free to use.',
   'faq.q11': 'How do I invite non-member friends to my group exhibition?',
   'faq.a11':
-    "Once your exhibition passes review, the 'Tell a friend' button on your My page becomes active. Send the link to friends through KakaoTalk, SMS, email, or any channel you usually use — we don't send it for you.",
+    "As soon as you publish, the 'Tell a friend' button appears on your exhibition card. From the review-pending stage, share the link with your friends through KakaoTalk, SMS, email, or any channel you usually use. After signing up, friends can claim their own slot, and the exhibition becomes public automatically once review passes — we don't send the link for you.",
   'faq.q12': "My friend signed up but their work isn't linked.",
   'faq.a12':
     "Right after signup, your friend has to tap their own work card on the 'Find my work' screen for the link to happen. They may have skipped it, or tapped someone else's spot by mistake. Please ask them to check.",
@@ -1885,7 +1869,7 @@ Phase 1: background earn only (Policy §7.1). No user-facing UI. Local earn hook
   'faq.a14':
     "Invite links are valid for 90 days from issue. If your friend hasn't signed up by then, the link expires and you can create a new one from My page. While the exhibition is under review or rejected, the link is temporarily inactive — once re-approved, it becomes active again automatically.",
   'meta.ogDescription':
-    'Discover and exhibit digital drawing and art online. Group shows, Proud Gallery\'s Pick, and events in one place.',
+    'Discover and exhibit digital drawing and art online. Group shows, Proud\'s Pick, and events in one place.',
   'contact.title': 'Contact us',
   'contact.leadBeforeFaq': 'If you have questions, send them using the form below. Check the ',
   'contact.leadAfterFaq': ' first for faster answers.',
@@ -1946,8 +1930,8 @@ Phase 1: background earn only (Policy §7.1). No user-facing UI. Local earn hook
   'workDetail.shareTitle': 'Exhibition invitation from {artist}',
   'workDetail.report': 'Report',
   'workDetail.more': 'More',
-  'workDetail.askAboutWork': 'Inquiry',
-  'workInquiry.title': 'Inquiry',
+  'workDetail.askAboutWork': 'Ask about this work',
+  'workInquiry.title': 'Ask about this work',
   'workInquiry.lead': 'Our team will respond within 5 business days. The artist is not contacted directly.',
   'workInquiry.catPurchase': 'Purchase / Acquisition',
   'workInquiry.catPurchaseHint': 'Can I buy or own this work?',
@@ -2043,7 +2027,7 @@ Phase 1: background earn only (Policy §7.1). No user-facing UI. Local earn hook
   'profile.deletedUser': 'Unknown artist',
   'profile.notFound': 'This profile does not exist.',
   'profile.withdrawnTitle': 'Artist has left',
-  'profile.withdrawnDesc': 'This artist has left Proud Gallery. Their past works are still viewable on Browse under "Anonymous artist".',
+  'profile.withdrawnDesc': 'This artist has left Proud Gallery.',
   'profile.formDisplayName': 'Display name',
   'profile.formDisplayNamePh': 'Enter your name',
   'profile.formHeadline': 'Headline',
@@ -2102,14 +2086,14 @@ Phase 1: background earn only (Policy §7.1). No user-facing UI. Local earn hook
   'profile.filterGroup': 'Group',
   'profile.filterOnlyMine': 'Uploaded by me only',
   'profile.publishedBannerTitle': 'Your exhibition is published — visible only to you for now',
-  'profile.publishedBannerDesc': 'Our team reviews within 24 hours before it appears on Browse. Watch the status badge; you\u2019ll get a notification when it goes public.',
+  'profile.publishedBannerDesc': "Our team will review before it appears on Browse. Watch the status badge; you'll get a notification when it goes public.",
   'profile.publishedBannerDismiss': 'Dismiss',
   'profile.uploaderLabel': 'Publisher',
-  'profile.deleteWorkConfirm': 'Delete exhibition “{title}”?',
-  'profile.deleteWorkPermanent': 'This exhibition will be permanently deleted and cannot be recovered.',
-  'profile.deleteWorkHasPendingInvites': 'Non-member artists have been invited to this exhibition. Deleting will invalidate their invitations.',
-  'profile.deleteWorkActiveCuration': 'This exhibition is currently featured in an active Pick / Curation. Deleting it will also remove it from the announcement.',
-  'profile.toastWorkDeleted': 'Exhibition has been deleted.',
+  'profile.deleteWorkConfirm': 'Delete “{title}”?',
+  'profile.deleteWorkPermanent': 'This work will be permanently deleted and cannot be recovered.',
+  'profile.deleteWorkHasPendingInvites': 'Non-member artists have been invited to this work. Deleting will invalidate their invitations.',
+  'profile.deleteWorkActiveCuration': 'This work is currently featured in an active Pick / Curation. Deleting it will also remove it from the announcement.',
+  'profile.toastWorkDeleted': 'Work has been deleted.',
   'profile.toastDraftDeleted': 'Draft has been deleted.',
   'profile.errEmptyTitle': 'Please enter a title.',
   'profile.changePhoto': 'Change profile photo',
