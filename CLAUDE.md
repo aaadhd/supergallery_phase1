@@ -1,4 +1,20 @@
+# CLAUDE.md
+
+This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
+
 # Artier (SuperGallery Phase 1)
+
+## 명령어
+
+```bash
+npm run dev          # 개발 서버 (localhost:5173)
+npm run build        # 프로덕션 빌드 → dist/
+npm run preview      # 빌드 결과물 로컬 미리보기
+npm run gallery:manifest  # public/images 변경 후 로컬 갤러리 매니페스트 재생성
+npm run ui:add       # shadcn/ui 컴포넌트 추가
+```
+
+테스트 프레임워크 미설정. TypeScript 타입 검사만: `npx tsc --noEmit`
 
 ## 프로젝트 개요
 시니어/중장년 순수미술 작가를 위한 웹 기반 디지털 갤러리 플랫폼.
@@ -64,6 +80,40 @@ PM 결정이 영향을 받는 작업(카피 작성·정책 정정·기획 변경
 - Push 대기 상태에서 **한 파일에 여러 버전 행 추가** (v1.9 + v2.0 같이)
 - 문서 수정 없이 코드만 수정한 PR / 코드 수정 없이 문서만 수정한 PR (정책·버그픽스 제외)
 - `_planning/*.md` 문서 내부에 **개발 코드 경로·라인 넘버 참조** (문서 단독 재현성 보장). 계약 이름(스토어·컴포넌트)은 허용.
+
+## 아키텍처
+
+### 앱 셸 계층
+
+```
+src/main.tsx
+  └─ App.tsx          ThemeProvider · I18nProvider · ConfirmDialogRoot · Toaster
+     └─ AppRootShell  페이지 전환 fade(150ms) · QaScreenShortcuts 플로팅 버튼
+        └─ Layout     Header · Footer · 계정 정지 가드 · 페이지 타이틀 동기화
+           └─ pages/  Browse, Upload, Profile, ...
+        └─ (Layout 밖) /onboarding · /login · /signup · /auth/verify · /maintenance
+        └─ /admin/*   AdminLayout · AdminDashboard · ...
+```
+
+경로 alias: `@` → `src/` (`vite.config.ts`).
+
+### 상태 관리 패턴
+
+`store.ts`의 스토어들은 Zustand/Redux 없이 클로저 + 구독자 배열로 구현된다. 상태 변경 시 두 채널로 알린다:
+
+1. **내부 구독자**: `listeners.forEach(l => l())` — 같은 탭 내 React 훅
+2. **커스텀 이벤트**: `window.dispatchEvent(new Event('artier-*'))` — 다른 스토어·컴포넌트 크로스 탭
+
+주요 이벤트: `artier-works-changed` · `artier-curation-changed` · `artier-events-changed` · `artier-locale`
+
+### 이미지 이중 저장소
+
+업로드된 이미지는 용량에 따라 자동 분리된다(`utils/workMediaIdb.ts`):
+
+- **소형**: `Work.image[]`에 data URL 직접 저장 (localStorage)
+- **대형** (data:/blob: 또는 120KB 초과): IndexedDB `artier_work_media` → `blobs` 스토어로 offload. `localStorage`의 `Work.image[]`에는 `__artier_media__|<workId>|<slot>` 포인터만 남음.
+
+이미지를 렌더링할 때 `imageUrls[i] || work.image[i]` 패턴으로 IDB에서 hydrate된 URL을 우선 사용한다.
 
 ## 주요 파일
 
@@ -184,13 +234,13 @@ Phase 1은 **작품 단위 모더레이션만** 다룬다. 사용자 계정 차�
 - **핵심 앱 상태 (`store.ts`)**: `artier_works_version`, `artier_works`, `artier_drafts`, `artier_profile`, `artier_interactions`, `artier_auth`, `artier_follows`, `artier_account_suspension`, `artier_withdrawn_artists`, `artier_demo_last_withdraw_reason`
 - **작품·피드·알림**: `artier_curation_v1`, `artier_feed_seen_work_ids`, `artier_notifications`, `artier_notification_settings`
 - **배너·이벤트·어드민**: `artier_admin_banners_v3`, `artier_managed_events_v4`, `artier_event_subscriptions`, `artier_admin_members_v1`, `artier_admin_picks_v1`, `artier_admin_audit_log_v1` (운영자 감사 로그 — 런칭 전 백엔드 이관 후 서버 테이블로 재출발)
-- **초대·포인트·신고·기타**: `artier_invite_tokens_v1` (전시 단위 1개, 90일 TTL), `artier_points_ledger`, `artier_points_state`, `artier_work_publish_times`, `artier_pp_balance`, `artier_artist_follower_delta`, `artier_reports`, `artier_report_hidden_v2`, `artier_report_signatures_v1`, `artier_reported_works`, `artier_reported_artists`, `artier_warning_counter_v1`, `artier_false_report_counter_v1`, `artier_social_signed_up__<provider>` (kakao/google/apple), `artier_pending_signup_nickname`·`artier_pending_signup_email`·`artier_pending_social_signup` (Signup/소셜 가입 → Onboarding 프리필 핸드오프, 온보딩 종료 시 정리), `artier_registered_emails_v1`·`artier_registered_phones_v1` (중복 가입 차단, `utils/registeredAccounts.ts`), `artier_last_group_name`, `artier_my_group_names`, `artier_inquiries`
+- **초대·포인트·신고·기타**: `artier_invite_tokens_v1` (전시 단위 1개, 90일 TTL), `artier_points_ledger`, `artier_points_state`, `artier_work_publish_times`, `artier_pp_balance`, `artier_artist_follower_delta`, `artier_reports`, `artier_report_hidden_v2`, `artier_report_signatures_v1`, `artier_reported_works`, `artier_reported_artists`, `artier_social_signed_up__<provider>` (kakao/google/apple), `artier_pending_signup_nickname`·`artier_pending_signup_email`·`artier_pending_social_signup` (Signup/소셜 가입 → Onboarding 프리필 핸드오프, 온보딩 종료 시 정리), `artier_registered_emails_v1`·`artier_registered_phones_v1` (중복 가입 차단, `utils/registeredAccounts.ts`), `artier_last_group_name`, `artier_my_group_names`, `artier_inquiries`
 - **UX·데모**: `artier_locale`, `artier_font_scale`, `artier_cookie_consent`, `artier_onboarding_done`, `artier_splash_seen`, `artier_mock_jwt_session`, `artier_admin_session_v1` (`adminGate`), `artier_recent_searches__guest`, `artier_recent_searches__<slug>` (`Search.tsx`)
 - **sessionStorage** (별도): 접두 `artier_scroll_` + 논리 키 — 스크롤 복원 (`src/app/utils/scrollRestore.ts`). `artier_pending_invite_token` — 초대 링크 랜딩 → 가입 → 온보딩 "본인 작품 찾기" 핸드오프 (가입 종료 시 정리).
 - **Deprecated (부팅 시 제거)**: `artier_instructor_public_ids`, `artier_pin_comments`, `artier_upload_guide_seen`, `artier_group_canonical_map`, `artier_signup_region`, `artier_pending_signup_realname`, `artier_pending_sms_invite`, `artier_pending_signup_phone`, `artier_invite_messaging_log`, `artier_invite_match_log`, `artier_invite_decline_log`, `artier_admin_issues`, `artier_admin_checklist` — `PointsBootstrap` 마운트 시 `LEGACY_STORAGE_KEYS`로 일괄 정리. sessionStorage `artier_pending_invite_claims`·`artier_geo_demo_cache` — `LEGACY_SESSION_KEYS`로 동일 시점 정리.
 
 ### 기타
-- **버전 관리**: `WORKS_STORAGE_VERSION` (`local-gallery-v16`) 변경 시 works 데이터 자동 재시드
+- **버전 관리**: `WORKS_STORAGE_VERSION` (`local-gallery-v18`) 변경 시 works 데이터 자동 재시드
 - **이벤트 데이터**: `eventStore.ts` 단일 소스 + `artier_managed_events_v4` 영속화. 이벤트·공지 메일 구독은 `eventSubscriptionStore.ts` + `artier_event_subscriptions`.
 - **포인트 회수**: 업로드 후 24시간 이내 삭제 시 AP -20 (`pointsBackground.ts`)
 
