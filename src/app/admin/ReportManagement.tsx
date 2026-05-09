@@ -278,13 +278,10 @@ export default function ReportManagement() {
     workStore.removeWork(workId);
     updateUserReport(reportId, { adminStatus: 'deleted' });
 
-    // 작가에게 삭제 알림 + 사유 변수
     const reasonLabel = t(`report.deleteReason.${deleteReason}` as never);
     pushDemoNotification({
       type: 'system',
-      message: t('report.notifTargetWorkDeleted')
-        .replace('{title}', targetName)
-        .replace('{reason}', reasonLabel),
+      message: t('report.notifTargetWorkDeleted').replace('{title}', targetName),
     });
     toast.success(t('admin.report.toastDeleted').replace('{reason}', reasonLabel));
     setDeleteDialog(null);
@@ -319,17 +316,13 @@ export default function ReportManagement() {
       actorId: 'admin',
       actorRole: 'admin',
     });
-    pushDemoNotification({
-      type: 'system',
-      message: t('report.notifReporterDismissed'),
-    });
     if (raw.targetType === 'work' && raw.targetId) {
       const restored = maybeRestoreAfterDismiss(raw.targetId);
       if (restored) {
         activateInviteToken(raw.targetId);
         pushDemoNotification({
           type: 'system',
-          message: `'${raw.targetName}' 전시가 검토 결과 정상 복원되었습니다.`,
+          message: t('report.notifTargetWorkRestored').replace('{title}', raw.targetName),
           workId: raw.targetId,
         });
         toast.message(t('admin.report.toastDismissedRestored'));

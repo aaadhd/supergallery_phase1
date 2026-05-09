@@ -5,7 +5,7 @@ import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
 import { Button } from '../components/ui/button';
 
-type FaqCat = 'all' | 'account' | 'upload' | 'exhibition' | 'other';
+type FaqCat = 'all' | 'account' | 'upload' | 'exhibition' | 'invite' | 'other';
 
 type FaqRowDef = {
   cat: Exclude<FaqCat, 'all'>;
@@ -22,10 +22,10 @@ const FAQ_ROWS: FaqRowDef[] = [
   { cat: 'upload', q: 'faq.q6', a: 'faq.a6' },
   { cat: 'exhibition', q: 'faq.q7', a: 'faq.a7' },
   { cat: 'exhibition', q: 'faq.q8', a: 'faq.a8' },
-  { cat: 'exhibition', q: 'faq.q11', a: 'faq.a11' },
-  { cat: 'exhibition', q: 'faq.q12', a: 'faq.a12' },
-  { cat: 'exhibition', q: 'faq.q13', a: 'faq.a13' },
-  { cat: 'exhibition', q: 'faq.q14', a: 'faq.a14' },
+  { cat: 'invite', q: 'faq.q11', a: 'faq.a11' },
+  { cat: 'invite', q: 'faq.q12', a: 'faq.a12' },
+  { cat: 'invite', q: 'faq.q13', a: 'faq.a13' },
+  { cat: 'invite', q: 'faq.q14', a: 'faq.a14' },
   { cat: 'other', q: 'faq.q9', a: 'faq.a9' },
   { cat: 'other', q: 'faq.q10', a: 'faq.a10' },
 ];
@@ -35,6 +35,7 @@ const CAT_LABEL_KEYS: { id: FaqCat; labelKey: MessageKey }[] = [
   { id: 'account', labelKey: 'faq.catAccount' },
   { id: 'upload', labelKey: 'faq.catUpload' },
   { id: 'exhibition', labelKey: 'faq.catExhibition' },
+  { id: 'invite', labelKey: 'faq.catInvite' },
   { id: 'other', labelKey: 'faq.catOther' },
 ];
 
@@ -42,6 +43,7 @@ const CAT_KEY_FOR_ROW: Record<FaqRowDef['cat'], MessageKey> = {
   account: 'faq.catAccount',
   upload: 'faq.catUpload',
   exhibition: 'faq.catExhibition',
+  invite: 'faq.catInvite',
   other: 'faq.catOther',
 };
 

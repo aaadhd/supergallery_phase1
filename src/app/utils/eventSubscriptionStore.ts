@@ -1,65 +1,40 @@
 /**
- * 이벤트·공지 메일 구독 목록 (Phase 1: 단말 전역 1목록, 이벤트별 분리 없음).
- * 키는 CLAUDE.md `artier_event_subscriptions`와 동일.
+ * 응모전 알림 구독 여부 (계정 단위 boolean).
+ * 가입 이메일을 자동 사용하므로 별도 이메일 입력·목록 없음.
+ * Phase 1: 로컬 플래그. 백엔드 연동 후 서버 저장으로 전환.
  */
 
-const STORAGE_KEY = 'artier_event_subscriptions';
-const CHANGED = 'artier-event-subscriptions-changed';
+import { useState, useEffect } from 'react';
 
-function normalizeEmail(raw: string): string {
-  return raw.trim().toLowerCase();
-}
+const STORAGE_KEY = 'artier_event_subscription';
+const CHANGED = 'artier-event-subscription-changed';
 
-function isValidEmail(s: string): boolean {
-  return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(s);
-}
-
-function readList(): string[] {
-  if (typeof window === 'undefined') return [];
+export function isEventSubscribed(): boolean {
   try {
-    const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const parsed = JSON.parse(raw) as unknown;
-    if (!Array.isArray(parsed)) return [];
-    return parsed.filter((x): x is string => typeof x === 'string').map((e) => e.toLowerCase());
+    return localStorage.getItem(STORAGE_KEY) === 'true';
   } catch {
-    return [];
+    return false;
   }
 }
 
-function writeList(emails: string[]): void {
-  if (typeof window === 'undefined') return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(emails));
+export function setEventSubscribed(value: boolean): void {
+  localStorage.setItem(STORAGE_KEY, value ? 'true' : 'false');
   window.dispatchEvent(new Event(CHANGED));
 }
 
-/**
- * @returns ok — duplicate true if 이미 구독된 주소
- */
-export function addEventEmailSubscription(
-  raw: string,
-): { ok: true; duplicate: boolean } | { ok: false; reason: 'empty' | 'invalid' } {
-  const trimmed = raw.trim();
-  if (!trimmed) return { ok: false, reason: 'empty' };
-  const email = normalizeEmail(trimmed);
-  if (!isValidEmail(email)) return { ok: false, reason: 'invalid' };
-  const list = readList();
-  if (list.includes(email)) return { ok: true, duplicate: true };
-  writeList([...list, email]);
-  return { ok: true, duplicate: false };
-}
+export function useEventSubscription(): [boolean, (v: boolean) => void] {
+  const [subscribed, setSubscribed] = useState(isEventSubscribed);
 
-/** 목록에서 제거했으면 true */
-export function removeEventEmailSubscription(raw: string): boolean {
-  const email = normalizeEmail(raw);
-  if (!email || !isValidEmail(email)) return false;
-  const list = readList();
-  const next = list.filter((e) => e !== email);
-  if (next.length === list.length) return false;
-  writeList(next);
-  return true;
-}
+  useEffect(() => {
+    const handler = () => setSubscribed(isEventSubscribed());
+    window.addEventListener(CHANGED, handler);
+    return () => window.removeEventListener(CHANGED, handler);
+  }, []);
 
-export function getEventEmailSubscriptions(): string[] {
-  return readList();
+  const toggle = (v: boolean) => {
+    setEventSubscribed(v);
+    setSubscribed(v);
+  };
+
+  return [subscribed, toggle];
 }

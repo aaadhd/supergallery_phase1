@@ -171,6 +171,9 @@ export default function Upload() {
   const [reorderMode, setReorderMode] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
+  // USR-UPL-08: 비회원 슬롯 발행 전 확인 모달 (Policy §3 v2.14)
+  const [nonMemberPreviewModal, setNonMemberPreviewModal] = useState<string[] | null>(null);
+  const nonMemberModalConfirmed = useRef(false);
   const [publishedResult, setPublishedResult] = useState<{ workId: string; autoApproved: boolean; hasNonMemberInvites: boolean; resubmittedFromRejected?: boolean } | null>(null);
   /* dragIndex 삭제됨 — @dnd-kit이 드래그 상태를 자체 관리 */
   /* hoveredBlockId 삭제됨 — 툴바를 항상 노출하므로 호버 추적 불필요 */
@@ -593,13 +596,26 @@ export default function Upload() {
           (c) => c.artistType === 'member' && c.artist?.id === selfId,
         );
         if (hasSelf) {
-          // 게시자 본인 작품만 있음 → 개인 전시 전환 제안
+          // 게시자 본인 작품만 있음 → 개인 전시 전환 제안 (신규·편집 공통 카피)
           const switchToSolo = await openConfirm({
             title: t('upload.soloSuggestionTitle'),
             description: t('upload.soloSuggestionDesc'),
             confirmLabel: t('upload.soloSuggestionConfirm'),
           });
           if (switchToSolo) {
+            // 편집 모드: 제거되는 회원 참여 작가에게 시스템 알림 (Policy §13.6.1)
+            if (editingWorkId) {
+              const currentSelfId = artists[0]?.id;
+              const title = exhibitionName || t('work.untitled');
+              imageContents.forEach((c) => {
+                if (c.artistType === 'member' && c.artist?.id && c.artist.id !== currentSelfId) {
+                  pushDemoNotification({
+                    type: 'system',
+                    message: t('notif.removedFromGroupExhibition').replace('{title}', title),
+                  });
+                }
+              });
+            }
             setUploadType('solo');
             setGroupName('');
             setContents((prev) => prev.map((p) => ({ ...p, artist: undefined, nonMemberArtist: undefined, artistType: undefined })));
@@ -695,6 +711,18 @@ export default function Upload() {
 
     // 이벤트 응모는 USR-EVT-04 응모 모달 단일 진입점 (Policy §25.2).
     // USR-UPL-02 일반 업로드 경로에서는 이벤트 연결을 받지 않음.
+
+    // USR-UPL-08: 비회원 슬롯이 있으면 발행 전 확인 모달 인터셉트 (Policy §3 v2.14).
+    if (!nonMemberModalConfirmed.current) {
+      const nonMemberNames = contents
+        .filter((c) => c.artistType === 'non-member' && (c.nonMemberArtist?.displayName ?? '').trim().length > 0)
+        .map((c) => c.nonMemberArtist!.displayName);
+      if (nonMemberNames.length > 0) {
+        setNonMemberPreviewModal(nonMemberNames);
+        return;
+      }
+    }
+    nonMemberModalConfirmed.current = false;
 
     setIsPublishing(true);
     const targetId = editingWorkId || newWork.id;
@@ -799,6 +827,9 @@ export default function Upload() {
       if (autoApprove) {
         activateInviteToken(targetWorkId);
       }
+    } else if (editingWorkId) {
+      // 편집으로 비회원 슬롯이 0개가 되면 기존 토큰 영구 무효화 (Policy §3 — "비회원 자리 0 시 취소")
+      import('../utils/inviteTokenStore').then(({ revokeInviteToken }) => revokeInviteToken(editingWorkId));
     }
 
     /**
@@ -822,9 +853,9 @@ export default function Upload() {
         const notifTitle = newWork.exhibitionName || newWork.title || t('work.untitled');
         memberIds.forEach((memberId) => {
           const memberArtist = artists.find((a) => a.id === memberId);
-          // PRD USR-NTF-01 §1 — 그룹 초대 카테고리. 회원 슬롯 직접 지정 시 발송.
+          // PRD USR-NTF-01 §1 — 그룹 전시 발행 완료 시 참여 작가에게 발송.
           pushDemoNotification({
-            type: 'groupInvite',
+            type: 'system',
             message: t('notif.workPublished').replace('{title}', notifTitle),
             workId: newWork.id,
             fromUser: memberArtist
@@ -875,15 +906,7 @@ export default function Upload() {
       publishedRef.current = true;
       const autoApproved = !import.meta.env.PROD && import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true';
       const wasRejectedResubmit = Boolean(editDiff && editDiff.originalStatus === 'rejected');
-      // 검수 진행 가시성 — 발행 즉시 본인 알림 1건 (auto-approve 환경은 별도 검수 단계가 없으므로 제외).
-      // Policy §12.2.1 SLA 24시간(영업일) 안내는 Profile 검수 대기 배지 tooltip + publishedConfirmDesc 카피로 보강.
-      if (!autoApproved && !wasEditingExistingWork) {
-        pushDemoNotification({
-          type: 'system',
-          message: t('review.notifSubmitted').replace('{title}', newWork.exhibitionName || newWork.title || ''),
-          workId: targetId,
-        });
-      }
+      // Policy §12.2.1 SLA 안내는 Profile 검수 대기 배지 tooltip + publishedConfirmDesc 카피로 충분.
       if (wasEditingExistingWork && !wasRejectedResubmit) {
         // 일반 편집(approved/pending 메타-only)은 기존대로 토스트 + 프로필 복귀
         navigate('/me?tab=exhibition');
@@ -1006,7 +1029,7 @@ export default function Upload() {
       );
       const hasTwoArtists = hasImages && assignedIds.size >= 2;
       const allAssigned = hasImages && validContents.every(
-        (c) => c.artist || !!c.nonMemberArtist?.displayName,
+        (c) => c.artistType === 'unknown' || c.artist || !!c.nonMemberArtist?.displayName,
       );
       items.push({ key: 'twoArtists', label: t('upload.blockerTwoArtists'), done: hasTwoArtists, disabled: !hasImages });
       items.push({ key: 'artist', label: t('upload.blockerArtist'), done: allAssigned, disabled: !hasImages });
@@ -1119,6 +1142,61 @@ export default function Upload() {
           isPreview
         />
       </>
+    );
+  }
+
+  // USR-UPL-08: 비회원 슬롯 발행 전 확인 모달
+  if (nonMemberPreviewModal !== null) {
+    return (
+      <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/45 px-4">
+        <div className="bg-white rounded-2xl shadow-2xl max-w-md w-full p-7">
+          <h2 className="text-lg font-bold text-foreground mb-1.5">{t('upload.nonMemberPreviewTitle')}</h2>
+          <p className="text-sm text-muted-foreground mb-5">{t('upload.nonMemberPreviewSubtitle')}</p>
+
+          <div className="bg-muted/40 rounded-xl p-4 mb-4">
+            <p className="text-xs font-semibold text-muted-foreground mb-3">
+              {t('upload.nonMemberPreviewListLabel').replace('{n}', String(nonMemberPreviewModal.length))}
+            </p>
+            <div className="flex flex-col gap-2.5">
+              {nonMemberPreviewModal.map((name, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <div className="w-7 h-7 rounded-full bg-muted flex items-center justify-center text-muted-foreground text-xs shrink-0">👤</div>
+                  <div>
+                    <p className="text-sm font-semibold text-foreground">{name}</p>
+                    <p className="text-xs text-muted-foreground">{t('upload.nonMemberPreviewSlotHint')}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          <div className="bg-blue-50 border border-blue-200 rounded-lg p-3.5 mb-6 text-sm text-blue-800 leading-relaxed">
+            📬 {t('upload.nonMemberPreviewInfo')}
+          </div>
+
+          <div className="flex gap-3">
+            <Button
+              type="button"
+              variant="outline"
+              className="flex-1 min-h-[44px] text-sm"
+              onClick={() => setNonMemberPreviewModal(null)}
+            >
+              {t('upload.nonMemberPreviewBack')}
+            </Button>
+            <Button
+              type="button"
+              className="flex-[1.3] min-h-[44px] text-sm font-semibold"
+              onClick={() => {
+                nonMemberModalConfirmed.current = true;
+                setNonMemberPreviewModal(null);
+                handlePublish();
+              }}
+            >
+              {t('upload.nonMemberPreviewConfirm')}
+            </Button>
+          </div>
+        </div>
+      </div>
     );
   }
 
@@ -1794,7 +1872,7 @@ export default function Upload() {
                                       <img src={sc.artist.avatar} alt={sc.artist.name} className="h-10 w-10 rounded-full object-cover border border-white shadow-sm" />
                                       <span className="text-sm font-bold text-foreground">{sc.artist.name}</span>
                                     </div>
-                                    <Button size="icon" variant="ghost" aria-label={t('upload.close')} onClick={() => setContents(contents.map(c => c.id === selectedContentId ? { ...c, artist: undefined, artistType: undefined } : c))} className="text-muted-foreground min-h-[44px] min-w-[44px] h-11 w-11 rounded-full hover:bg-white/50"><X className="h-4 w-4" /></Button>
+                                    <Button size="icon" variant="ghost" aria-label={t('upload.close')} onClick={() => setContents(contents.map(c => c.id === selectedContentId ? { ...c, artist: undefined, artistType: editingWorkId ? 'unknown' : undefined } : c))} className="text-muted-foreground min-h-[44px] min-w-[44px] h-11 w-11 rounded-full hover:bg-white/50"><X className="h-4 w-4" /></Button>
                                   </div>
                                 ) : (
                                   <div className="relative">

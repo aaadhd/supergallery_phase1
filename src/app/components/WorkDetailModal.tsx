@@ -428,16 +428,15 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
               )}
               <div className="flex flex-col gap-0.5 min-w-0">
                 <h2 className="text-zinc-900 text-base sm:text-lg font-extrabold leading-tight truncate">{headline}</h2>
-                {isGroupWork ? (
-                  <span className="text-zinc-500 text-sm">
-                    {work.groupName?.trim() || groupOrgLine || displayArtistName}
-                  </span>
-                ) : (
-                  <span
-                    className="text-zinc-600 font-medium text-sm cursor-pointer lg:hover:text-zinc-900 lg:hover:underline transition-colors"
-                    onClick={() => handleArtistClick(work.artist.id)}
-                  >
-                    {displayArtistName}
+                <span
+                  className="text-zinc-600 font-medium text-sm cursor-pointer lg:hover:text-zinc-900 lg:hover:underline transition-colors"
+                  onClick={() => handleArtistClick(uploaderArtist.id)}
+                >
+                  {uploaderName}
+                </span>
+                {isGroupWork && (work.groupName?.trim() || groupOrgLine) && (
+                  <span className="text-zinc-400 text-xs truncate">
+                    {work.groupName?.trim() || groupOrgLine}
                   </span>
                 )}
               </div>

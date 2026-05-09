@@ -233,7 +233,7 @@ export default function Notifications() {
   }, [navigate]);
 
   const [notifications, setNotifications] = useState<Notification[]>(loadNotifications);
-  const [readFilter, setReadFilter] = useState<'all' | 'unread'>('all');
+  const [typeFilter, setTypeFilter] = useState<'all' | 'like' | 'follow' | 'groupInvite' | 'curation' | 'event' | 'system'>('all');
   const [prefs, setPrefs] = useState<NotificationSettingsState>(() => loadNotificationSettings());
 
   useEffect(() => {
@@ -257,10 +257,15 @@ export default function Notifications() {
   }, []);
 
   const filtered = useMemo(() => {
-    let list = notifications;
-    if (readFilter === 'unread') list = list.filter((n) => !n.read);
-    return list.filter((n) => passesPrefs(n, prefs));
-  }, [notifications, readFilter, prefs]);
+    let list = notifications.filter((n) => passesPrefs(n, prefs));
+    if (typeFilter === 'like') list = list.filter((n) => n.type === 'like');
+    else if (typeFilter === 'follow') list = list.filter((n) => n.type === 'follow');
+    else if (typeFilter === 'groupInvite') list = list.filter((n) => n.type === 'groupInvite');
+    else if (typeFilter === 'curation') list = list.filter((n) => n.type === 'pick' || n.type === 'curation');
+    else if (typeFilter === 'event') list = list.filter((n) => n.type === 'event');
+    else if (typeFilter === 'system') list = list.filter((n) => n.type === 'system' || n.type === 'invite');
+    return list;
+  }, [notifications, typeFilter, prefs]);
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -343,35 +348,39 @@ export default function Notifications() {
             </div>
           </div>
 
-          <div className="flex gap-2 sm:gap-3 mt-4 sm:mt-5 flex-wrap">
-            <Button
-              type="button"
-              onClick={() => setReadFilter('all')}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                readFilter === 'all' ? 'bg-foreground text-white' : 'bg-muted text-muted-foreground lg:hover:bg-muted'
-              }`}
-            >
-              {t('notifications.filterAll')}
-            </Button>
-            <Button
-              type="button"
-              onClick={() => setReadFilter('unread')}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                readFilter === 'unread' ? 'bg-foreground text-white' : 'bg-muted text-muted-foreground lg:hover:bg-muted'
-              }`}
-            >
-              <span className="inline-flex items-center gap-1.5">
-                {t('notifications.filterUnread')}
-                {unreadCount > 0 && (
-                  <span
-                    aria-label={t('nav.notificationsWithCount').replace('{n}', String(unreadCount))}
-                    className="inline-flex min-w-[20px] h-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white"
-                  >
-                    {unreadCount > 99 ? '99+' : unreadCount}
+          <div className="flex gap-2 mt-4 sm:mt-5 flex-wrap">
+            {(
+              [
+                { id: 'all', labelKey: 'notifications.filterAll' },
+                { id: 'like', labelKey: 'notifications.filterLike' },
+                { id: 'follow', labelKey: 'notifications.filterFollow' },
+                { id: 'groupInvite', labelKey: 'notifications.filterGroupInvite' },
+                { id: 'curation', labelKey: 'notifications.filterCuration' },
+                { id: 'event', labelKey: 'notifications.filterEvent' },
+                { id: 'system', labelKey: 'notifications.filterSystem' },
+              ] as const
+            ).map(({ id, labelKey }) => (
+              <Button
+                key={id}
+                type="button"
+                onClick={() => setTypeFilter(id)}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                  typeFilter === id ? 'bg-foreground text-white' : 'bg-muted text-muted-foreground lg:hover:bg-muted'
+                }`}
+              >
+                {id === 'all' && unreadCount > 0 ? (
+                  <span className="inline-flex items-center gap-1.5">
+                    {t(labelKey)}
+                    <span
+                      aria-label={t('nav.notificationsWithCount').replace('{n}', String(unreadCount))}
+                      className="inline-flex min-w-[20px] h-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white"
+                    >
+                      {unreadCount > 99 ? '99+' : unreadCount}
+                    </span>
                   </span>
-                )}
-              </span>
-            </Button>
+                ) : t(labelKey)}
+              </Button>
+            ))}
           </div>
 
         </div>
@@ -382,7 +391,7 @@ export default function Notifications() {
           <div className="text-center py-12 sm:py-20">
             <Bell className="h-12 w-12 text-muted-foreground/30 mx-auto mb-3" />
             <h3 className="text-sm sm:text-base font-semibold text-muted-foreground mb-2">
-              {readFilter === 'unread' ? t('notifications.emptyUnread') : t('notifications.empty')}
+              {t('notifications.empty')}
             </h3>
             <p className="text-sm text-muted-foreground">{t('notifications.emptyHint')}</p>
           </div>
