@@ -7,8 +7,8 @@ import { useI18n } from '../i18n/I18nProvider';
 import { Button } from './ui/button';
 import { Separator } from './ui/separator';
 import { cn } from './ui/utils';
-import { Drawer, DrawerContent, DrawerTitle, DrawerDescription } from './ui/drawer';
-import { Dialog, DialogContent, DialogTitle, DialogDescription } from './ui/dialog';
+import { Drawer, DrawerContent, DrawerTitle } from './ui/drawer';
+import { Dialog, DialogContent, DialogTitle } from './ui/dialog';
 import { SocialSignupModal, type SocialProvider } from './SocialSignupModal';
 
 /**
@@ -204,7 +204,6 @@ export function AuthSheet({
       <Dialog open={open} onOpenChange={onOpenChange}>
         <DialogContent className="max-w-md p-0 gap-0">
           <DialogTitle className="sr-only">{t('login.signIn')}</DialogTitle>
-          <DialogDescription className="sr-only">{t('login.tagline')}</DialogDescription>
           {body}
         </DialogContent>
       </Dialog>
@@ -214,7 +213,6 @@ export function AuthSheet({
     <Drawer open={open} onOpenChange={onOpenChange}>
       <DrawerContent className="max-h-[92vh]">
         <DrawerTitle className="sr-only">{t('login.signIn')}</DrawerTitle>
-        <DrawerDescription className="sr-only">{t('login.tagline')}</DrawerDescription>
         <div className="overflow-y-auto">
           {body}
         </div>
