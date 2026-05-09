@@ -1,4 +1,4 @@
-# Copy Guide (UX Writing) · v1.17
+# Copy Guide (UX Writing) · v1.18
 
 Proud Gallery(SuperGallery Phase 1)의 UX 문구 가이드. 본 문서는 **톤·구조 기준(§1~5, §7~8)**과 **전체 i18n 사전(§6)**을 단일 소스로 제공한다. 구현은 §6의 한국어·영어 사전을 그대로 코드 i18n 사전으로 옮기고, §7 기술 규칙을 따른다.
 
@@ -1139,6 +1139,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'settings.sectionAccountActions': '계정',
   'settings.logoutRow': '로그아웃',
   'settings.withdrawWarning': '탈퇴하면 모든 데이터가 삭제되며 되돌릴 수 없어요.',
+  'settings.withdrawCheckTitle': '탈퇴 전 확인해 주세요',
   'settings.withdraw': '회원 탈퇴',
   'settings.withdrawTitle': '정말 탈퇴하시겠어요?',
   'settings.withdrawBody':
@@ -1372,6 +1373,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'admin.section.moderation': '모더레이션',
   'admin.section.contentOps': '콘텐츠 운영',
   'admin.section.members': '회원·커뮤니케이션',
+  'admin.section.operations': '운영',
   'admin.report.memoTitleDismiss': '신고 기각',
   'admin.report.memoTitleHide': '비공개 유지',
   'admin.report.memoAuditNote': '메모는 운영자 감사 로그에 보관됩니다 (Policy §22.7).',
@@ -1871,7 +1873,8 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'upload.toastOrderSaved': 'Order saved.',
   ‘upload.confirmStudent’: ‘I confirm consent from all participating artists’,
   ‘upload.confirmOriginal’: ‘I confirm this is my own original work’,
-  'upload.cardDone': 'Done',
+  ‘upload.consentCurationLabel’: "I agree that my work may be featured on related pages if selected for Proud’s Pick or a curated exhibition.",
+  ‘upload.cardDone’: ‘Done’,
   'upload.publishing': 'Creating exhibition...',
   'upload.confirmDeleteImage': 'Delete this image?',
   'upload.nextStep': 'Next',
@@ -2430,6 +2433,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'settings.sectionAccountActions': 'Account',
   'settings.logoutRow': 'Log out',
   'settings.withdrawWarning': 'Deleting your account will permanently remove all data and cannot be undone.',
+  'settings.withdrawCheckTitle': 'Please review before leaving',
   'settings.withdraw': 'Delete account',
   'settings.withdrawTitle': 'Delete your account?',
   'settings.withdrawBody':
@@ -2529,6 +2533,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'upload.unknownSlotHint': 'This slot has been unlinked, so it\'s shown as Unknown artist. Keep as-is, or re-assign below.',
   'upload.unknownSlotReassign': 'Reassign artist',
   'admin.nav.dashboard': 'Dashboard',
+  'admin.nav.featured': 'Featured Exhibitions',
   'admin.nav.contentReview': 'Review Queue',
   'admin.nav.picks': 'Pick',
   'admin.nav.curation': 'Curation',
@@ -2871,7 +2876,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.18 | 2026-05-09 | PM × Claude | upload.nonMemberPreview* 추가, signup.birthHint 중복 제거, settings.withdrawWarn* 추가, admin.report·notice·curation·contest i18n 키 신설; contactEmailValue iproud@i-screammedia.com 확정 |
+| v1.18 | 2026-05-09 | PM × Claude | upload.nonMemberPreview* 추가, signup.birthHint 중복 제거, settings.withdrawWarn* 추가, admin.report·notice·curation·contest i18n 키 신설; contactEmailValue iproud@i-screammedia.com 확정; EN 누락 키 추가(upload.consentCurationLabel·admin.nav.featured), KO 누락 키 추가(admin.section.operations); messages.ts 8건 정합(pick.notifSelected·events.subtitle·removePieceConfirmDesc·falseReportNotice·unknownSlotHint·qaAdminEventParticipants·qaAdminManagedEvents·linkSentBody) |
 | v1.17 | 2026-05-07 | PM × Claude | 서비스명 Artier → Proud Gallery 전면 치환(brand.name·splash.alt·Proud's Pick → Proud's Pick); 헤더 버전 동기; messages.ts ↔ Copy 사전 동기화 — points·admin 잔재·social·event·onboarding·faq 키 삭제, curation·events.results·evt.admin·notif.contestSelected·notifications.category·profile.editWarn·upload.groupRole·upload.roleInfo·badge·settings.notifWeeklyTheme·admin.notice 그룹 KO·EN 추가; upload.reviewNotice 신설; about feat2Desc·feat4Desc·feat5 정합; onboarding concept step 7키 KO·EN 제거 |
 | v1.16 | 2026-05-06 | PM × Claude | profile.removePieceFromExhibition·Confirm·Success 4키 추가(전시에서 빼기 신규 기능); tabGuideWorks 내 작품 탭 진입점 반영; profile.tabHelpWorks 키 삭제(화면에서 단락 제거); nicknameLockedLabel·Hint·ContactCta·categoryNicknameChange·nicknameChangeNotice·nicknameNew·nicknameReason·errNicknameDuplicate 닉네임 변경 불가 관련 키 일괄 삭제(즉시 자율 변경으로 정책 개정) |
 | v1.15 | 2026-05-06 | PM × Claude | events.viewMyEntry·cancelEntry·cancelEntryConfirmTitle·Desc·Success 5키 추가 |

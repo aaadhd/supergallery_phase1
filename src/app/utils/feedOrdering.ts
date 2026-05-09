@@ -142,8 +142,8 @@ function interleaveByPattern(
  * 이미 본 작품은 각 버킷 내 뒤쪽으로.
  *
  * 기획전(CuratedExhibition)은 §15.1 노출 표면상 [USR-CUR-01] 기획전 페이지에서만
- * 노출되며 일반 피드 부스트 대상이 아니다. 응모전은 검수 통과 후 일반 전시 카드로
- * 자연 노출(별도 부스트 없음). 진입은 어드민 배너([ADM-BNR-01]).
+ * 노출되며 일반 피드 부스트 대상이 아니다. 응모전 응모작(linkedEventId != null)은
+ * isWorkVisibleOnPublicFeed 사전 필터로 피드에서 완전 제외된다 (Policy §15.5).
  */
 export function orderWorksForBrowseFeed(
   works: Work[],

@@ -69,7 +69,7 @@
 | 1 | 계정 관련 | 영업일 5일 이내 응답 (Policy §30.0) |
 | 2 | **닉네임 변경 신청** | 영업일 5일 이내 응답 (Policy §30.0). 본인 확인·희망 닉네임·변경 사유는 PRD USR-INF-07 AC-06·07 |
 | 3 | 업로드/전시 관련 | 영업일 5일 이내 응답 (Policy §30.0) |
-| 4 | 신고/저작권 관련 | [Policy §22.2](./Policy_v1.md#22-2-신고-처리-약속) 영업일 24시간 (위급) |
+| 4 | 신고/저작권 관련 | [Policy §22.2](./Policy_v1.md#22-2-신고-처리-원칙) 영업일 24시간 (위급) |
 | 5 | **개인정보 열람·정정·삭제 요청** | [Policy §30.3](./Policy_v1.md#30-3-처리-기한-sla) 접수 영업일 5일 + 처리 30일 |
 | 6 | 제안/피드백 | 영업일 5일 이내 응답 (Policy §30.0) |
 | 7 | 오류 제보 | 영업일 5일 이내 응답 (재현 자료 첨부 권장) |
@@ -116,7 +116,7 @@
 | 1 | Account | 5 business days (Policy §30.0) |
 | 2 | **Nickname change request** | 5 business days (Policy §30.0). Identity check · proposed nickname · reason per PRD USR-INF-07 AC-06·07 |
 | 3 | Upload / exhibition | 5 business days (Policy §30.0) |
-| 4 | Report / copyright | [Policy §22.2](./Policy_v1.md#22-2-신고-처리-약속) 24 business hours (urgent) |
+| 4 | Report / copyright | [Policy §22.2](./Policy_v1.md#22-2-신고-처리-원칙) 24 business hours (urgent) |
 | 5 | **Personal data access / correction / deletion** | [Policy §30.3](./Policy_v1.md#30-3-처리-기한-sla) 5 business days + 30 days resolve |
 | 6 | Feedback | 5 business days (Policy §30.0) |
 | 7 | Bug report | 5 business days (Policy §30.0) (please attach repro) |
@@ -173,7 +173,7 @@
 - 카테고리 2 "닉네임 변경 신청" — [Policy §4.4](./Policy_v1.md#4-4-재가입)·[PRD USR-INF-07](PRD_User_v1.md) AC-06·07(본인 확인·희망 닉네임·사유)과 정합.
 - 카테고리 5 "개인정보 열람·정정·삭제 요청" — [Policy §30](./Policy_v1.md#30-개인정보-열람-정정-삭제-요청-정책) 권리 행사 채널의 단일 진입점. 운영팀 본인 확인 절차([Policy §30.4](./Policy_v1.md#30-4-본인-확인))와 정합 필수. 변호사 검토는 [Handoff_LegalReview_Checklist §3 LP-7](./Handoff_LegalReview_Checklist_v1.md#lp-7-데이터-내보내기-삭제-요청-개인정보보호법-gdpr) 참조.
 - 어드민 측 처리 화면 — [ADM-INQ-01](./PRD_Admin_v1.md#adm-inq-01-문의함) 문의함 + [Policy §22.7](./Policy_v1.md#22-7-운영자-감사-로그-원칙) 감사 로그 기록
-- 신고·저작권 카테고리는 위급 상황 가능 → 처리 시한이 다른 카테고리보다 짧음 ([Policy §22.2](./Policy_v1.md#22-2-신고-처리-약속))
+- 신고·저작권 카테고리는 위급 상황 가능 → 처리 시한이 다른 카테고리보다 짧음 ([Policy §22.2](./Policy_v1.md#22-2-신고-처리-원칙))
 
 ---
 
@@ -191,7 +191,7 @@
 [Policy §30.0]: Policy_v1.md#30-0-문의-채널-sla-통합-정리-참고
 [Policy §30.3]: Policy_v1.md#30-3-처리-기한-sla
 [Policy §30.4]: Policy_v1.md#30-4-본인-확인
-[Policy §22.2]: Policy_v1.md#22-2-신고-처리-약속
+[Policy §22.2]: Policy_v1.md#22-2-신고-처리-원칙
 [PRD_User_v1.md]: PRD_User_v1.md
 [ADM-INQ-01]: PRD_Admin_v1.md#adm-inq-01-문의함
 [Handoff_LegalReview_Checklist §3 LP-7]: Handoff_LegalReview_Checklist_v1.md#lp-7-데이터-내보내기-삭제-요청-개인정보보호법-gdpr

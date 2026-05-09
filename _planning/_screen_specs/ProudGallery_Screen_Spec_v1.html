@@ -1274,7 +1274,7 @@
  <div class="policy"><div class="label">운영팀 처리 액션</div><div class="body">
  <ul><li><strong>삭제</strong> — 작품 영구 삭제. 사유 4종 한정(저작권 침해 / 위법 / 청소년 유해 / 어뷰즈) + 자유 메모, 운영자 감사 로그 5년 보관</li><li><strong>기각</strong> — 비공개 유지 처리 상태였다면 즉시 복원</li><li><strong>비공개 유지</strong> — 둘러보기·검색 제외(작가 본인 프로필엔 노출). 작가가 수정 후 재검수 요청 가능</li><li><strong>(레거시 호환) 큐에서 제거</strong> — 액션 없이 정리. 주 3액션(삭제·기각·비공개 유지)과 별개의 보조 액션</li></ul>
  </div></div>
- <div class="policy"><div class="label">작가 알림</div><div class="body"><p>운영팀 처리 결과(삭제·비공개 유지·기각 후 복원)를 작가에게 시스템 알림. 「삭제」 알림에는 사유 라벨 동봉.</p>
+ <div class="policy"><div class="label">작가 알림</div><div class="body"><p>운영팀 처리 결과(삭제·비공개 유지·기각 후 복원)를 작가에게 시스템 알림. 삭제 알림은 고정 문구로 발송(사유 미노출, 사유는 내부 감사 로그에만 보관).</p>
  </div>
  </div>
  <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.6 (PC)</span><span>07-6 · 신고·모더레이션</span></div>
@@ -1802,7 +1802,7 @@
  <div style="border: 1px solid var(--line-2); padding: 11px 12px; border-radius: 8px; font-size: 13px; color: var(--ink-3); display: flex; justify-content: space-between; align-items: center;">3월<span>▼</span></div>
  <div style="border: 1px solid var(--line-2); padding: 11px 12px; border-radius: 8px; font-size: 13px; color: var(--ink-3); display: flex; justify-content: space-between; align-items: center;">15일<span>▼</span></div>
  </div>
- <div style="font-size: 11px; color: var(--ink-4); margin-top: 4px;">만 14세 이상부터 가입 가능합니다</div>
+ <div style="font-size: 11px; color: var(--ink-4); margin-top: 4px;">만 14세 이상만 가입할 수 있어요. 입력한 날짜는 나이 확인 외 용도로 사용되지 않아요.</div>
  <span class="bub" style="position: absolute; top: 18px; right: -28px;">2</span>
  </div>
 
@@ -1836,7 +1836,7 @@
  <div class="ac"><h4>완성 기준</h4><ol>
  <li>닉네임 2자 미만·20자 초과 시 CTA 비활성</li>
  <li>비속어 사전과 일치 시 즉시 안내</li>
- <li>만 14세 미만 → "만 14세 이상부터 가입 가능합니다" 안내</li>
+ <li>만 14세 미만 → "만 14세 이상만 가입할 수 있어요. 입력한 날짜는 나이 확인 외 용도로 사용되지 않아요." 안내</li>
  <li>"이전" 클릭 시 USR-AUT-03 입력 상태 보존</li>
  </ol></div>
 
@@ -5830,7 +5830,7 @@
  <dt><span class="bub">2</span></dt><dd>알림 피드 — 시간순 내림차순. 탭으로 읽음 처리 + 관련 화면 이동</dd>
  </dl>
 
- <div class="copy"><h4>알림 메시지 템플릿 (11종)</h4>
+ <div class="copy"><h4>알림 메시지 템플릿 (10종)</h4>
  <span class="copy-line">좋아요: "[작가명]님이 '작품명'을 좋아합니다"</span>
  <span class="copy-line">팔로우: "[작가명]님이 회원님을 팔로우합니다"</span>
  <span class="copy-line">그룹 초대: "[작가명]님이 회원님을 '전시명' 그룹 전시에 초대했어요"</span>
@@ -6065,7 +6065,7 @@
  <div style="font-size: 10.5px; color: var(--ink-3); margin-top: 12px;">큐레이션(Pick·기획전 선정)·응모전(응모전 선정·공지)·시스템(검수 결과·초대 수락)은 본인 전시·계정에 직접 영향이라 끌 수 없는 강제 알림으로 발송돼요.</div>
  </div>
  </div>
- <div class="placeholder-note">5 토글 (좋아요·팔로우·그룹 초대·기획전 · Pick·마케팅) — 일부 ON, 일부 OFF 기본값. 시스템 알림 5종은 토글 없음</div>
+ <div class="placeholder-note">5 토글 (좋아요·팔로우·그룹 초대·기획전 · Pick·마케팅) — 일부 ON, 일부 OFF 기본값. 시스템 알림 4종은 토글 없음</div>
  </div>
 
  <div class="desc">
@@ -6076,7 +6076,7 @@
 
  <h3 class="components">구성 요소</h3>
  <dl>
- <dt>—</dt><dd>5 토글 — 좋아요·팔로우·그룹 초대·기획전 · Pick·마케팅 (시스템 알림 5종은 토글 없음 — 검수·Pick·응모전 선정·응모전 공지·초대 수락)</dd>
+ <dt>—</dt><dd>5 토글 — 좋아요·팔로우·그룹 초대·기획전 · Pick·마케팅 (시스템 알림 4종은 토글 없음 — 검수 결과·초대 수락·응모전 선정·응모전 공지. Pick·기획전은 기획전 · Pick 토글로 이동)</dd>
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
@@ -7697,8 +7697,10 @@
  <div style="background: white; border-radius: 12px; padding: 20px 22px; position: relative;">
  <div style="font-size: 11px; color: #991b1b; letter-spacing: .04em; text-transform: uppercase; margin-bottom: 6px;">변형 1 · 삭제</div>
  <div style="font-size: 14px; font-weight: 700; margin-bottom: 6px;">전시를 영구 삭제할까요?</div>
- <div style="font-size: 11.5px; color: var(--ink-2); margin-bottom: 12px; line-height: 1.6;">복구 불가. 작가에게 시스템 알림이 갑니다.</div>
- <div style="background: #dc2626; color: white; padding: 8px; border-radius: 6px; font-size: 12px; font-weight: 700; text-align: center;">삭제하기</div>
+ <div style="font-size: 11.5px; color: var(--ink-2); margin-bottom: 10px; line-height: 1.6;">복구 불가. 작가에게 시스템 알림이 갑니다.</div>
+ <div style="border: 1px solid var(--line); border-radius: 6px; padding: 7px 10px; font-size: 11px; color: var(--ink-3); margin-bottom: 8px; display: flex; justify-content: space-between; align-items: center;">사유 선택 (필수)<span style="color: var(--ink-4);">▼</span></div>
+ <div style="border: 1px solid var(--line); border-radius: 6px; padding: 7px 10px; font-size: 11px; color: var(--ink-4); margin-bottom: 10px; height: 48px;">메모 (선택, 500자) — 운영자 감사 로그 보관</div>
+ <div style="background: #dc2626; color: white; padding: 8px; border-radius: 6px; font-size: 12px; font-weight: 700; text-align: center;">영구 삭제</div>
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">1</span>
  </div>
  <div style="background: white; border-radius: 12px; padding: 20px 22px; position: relative;">
@@ -7720,13 +7722,13 @@
  </div>
  </div>
  </div>
- <div class="placeholder-note">3 변형 — 삭제/기각(메모 모달)/비공개 유지(메모 모달)</div>
+ <div class="placeholder-note">3 변형 — 삭제(사유 select + 메모)/기각(메모 모달)/비공개 유지(메모 모달)</div>
  </div>
 
  <div class="desc">
      <h3 class="components">구성 요소</h3>
  <dl>
- <dt><span class="bub">1</span></dt><dd>삭제 확인 다이얼로그 — 영구 삭제 + 작가 알림 발송 안내</dd>
+ <dt><span class="bub">1</span></dt><dd>삭제 확인 다이얼로그 — 사유 select (저작권 침해·위법 콘텐츠·청소년 유해·어뷰즈, 필수) + 자유 메모 텍스트영역 (500자, 선택) + 영구 삭제 버튼. 사유·메모는 운영자 감사 로그 보관 (Policy §12.1.3)</dd>
  <dt><span class="bub">2</span></dt><dd>기각 확인 다이얼로그 — 비공개 상태였다면 즉시 복원 안내 + 메모 입력(자유 메모 500자, 선택) → 기각 확정. 메모는 운영자 감사 로그 보관 (Policy §22.7)</dd>
  <dt><span class="bub">3</span></dt><dd>비공개 유지 확인 — 둘러보기·검색 미노출. 본인 프로필엔 보임 + 동일 메모 모달 패턴 → 비공개 유지 확정</dd>
  </dl>

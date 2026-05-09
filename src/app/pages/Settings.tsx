@@ -315,7 +315,7 @@ export default function Settings() {
             <p className="text-sm text-muted-foreground leading-relaxed">{t('settings.withdrawBody')}</p>
             {withdrawWarnings.length > 0 && (
               <div className="rounded-lg border border-amber-200 bg-amber-50 px-3.5 py-3 space-y-1.5">
-                <p className="text-xs font-semibold text-amber-800">탈퇴 전 확인해 주세요</p>
+                <p className="text-xs font-semibold text-amber-800">{t('settings.withdrawCheckTitle')}</p>
                 {withdrawWarnings.map((msg, i) => (
                   <p key={i} className="text-xs text-amber-700 leading-snug">· {msg}</p>
                 ))}
