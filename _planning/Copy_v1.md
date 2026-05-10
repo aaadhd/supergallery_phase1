@@ -916,8 +916,8 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'workDetail.shareTitle': '{artist} 님의 전시 초대',
   'workDetail.report': '신고',
   'workDetail.more': '더보기',
-  'workDetail.askAboutWork': '이 작품에 대한 문의',
-  'workInquiry.title': '이 작품에 대한 문의',
+  'workDetail.askAboutWork': '문의',
+  'workInquiry.title': '문의',
   'workInquiry.lead': '운영팀이 영업일 5일 안에 확인해드려요. 작가에게 직접 전달되지 않아요.',
   'workInquiry.catPurchase': '작품 구입·소장 문의',
   'workInquiry.catPurchaseHint': '이 작품을 구입하거나 소장할 수 있나요',
@@ -2196,8 +2196,8 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'workDetail.shareTitle': 'Exhibition invitation from {artist}',
   'workDetail.report': 'Report',
   'workDetail.more': 'More',
-  'workDetail.askAboutWork': 'Ask about this work',
-  'workInquiry.title': 'Ask about this work',
+  'workDetail.askAboutWork': 'Inquiry',
+  'workInquiry.title': 'Inquiry',
   'workInquiry.lead': 'Our team will respond within 5 business days. The artist is not contacted directly.',
   'workInquiry.catPurchase': 'Purchase / Acquisition',
   'workInquiry.catPurchaseHint': 'Can I buy or own this work?',
@@ -2849,7 +2849,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.18 | 2026-05-09 | PM × Claude | upload.nonMemberPreview* 추가, signup.birthHint 중복 제거, settings.withdrawWarn* 추가, admin.report·notice·curation·contest i18n 키 신설; contactEmailValue iproud@i-screammedia.com 확정; EN 누락 키 추가(upload.consentCurationLabel·admin.nav.featured), KO 누락 키 추가(admin.section.operations); i18n 8건 정합; faq.a9 SLA 제거; 헤더 v1.18 정합; report.notifReporterDismissed 삭제; invite.notifAutoMatched 문구 정정("본인 작품을 연결"); settings.notifGroupInvite·notifications.categoryGroupInvite "그룹 전시 게시"로 개념 정정; notifications.filterGroupInvite KO "그룹 초대"→"그룹 전시 게시", EN "Group Invite"→"Group post"; demo.btnNotifGroup KO "그룹 초대"→"그룹 전시 게시" 정정; 이력 행 파일명 제거(i18n 표현으로 교체); 잔재 키 4개 삭제 — login.haveAccount·login.tagline·signup.hasAccount·signup.loginLink (AuthSheet에서 렌더 제거된 UI 요소, sr-only 포함); 코드 주도 잔재 29키(KO+EN 58항목) 추가 삭제 — upload.groupRole*/role*(instructor 잔재 8개), upload.event*/errDuplicateEvent(4개), settings.notifIntro/Channel/Optional/Required/System/SystemHint/WeeklyThemeHint(7개), browse.heroKicker·demo.sampleWorkTitle·workDetail.participants·review.notifNewWork·groupInvite.notif·invite.shareNotReady·report.leadWork/policyNote/okClose(9개) |
+| v1.18 | 2026-05-09 | PM × Claude | workDetail.askAboutWork·workInquiry.title KO "이 작품에 대한 문의"→"문의", EN "Ask about this work"→"Inquiry"; upload.nonMemberPreview* 추가, signup.birthHint 중복 제거, settings.withdrawWarn* 추가, admin.report·notice·curation·contest i18n 키 신설; contactEmailValue iproud@i-screammedia.com 확정; EN 누락 키 추가(upload.consentCurationLabel·admin.nav.featured), KO 누락 키 추가(admin.section.operations); i18n 8건 정합; faq.a9 SLA 제거; 헤더 v1.18 정합; report.notifReporterDismissed 삭제; invite.notifAutoMatched 문구 정정("본인 작품을 연결"); settings.notifGroupInvite·notifications.categoryGroupInvite "그룹 전시 게시"로 개념 정정; notifications.filterGroupInvite KO "그룹 초대"→"그룹 전시 게시", EN "Group Invite"→"Group post"; demo.btnNotifGroup KO "그룹 초대"→"그룹 전시 게시" 정정; 이력 행 파일명 제거(i18n 표현으로 교체); 잔재 키 4개 삭제 — login.haveAccount·login.tagline·signup.hasAccount·signup.loginLink (AuthSheet에서 렌더 제거된 UI 요소, sr-only 포함); 코드 주도 잔재 29키(KO+EN 58항목) 추가 삭제 — upload.groupRole*/role*(instructor 잔재 8개), upload.event*/errDuplicateEvent(4개), settings.notifIntro/Channel/Optional/Required/System/SystemHint/WeeklyThemeHint(7개), browse.heroKicker·demo.sampleWorkTitle·workDetail.participants·review.notifNewWork·groupInvite.notif·invite.shareNotReady·report.leadWork/policyNote/okClose(9개) |
 | v1.17 | 2026-05-07 | PM × Claude | 서비스명 Artier → Proud Gallery 전면 치환(brand.name·splash.alt·Proud's Pick → Proud's Pick); 헤더 버전 동기; i18n 키 동기화 — points·admin 잔재·social·event·onboarding·faq 키 삭제, curation·events.results·evt.admin·notif.contestSelected·notifications.category·profile.editWarn·upload.groupRole·upload.roleInfo·badge·settings.notifWeeklyTheme·admin.notice 그룹 KO·EN 추가; upload.reviewNotice 신설; about feat2Desc·feat4Desc·feat5 정합; onboarding concept step 7키 KO·EN 제거 |
 | v1.16 | 2026-05-06 | PM × Claude | profile.removePieceFromExhibition·Confirm·Success 4키 추가(전시에서 빼기 신규 기능); tabGuideWorks 내 작품 탭 진입점 반영; profile.tabHelpWorks 키 삭제(화면에서 단락 제거); nicknameLockedLabel·Hint·ContactCta·categoryNicknameChange·nicknameChangeNotice·nicknameNew·nicknameReason·errNicknameDuplicate 닉네임 변경 불가 관련 키 일괄 삭제(즉시 자율 변경으로 정책 개정) |
 | v1.15 | 2026-05-06 | PM × Claude | events.viewMyEntry·cancelEntry·cancelEntryConfirmTitle·Desc·Success 5키 추가 |
