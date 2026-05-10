@@ -87,13 +87,7 @@ export default function Signup() {
   const touched = (field: string) => submitted || touchedFields.has(field);
   const markTouched = (field: string) => setTouchedFields((prev) => new Set(prev).add(field));
 
-  const emailError = touched('email')
-    ? !emailValid(email)
-      ? t('signup.errEmail')
-      : isEmailRegistered(email)
-        ? t('signup.errEmailRegistered')
-        : ''
-    : '';
+  const emailError = touched('email') && !emailValid(email) ? t('signup.errEmail') : '';
 
   const birthFilled = birthYear !== '' && birthMonth !== '' && birthDay !== '';
   const birthValid = birthFilled && isValidDate(Number(birthYear), Number(birthMonth), Number(birthDay));
@@ -109,7 +103,7 @@ export default function Signup() {
   const monthOptions = useMemo(() => Array.from({ length: 12 }, (_, i) => i + 1), []);
   const dayOptions = useMemo(() => Array.from({ length: 31 }, (_, i) => i + 1), []);
 
-  const emailOk = emailValid(email) && !isEmailRegistered(email);
+  const emailOk = emailValid(email);
   const profileOk = birthMeetsAge;
   const agreementsOk = agreeTerms && agreePrivacy && agreeAge;
 
@@ -120,9 +114,10 @@ export default function Signup() {
     }
     setSending(true);
     try {
-      issueMagicLink({ email: email.trim(), intent: 'signup' });
+      const intent = isEmailRegistered(email.trim()) ? 'login' : 'signup';
+      issueMagicLink({ email: email.trim(), intent });
       try { localStorage.setItem('artier_pending_signup_email', email.trim()); } catch { /* ignore */ }
-      await requestEmailMagicLink({ email: email.trim(), intent: 'signup' });
+      await requestEmailMagicLink({ email: email.trim(), intent });
       setLinkSent(true);
       setResendSec(RESEND_COOLDOWN_SEC);
       return true;
