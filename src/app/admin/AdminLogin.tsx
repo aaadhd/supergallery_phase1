@@ -5,7 +5,8 @@ import { authStore } from '../store';
 import { setOperatorRole } from '../utils/adminGate';
 import { persistMockSession } from '../services/sessionTokens';
 
-/** 데모용 운영팀 PIN — Phase 2에서 서버 인증으로 대체 */
+/** 데모용 운영팀 자격증명 — Phase 2에서 서버 인증으로 대체 */
+const DEMO_ADMIN_ID = 'admin';
 const DEMO_ADMIN_PIN = 'admin1234';
 
 export default function AdminLogin() {
@@ -13,6 +14,7 @@ export default function AdminLogin() {
   const [searchParams] = useSearchParams();
   const redirectTo = searchParams.get('redirect') || '/admin';
 
+  const [id, setId] = useState('');
   const [pin, setPin] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -23,8 +25,8 @@ export default function AdminLogin() {
     setLoading(true);
 
     setTimeout(() => {
-      if (pin !== DEMO_ADMIN_PIN) {
-        setError('PIN이 올바르지 않습니다.');
+      if (id !== DEMO_ADMIN_ID || pin !== DEMO_ADMIN_PIN) {
+        setError('아이디 또는 비밀번호가 올바르지 않습니다.');
         setLoading(false);
         return;
       }
@@ -50,18 +52,32 @@ export default function AdminLogin() {
           </div>
         </div>
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        <form onSubmit={handleSubmit} className="space-y-3">
           <div>
             <label className="block text-sm font-medium text-slate-300 mb-1.5">
-              관리자 PIN
+              아이디
+            </label>
+            <input
+              type="text"
+              value={id}
+              onChange={(e) => setId(e.target.value)}
+              placeholder="아이디 입력"
+              className="w-full rounded-lg bg-white/10 border border-white/10 px-4 py-3 text-white placeholder:text-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-transparent"
+              autoFocus
+              autoComplete="username"
+            />
+          </div>
+
+          <div>
+            <label className="block text-sm font-medium text-slate-300 mb-1.5">
+              비밀번호
             </label>
             <input
               type="password"
               value={pin}
               onChange={(e) => setPin(e.target.value)}
-              placeholder="PIN 입력"
+              placeholder="비밀번호 입력"
               className="w-full rounded-lg bg-white/10 border border-white/10 px-4 py-3 text-white placeholder:text-slate-500 text-sm focus:outline-none focus:ring-2 focus:ring-white/20 focus:border-transparent"
-              autoFocus
               autoComplete="current-password"
             />
             {error && (
@@ -71,15 +87,15 @@ export default function AdminLogin() {
 
           <button
             type="submit"
-            disabled={loading || !pin}
-            className="w-full rounded-lg bg-white text-slate-900 font-semibold py-3 text-sm hover:bg-slate-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+            disabled={loading || !id || !pin}
+            className="w-full rounded-lg bg-white text-slate-900 font-semibold py-3 text-sm hover:bg-slate-100 transition-colors disabled:opacity-50 disabled:cursor-not-allowed mt-1"
           >
             {loading ? '확인 중…' : '로그인'}
           </button>
         </form>
 
         <p className="text-center text-xs text-slate-600 mt-6">
-          데모 PIN: admin1234
+          데모 계정: admin / admin1234
         </p>
       </div>
     </div>
