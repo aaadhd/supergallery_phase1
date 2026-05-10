@@ -7,6 +7,7 @@ import { workStore, useWorkStore } from '../store';
 import type { Work } from '../data';
 import { displayExhibitionTitle } from '../utils/workDisplay';
 import { getThumbCover } from '../utils/imageHelper';
+import { imageUrls } from '../imageUrls';
 import { isWorkPublic } from '../utils/workVisibility';
 import { pushDemoNotification } from '../utils/pushDemoNotification';
 import { appendAuditLog } from '../utils/adminAuditLog';
@@ -494,7 +495,7 @@ export default function PickManagement() {
                       >
                         <div className="w-10 h-10 rounded-md overflow-hidden bg-muted border border-border shrink-0">
                           <ImageWithFallback
-                            src={getThumbCover(work)}
+                            src={imageUrls[getThumbCover(work)] || getThumbCover(work)}
                             alt={displayExhibitionTitle(work, '무제')}
                             className="w-full h-full object-cover"
                           />
@@ -577,7 +578,7 @@ export default function PickManagement() {
                         {sessionWorks.map((w) => (
                           <div key={w.id} className="w-9 h-9 rounded-md overflow-hidden bg-muted border border-border/50 shrink-0">
                             <ImageWithFallback
-                              src={getThumbCover(w)}
+                              src={imageUrls[getThumbCover(w)] || getThumbCover(w)}
                               alt={displayExhibitionTitle(w, '')}
                               className="w-full h-full object-cover"
                             />
@@ -662,7 +663,7 @@ export default function PickManagement() {
                                 <div className="aspect-square rounded-lg overflow-hidden bg-muted border border-border/50">
                                   {work ? (
                                     <ImageWithFallback
-                                      src={getThumbCover(work)}
+                                      src={imageUrls[getThumbCover(work)] || getThumbCover(work)}
                                       alt={displayExhibitionTitle(work, '무제')}
                                       className="w-full h-full object-cover"
                                     />
@@ -743,7 +744,7 @@ function SortablePickWorkItem({ work, index, onRemove }: SortablePickWorkItemPro
       </button>
       <div className="w-10 h-10 rounded-md overflow-hidden bg-muted border border-border/50 shrink-0">
         <ImageWithFallback
-          src={getThumbCover(work)}
+          src={imageUrls[getThumbCover(work)] || getThumbCover(work)}
           alt={displayExhibitionTitle(work, '무제')}
           className="w-full h-full object-cover"
         />

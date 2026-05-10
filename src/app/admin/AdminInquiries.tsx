@@ -1,6 +1,11 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { MessageSquare, ShieldAlert, ChevronRight, X } from 'lucide-react';
+import { workStore } from '../store';
+import { getCoverImage } from '../utils/imageHelper';
+import { imageUrls } from '../imageUrls';
+import { ImageWithFallback } from '../components/ImageWithFallback';
 import { Button } from '../components/ui/button';
 import { openConfirm } from '../components/ConfirmDialog';
 import { appendAuditLog } from '../utils/adminAuditLog';
@@ -212,6 +217,22 @@ const QUICK_REPLIES: Record<string, string[]> = {
 };
 
 export default function AdminInquiries() {
+  const [searchParams, setSearchParams] = useSearchParams();
+  type InquiryTab = 'work' | 'general';
+  const activeTab: InquiryTab = searchParams.get('tab') === 'work' ? 'work' : 'general';
+  const setActiveTab = (tab: InquiryTab) => {
+    setSearchParams(
+      (prev) => {
+        const sp = new URLSearchParams(prev);
+        if (tab === 'general') sp.delete('tab');
+        else sp.set('tab', tab);
+        return sp;
+      },
+      { replace: true },
+    );
+    setSelectedId(null);
+  };
+
   const [inquiries, setInquiries] = useState<StoredInquiry[]>([]);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [categoryFilter, setCategoryFilter] = useState('전체');
@@ -255,17 +276,25 @@ export default function AdminInquiries() {
     return { newCount, inProgress, privacyCount, slaBreach };
   }, [inquiries]);
 
-  const filtered = useMemo(() => {
+  const workFiltered = useMemo(() => {
+    const now = Date.now();
+    return inquiries
+      .filter((i) => i.category === 'workInquiry')
+      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
+      .map((i) => ({ ...i, _slaTier: computeSlaTier(i, now) }));
+  }, [inquiries]);
+
+  const generalFiltered = useMemo(() => {
     const now = Date.now();
     return inquiries
       .filter((i) => {
+        if (i.category === 'workInquiry') return false;
         if (categoryFilter !== '전체' && i.category !== categoryFilter) return false;
         if (statusFilter !== '전체' && (i.status ?? '신규') !== statusFilter) return false;
         if (privacyPriority && i.category !== 'privacy') return false;
         return true;
       })
       .sort((a, b) => {
-        // 1) privacy 신규 우선 2) 접수 시각 오름차순
         const aPriv = a.category === 'privacy' && (a.status ?? '신규') === '신규' ? 0 : 1;
         const bPriv = b.category === 'privacy' && (b.status ?? '신규') === '신규' ? 0 : 1;
         if (aPriv !== bPriv) return aPriv - bPriv;
@@ -350,282 +379,427 @@ export default function AdminInquiries() {
         <KpiCard label="SLA 임박·초과" value={kpi.slaBreach} emphasize={kpi.slaBreach > 0} danger={kpi.slaBreach > 0} />
       </div>
 
-      {/* 필터 */}
-      <div className="flex flex-wrap gap-3 mb-4">
-        <select
-          value={categoryFilter}
-          onChange={(e) => setCategoryFilter(e.target.value)}
-          className="border border-border rounded-lg px-3 py-2 text-sm bg-white min-w-[150px]"
+      {/* 탭 헤더 */}
+      <div className="flex border-b border-border mb-4">
+        <button
+          type="button"
+          onClick={() => setActiveTab('general')}
+          className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+            activeTab === 'general'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-muted-foreground lg:hover:text-foreground'
+          }`}
         >
-          <option value="전체">카테고리: 전체</option>
-          {Object.entries(CATEGORY_LABELS).map(([k, v]) => (
-            <option key={k} value={k}>{v}</option>
-          ))}
-        </select>
-        <select
-          value={statusFilter}
-          onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
-          className="border border-border rounded-lg px-3 py-2 text-sm bg-white min-w-[150px]"
+          💬 일반 문의
+          <span className={`ml-1.5 inline-flex rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
+            activeTab === 'general' ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'
+          }`}>
+            {generalFiltered.length}
+          </span>
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveTab('work')}
+          className={`px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
+            activeTab === 'work'
+              ? 'border-primary text-primary'
+              : 'border-transparent text-muted-foreground lg:hover:text-foreground'
+          }`}
         >
-          <option value="전체">상태: 전체</option>
-          <option value="신규">신규</option>
-          <option value="처리 중">처리 중</option>
-          <option value="완료">완료</option>
-          <option value="보류">보류</option>
-        </select>
-        <label className="inline-flex items-center gap-2 px-3 py-2 border border-border rounded-lg text-sm bg-white cursor-pointer min-h-[44px]">
-          <input
-            type="checkbox"
-            checked={privacyPriority}
-            onChange={(e) => setPrivacyPriority(e.target.checked)}
-            className="accent-primary"
-          />
-          개인정보 우선
-        </label>
+          🖼 작품 문의
+          <span className={`ml-1.5 inline-flex rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
+            activeTab === 'work' ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'
+          }`}>
+            {workFiltered.length}
+          </span>
+        </button>
       </div>
 
-      {/* 테이블 + 상세 패널 */}
-      <div className="grid gap-4 lg:grid-cols-[1fr_420px]">
-        <div className="border border-border rounded-lg overflow-x-auto">
-          <table className="w-full text-sm min-w-[600px]">
-            <thead>
-              <tr className="bg-muted text-left text-foreground">
-                <th className="px-3 py-2 font-medium">접수</th>
-                <th className="px-3 py-2 font-medium">카테고리</th>
-                <th className="px-3 py-2 font-medium">이름/이메일</th>
-                <th className="px-3 py-2 font-medium">본문</th>
-                <th className="px-3 py-2 font-medium">상태</th>
-              </tr>
-            </thead>
-            <tbody>
-              {filtered.length === 0 ? (
-                <tr>
-                  <td colSpan={5} className="px-3 py-12 text-center text-sm text-muted-foreground">
-                    접수된 문의가 없습니다.
-                  </td>
-                </tr>
-              ) : (
-                filtered.map((i) => {
-                  const isPrivacy = i.category === 'privacy';
-                  const status = i.status ?? '신규';
-                  const tier = i._slaTier;
-                  return (
-                    <tr
-                      key={i.id}
-                      onClick={() => setSelectedId(i.id)}
-                      className={`cursor-pointer border-b border-border/40 transition-colors ${
-                        selectedId === i.id ? 'bg-primary/5' : 'lg:hover:bg-muted/50'
-                      }`}
-                    >
-                      <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">
-                        {i.createdAt.slice(0, 10)}
-                      </td>
-                      <td className="px-3 py-2">
-                        <span
-                          className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
-                            isPrivacy
-                              ? 'bg-violet-100 text-violet-800 border border-violet-300'
-                              : 'bg-slate-100 text-slate-700 border border-slate-200'
-                          }`}
-                        >
-                          {CATEGORY_LABELS[i.category] ?? i.category}
-                        </span>
-                      </td>
-                      <td className="px-3 py-2 max-w-[180px]">
-                        <div className="truncate text-muted-foreground">{i.email}</div>
-                      </td>
-                      <td className="px-3 py-2 max-w-[220px]">
-                        {i.category === 'workInquiry' && (
-                          <div className="text-xs text-foreground mb-0.5">
-                            {i.workTitle ?? '전시'}
-                            {typeof i.pieceIndex === 'number' ? ` · ${i.pieceIndex + 1}번 작품` : ''}
-                            {i.categoryDetail ? ` · ${WORK_INQUIRY_DETAIL_LABELS[i.categoryDetail] ?? ''}` : ''}
-                          </div>
-                        )}
-                        <div className="truncate text-muted-foreground">{i.message.slice(0, 60)}{i.message.length > 60 ? '…' : ''}</div>
-                      </td>
-                      <td className="px-3 py-2">
-                        <div className="flex flex-wrap items-center gap-1.5">
-                          <span className="inline-flex rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-foreground border border-border">
-                            {status}
+      {activeTab === 'work' ? (
+        /* ── 작품 문의 탭 ── */
+        <div className="grid gap-4 lg:grid-cols-[1fr_420px]">
+          <div className="border border-border rounded-lg overflow-hidden">
+            {workFiltered.length === 0 ? (
+              <div className="px-3 py-12 text-center text-sm text-muted-foreground">작품 문의가 없습니다.</div>
+            ) : (
+              workFiltered.map((i) => {
+                const status = i.status ?? '신규';
+                const workObj = i.workId ? workStore.getWork(i.workId) : null;
+                const thumbKey = workObj ? getCoverImage(workObj.image, workObj.coverImageIndex) : '';
+                const thumbSrc = thumbKey ? (imageUrls[thumbKey] || thumbKey) : '';
+                return (
+                  <button
+                    key={i.id}
+                    type="button"
+                    onClick={() => setSelectedId(i.id)}
+                    className={`w-full text-left flex gap-3 items-start px-3 py-3 border-b border-border/40 transition-colors ${
+                      selectedId === i.id ? 'bg-primary/[.06] border-l-2 border-l-primary' : 'lg:hover:bg-muted/50'
+                    }`}
+                  >
+                    <div className="w-9 h-9 rounded overflow-hidden border border-border bg-muted/30 shrink-0 flex items-center justify-center">
+                      {thumbSrc ? (
+                        <ImageWithFallback src={thumbSrc} alt="" className="w-full h-full object-cover" />
+                      ) : (
+                        <span className="text-muted-foreground text-xs">?</span>
+                      )}
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
+                        <span className="font-medium text-sm truncate">{i.workTitle ?? '(전시명 없음)'}</span>
+                        {i.categoryDetail && (
+                          <span className="text-[10px] bg-violet-100 text-violet-700 rounded px-1.5 py-0.5 shrink-0">
+                            {WORK_INQUIRY_DETAIL_LABELS[i.categoryDetail] ?? ''}
                           </span>
-                          {tier === 'nearing' && (
-                            <span className="inline-flex rounded-full bg-yellow-50 text-yellow-800 border border-yellow-200 px-2 py-0.5 text-[10px] font-semibold">
-                              SLA 임박
-                            </span>
-                          )}
-                          {tier === 'exceeded' && (
-                            <span className="inline-flex rounded-full bg-red-100 text-red-800 border border-red-300 px-2 py-0.5 text-[10px] font-semibold">
-                              SLA 초과
-                            </span>
-                          )}
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground">
+                        <span className={`inline-flex rounded-full px-1.5 py-0.5 text-[10px] font-medium ${inquiryStatusBadgeClass(status)}`}>
+                          {status}
+                        </span>
+                        <span>{i.createdAt.slice(0, 10)}</span>
+                      </div>
+                    </div>
+                  </button>
+                );
+              })
+            )}
+          </div>
+
+          {/* 작품 문의 상세 */}
+          {selected && selected.category === 'workInquiry' ? (
+            <aside className="border border-border rounded-lg bg-white overflow-hidden max-h-[calc(100vh-200px)] overflow-y-auto">
+              <WorkInquiryDetailHeader inquiry={selected} />
+              <div className="p-4 space-y-4">
+                <div>
+                  <div className="flex justify-between items-center mb-1">
+                    <p className="text-xs font-medium text-muted-foreground">문의 내용</p>
+                    <p className="text-xs text-muted-foreground">{selected.email} · {selected.createdAt.slice(0, 10)}</p>
+                  </div>
+                  <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{selected.message}</p>
+                </div>
+                <div className="space-y-2">
+                  <p className="text-xs font-medium text-muted-foreground">빠른 답변 템플릿</p>
+                  <select onChange={(e) => { if (e.target.value) setReplyText(e.target.value); }} value=""
+                    className="w-full border border-border rounded px-2 py-1.5 text-xs bg-white">
+                    <option value="">템플릿 선택…</option>
+                    {(QUICK_REPLIES[selected.category] ?? QUICK_REPLIES.other).map((tpl, idx) => (
+                      <option key={idx} value={tpl}>{tpl.slice(0, 60)}{tpl.length > 60 ? '…' : ''}</option>
+                    ))}
+                  </select>
+                  <textarea value={replyText} onChange={(e) => setReplyText(e.target.value)}
+                    placeholder="답변 내용 (최대 5000자)" rows={4} maxLength={5000}
+                    className="w-full border border-border rounded-lg px-3 py-2 text-sm resize-y min-h-[44px]" />
+                  <div className="flex gap-2 items-center">
+                    <Button type="button" onClick={sendReply}
+                      className="flex-1 text-sm px-3 py-1.5 bg-primary text-white rounded-lg min-h-[44px]">
+                      답변 발송 (모의)
+                    </Button>
+                    <select value={selected.status ?? '신규'}
+                      onChange={(e) => changeStatus(selected.id, e.target.value as InquiryStatus)}
+                      className="border border-border rounded-lg px-2 py-1.5 text-xs bg-white min-h-[44px]">
+                      {(['신규', '처리 중', '완료', '보류'] as const).map((s) => (
+                        <option key={s} value={s}>{s}</option>
+                      ))}
+                    </select>
+                  </div>
+                  {selected.replies && selected.replies.length > 0 && (
+                    <div className="mt-2 space-y-2">
+                      <p className="text-xs font-medium text-muted-foreground">이전 답변 {selected.replies.length}건</p>
+                      {selected.replies.map((r, idx) => (
+                        <div key={idx} className="rounded-lg border border-border bg-muted/30 p-2 text-xs">
+                          <p className="text-muted-foreground mb-1">{r.repliedAt.slice(0, 19).replace('T', ' ')}</p>
+                          <p className="text-foreground whitespace-pre-wrap">{r.text}</p>
                         </div>
+                      ))}
+                    </div>
+                  )}
+                </div>
+                <div className="space-y-1 pt-3 border-t border-border/60">
+                  <p className="text-xs font-medium text-muted-foreground">운영 메모 (내부)</p>
+                  <textarea value={internalNote} onChange={(e) => setInternalNote(e.target.value)}
+                    placeholder="다른 운영자와 공유하는 메모." rows={2}
+                    className="w-full border border-border rounded-lg px-3 py-2 text-xs resize-y" />
+                  <button type="button" onClick={saveInternalNote}
+                    className="text-xs px-3 py-1.5 rounded-lg border border-border bg-white text-foreground lg:hover:bg-muted/50 min-h-[44px]">
+                    메모 저장
+                  </button>
+                </div>
+              </div>
+            </aside>
+          ) : (
+            <div className="hidden lg:flex items-center justify-center border border-dashed border-border/60 rounded-lg bg-white text-sm text-muted-foreground p-8">
+              왼쪽에서 문의를 선택하세요
+            </div>
+          )}
+        </div>
+      ) : (
+        /* ── 일반 문의 탭 ── */
+        <>
+          <div className="flex flex-wrap gap-3 mb-4">
+            <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}
+              className="border border-border rounded-lg px-3 py-2 text-sm bg-white min-w-[150px]">
+              <option value="전체">카테고리: 전체</option>
+              {Object.entries(CATEGORY_LABELS)
+                .filter(([k]) => k !== 'workInquiry')
+                .map(([k, v]) => (<option key={k} value={k}>{v}</option>))}
+            </select>
+            <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
+              className="border border-border rounded-lg px-3 py-2 text-sm bg-white min-w-[150px]">
+              <option value="전체">상태: 전체</option>
+              <option value="신규">신규</option>
+              <option value="처리 중">처리 중</option>
+              <option value="완료">완료</option>
+              <option value="보류">보류</option>
+            </select>
+            <label className="inline-flex items-center gap-2 px-3 py-2 border border-border rounded-lg text-sm bg-white cursor-pointer min-h-[44px]">
+              <input type="checkbox" checked={privacyPriority} onChange={(e) => setPrivacyPriority(e.target.checked)}
+                className="accent-primary" />
+              개인정보 우선
+            </label>
+          </div>
+
+          <div className="grid gap-4 lg:grid-cols-[1fr_420px]">
+            <div className="border border-border rounded-lg overflow-x-auto">
+              <table className="w-full text-sm min-w-[600px]">
+                <thead>
+                  <tr className="bg-muted text-left text-foreground">
+                    <th className="px-3 py-2 font-medium">접수</th>
+                    <th className="px-3 py-2 font-medium">카테고리</th>
+                    <th className="px-3 py-2 font-medium">이메일</th>
+                    <th className="px-3 py-2 font-medium">본문</th>
+                    <th className="px-3 py-2 font-medium">상태</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {generalFiltered.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} className="px-3 py-12 text-center text-sm text-muted-foreground">
+                        접수된 문의가 없습니다.
                       </td>
                     </tr>
-                  );
-                })
-              )}
-            </tbody>
-          </table>
-        </div>
-
-        {/* 상세 패널 */}
-        {selected ? (
-          <aside className="border border-border rounded-lg bg-white p-4 space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto">
-            <div className="flex items-start justify-between gap-2">
-              <div>
-                <p className="text-xs text-muted-foreground">{selected.createdAt.slice(0, 19).replace('T', ' ')}</p>
-                <p className="text-sm font-semibold text-foreground">
-                  {selected.email}
-                </p>
-              </div>
-              <button
-                type="button"
-                onClick={() => setSelectedId(null)}
-                className="p-1 rounded lg:hover:bg-muted/60"
-                aria-label="닫기"
-              >
-                <X className="w-4 h-4 text-muted-foreground" />
-              </button>
+                  ) : (
+                    generalFiltered.map((i) => {
+                      const isPrivacy = i.category === 'privacy';
+                      const status = i.status ?? '신규';
+                      const tier = i._slaTier;
+                      return (
+                        <tr key={i.id} onClick={() => setSelectedId(i.id)}
+                          className={`cursor-pointer border-b border-border/40 transition-colors ${
+                            selectedId === i.id ? 'bg-primary/5' : 'lg:hover:bg-muted/50'
+                          }`}>
+                          <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">{i.createdAt.slice(0, 10)}</td>
+                          <td className="px-3 py-2">
+                            <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
+                              isPrivacy ? 'bg-violet-100 text-violet-800 border border-violet-300' : 'bg-slate-100 text-slate-700 border border-slate-200'
+                            }`}>
+                              {isPrivacy && '🔐 '}{CATEGORY_LABELS[i.category] ?? i.category}
+                            </span>
+                          </td>
+                          <td className="px-3 py-2 max-w-[180px]">
+                            <div className="truncate text-muted-foreground">{i.email}</div>
+                          </td>
+                          <td className="px-3 py-2 max-w-[220px]">
+                            <div className="truncate text-muted-foreground">{i.message.slice(0, 60)}{i.message.length > 60 ? '…' : ''}</div>
+                          </td>
+                          <td className="px-3 py-2">
+                            <div className="flex flex-wrap items-center gap-1.5">
+                              <span className="inline-flex rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-foreground border border-border">
+                                {status}
+                              </span>
+                              {tier === 'nearing' && (
+                                <span className="inline-flex rounded-full bg-yellow-50 text-yellow-800 border border-yellow-200 px-2 py-0.5 text-[10px] font-semibold">SLA 임박</span>
+                              )}
+                              {tier === 'exceeded' && (
+                                <span className="inline-flex rounded-full bg-red-100 text-red-800 border border-red-300 px-2 py-0.5 text-[10px] font-semibold">SLA 초과</span>
+                              )}
+                            </div>
+                          </td>
+                        </tr>
+                      );
+                    })
+                  )}
+                </tbody>
+              </table>
             </div>
 
-            <div>
-              <p className="text-xs font-medium text-muted-foreground mb-1">카테고리</p>
-              <p className="text-sm text-foreground">{CATEGORY_LABELS[selected.category] ?? selected.category}</p>
-            </div>
-
-            <div>
-              <p className="text-xs font-medium text-muted-foreground mb-1">본문</p>
-              <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{selected.message}</p>
-            </div>
-
-            {selected.attachments && selected.attachments.length > 0 && (
-              <div>
-                <p className="text-xs font-medium text-muted-foreground mb-1">첨부 파일</p>
-                <ul className="text-xs text-muted-foreground space-y-0.5">
-                  {selected.attachments.map((f, i) => (
-                    <li key={i}>· {f.name} ({Math.round(f.size / 1024)}KB)</li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {/* 개인정보 카테고리 추가 위젯 */}
-            {selected.category === 'privacy' && (
-              <div className="rounded-lg border border-violet-200 bg-violet-50 p-3 space-y-2">
-                <div className="flex items-center gap-1.5 text-xs font-semibold text-violet-900">
-                  <ShieldAlert className="w-3.5 h-3.5" />
-                  개인정보 권리 행사 요청 (Policy §30)
+            {/* 일반 문의 상세 패널 */}
+            {selected && selected.category !== 'workInquiry' ? (
+              <aside className="border border-border rounded-lg bg-white p-4 space-y-4 max-h-[calc(100vh-200px)] overflow-y-auto">
+                <div className="flex items-start justify-between gap-2">
+                  <div>
+                    <p className="text-xs text-muted-foreground">{selected.createdAt.slice(0, 19).replace('T', ' ')}</p>
+                    <p className="text-sm font-semibold text-foreground">{selected.email}</p>
+                  </div>
+                  <button type="button" onClick={() => setSelectedId(null)}
+                    className="p-1 rounded lg:hover:bg-muted/60" aria-label="닫기">
+                    <X className="w-4 h-4 text-muted-foreground" />
+                  </button>
                 </div>
-                <label className="flex items-start gap-2 text-xs text-violet-900 cursor-pointer">
-                  <input
-                    type="checkbox"
-                    checked={subjectVerified}
-                    onChange={(e) => setSubjectVerified(e.target.checked)}
-                    className="accent-violet-600 mt-0.5"
-                  />
-                  본인 확인 완료 (가입 이메일 일치 확인)
-                </label>
-                <p className="text-[11px] text-violet-700">
-                  처리 시한: 접수일로부터 30일 ({selected.createdAt.slice(0, 10)} 기준)
-                </p>
-              </div>
-            )}
-
-            {/* 답변 */}
-            <div className="space-y-2">
-              <p className="text-xs font-medium text-muted-foreground">빠른 답변 템플릿</p>
-              <select
-                onChange={(e) => {
-                  if (e.target.value) setReplyText(e.target.value);
-                }}
-                value=""
-                className="w-full border border-border rounded px-2 py-1.5 text-xs bg-white"
-              >
-                <option value="">템플릿 선택…</option>
-                {(QUICK_REPLIES[selected.category] ?? QUICK_REPLIES.other).map((tpl, i) => (
-                  <option key={i} value={tpl}>{tpl.slice(0, 60)}{tpl.length > 60 ? '…' : ''}</option>
-                ))}
-              </select>
-              <textarea
-                value={replyText}
-                onChange={(e) => setReplyText(e.target.value)}
-                placeholder="답변 내용 (최대 5000자)"
-                rows={5}
-                maxLength={5000}
-                className="w-full border border-border rounded-lg px-3 py-2 text-sm resize-y min-h-[44px]"
-              />
-              <div className="flex justify-end gap-2">
-                <Button
-                  type="button"
-                  onClick={sendReply}
-                  className="text-sm px-3 py-1.5 bg-primary text-white rounded-lg min-h-[44px]"
-                >
-                  답변 발송 (모의)
-                </Button>
-              </div>
-              {selected.replies && selected.replies.length > 0 && (
-                <div className="mt-3 space-y-2">
-                  <p className="text-xs font-medium text-muted-foreground">이전 답변 {selected.replies.length}건</p>
-                  {selected.replies.map((r, i) => (
-                    <div key={i} className="rounded-lg border border-border bg-muted/30 p-2 text-xs">
-                      <p className="text-muted-foreground mb-1">{r.repliedAt.slice(0, 19).replace('T', ' ')}</p>
-                      <p className="text-foreground whitespace-pre-wrap">{r.text}</p>
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground mb-1">카테고리</p>
+                  <p className="text-sm text-foreground">{CATEGORY_LABELS[selected.category] ?? selected.category}</p>
+                </div>
+                <div>
+                  <p className="text-xs font-medium text-muted-foreground mb-1">본문</p>
+                  <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{selected.message}</p>
+                </div>
+                {selected.attachments && selected.attachments.length > 0 && (
+                  <div>
+                    <p className="text-xs font-medium text-muted-foreground mb-1">첨부 파일</p>
+                    <ul className="text-xs text-muted-foreground space-y-0.5">
+                      {selected.attachments.map((f, idx) => (
+                        <li key={idx}>· {f.name} ({Math.round(f.size / 1024)}KB)</li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+                {selected.category === 'privacy' && (
+                  <div className="rounded-lg border border-violet-200 bg-violet-50 p-3 space-y-2">
+                    <div className="flex items-center gap-1.5 text-xs font-semibold text-violet-900">
+                      <ShieldAlert className="w-3.5 h-3.5" />
+                      개인정보 권리 행사 요청 (Policy §30)
                     </div>
-                  ))}
+                    <label className="flex items-start gap-2 text-xs text-violet-900 cursor-pointer">
+                      <input type="checkbox" checked={subjectVerified} onChange={(e) => setSubjectVerified(e.target.checked)}
+                        className="accent-violet-600 mt-0.5" />
+                      본인 확인 완료 (가입 이메일 일치 확인)
+                    </label>
+                    <p className="text-[11px] text-violet-700">
+                      처리 시한: 접수일로부터 30일 ({selected.createdAt.slice(0, 10)} 기준)
+                    </p>
+                  </div>
+                )}
+                <div className="space-y-2">
+                  <p className="text-xs font-medium text-muted-foreground">빠른 답변 템플릿</p>
+                  <select onChange={(e) => { if (e.target.value) setReplyText(e.target.value); }} value=""
+                    className="w-full border border-border rounded px-2 py-1.5 text-xs bg-white">
+                    <option value="">템플릿 선택…</option>
+                    {(QUICK_REPLIES[selected.category] ?? QUICK_REPLIES.other).map((tpl, idx) => (
+                      <option key={idx} value={tpl}>{tpl.slice(0, 60)}{tpl.length > 60 ? '…' : ''}</option>
+                    ))}
+                  </select>
+                  <textarea value={replyText} onChange={(e) => setReplyText(e.target.value)}
+                    placeholder="답변 내용 (최대 5000자)" rows={5} maxLength={5000}
+                    className="w-full border border-border rounded-lg px-3 py-2 text-sm resize-y min-h-[44px]" />
+                  <div className="flex justify-end gap-2">
+                    <Button type="button" onClick={sendReply}
+                      className="text-sm px-3 py-1.5 bg-primary text-white rounded-lg min-h-[44px]">
+                      답변 발송 (모의)
+                    </Button>
+                  </div>
+                  {selected.replies && selected.replies.length > 0 && (
+                    <div className="mt-3 space-y-2">
+                      <p className="text-xs font-medium text-muted-foreground">이전 답변 {selected.replies.length}건</p>
+                      {selected.replies.map((r, idx) => (
+                        <div key={idx} className="rounded-lg border border-border bg-muted/30 p-2 text-xs">
+                          <p className="text-muted-foreground mb-1">{r.repliedAt.slice(0, 19).replace('T', ' ')}</p>
+                          <p className="text-foreground whitespace-pre-wrap">{r.text}</p>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
-              )}
-            </div>
-
-            {/* 상태 변경 */}
-            <div className="space-y-1 pt-3 border-t border-border/60">
-              <p className="text-xs font-medium text-muted-foreground">상태 변경</p>
-              <div className="flex flex-wrap gap-2">
-                {(['신규', '처리 중', '완료', '보류'] as const).map((s) => {
-                  const active = (selected.status ?? '신규') === s;
-                  return (
-                    <button
-                      key={s}
-                      type="button"
-                      onClick={() => changeStatus(selected.id, s)}
-                      className={`text-xs px-3 py-1.5 rounded-lg min-h-[44px] ${
-                        active
-                          ? 'bg-foreground text-background'
-                          : 'bg-muted text-foreground lg:hover:bg-muted/70'
-                      }`}
-                    >
-                      {s}
-                    </button>
-                  );
-                })}
+                <div className="space-y-1 pt-3 border-t border-border/60">
+                  <p className="text-xs font-medium text-muted-foreground">상태 변경</p>
+                  <div className="flex flex-wrap gap-2">
+                    {(['신규', '처리 중', '완료', '보류'] as const).map((s) => {
+                      const active = (selected.status ?? '신규') === s;
+                      return (
+                        <button key={s} type="button" onClick={() => changeStatus(selected.id, s)}
+                          className={`text-xs px-3 py-1.5 rounded-lg min-h-[44px] ${
+                            active ? 'bg-foreground text-background' : 'bg-muted text-foreground lg:hover:bg-muted/70'
+                          }`}>
+                          {s}
+                        </button>
+                      );
+                    })}
+                  </div>
+                </div>
+                <div className="space-y-1 pt-3 border-t border-border/60">
+                  <p className="text-xs font-medium text-muted-foreground">운영 메모 (내부)</p>
+                  <textarea value={internalNote} onChange={(e) => setInternalNote(e.target.value)}
+                    placeholder="다른 운영자와 공유하는 메모. 사용자에게 노출되지 않습니다." rows={3}
+                    className="w-full border border-border rounded-lg px-3 py-2 text-xs resize-y" />
+                  <button type="button" onClick={saveInternalNote}
+                    className="text-xs px-3 py-1.5 rounded-lg border border-border bg-white text-foreground lg:hover:bg-muted/50 min-h-[44px]">
+                    메모 저장
+                  </button>
+                </div>
+              </aside>
+            ) : (
+              <div className="hidden lg:flex items-center justify-center border border-dashed border-border/60 rounded-lg bg-white text-sm text-muted-foreground p-8">
+                <span className="flex items-center gap-2">
+                  왼쪽에서 문의를 선택하세요 <ChevronRight className="w-4 h-4" />
+                </span>
               </div>
-            </div>
-
-            {/* 운영 메모 (내부) */}
-            <div className="space-y-1 pt-3 border-t border-border/60">
-              <p className="text-xs font-medium text-muted-foreground">운영 메모 (내부)</p>
-              <textarea
-                value={internalNote}
-                onChange={(e) => setInternalNote(e.target.value)}
-                placeholder="다른 운영자와 공유하는 메모. 사용자에게 노출되지 않습니다."
-                rows={3}
-                className="w-full border border-border rounded-lg px-3 py-2 text-xs resize-y"
-              />
-              <button
-                type="button"
-                onClick={saveInternalNote}
-                className="text-xs px-3 py-1.5 rounded-lg border border-border bg-white text-foreground lg:hover:bg-muted/50 min-h-[44px]"
-              >
-                메모 저장
-              </button>
-            </div>
-          </aside>
-        ) : (
-          <div className="hidden lg:flex items-center justify-center border border-dashed border-border/60 rounded-lg bg-white text-sm text-muted-foreground p-8">
-            <span className="flex items-center gap-2">
-              왼쪽에서 문의를 선택하세요 <ChevronRight className="w-4 h-4" />
-            </span>
+            )}
           </div>
+        </>
+      )}
+    </div>
+  );
+}
+
+// ─── 작품 문의 상세 헤더 컴포넌트 ────────────────────────────────────────────
+
+function inquiryStatusBadgeClass(status: string): string {
+  if (status === '신규') return 'bg-violet-100 text-violet-700 border border-violet-200';
+  if (status === '처리 중') return 'bg-blue-50 text-blue-700 border border-blue-200';
+  if (status === '완료') return 'bg-emerald-50 text-emerald-700 border border-emerald-200';
+  return 'bg-slate-100 text-slate-600 border border-slate-200';
+}
+
+function WorkInquiryDetailHeader({ inquiry }: { inquiry: StoredInquiry }) {
+  const workObj = inquiry.workId ? workStore.getWork(inquiry.workId) : null;
+  const pieceImages = workObj
+    ? (Array.isArray(workObj.image) ? workObj.image : [workObj.image])
+    : [];
+  const pieceIndex = inquiry.pieceIndex ?? 0;
+  const imgKey = workObj
+    ? (pieceImages[pieceIndex] ?? getCoverImage(workObj.image, workObj.coverImageIndex))
+    : '';
+  const imgSrc = imgKey ? (imageUrls[imgKey] || imgKey) : '';
+  const totalPieces = pieceImages.length;
+  const categoryLabel = inquiry.categoryDetail
+    ? (WORK_INQUIRY_DETAIL_LABELS[inquiry.categoryDetail] ?? '')
+    : '';
+
+  return (
+    <div className="bg-slate-900 p-4">
+      <div className="flex gap-3 mb-3">
+        <div className="w-14 h-14 rounded overflow-hidden border border-slate-700 bg-slate-800 shrink-0 flex items-center justify-center">
+          {imgSrc ? (
+            <ImageWithFallback src={imgSrc} alt="" className="w-full h-full object-cover" />
+          ) : (
+            <div className="w-full h-full bg-slate-700" />
+          )}
+        </div>
+        <div className="flex-1 min-w-0">
+          <p className="text-white font-bold text-sm leading-tight truncate">
+            {inquiry.workTitle ?? '(전시명 없음)'}
+          </p>
+          {workObj && (
+            <p className="text-slate-400 text-xs mt-0.5">
+              {workObj.artist?.name ?? '—'}
+              {totalPieces > 1 && ` · 전시 ${totalPieces}장 중 ${pieceIndex + 1}번째`}
+            </p>
+          )}
+          {workObj && (
+            <a
+              href={`/exhibitions/${inquiry.workId}`}
+              target="_blank"
+              rel="noreferrer"
+              className="text-violet-300 text-xs mt-0.5 inline-flex items-center gap-0.5 lg:hover:text-violet-100"
+            >
+              전시 바로가기 ↗
+            </a>
+          )}
+        </div>
+      </div>
+      <div className="flex gap-2">
+        <span className="bg-violet-900 text-violet-200 rounded px-2 py-0.5 text-[10px] font-semibold">🖼 작품 문의</span>
+        {categoryLabel && (
+          <span className="bg-blue-900 text-blue-200 rounded px-2 py-0.5 text-[10px] font-semibold">{categoryLabel}</span>
         )}
       </div>
     </div>
