@@ -23,6 +23,7 @@ import Notices from './pages/Notices';
 import NoticeDetail from './pages/NoticeDetail';
 import ServerError from './pages/ServerError';
 import AdminLayout from './admin/AdminLayout';
+import AdminLogin from './admin/AdminLogin';
 import AdminDashboard from './admin/AdminDashboard';
 
 import ContentReview from './admin/ContentReview';
@@ -111,6 +112,7 @@ export const router = createBrowserRouter([
       { path: '/maintenance', Component: Maintenance },
       { path: '/signup', Component: Signup },
       { path: '/auth/verify', Component: AuthVerify },
+      { path: '/admin/login', Component: AdminLogin },
       // Admin (접근 제어는 AdminLayout 내부에서 처리)
       {
         path: '/admin',

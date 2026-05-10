@@ -135,7 +135,8 @@ export default function AdminLayout() {
   }, [sessionValid]);
 
   if (!sessionValid) {
-    return <Navigate to="/" replace />;
+    const redirect = encodeURIComponent(location.pathname + location.search);
+    return <Navigate to={`/admin/login?redirect=${redirect}`} replace />;
   }
 
   return (

@@ -21,19 +21,6 @@ const QA_NOT_FOUND_PATH = '/__artier_qa_not_found__';
 const showQaNav =
   import.meta.env.DEV || import.meta.env.VITE_FOOTER_QA_LINKS === 'true';
 
-/** AdminLayout이 `canAccessAdminRoutes`로 막지 않도록 운영팀 역할을 켠 뒤 이동합니다. */
-const ADMIN_QA_PATHS: { path: string; labelKey: MessageKey }[] = [
-  { path: '/admin', labelKey: 'footer.qaAdminDashboard' },
-  { path: '/admin/contests?tab=participants', labelKey: 'footer.qaAdminEventParticipants' },
-  { path: '/admin/content-review', labelKey: 'footer.qaAdminContentReview' },
-  { path: '/admin/picks', labelKey: 'footer.qaAdminPicks' },
-  { path: '/admin/curation', labelKey: 'footer.qaAdminCuration' },
-  { path: '/admin/banners', labelKey: 'footer.qaAdminBanners' },
-  { path: '/admin/contests', labelKey: 'footer.qaAdminManagedEvents' },
-  { path: '/admin/reports', labelKey: 'footer.qaAdminReports' },
-  { path: '/admin/members', labelKey: 'footer.qaAdminMembers' },
-  { path: '/admin/inquiries', labelKey: 'footer.qaAdminInquiries' },
-];
 
 function useSampleWorkId(): string {
   return useSyncExternalStore(
@@ -192,19 +179,19 @@ export function QaScreenShortcuts() {
 
           <DropdownMenuSeparator />
           <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
-            {t('footer.qaGroupAdmin')}
+            어드민
           </DropdownMenuLabel>
-          {ADMIN_QA_PATHS.map(({ path, labelKey }) => (
-            <DropdownMenuItem
-              key={path}
-              className={linkCls}
-              onSelect={() => {
-                goAdmin(path);
-              }}
-            >
-              {t(labelKey)}
-            </DropdownMenuItem>
-          ))}
+          <DropdownMenuItem asChild>
+            <Link to="/admin/login" className={linkCls}>
+              어드민 로그인 화면
+            </Link>
+          </DropdownMenuItem>
+          <DropdownMenuItem
+            className={linkCls}
+            onSelect={() => goAdmin('/admin')}
+          >
+            어드민 로그인 상태 바로가기
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
