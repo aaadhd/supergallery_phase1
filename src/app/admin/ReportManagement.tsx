@@ -1,8 +1,10 @@
 import { useMemo, useState, useEffect, useCallback } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { artists } from '../data';
 import { toast } from 'sonner';
-import { EyeOff, Trash2, XCircle, ExternalLink } from 'lucide-react';
+import { Trash2, Flag } from 'lucide-react';
+import { getCoverImage } from '../utils/imageHelper';
+import { imageUrls } from '../imageUrls';
+import { ImageWithFallback } from '../components/ImageWithFallback';
 import { Button } from '../components/ui/button';
 import { openConfirm } from '../components/ConfirmDialog';
 import { workStore } from '../store';
@@ -60,6 +62,7 @@ type ReportRow = {
   id: string;
   target: string;
   targetName: string;
+  detail: string;
   reason: string;
   reportedAt: string;
   reporterId?: string;
@@ -90,6 +93,7 @@ function mapUserReportToRow(r: StoredUserReport): ReportRow {
     id: r.id,
     target,
     targetName: r.targetName ?? '',
+    detail,
     reason: r.reason ?? r.reasonLabel ?? r.reasonKey ?? '',
     reportedAt,
     reporterId: r.reporterId,
@@ -120,6 +124,17 @@ function mergeReportRows(): ReportRow[] {
   return unique.map(mapUserReportToRow);
 }
 
+function reasonBadgeClass(reason: string): string {
+  const r = reason.toLowerCase();
+  if (r.includes('저작권') || r.includes('copyright'))
+    return 'bg-red-50 text-red-700 border border-red-200';
+  if (r.includes('부적절') || r.includes('inappropriate'))
+    return 'bg-amber-50 text-amber-800 border border-amber-200';
+  if (r.includes('스팸') || r.includes('spam') || r.includes('광고'))
+    return 'bg-slate-100 text-slate-600 border border-slate-200';
+  return 'bg-slate-100 text-slate-600 border border-slate-200';
+}
+
 function stateBadge(s: ReportState) {
   switch (s) {
     case '삭제': return 'bg-red-50 text-red-700 border border-red-200';
@@ -133,10 +148,10 @@ function stateBadge(s: ReportState) {
 
 export default function ReportManagement() {
   const { t } = useI18n();
-  const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [rows, setRows] = useState<ReportRow[]>(mergeReportRows);
-  const [statusFilter, setStatusFilter] = useState('전체');
+  const [statusFilter, setStatusFilter] = useState('대기');
+  const [selectedReport, setSelectedReport] = useState<ReportRow | null>(null);
   // Policy §22.2 v2.20·§22.5 — Phase 1엔 SLA 자동 측정·시간 기반 우선순위 폐기. 운영팀 정성 판단으로 처리.
 
   // Policy §12.1 v2.20 「삭제」 사유 4종 한정 + audit_log 기록.
@@ -367,117 +382,95 @@ export default function ReportManagement() {
           접수된 신고가 없습니다. Proud Gallery에서 로그인한 뒤 작품 ⋯ 메뉴에서 신고해 보세요.
         </div>
       ) : (
-        <div className="border border-border rounded-lg overflow-hidden overflow-x-auto">
-          <table className="w-full text-sm min-w-[1100px]">
-            <thead>
-              <tr className="bg-muted text-left text-foreground">
-                <th className="px-4 py-3 font-medium whitespace-nowrap">신고대상</th>
-                <th className="px-4 py-3 font-medium whitespace-nowrap">신고사유</th>
-                <th className="px-4 py-3 font-medium whitespace-nowrap">신고자</th>
-                <th className="px-4 py-3 font-medium whitespace-nowrap">신고일시</th>
-                <th className="px-4 py-3 font-medium whitespace-nowrap">상태</th>
-                <th className="px-4 py-3 font-medium text-right whitespace-nowrap">작업</th>
-              </tr>
-            </thead>
-            <tbody>
+        <div className="border border-border rounded-lg overflow-hidden">
+          <div className="grid" style={{ gridTemplateColumns: '44% 1fr' }}>
+
+            {/* 좌: 신고 목록 */}
+            <div className="border-r border-border overflow-y-auto" style={{ maxHeight: '72vh' }}>
+              {/* 컬럼 헤더 */}
+              <div
+                className="grid px-3 py-2 bg-muted border-b border-border text-[11px] font-semibold text-muted-foreground uppercase tracking-wide"
+                style={{ gridTemplateColumns: '28px 1fr 72px 44px' }}
+              >
+                <div />
+                <div className="pl-2">신고 대상</div>
+                <div>사유</div>
+                <div>날짜</div>
+              </div>
               {pageItems.map((r) => {
-                const targetKey = r.workId ? `work:${r.workId}` : r.artistId ? `artist:${r.artistId}` : '';
-                const accumulated = targetKey ? reportCountByTarget.get(targetKey) ?? 0 : 0;
+                const isSelected = selectedReport?.id === r.id;
+                const isDone = r.status !== '대기';
+                const reportWork = r.workId ? workStore.getWork(r.workId) : null;
+                const thumbKey = reportWork
+                  ? getCoverImage(reportWork.image, reportWork.coverImageIndex)
+                  : '';
+                const thumbSrc = thumbKey ? (imageUrls[thumbKey] || thumbKey) : '';
                 return (
-                <tr key={r.id} className="border-b border-border/40 transition-colors lg:hover:bg-muted/50">
-                  <td className="px-4 py-3 text-foreground whitespace-nowrap">
-                    <div className="flex flex-col gap-1">
-                      {r.workId ? (
-                        <a
-                          href={`/exhibitions/${r.workId}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1 text-primary lg:hover:underline"
-                          title="전시 상세 새 탭으로 열기"
-                        >
-                          {r.target}
-                          <ExternalLink className="w-3 h-3 shrink-0" />
-                        </a>
-                      ) : r.artistId ? (
-                        <button
-                          type="button"
-                          onClick={() => navigate(`/admin/members?artist=${r.artistId}`)}
-                          className="inline-flex items-center gap-1 text-primary lg:hover:underline text-left"
-                          title="회원 상세 모달 열기"
-                        >
-                          {r.target}
-                          <ExternalLink className="w-3 h-3 shrink-0" />
-                        </button>
+                  <button
+                    key={r.id}
+                    type="button"
+                    onClick={() => setSelectedReport(r)}
+                    className={`w-full text-left grid px-3 py-2.5 border-b border-border/40 transition-colors items-center ${
+                      isSelected ? 'bg-primary/[.06] border-l-2 border-l-primary' : 'lg:hover:bg-muted/50'
+                    } ${isDone ? 'opacity-50' : ''}`}
+                    style={{ gridTemplateColumns: '28px 1fr 72px 44px' }}
+                  >
+                    <div className="w-7 h-7 rounded overflow-hidden border border-border bg-muted/30 shrink-0 flex items-center justify-center">
+                      {thumbSrc ? (
+                        <ImageWithFallback src={thumbSrc} alt="" className="w-full h-full object-cover" />
                       ) : (
-                        r.target
-                      )}
-                      {accumulated >= 2 && (
-                        <span
-                          className="inline-flex w-fit items-center rounded-full bg-rose-50 border border-rose-200 text-rose-700 px-2 py-0.5 text-[10px] font-semibold"
-                          title="같은 대상에 접수된 누적 신고 수"
-                        >
-                          {accumulated}건 누적
-                        </span>
+                        <Flag className="w-3 h-3 text-muted-foreground" />
                       )}
                     </div>
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground max-w-[220px] truncate">{r.reason}</td>
-                  <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
-                    {r.reporterId ? (reporterNicknameMap.get(r.reporterId) ?? r.reporterId) : '—'}
-                  </td>
-                  <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{r.reportedAt}</td>
-                  <td className="px-4 py-3 whitespace-nowrap">
-                    <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${stateBadge(r.status)}`}>
-                      {r.status}
-                    </span>
-                  </td>
-                  <td className="px-4 py-3 text-right whitespace-nowrap">
-                    <div className="flex flex-nowrap justify-end gap-2">
-                      <Button
-                        type="button"
-                        disabled={r.status !== '대기'}
-                        onClick={() => openDeleteDialog(r.id)}
-                        className="text-sm px-3 py-1.5 rounded-lg bg-red-600 text-white lg:hover:bg-red-700 disabled:opacity-50 disabled:pointer-events-none"
-                      >
-                        <Trash2 className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
-                        삭제
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        disabled={r.status !== '대기'}
-                        onClick={() => openMemoDialog(r.id, 'dismiss', r.targetName)}
-                        className="text-sm px-3 py-1.5 rounded-lg"
-                        title="신고 기각 — 비공개 유지 상태였다면 즉시 복원"
-                      >
-                        <XCircle className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
-                        기각
-                      </Button>
-                      <button
-                        type="button"
-                        disabled={r.status !== '대기'}
-                        onClick={() => openMemoDialog(r.id, 'keepHidden', r.targetName)}
-                        className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/40 disabled:opacity-50 disabled:pointer-events-none inline-flex items-center gap-1"
-                        title="비공개 유지 — 운영자 확정 비공개로 전환"
-                      >
-                        <EyeOff className="w-3.5 h-3.5" />
-                        비공개 유지
-                      </button>
+                    <div className="pl-2 min-w-0">
+                      <div className="font-medium text-sm text-foreground truncate">{r.targetName}</div>
+                      <div className="text-[11px] text-muted-foreground truncate">
+                        {r.reporterId ? (reporterNicknameMap.get(r.reporterId) ?? r.reporterId) : '—'}
+                      </div>
                     </div>
-                  </td>
-                </tr>
+                    <div>
+                      <span className={`inline-flex rounded-full px-1.5 py-0.5 text-[10px] font-medium ${reasonBadgeClass(r.reason)}`}>
+                        {r.reason.slice(0, 5)}
+                      </span>
+                    </div>
+                    <div className="text-[11px] text-muted-foreground">
+                      {r.reportedAt ? r.reportedAt.slice(5, 10) : '—'}
+                    </div>
+                  </button>
                 );
               })}
-            </tbody>
-          </table>
-          <div className="px-4 pb-3">
-            <PaginationBar
-              page={page}
-              pageCount={pageCount}
-              totalCount={totalCount}
-              pageSize={ADMIN_TABLE_PAGE_SIZE}
-              onPageChange={setPage}
-            />
+              <div className="px-3 py-2">
+                <PaginationBar
+                  page={page}
+                  pageCount={pageCount}
+                  totalCount={totalCount}
+                  pageSize={ADMIN_TABLE_PAGE_SIZE}
+                  onPageChange={setPage}
+                />
+              </div>
+            </div>
+
+            {/* 우: 신고 상세 패널 */}
+            <div className="overflow-y-auto" style={{ maxHeight: '72vh' }}>
+              {selectedReport ? (
+                <ReportDetailPanel
+                  report={selectedReport}
+                  reporterNickname={
+                    selectedReport.reporterId
+                      ? (reporterNicknameMap.get(selectedReport.reporterId) ?? selectedReport.reporterId)
+                      : '—'
+                  }
+                  onDelete={() => openDeleteDialog(selectedReport.id)}
+                  onDismiss={() => openMemoDialog(selectedReport.id, 'dismiss', selectedReport.targetName)}
+                  onKeepHidden={() => openMemoDialog(selectedReport.id, 'keepHidden', selectedReport.targetName)}
+                />
+              ) : (
+                <div className="flex items-center justify-center h-full text-sm text-muted-foreground p-8">
+                  왼쪽에서 신고를 선택하세요
+                </div>
+              )}
+            </div>
+
           </div>
         </div>
       )}
@@ -592,6 +585,121 @@ export default function ReportManagement() {
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// ─── 신고 상세 패널 컴포넌트 ──────────────────────────────────────────────────
+
+interface ReportDetailPanelProps {
+  report: ReportRow;
+  reporterNickname: string;
+  onDelete: () => void;
+  onDismiss: () => void;
+  onKeepHidden: () => void;
+}
+
+function ReportDetailPanel({ report, reporterNickname, onDelete, onDismiss, onKeepHidden }: ReportDetailPanelProps) {
+  const reportWork = report.workId ? workStore.getWork(report.workId) : null;
+  const coverKey = reportWork ? getCoverImage(reportWork.image, reportWork.coverImageIndex) : '';
+  const coverSrc = coverKey ? (imageUrls[coverKey] || coverKey) : '';
+
+  return (
+    <div className="flex flex-col h-full">
+
+      {/* 어두운 배경: 작품 이미지 */}
+      <div className="bg-slate-900 p-4 shrink-0">
+        {coverSrc ? (
+          <div
+            className="bg-slate-800 rounded-lg overflow-hidden flex items-center justify-center mb-3"
+            style={{ height: 120 }}
+          >
+            <ImageWithFallback src={coverSrc} alt="" className="w-full h-full object-contain" />
+          </div>
+        ) : (
+          <div
+            className="bg-slate-800 rounded-lg flex items-center justify-center mb-3 text-slate-500 text-xs"
+            style={{ height: 72 }}
+          >
+            작품 이미지 없음 (계정 신고 또는 이미 삭제됨)
+          </div>
+        )}
+        <div className="font-bold text-white text-sm">{report.targetName}</div>
+        {reportWork && (
+          <div className="flex items-center gap-3 mt-1">
+            <span className="text-slate-400 text-xs">{reportWork.artist?.name ?? '—'}</span>
+            <a
+              href={`/exhibitions/${report.workId}`}
+              target="_blank"
+              rel="noreferrer"
+              className="text-violet-300 text-xs lg:hover:text-violet-100"
+            >
+              전시 보기 ↗
+            </a>
+          </div>
+        )}
+      </div>
+
+      {/* 신고 내용 */}
+      <div className="px-4 py-4 border-b border-border">
+        <div className="flex items-center justify-between mb-2">
+          <span className="text-sm font-semibold text-foreground">신고 내용</span>
+          <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-semibold ${reasonBadgeClass(report.reason)}`}>
+            {report.reason}
+          </span>
+        </div>
+        {report.detail ? (
+          <div className="bg-amber-50 border-l-2 border-amber-400 px-3 py-2 rounded-r text-sm text-foreground leading-relaxed mb-2">
+            {report.detail}
+          </div>
+        ) : (
+          <p className="text-sm text-muted-foreground italic mb-2">(상세 내용 없음)</p>
+        )}
+        <p className="text-xs text-muted-foreground">{reporterNickname} · {report.reportedAt}</p>
+      </div>
+
+      {/* 판정 액션 (위험도 순) */}
+      <div className="px-4 py-4 space-y-2.5">
+        <p className="text-xs font-semibold text-muted-foreground uppercase tracking-wide mb-3">판정</p>
+
+        <button
+          type="button"
+          disabled={report.status !== '대기'}
+          onClick={onKeepHidden}
+          className="w-full text-left border border-border rounded-lg px-3 py-2.5 lg:hover:bg-muted/50 transition-colors disabled:opacity-50 disabled:pointer-events-none"
+        >
+          <div className="font-semibold text-sm mb-0.5">🔒 비공개 유지</div>
+          <div className="text-xs text-muted-foreground">피드·검색에서 숨김 유지. 작가 프로필엔 보임.</div>
+        </button>
+
+        <button
+          type="button"
+          disabled={report.status !== '대기' || !report.workId}
+          onClick={onDelete}
+          className="w-full text-left border border-red-200 rounded-lg px-3 py-2.5 lg:hover:bg-red-50 transition-colors disabled:opacity-50 disabled:pointer-events-none"
+        >
+          <div className="font-semibold text-sm text-red-600 mb-0.5">🗑 작품 삭제</div>
+          <div className="text-xs text-muted-foreground">영구 삭제. 되돌릴 수 없음. 확인 다이얼로그.</div>
+        </button>
+
+        <button
+          type="button"
+          disabled={report.status !== '대기'}
+          onClick={onDismiss}
+          className="w-full text-left border border-emerald-200 rounded-lg px-3 py-2.5 lg:hover:bg-emerald-50 transition-colors disabled:opacity-50 disabled:pointer-events-none"
+        >
+          <div className="font-semibold text-sm text-emerald-700 mb-0.5">✓ 신고 기각</div>
+          <div className="text-xs text-muted-foreground">신고 부당. 비공개 처리됐다면 즉시 복원.</div>
+        </button>
+      </div>
+
+      {/* 현재 상태 */}
+      <div className="px-4 py-3 border-t border-border/60 mt-auto flex items-center gap-2 text-sm text-muted-foreground">
+        <span>현재 상태:</span>
+        <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${stateBadge(report.status)}`}>
+          {report.status}
+        </span>
+      </div>
     </div>
   );
 }
