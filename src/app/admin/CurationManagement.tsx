@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-import { Plus, Trash2, Pencil, Check, X, Search, ArrowUp, ArrowDown, AlertTriangle } from 'lucide-react';
+import { Plus, Trash2, Pencil, Check, X, Search, ArrowUp, ArrowDown, AlertTriangle, ExternalLink } from 'lucide-react';
+import { Link } from 'react-router-dom';
 import { Button } from '../components/ui/button';
 import {
   curationStore,
@@ -291,32 +292,55 @@ export default function CurationManagement() {
         ) : (
           <ul className="mb-4 space-y-3">
             {curatedExhibitions.map((c) => (
-              <li key={c.id} className="rounded-lg border border-border bg-white p-4">
-                <div className="flex items-start gap-3">
-                  <div className="flex-1 min-w-0">
-                    <p className="text-sm font-semibold text-foreground">{c.title}</p>
-                    {c.subtitle && <p className="text-xs text-muted-foreground mt-0.5">{c.subtitle}</p>}
-                    <p className="text-xs text-muted-foreground mt-1">{t('admin.curation.pieceCount').replace('{n}', String(c.pieces.length))}</p>
-                  </div>
-                  <div className="flex shrink-0 gap-1.5">
-                    <button
-                      type="button"
-                      onClick={() => openEdit(c)}
-                      disabled={isEditorOpen}
-                      className="text-xs px-2.5 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/50 inline-flex items-center gap-1 disabled:opacity-50"
-                      aria-label={`${c.title} ${t('admin.curation.edit')}`}
-                    >
-                      <Pencil className="w-3.5 h-3.5" />{t('admin.curation.edit')}
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => removeCuratedExhibition(c)}
-                      disabled={isEditorOpen}
-                      className="text-xs px-2.5 py-1.5 rounded-lg border border-red-200 text-red-700 lg:hover:bg-red-50 inline-flex items-center gap-1 disabled:opacity-50"
-                      aria-label={`${c.title} ${t('admin.curation.delete')}`}
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />{t('admin.curation.delete')}
-                    </button>
+              <li key={c.id} className="rounded-lg border border-border bg-white overflow-hidden">
+                <div className="flex items-stretch gap-0">
+                  {c.bannerImageUrl && (
+                    <div className="w-20 shrink-0 bg-muted">
+                      <img src={c.bannerImageUrl} alt="" className="w-full h-full object-cover" loading="lazy" />
+                    </div>
+                  )}
+                  <div className="flex flex-1 items-start gap-3 p-4">
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-semibold text-foreground">{c.title}</p>
+                      {c.subtitle && <p className="text-xs text-muted-foreground mt-0.5">{c.subtitle}</p>}
+                      <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+                        <span className="text-xs text-muted-foreground">{t('admin.curation.pieceCount').replace('{n}', String(c.pieces.length))}</span>
+                        {(c.startAt || c.endAt) && (
+                          <span className="text-xs text-muted-foreground">
+                            {c.startAt && c.endAt ? `${c.startAt} ~ ${c.endAt}` : c.startAt ? `${c.startAt} ~` : `~ ${c.endAt}`}
+                          </span>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex shrink-0 gap-1.5 items-center">
+                      <Link
+                        to={`/curations/${c.id}`}
+                        target="_blank"
+                        className="h-7 w-7 inline-flex items-center justify-center rounded border border-border text-muted-foreground lg:hover:bg-muted/40 lg:hover:text-foreground"
+                        aria-label="기획전 미리보기"
+                        title="사용자 화면 보기"
+                      >
+                        <ExternalLink className="w-3.5 h-3.5" />
+                      </Link>
+                      <button
+                        type="button"
+                        onClick={() => openEdit(c)}
+                        disabled={isEditorOpen}
+                        className="text-xs px-2.5 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/50 inline-flex items-center gap-1 disabled:opacity-50"
+                        aria-label={`${c.title} ${t('admin.curation.edit')}`}
+                      >
+                        <Pencil className="w-3.5 h-3.5" />{t('admin.curation.edit')}
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => removeCuratedExhibition(c)}
+                        disabled={isEditorOpen}
+                        className="text-xs px-2.5 py-1.5 rounded-lg border border-red-200 text-red-700 lg:hover:bg-red-50 inline-flex items-center gap-1 disabled:opacity-50"
+                        aria-label={`${c.title} ${t('admin.curation.delete')}`}
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />{t('admin.curation.delete')}
+                      </button>
+                    </div>
                   </div>
                 </div>
               </li>
