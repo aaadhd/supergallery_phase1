@@ -345,7 +345,7 @@ export default function Browse() {
   // RENDER
   // =========================================================================
   return (
-    <div className="min-h-full bg-background">
+    <div className="min-h-full bg-background overflow-x-hidden">
       {/* ----------------------------------------------------------------- */}
       {/* HERO — 에디토리얼 갤러리 톤                                              */}
       {/* ----------------------------------------------------------------- */}

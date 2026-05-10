@@ -49,7 +49,7 @@ export default function Layout() {
 
   if (browseDocked) {
     return (
-      <div className="flex h-dvh min-h-0 flex-col bg-background max-md:pb-[calc(3.5rem+env(safe-area-inset-bottom,0px))]">
+      <div className="flex h-dvh min-h-0 flex-col bg-background overflow-x-hidden max-md:pb-[calc(3.5rem+env(safe-area-inset-bottom,0px))]">
         <a
           href="#browse-scroll-root"
           className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-foreground focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-background focus:shadow-lg"
@@ -68,7 +68,7 @@ export default function Layout() {
 
   // 일반 페이지: 홈과 동일 구조 — 화면 고정 높이 + main 내부 스크롤 + Footer 화면 하단 고정
   return (
-    <div className="flex h-dvh min-h-0 flex-col bg-background max-md:pb-[calc(3.5rem+env(safe-area-inset-bottom,0px))]">
+    <div className="flex h-dvh min-h-0 flex-col bg-background overflow-x-hidden max-md:pb-[calc(3.5rem+env(safe-area-inset-bottom,0px))]">
       <a
         href="#main-content"
         className="sr-only focus:not-sr-only focus:fixed focus:left-4 focus:top-4 focus:z-[100] focus:rounded-lg focus:bg-foreground focus:px-4 focus:py-2 focus:text-sm focus:font-semibold focus:text-background focus:shadow-lg"

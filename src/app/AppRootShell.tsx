@@ -6,7 +6,7 @@ export function AppRootShell() {
   const location = useLocation();
   return (
     <>
-      <div key={location.pathname} className="animate-in fade-in duration-150">
+      <div key={location.pathname} className="animate-in fade-in duration-150 overflow-x-hidden">
         <Outlet />
       </div>
       <QaScreenShortcuts />
