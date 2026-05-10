@@ -1,8 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-import { Plus, Trash2, Pencil, Check, X, Search, ArrowUp, ArrowDown, AlertTriangle, ExternalLink } from 'lucide-react';
+import { Plus, Trash2, X, Search, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
-import { Button } from '../components/ui/button';
 import {
   curationStore,
   useCuration,
@@ -17,11 +16,23 @@ import { pushDemoNotification } from '../utils/pushDemoNotification';
 import { useI18n } from '../i18n/I18nProvider';
 import type { Work } from '../data';
 import { appendAuditLog } from '../utils/adminAuditLog';
+import { getCoverImage } from '../utils/imageHelper';
+import { imageUrls } from '../imageUrls';
+import { ImageWithFallback } from '../components/ImageWithFallback';
+import {
+  DndContext, closestCenter, KeyboardSensor, PointerSensor, TouchSensor,
+  useSensor, useSensors, type DragEndEvent,
+} from '@dnd-kit/core';
+import {
+  arrayMove, SortableContext, sortableKeyboardCoordinates,
+  useSortable, verticalListSortingStrategy,
+} from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
+
 
 /**
  * ADM-CUR-01 기획전 관리 (Policy v2.19, PRD v1.23 — piece 단위 큐레이션).
- * - 2단계 piece 선택 UX: 전시 그리드 → piece sub 그리드.
- * - 단일 이미지 전시는 클릭 한 번으로 piece 자동 선택(AC-05).
+ * - 평면 갤러리 piece 선택 UX: 모든 이미지 한 그리드.
  * - 같은 전시 piece 다중 선택·다른 기획전과 다중 큐레이션 허용(AC-06).
  * - 비공개·검수 미통과 piece 추가 시도 시 경고 + 저장은 허용(AC-02 — 검수 통과 후 자연 노출).
  * - 저장 시 새로 추가된 piece의 작가에게 알림 발송(B-4c-5, Policy §15.2 정합).
@@ -40,25 +51,18 @@ type EditorState = {
   startAt: string;
   endAt: string;
   pieces: SelectedPiece[];
-  /** 어떤 전시 카드가 펼쳐져 piece sub 그리드를 보여줄지 */
-  expandedWorkId: string | null;
   search: string;
 };
 
 function emptyEditor(): EditorState {
-  return { mode: 'create', title: '', subtitle: '', startAt: '', endAt: '', pieces: [], expandedWorkId: null, search: '' };
+  return { mode: 'create', title: '', subtitle: '', startAt: '', endAt: '', pieces: [], search: '' };
 }
 
 function fromExhibition(c: CuratedExhibition): EditorState {
   return {
-    mode: 'edit',
-    editingId: c.id,
-    title: c.title,
-    subtitle: c.subtitle ?? '',
-    startAt: c.startAt ?? '',
-    endAt: c.endAt ?? '',
+    mode: 'edit', editingId: c.id, title: c.title, subtitle: c.subtitle ?? '',
+    startAt: c.startAt ?? '', endAt: c.endAt ?? '',
     pieces: c.pieces.map((p) => ({ workId: p.workId, pieceId: p.pieceId })),
-    expandedWorkId: null,
     search: '',
   };
 }
@@ -93,6 +97,14 @@ function pushCurationSelectedNotification(
   });
 }
 
+type PieceItem = {
+  workId: string;
+  pieceId: string;
+  imgKey: string;
+  workTitle: string;
+  isPublic: boolean;
+};
+
 export default function CurationManagement() {
   const { t } = useI18n();
   const { curatedExhibitions } = useCuration();
@@ -100,7 +112,7 @@ export default function CurationManagement() {
 
   const [loading, setLoading] = useState(true);
   const [editor, setEditor] = useState<EditorState | null>(null);
-  const isEditorOpen = editor !== null;
+  const [selectedCurationId, setSelectedCurationId] = useState<string | null>(null);
 
   useEffect(() => {
     const tm = window.setTimeout(() => setLoading(false), 200);
@@ -108,19 +120,21 @@ export default function CurationManagement() {
   }, []);
 
   const allWorks = useMemo(() => workStore.getWorks(), [curatedExhibitions, editor]);
-  const filteredWorks = useMemo(() => {
-    const q = editor?.search.trim().toLowerCase() ?? '';
-    if (!q) return allWorks;
-    return allWorks.filter((w) => {
-      const title = (w.exhibitionName || w.title || '').toLowerCase();
-      const artist = (w.artist?.name || '').toLowerCase();
-      return w.id.includes(q) || title.includes(q) || artist.includes(q);
-    });
-  }, [allWorks, editor?.search]);
 
-  const openCreate = () => setEditor(emptyEditor());
-  const openEdit = (c: CuratedExhibition) => setEditor(fromExhibition(c));
-  const closeEditor = () => setEditor(null);
+  const openCreate = () => {
+    setEditor(emptyEditor());
+    setSelectedCurationId('new');
+  };
+
+  const openEdit = (c: CuratedExhibition) => {
+    setEditor(fromExhibition(c));
+    setSelectedCurationId(c.id);
+  };
+
+  const closeEditor = () => {
+    setEditor(null);
+    setSelectedCurationId(null);
+  };
 
   const togglePiece = (workId: string, pieceId: string) => {
     setEditor((prev) => {
@@ -134,19 +148,6 @@ export default function CurationManagement() {
     });
   };
 
-  const movePiece = (key: string, dir: -1 | 1) => {
-    setEditor((prev) => {
-      if (!prev) return prev;
-      const idx = prev.pieces.findIndex((p) => pieceKey(p) === key);
-      if (idx < 0) return prev;
-      const j = idx + dir;
-      if (j < 0 || j >= prev.pieces.length) return prev;
-      const next = [...prev.pieces];
-      [next[idx], next[j]] = [next[j], next[idx]];
-      return { ...prev, pieces: next };
-    });
-  };
-
   const removeSelected = (key: string) => {
     setEditor((prev) => {
       if (!prev) return prev;
@@ -154,10 +155,21 @@ export default function CurationManagement() {
     });
   };
 
-  const handleExpand = (workId: string) => {
+  const sensors = useSensors(
+    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
+    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 8 } }),
+    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
+  );
+
+  const handlePieceDragEnd = (event: DragEndEvent) => {
+    const { active, over } = event;
+    if (!over || active.id === over.id) return;
     setEditor((prev) => {
       if (!prev) return prev;
-      return { ...prev, expandedWorkId: prev.expandedWorkId === workId ? null : workId };
+      const oldIdx = prev.pieces.findIndex((p) => pieceKey(p) === active.id);
+      const newIdx = prev.pieces.findIndex((p) => pieceKey(p) === over.id);
+      if (oldIdx < 0 || newIdx < 0) return prev;
+      return { ...prev, pieces: arrayMove(prev.pieces, oldIdx, newIdx) };
     });
   };
 
@@ -254,6 +266,28 @@ export default function CurationManagement() {
     toast.success(t('admin.curation.toastDeleted'));
   };
 
+  const allPieces = useMemo((): PieceItem[] => {
+    const q = editor?.search.trim().toLowerCase() ?? '';
+    return allWorks
+      .filter((w) => {
+        if (!q) return true;
+        const title = (w.exhibitionName || w.title || '').toLowerCase();
+        const artist = (w.artist?.name || '').toLowerCase();
+        return title.includes(q) || artist.includes(q);
+      })
+      .flatMap((w) => {
+        const images = getWorkImages(w);
+        const pieceIds = Array.isArray(w.imagePieceIds) ? w.imagePieceIds : images.map((_, i) => `${w.id}_piece${i}`);
+        return images.map((imgKey, i) => ({
+          workId: w.id,
+          pieceId: pieceIds[i] ?? `${w.id}_piece${i}`,
+          imgKey,
+          workTitle: displayExhibitionTitle(w, ''),
+          isPublic: isWorkPublic(w),
+        }));
+      });
+  }, [allWorks, editor?.search]);
+
   if (loading) {
     return (
       <div>
@@ -265,326 +299,239 @@ export default function CurationManagement() {
 
   return (
     <div className="min-h-full">
-      <h1 className="text-xl font-bold text-foreground mb-1">{t('admin.curation.title')}</h1>
-      <p className="text-sm text-muted-foreground mb-6">
-        {t('admin.curation.subtitle')}
+      <h1 className="text-xl font-bold mb-1 text-foreground">기획전 관리</h1>
+      <p className="text-sm text-muted-foreground mb-4">
+        테마 기획전을 만들고 개별 이미지(piece)를 큐레이션합니다.
       </p>
 
-      {/* 기획전 목록 */}
-      <section className="mb-10">
-        <div className="flex items-center justify-between mb-3">
-          <h2 className="text-base font-semibold text-foreground">{t('admin.curation.listTitle').replace('{n}', String(curatedExhibitions.length))}</h2>
-          {!isEditorOpen && (
-            <Button
-              type="button"
-              onClick={openCreate}
-              className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white inline-flex items-center gap-1.5"
-            >
-              <Plus className="w-4 h-4" />{t('admin.curation.new')}
-            </Button>
-          )}
-        </div>
+      <div className="border border-border rounded-lg overflow-hidden">
+        <div className="grid" style={{ gridTemplateColumns: '280px 1fr' }}>
 
-        {curatedExhibitions.length === 0 ? (
-          <div className="mb-3 rounded-lg border border-dashed border-border bg-muted/20 px-4 py-6 text-center text-sm text-muted-foreground">
-            {t('admin.curation.empty')}
-          </div>
-        ) : (
-          <ul className="mb-4 space-y-3">
-            {curatedExhibitions.map((c) => (
-              <li key={c.id} className="rounded-lg border border-border bg-white overflow-hidden">
-                <div className="flex items-stretch gap-0">
-                  {c.bannerImageUrl && (
-                    <div className="w-20 shrink-0 bg-muted">
-                      <img src={c.bannerImageUrl} alt="" className="w-full h-full object-cover" loading="lazy" />
-                    </div>
-                  )}
-                  <div className="flex flex-1 items-start gap-3 p-4">
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold text-foreground">{c.title}</p>
-                      {c.subtitle && <p className="text-xs text-muted-foreground mt-0.5">{c.subtitle}</p>}
-                      <div className="flex items-center gap-3 mt-1.5 flex-wrap">
-                        <span className="text-xs text-muted-foreground">{t('admin.curation.pieceCount').replace('{n}', String(c.pieces.length))}</span>
-                        {(c.startAt || c.endAt) && (
-                          <span className="text-xs text-muted-foreground">
-                            {c.startAt && c.endAt ? `${c.startAt} ~ ${c.endAt}` : c.startAt ? `${c.startAt} ~` : `~ ${c.endAt}`}
-                          </span>
-                        )}
+          {/* 좌: 기획전 목록 */}
+          <div className="border-r border-border bg-muted/30 flex flex-col" style={{ minHeight: '72vh' }}>
+            <div className="p-3 border-b border-border flex justify-between items-center">
+              <span className="text-sm font-semibold">기획전</span>
+              <button type="button" onClick={openCreate}
+                className="inline-flex items-center gap-1 bg-sky-600 text-white rounded-md px-2.5 py-1 text-xs font-medium lg:hover:bg-sky-700">
+                <Plus className="w-3 h-3" /> 새로
+              </button>
+            </div>
+            <div className="overflow-y-auto flex-1">
+              {curatedExhibitions.length === 0 && (
+                <div className="p-4 text-center text-xs text-muted-foreground">기획전이 없습니다</div>
+              )}
+              {curatedExhibitions.map((c) => {
+                const isSelected = selectedCurationId === c.id;
+                const bannerWork = c.pieces[0]
+                  ? workStore.getWork(c.pieces[0].workId) : null;
+                const bannerKey = bannerWork ? getCoverImage(bannerWork.image, bannerWork.coverImageIndex) : '';
+                const bannerSrc = bannerKey ? (imageUrls[bannerKey] || bannerKey) : '';
+                return (
+                  <div key={c.id} className={`w-full text-left flex gap-3 items-start px-3 py-3 border-b border-border/40 transition-colors ${
+                    isSelected ? 'bg-sky-50 border-l-2 border-l-sky-600' : 'lg:hover:bg-muted/50'
+                  }`}>
+                    <button type="button" onClick={() => openEdit(c)} className="flex gap-3 items-start flex-1 min-w-0 text-left">
+                      {bannerSrc ? (
+                        <div className="w-10 h-10 rounded overflow-hidden border border-border shrink-0">
+                          <ImageWithFallback src={bannerSrc} alt="" className="w-full h-full object-cover" />
+                        </div>
+                      ) : (
+                        <div className="w-10 h-10 rounded bg-muted border border-border shrink-0" />
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <div className="font-medium text-sm truncate">{c.title}</div>
+                        <div className="text-xs text-muted-foreground">piece {c.pieces.length}개</div>
                       </div>
-                    </div>
-                    <div className="flex shrink-0 gap-1.5 items-center">
+                    </button>
+                    <div className="flex shrink-0 gap-1 items-center">
                       <Link
                         to={`/curations/${c.id}`}
                         target="_blank"
-                        className="h-7 w-7 inline-flex items-center justify-center rounded border border-border text-muted-foreground lg:hover:bg-muted/40 lg:hover:text-foreground"
+                        className="h-6 w-6 inline-flex items-center justify-center rounded border border-border text-muted-foreground lg:hover:bg-muted/40 lg:hover:text-foreground"
                         aria-label="기획전 미리보기"
                         title="사용자 화면 보기"
+                        onClick={(e) => e.stopPropagation()}
                       >
-                        <ExternalLink className="w-3.5 h-3.5" />
+                        <ExternalLink className="w-3 h-3" />
                       </Link>
                       <button
                         type="button"
-                        onClick={() => openEdit(c)}
-                        disabled={isEditorOpen}
-                        className="text-xs px-2.5 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/50 inline-flex items-center gap-1 disabled:opacity-50"
-                        aria-label={`${c.title} ${t('admin.curation.edit')}`}
-                      >
-                        <Pencil className="w-3.5 h-3.5" />{t('admin.curation.edit')}
-                      </button>
-                      <button
-                        type="button"
                         onClick={() => removeCuratedExhibition(c)}
-                        disabled={isEditorOpen}
-                        className="text-xs px-2.5 py-1.5 rounded-lg border border-red-200 text-red-700 lg:hover:bg-red-50 inline-flex items-center gap-1 disabled:opacity-50"
+                        className="h-6 w-6 inline-flex items-center justify-center rounded border border-red-200 text-red-700 lg:hover:bg-red-50"
                         aria-label={`${c.title} ${t('admin.curation.delete')}`}
                       >
-                        <Trash2 className="w-3.5 h-3.5" />{t('admin.curation.delete')}
+                        <Trash2 className="w-3 h-3" />
                       </button>
                     </div>
                   </div>
-                </div>
-              </li>
-            ))}
-          </ul>
-        )}
-      </section>
-
-      {/* 편집 패널 */}
-      {editor && (
-        <section className="mb-10 rounded-lg border-2 border-primary/30 bg-primary/[0.02] p-5">
-          <div className="flex items-center justify-between mb-4">
-            <h3 className="text-base font-semibold text-foreground">
-              {editor.mode === 'create' ? t('admin.curation.editorCreate') : t('admin.curation.editorEdit')}
-            </h3>
-            <button
-              type="button"
-              onClick={closeEditor}
-              className="text-xs text-muted-foreground hover:text-foreground inline-flex items-center gap-1"
-            >
-              <X className="w-3.5 h-3.5" />{t('admin.curation.close')}
-            </button>
-          </div>
-
-          <div className="grid sm:grid-cols-2 gap-3 mb-3">
-            <input
-              placeholder={t('admin.curation.placeholderTitle')}
-              value={editor.title}
-              onChange={(e) => setEditor((prev) => prev && { ...prev, title: e.target.value })}
-              className="border border-border rounded-lg px-3 py-2 text-sm bg-white"
-            />
-            <input
-              placeholder={t('admin.curation.placeholderSubtitle')}
-              value={editor.subtitle}
-              onChange={(e) => setEditor((prev) => prev && { ...prev, subtitle: e.target.value })}
-              className="border border-border rounded-lg px-3 py-2 text-sm bg-white"
-            />
-          </div>
-          <div className="grid sm:grid-cols-2 gap-3 mb-4">
-            <div className="flex items-center gap-2">
-              <label className="text-xs text-muted-foreground whitespace-nowrap w-14 shrink-0">시작일</label>
-              <input
-                type="date"
-                value={editor.startAt}
-                onChange={(e) => setEditor((prev) => prev && { ...prev, startAt: e.target.value })}
-                className="flex-1 border border-border rounded-lg px-3 py-2 text-sm bg-white"
-              />
-            </div>
-            <div className="flex items-center gap-2">
-              <label className="text-xs text-muted-foreground whitespace-nowrap w-14 shrink-0">종료일</label>
-              <input
-                type="date"
-                value={editor.endAt}
-                onChange={(e) => setEditor((prev) => prev && { ...prev, endAt: e.target.value })}
-                className="flex-1 border border-border rounded-lg px-3 py-2 text-sm bg-white"
-              />
+                );
+              })}
             </div>
           </div>
 
-          <div className="grid lg:grid-cols-2 gap-4">
-            {/* 좌: 전시 그리드 → piece sub 그리드 */}
-            <div>
-              <div className="flex items-center gap-2 mb-2">
-                <Search className="w-4 h-4 text-muted-foreground" />
-                <input
-                  type="search"
-                  placeholder={t('admin.curation.searchPlaceholder')}
-                  value={editor.search}
-                  onChange={(e) => setEditor((prev) => prev && { ...prev, search: e.target.value })}
-                  className="flex-1 border border-border rounded-lg px-3 py-1.5 text-sm bg-white"
-                />
+          {/* 우: 편집기 */}
+          <div className="flex flex-col" style={{ minHeight: '72vh' }}>
+            {!editor ? (
+              <div className="flex-1 flex items-center justify-center text-sm text-muted-foreground">
+                기획전을 선택하거나 새로 만드세요
               </div>
-              <p className="text-xs text-muted-foreground mb-2">
-                {t('admin.curation.pieceSelectHint')}
-              </p>
-              <ul className="max-h-[480px] overflow-auto rounded-lg border border-border bg-white divide-y divide-border/60">
-                {filteredWorks.length === 0 ? (
-                  <li className="px-4 py-6 text-center text-sm text-muted-foreground">{t('admin.curation.searchEmpty')}</li>
-                ) : (
-                  filteredWorks.map((w) => {
-                    const images = getWorkImages(w);
-                    const pieceIds = w.imagePieceIds ?? [];
-                    const isExpanded = editor.expandedWorkId === w.id;
-                    const isSingle = images.length === 1 && pieceIds.length === 1;
-                    const exhTitle = displayExhibitionTitle(w, t('work.untitled'));
-                    const isPublic = isWorkPublic(w);
-                    const selectedFromThisWork = editor.pieces.filter((p) => p.workId === w.id).length;
-                    return (
-                      <li key={w.id}>
-                        <div className="flex items-center gap-3 px-3 py-2.5">
+            ) : (
+              <>
+                {/* 기획전 메타 + 검색 */}
+                <div className="p-4 border-b border-border space-y-3">
+                  <div className="grid grid-cols-2 gap-3">
+                    <div>
+                      <label className="block text-xs text-muted-foreground mb-1">제목 *</label>
+                      <input value={editor.title}
+                        onChange={(e) => setEditor((prev) => prev ? { ...prev, title: e.target.value } : prev)}
+                        placeholder="봄의 기억들"
+                        className="w-full border border-border rounded-lg px-3 py-1.5 text-sm" />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-muted-foreground mb-1">부제</label>
+                      <input value={editor.subtitle}
+                        onChange={(e) => setEditor((prev) => prev ? { ...prev, subtitle: e.target.value } : prev)}
+                        placeholder="봄을 담은 작품 모음"
+                        className="w-full border border-border rounded-lg px-3 py-1.5 text-sm" />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-muted-foreground mb-1">시작일</label>
+                      <input type="date" value={editor.startAt}
+                        onChange={(e) => setEditor((prev) => prev ? { ...prev, startAt: e.target.value } : prev)}
+                        className="w-full border border-border rounded-lg px-3 py-1.5 text-sm" />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-muted-foreground mb-1">종료일</label>
+                      <input type="date" value={editor.endAt}
+                        onChange={(e) => setEditor((prev) => prev ? { ...prev, endAt: e.target.value } : prev)}
+                        className="w-full border border-border rounded-lg px-3 py-1.5 text-sm" />
+                    </div>
+                  </div>
+                  <div className="relative">
+                    <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                    <input value={editor.search}
+                      onChange={(e) => setEditor((prev) => prev ? { ...prev, search: e.target.value } : prev)}
+                      placeholder="전시·작가 검색…"
+                      className="w-full pl-7 pr-3 py-1.5 border border-border rounded-lg text-sm" />
+                  </div>
+                </div>
+
+                {/* 평면 이미지 갤러리 */}
+                <div className="flex-1 overflow-y-auto p-4 bg-muted/10">
+                  {allPieces.length === 0 ? (
+                    <div className="text-center py-16 text-sm text-muted-foreground">공개된 전시가 없습니다.</div>
+                  ) : (
+                    <div className="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-8 gap-3">
+                      {allPieces.map((piece) => {
+                        const key = `${piece.workId}:${piece.pieceId}`;
+                        const src = imageUrls[piece.imgKey] || piece.imgKey;
+                        const orderIdx = editor.pieces.findIndex((p) => pieceKey(p) === key);
+                        const isSelected = orderIdx >= 0;
+                        return (
                           <button
+                            key={key}
                             type="button"
-                            onClick={() => {
-                              if (isSingle && pieceIds[0]) {
-                                togglePiece(w.id, pieceIds[0]);
-                              } else {
-                                handleExpand(w.id);
-                              }
-                            }}
-                            className="flex-1 min-w-0 flex items-center gap-3 text-left lg:hover:bg-muted/40 rounded-md px-1 py-1"
+                            disabled={!piece.isPublic}
+                            onClick={() => togglePiece(piece.workId, piece.pieceId)}
+                            title={piece.workTitle}
+                            className={`group relative rounded-lg overflow-hidden border-2 transition-all disabled:opacity-40 disabled:pointer-events-none ${
+                              isSelected ? 'border-primary shadow-md' : 'border-transparent lg:hover:border-primary/40'
+                            }`}
                           >
-                            <img src={images[0]} alt="" className="h-12 w-12 rounded object-cover border border-border" loading="lazy" />
-                            <div className="flex-1 min-w-0">
-                              <p className="text-sm font-medium text-foreground truncate">{exhTitle}</p>
-                              <p className="text-xs text-muted-foreground truncate">
-                                {w.artist?.name} · {images.length}장 · ID {w.id}
-                                {!isPublic && <span className="ml-1 text-amber-600">{t('admin.curation.badgeNonPublic')}</span>}
-                              </p>
+                            <div className="aspect-square bg-muted">
+                              <ImageWithFallback src={src} alt="" className="w-full h-full object-cover" />
                             </div>
-                            {selectedFromThisWork > 0 && (
-                              <span className="shrink-0 px-2 py-0.5 rounded-full bg-primary/10 text-primary text-xs font-medium">
-                                {t('admin.curation.selectedBadge').replace('{n}', String(selectedFromThisWork))}
-                              </span>
+                            {isSelected && (
+                              <div className="absolute top-1 right-1 bg-primary text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                                {orderIdx + 1}
+                              </div>
                             )}
+                            {!piece.isPublic && (
+                              <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
+                                <span className="text-white text-[9px] font-medium">비공개</span>
+                              </div>
+                            )}
+                            <div className="absolute inset-x-0 bottom-0 bg-black/60 px-1 py-0.5 text-[9px] text-white truncate opacity-0 group-hover:opacity-100 transition-opacity">
+                              {piece.workTitle}
+                            </div>
                           </button>
-                        </div>
-                        {isExpanded && pieceIds.length > 1 && (
-                          <div className="px-3 pb-3 grid grid-cols-3 sm:grid-cols-4 gap-2 bg-muted/20">
-                            {images.map((src, i) => {
-                              const pid = pieceIds[i];
-                              if (!pid) return null;
-                              const checked = editor.pieces.some((p) => p.workId === w.id && p.pieceId === pid);
-                              return (
-                                <label
-                                  key={pid}
-                                  className={`relative cursor-pointer rounded-md overflow-hidden border-2 transition-colors ${checked ? 'border-primary' : 'border-transparent hover:border-border'}`}
-                                >
-                                  <input
-                                    type="checkbox"
-                                    checked={checked}
-                                    onChange={() => togglePiece(w.id, pid)}
-                                    className="sr-only"
-                                  />
-                                  <img src={src} alt="" className="aspect-square w-full object-cover" loading="lazy" />
-                                  <span className="absolute top-1 left-1 bg-black/60 text-white text-[10px] px-1.5 py-0.5 rounded">{i + 1}</span>
-                                  {checked && (
-                                    <span className="absolute top-1 right-1 bg-primary text-white rounded-full h-5 w-5 flex items-center justify-center">
-                                      <Check className="w-3 h-3" />
-                                    </span>
-                                  )}
-                                </label>
-                              );
-                            })}
-                          </div>
-                        )}
-                      </li>
-                    );
-                  })
-                )}
-              </ul>
-            </div>
+                        );
+                      })}
+                    </div>
+                  )}
+                </div>
 
-            {/* 우: 선택된 piece 리스트 + 순서 */}
-            <div>
-              <p className="text-sm font-medium text-foreground mb-2">
-                {t('admin.curation.selectedCount').replace('{n}', String(editor.pieces.length))}
-              </p>
-              <ul className="max-h-[480px] overflow-auto rounded-lg border border-border bg-white divide-y divide-border/60">
-                {editor.pieces.length === 0 ? (
-                  <li className="px-4 py-8 text-center text-sm text-muted-foreground">{t('admin.curation.selectedEmpty')}</li>
-                ) : (
-                  editor.pieces.map((p, idx) => {
-                    const w = workStore.getWork(p.workId);
-                    if (!w) {
-                      return (
-                        <li key={pieceKey(p)} className="px-3 py-2.5 text-xs text-amber-700 flex items-center gap-2">
-                          <AlertTriangle className="w-3.5 h-3.5" />
-                          {t('admin.curation.deletedWork').replace('{id}', p.workId)}
-                          <button onClick={() => removeSelected(pieceKey(p))} className="ml-auto text-red-700">{t('admin.curation.removeSelected')}</button>
-                        </li>
-                      );
-                    }
-                    const images = getWorkImages(w);
-                    const pieceIdx = (w.imagePieceIds ?? []).indexOf(p.pieceId);
-                    const src = images[pieceIdx] ?? images[0];
-                    const pieceTitle = displayPieceTitleAtIndex(w, pieceIdx, t('work.untitled'));
-                    const isPublic = isWorkPublic(w);
-                    return (
-                      <li key={pieceKey(p)} className="flex items-center gap-3 px-3 py-2.5">
-                        <span className="shrink-0 w-6 text-xs text-muted-foreground tabular-nums">{idx + 1}</span>
-                        <img src={src} alt="" className="h-12 w-12 rounded object-cover border border-border" loading="lazy" />
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-foreground truncate">{pieceTitle}</p>
-                          <p className="text-xs text-muted-foreground truncate">
-                            {w.artist?.name} · {displayExhibitionTitle(w, t('work.untitled'))}
-                            {!isPublic && <span className="ml-1 text-amber-600">{t('admin.curation.badgeHidden')}</span>}
-                          </p>
+                {/* 하단 고정 바 */}
+                <div className="bg-sky-950 px-4 py-3 flex items-center gap-3 shrink-0">
+                  {editor.pieces.length > 0 ? (
+                    <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handlePieceDragEnd}>
+                      <SortableContext items={editor.pieces.map(pieceKey)} strategy={verticalListSortingStrategy}>
+                        <div className="flex gap-1.5 overflow-x-auto">
+                          {editor.pieces.map((p) => {
+                            const w = workStore.getWork(p.workId);
+                            const images = w ? getWorkImages(w) : [];
+                            const pieceIds = w && Array.isArray(w.imagePieceIds) ? w.imagePieceIds : images.map((_, i) => `${p.workId}_piece${i}`);
+                            const idx = pieceIds.indexOf(p.pieceId);
+                            const imgKey = images[idx] ?? '';
+                            const src = imageUrls[imgKey] || imgKey;
+                            const pKey = pieceKey(p);
+                            return (
+                              <CurationBottomBarItem
+                                key={pKey}
+                                id={pKey}
+                                src={src}
+                                onRemove={() => removeSelected(pKey)}
+                              />
+                            );
+                          })}
                         </div>
-                        <div className="shrink-0 flex items-center gap-1">
-                          <button
-                            type="button"
-                            onClick={() => movePiece(pieceKey(p), -1)}
-                            disabled={idx === 0}
-                            className="h-7 w-7 inline-flex items-center justify-center rounded border border-border lg:hover:bg-muted/40 disabled:opacity-30"
-                            aria-label={t('admin.curation.moveUp')}
-                          >
-                            <ArrowUp className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => movePiece(pieceKey(p), 1)}
-                            disabled={idx === editor.pieces.length - 1}
-                            className="h-7 w-7 inline-flex items-center justify-center rounded border border-border lg:hover:bg-muted/40 disabled:opacity-30"
-                            aria-label={t('admin.curation.moveDown')}
-                          >
-                            <ArrowDown className="w-3.5 h-3.5" />
-                          </button>
-                          <button
-                            type="button"
-                            onClick={() => removeSelected(pieceKey(p))}
-                            className="h-7 w-7 inline-flex items-center justify-center rounded border border-red-200 text-red-700 lg:hover:bg-red-50"
-                            aria-label={t('admin.curation.removeSelected')}
-                          >
-                            <X className="w-3.5 h-3.5" />
-                          </button>
-                        </div>
-                      </li>
-                    );
-                  })
-                )}
-              </ul>
-            </div>
+                      </SortableContext>
+                    </DndContext>
+                  ) : (
+                    <span className="text-sky-400 text-xs">갤러리에서 이미지를 클릭해 piece를 선정하세요</span>
+                  )}
+                  <div className="text-sky-300 text-xs font-semibold shrink-0 ml-1">
+                    {editor.pieces.length}개 선정
+                  </div>
+                  <div className="flex-1" />
+                  <button type="button" onClick={closeEditor}
+                    className="border border-sky-700 text-sky-300 rounded-md px-3 py-1.5 text-xs lg:hover:bg-sky-900">
+                    취소
+                  </button>
+                  <button type="button" onClick={saveEditor}
+                    className="bg-sky-600 text-white rounded-md px-3 py-1.5 text-xs font-semibold lg:hover:bg-sky-700">
+                    게시
+                  </button>
+                </div>
+              </>
+            )}
           </div>
 
-          <div className="flex gap-2 mt-4">
-            <Button
-              type="button"
-              onClick={saveEditor}
-              className="text-sm px-4 py-2 rounded-lg bg-primary text-white inline-flex items-center gap-1.5"
-            >
-              <Check className="w-4 h-4" />
-              {editor.mode === 'create' ? t('admin.curation.saveAdd') : t('admin.curation.save')}
-            </Button>
-            <button
-              type="button"
-              onClick={closeEditor}
-              className="text-sm px-4 py-2 rounded-lg border border-border text-foreground lg:hover:bg-muted/50 inline-flex items-center gap-1.5"
-            >
-              {t('admin.curation.cancel')}
-            </button>
-          </div>
-        </section>
-      )}
+        </div>
+      </div>
+    </div>
+  );
+}
 
+function CurationBottomBarItem({ id, src, onRemove }: { id: string; src: string; onRemove: () => void }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
+  return (
+    <div
+      ref={setNodeRef}
+      {...attributes}
+      {...listeners}
+      style={{ transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 }}
+      className="relative w-10 h-10 rounded overflow-hidden border-2 border-sky-400 shrink-0 cursor-grab"
+    >
+      <ImageWithFallback src={src} alt="" className="w-full h-full object-cover" />
+      <button
+        type="button"
+        onPointerDown={(e) => e.stopPropagation()}
+        onClick={onRemove}
+        className="absolute top-0 right-0 bg-black/60 text-white rounded-bl text-[8px] px-0.5 leading-none lg:hover:bg-red-600"
+      >
+        ✕
+      </button>
     </div>
   );
 }
