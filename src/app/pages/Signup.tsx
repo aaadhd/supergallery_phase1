@@ -1,7 +1,7 @@
-import { useEffect, useMemo, useRef, useState, FormEvent, ReactNode } from 'react';
+import { useEffect, useMemo, useRef, useState, FormEvent } from 'react';
 import { toast } from 'sonner';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Mail, User, Calendar } from 'lucide-react';
+import { Mail, Calendar } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import { useAuthStore } from '../store';
 import { pointsOnSignupComplete } from '../utils/pointsBackground';
@@ -15,7 +15,6 @@ import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Checkbox } from '../components/ui/checkbox';
 import { isValidDate, meetsMinAge } from '../utils/ageCheck';
-import { containsProfanity } from '../utils/profanityFilter';
 
 const inputClass =
   'min-h-[44px] rounded-lg border-border/40 px-3 py-3 text-sm text-foreground placeholder:text-muted-foreground sm:px-4 sm:text-sm focus-visible:ring-primary/25';
@@ -27,11 +26,10 @@ export default function Signup() {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
   const demo = searchParams.get('demo');
-  const stepParam = Math.max(1, Math.min(3, Number(searchParams.get('step')) || 1));
+  const stepParam = Math.max(1, Math.min(2, Number(searchParams.get('step')) || 1));
   const auth = useAuthStore();
   const { t } = useI18n();
   const [email, setEmail] = useState('');
-  const [nickname, setNickname] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
   const [birthYear, setBirthYear] = useState<string>('');
@@ -97,15 +95,6 @@ export default function Signup() {
         : ''
     : '';
 
-  const nicknameTrim = nickname.trim();
-  const nicknameLengthOk = nicknameTrim.length >= 2 && nicknameTrim.length <= 20;
-  const nicknameClean = !containsProfanity(nicknameTrim);
-  const nicknameError = touched('nickname') && !nicknameLengthOk
-    ? t('signup.errNickname')
-    : touched('nickname') && !nicknameClean
-      ? t('signup.errProfanity')
-      : '';
-
   const birthFilled = birthYear !== '' && birthMonth !== '' && birthDay !== '';
   const birthValid = birthFilled && isValidDate(Number(birthYear), Number(birthMonth), Number(birthDay));
   const birthMeetsAge = birthValid && meetsMinAge(Number(birthYear), Number(birthMonth), Number(birthDay));
@@ -121,7 +110,7 @@ export default function Signup() {
   const dayOptions = useMemo(() => Array.from({ length: 31 }, (_, i) => i + 1), []);
 
   const emailOk = emailValid(email) && !isEmailRegistered(email);
-  const profileOk = nicknameLengthOk && nicknameClean && birthMeetsAge;
+  const profileOk = birthMeetsAge;
   const agreementsOk = agreeTerms && agreePrivacy && agreeAge;
 
   const sendMagicLink = async (): Promise<boolean> => {
@@ -168,7 +157,6 @@ export default function Signup() {
     if (!profileOk || !agreementsOk) return;
     try {
       localStorage.setItem('artier_pending_signup_email', email.trim());
-      localStorage.setItem('artier_pending_signup_nickname', nicknameTrim);
     } catch { /* ignore */ }
     auth.login();
     persistMockSession(email.trim());
@@ -261,26 +249,6 @@ export default function Signup() {
     return sentBanner;
   }
 
-  const checkboxRow = (
-    id: string,
-    checked: boolean,
-    onChange: (v: boolean) => void,
-    label: ReactNode
-  ) => (
-    <div className="flex items-start gap-3 py-1">
-      <Checkbox
-        id={id}
-        checked={checked}
-        onCheckedChange={(v) => onChange(v === true)}
-        className="mt-0.5 border-border/40"
-      />
-      <Label htmlFor={id} className="cursor-pointer text-sm font-normal leading-snug text-foreground sm:text-sm">
-        {label}
-      </Label>
-    </div>
-  );
-
-
   if (stepParam === 1) {
     return (
       <div className="min-h-screen bg-white flex items-center justify-center px-4 sm:px-6 py-10">
@@ -339,40 +307,11 @@ export default function Signup() {
       <div className="w-full max-w-md">
         <div className="mb-8 text-center">
           <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('signup.title')}</h1>
-          <p className="mt-1.5 text-sm text-muted-foreground">
-            {stepParam === 2
-              ? `1/2 · ${t('signup.stepProfileLabel')}`
-              : `2/2 · ${t('signup.stepTermsLabel')}`}
-          </p>
         </div>
 
         <form onSubmit={handleFinalSubmit} className="space-y-4">
           {stepParam === 2 && (
             <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
-              <div>
-                <Label
-                  htmlFor="signup-nickname"
-                  className="mb-1.5 flex items-center gap-1.5 text-sm font-semibold text-foreground sm:text-sm"
-                >
-                  <User className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={2} />
-                  {t('signup.nicknameLabel')}
-                </Label>
-                <Input
-                  id="signup-nickname"
-                  type="text"
-                  autoComplete="nickname"
-                  value={nickname}
-                  onChange={(e) => setNickname(e.target.value.slice(0, 20))}
-                  onBlur={() => markTouched('nickname')}
-                  placeholder={t('signup.nicknamePh')}
-                  className={inputClass}
-                  autoFocus
-                />
-                {nicknameError ? (
-                  <p className="mt-1.5 text-sm text-destructive">{nicknameError}</p>
-                ) : null}
-              </div>
-
               <div>
                 <Label className="mb-0.5 flex items-center gap-1.5 text-sm font-semibold text-foreground sm:text-sm">
                   <Calendar className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={2} />
@@ -426,25 +365,6 @@ export default function Signup() {
                 {birthError ? <p className="mt-1 text-sm text-destructive">{birthError}</p> : null}
               </div>
 
-              <div className="flex gap-2 mt-4">
-                <Button
-                  type="button"
-                  onClick={() => {
-                    markTouched('nickname');
-                    markTouched('birth');
-                    if (profileOk) navigate('/signup?step=3');
-                  }}
-                  disabled={!profileOk}
-                  className="w-full min-h-[44px] rounded-lg bg-primary text-white text-sm sm:text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50"
-                >
-                  {t('upload.nextStep')}
-                </Button>
-              </div>
-            </div>
-          )}
-
-          {stepParam === 3 && (
-            <div className="space-y-5 animate-in fade-in slide-in-from-right-4 duration-300">
               {/* 약관 동의 카드 */}
               <div className="rounded-xl border border-border/50 bg-card overflow-hidden">
                 {/* 전체 동의 헤더 — 행 전체 클릭 */}
@@ -534,10 +454,10 @@ export default function Signup() {
               <p className="text-xs text-muted-foreground leading-relaxed px-1">{t('signup.ageRestrictionLead')}</p>
 
               <div className="flex gap-2">
-                <Button type="button" variant="outline" onClick={() => navigate('/signup?step=2')} className="w-1/3 min-h-[44px] rounded-lg text-sm">
+                <Button type="button" variant="outline" onClick={() => navigate('/signup?step=1')} className="w-1/3 min-h-[44px] rounded-lg text-sm">
                   {t('signup.previous')}
                 </Button>
-                <Button type="submit" disabled={!agreementsOk} className="flex-1 min-h-[44px] rounded-lg bg-primary text-white text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed">
+                <Button type="submit" disabled={!profileOk || !agreementsOk} className="flex-1 min-h-[44px] rounded-lg bg-primary text-white text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed">
                   {t('signup.submit')}
                 </Button>
               </div>
