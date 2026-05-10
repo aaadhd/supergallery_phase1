@@ -1,7 +1,7 @@
 import { useState, useCallback, useRef, useEffect, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AnimatePresence, motion } from 'framer-motion';
-import { Camera, Palette } from 'lucide-react';
+import { Camera, Palette, Bookmark, Users } from 'lucide-react';
 import { profileStore, workStore, connectMemberToSlot } from '../store';
 import { artists } from '../data';
 import type { Work } from '../data';
@@ -11,7 +11,7 @@ import {
   getInviteToken,
   type InviteToken,
 } from '../utils/inviteTokenStore';
-import { isEmailRegistered, registerAccount } from '../utils/registeredAccounts';
+import { registerAccount } from '../utils/registeredAccounts';
 import { toast } from 'sonner';
 import { useI18n } from '../i18n/I18nProvider';
 import { containsProfanity } from '../utils/profanityFilter';
@@ -21,7 +21,6 @@ import { ImageWithFallback } from '../components/ImageWithFallback';
 import { imageUrls } from '../imageUrls';
 import { getAllImages } from '../utils/imageHelper';
 
-const TOTAL_STEPS = 3;
 const ACCENT = '#171717';
 
 type ClaimableSlot = {
@@ -63,8 +62,7 @@ export default function Onboarding() {
     if (typeof window === 'undefined') return '';
     try { return localStorage.getItem('artier_pending_signup_email') || ''; } catch { return ''; }
   })();
-  const [email, setEmail] = useState(prefilledEmail);
-  const [emailError, setEmailError] = useState('');
+  const [email] = useState(prefilledEmail);
   const [profileImage, setProfileImage] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -76,7 +74,6 @@ export default function Onboarding() {
   const [pendingToken, setPendingToken] = useState<InviteToken | null>(null);
   const [claimWork, setClaimWork] = useState<Work | null>(null);
   const [claimableSlots, setClaimableSlots] = useState<ClaimableSlot[]>([]);
-  const [showClaimScreen, setShowClaimScreen] = useState(false);
   const [claimBusy, setClaimBusy] = useState(false);
   const [claimedTitle, setClaimedTitle] = useState<string | null>(null);
 
@@ -95,27 +92,41 @@ export default function Onboarding() {
     return unsubscribe;
   }, [claimWork, t]);
 
-  /**
-   * 소셜 첫 가입자. 배너 문구 + 이메일 필수 여부에 사용.
-   */
-  const isSocialSignup = useMemo(() => {
-    if (typeof window === 'undefined') return false;
-    try { return !!localStorage.getItem('artier_pending_social_signup'); } catch { return false; }
-  }, []);
-
-  /** 초대 토큰으로 들어온 가입자 (배너 문구용) */
+  /** 초대 토큰으로 들어온 가입자 */
   const isInviteFlow = useMemo(() => {
     if (typeof window === 'undefined') return false;
     try { return !!sessionStorage.getItem('artier_pending_invite_token'); } catch { return false; }
   }, []);
 
+  const TOTAL_STEPS = isInviteFlow ? 3 : 2;
+
   const goNext = useCallback(() => {
     setCurrentStep(s => Math.min(s + 1, TOTAL_STEPS - 1));
-  }, []);
+  }, [TOTAL_STEPS]);
 
-  const goBack = useCallback(() => {
-    setCurrentStep(s => Math.max(s - 1, 0));
-  }, []);
+  // 마운트 시 초대 토큰 해석 → claimWork/pendingToken/claimableSlots 세팅
+  useEffect(() => {
+    if (!isInviteFlow) return;
+    let tokenStr: string | null = null;
+    try { tokenStr = sessionStorage.getItem('artier_pending_invite_token'); } catch { /* ignore */ }
+    if (!tokenStr) return;
+    const tok = getInviteToken(tokenStr);
+    if (tok && (tok.status === 'active' || tok.status === 'inactive')) {
+      const work = workStore.getWork(tok.workId);
+      if (work) {
+        const slots = buildClaimableSlots(work, t);
+        setPendingToken(tok);
+        setClaimWork(work);
+        setClaimableSlots(slots);
+      }
+    }
+  }, [isInviteFlow, t]);
+
+  // step1(토큰 플로우)에서 pendingToken이 없으면 자동 스킵
+  useEffect(() => {
+    if (currentStep !== 1 || !isInviteFlow) return;
+    if (!pendingToken) goNext();
+  }, [currentStep, isInviteFlow, pendingToken, goNext]);
 
   const validateNickname = (): boolean => {
     const trimmed = nickname.trim();
@@ -135,49 +146,9 @@ export default function Onboarding() {
     return true;
   };
 
-  const validateEmail = (): boolean => {
-    const trimmed = email.trim();
-    if (trimmed.length === 0) {
-      setEmailError(t('onboarding.errEmailRequired'));
-      return false;
-    }
-    if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(trimmed)) {
-      setEmailError(t('onboarding.errEmailInvalid'));
-      return false;
-    }
-    if (isEmailRegistered(trimmed) && trimmed.toLowerCase() !== prefilledEmail.trim().toLowerCase()) {
-      setEmailError(t('onboarding.errEmailRegistered'));
-      return false;
-    }
-    setEmailError('');
-    return true;
-  };
-
   const handleNicknameNext = () => {
     if (!validateNickname()) return;
     pointsOnOnboardingStep1Complete();
-
-    // 초대 토큰 핸드오프 평가
-    let tokenStr: string | null = null;
-    try { tokenStr = sessionStorage.getItem('artier_pending_invite_token'); } catch { /* ignore */ }
-    if (tokenStr) {
-      const tok = getInviteToken(tokenStr);
-      // Policy v2.16 §3: inactive(검수 신청 중) 토큰도 클레임 허용.
-      // 친구가 가입 직후 본인 작품을 골라두면 검수 통과 시 자동 노출.
-      if (tok && (tok.status === 'active' || tok.status === 'inactive')) {
-        const work = workStore.getWork(tok.workId);
-        if (work) {
-          const slots = buildClaimableSlots(work, t);
-          if (slots.length > 0) {
-            setPendingToken(tok);
-            setClaimWork(work);
-            setClaimableSlots(slots);
-            setShowClaimScreen(true);
-            return;
-          }
-        }
-      }
-    }
     goNext();
   };
 
@@ -242,7 +213,6 @@ export default function Onboarding() {
     } catch { /* ignore */ }
 
     setClaimedTitle(claimWork.exhibitionName?.trim() || claimWork.title || t('work.exhibitionFallback'));
-    setShowClaimScreen(false);
     setClaimBusy(false);
     try { sessionStorage.removeItem('artier_pending_invite_token'); } catch { /* ignore */ }
     goNext();
@@ -250,7 +220,6 @@ export default function Onboarding() {
 
   /** "여기 없어요" — 가입은 계속 진행, 토큰 정리. 시니어 안심 토스트 1건. */
   const handleClaimSkip = () => {
-    setShowClaimScreen(false);
     try { sessionStorage.removeItem('artier_pending_invite_token'); } catch { /* ignore */ }
     toast.info(t('claim.skipReassured'));
     goNext();
@@ -262,8 +231,6 @@ export default function Onboarding() {
       toast.error(t('onboarding.errProfanityNickname'));
       return;
     }
-    // 이메일은 소셜·이메일 가입에서 prefill된 경우만 검증 (Policy §2.1)
-    if (email.trim() && !validateEmail()) return;
     profileStore.updateProfile({
       name,
       nickname: name,
@@ -282,7 +249,6 @@ export default function Onboarding() {
   };
 
   const progress = ((currentStep + 1) / TOTAL_STEPS) * 100;
-  const welcomeTitle = t('onboarding.welcomeTitle').replace('{brand}', t('brand.name'));
 
   return (
     <div className="min-h-screen bg-white flex flex-col">
@@ -316,7 +282,7 @@ export default function Onboarding() {
         <div className="w-full max-w-md">
           <AnimatePresence mode="wait" initial={false}>
             <motion.div
-              key={`${currentStep}-${showClaimScreen ? 'claim' : 'main'}`}
+              key={currentStep}
               className="w-full"
               initial={{ opacity: 0, x: 18 }}
               animate={{ opacity: 1, x: 0 }}
@@ -324,116 +290,16 @@ export default function Onboarding() {
               transition={{ duration: 0.28, ease: [0.25, 0.46, 0.45, 0.94] }}
             >
             <div className="rounded-2xl border border-border bg-white p-6 sm:p-8 shadow-sm">
+              {/* Step 0: nickname + photo */}
               {currentStep === 0 && (
                 <>
-                  <div className="text-center">
-                    <div className="mx-auto mb-6 flex h-14 w-14 items-center justify-center rounded-2xl bg-primary/10 text-primary shadow-sm ring-1 ring-border/10">
-                      <Palette className="h-7 w-7" />
-                    </div>
-                    <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-2">{welcomeTitle}</h1>
-                    <p className="text-sm text-muted-foreground mb-8">{t('onboarding.welcomeLead')}</p>
-                    <Button
-                      type="button"
-                      onClick={goNext}
-                      className="w-full rounded-xl py-3.5 text-sm font-semibold text-white transition lg:hover:opacity-90 active:scale-[0.99]"
-                      style={{ backgroundColor: ACCENT }}
-                    >
-                      {t('onboarding.start')}
-                    </Button>
-                  </div>
-                </>
-              )}
+                  <h2 className="text-lg font-bold text-foreground mb-1">
+                    {t('onboarding.nicknameTitle')}
+                  </h2>
+                  <p className="text-sm text-muted-foreground mb-4">
+                    {t('onboarding.nicknameLead')}
+                  </p>
 
-              {/* Step 1A: 본인 작품 찾기 (토큰 기반, 조건부) */}
-              {currentStep === 1 && showClaimScreen && pendingToken && (
-                <>
-                  <h2 className="text-lg font-bold text-foreground mb-2">{t('claim.findMyWorksTitle')}</h2>
-                  {pendingToken.status === 'inactive' && (
-                    <p className="mb-3 text-xs text-muted-foreground leading-relaxed">
-                      {t('claim.pendingHeader')}
-                    </p>
-                  )}
-                  <div className="mb-4 rounded-lg border border-border bg-muted/40 p-3 text-sm text-foreground/75 leading-relaxed">
-                    {t('claim.findMyWorksWarning')}
-                  </div>
-
-                  {claimableSlots.length === 0 ? (
-                    <p className="text-sm text-muted-foreground py-6 text-center">
-                      {t('claim.alreadyTaken')}
-                    </p>
-                  ) : (
-                    <>
-                    {claimableSlots.length === 1 && (
-                      <p className="mb-3 text-sm text-foreground/80 leading-relaxed">
-                        {t('claim.singleCardSafetyNote')}
-                      </p>
-                    )}
-                    <div className="grid grid-cols-2 gap-3 mb-6">
-                      {claimableSlots.map((slot) => (
-                        <button
-                          key={slot.pieceIndex}
-                          type="button"
-                          disabled={claimBusy}
-                          onClick={() => handleClaimSlot(slot)}
-                          className="group text-left rounded-xl overflow-hidden border border-border lg:hover:border-primary/50 transition disabled:opacity-50"
-                        >
-                          <div className="aspect-square bg-muted/30">
-                            <ImageWithFallback
-                              src={slot.imageSrc}
-                              alt={slot.pieceTitle}
-                              className="h-full w-full object-cover"
-                            />
-                          </div>
-                          <div className="px-3 py-2">
-                            <p className="text-sm font-semibold text-foreground truncate">
-                              {slot.displayName}
-                            </p>
-                            <p className="text-xs text-muted-foreground truncate">
-                              {slot.pieceTitle}
-                            </p>
-                            <p className="mt-1 text-xs text-primary font-medium">
-                              {t('claim.thisIsMine')}
-                            </p>
-                          </div>
-                        </button>
-                      ))}
-                    </div>
-                    </>
-                  )}
-
-                  <Button
-                    variant="ghost"
-                    type="button"
-                    onClick={handleClaimSkip}
-                    disabled={claimBusy}
-                    className="w-full rounded-xl border border-border py-3.5 text-sm font-semibold text-foreground lg:hover:bg-muted/50"
-                  >
-                    {t('claim.notHere')}
-                  </Button>
-                </>
-              )}
-
-              {/* Step 1B: 프로필 설정 */}
-              {currentStep === 1 && !showClaimScreen && (
-                <>
-                  <h2 className="text-lg font-bold text-foreground mb-1">{t('onboarding.nicknameTitle')}</h2>
-                  <p className="text-sm text-muted-foreground mb-4">{t('onboarding.nicknameLead')}</p>
-                  {(() => {
-                    const noticeText = isSocialSignup
-                      ? t('onboarding.socialNotice')
-                      : isInviteFlow
-                        ? t('onboarding.inviteNotice')
-                        : prefilledNickname
-                          ? t('onboarding.emailSignupNotice')
-                          : null;
-                    return noticeText ? (
-                      <div className="mb-6 rounded-lg border border-amber-200 bg-amber-50 p-3 text-sm text-amber-900">
-                        {noticeText}
-                      </div>
-                    ) : null;
-                  })()}
-
-                  {/* 프로필 이미지 */}
                   <input ref={fileInputRef} type="file" accept="image/*" className="sr-only" onChange={handleFileChange} />
                   <div className="flex items-center gap-4 mb-6">
                     <button type="button" onClick={() => fileInputRef.current?.click()} className="group shrink-0">
@@ -450,7 +316,6 @@ export default function Onboarding() {
                     </button>
                   </div>
 
-                  {/* 닉네임 */}
                   <label className="block text-sm font-medium text-foreground mb-2">
                     {t('onboarding.nicknameLabel')}
                     <span className="ml-1 text-xs font-medium text-red-500">{t('common.required')}</span>
@@ -468,56 +333,138 @@ export default function Onboarding() {
                   {nicknameError ? <p className="mt-1 text-sm text-destructive">{nicknameError}</p> : null}
 
                   <div className="mt-8 flex gap-3">
-                    <Button variant="ghost" type="button" onClick={goBack} className="flex-1 rounded-xl border border-border py-3.5 text-sm font-semibold text-foreground lg:hover:bg-muted/50">
-                      {t('onboarding.back')}
-                    </Button>
-                    <Button type="button" onClick={handleNicknameNext} className="flex-1 rounded-xl py-3.5 text-sm font-semibold text-white transition lg:hover:opacity-90" style={{ backgroundColor: ACCENT }}>
+                    <Button
+                      type="button"
+                      onClick={handleNicknameNext}
+                      className="flex-1 rounded-xl py-3.5 text-sm font-semibold text-white transition lg:hover:opacity-90"
+                      style={{ backgroundColor: ACCENT }}
+                    >
                       {t('onboarding.next')}
                     </Button>
                   </div>
                 </>
               )}
 
-              {/* Step 2: 첫 작품 업로드 유도 + 완료 */}
-              {currentStep === 2 && (
+              {/* Step 1 (token): claim screen */}
+              {currentStep === 1 && isInviteFlow && (
                 <>
-                  <div className="text-center">
-                    <div className="relative mx-auto mb-6 h-28 w-28">
-                      <ConfettiBurst />
-                    </div>
-                    <h2 className="text-xl font-bold text-foreground mb-2">{t('onboarding.doneTitle')}</h2>
-                    <p className="text-sm text-muted-foreground mb-4 whitespace-pre-line leading-relaxed">
-                      {t('onboarding.doneWelcome').replace('{name}', nickname.trim())}
+                  <h2 className="text-lg font-bold text-foreground mb-2">
+                    {t('claim.findMyWorksTitle')}
+                  </h2>
+                  {claimWork && (
+                    <p className="mb-3 text-sm text-muted-foreground leading-relaxed">
+                      {t('claim.findMyWorksSub').replace('{inviterName}', claimWork.artist?.name || '')}
                     </p>
-                    {claimedTitle && (
-                      <div className="mb-8 rounded-xl border border-primary/30 bg-primary/5 px-4 py-3 text-left">
-                        <p className="text-sm font-semibold text-foreground mb-1">
-                          {t('claim.doneTitle')}
-                        </p>
-                        <p className="text-xs text-muted-foreground leading-relaxed">
-                          {t('claim.doneBody').replace('{title}', claimedTitle)}
-                        </p>
-                      </div>
-                    )}
-                    {!claimedTitle && <div className="mb-8" />}
-                    <Button
-                      type="button"
-                      onClick={() => { finishOnboarding(); navigate('/upload'); }}
-                      className="w-full rounded-xl py-3.5 text-sm font-semibold text-white transition lg:hover:opacity-90"
-                      style={{ backgroundColor: ACCENT }}
-                    >
-                      {t('onboarding.uploadFirst')}
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      type="button"
-                      onClick={finishOnboarding}
-                      className="mt-3 w-full text-sm text-muted-foreground lg:hover:text-foreground"
-                    >
-                      {t('onboarding.browseStart')}
-                    </Button>
+                  )}
+                  {pendingToken?.status === 'inactive' && (
+                    <p className="mb-3 text-xs text-muted-foreground leading-relaxed">
+                      {t('claim.pendingHeader')}
+                    </p>
+                  )}
+                  <div className="mb-4 rounded-lg border border-border bg-muted/40 p-3 text-sm text-foreground/75 leading-relaxed">
+                    {t('claim.findMyWorksWarning')}
                   </div>
+
+                  {claimableSlots.length === 0 ? (
+                    <p className="text-sm text-muted-foreground py-6 text-center">
+                      {t('claim.alreadyTaken')}
+                    </p>
+                  ) : (
+                    <>
+                      {claimableSlots.length === 1 && (
+                        <p className="mb-3 text-sm text-foreground/80 leading-relaxed">
+                          {t('claim.singleCardSafetyNote')}
+                        </p>
+                      )}
+                      <div className="grid grid-cols-2 gap-3 mb-6">
+                        {claimableSlots.map((slot) => (
+                          <button
+                            key={slot.pieceIndex}
+                            type="button"
+                            disabled={claimBusy}
+                            onClick={() => handleClaimSlot(slot)}
+                            className="group text-left rounded-xl overflow-hidden border border-border lg:hover:border-primary/50 transition disabled:opacity-50"
+                          >
+                            <div className="aspect-square bg-muted/30">
+                              <ImageWithFallback src={slot.imageSrc} alt={slot.pieceTitle} className="h-full w-full object-cover" />
+                            </div>
+                            <div className="px-3 py-2">
+                              <p className="text-sm font-semibold text-foreground truncate">{slot.displayName}</p>
+                              <p className="text-xs text-muted-foreground truncate">{slot.pieceTitle}</p>
+                              <p className="mt-1 text-xs text-primary font-medium">{t('claim.thisIsMine')}</p>
+                            </div>
+                          </button>
+                        ))}
+                      </div>
+                    </>
+                  )}
+
+                  <Button
+                    variant="ghost"
+                    type="button"
+                    onClick={handleClaimSkip}
+                    disabled={claimBusy}
+                    className="w-full rounded-xl border border-border py-3.5 text-sm font-semibold text-foreground lg:hover:bg-muted/50"
+                  >
+                    {t('claim.notHere')}
+                  </Button>
                 </>
+              )}
+
+              {/* Completion: step 1 (regular) or step 2 (token) */}
+              {((currentStep === 1 && !isInviteFlow) || currentStep === 2) && (
+                <div className="text-center">
+                  <div className="relative mx-auto mb-6 h-28 w-28">
+                    <ConfettiBurst />
+                  </div>
+                  <h2 className="text-xl font-bold text-foreground mb-2">
+                    {t('onboarding.doneWelcome').replace('{name}', nickname.trim())}
+                  </h2>
+                  <p className="text-sm text-muted-foreground mb-6 whitespace-pre-line leading-relaxed">
+                    {t('onboarding.doneTagline')}
+                  </p>
+
+                  <div className="mb-8 space-y-3 text-left rounded-xl border border-border/50 bg-muted/30 px-4 py-4">
+                    <div className="flex items-center gap-3">
+                      <Palette className="h-4 w-4 shrink-0 text-primary" />
+                      <span className="text-sm text-foreground">{t('onboarding.feature1')}</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Bookmark className="h-4 w-4 shrink-0 text-primary" />
+                      <span className="text-sm text-foreground">{t('onboarding.feature2')}</span>
+                    </div>
+                    <div className="flex items-center gap-3">
+                      <Users className="h-4 w-4 shrink-0 text-primary" />
+                      <span className="text-sm text-foreground">{t('onboarding.feature3')}</span>
+                    </div>
+                  </div>
+
+                  {claimedTitle && (
+                    <div className="mb-6 rounded-xl border border-primary/30 bg-primary/5 px-4 py-3 text-left">
+                      <p className="text-sm font-semibold text-foreground mb-1">{t('claim.doneTitle')}</p>
+                      <p className="text-xs text-muted-foreground leading-relaxed">
+                        {t('claim.doneBody').replace('{title}', claimedTitle)}
+                      </p>
+                    </div>
+                  )}
+
+                  <Button
+                    type="button"
+                    onClick={finishOnboarding}
+                    className="w-full rounded-xl py-3.5 text-sm font-semibold text-white transition lg:hover:opacity-90"
+                    style={{ backgroundColor: ACCENT }}
+                  >
+                    {t('onboarding.browseStart')}
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    type="button"
+                    onClick={() => { finishOnboarding(); navigate('/upload'); }}
+                    className="mt-3 w-full text-sm text-muted-foreground lg:hover:text-foreground"
+                  >
+                    {t('onboarding.uploadFirst')}
+                  </Button>
+                </div>
               )}
             </div>
             </motion.div>
