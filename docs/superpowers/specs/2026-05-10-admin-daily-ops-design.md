@@ -220,8 +220,47 @@
 
 ---
 
+## 4. 나머지 메뉴 일관성 체크 결과
+
+이번 설계 범위(검수·신고·문의) 외 페이지들을 공통 패턴 기준으로 점검한 결과:
+
+### 이미 개선 완료 (이번 세션)
+| 페이지 | 완료 내용 |
+|---|---|
+| 추천 전시 | 작가 ID → 작가명 수정, 전시명·작가명 검색 추가, 추천 활성 우선 정렬 |
+| 기획전 | 목록 카드에 날짜 범위·배너 썸네일·사용자 화면 바로가기(↗) 추가 |
+| 응모자 관리 | 갤러리 뷰 전면 재설계, 카드 클릭 선정 토글, 대기중 기본 제외 |
+| 응모전 목록 | 응모 건수 열 추가 |
+| 검수 기본 필터 | 전체 → 대기중으로 변경 |
+
+### 버그 발견: PickManagement 이미지 패턴 불일치
+
+**현상**: `PickManagement.tsx`에서 `src={getThumbCover(work)}` 직접 사용.  
+`getThumbCover`는 내부적으로 `getCoverImage`를 호출하지만 **`imageUrls` 룩업을 거치지 않는다.**
+
+**영향**: 시드 데이터 작품(image 필드가 `'window-light'` 같은 단축키)의 이미지가 깨짐.  
+`Search.tsx`는 이미 `imageUrls[getThumbCover(work)] || getThumbCover(work)` 올바른 패턴을 쓰고 있다.
+
+**수정**: PickManagement의 모든 `src={getThumbCover(work)}` →
+```tsx
+src={imageUrls[getThumbCover(work)] || getThumbCover(work)}
+```
+
+### 나머지 페이지 현황
+| 페이지 | 상태 | 비고 |
+|---|---|---|
+| 대시보드 | ✅ 양호 | KPI 카드 → 링크에 필터 파라미터 포함됨 |
+| Pick 관리 | ⚠️ 이미지 버그 | 위 PickManagement 패턴 수정 필요 |
+| 일반 이벤트 | ✅ 양호 | 폼 기반, 이미지 표시 없음 |
+| 배너 관리 | ✅ 양호 | 직접 URL 사용, workStore 미사용 |
+| 회원 관리 | ✅ 양호 | 이미지 표시 없음 |
+| 공지 관리 | ✅ 양호 | 이미지 표시 없음 |
+
+---
+
 ## 구현 순서 제안
 
 1. **ContentReview** — 상세 패널을 WorkDetailModal 스타일로 교체 (이미지 갤러리 재사용)
 2. **ReportManagement** — 목록 컬럼 정리 + 상세 패널 작품 이미지 추가
 3. **AdminInquiries** — 탭 분리 + 작품 문의 상세에 작품 맥락 영역 추가
+4. **PickManagement** — 이미지 `imageUrls` 룩업 버그 수정 (소규모)
