@@ -482,8 +482,8 @@
  <li><a href="#USR-AUT-02"><code>AUT-02</code><span>로그인·가입 시트</span></a></li>
  <li><a href="#USR-AUT-02b"><code>AUT-02b</code><span>이메일 로그인</span></a></li>
  <li><a href="#USR-AUT-03"><code>AUT-03</code><span>가입 Step 1 · 이메일</span></a></li>
- <li><a href="#USR-AUT-04"><code>AUT-04</code><span>가입 Step 2 · 닉네임·생년월일</span></a></li>
- <li><a href="#USR-AUT-05"><code>AUT-05</code><span>가입 Step 3 · 약관</span></a></li>
+ <li><a href="#USR-AUT-04"><code>AUT-04</code><span>가입 Step 2 · 약관 동의</span></a></li>
+ <li><a href="#USR-AUT-05"><code>AUT-05</code><span>가입 Step 3 · 약관 [폐지 — Step 2에 통합]</span></a></li>
  <li><a href="#USR-AUT-06"><code>AUT-06</code><span>소셜 첫 가입</span></a></li>
  <li><a href="#USR-AUT-08"><code>AUT-08</code><span>매직 링크 콜백</span></a></li>
  <li><a href="#USR-AUT-09"><code>AUT-09</code><span>온보딩 환영</span></a></li>
@@ -510,6 +510,7 @@
  <li><a href="#USR-EXH-03"><code>EXH-03</code><span>초대장 랜딩 ⭐</span></a></li>
  <li><a href="#USR-EXH-05"><code>EXH-05</code><span>신고 모달</span></a></li>
  <li><a href="#USR-EXH-06"><code>EXH-06</code><span>공유 시트</span></a></li>
+ <li><a href="#USR-EXH-07"><code>EXH-07</code><span>작품 문의 모달</span></a></li>
  </ul>
  </li>
 
@@ -1802,8 +1803,8 @@
  <section class="slide" id="USR-AUT-04">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">08 · 인증·온보딩</div><h2>이메일 가입 Step 2 · 닉네임·생년월일</h2></div>
- <div class="meta"><span class="role">USR</span><span class="id">USR-AUT-04</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
+ <div><div class="crumb">08 · 인증·온보딩</div><h2>이메일 가입 Step 2 · 약관 동의</h2></div>
+ <div class="meta"><span class="role">USR</span><span class="id">USR-AUT-04</span><span class="device">PC</span><span class="ver">v2.0</span></div>
  </div>
 
  <div class="screen">
@@ -1819,40 +1820,46 @@
  <div style="flex: 1; height: 4px; background: var(--ink); border-radius: 2px;"></div>
  <div style="flex: 1; height: 4px; background: var(--line); border-radius: 2px;"></div>
  </div>
- <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">1/2 · 프로필 설정</div>
- <div style="font-size: 22px; font-weight: 700; margin-bottom: 6px;">회원가입</div>
- <div style="font-size: 12px; color: var(--ink-3); margin-bottom: 22px;">name@example.com 으로 가입 진행 중</div>
+ <div style="font-size: 22px; font-weight: 700; margin-bottom: 20px;">회원가입</div>
 
- <div style="margin-bottom: 18px; position: relative;">
- <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">닉네임 <span style="color: #dc2626;">*</span></div>
- <div style="border: 1.5px solid var(--ink); padding: 11px 12px; border-radius: 8px; display: flex; justify-content: space-between; align-items: center;">
- <span style="font-size: 13px;">홍길동</span>
- <span style="font-size: 11px; color: var(--ink-3);">3 / 20</span>
+ <div style="border: 1px solid var(--line-2); border-radius: 8px; padding: 14px; margin-bottom: 16px; position: relative;">
+ <div style="display: flex; align-items: center; gap: 10px; padding: 6px 0; border-bottom: 1px solid var(--line); margin-bottom: 8px;">
+ <div style="width: 18px; height: 18px; border: 1.5px solid var(--line-2); border-radius: 3px;"></div>
+ <span style="font-size: 13px; font-weight: 700;">필수 약관 모두 동의</span>
  </div>
- <span class="bub" style="position: absolute; top: 18px; right: -28px;">1</span>
+ <div style="display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: 12px;">
+ <div style="width: 16px; height: 16px; border: 1px solid var(--line-2); border-radius: 3px;"></div>
+ <span style="background: #dc2626; color: white; font-size: 9px; padding: 2px 5px; border-radius: 3px;">필수</span>
+ <span style="flex: 1;">이용약관 동의</span>
  </div>
-
- <div style="margin-bottom: 22px; position: relative;">
- <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">생년월일 <span style="color: #dc2626;">*</span></div>
- <div style="display: grid; grid-template-columns: 1.4fr 1fr 1fr; gap: 8px;">
- <div style="border: 1px solid var(--line-2); padding: 11px 12px; border-radius: 8px; font-size: 13px; color: var(--ink-3); display: flex; justify-content: space-between; align-items: center;">1960<span>▼</span></div>
- <div style="border: 1px solid var(--line-2); padding: 11px 12px; border-radius: 8px; font-size: 13px; color: var(--ink-3); display: flex; justify-content: space-between; align-items: center;">3월<span>▼</span></div>
- <div style="border: 1px solid var(--line-2); padding: 11px 12px; border-radius: 8px; font-size: 13px; color: var(--ink-3); display: flex; justify-content: space-between; align-items: center;">15일<span>▼</span></div>
+ <div style="display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: 12px;">
+ <div style="width: 16px; height: 16px; border: 1px solid var(--line-2); border-radius: 3px;"></div>
+ <span style="background: #dc2626; color: white; font-size: 9px; padding: 2px 5px; border-radius: 3px;">필수</span>
+ <span style="flex: 1;">개인정보 수집·이용 동의</span>
  </div>
- <div style="font-size: 11px; color: var(--ink-4); margin-top: 4px;">만 14세 이상만 가입할 수 있어요. 입력한 날짜는 나이 확인 외 용도로 사용되지 않아요.</div>
- <span class="bub" style="position: absolute; top: 18px; right: -28px;">2</span>
+ <div style="display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: 12px;">
+ <div style="width: 16px; height: 16px; border: 1px solid var(--line-2); border-radius: 3px;"></div>
+ <span style="background: #dc2626; color: white; font-size: 9px; padding: 2px 5px; border-radius: 3px;">필수</span>
+ <span style="flex: 1;">만 14세 이상이에요</span>
+ </div>
+ <div style="display: flex; align-items: center; gap: 8px; padding: 5px 0; font-size: 12px;">
+ <div style="width: 16px; height: 16px; border: 1px solid var(--line-2); border-radius: 3px;"></div>
+ <span style="background: var(--ink-4); color: white; font-size: 9px; padding: 2px 5px; border-radius: 3px;">선택</span>
+ <span style="flex: 1; color: var(--ink-2);">마케팅 정보 수신 동의</span>
+ </div>
+ <span class="bub" style="position: absolute; top: 10px; right: -28px;">1</span>
  </div>
 
  <div style="display: flex; gap: 10px;">
  <div style="flex: 1; border: 1px solid var(--line-2); padding: 12px; border-radius: 8px; font-size: 13px; text-align: center; color: var(--ink-2);">이전</div>
- <div style="flex: 2; background: var(--ink); color: white; padding: 12px; border-radius: 8px; font-size: 13px; font-weight: 600; text-align: center; position: relative;">다음
- <span class="bub" style="position: absolute; top: -10px; right: -10px;">3</span>
+ <div style="flex: 2; background: var(--ink-4); color: white; padding: 12px; border-radius: 8px; font-size: 13px; font-weight: 600; text-align: center; position: relative;">가입하기
+ <span class="bub" style="position: absolute; top: -10px; right: -10px;">2</span>
  </div>
  </div>
  </div>
  </div>
  </div>
- <div class="placeholder-note">닉네임 + 생년월일. 실명·전화는 묻지 않음</div>
+ <div class="placeholder-note">약관 동의 화면. 생년월일 수집 없음. 닉네임은 온보딩(USR-AUT-10)에서 수집</div>
  </div>
 
  <div class="desc">
@@ -1865,30 +1872,28 @@
 
      <h3 class="components">구성 요소</h3>
  <dl>
- <dt><span class="bub">1</span></dt><dd>닉네임 입력 필드 — 2~20자, 비속어 필터. 소셜 가입 시 자동 프리필</dd>
- <dt><span class="bub">2</span></dt><dd>생년월일 드롭다운 — 연·월·일 3단. 만 14세 미만 선택 시 가입 차단</dd>
- <dt><span class="bub">3</span></dt><dd>다음 버튼 — 닉네임·생년월일 모두 입력해야 활성 → USR-AUT-05</dd>
+ <dt><span class="bub">1</span></dt><dd>약관 동의 — 필수(이용약관·개인정보·만 14세) + 선택(마케팅). "필수 약관 모두 동의" 토글</dd>
+ <dt><span class="bub">2</span></dt><dd>가입하기 버튼 — 필수 3종 동의 시 활성 → 온보딩(USR-AUT-10)</dd>
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
- <li>닉네임 2자 미만·20자 초과 시 CTA 비활성</li>
- <li>비속어 사전과 일치 시 즉시 안내</li>
- <li>만 14세 미만 → "만 14세 이상만 가입할 수 있어요. 입력한 날짜는 나이 확인 외 용도로 사용되지 않아요." 안내</li>
+ <li>필수 약관 3종 미동의 시 가입하기 비활성</li>
  <li>"이전" 클릭 시 USR-AUT-03 입력 상태 보존</li>
+ <li>완료 후 온보딩(USR-AUT-10) 진입</li>
  </ol></div>
 
- <div class="pol"><h4>관련 정책</h4>만 14세 · 닉네임
+ <div class="pol"><h4>관련 정책</h4>만 14세 · 가입 약관 동의
  </div>
  </div>
  <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.8 (PC)</span><span>USR-AUT-04 · 가입 Step 2</span></div>
  </section>
 
- <!-- ───────── 화면: 회원가입 Step 3 · 약관 동의 (PC) ───────── -->
+ <!-- ───────── 화면: 회원가입 Step 3 · 약관 동의 (PC) ─── [폐지] Step 2에 통합 ───────── -->
  <section class="slide" id="USR-AUT-05">
  <div class="slide-pad">
  <div class="slide-head">
- <div><div class="crumb">08 · 인증·온보딩</div><h2>회원가입 Step 3 · 약관 동의</h2></div>
- <div class="meta"><span class="role">USR</span><span class="id">USR-AUT-05</span><span class="device">PC</span><span class="ver">v1.2 NEW</span></div>
+ <div><div class="crumb">08 · 인증·온보딩</div><h2>회원가입 Step 3 · 약관 동의 <span style="background:#dc2626;color:white;font-size:12px;padding:2px 8px;border-radius:4px;margin-left:8px;">폐지 — USR-AUT-04에 통합</span></h2></div>
+ <div class="meta"><span class="role">USR</span><span class="id">USR-AUT-05</span><span class="device">PC</span><span class="ver">v1.2 → 폐지</span></div>
  </div>
 
  <div class="screen">
@@ -2009,12 +2014,7 @@
  </div>
  <div style="border-top: 1px solid var(--line); margin: 18px 0;"></div>
 
- <div style="margin-bottom: 14px; position: relative;">
- <div style="font-size: 11px; color: var(--ink-3); margin-bottom: 4px;">닉네임 <span style="color: #dc2626;">*</span></div>
- <div style="border: 1.5px solid var(--ink); padding: 10px 12px; border-radius: 6px; font-size: 13px;">홍길동</div>
- <span class="bub" style="position: absolute; top: 18px; right: -22px;">1</span>
- </div>
- <div style="display: flex; align-items: center; gap: 10px; border: 1px solid var(--line-2); border-radius: 8px; padding: 10px 12px; margin-bottom: 18px; background: #f8fafc;">
+ <div style="display: flex; align-items: center; gap: 10px; border: 1px solid var(--line-2); border-radius: 8px; padding: 10px 12px; margin-bottom: 14px; background: #f8fafc;">
  <div style="width: 32px; height: 32px; background: #FEE500; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 700; flex-shrink: 0;">K</div>
  <div style="min-width: 0;">
  <div style="font-size: 9px; color: var(--ink-4); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 1px;">카카오</div>
@@ -2033,16 +2033,16 @@
  <span style="background: var(--ink-4); color: white; font-size: 9px; padding: 2px 5px; border-radius: 3px;">선택</span>
  <span style="flex: 1; color: var(--ink-2);">마케팅 수신 동의</span>
  </div>
- <span class="bub" style="position: absolute; top: 4px; right: -22px;">2</span>
+ <span class="bub" style="position: absolute; top: 4px; right: -22px;">1</span>
  </div>
 
  <div style="margin-top: 18px; background: var(--ink); color: white; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 600; text-align: center; position: relative;">가입 완료
- <span class="bub" style="position: absolute; top: -10px; right: -10px;">3</span>
+ <span class="bub" style="position: absolute; top: -10px; right: -10px;">2</span>
  </div>
  </div>
  </div>
  </div>
- <div class="placeholder-note">소셜 인증 후 미가입자 — 닉네임 자동 프리필. 이메일은 소셜 계정에 등록된 경우에만 프리필 (카카오 전화번호 전용 계정은 이메일 없음)</div>
+ <div class="placeholder-note">소셜 신규 가입 — 약관 동의. 생년월일 수집 없음. 닉네임은 artier_pending_signup_nickname에 보관 → 온보딩(USR-AUT-10) prefill</div>
  </div>
 
  <div class="desc">
@@ -2054,14 +2054,13 @@
 
      <h3 class="components">구성 요소</h3>
  <dl>
- <dt><span class="bub">1</span></dt><dd>닉네임 입력 필드 — 소셜 이름 자동 프리필. 수정 가능. 2~20자</dd>
- <dt><span class="bub">2</span></dt><dd>약관 동의 묶음 — 필수(이용약관·개인정보·만 14세) + 선택(마케팅). 미동의 시 가입 차단</dd>
- <dt><span class="bub">3</span></dt><dd>가입 완료 버튼 — 필수 동의 후 활성 → 온보딩 진입</dd>
+ <dt><span class="bub">1</span></dt><dd>약관 동의 묶음 — 필수(이용약관·개인정보·만 14세) + 선택(마케팅). 미동의 시 가입 차단</dd>
+ <dt><span class="bub">2</span></dt><dd>가입 완료 버튼 — 필수 동의 후 활성 → 온보딩 진입</dd>
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
  <li>제공자 색·로고에 맞춰 헤더 자동 변경 (kakao 노랑·구글 외곽선·애플 검정)</li>
- <li>제공자 미보낸 정보(생년월일 등)는 USR-AUT-10 온보딩에서 보강</li>
+ <li>닉네임은 artier_pending_signup_nickname에 보관 → USR-AUT-10에서 prefill</li>
  <li>"모두 동의" 토글 + indeterminate 동일</li>
  <li>완료 → SOCIAL_PROVIDER_FLAG 저장</li>
  </ol></div>
@@ -3282,6 +3281,78 @@
  </div>
  </div>
  <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.8 (PC)</span><span>USR-EXH-06 · 공유 시트</span></div>
+ </section>
+
+ <!-- ───────── 화면: 작품 문의 모달 (PC) ───────── -->
+ <section class="slide" id="USR-EXH-07">
+ <div class="slide-pad">
+ <div class="slide-head">
+ <div><div class="crumb">10 · 전시</div><h2>작품 문의 모달</h2></div>
+ <div class="meta"><span class="role">USR</span><span class="id">USR-EXH-07</span><span class="device">PC</span><span class="ver">v1.15 NEW</span></div>
+ </div>
+
+ <div class="screen">
+ <div class="mock">
+ <div class="pc-frame">
+ <div class="chrome">
+ <span class="dots"><span></span><span></span><span></span></span>
+ <span class="url">proudgallery.com/exhibitions/exh-001</span>
+ </div>
+ <div class="viewport" style="background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; padding: 24px;">
+ <div style="background: white; width: 480px; border-radius: 12px; padding: 26px 28px; box-shadow: 0 20px 50px rgba(0,0,0,.3); position: relative;">
+ <div style="font-size: 17px; font-weight: 700; margin-bottom: 16px; position: relative;">작품 문의하기
+ <span class="bub" style="position: absolute; top: -8px; right: -10px;">1</span>
+ </div>
+ <div style="margin-bottom: 14px; position: relative;">
+ <div style="font-size: 12px; color: #888; margin-bottom: 8px;">문의 유형 <span style="color: #e53e3e;">*</span></div>
+ <div style="display: flex; flex-wrap: wrap; gap: 8px;">
+ <div style="border: 2px solid #3b82f6; background: #eff6ff; padding: 7px 14px; border-radius: 20px; font-size: 13px; color: #3b82f6;">구매 문의</div>
+ <div style="border: 1px solid #e2e8f0; padding: 7px 14px; border-radius: 20px; font-size: 13px;">라이선스</div>
+ <div style="border: 1px solid #e2e8f0; padding: 7px 14px; border-radius: 20px; font-size: 13px;">협업 제안</div>
+ <div style="border: 1px solid #e2e8f0; padding: 7px 14px; border-radius: 20px; font-size: 13px;">정보 요청</div>
+ <div style="border: 1px solid #e2e8f0; padding: 7px 14px; border-radius: 20px; font-size: 13px;">기타</div>
+ </div>
+ <span class="bub" style="position: absolute; top: -10px; right: -10px;">2</span>
+ </div>
+ <div style="margin-bottom: 14px; position: relative;">
+ <div style="font-size: 12px; color: #888; margin-bottom: 6px;">메시지 (선택)</div>
+ <textarea style="width: 100%; border: 1px solid #e2e8f0; border-radius: 8px; padding: 10px; font-size: 13px; resize: none; height: 80px; box-sizing: border-box;" placeholder="문의 내용을 입력하세요"></textarea>
+ <span class="bub" style="position: absolute; top: -10px; right: -10px;">3</span>
+ </div>
+ <div style="background: #111; color: white; padding: 12px; border-radius: 8px; font-size: 14px; font-weight: 600; text-align: center; position: relative;">문의 보내기
+ <span class="bub" style="position: absolute; top: -10px; right: -10px;">4</span>
+ </div>
+ </div>
+ </div>
+ </div>
+ </div>
+ <div class="placeholder-note">WorkInquiryModal.tsx — 운영팀(ADM-INQ-01) 수신</div>
+ </div>
+
+ <div class="desc">
+ <h3>화면 정보</h3>
+ <dl>
+ <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> USR-EXH-01 "문의하기" 버튼 탭</dd>
+ <dt></dt><dd><strong>진입 조건</strong> 로그인 필수 — 비로그인 시 CM-02</dd>
+ <dt></dt><dd><strong>제출 후</strong> artier_inquiries 저장 → ADM-INQ-01 수신 큐</dd>
+ </dl>
+
+ <h3 class="components">구성 요소</h3>
+ <dl>
+ <dt><span class="bub">1</span></dt><dd>모달 제목 — "작품 문의하기"</dd>
+ <dt><span class="bub">2</span></dt><dd>문의 유형 칩 (필수) — 구매 문의 · 라이선스 · 협업 제안 · 정보 요청 · 기타</dd>
+ <dt><span class="bub">3</span></dt><dd>메시지 입력 (선택) — 다장 전시 시 작품 선택 셀렉터 추가 노출</dd>
+ <dt><span class="bub">4</span></dt><dd>제출 버튼 — 유형 미선택 시 비활성. 제출 완료 후 토스트 + 모달 닫기</dd>
+ </dl>
+
+ <div class="ac"><h4>완성 기준</h4><ol>
+ <li>문의 유형 미선택 시 제출 불가</li>
+ <li>다장 전시(image 배열) 시 작품 선택 셀렉터 노출, 1장이면 자동 선택</li>
+ <li>비로그인 탭 시 CM-02 로그인 유도</li>
+ <li>제출 성공 시 artier_inquiries 기록, ADM-INQ-01에 노출</li>
+ </ol></div>
+ </div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.8 (PC)</span><span>USR-EXH-07 · 작품 문의 모달</span></div>
  </section>
 
  <!-- ───────── 화면: 업로드 유형 선택 모달 (PC) ───────── -->

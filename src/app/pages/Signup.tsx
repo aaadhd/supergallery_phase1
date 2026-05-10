@@ -1,20 +1,19 @@
 import { useEffect, useMemo, useRef, useState, FormEvent } from 'react';
 import { toast } from 'sonner';
 import { Link, useNavigate, useSearchParams } from 'react-router-dom';
-import { Mail, Calendar } from 'lucide-react';
+import { Mail } from 'lucide-react';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '../components/ui/dialog';
 import { useAuthStore } from '../store';
 import { pointsOnSignupComplete } from '../utils/pointsBackground';
 import { persistMockSession } from '../services/sessionTokens';
 import { isEmailRegistered } from '../utils/registeredAccounts';
 import { requestEmailMagicLink } from '../services/apiClient';
-import { issueMagicLink, buildVerifyUrl, latestMagicLinkFor } from '../utils/magicLinkStore';
+import { issueMagicLink } from '../utils/magicLinkStore';
 import { useI18n } from '../i18n/I18nProvider';
 import { Button } from '../components/ui/button';
 import { Input } from '../components/ui/input';
 import { Label } from '../components/ui/label';
 import { Checkbox } from '../components/ui/checkbox';
-import { isValidDate, meetsMinAge } from '../utils/ageCheck';
 
 const inputClass =
   'min-h-[44px] rounded-lg border-border/40 px-3 py-3 text-sm text-foreground placeholder:text-muted-foreground sm:px-4 sm:text-sm focus-visible:ring-primary/25';
@@ -32,9 +31,6 @@ export default function Signup() {
   const [email, setEmail] = useState('');
   const [submitted, setSubmitted] = useState(false);
 
-  const [birthYear, setBirthYear] = useState<string>('');
-  const [birthMonth, setBirthMonth] = useState<string>('');
-  const [birthDay, setBirthDay] = useState<string>('');
 
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
@@ -89,22 +85,7 @@ export default function Signup() {
 
   const emailError = touched('email') && !emailValid(email) ? t('signup.errEmail') : '';
 
-  const birthFilled = birthYear !== '' && birthMonth !== '' && birthDay !== '';
-  const birthValid = birthFilled && isValidDate(Number(birthYear), Number(birthMonth), Number(birthDay));
-  const birthMeetsAge = birthValid && meetsMinAge(Number(birthYear), Number(birthMonth), Number(birthDay));
-  const birthError = !touched('birth')
-    ? ''
-    : !birthFilled || !birthValid
-      ? t('signup.errBirthInvalid')
-      : !birthMeetsAge
-        ? t('signup.errBirthUnderAge')
-        : '';
-
-  const monthOptions = useMemo(() => Array.from({ length: 12 }, (_, i) => i + 1), []);
-  const dayOptions = useMemo(() => Array.from({ length: 31 }, (_, i) => i + 1), []);
-
   const emailOk = emailValid(email);
-  const profileOk = birthMeetsAge;
   const agreementsOk = agreeTerms && agreePrivacy && agreeAge;
 
   const sendMagicLink = async (): Promise<boolean> => {
@@ -135,12 +116,6 @@ export default function Signup() {
     if (ok) toast.success(t('signup.resendSuccess'));
   };
 
-  const openDemoVerifyLink = () => {
-    const ref = latestMagicLinkFor(email.trim());
-    if (!ref) return;
-    navigate(buildVerifyUrl(ref.token));
-  };
-
   const goEditEmail = () => {
     setLinkSent(false);
     setResendSec(0);
@@ -149,7 +124,7 @@ export default function Signup() {
   const handleFinalSubmit = (e: FormEvent) => {
     e.preventDefault();
     setSubmitted(true);
-    if (!profileOk || !agreementsOk) return;
+    if (!agreementsOk) return;
     try {
       localStorage.setItem('artier_pending_signup_email', email.trim());
     } catch { /* ignore */ }
@@ -170,29 +145,12 @@ export default function Signup() {
           <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">
             {t('signup.linkSentBody').replace('{email}', email || 'you@example.com')}
           </p>
-          <p className="text-sm text-foreground/80 bg-muted/40 rounded-lg px-3 py-2.5 leading-relaxed">
-            {t('signup.linkSentAutoFlow')}
-          </p>
           <div className="rounded-lg border border-border/40 bg-background px-3 py-2.5 text-left space-y-1">
             <p className="text-sm font-semibold text-foreground">{t('signup.linkSentHelpTitle')}</p>
             <p className="text-sm text-muted-foreground leading-relaxed">{t('signup.linkSentSpam')}</p>
             <p className="text-sm text-muted-foreground leading-relaxed">{t('signup.linkSentSenderHint')}</p>
           </div>
         </div>
-
-        {(import.meta.env.DEV || import.meta.env.VITE_FOOTER_QA_LINKS === 'true') && (
-          <div className="space-y-2">
-            <Button
-              type="button"
-              onClick={openDemoVerifyLink}
-              disabled={!latestMagicLinkFor(email.trim())}
-              className="w-full min-h-[44px] rounded-lg bg-primary text-white text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50"
-            >
-              {t('signup.openMockLink')}
-            </Button>
-            <p className="text-center text-xs text-muted-foreground">{t('signup.openMockLinkHint')}</p>
-          </div>
-        )}
 
         <div className="flex flex-col gap-2 border-t border-border/40 pt-4">
           <Button
@@ -307,59 +265,6 @@ export default function Signup() {
         <form onSubmit={handleFinalSubmit} className="space-y-4">
           {stepParam === 2 && (
             <div className="space-y-4 animate-in fade-in slide-in-from-right-4 duration-300">
-              <div>
-                <Label className="mb-0.5 flex items-center gap-1.5 text-sm font-semibold text-foreground sm:text-sm">
-                  <Calendar className="h-3.5 w-3.5 text-muted-foreground" strokeWidth={2} />
-                  {t('signup.birthLabel')}
-                  <span className="text-destructive ml-0.5">*</span>
-                </Label>
-                <p className="mb-2 text-xs text-muted-foreground">{t('signup.birthHint')}</p>
-                <div className="grid grid-cols-3 gap-2">
-                  <div className="relative">
-                    <input
-                      type="text"
-                      inputMode="numeric"
-                      pattern="[0-9]*"
-                      autoComplete="bday-year"
-                      aria-label={t('signup.birthYear')}
-                      value={birthYear}
-                      onChange={(e) => {
-                        const v = e.target.value.replace(/[^0-9]/g, '').slice(0, 4);
-                        setBirthYear(v);
-                        if (v.length >= 4) markTouched('birth');
-                      }}
-                      onBlur={() => markTouched('birth')}
-                      placeholder={t('signup.birthYearPlaceholder')}
-                      maxLength={4}
-                      className="min-h-[44px] w-full rounded-lg border border-border/40 pl-3 pr-8 py-2 text-sm sm:text-sm text-foreground bg-white focus-visible:ring-[3px] focus-visible:ring-primary/25 focus-visible:outline-none placeholder:text-muted-foreground/50"
-                    />
-                    <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">{t('signup.birthYear')}</span>
-                  </div>
-                  <select
-                    aria-label={t('signup.birthMonth')}
-                    value={birthMonth}
-                    onChange={(e) => { setBirthMonth(e.target.value); markTouched('birth'); }}
-                    onBlur={() => markTouched('birth')}
-                    className="min-h-[44px] rounded-lg border border-border/40 px-3 py-2 text-sm sm:text-sm text-foreground bg-white focus-visible:ring-[3px] focus-visible:ring-primary/25 focus-visible:outline-none"
-                  >
-                    <option value="">{t('signup.birthMonth')}</option>
-                    {monthOptions.map((m) => (<option key={m} value={m}>{m}</option>))}
-                  </select>
-                  <select
-                    aria-label={t('signup.birthDay')}
-                    value={birthDay}
-                    onChange={(e) => { setBirthDay(e.target.value); markTouched('birth'); }}
-                    onBlur={() => markTouched('birth')}
-                    className="min-h-[44px] rounded-lg border border-border/40 px-3 py-2 text-sm sm:text-sm text-foreground bg-white focus-visible:ring-[3px] focus-visible:ring-primary/25 focus-visible:outline-none"
-                  >
-                    <option value="">{t('signup.birthDay')}</option>
-                    {dayOptions.map((d) => (<option key={d} value={d}>{d}</option>))}
-                  </select>
-                </div>
-                <p className="mt-1.5 text-xs sm:text-sm text-muted-foreground">{t('signup.birthHint')}</p>
-                {birthError ? <p className="mt-1 text-sm text-destructive">{birthError}</p> : null}
-              </div>
-
               {/* 약관 동의 카드 */}
               <div className="rounded-xl border border-border/50 bg-card overflow-hidden">
                 {/* 전체 동의 헤더 — 행 전체 클릭 */}
@@ -446,13 +351,11 @@ export default function Signup() {
                 </div>
               </div>
 
-              <p className="text-xs text-muted-foreground leading-relaxed px-1">{t('signup.ageRestrictionLead')}</p>
-
               <div className="flex gap-2">
                 <Button type="button" variant="outline" onClick={() => navigate('/signup?step=1')} className="w-1/3 min-h-[44px] rounded-lg text-sm">
                   {t('signup.previous')}
                 </Button>
-                <Button type="submit" disabled={!profileOk || !agreementsOk} className="flex-1 min-h-[44px] rounded-lg bg-primary text-white text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed">
+                <Button type="submit" disabled={!agreementsOk} className="flex-1 min-h-[44px] rounded-lg bg-primary text-white text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-50 disabled:cursor-not-allowed">
                   {t('signup.submit')}
                 </Button>
               </div>

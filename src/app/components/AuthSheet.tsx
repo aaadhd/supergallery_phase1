@@ -195,13 +195,6 @@ export function AuthSheet({
         {t('login.signupEmail')}
       </Button>
 
-      {/* 하단: 연령 고지 */}
-      <div className="flex flex-col items-center gap-3 pt-2">
-        <p className="text-center text-xs text-muted-foreground leading-relaxed px-2">
-          {t('login.ageNotice')}
-        </p>
-      </div>
-
       <SocialSignupModal
         open={pendingSocial !== null}
         provider={pendingSocial}

@@ -130,6 +130,19 @@ export function QaScreenShortcuts() {
           >
             소셜 가입 기록 초기화 → /login
           </DropdownMenuItem>
+          <DropdownMenuItem
+            className="cursor-pointer"
+            onSelect={() => {
+              try {
+                const links = JSON.parse(localStorage.getItem('artier_pending_magic_links') ?? '{}');
+                const latest = (Object.values(links) as { token: string; createdAt: number }[])
+                  .sort((a, b) => b.createdAt - a.createdAt)[0];
+                if (latest?.token) navigate(`/auth/verify?token=${latest.token}`);
+              } catch { /* ignore */ }
+            }}
+          >
+            데모: 최신 인증 링크 열기
+          </DropdownMenuItem>
           <DropdownMenuSeparator />
           <DropdownMenuItem asChild>
             <Link to="/onboarding" className={linkCls}>

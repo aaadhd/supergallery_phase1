@@ -423,15 +423,18 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
               )}
               <div className="flex flex-col gap-0.5 min-w-0">
                 <h2 className="text-zinc-900 text-base sm:text-lg font-extrabold leading-tight truncate">{headline}</h2>
-                <span
-                  className="text-zinc-600 font-medium text-sm cursor-pointer lg:hover:text-zinc-900 lg:hover:underline transition-colors"
-                  onClick={() => handleArtistClick(uploaderArtist.id)}
-                >
-                  {uploaderName}
-                </span>
-                {isGroupWork && (work.groupName?.trim() || groupOrgLine) && (
-                  <span className="text-zinc-400 text-xs truncate">
-                    {work.groupName?.trim() || groupOrgLine}
+                {isGroupWork ? (
+                  (work.groupName?.trim() || groupOrgLine) && (
+                    <span className="text-zinc-600 font-medium text-sm truncate">
+                      {work.groupName?.trim() || groupOrgLine}
+                    </span>
+                  )
+                ) : (
+                  <span
+                    className="text-zinc-600 font-medium text-sm cursor-pointer lg:hover:text-zinc-900 lg:hover:underline transition-colors"
+                    onClick={() => handleArtistClick(uploaderArtist.id)}
+                  >
+                    {uploaderName}
                   </span>
                 )}
               </div>
@@ -694,7 +697,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                       {t('workDetail.inspireCtaTitle')}
                     </p>
                     <p className="text-sm sm:text-base text-zinc-800 leading-relaxed mb-5">
-                      {t('workDetail.inspireCtaBody').replace('{artist}', displayArtistName)}
+                      {t('workDetail.inspireCtaBody').replace('{artist}', isGroupWork ? (work.groupName?.trim() || groupOrgLine || displayArtistName) : displayArtistName)}
                     </p>
                     <button
                       type="button"

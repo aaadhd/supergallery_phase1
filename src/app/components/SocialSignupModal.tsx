@@ -4,12 +4,11 @@ import { Link } from 'react-router-dom';
 import { useI18n } from '../i18n/I18nProvider';
 import { Button } from './ui/button';
 import { Checkbox } from './ui/checkbox';
-import { isValidDate, meetsMinAge } from '../utils/ageCheck';
 
 export type SocialProvider = 'kakao' | 'google' | 'apple';
 
-export const MOCK_SOCIAL_PROFILE: Record<SocialProvider, { email: string; name: string; avatar: string; birthYear?: string; birthMonth?: string; birthDay?: string }> = {
-  kakao: { email: 'demo@kakao.com', name: '카테', avatar: '🟡', birthYear: '1975', birthMonth: '3', birthDay: '15' },
+export const MOCK_SOCIAL_PROFILE: Record<SocialProvider, { email: string; name: string; avatar: string }> = {
+  kakao: { email: 'demo@kakao.com', name: '카테', avatar: '🟡' },
   google: { email: 'demo@gmail.com', name: 'Carte', avatar: '🅖' },
   apple: { email: 'demo@privaterelay.appleid.com', name: 'Carte', avatar: '🍎' },
 };
@@ -29,9 +28,6 @@ export function SocialSignupModal({ open, provider, onClose, onComplete }: Props
   const { t } = useI18n();
   const profile = useMemo(() => (provider ? MOCK_SOCIAL_PROFILE[provider] : null), [provider]);
   const [nickname, setNickname] = useState('');
-  const [birthYear, setBirthYear] = useState('');
-  const [birthMonth, setBirthMonth] = useState('');
-  const [birthDay, setBirthDay] = useState('');
   const [agreeTerms, setAgreeTerms] = useState(false);
   const [agreePrivacy, setAgreePrivacy] = useState(false);
   const [agreeAge, setAgreeAge] = useState(false);
@@ -40,22 +36,12 @@ export function SocialSignupModal({ open, provider, onClose, onComplete }: Props
   useEffect(() => {
     if (open && profile) {
       setNickname(profile.name);
-      setBirthYear(profile.birthYear ?? '');
-      setBirthMonth(profile.birthMonth ?? '');
-      setBirthDay(profile.birthDay ?? '');
       setAgreeTerms(false);
       setAgreePrivacy(false);
       setAgreeAge(false);
       setAgreeMarketing(false);
     }
   }, [open, profile]);
-
-  const monthOptions = useMemo(() => Array.from({ length: 12 }, (_, i) => i + 1), []);
-  const dayOptions = useMemo(() => Array.from({ length: 31 }, (_, i) => i + 1), []);
-
-  const birthFilled = birthYear !== '' && birthMonth !== '' && birthDay !== '';
-  const birthValid = birthFilled && isValidDate(Number(birthYear), Number(birthMonth), Number(birthDay));
-  const birthMeetsAge = birthValid && meetsMinAge(Number(birthYear), Number(birthMonth), Number(birthDay));
 
   if (!open || !provider || !profile) return null;
 
@@ -69,7 +55,7 @@ export function SocialSignupModal({ open, provider, onClose, onComplete }: Props
     setAgreeAge(next);
   };
 
-  const canSubmit = allRequired && birthMeetsAge;
+  const canSubmit = allRequired;
 
   return (
     <div
@@ -101,51 +87,6 @@ export function SocialSignupModal({ open, provider, onClose, onComplete }: Props
               </p>
               <p className="truncate text-sm font-medium text-foreground">{profile.email}</p>
             </div>
-          </div>
-
-          {/* 생년월일 */}
-          <div className="space-y-2">
-            <label className="text-sm font-medium text-foreground">
-              {t('socialSignup.birthLabel')}
-              <span className="ml-1 text-xs font-medium text-red-500">(필수)</span>
-            </label>
-            <div className="grid grid-cols-3 gap-2">
-              <div className="relative">
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  pattern="[0-9]*"
-                  aria-label="출생 연도"
-                  value={birthYear}
-                  onChange={(e) => setBirthYear(e.target.value.replace(/[^0-9]/g, '').slice(0, 4))}
-                  placeholder="1990"
-                  maxLength={4}
-                  className="min-h-[44px] w-full rounded-lg border border-border/40 pl-3 pr-8 py-2 text-sm text-foreground bg-white focus-visible:ring-[3px] focus-visible:ring-primary/25 focus-visible:outline-none placeholder:text-muted-foreground/50"
-                />
-                <span className="pointer-events-none absolute right-3 top-1/2 -translate-y-1/2 text-sm text-muted-foreground">년</span>
-              </div>
-              <select
-                aria-label="출생 월"
-                value={birthMonth}
-                onChange={(e) => setBirthMonth(e.target.value)}
-                className="min-h-[44px] rounded-lg border border-border/40 px-3 py-2 text-sm text-foreground bg-white focus-visible:ring-[3px] focus-visible:ring-primary/25 focus-visible:outline-none"
-              >
-                <option value="">월</option>
-                {monthOptions.map((m) => <option key={m} value={m}>{m}</option>)}
-              </select>
-              <select
-                aria-label="출생 일"
-                value={birthDay}
-                onChange={(e) => setBirthDay(e.target.value)}
-                className="min-h-[44px] rounded-lg border border-border/40 px-3 py-2 text-sm text-foreground bg-white focus-visible:ring-[3px] focus-visible:ring-primary/25 focus-visible:outline-none"
-              >
-                <option value="">일</option>
-                {dayOptions.map((d) => <option key={d} value={d}>{d}</option>)}
-              </select>
-            </div>
-            {birthFilled && !birthMeetsAge && (
-              <p className="text-sm text-destructive">만 14세 이상만 가입할 수 있어요.</p>
-            )}
           </div>
 
           {/* 약관 동의 */}

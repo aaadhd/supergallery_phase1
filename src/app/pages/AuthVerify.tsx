@@ -72,20 +72,12 @@ export default function AuthVerify() {
         <div className="w-full max-w-md text-center space-y-6">
           <h1 className="text-xl sm:text-2xl font-bold text-foreground">{t('verify.expiredTitle')}</h1>
           <p className="text-sm text-muted-foreground leading-relaxed whitespace-pre-line">{t('verify.expiredBody')}</p>
-          <div className="flex flex-col gap-2">
-            <Link
-              to="/signup"
-              className="flex w-full min-h-[44px] items-center justify-center rounded-lg bg-primary text-white text-sm font-semibold lg:hover:bg-primary/90"
-            >
-              {t('verify.retrySignup')}
-            </Link>
-            <Link
-              to="/login?mode=email"
-              className="flex w-full min-h-[44px] items-center justify-center rounded-lg border border-border text-sm font-semibold lg:hover:bg-muted/50"
-            >
-              {t('verify.retryLogin')}
-            </Link>
-          </div>
+          <Link
+            to="/signup"
+            className="flex w-full min-h-[44px] items-center justify-center rounded-lg bg-primary text-white text-sm font-semibold lg:hover:bg-primary/90"
+          >
+            {t('verify.retrySignup')}
+          </Link>
         </div>
       </div>
     );

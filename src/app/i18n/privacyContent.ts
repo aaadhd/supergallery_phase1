@@ -5,7 +5,7 @@ const ko = {
   effective: '시행일: 2026년 5월 1일',
   s1h: '1. 수집하는 개인정보 항목',
   s1p:
-    '서비스는 회원가입 및 서비스 이용을 위해 다음의 개인정보를 수집합니다: 이메일 주소, 작가명(닉네임), 생년월일, 프로필 이미지, 자기소개, 위치(사용자가 직접 선택).',
+    '서비스는 회원가입 및 서비스 이용을 위해 다음의 개인정보를 수집합니다: 이메일 주소, 작가명(닉네임), 프로필 이미지, 자기소개, 위치(사용자가 직접 선택).',
   s2h: '2. 개인정보의 수집·이용 목적',
   s2p:
     '회원 식별 및 인증, 서비스 제공 및 개선, 이벤트 안내, 법적 의무 이행을 위해 개인정보를 수집·이용합니다.',
@@ -26,7 +26,7 @@ const en: Record<PrivacyContentKey, string> = {
   effective: 'Effective: May 1, 2026',
   s1h: '1. Personal information we collect',
   s1p:
-    'To register and use the Service, we may collect: email address, artist name (nickname), date of birth, profile image, bio, and location (selected by the member).',
+    'To register and use the Service, we may collect: email address, artist name (nickname), profile image, bio, and location (selected by the member).',
   s2h: '2. Purposes of collection and use',
   s2p:
     'We use personal information to identify members, provide and improve the Service, share event information, and meet legal obligations.',
