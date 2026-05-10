@@ -8,7 +8,7 @@ import { isValidDate, meetsMinAge } from '../utils/ageCheck';
 
 export type SocialProvider = 'kakao' | 'google' | 'apple';
 
-const MOCK_SOCIAL_PROFILE: Record<SocialProvider, { email: string; name: string; avatar: string; birthYear?: string; birthMonth?: string; birthDay?: string }> = {
+export const MOCK_SOCIAL_PROFILE: Record<SocialProvider, { email: string; name: string; avatar: string; birthYear?: string; birthMonth?: string; birthDay?: string }> = {
   kakao: { email: 'demo@kakao.com', name: '카테', avatar: '🟡', birthYear: '1975', birthMonth: '3', birthDay: '15' },
   google: { email: 'demo@gmail.com', name: 'Carte', avatar: '🅖' },
   apple: { email: 'demo@privaterelay.appleid.com', name: 'Carte', avatar: '🍎' },
