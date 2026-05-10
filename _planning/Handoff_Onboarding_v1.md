@@ -1,8 +1,8 @@
-# 온보딩 원고 (USR-AUT-09 ~ USR-AUT-11)
+# 온보딩 원고 (USR-AUT-10 ~ USR-AUT-11)
 
 **작성**: 기획 · **독자**: 개발(구현·QA)
 
-가입 직후 온보딩 다단 흐름 — Step 0 환영(USR-AUT-09) · Step 1 프로필 입력(USR-AUT-10) · 조건부 Step 2 본인 작품 찾기(USR-AUT-10b, 활성 또는 비활성 토큰 보유 시) · Step 3 완료 축하(USR-AUT-11). **스텝·레이아웃**은 PRD, 세부 인터랙션은 구현 판단.
+가입 직후 온보딩 다단 흐름 — Step 0 닉네임+프로필 사진(USR-AUT-10) · 조건부 Step 1 본인 작품 찾기(USR-AUT-10b, 활성 또는 비활성 토큰 보유 시) · Step 1(일반) 또는 Step 2(토큰) 완료 축하(USR-AUT-11). **스텝·레이아웃**은 PRD, 세부 인터랙션은 구현 판단.
 
 > **단일 소스**
 > - 화면 문자열은 [Copy_v1.md](./Copy_v1.md) 온보딩·claim 관련 영역이 단일 소스다.
@@ -23,39 +23,11 @@
 
 ---
 
-## 1) Step 0 — 환영 화면 (USR-AUT-09)
+## 1) Step 0 — 프로필 입력 (모든 사용자 공통, USR-AUT-10)
 
-가입 직후 짧은 환영 화면. "시작하기" CTA로 다음 단계 진입.
+지역 분기 없는 단일 폼([Policy §2.1](./Policy_v1.md#2-1-가입-옵션과-필수-수집-정보-region-분기-폐기)). 진입 분기별 배너 없음 — per-route notice banner 폐지.
 
-### 한국어
-- 제목: **{brand}에 오신 것을 환영합니다**
-- 리드: 그림 한 점만 올려도 나만의 전시가 열려요
-- 시작 버튼: 시작하기
-
-### English
-- Title: **Welcome to {brand}**
-- Lead: Even one piece becomes your own exhibition
-- Primary CTA: Get started
-
----
-
-## 2) Step 1 — 프로필 입력 (모든 사용자 공통, USR-AUT-10)
-
-지역 분기 없는 단일 폼([Policy §2.1](./Policy_v1.md#2-1-가입-옵션과-필수-수집-정보-region-분기-폐기)).
-
-### 2.1 진입 분기별 안내 (상단 배너)
-
-가입 경로에 따라 상단에 다음 배너 1줄이 노출된다.
-
-#### 초대 링크 가입자
-- 한국어: 친구가 보내주신 초대 링크로 오셨어요. 프로필 설정을 마치면 본인 작품을 직접 골라 연결할 수 있어요.
-- English: You arrived via an invite from a friend. After you finish profile setup, you can pick the artwork that belongs to you.
-
-#### 소셜 가입자
-- 한국어: 소셜 계정으로 빠르게 가입했어요. 닉네임은 방금 적은 그대로 채워뒀어요 — 바꾸고 싶으면 수정해 주세요. 전화번호는 나중에 설정에서 추가할 수 있어요.
-- English: You signed up with a social account. The nickname you just chose is filled in — feel free to change it. You can add your phone number later in Settings.
-
-### 2.2 입력 필드
+### 1.1 입력 필드
 
 닉네임 2~20자 등 제약은 PRD·Policy와 동일. 문구는 Copy와 맞춘다.
 
@@ -70,7 +42,7 @@
 | 이메일 보조 설명 | 중요 안내와 로그인·가입 인증 링크 수신에 사용돼요. (애플 릴레이 비활성·계정 비공개 등 소셜 제공자가 이메일을 안 줄 때만 입력 받아요. 이메일 가입자·제공된 소셜 가입자는 이 칸이 안 보여요.) | Used for important notices and sign-in verification links. (Shown only when the social provider didn't return an email — e.g., Apple relay disabled. Email sign-ups and other social sign-ups skip this field.) |
 | 사진 올리기 버튼 | 사진 올리기 | Upload photo |
 
-### 2.3 관심사 태그 (15종 + 기타)
+### 1.2 관심사 태그 (15종 + 기타)
 
 작가의 작업 영역을 나타내는 칩 형태. 다중 선택 가능.
 
@@ -92,7 +64,7 @@
 | 텍스타일 | Textile |
 | 기타 | Other |
 
-### 2.4 검증 메시지 (에러)
+### 1.3 검증 메시지 (에러)
 
 | 시나리오 | 한국어 | English |
 |---|---|---|
@@ -106,18 +78,18 @@
 | 전화번호 중복 | 이미 가입된 전화번호예요. 다른 번호를 입력해주세요. | This phone number is already registered. Please use a different number. |
 | 이미지 5MB 초과 | 이미지 크기는 5MB 이하여야 해요. | Image must be under 5MB. |
 
-### 2.5 네비게이션 버튼
+### 1.4 네비게이션 버튼
 
 - 이전 / Back
 - 다음 / Next
 
 ---
 
-## 3) Step 2 — 본인 작품 찾기 (claim, 토큰 보유자만)
+## 2) Step 1 — 본인 작품 찾기 (claim, 토큰 보유자만, 조건부)
 
 초대 링크로 가입한 사용자가 가입 직후 진입하는 단계. **활성 또는 비활성 토큰** 보유 시에만 노출 ([Policy §3.2](./Policy_v1.md#3-2-본인-작품-찾기-가입자-본인-선택)).
 
-### 3.1 진입 안내
+### 2.1 진입 안내
 
 #### 활성 토큰 (검수 통과 후)
 일반 안내만 노출.
@@ -127,7 +99,7 @@
 - 한국어: 이 전시는 검수 신청 중이에요. 미리 본인 작품을 골라두시면 공개 시 자동으로 노출돼요.
 - English: This exhibition is under review. Pick your work now and it will be linked automatically when approved.
 
-### 3.2 화면 본문
+### 2.2 화면 본문
 
 **제목**
 - 한국어: 혹시 이 중에 본인 작품이 있나요?
@@ -141,14 +113,14 @@
 - 한국어: 아래 작품이 정말 본인이 그린 그림이 맞으면 눌러주세요.
 - English: Please tap only if the work below is really yours.
 
-### 3.3 액션 버튼
+### 2.3 액션 버튼
 
 | 액션 | 한국어 | English |
 |---|---|---|
 | 카드 클릭 | 이거 제 작품이에요 | This one is mine |
 | 건너뛰기 | 여기 없어요. 그냥 둘러볼게요 | Not here. I'll just browse |
 
-### 3.4 확인 다이얼로그 (명시 클릭 후)
+### 2.4 확인 다이얼로그 (명시 클릭 후)
 
 자동 연결 방지 — 카드를 누르면 1회 확인 거친 뒤 연결.
 
@@ -164,7 +136,7 @@
 - 한국어: 네, 맞아요
 - English: Yes, that's mine
 
-### 3.5 결과 토스트·메시지
+### 2.5 결과 토스트·메시지
 
 | 시나리오 | 한국어 | English |
 |---|---|---|
@@ -175,23 +147,26 @@
 
 ---
 
-## 4) Step 3 — 완료 화면
+## 3) 완료 화면 (일반: Step 2, 토큰 보유: Step 3)
 
 ### 한국어
 - 제목: 설정 완료!
-- 환영: {name}님, 환영합니다!
-- CTA 1: 첫 작품 올리기 → 경로 /upload
-- CTA 2: 갤러리 둘러보기 → `/`
+- 환영: {name}님, 반가워요!
+- 태그라인: 그림을 올려 나만의 전시를 열거나,\n마음에 드는 작품을 저장해두세요
+- 서비스 포인트: 그림 한 점이 나만의 전시가 돼요 / 마음에 든 작품을 모아둘 수 있어요 / 작가와 감상자가 함께하는 갤러리예요
+- 1차 CTA (primary): 갤러리 둘러보기 → `/`
+- 2차 CTA (secondary, ghost): 작품 올려보기 → 경로 /upload
 
 ### English
 - Title: You're all set!
 - Welcome: Welcome, {name}!
-- CTA 1: Upload your first work → `/upload`
-- CTA 2: Explore the gallery → `/`
+- Tagline: Upload your art to open your own exhibition,\nor save works you love.
+- 1차 CTA (primary): Explore the gallery → `/`
+- 2차 CTA (secondary, ghost): Upload your first work → `/upload`
 
 ---
 
-## 5) 시니어 친화 톤 적용
+## 4) 시니어 친화 톤 적용
 
 사용자는 **디지털 드로잉에 익숙한 시니어 작가**를 기본 페르소나로 둔다. 일반 시니어 가이드(친절·반복·확대 글꼴)를 모두 적용하지 않고 핵심 임계값만 강제한다.
 
@@ -204,27 +179,27 @@
 
 ---
 
-## 6) 문자열 출처
+## 5) 문자열 출처
 
 모든 UI 문구는 [Copy_v1.md](./Copy_v1.md) 온보딩·claim 영역을 따른다. 본 문서는 prose 참고용이며 i18n 키 목록은 적지 않는다.
 
 ---
 
-## 7) 구현 체크
+## 6) 구현 체크
 
-- [ ] Step 0 / 1 / 2(조건부) / 3 — 4화면 흐름 모두 ko/en 동작 (Step 0.5 USR-AUT-09b 폐기)
-- [ ] 진입 분기별 배너 자동 분기 (일반·소셜·초대) — 단말에 임시 보관된 토큰 보유 여부로 판정
-- [ ] Step 2 진입 조건: 활성 또는 비활성 토큰 보유 ([Policy §3.2](./Policy_v1.md#3-2-본인-작품-찾기-가입자-본인-선택)). 토큰 없으면 자동 스킵
+- [ ] Step 0 / 1(조건부) / 완료 — 흐름 모두 ko/en 동작 (USR-AUT-09 환영 스플래시 폐기)
+- [ ] 진입 분기별 배너 없음 — per-route notice banner 폐지
+- [ ] Step 1(본인 작품 찾기) 진입 조건: 활성 또는 비활성 토큰 보유 ([Policy §3.2](./Policy_v1.md#3-2-본인-작품-찾기-가입자-본인-선택)). 토큰 없으면 자동 스킵
 - [ ] 동시 선택 처리: 두 번째 클릭 시 §3.5 동시 선택 토스트 + 카드 새로고침
 - [ ] 명시 클릭 + 확인 다이얼로그 1회 = 자동 연결 방지 (Policy §3.2 자동 연결 옵션 없음)
 - [ ] 관심사 태그 15종 ko/en 동일 노출 + 다중 선택 동작
 - [ ] 검증 메시지 9종 ko/en 분기
-- [ ] 완료 화면 CTA 2종 동작 (경로 /upload, `/`)
-- [ ] 비활성 토큰 단계 Step 2 진입 시 §3.1 비활성 토큰 헤더 한 줄 추가 노출
+- [ ] 완료 화면 1차 CTA "갤러리 둘러보기" → `/`, 2차 CTA "작품 올려보기" → `/upload`
+- [ ] 비활성 토큰 단계 Step 1 진입 시 §2.1 비활성 토큰 헤더 한 줄 추가 노출
 
 ---
 
-## 8) 법무·UX 검토 연결
+## 7) 법무·UX 검토 연결
 
 - **claim 흐름의 법적 적정성** — 자동 매칭 폐기·명시 클릭만 허용 ([Handoff_LegalReview_Checklist §3 LP-3](./Handoff_LegalReview_Checklist_v1.md#lp-3-비회원-초대-토큰-모델-적법-근거))
 - **만 14세 검증** — 본 화면은 가입 후 단계라 검증은 가입 시점에서 끝남. 본 화면에 14세 표기 별도 없음
@@ -236,6 +211,7 @@
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.2 | 2026-05-10 | PM × Claude | Step 0 환영 화면 제거, 온보딩 직접 시작(닉네임+사진), 완료 화면 카피·CTA 갱신 |
 | v1.1 | 2026-05-07 | PM × Claude | Step 0.5 제거, 온보딩 단계 축소; 구현 체크리스트 Step 0.5·5단계 잔재 제거 |
 | v1 | 2026-05-01 | PM × Claude | 최초 작성 — 온보딩 카피(Step 0~3) + 본인 작품 찾기(Step 2) ko/en prose. Policy §3 토큰 모델 정합 + 시니어 친화 톤 + 법무·UX 검토 연결. 단일 소스 안내 문구 정리. **후속** — 독자=개발·작성=기획 명시, `(온보딩 카피 키)` 등 플레이스홀더·표 키 열 제거, 관심사 태그 표 복구, §「적용 키」→「문자열 출처」, 시니어 표·체크리스트·법무 절 자연어화. |
 <!-- 인용 정의 -->
