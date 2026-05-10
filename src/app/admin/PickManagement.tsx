@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect, type FormEvent } from 'react';
 import { toast } from 'sonner';
-import { Plus, Search } from 'lucide-react';
+import { Plus, Search, Trash2 } from 'lucide-react';
 import { ImageWithFallback } from '../components/ImageWithFallback';
 import { workStore, useWorkStore } from '../store';
 import type { Work } from '../data';
@@ -257,8 +257,7 @@ export default function PickManagement() {
     return true;
   };
 
-  const saveDraft = (e: FormEvent) => {
-    e.preventDefault();
+  const doSave = () => {
     if (!validateDraft()) return;
     const payload = buildPayload();
     if (selectedId && selectedId !== 'new') {
@@ -271,6 +270,8 @@ export default function PickManagement() {
     }
     toast.success('임시저장되었습니다.');
   };
+
+  const saveDraft = (e: FormEvent) => { e.preventDefault(); doSave(); };
 
   const handlePublish = async () => {
     if (!validateDraft(true)) return;
@@ -352,23 +353,48 @@ export default function PickManagement() {
                 const isSelected = selectedId === session.id;
                 const isEnded = status === 'ended';
                 return (
-                  <button
+                  <div
                     key={session.id}
-                    type="button"
-                    onClick={() => openEdit(session)}
-                    className={`w-full text-left px-3 py-3 border-b border-border/40 transition-colors ${
-                      isSelected ? 'bg-primary/[.06] border-l-2 border-l-primary' : 'lg:hover:bg-muted/50'
-                    } ${isEnded ? 'opacity-50' : ''}`}
+                    className={`group relative border-b border-border/40 ${isEnded ? 'opacity-50' : ''}`}
                   >
-                    <div className="font-medium text-sm truncate mb-1">{session.title}</div>
-                    <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
-                      <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium ${STATUS_COLOR[status]}`}>
-                        {STATUS_LABEL[status]}
-                      </span>
-                      <span>{session.startAt?.slice(5)} ~ {session.endAt?.slice(5)}</span>
-                      <span>{(session.selectedWorkIds?.length ?? 0)}개</span>
-                    </div>
-                  </button>
+                    <button
+                      type="button"
+                      onClick={() => openEdit(session)}
+                      className={`w-full text-left px-3 py-3 pr-8 transition-colors ${
+                        isSelected ? 'bg-primary/[.06] border-l-2 border-l-primary' : 'lg:hover:bg-muted/50'
+                      }`}
+                    >
+                      <div className="font-medium text-sm truncate mb-1">{session.title}</div>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
+                        <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium ${STATUS_COLOR[status]}`}>
+                          {STATUS_LABEL[status]}
+                        </span>
+                        <span>{session.startAt?.slice(5)} ~ {session.endAt?.slice(5)}</span>
+                        <span>{(session.selectedWorkIds?.length ?? 0)}개</span>
+                      </div>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={async (e) => {
+                        e.stopPropagation();
+                        const ok = await openConfirm({
+                          title: '픽 세션 삭제',
+                          description: `"${session.title}" 세션을 삭제합니다. 이 작업은 되돌릴 수 없습니다.`,
+                          confirmLabel: '삭제',
+                          destructive: true,
+                        });
+                        if (!ok) return;
+                        pickStore.remove(session.id);
+                        appendAuditLog({ action: 'event_deleted', targetId: session.id, targetSnapshot: { title: session.title }, actorId: 'admin', actorRole: 'admin' });
+                        if (selectedId === session.id) closePanel();
+                        toast.success('픽 세션이 삭제되었습니다.');
+                      }}
+                      className="absolute right-2 top-1/2 -translate-y-1/2 p-1 rounded text-muted-foreground opacity-0 group-hover:opacity-100 lg:hover:text-destructive lg:hover:bg-destructive/10 transition-opacity"
+                      aria-label="세션 삭제"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                    </button>
+                  </div>
                 );
               })}
             </div>
@@ -531,7 +557,7 @@ export default function PickManagement() {
                         <div className="flex-1" />
                         <button
                           type="button"
-                          onClick={(e) => saveDraft(e as unknown as FormEvent)}
+                          onClick={doSave}
                           className="border border-slate-600 text-slate-300 rounded-md px-3 py-1.5 text-xs lg:hover:bg-slate-700"
                         >
                           임시저장
