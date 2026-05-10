@@ -7,6 +7,78 @@ export const REPORTS_STORAGE_KEY = 'artier_reports';
 
 export const REPORTS_CHANGED_EVENT = 'artier-reports-changed';
 
+const SEED_REPORTS: StoredUserReport[] = [
+  {
+    id: 'rpt-seed-1',
+    targetType: 'work',
+    targetId: 'gw2',
+    targetName: '도시의 빛 2026',
+    targetArtistId: 'g2',
+    reporterId: '5',
+    reasonKey: 'copyright',
+    reasonLabel: '저작권 침해',
+    reason: '저작권 침해',
+    detail: 'Pinterest에서 해외 작가의 작품을 그대로 올린 것 같습니다. 원본 링크: https://pinterest.com/pin/example',
+    createdAt: '2026-05-09T14:22:00',
+    adminStatus: 'pending',
+  },
+  {
+    id: 'rpt-seed-2',
+    targetType: 'work',
+    targetId: 'gw5',
+    targetName: '전통의 선',
+    targetArtistId: 'g5',
+    reporterId: '3',
+    reasonKey: 'copyright',
+    reasonLabel: '저작권 침해',
+    reason: '저작권 침해',
+    detail: 'AI로 생성한 이미지를 본인 창작물처럼 올린 것으로 보입니다. 붓터치가 없고 텍스처가 AI 특유의 패턴입니다.',
+    createdAt: '2026-05-08T09:45:00',
+    adminStatus: 'pending',
+  },
+  {
+    id: 'rpt-seed-3',
+    targetType: 'work',
+    targetId: 'gw1',
+    targetName: '디지털 한국화 재해석',
+    targetArtistId: 'g1',
+    reporterId: '7',
+    reasonKey: 'inappropriate',
+    reasonLabel: '부적절한 콘텐츠',
+    reason: '부적절한 콘텐츠',
+    detail: '작품 설명에 특정 종교를 비하하는 내용이 포함되어 있습니다. 작품 자체보다 설명글 문제입니다.',
+    createdAt: '2026-05-07T16:10:00',
+    adminStatus: 'pending',
+  },
+  {
+    id: 'rpt-seed-4',
+    targetType: 'work',
+    targetId: 'gw3',
+    targetName: '사이버 감성',
+    targetArtistId: 'g3',
+    reporterId: '9',
+    reasonKey: 'copyright',
+    reasonLabel: '저작권 침해',
+    reason: '저작권 침해',
+    detail: '유명 일러스트 작가의 작품과 구도·색감이 매우 유사합니다. 직접 그린 것이 맞는지 확인 필요합니다.',
+    createdAt: '2026-05-06T11:30:00',
+    adminStatus: 'hidden',
+  },
+  {
+    id: 'rpt-seed-5',
+    targetType: 'artist',
+    targetName: '홍보계정123',
+    targetArtistId: '21',
+    reporterId: '2',
+    reasonKey: 'spam',
+    reasonLabel: '스팸·광고',
+    reason: '스팸·광고',
+    detail: '모든 작품 설명이 외부 쇼핑몰 링크와 홍보 문구로만 구성되어 있습니다. 갤러리 목적으로 사용하는 계정이 아닌 것 같습니다.',
+    createdAt: '2026-05-05T20:05:00',
+    adminStatus: 'dismissed',
+  },
+];
+
 export type StoredUserReport = {
   id: string;
   targetType: 'work' | 'artist';
@@ -36,12 +108,17 @@ export type StoredUserReport = {
 };
 
 export function loadUserReports(): StoredUserReport[] {
-  if (typeof window === 'undefined') return [];
+  if (typeof window === 'undefined') return SEED_REPORTS;
   try {
-    const raw = JSON.parse(localStorage.getItem(REPORTS_STORAGE_KEY) || '[]') as unknown;
-    return Array.isArray(raw) ? (raw as StoredUserReport[]) : [];
+    const raw = localStorage.getItem(REPORTS_STORAGE_KEY);
+    if (!raw) {
+      localStorage.setItem(REPORTS_STORAGE_KEY, JSON.stringify(SEED_REPORTS));
+      return SEED_REPORTS;
+    }
+    const parsed = JSON.parse(raw) as unknown;
+    return Array.isArray(parsed) ? (parsed as StoredUserReport[]) : SEED_REPORTS;
   } catch {
-    return [];
+    return SEED_REPORTS;
   }
 }
 

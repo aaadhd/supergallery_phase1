@@ -58,15 +58,103 @@ interface StoredInquiry {
 
 const STORAGE_KEY = 'artier_inquiries';
 
+const SEED_INQUIRIES: StoredInquiry[] = [
+  {
+    id: 'inq-seed-1',
+    email: 'minseo.k@example.com',
+    category: 'upload',
+    message: '작품을 업로드했는데 검수 대기 중이라고만 나오고 3일째 처리가 안 되고 있습니다. 정상적으로 접수된 건지 확인 부탁드립니다.',
+    createdAt: '2026-05-09T10:30:00',
+    status: '신규',
+    replies: [],
+  },
+  {
+    id: 'inq-seed-2',
+    email: 'hajun.lee@example.com',
+    category: 'account',
+    message: '닉네임을 변경하고 싶은데 설정에서 수정이 안 됩니다. 혹시 닉네임 변경 횟수 제한이 있나요?',
+    createdAt: '2026-05-08T15:20:00',
+    status: '처리 중',
+    replies: [
+      {
+        text: '안녕하세요, Proud Gallery 운영팀입니다.\n\n닉네임은 가입 후 프로필 설정에서 자유롭게 변경하실 수 있습니다. 현재 설정 화면에서 닉네임 항목을 탭하시면 편집 모드로 진입됩니다. 문제가 지속되면 스크린샷과 함께 다시 문의 주세요.',
+        repliedAt: '2026-05-08T17:45:00',
+        repliedBy: '운영팀',
+      },
+    ],
+  },
+  {
+    id: 'inq-seed-3',
+    email: 'daeun.j@example.com',
+    category: 'workInquiry',
+    categoryDetail: '작품 구입·소장 문의',
+    message: '"봄날의 기록" 전시 작품 중 두 번째 작품을 구입하고 싶습니다. 판매 가능한지 작가분께 연락을 취할 수 있을까요?',
+    workTitle: '봄날의 기록',
+    createdAt: '2026-05-08T09:15:00',
+    status: '신규',
+    replies: [],
+  },
+  {
+    id: 'inq-seed-4',
+    email: 'banned_user@example.com',
+    category: 'privacy',
+    message: '개인정보보호법 제36조에 따라 본인의 계정 및 관련 데이터 전체 삭제를 요청드립니다. 이메일: banned_user@example.com',
+    createdAt: '2026-05-07T13:00:00',
+    status: '처리 중',
+    privacy: { subjectVerified: true },
+    replies: [
+      {
+        text: '안녕하세요. 개인정보 삭제 요청 접수되었습니다. 30일 이내 처리 완료 후 안내드리겠습니다. 본인 확인을 위해 가입 시 사용한 이메일 주소를 회신 부탁드립니다.',
+        repliedAt: '2026-05-07T16:30:00',
+        repliedBy: '운영팀',
+      },
+    ],
+  },
+  {
+    id: 'inq-seed-5',
+    email: 'sohee.h@example.com',
+    category: 'bug',
+    message: '갤러리 둘러보기 화면에서 스크롤을 내리면 특정 작품 카드에서 이미지가 로딩되지 않고 빈 화면으로 표시됩니다. 아이폰 15, 사파리 환경입니다.',
+    createdAt: '2026-05-06T20:40:00',
+    status: '완료',
+    replies: [
+      {
+        text: '안녕하세요! 말씀해 주신 증상 확인 후 이미지 lazy-load 처리 관련 버그를 수정했습니다. 업데이트 후 증상이 해결되었는지 확인 부탁드립니다. 이용에 불편을 드려 죄송합니다.',
+        repliedAt: '2026-05-07T11:00:00',
+        repliedBy: '운영팀',
+      },
+    ],
+  },
+  {
+    id: 'inq-seed-6',
+    email: 'seoa.y@example.com',
+    category: 'suggestion',
+    message: '작품에 좋아요를 누른 사용자 목록을 작가가 볼 수 있으면 좋겠습니다. 어떤 분들이 관심 가지는지 알면 교류가 더 활발해질 것 같아요.',
+    createdAt: '2026-05-05T14:55:00',
+    status: '보류',
+    internalNotes: 'Phase 2 기능 후보로 검토 예정. 개인정보 노출 이슈 사전 검토 필요.',
+    replies: [
+      {
+        text: '소중한 의견 감사합니다. 해당 기능은 현재 기획 검토 단계에 있으며, 서비스 개선 시 반영될 수 있도록 하겠습니다.',
+        repliedAt: '2026-05-06T09:30:00',
+        repliedBy: '운영팀',
+      },
+    ],
+  },
+];
+
 function loadInquiries(): StoredInquiry[] {
-  if (typeof localStorage === 'undefined') return [];
+  if (typeof localStorage === 'undefined') return SEED_INQUIRIES;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
+    if (!raw) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(SEED_INQUIRIES));
+      return SEED_INQUIRIES;
+    }
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : [];
+    return Array.isArray(parsed) ? parsed : SEED_INQUIRIES;
   } catch {
-    return [];
+    return SEED_INQUIRIES;
   }
 }
 
