@@ -30,23 +30,6 @@ export default function FeaturedManagement() {
   const featuredSet = new Set(featuredExhibitionIds);
   const publicWorks = workStore.getWorks().filter(isWorkPublic);
 
-  // 추천 활성 먼저, 이후 전시명 가나다순
-  const sortedWorks = useMemo(() => [...publicWorks].sort((a, b) => {
-    const aF = featuredSet.has(a.id) ? 0 : 1;
-    const bF = featuredSet.has(b.id) ? 0 : 1;
-    if (aF !== bF) return aF - bF;
-    return displayExhibitionTitle(a, '').localeCompare(displayExhibitionTitle(b, ''), 'ko');
-  }), [publicWorks, featuredExhibitionIds]);
-
-  const filtered = useMemo(() => {
-    if (!search.trim()) return sortedWorks;
-    const q = search.trim().toLowerCase();
-    return sortedWorks.filter((w) =>
-      displayExhibitionTitle(w, '').toLowerCase().includes(q) ||
-      (w.artist?.name ?? '').toLowerCase().includes(q),
-    );
-  }, [sortedWorks, search]);
-
   // 추천 중인 것만
   const featuredWorks = useMemo(
     () => publicWorks.filter((w) => featuredSet.has(w.id)),
