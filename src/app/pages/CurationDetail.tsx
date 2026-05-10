@@ -74,12 +74,32 @@ export default function CurationDetail() {
         <ChevronLeft className="h-4 w-4" /> {t('common.back')}
       </Link>
 
+      {curation.bannerImageUrl && (
+        <div className="w-full rounded-xl overflow-hidden mb-6 aspect-[3/1] bg-muted">
+          <img
+            src={curation.bannerImageUrl}
+            alt={curation.title}
+            className="w-full h-full object-cover"
+            loading="eager"
+          />
+        </div>
+      )}
+
       <header className="mb-6 sm:mb-8">
         <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">{curation.title}</h1>
         {curation.subtitle && (
           <p className="text-sm sm:text-base text-muted-foreground">{curation.subtitle}</p>
         )}
-        <p className="text-xs text-muted-foreground mt-3">
+        {(curation.startAt || curation.endAt) && (
+          <p className="text-xs text-muted-foreground mt-2">
+            {curation.startAt && curation.endAt
+              ? `${curation.startAt} ~ ${curation.endAt}`
+              : curation.startAt
+                ? `${curation.startAt} ~`
+                : `~ ${curation.endAt}`}
+          </p>
+        )}
+        <p className="text-xs text-muted-foreground mt-2">
           {t('curation.pieceCount').replace('{n}', String(resolved.length))}
         </p>
       </header>
