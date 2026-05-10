@@ -112,7 +112,7 @@ export function QaScreenShortcuts() {
               localStorage.setItem('artier_onboarding_done', 'true');
               authStore.login();
               persistMockSession('qa-relogin-auto');
-              navigate('/');
+              window.location.replace('/');
             }}
           >
             로그인 상태 바로가기
