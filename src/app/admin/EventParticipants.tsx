@@ -1,14 +1,11 @@
 import { useState, useMemo, useEffect, useSyncExternalStore } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Badge } from '../components/ui/badge';
-import {
-  Table, TableHeader, TableBody, TableHead, TableRow, TableCell,
-} from '../components/ui/table';
+import { Check } from 'lucide-react';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '../components/ui/select';
-import { eventsStore, useManagedEvents, type ManagedEvent } from '../utils/eventsStore';
+import { eventsStore, useManagedEvents } from '../utils/eventsStore';
 import { workStore } from '../store';
 import { useI18n } from '../i18n/I18nProvider';
 import { pushDemoNotification } from '../utils/pushDemoNotification';
@@ -22,39 +19,22 @@ interface EventParticipant {
   id: string;
   eventId: string;
   name: string;
-  email: string;
   status: string;
   participatedAt: string;
-  /** 실 업로드 응모작이면 그 전시 ID — 선정 체크 토글 대상. 시드는 undefined. */
   workId?: string;
 }
 
-/**
- * 참여자 시드 — Phase 2에서 실 DB 연결 예정.
- * eventId는 contestStore의 ManagedContest.id(string)와 일치.
- */
 const seedParticipants: EventParticipant[] = [
-  { id: 'EP-001', eventId: '1', name: '카테', email: 'cho.gayoung@email.com', status: '참여 완료', participatedAt: '2026-05-02' },
-  { id: 'EP-002', eventId: '1', name: '김영자', email: 'kim.youngja@email.com', status: '참여 완료', participatedAt: '2026-05-03' },
-  { id: 'EP-003', eventId: '1', name: '정호아트', email: 'park.jh@email.com', status: '대기 중', participatedAt: '2026-05-05' },
-  { id: 'EP-004', eventId: '2', name: '은수워터컬러', email: 'jung.es@email.com', status: '참여 완료', participatedAt: '2026-05-10' },
-  { id: 'EP-005', eventId: '2', name: '내면의풍경', email: 'seo.kh@email.com', status: '참여 완료', participatedAt: '2026-05-12' },
-  { id: 'EP-006', eventId: '2', name: '정림수채화', email: 'oh.jl@email.com', status: '대기 중', participatedAt: '2026-05-15' },
-  { id: 'EP-007', eventId: '1', name: '강미란', email: 'kang.mr@email.com', status: '참여 완료', participatedAt: '2026-05-04' },
-  { id: 'EP-008', eventId: '1', name: '나무결공방', email: 'yoon.ts@email.com', status: '취소', participatedAt: '2026-05-06' },
+  { id: 'EP-001', eventId: '1', name: '카테', status: '참여 완료', participatedAt: '2026-05-02' },
+  { id: 'EP-002', eventId: '1', name: '김영자', status: '참여 완료', participatedAt: '2026-05-03' },
+  { id: 'EP-003', eventId: '1', name: '정호아트', status: '대기 중', participatedAt: '2026-05-05' },
+  { id: 'EP-004', eventId: '2', name: '은수워터컬러', status: '참여 완료', participatedAt: '2026-05-10' },
+  { id: 'EP-005', eventId: '2', name: '내면의풍경', status: '참여 완료', participatedAt: '2026-05-12' },
+  { id: 'EP-006', eventId: '2', name: '정림수채화', status: '대기 중', participatedAt: '2026-05-15' },
+  { id: 'EP-007', eventId: '1', name: '강미란', status: '참여 완료', participatedAt: '2026-05-04' },
+  { id: 'EP-008', eventId: '1', name: '나무결공방', status: '취소', participatedAt: '2026-05-06' },
 ];
 
-function formatEventPeriod(ev: ManagedEvent): string {
-  return `${ev.startAt.replace(/-/g, '.')} - ${ev.endAt.replace(/-/g, '.')}`;
-}
-
-const participantStatuses = ['참여 완료', '대기 중', '취소'];
-
-/**
- * 실제 업로드된 작품 중 `linkedEventId`가 있는 것을 참여자로 변환.
- * EventDetail "참여" 버튼 → /upload?event=... → 작품 저장 경로로 들어온 실 데이터.
- * 시드 데이터와 합쳐서 어드민이 데모+실제 데이터를 한 표에서 조회 가능.
- */
 function useParticipantsFromWorks(): EventParticipant[] {
   const works = useSyncExternalStore(
     (cb) => workStore.subscribe(cb),
@@ -68,7 +48,6 @@ function useParticipantsFromWorks(): EventParticipant[] {
         id: `work-${w.id}`,
         eventId: String(w.linkedEventId),
         name: w.artist?.name || '-',
-        email: '(로그인 계정)',
         status:
           w.feedReviewStatus === 'approved'
             ? '참여 완료'
@@ -81,335 +60,232 @@ function useParticipantsFromWorks(): EventParticipant[] {
   }, [works]);
 }
 
+const STATUS_OPTIONS = ['전체', '참여 완료', '대기 중', '취소'];
+
 export default function EventParticipants({ compact = false }: { compact?: boolean }) {
   const { t } = useI18n();
   const [searchParams] = useSearchParams();
-  const [filterEvent, setFilterEvent] = useState(searchParams.get('event') ?? 'all');
-  const [filterStatus, setFilterStatus] = useState('all');
   const events = useManagedEvents();
 
-  // ADM-EVT-01에서 "응모자" 링크 진입 시 ?event=<id>로 응모전 자동 필터.
+  const contestEvents = useMemo(() => events.filter(e => e.type === 'contest'), [events]);
+
+  const [selectedEventId, setSelectedEventId] = useState(searchParams.get('event') ?? '');
+  const [filterStatus, setFilterStatus] = useState('전체');
+
   useEffect(() => {
     const fromQuery = searchParams.get('event');
-    if (fromQuery && fromQuery !== filterEvent) setFilterEvent(fromQuery);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    if (fromQuery && fromQuery !== selectedEventId) setSelectedEventId(fromQuery);
   }, [searchParams]);
 
-  const selectedByEvent = useMemo(() => {
-    const map = new Map<string, Set<string>>();
-    for (const e of events) map.set(e.id, new Set(e.selectedWorkIds ?? []));
-    return map;
-  }, [events]);
+  // URL에 event 없으면 첫 응모전으로 자동 선택
+  useEffect(() => {
+    if (!selectedEventId && contestEvents.length > 0) {
+      setSelectedEventId(contestEvents[0].id);
+    }
+  }, [contestEvents, selectedEventId]);
 
-  const sendContestSelectedNotification = (eventId: string, eventTitle: string, workId: string) => {
+  const selectedEvent = useMemo(() => events.find(e => e.id === selectedEventId), [events, selectedEventId]);
+  const selectedWorkIds = useMemo(() => new Set(selectedEvent?.selectedWorkIds ?? []), [selectedEvent]);
+
+  const realParticipants = useParticipantsFromWorks();
+  const allParticipants = useMemo(() => [...realParticipants, ...seedParticipants], [realParticipants]);
+
+  // 갤러리는 workId 있는 실제 작품만 표시
+  const filtered = useMemo(() => {
+    return allParticipants.filter(p => {
+      if (p.eventId !== selectedEventId) return false;
+      if (!p.workId) return false;
+      if (filterStatus !== '전체' && p.status !== filterStatus) return false;
+      return true;
+    });
+  }, [allParticipants, selectedEventId, filterStatus]);
+
+  const totalCount = useMemo(
+    () => allParticipants.filter(p => p.eventId === selectedEventId && p.workId).length,
+    [allParticipants, selectedEventId],
+  );
+
+  const sendNotification = (workId: string) => {
+    const ev = events.find(e => e.id === selectedEventId);
     const w = workStore.getWork(workId);
-    if (!w) return;
+    if (!ev || !w) return;
     const message = t('notif.contestSelected')
       .replace('{title}', displayExhibitionTitle(w, t('work.untitled')))
-      .replace('{event}', eventTitle);
+      .replace('{event}', ev.title);
     pushDemoNotification({
       type: 'event',
       message,
       workId,
-      eventId,
+      eventId: selectedEventId,
       fromUser: { name: '운영팀', avatar: '', id: 'admin' },
       demo: false,
     });
   };
 
-  const handleToggleSelected = (eventId: string, workId: string) => {
-    const ev = events.find((e) => e.id === eventId);
+  const handleToggle = (workId: string) => {
+    if (!selectedEvent) return;
+    const result = eventsStore.toggleSelected(selectedEventId, workId);
     const w = workStore.getWork(workId);
-    if (!ev || !w) return;
-    const result = eventsStore.toggleSelected(eventId, workId);
+    const title = w ? displayExhibitionTitle(w, '') : workId;
     if (result.added) {
-      sendContestSelectedNotification(ev.id, ev.title, workId);
-      appendAuditLog({ action: 'contest_selected', targetId: workId, targetSnapshot: { eventId, eventTitle: ev.title }, actorId: 'admin', actorRole: 'admin' });
-      toast.success(`${displayExhibitionTitle(w, '')} 선정 처리 + 작가 알림 발송`);
+      sendNotification(workId);
+      appendAuditLog({ action: 'contest_selected', targetId: workId, targetSnapshot: { eventId: selectedEventId, eventTitle: selectedEvent.title }, actorId: 'admin', actorRole: 'admin' });
+      toast.success(`${title} 선정 + 작가 알림 발송`);
     } else {
-      appendAuditLog({ action: 'contest_unselected', targetId: workId, targetSnapshot: { eventId, eventTitle: ev.title }, actorId: 'admin', actorRole: 'admin' });
-      toast(`${displayExhibitionTitle(w, '')} 선정 해제`);
+      appendAuditLog({ action: 'contest_unselected', targetId: workId, targetSnapshot: { eventId: selectedEventId, eventTitle: selectedEvent.title }, actorId: 'admin', actorRole: 'admin' });
+      toast(`${title} 선정 해제`);
     }
   };
 
-  // 일괄 선정/해제용 다중 선택 (PRD ADM-EVT-03 AC-04). 행 단위 체크박스로 모았다가 버튼으로 일괄 처리.
-  const [bulkSelected, setBulkSelected] = useState<Set<string>>(new Set());
-
-  const toggleBulk = (key: string) => {
-    setBulkSelected((prev) => {
-      const next = new Set(prev);
-      if (next.has(key)) next.delete(key);
-      else next.add(key);
-      return next;
-    });
-  };
-  const clearBulk = () => setBulkSelected(new Set());
-
-  const handleBulkSelect = () => {
-    // 같은 응모전 행끼리 묶어 일괄 처리
-    const byEvent = new Map<string, string[]>();
-    for (const key of bulkSelected) {
-      const [eventId, workId] = key.split('::');
-      if (!eventId || !workId) continue;
-      if (!byEvent.has(eventId)) byEvent.set(eventId, []);
-      byEvent.get(eventId)!.push(workId);
+  const handleSelectAll = () => {
+    const workIds = filtered.map(p => p.workId!);
+    const { addedIds } = eventsStore.bulkSelect(selectedEventId, workIds);
+    if (addedIds.length > 0) {
+      addedIds.forEach(wid => sendNotification(wid));
+      appendAuditLog({ action: 'contest_selected', targetId: 'bulk', targetSnapshot: { totalAdded: addedIds.length }, actorId: 'admin', actorRole: 'admin' });
+      toast.success(`${addedIds.length}건 선정 + 작가 알림 발송`);
+    } else {
+      toast('이미 모두 선정된 상태입니다');
     }
-    let totalAdded = 0;
-    for (const [eventId, workIds] of byEvent) {
-      const ev = events.find((e) => e.id === eventId);
-      if (!ev) continue;
-      const { addedIds } = eventsStore.bulkSelect(eventId, workIds);
-      for (const wid of addedIds) sendContestSelectedNotification(eventId, ev.title, wid);
-      totalAdded += addedIds.length;
-    }
-    if (totalAdded > 0) {
-      appendAuditLog({ action: 'contest_selected', targetId: 'bulk', targetSnapshot: { totalAdded }, actorId: 'admin', actorRole: 'admin' });
-      toast.success(`${totalAdded}건 선정 처리 + 작가 알림 발송`);
-    } else toast('이미 선정된 항목이라 변동 없음');
-    clearBulk();
   };
 
-  const handleBulkUnselect = () => {
-    const byEvent = new Map<string, string[]>();
-    for (const key of bulkSelected) {
-      const [eventId, workId] = key.split('::');
-      if (!eventId || !workId) continue;
-      if (!byEvent.has(eventId)) byEvent.set(eventId, []);
-      byEvent.get(eventId)!.push(workId);
-    }
-    for (const [eventId, workIds] of byEvent) {
-      eventsStore.bulkUnselect(eventId, workIds);
-    }
-    appendAuditLog({ action: 'contest_unselected', targetId: 'bulk', targetSnapshot: { count: bulkSelected.size }, actorId: 'admin', actorRole: 'admin' });
-    toast(`${bulkSelected.size}건 선정 해제 (알림은 보존)`);
-    clearBulk();
-  };
-
-  const realParticipants = useParticipantsFromWorks();
-  // 시드 + 실 업로드 병합. id 충돌 없음 (시드: EP-*, 실: work-*)
-  const allParticipants = useMemo(
-    () => [...realParticipants, ...seedParticipants],
-    [realParticipants],
-  );
-
-  // 응모전(type=contest) 중 참여자가 있는 이벤트만 관리 대상으로 노출
-  const relevantEvents = useMemo(() => {
-    const withParticipants = new Set(allParticipants.map((p) => p.eventId));
-    return events.filter((e) => e.type === 'contest' && withParticipants.has(e.id));
-  }, [events, allParticipants]);
-
-  const filtered = allParticipants.filter(p => {
-    if (filterEvent !== 'all' && p.eventId !== filterEvent) return false;
-    if (filterStatus !== 'all' && p.status !== filterStatus) return false;
-    return true;
-  });
-
-  const statusColors: Record<string, string> = {
-    '참여 완료': 'bg-green-100 text-green-800',
-    '대기 중': 'bg-yellow-100 text-yellow-800',
-    '취소': 'bg-muted/50 text-muted-foreground',
+  const handleUnselectAll = () => {
+    const workIds = filtered.map(p => p.workId!);
+    eventsStore.bulkUnselect(selectedEventId, workIds);
+    appendAuditLog({ action: 'contest_unselected', targetId: 'bulk', targetSnapshot: { count: workIds.length }, actorId: 'admin', actorRole: 'admin' });
+    toast(`${workIds.length}건 선정 해제 (알림 보존)`);
   };
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {!compact && (
         <div>
-          <h1 className="text-2xl font-bold text-foreground">응모전 참여자 관리</h1>
-          <p className="text-sm text-muted-foreground mt-1">런칭 응모전 참여 현황 및 참여자 목록</p>
+          <h1 className="text-2xl font-bold text-foreground">응모자 관리</h1>
+          <p className="text-sm text-muted-foreground mt-1">응모전별 제출 작품 확인 및 선정</p>
         </div>
       )}
 
-      {/* Event summary cards */}
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        {relevantEvents.length === 0 ? (
-          <div className="col-span-full bg-white rounded-lg border p-6 text-center text-sm text-muted-foreground">
-            참여자가 등록된 응모전가 없습니다.
-          </div>
+      {/* 응모전 선택 + 통계 */}
+      <div className="flex flex-wrap items-center gap-3">
+        {contestEvents.length === 0 ? (
+          <p className="text-sm text-muted-foreground">운영 중인 응모전이 없습니다.</p>
         ) : (
-          relevantEvents.map(event => {
-            const participants = allParticipants.filter(p => p.eventId === event.id);
-            const completed = participants.filter(p => p.status === '참여 완료').length;
-            return (
-              <div key={event.id} className="bg-white rounded-lg border p-4">
-                <h3 className="font-medium text-foreground">{event.title}</h3>
-                <p className="text-xs text-muted-foreground mt-1">{formatEventPeriod(event)}</p>
-                <div className="flex gap-3 mt-3">
-                  <Badge variant="outline" className="bg-blue-50 text-blue-700">전체 {participants.length}명</Badge>
-                  <Badge variant="outline" className="bg-primary/5 text-primary">완료 {completed}명</Badge>
-                </div>
-              </div>
-            );
-          })
+          <Select value={selectedEventId} onValueChange={setSelectedEventId}>
+            <SelectTrigger className="w-[240px]">
+              <SelectValue placeholder="응모전 선택" />
+            </SelectTrigger>
+            <SelectContent>
+              {contestEvents.map(e => (
+                <SelectItem key={e.id} value={e.id}>{e.title}</SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        )}
+        {selectedEventId && (
+          <p className="text-sm text-muted-foreground">
+            {totalCount}건 응모
+            {selectedWorkIds.size > 0 && (
+              <span className="ml-2 text-primary font-semibold">· {selectedWorkIds.size}건 선정</span>
+            )}
+          </p>
         )}
       </div>
 
-      {/* Filters */}
-      <div className="flex flex-wrap gap-3">
-        <Select value={filterEvent} onValueChange={setFilterEvent}>
-          <SelectTrigger className="w-[200px]">
-            <SelectValue placeholder="응모전" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">전체 응모전</SelectItem>
-            {relevantEvents.map(e => (
-              <SelectItem key={e.id} value={e.id}>{e.title}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <Select value={filterStatus} onValueChange={setFilterStatus}>
-          <SelectTrigger className="w-[140px]">
-            <SelectValue placeholder="상태" />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">전체 상태</SelectItem>
-            {participantStatuses.map(s => (
-              <SelectItem key={s} value={s}>{s}</SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-
-        <span className="self-center text-sm text-muted-foreground">{filtered.length}명 표시</span>
+      {/* 상태 필터 칩 + 일괄 액션 */}
+      <div className="flex flex-wrap items-center gap-2">
+        {STATUS_OPTIONS.map(s => (
+          <button
+            key={s}
+            type="button"
+            onClick={() => setFilterStatus(s)}
+            className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
+              filterStatus === s
+                ? 'bg-primary text-white border-primary'
+                : 'border-border text-muted-foreground lg:hover:border-foreground lg:hover:text-foreground'
+            }`}
+          >
+            {s}
+          </button>
+        ))}
+        {filtered.length > 0 && (
+          <div className="ml-auto flex gap-2">
+            <button
+              type="button"
+              onClick={handleSelectAll}
+              className="text-xs px-3 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/40"
+            >
+              전체 선정
+            </button>
+            <button
+              type="button"
+              onClick={handleUnselectAll}
+              className="text-xs px-3 py-1.5 rounded-lg border border-red-200 text-red-700 lg:hover:bg-red-50"
+            >
+              전체 해제
+            </button>
+          </div>
+        )}
       </div>
 
-      {/* 일괄 선정/해제 액션 바 (PRD ADM-EVT-03 AC-04) */}
-      {bulkSelected.size > 0 && (
-        <div className="flex flex-wrap items-center gap-3 bg-primary/5 border border-primary/30 rounded-lg px-4 py-3">
-          <span className="text-sm text-foreground">선택 {bulkSelected.size}건</span>
-          <button
-            type="button"
-            onClick={handleBulkSelect}
-            className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90"
-          >
-            {t('evt.adminBulkSelect')}
-          </button>
-          <button
-            type="button"
-            onClick={handleBulkUnselect}
-            className="text-sm px-3 py-1.5 rounded-lg border border-red-200 text-red-700 lg:hover:bg-red-50"
-          >
-            {t('evt.adminBulkUnselect')}
-          </button>
-          <button
-            type="button"
-            onClick={clearBulk}
-            className="text-xs text-muted-foreground hover:text-foreground ml-auto"
-          >
-            선택 해제
-          </button>
+      {/* 갤러리 그리드 */}
+      {!selectedEventId || contestEvents.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
+          응모전을 선택해 주세요.
         </div>
+      ) : filtered.length === 0 ? (
+        <div className="rounded-xl border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
+          제출된 작품이 없습니다.
+        </div>
+      ) : (
+        <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
+          {filtered.map(p => {
+            const isSelected = selectedWorkIds.has(p.workId!);
+            const work = workStore.getWork(p.workId!);
+            const coverKey = work ? getCoverImage(work.image, work.coverImageIndex) : null;
+            const coverSrc = coverKey ? (imageUrls[coverKey] || coverKey) : null;
+            const exhibitionTitle = work?.exhibitionName || work?.title || p.name;
+            const artistName = work?.artist?.name;
+            return (
+              <li key={p.id}>
+                <button
+                  type="button"
+                  onClick={() => handleToggle(p.workId!)}
+                  className={`group w-full rounded-xl overflow-hidden border-2 text-left transition-all ${
+                    isSelected
+                      ? 'border-primary shadow-md shadow-primary/15'
+                      : 'border-border lg:hover:border-primary/50'
+                  }`}
+                >
+                  <div className="aspect-square bg-muted relative overflow-hidden">
+                    {coverSrc ? (
+                      <ImageWithFallback
+                        src={coverSrc}
+                        alt={exhibitionTitle}
+                        className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-200"
+                      />
+                    ) : (
+                      <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">
+                        이미지 없음
+                      </div>
+                    )}
+                    {isSelected && (
+                      <div className="absolute top-2 right-2 bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center shadow-sm">
+                        <Check className="w-3.5 h-3.5 stroke-[3]" />
+                      </div>
+                    )}
+                    <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/8 transition-colors" />
+                  </div>
+                  <div className="p-2.5 bg-white">
+                    <p className="text-sm font-medium text-foreground truncate leading-snug">{exhibitionTitle}</p>
+                    {artistName && <p className="text-xs text-muted-foreground mt-0.5 truncate">{artistName}</p>}
+                    <p className="text-[11px] text-muted-foreground/60 mt-1">{p.participatedAt}</p>
+                  </div>
+                </button>
+              </li>
+            );
+          })}
+        </ul>
       )}
-
-      {/* Table */}
-      <div className="bg-white rounded-lg border">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead className="w-12"></TableHead>
-              <TableHead className="w-20">선정</TableHead>
-              <TableHead className="w-16">작품</TableHead>
-              <TableHead>작품명</TableHead>
-              <TableHead>이메일</TableHead>
-              <TableHead>응모전</TableHead>
-              <TableHead>상태</TableHead>
-              <TableHead>참여일</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {filtered.length === 0 ? (
-              <TableRow>
-                <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
-                  조건에 맞는 참여자가 없습니다.
-                </TableCell>
-              </TableRow>
-            ) : (
-              filtered.map(p => {
-                const selectedSet = selectedByEvent.get(p.eventId);
-                const isSelected = !!(p.workId && selectedSet?.has(p.workId));
-                const bulkKey = p.workId ? `${p.eventId}::${p.workId}` : null;
-                const isBulkChecked = bulkKey ? bulkSelected.has(bulkKey) : false;
-                const work = p.workId ? workStore.getWork(p.workId) : null;
-                const coverKey = work ? getCoverImage(work.image, work.coverImageIndex) : null;
-                const coverSrc = coverKey ? (imageUrls[coverKey] || coverKey) : null;
-                const exhibitionTitle = work?.exhibitionName || work?.title || p.name;
-                const artistName = work?.artist?.name ?? (work ? p.name : undefined);
-                return (
-                  <TableRow key={p.id}>
-                    <TableCell>
-                      {bulkKey ? (
-                        <input
-                          type="checkbox"
-                          checked={isBulkChecked}
-                          onChange={() => toggleBulk(bulkKey)}
-                          aria-label={`${exhibitionTitle} 다중 선택`}
-                          className="h-4 w-4"
-                        />
-                      ) : (
-                        <span className="text-xs text-muted-foreground/60">—</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {p.workId ? (
-                        <label className="inline-flex items-center gap-2 cursor-pointer">
-                          <input
-                            type="checkbox"
-                            checked={isSelected}
-                            onChange={() => handleToggleSelected(p.eventId, p.workId!)}
-                            aria-label={`${exhibitionTitle} 선정 토글`}
-                            className="h-4 w-4"
-                          />
-                          {isSelected && (
-                            <span className="text-[11px] font-semibold text-primary">{t('evt.adminSelectedBadge')}</span>
-                          )}
-                        </label>
-                      ) : (
-                        <span className="text-xs text-muted-foreground/60">—</span>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {coverSrc ? (
-                        <a href={`/exhibitions/${p.workId}`} target="_blank" rel="noopener noreferrer">
-                          <div className="w-12 h-12 rounded overflow-hidden border border-border bg-muted/30 flex items-center justify-center">
-                            <ImageWithFallback src={coverSrc} alt={exhibitionTitle} className="w-full h-full object-cover" />
-                          </div>
-                        </a>
-                      ) : (
-                        <div className="w-12 h-12 rounded border border-dashed border-border bg-muted/20 flex items-center justify-center">
-                          <span className="text-xs text-muted-foreground/60">—</span>
-                        </div>
-                      )}
-                    </TableCell>
-                    <TableCell className="font-medium text-foreground">
-                      {p.workId ? (
-                        <a
-                          href={`/exhibitions/${p.workId}`}
-                          target="_blank"
-                          rel="noopener noreferrer"
-                          className="lg:hover:text-primary"
-                        >
-                          <span className="text-sm">{exhibitionTitle}</span>
-                          {artistName && <p className="text-xs text-muted-foreground mt-0.5">{artistName}</p>}
-                        </a>
-                      ) : (
-                        <div>
-                          <span className="text-sm">{exhibitionTitle}</span>
-                          {artistName && <p className="text-xs text-muted-foreground mt-0.5">{artistName}</p>}
-                        </div>
-                      )}
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">{p.email}</TableCell>
-                    <TableCell className="text-sm">{events.find(e => e.id === p.eventId)?.title ?? '-'}</TableCell>
-                    <TableCell>
-                      <Badge className={statusColors[p.status] || ''} variant="outline">{p.status}</Badge>
-                    </TableCell>
-                    <TableCell className="text-sm text-muted-foreground">{p.participatedAt}</TableCell>
-                  </TableRow>
-                );
-              })
-            )}
-          </TableBody>
-        </Table>
-      </div>
     </div>
   );
 }
