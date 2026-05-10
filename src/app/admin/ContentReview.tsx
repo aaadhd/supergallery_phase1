@@ -2,8 +2,9 @@ import type React from 'react';
 import { useMemo, useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Check, X } from 'lucide-react';
+import { Check, X, Star } from 'lucide-react';
 import { workStore } from '../store';
+import { featuredStore, useFeaturedExhibitions } from '../utils/featuredStore';
 import type { Work } from '../data';
 import { getCoverImage } from '../utils/imageHelper';
 import { imageUrls } from '../imageUrls';
@@ -61,6 +62,8 @@ const STATUS_UI_TO_URL: Record<string, string> = {
 
 export default function ContentReview() {
   const { t } = useI18n();
+  const featuredIds = useFeaturedExhibitions();
+  const featuredSet = useMemo(() => new Set(featuredIds), [featuredIds]);
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
@@ -320,6 +323,22 @@ export default function ContentReview() {
                     <div className="w-9 h-9 rounded overflow-hidden border border-border bg-muted/30 shrink-0">
                       <ImageWithFallback src={src} alt="" className="w-full h-full object-contain" />
                     </div>
+                    <button
+                      type="button"
+                      onPointerDown={(e) => e.stopPropagation()}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        featuredStore.toggle(w.id);
+                      }}
+                      className={`shrink-0 p-1 rounded transition-colors ${
+                        featuredSet.has(w.id)
+                          ? 'text-amber-500 lg:hover:text-amber-400'
+                          : 'text-muted-foreground/40 lg:hover:text-amber-400'
+                      }`}
+                      title={featuredSet.has(w.id) ? '추천 중 — 클릭해서 해제' : '클릭해서 추천'}
+                    >
+                      <Star className={`w-3.5 h-3.5 ${featuredSet.has(w.id) ? 'fill-amber-500' : ''}`} />
+                    </button>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
                         <span className="font-medium text-sm text-foreground truncate">
