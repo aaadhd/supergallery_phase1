@@ -1,12 +1,11 @@
 import { useMemo, useState, useEffect, type FormEvent } from 'react';
 import { toast } from 'sonner';
-import { GripVertical, Plus, Search, X, ChevronDown, Star, Calendar } from 'lucide-react';
-import { Button } from '../components/ui/button';
+import { Plus, Search } from 'lucide-react';
 import { ImageWithFallback } from '../components/ImageWithFallback';
 import { workStore, useWorkStore } from '../store';
 import type { Work } from '../data';
 import { displayExhibitionTitle } from '../utils/workDisplay';
-import { getThumbCover } from '../utils/imageHelper';
+import { getCoverImage } from '../utils/imageHelper';
 import { imageUrls } from '../imageUrls';
 import { isWorkPublic } from '../utils/workVisibility';
 import { pushDemoNotification } from '../utils/pushDemoNotification';
@@ -158,12 +157,9 @@ export default function PickManagement() {
   useWorkStore();
 
   const [loading, setLoading] = useState(true);
-  const [showEditor, setShowEditor] = useState(false);
-  const [editingId, setEditingId] = useState<string | null>(null);
+  const [selectedId, setSelectedId] = useState<string | null>(null);
   const [draft, setDraft] = useState<PickDraft>(emptyDraft);
-  const [showWorkPicker, setShowWorkPicker] = useState(false);
   const [pickerSearch, setPickerSearch] = useState('');
-  const [viewingHistoryId, setViewingHistoryId] = useState<string | null>(null);
 
   useEffect(() => {
     migrateLegacyPicks();
@@ -179,15 +175,6 @@ export default function PickManagement() {
     [allSessions],
   );
 
-  const activeSessions = useMemo(
-    () => sessions.filter((e) => getPickStatus(e) !== 'ended'),
-    [sessions],
-  );
-  const historySessions = useMemo(
-    () => sessions.filter((e) => getPickStatus(e) === 'ended'),
-    [sessions],
-  );
-
   const draftWorks = useMemo(
     () => draft.workIds.map((id) => worksById.get(id)).filter((w): w is Work => Boolean(w)),
     [draft.workIds, worksById],
@@ -200,31 +187,14 @@ export default function PickManagement() {
     useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
   );
 
-  const debouncedPickerSearch = useDebouncedValue(pickerSearch, 300);
-  const pickerResults = useMemo(() => {
-    const q = debouncedPickerSearch.trim().toLowerCase();
-    return works
-      .filter((w) => isWorkPublic(w) && !draftWorkIdSet.has(w.id))
-      .filter((w) => {
-        if (!q) return true;
-        return (
-          displayExhibitionTitle(w, '').toLowerCase().includes(q) ||
-          (w.artist?.name || '').toLowerCase().includes(q)
-        );
-      })
-      .slice(0, 30);
-  }, [debouncedPickerSearch, works, draftWorkIdSet]);
-
   const openNew = () => {
-    setEditingId(null);
+    setSelectedId('new');
     setDraft(emptyDraft);
-    setShowWorkPicker(false);
     setPickerSearch('');
-    setShowEditor(true);
   };
 
   const openEdit = (session: PickSession) => {
-    setEditingId(session.id);
+    setSelectedId(session.id);
     setDraft({
       title: session.title,
       startAt: session.startAt,
@@ -232,16 +202,12 @@ export default function PickManagement() {
       bannerImageUrl: session.bannerImageUrl ?? '',
       workIds: session.selectedWorkIds ?? [],
     });
-    setShowWorkPicker(false);
     setPickerSearch('');
-    setShowEditor(true);
   };
 
-  const closeEditor = () => {
-    setShowEditor(false);
-    setEditingId(null);
+  const closePanel = () => {
+    setSelectedId(null);
     setDraft(emptyDraft);
-    setShowWorkPicker(false);
     setPickerSearch('');
   };
 
@@ -267,6 +233,14 @@ export default function PickManagement() {
     setDraft((d) => ({ ...d, workIds: d.workIds.filter((id) => id !== workId) }));
   };
 
+  const toggleWork = (work: Work) => {
+    if (draftWorkIdSet.has(work.id)) {
+      removeWork(work.id);
+    } else {
+      addWork(work);
+    }
+  };
+
   const buildPayload = () => ({
     title: draft.title.trim(),
     bannerImageUrl: draft.bannerImageUrl.trim() || '',
@@ -287,12 +261,12 @@ export default function PickManagement() {
     e.preventDefault();
     if (!validateDraft()) return;
     const payload = buildPayload();
-    if (editingId) {
-      pickStore.update(editingId, payload);
-      appendAuditLog({ action: 'event_saved', targetId: editingId, targetSnapshot: { title: payload.title }, actorId: 'admin', actorRole: 'admin' });
+    if (selectedId && selectedId !== 'new') {
+      pickStore.update(selectedId, payload);
+      appendAuditLog({ action: 'event_saved', targetId: selectedId, targetSnapshot: { title: payload.title }, actorId: 'admin', actorRole: 'admin' });
     } else {
       const created = pickStore.add({ description: '', publicationOpen: false, ...payload });
-      setEditingId(created.id);
+      setSelectedId(created.id);
       appendAuditLog({ action: 'event_saved', targetId: created.id, targetSnapshot: { title: payload.title }, actorId: 'admin', actorRole: 'admin' });
     }
     toast.success('임시저장되었습니다.');
@@ -300,7 +274,7 @@ export default function PickManagement() {
 
   const handlePublish = async () => {
     if (!validateDraft(true)) return;
-    const hasOtherActive = sessions.some((e) => e.id !== editingId && getPickStatus(e) === 'active');
+    const hasOtherActive = sessions.some((e) => e.id !== selectedId && getPickStatus(e) === 'active');
     if (hasOtherActive) {
       const ok = await openConfirm({
         title: '현재 발행 중인 픽 세션이 있습니다',
@@ -310,51 +284,37 @@ export default function PickManagement() {
       if (!ok) return;
     }
     const payload = buildPayload();
-    let targetId = editingId;
+    let targetId = (selectedId && selectedId !== 'new') ? selectedId : null;
     if (targetId) {
       pickStore.update(targetId, payload);
     } else {
       const created = pickStore.add({ description: '', publicationOpen: false, ...payload });
       targetId = created.id;
+      setSelectedId(targetId);
     }
     publishPickSession(targetId);
     appendAuditLog({ action: 'event_saved', targetId, targetSnapshot: { title: payload.title }, actorId: 'admin', actorRole: 'admin' });
     toast.success('발행되었습니다.');
-    closeEditor();
   };
 
-  const handleEndSession = async (session: PickSession) => {
-    const ok = await openConfirm({
-      title: `"${session.title}" 세션을 종료할까요?`,
-      description: '작품의 활성 Pick이 해제됩니다. Pick 배지(이력)는 유지됩니다.',
-      confirmLabel: '게시 종료',
-      destructive: true,
-    });
-    if (!ok) return;
-    endPickSession(session.id);
-    appendAuditLog({ action: 'event_saved', targetId: session.id, targetSnapshot: { title: session.title }, actorId: 'admin', actorRole: 'admin' });
-    toast.success('게시 종료되었습니다.');
-  };
-
-  const handleDeleteSession = async (session: PickSession) => {
-    const ok = await openConfirm({
-      title: `"${session.title}" 세션을 삭제할까요?`,
-      description: '삭제된 픽 세션은 복구할 수 없습니다.',
-      confirmLabel: '삭제',
-      destructive: true,
-    });
-    if (!ok) return;
-    if (session.publicationOpen) endPickSession(session.id);
-    pickStore.remove(session.id);
-    appendAuditLog({ action: 'event_deleted', targetId: session.id, targetSnapshot: { title: session.title }, actorId: 'admin', actorRole: 'admin' });
-    toast.success('삭제되었습니다.');
-    if (editingId === session.id) closeEditor();
-  };
+  const debouncedGallerySearch = useDebouncedValue(pickerSearch, 300);
+  const galleryWorks = useMemo(() => {
+    const q = debouncedGallerySearch.trim().toLowerCase();
+    return works
+      .filter(isWorkPublic)
+      .filter((w) => {
+        if (!q) return true;
+        return (
+          displayExhibitionTitle(w, '').toLowerCase().includes(q) ||
+          (w.artist?.name || '').toLowerCase().includes(q)
+        );
+      });
+  }, [debouncedGallerySearch, works]);
 
   if (loading) {
     return (
       <div>
-        <h1 className="text-xl font-bold mb-6 text-foreground">Proud&apos;s Pick 관리</h1>
+        <h1 className="text-xl font-bold mb-6 text-foreground">픽 관리</h1>
         <div className="rounded-lg border border-border py-16 text-center text-sm text-muted-foreground">불러오는 중…</div>
       </div>
     );
@@ -362,405 +322,272 @@ export default function PickManagement() {
 
   return (
     <div className="min-h-full">
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-1">
-        <h1 className="text-xl font-bold text-foreground">Proud&apos;s Pick 관리</h1>
-        {!showEditor && (
-          <Button
-            type="button"
-            onClick={openNew}
-            className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90 inline-flex items-center gap-1.5"
-          >
-            <Plus className="w-4 h-4" />
-            새 픽 만들기
-          </Button>
-        )}
-      </div>
-      <p className="text-sm text-muted-foreground mb-6">
-        픽 세션에 제목과 기간을 설정하고 작품을 선정합니다. 발행 시 홈 배너에 노출되고 선정 작가에게 알림이 발송됩니다.
+      <h1 className="text-xl font-bold mb-1 text-foreground">픽 관리</h1>
+      <p className="text-sm text-muted-foreground mb-4">
+        Proud's Pick 세션을 만들고 선정 작품을 관리합니다.
       </p>
 
-      {/* ───── 에디터 ───── */}
-      {showEditor && (
-        <form onSubmit={saveDraft} className="mb-8 border border-border rounded-xl p-5 space-y-5 bg-muted/30">
-          <p className="text-sm font-semibold text-foreground">
-            {editingId ? 'Pick 세션 편집' : '새 Pick 세션'}
-          </p>
+      <div className="border border-border rounded-lg overflow-hidden">
+        <div className="grid" style={{ gridTemplateColumns: '280px 1fr' }}>
 
-          <div className="grid sm:grid-cols-2 gap-3">
-            <input
-              placeholder="세션 제목 * (예: 5월 둘째주 Proud's Pick)"
-              value={draft.title}
-              onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
-              className="border border-border rounded-lg px-3 py-2 text-sm bg-white sm:col-span-2"
-            />
-            <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-              시작일 *
-              <input
-                type="date"
-                value={draft.startAt}
-                onChange={(e) => setDraft((d) => ({ ...d, startAt: e.target.value }))}
-                className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground"
-              />
-            </label>
-            <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-              종료일 *
-              <input
-                type="date"
-                value={draft.endAt}
-                onChange={(e) => setDraft((d) => ({ ...d, endAt: e.target.value }))}
-                className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground"
-              />
-            </label>
-            <input
-              placeholder="배너 이미지 URL (선택 — Events 페이지 표시용)"
-              value={draft.bannerImageUrl}
-              onChange={(e) => setDraft((d) => ({ ...d, bannerImageUrl: e.target.value }))}
-              className="border border-border rounded-lg px-3 py-2 text-sm bg-white sm:col-span-2"
-            />
-          </div>
-
-          {/* 선정 작품 */}
-          <div>
-            <div className="flex items-center justify-between mb-2">
-              <p className="text-xs font-semibold text-foreground">
-                선정 작품
-                <span className={`ml-2 text-xs font-medium px-1.5 py-0.5 rounded-full ${
-                  draft.workIds.length >= MAX_PICKS
-                    ? 'bg-red-50 text-red-700 border border-red-200'
-                    : 'bg-muted text-muted-foreground'
-                }`}>
-                  {draft.workIds.length} / {MAX_PICKS}
-                </span>
-              </p>
+          {/* 좌: 세션 목록 */}
+          <div className="border-r border-border bg-muted/30 flex flex-col" style={{ minHeight: '72vh' }}>
+            <div className="p-3 border-b border-border flex justify-between items-center">
+              <span className="text-sm font-semibold">픽 세션</span>
               <button
                 type="button"
-                onClick={() => setShowWorkPicker((v) => !v)}
-                disabled={draft.workIds.length >= MAX_PICKS}
-                className="inline-flex items-center gap-1.5 text-xs px-3 py-1.5 rounded-lg border border-border bg-white lg:hover:bg-muted/40 disabled:opacity-40"
+                onClick={openNew}
+                className="inline-flex items-center gap-1 bg-primary text-white rounded-md px-2.5 py-1 text-xs font-medium lg:hover:bg-primary/90"
               >
-                <Plus className="w-3.5 h-3.5" />
-                작품 추가
+                <Plus className="w-3 h-3" /> 새로
               </button>
             </div>
 
-            {draftWorks.length > 0 ? (
-              <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
-                <SortableContext items={draft.workIds} strategy={verticalListSortingStrategy}>
-                  <ol className="border border-border rounded-lg divide-y divide-border/50 bg-white">
-                    {draftWorks.map((work, idx) => (
-                      <SortablePickWorkItem
-                        key={work.id}
-                        work={work}
-                        index={idx}
-                        onRemove={() => removeWork(work.id)}
-                      />
-                    ))}
-                  </ol>
-                </SortableContext>
-              </DndContext>
-            ) : (
-              <div className="border border-dashed border-border rounded-lg py-8 text-center text-sm text-muted-foreground bg-white">
-                작품 추가 버튼으로 선정 작품을 추가하세요
-              </div>
-            )}
-
-            {/* 작품 피커 */}
-            {showWorkPicker && (
-              <div className="mt-3 border border-border rounded-lg bg-white overflow-hidden">
-                <div className="p-3 border-b border-border/50">
-                  <div className="relative">
-                    <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                    <input
-                      type="search"
-                      placeholder="작품명 또는 작가명으로 검색"
-                      value={pickerSearch}
-                      onChange={(e) => setPickerSearch(e.target.value)}
-                      className="w-full border border-border rounded-lg pl-9 pr-3 py-2 text-sm"
-                      autoFocus
-                    />
-                  </div>
-                </div>
-                <div className="max-h-64 overflow-y-auto divide-y divide-border/40">
-                  {pickerResults.length === 0 ? (
-                    <p className="py-6 text-center text-sm text-muted-foreground">
-                      {pickerSearch ? '검색 결과가 없습니다.' : '검색어를 입력하세요.'}
-                    </p>
-                  ) : (
-                    pickerResults.map((work) => (
-                      <button
-                        key={work.id}
-                        type="button"
-                        onClick={() => addWork(work)}
-                        className="w-full flex items-center gap-3 px-4 py-2.5 lg:hover:bg-muted/40 transition-colors text-left"
-                      >
-                        <div className="w-10 h-10 rounded-md overflow-hidden bg-muted border border-border shrink-0">
-                          <ImageWithFallback
-                            src={imageUrls[getThumbCover(work)] || getThumbCover(work)}
-                            alt={displayExhibitionTitle(work, '무제')}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className="min-w-0 flex-1">
-                          <p className="text-sm font-medium text-foreground truncate">
-                            {displayExhibitionTitle(work, '무제')}
-                          </p>
-                          <p className="text-xs text-muted-foreground truncate">
-                            {work.artist?.name || '작가 미상'}
-                          </p>
-                        </div>
-                        <Plus className="w-4 h-4 text-muted-foreground shrink-0" />
-                      </button>
-                    ))
-                  )}
-                </div>
-              </div>
-            )}
-          </div>
-
-          <div className="flex flex-wrap gap-2 pt-1 border-t border-border/50">
-            <Button
-              type="submit"
-              className="text-sm px-3 py-1.5 rounded-lg border border-border bg-white text-foreground lg:hover:bg-muted/40"
-            >
-              임시저장
-            </Button>
-            <button
-              type="button"
-              onClick={handlePublish}
-              className="text-sm px-4 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90"
-            >
-              발행
-            </button>
-            <button
-              type="button"
-              onClick={closeEditor}
-              className="text-sm px-3 py-1.5 rounded-lg border border-border text-muted-foreground"
-            >
-              취소
-            </button>
-          </div>
-        </form>
-      )}
-
-      {/* ───── 현재 세션 ───── */}
-      {activeSessions.length > 0 && (
-        <section className="mb-8">
-          <h2 className="text-sm font-semibold text-foreground mb-3">현재 세션</h2>
-          <div className="space-y-3">
-            {activeSessions.map((session) => {
-              const status = getPickStatus(session);
-              const workCount = session.selectedWorkIds?.length ?? 0;
-              const sessionWorks = (session.selectedWorkIds ?? [])
-                .slice(0, 5)
-                .map((id) => worksById.get(id))
-                .filter((w): w is Work => Boolean(w));
-              return (
-                <div
-                  key={session.id}
-                  className="border border-border rounded-xl p-4 bg-white flex flex-col sm:flex-row sm:items-center gap-4"
-                >
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 mb-1.5 flex-wrap">
-                      <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${STATUS_COLOR[status]}`}>
+            <div className="overflow-y-auto flex-1">
+              {sessions.length === 0 && (
+                <div className="p-4 text-center text-xs text-muted-foreground">세션이 없습니다</div>
+              )}
+              {sessions.map((session) => {
+                const status = getPickStatus(session);
+                const isSelected = selectedId === session.id;
+                const isEnded = status === 'ended';
+                return (
+                  <button
+                    key={session.id}
+                    type="button"
+                    onClick={() => openEdit(session)}
+                    className={`w-full text-left px-3 py-3 border-b border-border/40 transition-colors ${
+                      isSelected ? 'bg-primary/[.06] border-l-2 border-l-primary' : 'lg:hover:bg-muted/50'
+                    } ${isEnded ? 'opacity-50' : ''}`}
+                  >
+                    <div className="font-medium text-sm truncate mb-1">{session.title}</div>
+                    <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
+                      <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium ${STATUS_COLOR[status]}`}>
                         {STATUS_LABEL[status]}
                       </span>
-                      <h3 className="text-sm font-semibold text-foreground">{session.title}</h3>
+                      <span>{session.startAt?.slice(5)} ~ {session.endAt?.slice(5)}</span>
+                      <span>{(session.selectedWorkIds?.length ?? 0)}개</span>
                     </div>
-                    <div className="flex items-center gap-3 text-xs text-muted-foreground mb-2">
-                      <span className="inline-flex items-center gap-1">
-                        <Calendar className="w-3.5 h-3.5" />
-                        {session.startAt} ~ {session.endAt}
-                      </span>
-                      <span>선정 작품 {workCount}개</span>
-                    </div>
-                    {sessionWorks.length > 0 && (
-                      <div className="flex gap-1.5">
-                        {sessionWorks.map((w) => (
-                          <div key={w.id} className="w-9 h-9 rounded-md overflow-hidden bg-muted border border-border/50 shrink-0">
-                            <ImageWithFallback
-                              src={imageUrls[getThumbCover(w)] || getThumbCover(w)}
-                              alt={displayExhibitionTitle(w, '')}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                        ))}
-                        {workCount > 5 && (
-                          <div className="w-9 h-9 rounded-md bg-muted border border-border/50 flex items-center justify-center text-xs text-muted-foreground shrink-0">
-                            +{workCount - 5}
-                          </div>
-                        )}
-                      </div>
-                    )}
-                  </div>
-                  <div className="flex gap-2 shrink-0 flex-wrap">
-                    <button
-                      type="button"
-                      onClick={() => openEdit(session)}
-                      className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground bg-white lg:hover:bg-muted/40 whitespace-nowrap"
-                    >
-                      편집
-                    </button>
-                    {status === 'active' && (
-                      <button
-                        type="button"
-                        onClick={() => handleEndSession(session)}
-                        className="text-sm px-3 py-1.5 rounded-lg border border-border text-muted-foreground bg-white lg:hover:bg-muted/40 whitespace-nowrap"
-                      >
-                        게시 종료
-                      </button>
-                    )}
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteSession(session)}
-                      className="text-sm px-3 py-1.5 rounded-lg border border-red-200 text-red-700 lg:hover:bg-red-50 whitespace-nowrap"
-                    >
-                      삭제
-                    </button>
-                  </div>
-                </div>
-              );
-            })}
-          </div>
-        </section>
-      )}
-
-      {/* ───── 이전 픽 이력 ───── */}
-      {historySessions.length > 0 && (
-        <section>
-          <h2 className="text-sm font-semibold text-foreground mb-3">이전 픽 이력</h2>
-          <div className="space-y-2">
-            {historySessions.map((session) => {
-              const workCount = session.selectedWorkIds?.length ?? 0;
-              const isOpen = viewingHistoryId === session.id;
-              return (
-                <div key={session.id} className="border border-border rounded-xl bg-white overflow-hidden">
-                  <button
-                    type="button"
-                    onClick={() => setViewingHistoryId((prev) => (prev === session.id ? null : session.id))}
-                    className="w-full flex items-center gap-3 px-4 py-3.5 lg:hover:bg-muted/30 transition-colors text-left min-h-[44px]"
-                  >
-                    <Star className="w-4 h-4 text-[#B8862F] shrink-0" />
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-medium text-foreground truncate">{session.title}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {session.startAt} ~ {session.endAt} · 작품 {workCount}개
-                      </p>
-                    </div>
-                    <ChevronDown
-                      className={`w-4 h-4 text-muted-foreground transition-transform shrink-0 ${isOpen ? 'rotate-180' : ''}`}
-                    />
                   </button>
-                  {isOpen && (
-                    <div className="border-t border-border/50 px-4 pb-4 pt-3">
-                      {workCount === 0 ? (
-                        <p className="text-sm text-muted-foreground">선정 작품 없음</p>
+                );
+              })}
+            </div>
+          </div>
+
+          {/* 우: 폼 또는 갤러리 */}
+          <div className="flex flex-col" style={{ minHeight: '72vh' }}>
+            {!selectedId ? (
+              <div className="flex-1 flex items-center justify-center text-sm text-muted-foreground">
+                세션을 선택하거나 새로 만드세요
+              </div>
+            ) : selectedId === 'new' ? (
+              /* 신규 세션 생성 폼 */
+              <div className="p-6 max-w-md">
+                <h2 className="text-base font-bold mb-4">새 픽 세션</h2>
+                <form onSubmit={saveDraft} className="space-y-4">
+                  <div>
+                    <label className="block text-sm font-medium mb-1">제목 <span className="text-destructive">*</span></label>
+                    <input
+                      value={draft.title}
+                      onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
+                      placeholder="5월 2주차 Proud's Pick"
+                      className="w-full border border-border rounded-lg px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div className="flex gap-2 items-center">
+                    <div className="flex-1">
+                      <label className="block text-xs text-muted-foreground mb-1">시작일 *</label>
+                      <input type="date" value={draft.startAt}
+                        onChange={(e) => setDraft((d) => ({ ...d, startAt: e.target.value }))}
+                        className="w-full border border-border rounded-lg px-3 py-2 text-sm" />
+                    </div>
+                    <span className="mt-4 text-muted-foreground">~</span>
+                    <div className="flex-1">
+                      <label className="block text-xs text-muted-foreground mb-1">종료일 *</label>
+                      <input type="date" value={draft.endAt}
+                        onChange={(e) => setDraft((d) => ({ ...d, endAt: e.target.value }))}
+                        className="w-full border border-border rounded-lg px-3 py-2 text-sm" />
+                    </div>
+                  </div>
+                  <div>
+                    <label className="block text-sm font-medium mb-1">배너 이미지 URL <span className="text-muted-foreground text-xs">(선택)</span></label>
+                    <input
+                      value={draft.bannerImageUrl}
+                      onChange={(e) => setDraft((d) => ({ ...d, bannerImageUrl: e.target.value }))}
+                      placeholder="https://..."
+                      className="w-full border border-border rounded-lg px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div className="flex gap-2 pt-2">
+                    <button type="button" onClick={closePanel}
+                      className="flex-1 border border-border rounded-lg px-4 py-2 text-sm text-muted-foreground lg:hover:bg-muted/50">
+                      취소
+                    </button>
+                    <button type="submit"
+                      className="flex-1 bg-primary text-white rounded-lg px-4 py-2 text-sm font-medium lg:hover:bg-primary/90">
+                      저장 → 작품 선정으로
+                    </button>
+                  </div>
+                </form>
+              </div>
+            ) : (
+              /* 기존 세션 편집 — 갤러리 + 하단 바 */
+              (() => {
+                const session = sessions.find((s) => s.id === selectedId);
+                const isEnded = session ? getPickStatus(session) === 'ended' : false;
+                return (
+                  <>
+                    {/* 갤러리 영역 */}
+                    <div className="p-4 border-b border-border flex items-center gap-3">
+                      <h2 className="text-sm font-bold flex-1 truncate">{draft.title}</h2>
+                      <div className="relative">
+                        <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                        <input
+                          value={pickerSearch}
+                          onChange={(e) => setPickerSearch(e.target.value)}
+                          placeholder="작품·작가 검색…"
+                          className="pl-7 pr-3 py-1.5 border border-border rounded-lg text-sm w-48"
+                        />
+                      </div>
+                      {!isEnded && (
+                        <form onSubmit={saveDraft}>
+                          <button type="submit"
+                            className="border border-border rounded-lg px-3 py-1.5 text-xs text-muted-foreground lg:hover:bg-muted/50">
+                            정보 수정
+                          </button>
+                        </form>
+                      )}
+                    </div>
+                    <div className="flex-1 overflow-y-auto p-4 bg-muted/10">
+                      {galleryWorks.length === 0 ? (
+                        <div className="text-center py-16 text-sm text-muted-foreground">공개된 전시가 없습니다.</div>
                       ) : (
-                        <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-                          {(session.selectedWorkIds ?? []).map((wid, idx) => {
-                            const work = worksById.get(wid);
+                        <div className="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-8 gap-3">
+                          {galleryWorks.map((w) => {
+                            const key = getCoverImage(w.image, w.coverImageIndex);
+                            const src = imageUrls[key] || key;
+                            const orderIdx = draft.workIds.indexOf(w.id);
+                            const isSelected = orderIdx >= 0;
                             return (
-                              <div key={wid} className="relative">
-                                <div className="aspect-square rounded-lg overflow-hidden bg-muted border border-border/50">
-                                  {work ? (
-                                    <ImageWithFallback
-                                      src={imageUrls[getThumbCover(work)] || getThumbCover(work)}
-                                      alt={displayExhibitionTitle(work, '무제')}
-                                      className="w-full h-full object-cover"
-                                    />
-                                  ) : (
-                                    <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">
-                                      삭제됨
-                                    </div>
-                                  )}
+                              <button
+                                key={w.id}
+                                type="button"
+                                disabled={isEnded}
+                                onClick={() => toggleWork(w)}
+                                className={`group relative rounded-lg overflow-hidden border-2 transition-all disabled:pointer-events-none ${
+                                  isSelected ? 'border-primary shadow-md' : 'border-transparent lg:hover:border-primary/40'
+                                }`}
+                              >
+                                <div className="aspect-square bg-muted">
+                                  <ImageWithFallback src={src} alt="" className="w-full h-full object-cover" />
                                 </div>
-                                <span className="absolute top-1.5 left-1.5 w-5 h-5 rounded-full bg-black/60 text-white text-xs flex items-center justify-center font-bold">
-                                  {idx + 1}
-                                </span>
-                                {work && (
-                                  <p className="text-xs text-muted-foreground truncate mt-1 leading-snug">
-                                    {displayExhibitionTitle(work, '무제')}
-                                  </p>
+                                {isSelected && (
+                                  <div className="absolute top-1 right-1 bg-primary text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                                    {orderIdx + 1}
+                                  </div>
                                 )}
-                              </div>
+                                <div className="absolute inset-x-0 bottom-0 bg-black/60 px-1 py-0.5 text-[9px] text-white truncate opacity-0 group-hover:opacity-100 transition-opacity">
+                                  {displayExhibitionTitle(w, '')}
+                                </div>
+                              </button>
                             );
                           })}
                         </div>
                       )}
                     </div>
-                  )}
-                </div>
-              );
-            })}
-          </div>
-        </section>
-      )}
 
-      {/* 빈 상태 */}
-      {activeSessions.length === 0 && historySessions.length === 0 && !showEditor && (
-        <div className="rounded-xl border border-dashed border-border py-16 text-center">
-          <Star className="w-8 h-8 text-muted-foreground/40 mx-auto mb-3" />
-          <p className="text-sm text-muted-foreground mb-4">등록된 픽 세션이 없습니다</p>
-          <button
-            type="button"
-            onClick={openNew}
-            className="text-sm px-4 py-2 rounded-lg bg-primary text-white lg:hover:bg-primary/90"
-          >
-            첫 번째 픽 만들기
-          </button>
+                    {/* 하단 고정 바 */}
+                    {!isEnded && (
+                      <div className="bg-slate-900 px-4 py-3 flex items-center gap-3 shrink-0">
+                        {draftWorks.length > 0 ? (
+                          <DndContext
+                            sensors={sensors}
+                            collisionDetection={closestCenter}
+                            onDragEnd={handleDragEnd}
+                          >
+                            <SortableContext items={draft.workIds} strategy={verticalListSortingStrategy}>
+                              <div className="flex gap-1.5 overflow-x-auto">
+                                {draftWorks.map((w) => {
+                                  const key = getCoverImage(w.image, w.coverImageIndex);
+                                  const src = imageUrls[key] || key;
+                                  return (
+                                    <PickBottomBarItem
+                                      key={w.id}
+                                      id={w.id}
+                                      src={src}
+                                      onRemove={() => removeWork(w.id)}
+                                    />
+                                  );
+                                })}
+                              </div>
+                            </SortableContext>
+                          </DndContext>
+                        ) : (
+                          <span className="text-slate-500 text-xs">갤러리에서 작품을 클릭해 선정하세요</span>
+                        )}
+                        <div className="text-violet-300 text-xs font-semibold shrink-0 ml-1">
+                          {draft.workIds.length} / {MAX_PICKS}개
+                        </div>
+                        <div className="flex-1" />
+                        <button
+                          type="button"
+                          onClick={(e) => saveDraft(e as unknown as FormEvent)}
+                          className="border border-slate-600 text-slate-300 rounded-md px-3 py-1.5 text-xs lg:hover:bg-slate-700"
+                        >
+                          임시저장
+                        </button>
+                        <button
+                          type="button"
+                          onClick={handlePublish}
+                          className="bg-primary text-white rounded-md px-3 py-1.5 text-xs font-semibold lg:hover:bg-primary/90"
+                        >
+                          발행
+                        </button>
+                        {session && getPickStatus(session) === 'active' && (
+                          <button
+                            type="button"
+                            onClick={async () => {
+                              const ok = await openConfirm({ title: '게시 종료', description: '픽 세션을 종료하면 선정 작품의 픽 배지가 해제됩니다.', confirmLabel: '종료', destructive: true });
+                              if (ok) endPickSession(selectedId);
+                            }}
+                            className="border border-red-800 text-red-400 rounded-md px-3 py-1.5 text-xs lg:hover:bg-red-900/30"
+                          >
+                            게시 종료
+                          </button>
+                        )}
+                      </div>
+                    )}
+                  </>
+                );
+              })()
+            )}
+          </div>
+
         </div>
-      )}
+      </div>
     </div>
   );
 }
 
-interface SortablePickWorkItemProps {
-  work: Work;
-  index: number;
-  onRemove: () => void;
-}
-
-function SortablePickWorkItem({ work, index, onRemove }: SortablePickWorkItemProps) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: work.id });
-  const style: React.CSSProperties = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.6 : 1,
-  };
+function PickBottomBarItem({ id, src, onRemove }: { id: string; src: string; onRemove: () => void }) {
+  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id });
   return (
-    <li
+    <div
       ref={setNodeRef}
-      style={style}
-      className={`flex items-center gap-3 px-4 py-2.5 transition-colors ${isDragging ? 'bg-muted/60 shadow-sm' : 'lg:hover:bg-muted/30'}`}
+      {...attributes}
+      {...listeners}
+      style={{ transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 }}
+      className="relative w-10 h-10 rounded overflow-hidden border-2 border-violet-500 shrink-0 cursor-grab"
     >
-      <span className="text-xs text-muted-foreground tabular-nums w-5 shrink-0 text-right">{index + 1}</span>
+      <ImageWithFallback src={src} alt="" className="w-full h-full object-cover" />
       <button
         type="button"
-        {...attributes}
-        {...listeners}
-        aria-label="순서 드래그"
-        className="min-h-[44px] min-w-[24px] flex items-center cursor-grab active:cursor-grabbing touch-none"
-      >
-        <GripVertical className="w-4 h-4 text-muted-foreground" />
-      </button>
-      <div className="w-10 h-10 rounded-md overflow-hidden bg-muted border border-border/50 shrink-0">
-        <ImageWithFallback
-          src={imageUrls[getThumbCover(work)] || getThumbCover(work)}
-          alt={displayExhibitionTitle(work, '무제')}
-          className="w-full h-full object-cover"
-        />
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-sm font-medium text-foreground truncate">{displayExhibitionTitle(work, '무제')}</p>
-        <p className="text-xs text-muted-foreground truncate">{work.artist?.name || '작가 미상'}</p>
-      </div>
-      <button
-        type="button"
+        onPointerDown={(e) => e.stopPropagation()}
         onClick={onRemove}
-        aria-label="제거"
-        className="p-1.5 rounded-md text-muted-foreground lg:hover:text-destructive lg:hover:bg-muted/40 transition-colors shrink-0"
+        className="absolute top-0 right-0 bg-black/60 text-white rounded-bl text-[8px] px-0.5 leading-none lg:hover:bg-red-600"
       >
-        <X className="w-4 h-4" />
+        ✕
       </button>
-    </li>
+    </div>
   );
 }
