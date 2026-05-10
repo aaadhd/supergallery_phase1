@@ -2,7 +2,7 @@
  * 어드민 배너 관리 — localStorage 영속화.
  * Phase 2에서 Supabase 연동 예정 (현재는 기획자 확인용 데모).
  *
- * 명세(배너 관리): 최대 5개, start_at~end_at 기간 필터, is_active 수동 토글.
+ * 명세(배너 관리): start_at~end_at 기간 필터, is_active 수동 토글.
  */
 
 import { useSyncExternalStore } from 'react';
@@ -14,14 +14,17 @@ export type AdminBanner = {
   subtitle?: string;
   imageUrl: string;
   linkUrl?: string;
-  startAt?: string; // ISO date (예: 2026-04-01)
-  endAt?: string; // ISO date
+  /** 게시 기간 — 배너를 홈 슬라이더에 노출할 기간. YYYY-MM-DD */
+  startAt?: string;
+  endAt?: string;
+  /** 이벤트 실행 기간 — 실제 이벤트가 진행되는 기간(게시 기간과 다를 수 있음). YYYY-MM-DD */
+  eventStartAt?: string;
+  eventEndAt?: string;
   isActive: boolean;
 };
 
 const STORAGE_KEY = 'artier_admin_banners_v3';
 const CHANGED_EVENT = 'artier-banners-changed';
-export const MAX_BANNERS = 5;
 
 const SEED_BANNERS: AdminBanner[] = [
   {
@@ -46,7 +49,7 @@ const SEED_BANNERS: AdminBanner[] = [
   },
   {
     id: 'bn-seed-1',
-    title: '수채화 작품전',
+    title: '봄 수채화 기획전',
     subtitle: '감성 넘치는 수채화 작가들의 작품을 만나보세요',
     imageUrl: 'https://images.unsplash.com/photo-1713779490284-a81ff6a8ffae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcnQlMjBnYWxsZXJ5JTIwZXhoaWJpdGlvbnxlbnwxfHx8fDE3NzI3MTU0NTN8MA&ixlib=rb-4.1.0&q=80&w=1080',
     linkUrl: '/curations/seed-curation-1',
@@ -100,7 +103,7 @@ function readFromStorage(): AdminBanner[] {
 
 function writeToStorage(list: AdminBanner[]) {
   if (typeof window === 'undefined') return;
-  localStorage.setItem(STORAGE_KEY, JSON.stringify(list.slice(0, MAX_BANNERS)));
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(list));
   cachedAll = null;
   cachedVisible = null;
   window.dispatchEvent(new Event(CHANGED_EVENT));
@@ -149,9 +152,7 @@ export const bannerStore = {
 
   add(banner: Omit<AdminBanner, 'id'>): { ok: boolean; id?: string; reason?: string } {
     const list = readFromStorage();
-    if (list.length >= MAX_BANNERS) {
-      return { ok: false, reason: 'limit_reached' };
-    }
+
     const next: AdminBanner = {
       ...banner,
       id: `bn-${Date.now()}-${Math.random().toString(36).slice(2, 6)}`,

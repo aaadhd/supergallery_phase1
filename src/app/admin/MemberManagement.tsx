@@ -11,10 +11,28 @@ import { PaginationBar } from './components/PaginationBar';
 
 const MEMBERS_PAGE_SIZE = 20;
 
+type SignupMethod = 'kakao' | 'apple' | 'google' | 'magic';
+
+const SIGNUP_METHOD_LABEL: Record<SignupMethod, string> = {
+  kakao: '카카오',
+  apple: '애플',
+  google: '구글',
+  magic: '매직링크',
+};
+
+const SIGNUP_METHOD_COLOR: Record<SignupMethod, string> = {
+  kakao: 'bg-yellow-50 text-yellow-800 border-yellow-200',
+  apple: 'bg-zinc-100 text-zinc-700 border-zinc-300',
+  google: 'bg-blue-50 text-blue-700 border-blue-200',
+  magic: 'bg-violet-50 text-violet-700 border-violet-200',
+};
+
 type MemberRow = {
   id: string;
   name: string;
   email: string;
+  phone?: string;
+  signupMethod?: SignupMethod;
   joinedAt: string;
   avatar: string;
   ap?: number;
@@ -33,20 +51,22 @@ const demoUserMember: MemberRow = {
   id: DEMO_USER_ID,
   name: `${artists[0].name} (데모 사용자)`,
   email: 'artist@proudgallery.com',
+  phone: '010-1234-5678',
+  signupMethod: 'kakao',
   joinedAt: '2025-09-01',
   avatar: artists[0].name[0] ?? 'D',
 };
 
 const initialMembers: MemberRow[] = [
   demoUserMember,
-  { id: 'm1', name: '민서_그림', email: 'minseo.k@example.com', joinedAt: '2025-11-02', avatar: '민', ap: 140 },
-  { id: 'm2', name: '하준아트', email: 'hajun.lee@example.com', joinedAt: '2025-12-18', avatar: '하', ap: 80 },
-  { id: 'm3', name: '지우123', email: 'spam_account@test.com', joinedAt: '2026-01-05', avatar: '지', ap: 20 },
-  { id: 'm4', name: '유나의갤러리', email: 'yuna.c@example.com', joinedAt: '2026-02-14', avatar: '유', ap: 200 },
-  { id: 'm5', name: '다은스케치', email: 'daeun.j@example.com', joinedAt: '2026-02-20', avatar: '다', ap: 60 },
-  { id: 'm6', name: '소희_watercolor', email: 'sohee.h@example.com', joinedAt: '2026-03-01', avatar: '소', ap: 120 },
-  { id: 'm7', name: '준영99', email: 'banned_user@example.com', joinedAt: '2025-09-30', avatar: '준', ap: 40 },
-  { id: 'm8', name: '서아의봄', email: 'seoa.y@example.com', joinedAt: '2026-03-15', avatar: '서', ap: 180 },
+  { id: 'm1', name: '민서_그림',       email: 'minseo.k@example.com',   phone: '010-2345-6789', signupMethod: 'kakao',  joinedAt: '2025-11-02', avatar: '민', ap: 140 },
+  { id: 'm2', name: '하준아트',        email: 'hajun.lee@example.com',   phone: '010-3456-7890', signupMethod: 'kakao',  joinedAt: '2025-12-18', avatar: '하', ap: 80 },
+  { id: 'm3', name: '지우123',         email: 'spam_account@test.com',                           signupMethod: 'magic',  joinedAt: '2026-01-05', avatar: '지', ap: 20 },
+  { id: 'm4', name: '유나의갤러리',    email: 'yuna.c@example.com',                              signupMethod: 'google', joinedAt: '2026-02-14', avatar: '유', ap: 200 },
+  { id: 'm5', name: '다은스케치',      email: 'daeun.j@example.com',     phone: '010-5678-9012', signupMethod: 'kakao',  joinedAt: '2026-02-20', avatar: '다', ap: 60 },
+  { id: 'm6', name: '소희_watercolor', email: 'sohee.h@example.com',                             signupMethod: 'apple',  joinedAt: '2026-03-01', avatar: '소', ap: 120 },
+  { id: 'm7', name: '준영99',          email: 'banned_user@example.com',                         signupMethod: 'magic',  joinedAt: '2025-09-30', avatar: '준', ap: 40 },
+  { id: 'm8', name: '서아의봄',        email: 'seoa.y@example.com',      phone: '010-8901-2345', signupMethod: 'kakao',  joinedAt: '2026-03-15', avatar: '서', ap: 180 },
 ];
 
 const MEMBERS_KEY = 'artier_admin_members_v1';
@@ -112,7 +132,11 @@ export default function MemberManagement() {
   const filtered = useMemo(() => {
     const s = debouncedQ.trim().toLowerCase();
     if (!s) return members;
-    return members.filter((m) => m.name.toLowerCase().includes(s) || m.email.toLowerCase().includes(s));
+    return members.filter((m) =>
+      m.name.toLowerCase().includes(s) ||
+      m.email.toLowerCase().includes(s) ||
+      (m.phone ?? '').includes(s),
+    );
   }, [members, debouncedQ]);
 
   const { page, setPage, pageCount, pageItems, totalCount } = usePagination(filtered, MEMBERS_PAGE_SIZE);
@@ -158,12 +182,14 @@ export default function MemberManagement() {
         </div>
       ) : (
         <div className="border border-border rounded-lg overflow-hidden overflow-x-auto">
-          <table className="w-full text-sm min-w-[640px]">
+          <table className="w-full text-sm min-w-[900px]">
             <thead>
               <tr className="bg-muted text-left text-foreground">
-                <th className="px-4 py-3 font-medium w-24">프로필</th>
+                <th className="px-4 py-3 font-medium w-16">프로필</th>
                 <th className="px-4 py-3 font-medium">닉네임</th>
+                <th className="px-4 py-3 font-medium">휴대폰</th>
                 <th className="px-4 py-3 font-medium">이메일</th>
+                <th className="px-4 py-3 font-medium">가입방식</th>
                 <th className="px-4 py-3 font-medium">가입일</th>
                 <th className="px-4 py-3 font-medium text-right">AP</th>
                 <th className="px-4 py-3 font-medium text-right">상세</th>
@@ -187,7 +213,17 @@ export default function MemberManagement() {
                       {m.name}
                     </button>
                   </td>
+                  <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">
+                    {m.phone ?? <span className="text-border">—</span>}
+                  </td>
                   <td className="px-4 py-3 text-muted-foreground break-all">{m.email}</td>
+                  <td className="px-4 py-3">
+                    {m.signupMethod ? (
+                      <span className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full border ${SIGNUP_METHOD_COLOR[m.signupMethod]}`}>
+                        {SIGNUP_METHOD_LABEL[m.signupMethod]}
+                      </span>
+                    ) : <span className="text-border">—</span>}
+                  </td>
                   <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{m.joinedAt}</td>
                   <td className="px-4 py-3 text-right tabular-nums text-muted-foreground">
                     {m.id === DEMO_USER_ID ? getDemoUserAp() : (m.ap ?? 0)}
@@ -244,8 +280,16 @@ export default function MemberManagement() {
                   </div>
                   <div className="min-w-0">
                     <h2 id="member-detail-title" className="text-base font-semibold text-foreground truncate">{member.name}</h2>
+                    {member.phone && <p className="text-xs text-muted-foreground">{member.phone}</p>}
                     <p className="text-xs text-muted-foreground truncate">{member.email}</p>
-                    <p className="text-xs text-muted-foreground">가입일: {member.joinedAt}</p>
+                    <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                      <p className="text-xs text-muted-foreground">가입일: {member.joinedAt}</p>
+                      {member.signupMethod && (
+                        <span className={`inline-block text-xs font-medium px-2 py-0.5 rounded-full border ${SIGNUP_METHOD_COLOR[member.signupMethod]}`}>
+                          {SIGNUP_METHOD_LABEL[member.signupMethod]}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
                 <button

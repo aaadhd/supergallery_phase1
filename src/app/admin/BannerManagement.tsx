@@ -5,7 +5,6 @@ import { Button } from '../components/ui/button';
 import {
   bannerStore,
   useAdminBanners,
-  MAX_BANNERS,
   type AdminBanner,
 } from '../utils/bannerStore';
 import { openConfirm } from '../components/ConfirmDialog';
@@ -35,8 +34,12 @@ type DraftState = {
   subtitle: string;
   imageUrl: string;
   linkUrl: string;
+  /** 게시 기간 — 배너를 슬라이더에 표시할 기간 */
   startAt: string;
   endAt: string;
+  /** 이벤트 실행 기간 — 실제 이벤트 진행 날짜 (게시 기간과 다를 때 입력) */
+  eventStartAt: string;
+  eventEndAt: string;
   isActive: boolean;
 };
 
@@ -47,6 +50,8 @@ const emptyDraft: DraftState = {
   linkUrl: '',
   startAt: '',
   endAt: '',
+  eventStartAt: '',
+  eventEndAt: '',
   isActive: true,
 };
 
@@ -83,6 +88,7 @@ export default function BannerManagement() {
   const banners = useAdminBanners();
   const [showForm, setShowForm] = useState(false);
   const [draft, setDraft] = useState<DraftState>(emptyDraft);
+  const [editingId, setEditingId] = useState<string | null>(null);
   const [activeTab, setActiveTab] = useState<BannerTab>('live');
 
   const grouped = useMemo(() => ({
@@ -132,33 +138,68 @@ export default function BannerManagement() {
     toast.success('배너가 삭제되었습니다.');
   };
 
-  const submitNew = (e: FormEvent) => {
+  const openEdit = (b: AdminBanner) => {
+    setDraft({
+      title: b.title,
+      subtitle: b.subtitle ?? '',
+      imageUrl: b.imageUrl,
+      linkUrl: b.linkUrl ?? '',
+      startAt: b.startAt ?? '',
+      endAt: b.endAt ?? '',
+      eventStartAt: b.eventStartAt ?? '',
+      eventEndAt: b.eventEndAt ?? '',
+      isActive: b.isActive,
+    });
+    setEditingId(b.id);
+    setShowForm(true);
+  };
+
+  const closeForm = () => {
+    setShowForm(false);
+    setDraft(emptyDraft);
+    setEditingId(null);
+  };
+
+  const submitForm = (e: FormEvent) => {
     e.preventDefault();
     if (!draft.title.trim() || !draft.imageUrl.trim()) {
       toast.error('제목과 이미지 URL을 입력해 주세요.');
       return;
     }
     if (draft.startAt && draft.endAt && draft.startAt > draft.endAt) {
-      toast.error('시작일이 종료일보다 늦을 수 없습니다.');
+      toast.error('게시 기간 시작일이 종료일보다 늦을 수 없습니다.');
       return;
     }
-    const result = bannerStore.add({
+    if (draft.eventStartAt && draft.eventEndAt && draft.eventStartAt > draft.eventEndAt) {
+      toast.error('이벤트 기간 시작일이 종료일보다 늦을 수 없습니다.');
+      return;
+    }
+    const patch = {
       title: draft.title.trim(),
       subtitle: draft.subtitle.trim() || undefined,
       imageUrl: draft.imageUrl.trim(),
       linkUrl: draft.linkUrl.trim() || undefined,
       startAt: draft.startAt || undefined,
       endAt: draft.endAt || undefined,
+      eventStartAt: draft.eventStartAt || undefined,
+      eventEndAt: draft.eventEndAt || undefined,
       isActive: draft.isActive,
-    });
-    if (!result.ok) {
-      toast.error(`배너는 최대 ${MAX_BANNERS}개까지 등록할 수 있습니다.`);
-      return;
+    };
+    if (editingId) {
+      bannerStore.update(editingId, patch);
+      appendAuditLog({ action: 'banner_saved', targetId: editingId, targetSnapshot: { title: patch.title }, actorId: 'admin', actorRole: 'admin' });
+      closeForm();
+      toast.success('배너가 수정되었습니다.');
+    } else {
+      const result = bannerStore.add(patch);
+      if (!result.ok) {
+        toast.error('배너 등록에 실패했습니다.');
+        return;
+      }
+      appendAuditLog({ action: 'banner_saved', targetId: result.id ?? 'new', targetSnapshot: { title: patch.title }, actorId: 'admin', actorRole: 'admin' });
+      closeForm();
+      toast.success('배너가 등록되었습니다. 둘러보기에 반영됩니다.');
     }
-    appendAuditLog({ action: 'banner_saved', targetId: result.id ?? 'new', targetSnapshot: { title: draft.title.trim() }, actorId: 'admin', actorRole: 'admin' });
-    setDraft(emptyDraft);
-    setShowForm(false);
-    toast.success('배너가 등록되었습니다. 둘러보기에 반영됩니다.');
   };
 
   if (loading) {
@@ -170,32 +211,29 @@ export default function BannerManagement() {
     );
   }
 
-  const atLimit = banners.length >= MAX_BANNERS;
-
   return (
     <div className="min-h-full">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-1">
         <h1 className="text-xl font-bold text-foreground">배너 관리</h1>
         <Button
           type="button"
-          disabled={atLimit}
           onClick={() => setShowForm((v) => !v)}
-          className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90 inline-flex items-center gap-1.5 disabled:opacity-50 disabled:pointer-events-none"
+          className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90 inline-flex items-center gap-1.5"
         >
           <Plus className="w-4 h-4" />
           새 배너
         </Button>
       </div>
       <p className="text-sm text-muted-foreground mb-6">
-        등록한 배너는 둘러보기 히어로 슬라이더에 반영됩니다. 등록 가능 {banners.length} / {MAX_BANNERS}개. 기본 더미 배너는 등록 배너가 없을 때만 노출됩니다.
+        등록한 배너는 둘러보기 히어로 슬라이더에 반영됩니다. 기본 더미 배너는 등록 배너가 없을 때만 노출됩니다.
       </p>
 
-      {showForm && !atLimit && (
+      {showForm && (
         <form
-          onSubmit={submitNew}
+          onSubmit={submitForm}
           className="mb-6 border border-border rounded-lg p-4 space-y-3 bg-muted/50"
         >
-          <p className="text-sm font-medium text-foreground">새 배너 등록</p>
+          <p className="text-sm font-medium text-foreground">{editingId ? '배너 수정' : '새 배너 등록'}</p>
           <div className="grid sm:grid-cols-2 gap-3">
             <input
               placeholder="제목 *"
@@ -221,7 +259,7 @@ export default function BannerManagement() {
               onChange={(e) => setDraft((d) => ({ ...d, linkUrl: e.target.value }))}
               className="border border-border rounded-lg px-3 py-2 text-sm bg-white sm:col-span-2"
             />
-            <label className="flex items-center gap-2 text-sm text-foreground px-1">
+            <label className="flex items-center gap-2 text-sm text-foreground px-1 sm:col-span-2">
               <input
                 type="checkbox"
                 checked={draft.isActive}
@@ -229,24 +267,52 @@ export default function BannerManagement() {
               />
               등록 즉시 활성화
             </label>
-            <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-              시작일
-              <input
-                type="date"
-                value={draft.startAt}
-                onChange={(e) => setDraft((d) => ({ ...d, startAt: e.target.value }))}
-                className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground"
-              />
-            </label>
-            <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-              종료일
-              <input
-                type="date"
-                value={draft.endAt}
-                onChange={(e) => setDraft((d) => ({ ...d, endAt: e.target.value }))}
-                className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground"
-              />
-            </label>
+            <div className="sm:col-span-2">
+              <p className="text-xs font-semibold text-foreground mb-2">게시 기간 <span className="font-normal text-muted-foreground">(배너를 슬라이더에 표시할 기간)</span></p>
+              <div className="grid sm:grid-cols-2 gap-3">
+                <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+                  게시 시작일
+                  <input
+                    type="date"
+                    value={draft.startAt}
+                    onChange={(e) => setDraft((d) => ({ ...d, startAt: e.target.value }))}
+                    className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground"
+                  />
+                </label>
+                <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+                  게시 종료일
+                  <input
+                    type="date"
+                    value={draft.endAt}
+                    onChange={(e) => setDraft((d) => ({ ...d, endAt: e.target.value }))}
+                    className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground"
+                  />
+                </label>
+              </div>
+            </div>
+            <div className="sm:col-span-2">
+              <p className="text-xs font-semibold text-foreground mb-2">이벤트 실행 기간 <span className="font-normal text-muted-foreground">(선택 — 실제 이벤트 진행 날짜, 게시 기간과 다를 때 입력)</span></p>
+              <div className="grid sm:grid-cols-2 gap-3">
+                <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+                  이벤트 시작일
+                  <input
+                    type="date"
+                    value={draft.eventStartAt}
+                    onChange={(e) => setDraft((d) => ({ ...d, eventStartAt: e.target.value }))}
+                    className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground"
+                  />
+                </label>
+                <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+                  이벤트 종료일
+                  <input
+                    type="date"
+                    value={draft.eventEndAt}
+                    onChange={(e) => setDraft((d) => ({ ...d, eventEndAt: e.target.value }))}
+                    className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground"
+                  />
+                </label>
+              </div>
+            </div>
           </div>
           <div className="flex gap-2">
             <Button type="submit" className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white">
@@ -254,10 +320,7 @@ export default function BannerManagement() {
             </Button>
             <button
               type="button"
-              onClick={() => {
-                setShowForm(false);
-                setDraft(emptyDraft);
-              }}
+              onClick={closeForm}
               className="text-sm px-3 py-1.5 rounded-lg border border-border"
             >
               취소
@@ -308,6 +371,7 @@ export default function BannerManagement() {
               index={banners.indexOf(b)}
               onToggleActive={toggleActive}
               onRemove={handleRemove}
+              onEdit={openEdit}
             />
           ))}
         </ol>
@@ -322,6 +386,7 @@ export default function BannerManagement() {
                   index={banners.indexOf(b)}
                   onToggleActive={toggleActive}
                   onRemove={handleRemove}
+                  onEdit={openEdit}
                 />
               ))}
             </ol>
@@ -337,9 +402,10 @@ interface SortableBannerRowProps {
   index: number;
   onToggleActive: (id: string, next: boolean) => void;
   onRemove: (id: string, title: string) => void;
+  onEdit: (banner: AdminBanner) => void;
 }
 
-function SortableBannerRow({ banner: b, index: idx, onToggleActive, onRemove }: SortableBannerRowProps) {
+function SortableBannerRow({ banner: b, index: idx, onToggleActive, onRemove, onEdit }: SortableBannerRowProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: b.id });
   const expired = isExpired(b);
   const style: React.CSSProperties = {
@@ -379,12 +445,22 @@ function SortableBannerRow({ banner: b, index: idx, onToggleActive, onRemove }: 
         <p className="text-sm font-semibold text-foreground">{b.title}</p>
         {b.subtitle && <p className="text-xs text-muted-foreground">{b.subtitle}</p>}
         {b.linkUrl && <p className="text-xs text-primary break-all">{b.linkUrl}</p>}
-        <p className="text-xs text-muted-foreground">{formatPeriod(b)}</p>
+        <p className="text-xs text-muted-foreground">게시: {formatPeriod(b)}</p>
+        {(b.eventStartAt || b.eventEndAt) && (
+          <p className="text-xs text-muted-foreground">이벤트: {b.eventStartAt ?? '?'} ~ {b.eventEndAt ?? '?'}</p>
+        )}
         <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${statusBadgeClass(b.isActive, expired)}`}>
           {expired ? '기간 종료' : b.isActive ? '활성' : '비활성'}
         </span>
       </div>
       <div className="flex sm:flex-col gap-2 justify-end shrink-0">
+        <button
+          type="button"
+          onClick={() => onEdit(b)}
+          className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground bg-white lg:hover:bg-muted/40 whitespace-nowrap"
+        >
+          수정
+        </button>
         <button
           type="button"
           onClick={() => onToggleActive(b.id, !b.isActive)}

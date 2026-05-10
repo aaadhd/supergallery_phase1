@@ -36,6 +36,8 @@ type EditorState = {
   editingId?: string;
   title: string;
   subtitle: string;
+  startAt: string;
+  endAt: string;
   pieces: SelectedPiece[];
   /** 어떤 전시 카드가 펼쳐져 piece sub 그리드를 보여줄지 */
   expandedWorkId: string | null;
@@ -43,7 +45,7 @@ type EditorState = {
 };
 
 function emptyEditor(): EditorState {
-  return { mode: 'create', title: '', subtitle: '', pieces: [], expandedWorkId: null, search: '' };
+  return { mode: 'create', title: '', subtitle: '', startAt: '', endAt: '', pieces: [], expandedWorkId: null, search: '' };
 }
 
 function fromExhibition(c: CuratedExhibition): EditorState {
@@ -52,6 +54,8 @@ function fromExhibition(c: CuratedExhibition): EditorState {
     editingId: c.id,
     title: c.title,
     subtitle: c.subtitle ?? '',
+    startAt: c.startAt ?? '',
+    endAt: c.endAt ?? '',
     pieces: c.pieces.map((p) => ({ workId: p.workId, pieceId: p.pieceId })),
     expandedWorkId: null,
     search: '',
@@ -195,6 +199,8 @@ export default function CurationManagement() {
       curationStore.updateCuratedExhibition(editor.editingId, {
         title,
         subtitle: editor.subtitle.trim() || undefined,
+        startAt: editor.startAt.trim() || undefined,
+        endAt: editor.endAt.trim() || undefined,
         pieces,
       });
       // 새로 추가된 piece만 알림
@@ -214,6 +220,8 @@ export default function CurationManagement() {
       const created = curationStore.addCuratedExhibition({
         title,
         subtitle: editor.subtitle.trim() || undefined,
+        startAt: editor.startAt.trim() || undefined,
+        endAt: editor.endAt.trim() || undefined,
         pieces,
       });
       // 모든 piece가 새로 추가됨
@@ -333,7 +341,7 @@ export default function CurationManagement() {
             </button>
           </div>
 
-          <div className="grid sm:grid-cols-2 gap-3 mb-4">
+          <div className="grid sm:grid-cols-2 gap-3 mb-3">
             <input
               placeholder={t('admin.curation.placeholderTitle')}
               value={editor.title}
@@ -346,6 +354,26 @@ export default function CurationManagement() {
               onChange={(e) => setEditor((prev) => prev && { ...prev, subtitle: e.target.value })}
               className="border border-border rounded-lg px-3 py-2 text-sm bg-white"
             />
+          </div>
+          <div className="grid sm:grid-cols-2 gap-3 mb-4">
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-muted-foreground whitespace-nowrap w-14 shrink-0">시작일</label>
+              <input
+                type="date"
+                value={editor.startAt}
+                onChange={(e) => setEditor((prev) => prev && { ...prev, startAt: e.target.value })}
+                className="flex-1 border border-border rounded-lg px-3 py-2 text-sm bg-white"
+              />
+            </div>
+            <div className="flex items-center gap-2">
+              <label className="text-xs text-muted-foreground whitespace-nowrap w-14 shrink-0">종료일</label>
+              <input
+                type="date"
+                value={editor.endAt}
+                onChange={(e) => setEditor((prev) => prev && { ...prev, endAt: e.target.value })}
+                className="flex-1 border border-border rounded-lg px-3 py-2 text-sm bg-white"
+              />
+            </div>
           </div>
 
           <div className="grid lg:grid-cols-2 gap-4">
