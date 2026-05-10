@@ -288,6 +288,11 @@ export default function CurationManagement() {
       });
   }, [allWorks, editor?.search]);
 
+  const selectedPieceKeys = useMemo(
+    () => new Set(editor?.pieces.map(pieceKey) ?? []),
+    [editor?.pieces],
+  );
+
   if (loading) {
     return (
       <div>
