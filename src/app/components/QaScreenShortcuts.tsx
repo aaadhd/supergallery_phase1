@@ -117,19 +117,18 @@ export function QaScreenShortcuts() {
             {t('footer.qaGroupAuthUrl')}
           </DropdownMenuLabel>
           <DropdownMenuItem
-            className="text-destructive focus:text-destructive cursor-pointer"
+            className="cursor-pointer"
             onSelect={() => {
               ['kakao', 'google', 'apple'].forEach((p) =>
                 localStorage.setItem(`artier_social_signed_up__${p}`, '1')
               );
-              authStore.logout();
-              clearMockSession();
+              localStorage.setItem('artier_onboarding_done', 'true');
               authStore.login();
               persistMockSession('qa-relogin-auto');
               navigate('/');
             }}
           >
-            재로그인 → 둘러보기
+            로그인 상태 바로가기
           </DropdownMenuItem>
           <DropdownMenuItem
             className="cursor-pointer"
