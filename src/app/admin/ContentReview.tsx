@@ -1,14 +1,14 @@
+import type React from 'react';
 import { useMemo, useState, useEffect, useCallback } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Check, X, ExternalLink } from 'lucide-react';
+import { Check, X } from 'lucide-react';
 import { workStore } from '../store';
 import type { Work } from '../data';
 import { getCoverImage } from '../utils/imageHelper';
 import { imageUrls } from '../imageUrls';
 import { ImageWithFallback } from '../components/ImageWithFallback';
 import { Button } from '../components/ui/button';
-import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import { REJECTION_REASONS, REJECTION_REASON_LABEL_KEY, type RejectionReason } from '../utils/reviewLabels';
 import { usePagination } from '../hooks/usePagination';
 import { PaginationBar } from './components/PaginationBar';
@@ -95,7 +95,9 @@ export default function ContentReview() {
   }, [searchParams]);
   const [from, setFrom] = useState('');
   const [to, setTo] = useState('');
-  const [rejectTarget, setRejectTarget] = useState<Work | null>(null);
+  const [selectedWork, setSelectedWork] = useState<Work | null>(null);
+  const [showRejectForm, setShowRejectForm] = useState(false);
+  const [activeImageIndex, setActiveImageIndex] = useState(0);
   const [pickedReason, setPickedReason] = useState<RejectionReason>('low_quality');
   // ADM-030: 운영팀 내부 메모(선택, 최대 500자). rejectionHistory[i].note에 누적 저장.
   const [internalNote, setInternalNote] = useState('');
@@ -108,15 +110,15 @@ export default function ContentReview() {
     return workStore.subscribe(() => setWorks(workStore.getWorks()));
   }, []);
 
-  // 반려 모달 ESC 닫기 (다른 모달과 동작 일관)
+  // 반려 폼 ESC 닫기
   useEffect(() => {
-    if (!rejectTarget) return;
+    if (!showRejectForm) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setRejectTarget(null);
+      if (e.key === 'Escape') setShowRejectForm(false);
     };
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
-  }, [rejectTarget]);
+  }, [showRejectForm]);
 
   const rows = useMemo(() => {
     return works
@@ -141,6 +143,10 @@ export default function ContentReview() {
   }, [statusFilter, from, to, setPage]);
 
   const approve = (w: Work) => {
+    // 자동 전진: 승인 전에 다음 항목 캡처
+    const currentIdx = filtered.findIndex((r) => r.work.id === w.id);
+    const nextItem = filtered[currentIdx + 1] ?? filtered[currentIdx - 1] ?? null;
+
     workStore.updateWork(w.id, {
       ...buildVisibilityPatch('public'),
       rejectionReason: undefined,
@@ -178,17 +184,26 @@ export default function ContentReview() {
         workId: w.id,
       });
     });
+
+    // 자동 전진
+    setSelectedWork(nextItem?.work ?? null);
+    setShowRejectForm(false);
+    setActiveImageIndex(0);
   };
 
   const openReject = (w: Work) => {
-    setRejectTarget(w);
+    setSelectedWork(w);
+    setShowRejectForm(true);
     setPickedReason('low_quality');
     setInternalNote('');
   };
 
   const confirmReject = () => {
-    if (!rejectTarget) return;
-    const w = rejectTarget;
+    if (!selectedWork) return;
+    const w = selectedWork;
+    // 자동 전진: 반려 전에 다음 항목 캡처
+    const currentIdx = filtered.findIndex((r) => r.work.id === w.id);
+    const nextItem = filtered[currentIdx + 1] ?? filtered[currentIdx - 1] ?? null;
     // 반려 이력에 누적 append — 작가가 수정 재발행해도 보존됨(감사·재범 추적·사유 트렌드).
     const trimmedNote = internalNote.trim();
     const nextHistory = [
@@ -227,7 +242,11 @@ export default function ContentReview() {
       // PRD USR-NTF-01 §1·AC-04 — 검수 반려 알림 클릭 시 프로필 전시 탭 + USR-PRF-12 모달 자동 오픈.
       navigateTo: `/me?rejected=${encodeURIComponent(w.id)}`,
     });
-    setRejectTarget(null);
+
+    // 자동 전진
+    setShowRejectForm(false);
+    setSelectedWork(nextItem?.work ?? null);
+    setActiveImageIndex(0);
   };
 
   if (loading) {
@@ -279,246 +298,297 @@ export default function ContentReview() {
           조건에 맞는 항목이 없습니다. 신규 작품을 업로드하면 대기 목록에 표시됩니다.
         </div>
       ) : (
-        <div className="border border-border rounded-lg overflow-hidden overflow-x-auto">
-          <table className="w-full text-sm min-w-[720px]">
-            <thead>
-              <tr className="bg-muted text-left text-foreground">
-                <th className="px-4 py-3 font-medium w-20">썸네일</th>
-                <th className="px-4 py-3 font-medium">작품명</th>
-                <th className="px-4 py-3 font-medium">작가</th>
-                <th className="px-4 py-3 font-medium">업로드일</th>
-                <th className="px-4 py-3 font-medium">상태</th>
-                <th className="px-4 py-3 font-medium text-right">작업</th>
-              </tr>
-            </thead>
-            <tbody>
+        <div className="border border-border rounded-lg overflow-hidden">
+          <div className="grid" style={{ gridTemplateColumns: '38% 1fr' }}>
+
+            {/* 좌: 검수 목록 */}
+            <div className="border-r border-border overflow-y-auto" style={{ maxHeight: '72vh' }}>
               {pageItems.map(({ work: w, ui, date }) => {
                 const key = getCoverImage(w.image, w.coverImageIndex);
                 const src = imageUrls[key] || key;
+                const imageCount = Array.isArray(w.image) ? w.image.length : 1;
+                const isSelected = selectedWork?.id === w.id;
                 return (
-                  <tr key={w.id} className="border-b border-border/40 lg:hover:bg-muted/50 transition-colors">
-                    <td className="px-4 py-3">
-                      <div className="flex w-12 h-12 items-center justify-center rounded-md overflow-hidden border border-border bg-muted/30">
-                        <ImageWithFallback src={src} alt="" className="w-full h-full object-contain object-center" />
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 font-medium text-foreground">
-                      <div className="flex items-center gap-2 min-w-0">
-                        <a
-                          href={`/exhibitions/${w.id}`}
-                          target="_blank"
-                          rel="noreferrer"
-                          className="inline-flex items-center gap-1 text-primary lg:hover:underline truncate"
-                          title="전시 상세 새 탭으로 열기"
-                        >
-                          <span className="truncate">{w.title}</span>
-                          <ExternalLink className="w-3 h-3 shrink-0" />
-                        </a>
-                        {ui === '대기중' && (w.rejectionHistory?.length ?? 0) > 0 && (
-                          <Popover>
-                            <PopoverTrigger asChild>
-                              <button
-                                type="button"
-                                className="inline-flex items-center rounded-full px-2 py-0.5 text-[11px] font-medium bg-amber-100 text-amber-700 border border-amber-200 cursor-pointer lg:hover:bg-amber-200 transition-colors"
-                                aria-label={`이전 반려 ${w.rejectionHistory!.length}회 이력 보기`}
-                              >
-                                재검수 {w.rejectionHistory!.length > 1 ? `${w.rejectionHistory!.length}회차` : '요청'}
-                              </button>
-                            </PopoverTrigger>
-                            <PopoverContent align="start" className="w-80 p-0">
-                              <div className="p-3 border-b border-border">
-                                <p className="text-xs font-semibold text-foreground">반려 이력 {w.rejectionHistory!.length}건</p>
-                                <p className="text-[11px] text-muted-foreground mt-0.5">
-                                  작가가 수정 재발행 후 재검수 대기 중입니다. 과거 판정을 참고해 결정하세요.
-                                </p>
-                              </div>
-                              <ul className="max-h-64 overflow-y-auto divide-y divide-border/60">
-                                {[...(w.rejectionHistory ?? [])]
-                                  .slice()
-                                  .reverse()
-                                  .map((entry, idx, arr) => (
-                                    <li key={`${entry.rejectedAt}-${idx}`} className="p-3">
-                                      <div className="flex items-start justify-between gap-2">
-                                        <span className="inline-flex rounded-full px-2 py-0.5 text-[11px] font-medium bg-red-50 text-red-700 border border-red-200">
-                                          {t(REJECTION_REASON_LABEL_KEY[entry.reason])}
-                                        </span>
-                                        <span className="text-[11px] text-muted-foreground whitespace-nowrap">
-                                          {arr.length - idx}회차
-                                        </span>
-                                      </div>
-                                      <p className="text-[11px] text-muted-foreground mt-1">{formatHistoryDate(entry.rejectedAt)}</p>
-                                      {entry.note && (
-                                        <p className="text-xs text-foreground mt-1 whitespace-pre-wrap break-words">{entry.note}</p>
-                                      )}
-                                    </li>
-                                  ))}
-                              </ul>
-                            </PopoverContent>
-                          </Popover>
-                        )}
-                      </div>
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground">
-                      <button
-                        type="button"
-                        onClick={() => navigate(`/admin/members?artist=${w.artistId}`)}
-                        className="inline-flex items-center gap-1 text-primary lg:hover:underline text-left"
-                        title="회원 상세 모달 열기"
-                      >
-                        <span>{w.artist.name}</span>
-                        <ExternalLink className="w-3 h-3 shrink-0" />
-                      </button>
-                    </td>
-                    <td className="px-4 py-3 text-muted-foreground whitespace-nowrap">{date ? formatHistoryDate(date) : '—'}</td>
-                    <td className="px-4 py-3">
-                      <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${statusBadgeClass(ui)}`}>
-                        {ui}
-                        {ui === '반려' && w.rejectionReason && (
-                          <span className="ml-1 text-xs opacity-80">
-                            · {t(REJECTION_REASON_LABEL_KEY[w.rejectionReason])}
+                  <button
+                    key={w.id}
+                    type="button"
+                    onClick={() => { setSelectedWork(w); setShowRejectForm(false); setActiveImageIndex(0); }}
+                    className={`w-full text-left flex gap-3 items-start px-3 py-2.5 border-b border-border/40 transition-colors ${
+                      isSelected ? 'bg-primary/[.06] border-l-2 border-l-primary' : 'lg:hover:bg-muted/50'
+                    }`}
+                  >
+                    <div className="w-9 h-9 rounded overflow-hidden border border-border bg-muted/30 shrink-0">
+                      <ImageWithFallback src={src} alt="" className="w-full h-full object-contain" />
+                    </div>
+                    <div className="flex-1 min-w-0">
+                      <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
+                        <span className="font-medium text-sm text-foreground truncate">
+                          {w.exhibitionName || w.title}
+                        </span>
+                        {imageCount > 1 && (
+                          <span className="text-[10px] bg-slate-100 text-slate-600 rounded px-1.5 py-0.5 shrink-0">
+                            {imageCount}장
                           </span>
                         )}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 text-right space-x-2 whitespace-nowrap">
-                      <Button
-                        type="button"
-                        disabled={ui !== '대기중'}
-                        onClick={() => approve(w)}
-                        className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90 disabled:opacity-50 disabled:pointer-events-none"
-                      >
-                        <Check className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
-                        승인
-                      </Button>
-                      <Button
-                        type="button"
-                        variant="outline"
-                        disabled={ui !== '대기중'}
-                        onClick={() => openReject(w)}
-                        className="text-sm px-3 py-1.5 rounded-lg disabled:opacity-50 disabled:pointer-events-none"
-                      >
-                        <X className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
-                        반려
-                      </Button>
-                    </td>
-                  </tr>
+                        {ui === '대기중' && (w.rejectionHistory?.length ?? 0) > 0 && (
+                          <span className="text-[10px] bg-amber-100 text-amber-700 rounded-full px-1.5 py-0.5 shrink-0">
+                            재검수 {w.rejectionHistory!.length > 1 ? `${w.rejectionHistory!.length}회` : ''}
+                          </span>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-2 text-xs text-muted-foreground flex-wrap">
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); navigate(`/admin/members?artist=${w.artistId}`); }}
+                          className="text-primary lg:hover:underline"
+                        >
+                          {w.artist.name}
+                        </button>
+                        <span>·</span>
+                        <span>{date ? date.slice(0, 10) : '—'}</span>
+                        <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-medium ${statusBadgeClass(ui)}`}>
+                          {ui}
+                          {ui === '반려' && w.rejectionReason && (
+                            <span className="ml-1 opacity-80">· {t(REJECTION_REASON_LABEL_KEY[w.rejectionReason])}</span>
+                          )}
+                        </span>
+                      </div>
+                    </div>
+                  </button>
                 );
               })}
-            </tbody>
-          </table>
-          <div className="px-4 pb-3">
-            <PaginationBar
-              page={page}
-              pageCount={pageCount}
-              totalCount={totalCount}
-              pageSize={REVIEW_PAGE_SIZE}
-              onPageChange={setPage}
-            />
-          </div>
-        </div>
-      )}
-
-      {rejectTarget && (
-        <div
-          className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
-          onClick={() => setRejectTarget(null)}
-        >
-          <div
-            className="bg-white rounded-xl shadow-lg max-w-md w-full p-5"
-            onClick={(e) => e.stopPropagation()}
-          >
-            <h2 className="text-base font-bold text-foreground mb-1">
-              {t('review.rejectPickTitle')}
-            </h2>
-            <p className="text-sm text-muted-foreground mb-4">
-              {t('review.rejectPickDesc')}
-            </p>
-
-            {/* 이전 반려 이력이 있으면 미리보기 — 재검수 판단 시 참고용 */}
-            {(rejectTarget.rejectionHistory?.length ?? 0) > 0 && (
-              <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50/60 p-3">
-                <p className="text-xs font-semibold text-amber-900 mb-2">
-                  이전 반려 이력 {rejectTarget.rejectionHistory!.length}건 (최신순)
-                </p>
-                <ul className="space-y-2 max-h-40 overflow-y-auto">
-                  {[...(rejectTarget.rejectionHistory ?? [])].reverse().map((entry, idx) => (
-                    <li key={`${entry.rejectedAt}-${idx}`} className="space-y-1">
-                      <div className="flex items-center gap-2 text-[11px]">
-                        <span className="inline-flex rounded-full px-1.5 py-0.5 font-medium bg-red-100 text-red-700 border border-red-200">
-                          {t(REJECTION_REASON_LABEL_KEY[entry.reason])}
-                        </span>
-                        <span className="text-muted-foreground">{formatHistoryDate(entry.rejectedAt)}</span>
-                      </div>
-                      {entry.note && (
-                        <p className="text-[11px] text-foreground pl-1 whitespace-pre-wrap break-words">{entry.note}</p>
-                      )}
-                    </li>
-                  ))}
-                </ul>
+              <div className="px-3 py-2">
+                <PaginationBar
+                  page={page}
+                  pageCount={pageCount}
+                  totalCount={totalCount}
+                  pageSize={REVIEW_PAGE_SIZE}
+                  onPageChange={setPage}
+                />
               </div>
-            )}
-
-            <div className="space-y-2 mb-4">
-              {REJECTION_REASONS.map((r) => (
-                <label
-                  key={r}
-                  className={`flex items-center gap-2 p-2.5 border rounded-lg cursor-pointer text-sm ${
-                    pickedReason === r ? 'border-primary bg-primary/5' : 'border-border'
-                  }`}
-                >
-                  <input
-                    type="radio"
-                    name="rejectReason"
-                    value={r}
-                    checked={pickedReason === r}
-                    onChange={() => setPickedReason(r)}
-                  />
-                  {t(REJECTION_REASON_LABEL_KEY[r])}
-                </label>
-              ))}
             </div>
 
-            {/* ADM-030: 운영팀 내부 메모 — 작가에게 노출되지 않음. 재검수 판단용 맥락 보존. */}
-            <div className="mb-5">
-              <label htmlFor="reject-internal-note" className="block text-xs font-semibold text-foreground mb-1.5">
-                내부 메모 <span className="font-normal text-muted-foreground">(선택 · 운영팀만 열람)</span>
-              </label>
-              <textarea
-                id="reject-internal-note"
-                value={internalNote}
-                onChange={(e) => {
-                  if (e.target.value.length <= 500) setInternalNote(e.target.value);
-                }}
-                maxLength={500}
-                rows={3}
-                placeholder="재검수 시 참고할 맥락을 적어주세요. 작가에게는 노출되지 않습니다."
-                className="w-full text-sm border border-border rounded-lg px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-primary/20 focus:border-primary"
-              />
-              <p className="text-[11px] text-muted-foreground text-right mt-1">
-                {internalNote.length} / 500
-              </p>
+            {/* 우: 상세 패널 */}
+            <div className="overflow-y-auto flex flex-col" style={{ maxHeight: '72vh' }}>
+              {selectedWork ? (
+                <ReviewDetailPanel
+                  work={selectedWork}
+                  ui={toUiStatus(selectedWork) ?? '대기중'}
+                  activeImageIndex={activeImageIndex}
+                  onImageSelect={setActiveImageIndex}
+                  showRejectForm={showRejectForm}
+                  onToggleRejectForm={() => setShowRejectForm((f) => !f)}
+                  pickedReason={pickedReason}
+                  onPickReason={setPickedReason}
+                  internalNote={internalNote}
+                  onNoteChange={(v) => { if (v.length <= 500) setInternalNote(v); }}
+                  onApprove={() => approve(selectedWork)}
+                  onConfirmReject={confirmReject}
+                />
+              ) : (
+                <div className="flex-1 flex items-center justify-center text-sm text-muted-foreground p-8">
+                  왼쪽에서 전시를 선택하세요
+                </div>
+              )}
             </div>
 
-            <div className="flex gap-2 justify-end">
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setRejectTarget(null)}
-                className="text-sm px-3 py-1.5 rounded-lg"
-              >
-                {t('review.rejectCancel')}
-              </Button>
-              <Button
-                type="button"
-                onClick={confirmReject}
-                className="text-sm px-3 py-1.5 rounded-lg bg-red-600 text-white lg:hover:bg-red-700"
-              >
-                {t('review.rejectConfirm')}
-              </Button>
-            </div>
           </div>
         </div>
       )}
+    </div>
+  );
+}
+
+// ─── 상세 패널 컴포넌트 ───────────────────────────────────────────────────────
+
+interface ReviewDetailPanelProps {
+  work: Work;
+  ui: ReviewStatusUi;
+  activeImageIndex: number;
+  onImageSelect: (i: number) => void;
+  showRejectForm: boolean;
+  onToggleRejectForm: () => void;
+  pickedReason: RejectionReason;
+  onPickReason: (r: RejectionReason) => void;
+  internalNote: string;
+  onNoteChange: (v: string) => void;
+  onApprove: () => void;
+  onConfirmReject: () => void;
+}
+
+function ReviewDetailPanel({
+  work, ui, activeImageIndex, onImageSelect,
+  showRejectForm, onToggleRejectForm,
+  pickedReason, onPickReason, internalNote, onNoteChange,
+  onApprove, onConfirmReject,
+}: ReviewDetailPanelProps) {
+  const { t } = useI18n();
+  const workImages = Array.isArray(work.image) ? work.image : [work.image];
+  const hasCoverPage = !!(work.customCoverUrl && work.coverImageIndex === -1);
+  const images: string[] = hasCoverPage
+    ? [work.customCoverUrl as string, ...workImages]
+    : workImages;
+  const safeIdx = Math.min(activeImageIndex, images.length - 1);
+  const activeKey = images[safeIdx] ?? '';
+  const activeSrc = imageUrls[activeKey] || activeKey;
+
+  return (
+    <div className="flex flex-col h-full">
+
+      {/* ① 어두운 배경 이미지 갤러리 */}
+      <div className="bg-slate-900 p-4 shrink-0">
+        <div className="flex gap-3 mb-3">
+          <div
+            className="flex-1 bg-slate-800 rounded-lg overflow-hidden flex items-center justify-center"
+            style={{ minHeight: 140, maxHeight: 220 }}
+          >
+            <ImageWithFallback src={activeSrc} alt="" className="w-full h-full object-contain" style={{ maxHeight: 220 } as React.CSSProperties} />
+          </div>
+          {images.length > 1 && (
+            <div className="flex flex-col gap-1.5 shrink-0">
+              {images.map((imgKey, i) => {
+                const thumbSrc = imageUrls[imgKey] || imgKey;
+                return (
+                  <button
+                    key={i}
+                    type="button"
+                    onClick={() => onImageSelect(i)}
+                    className={`w-14 h-14 rounded overflow-hidden border-2 transition-colors shrink-0 ${
+                      safeIdx === i ? 'border-primary' : 'border-slate-600 lg:hover:border-slate-400'
+                    }`}
+                  >
+                    <ImageWithFallback src={thumbSrc} alt={`${i + 1}번째 이미지`} className="w-full h-full object-cover" />
+                  </button>
+                );
+              })}
+            </div>
+          )}
+        </div>
+        <h3 className="text-white font-bold text-sm leading-tight">
+          {work.exhibitionName || work.title}
+        </h3>
+        <p className="text-slate-400 text-xs mt-0.5">
+          {work.artist.name}
+          {images.length > 1 && ` · ${images.length}장`}
+          {work.uploadedAt && ` · ${work.uploadedAt.slice(0, 10)}`}
+        </p>
+        <a
+          href={`/exhibitions/${work.id}`}
+          target="_blank"
+          rel="noreferrer"
+          className="text-violet-300 text-xs mt-1 inline-flex items-center gap-0.5 lg:hover:text-violet-100"
+        >
+          전시 보기 ↗
+        </a>
+      </div>
+
+      {/* ② 전시 설명 */}
+      {work.description && (
+        <div className="px-4 py-3 text-sm text-foreground leading-relaxed border-b border-border">
+          {work.description}
+        </div>
+      )}
+
+      {/* ③ 이전 반려 이력 (재검수 건) */}
+      {(work.rejectionHistory?.length ?? 0) > 0 && (
+        <div className="px-4 py-3 border-b border-border bg-amber-50/60">
+          <p className="text-xs font-semibold text-amber-900 mb-2">
+            이전 반려 이력 {work.rejectionHistory!.length}건
+          </p>
+          <ul className="space-y-1.5 max-h-28 overflow-y-auto">
+            {[...(work.rejectionHistory ?? [])].reverse().map((entry, idx) => (
+              <li key={`${entry.rejectedAt}-${idx}`} className="text-xs">
+                <span className="inline-flex rounded-full px-1.5 py-0.5 font-medium bg-red-100 text-red-700 border border-red-200 mr-2">
+                  {t(REJECTION_REASON_LABEL_KEY[entry.reason])}
+                </span>
+                <span className="text-muted-foreground">{entry.rejectedAt.slice(0, 16).replace('T', ' ')}</span>
+                {entry.note && <p className="text-foreground mt-0.5 pl-1">{entry.note}</p>}
+              </li>
+            ))}
+          </ul>
+        </div>
+      )}
+
+      {/* ④ 반려 사유 폼 (showRejectForm=true 시에만) */}
+      {showRejectForm && (
+        <div className="px-4 py-4 bg-red-50/80 border-b border-red-200">
+          <p className="text-sm font-semibold text-foreground mb-3">{t('review.rejectPickTitle')}</p>
+          <div className="space-y-2 mb-3">
+            {REJECTION_REASONS.map((r) => (
+              <label
+                key={r}
+                className={`flex items-center gap-2 p-2.5 border rounded-lg cursor-pointer text-sm ${
+                  pickedReason === r ? 'border-primary bg-primary/5' : 'border-border bg-white'
+                }`}
+              >
+                <input
+                  type="radio"
+                  name="rejectReason"
+                  value={r}
+                  checked={pickedReason === r}
+                  onChange={() => onPickReason(r)}
+                />
+                {t(REJECTION_REASON_LABEL_KEY[r])}
+              </label>
+            ))}
+          </div>
+          <div className="mb-3">
+            <label className="block text-xs font-semibold text-foreground mb-1">
+              내부 메모{' '}
+              <span className="font-normal text-muted-foreground">(선택 · 운영팀만 열람)</span>
+            </label>
+            <textarea
+              value={internalNote}
+              onChange={(e) => onNoteChange(e.target.value)}
+              maxLength={500}
+              rows={2}
+              placeholder="재검수 시 참고할 맥락을 적어주세요."
+              className="w-full text-sm border border-border rounded-lg px-3 py-2 resize-none focus:outline-none focus:ring-2 focus:ring-primary/20"
+            />
+            <p className="text-[11px] text-muted-foreground text-right mt-0.5">{internalNote.length}/500</p>
+          </div>
+          <div className="flex gap-2">
+            <Button type="button" variant="outline" onClick={onToggleRejectForm} className="flex-1 text-sm">
+              {t('review.rejectCancel')}
+            </Button>
+            <Button
+              type="button"
+              onClick={onConfirmReject}
+              className="flex-1 text-sm bg-red-600 text-white lg:hover:bg-red-700"
+            >
+              {t('review.rejectConfirm')}
+            </Button>
+          </div>
+        </div>
+      )}
+
+      {/* 스페이서 */}
+      <div className="flex-1" />
+
+      {/* ⑤ 검수 판정 액션 바 */}
+      <div className="sticky bottom-0 bg-white border-t border-border px-4 py-3 flex gap-2 shrink-0">
+        <Button
+          type="button"
+          disabled={ui !== '대기중'}
+          onClick={onApprove}
+          className="flex-1 text-sm bg-primary text-white lg:hover:bg-primary/90 disabled:opacity-50 disabled:pointer-events-none"
+        >
+          <Check className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
+          승인 → 피드 게시
+        </Button>
+        <Button
+          type="button"
+          variant="outline"
+          disabled={ui !== '대기중'}
+          onClick={onToggleRejectForm}
+          className={`flex-1 text-sm disabled:opacity-50 disabled:pointer-events-none ${
+            showRejectForm ? 'border-red-400 text-red-600 bg-red-50' : ''
+          }`}
+        >
+          <X className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
+          반려
+        </Button>
+      </div>
     </div>
   );
 }
