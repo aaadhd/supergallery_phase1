@@ -65,10 +65,10 @@ export default function ContentReview() {
   const [searchParams, setSearchParams] = useSearchParams();
   const [loading, setLoading] = useState(true);
   const [works, setWorks] = useState<Work[]>(() => workStore.getWorks());
-  // 초기 필터: URL `?status=` 이 유효하면 반영, 아니면 '전체'
+  // 초기 필터: URL `?status=` 이 유효하면 반영, 아니면 '대기중' (운영자가 열면 처리할 항목만)
   const initialStatus: string = ((): string => {
     const raw = searchParams.get('status') ?? '';
-    return STATUS_URL_TO_UI[raw] ?? '전체';
+    return STATUS_URL_TO_UI[raw] ?? '대기중';
   })();
   const [statusFilter, setStatusFilterState] = useState<string>(initialStatus);
   const setStatusFilter = useCallback(
@@ -90,7 +90,7 @@ export default function ContentReview() {
   // 외부 URL 변경(뒤로가기·딥링크) 역방향 동기화
   useEffect(() => {
     const raw = searchParams.get('status') ?? '';
-    const next = STATUS_URL_TO_UI[raw] ?? '전체';
+    const next = STATUS_URL_TO_UI[raw] ?? '대기중';
     setStatusFilterState((prev) => (prev === next ? prev : next));
   }, [searchParams]);
   const [from, setFrom] = useState('');

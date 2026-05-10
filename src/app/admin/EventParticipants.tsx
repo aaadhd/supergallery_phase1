@@ -70,7 +70,7 @@ export default function EventParticipants({ compact = false }: { compact?: boole
   const contestEvents = useMemo(() => events.filter(e => e.type === 'contest'), [events]);
 
   const [selectedEventId, setSelectedEventId] = useState(searchParams.get('event') ?? '');
-  const [filterStatus, setFilterStatus] = useState('전체');
+  const [filterStatus, setFilterStatus] = useState('참여 완료');
 
   useEffect(() => {
     const fromQuery = searchParams.get('event');
@@ -102,6 +102,15 @@ export default function EventParticipants({ compact = false }: { compact?: boole
 
   const totalCount = useMemo(
     () => allParticipants.filter(p => p.eventId === selectedEventId && p.workId).length,
+    [allParticipants, selectedEventId],
+  );
+
+  const pendingCount = useMemo(
+    () => allParticipants.filter(p => p.eventId === selectedEventId && p.workId && p.status === '대기 중').length,
+    [allParticipants, selectedEventId],
+  );
+  const rejectedCount = useMemo(
+    () => allParticipants.filter(p => p.eventId === selectedEventId && p.workId && p.status === '취소').length,
     [allParticipants, selectedEventId],
   );
 
@@ -182,12 +191,22 @@ export default function EventParticipants({ compact = false }: { compact?: boole
           </Select>
         )}
         {selectedEventId && (
-          <p className="text-sm text-muted-foreground">
-            {totalCount}건 응모
-            {selectedWorkIds.size > 0 && (
-              <span className="ml-2 text-primary font-semibold">· {selectedWorkIds.size}건 선정</span>
+          <div className="flex flex-wrap items-center gap-3">
+            <p className="text-sm text-muted-foreground">
+              총 {totalCount}건 응모
+              {selectedWorkIds.size > 0 && (
+                <span className="ml-2 text-primary font-semibold">· {selectedWorkIds.size}건 선정</span>
+              )}
+            </p>
+            {(pendingCount > 0 || rejectedCount > 0) && (
+              <p className="text-xs text-muted-foreground/70">
+                {pendingCount > 0 && `검수 대기 ${pendingCount}건`}
+                {pendingCount > 0 && rejectedCount > 0 && ' · '}
+                {rejectedCount > 0 && `반려 ${rejectedCount}건`}
+                {pendingCount > 0 && ' (검수 통과 후 선정 가능)'}
+              </p>
             )}
-          </p>
+          </div>
         )}
       </div>
 
