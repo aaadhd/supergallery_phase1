@@ -107,6 +107,8 @@ ExhibitionInviteLanding → authStore.isLoggedIn() 감지
 - 약관: 현행 유지
 - 이메일 중복 체크: `isEmailRegistered(email)` — 프로바이더에서 이메일이 넘어온 경우에만 실행, 없으면 skip
 
+닉네임 핸드오프: `AuthSheet`가 OAuth 콜백에서 받은 프로바이더 표시 이름을 `artier_pending_signup_nickname`(localStorage)에 저장 → `SocialSignupModal`에서는 닉네임을 묻지 않음 → Onboarding step 1에서 읽어 프리필
+
 ---
 
 ### 3. Onboarding Step 1 (1/2 또는 1/3) — 닉네임 + 프로필 사진
@@ -121,7 +123,7 @@ ExhibitionInviteLanding → authStore.isLoggedIn() 감지
 ```
 
 필드:
-- 닉네임 (필수, 2–20자): 소셜 프로바이더 이름 프리필 가능, 수정 가능. 비속어 필터 현행 유지
+- 닉네임 (필수, 2–20자): `artier_pending_signup_nickname` 있으면 프리필, 수정 가능. 비속어 필터 현행 유지
 - 프로필 사진 (선택): 현행 유지
 
 ---
