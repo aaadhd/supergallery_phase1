@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useSyncExternalStore } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Badge } from '../components/ui/badge';
@@ -10,11 +10,13 @@ import {
 } from '../components/ui/select';
 import { eventsStore, useManagedEvents, type ManagedEvent } from '../utils/eventsStore';
 import { workStore } from '../store';
-import { useSyncExternalStore } from 'react';
 import { useI18n } from '../i18n/I18nProvider';
 import { pushDemoNotification } from '../utils/pushDemoNotification';
 import { displayExhibitionTitle } from '../utils/workDisplay';
 import { appendAuditLog } from '../utils/adminAuditLog';
+import { getCoverImage } from '../utils/imageHelper';
+import { imageUrls } from '../imageUrls';
+import { ImageWithFallback } from '../components/ImageWithFallback';
 
 interface EventParticipant {
   id: string;
@@ -305,7 +307,8 @@ export default function EventParticipants({ compact = false }: { compact?: boole
             <TableRow>
               <TableHead className="w-12"></TableHead>
               <TableHead className="w-20">선정</TableHead>
-              <TableHead>이름</TableHead>
+              <TableHead className="w-16">작품</TableHead>
+              <TableHead>작품명</TableHead>
               <TableHead>이메일</TableHead>
               <TableHead>응모전</TableHead>
               <TableHead>상태</TableHead>
@@ -315,7 +318,7 @@ export default function EventParticipants({ compact = false }: { compact?: boole
           <TableBody>
             {filtered.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={8} className="text-center py-8 text-muted-foreground">
                   조건에 맞는 참여자가 없습니다.
                 </TableCell>
               </TableRow>
@@ -325,6 +328,11 @@ export default function EventParticipants({ compact = false }: { compact?: boole
                 const isSelected = !!(p.workId && selectedSet?.has(p.workId));
                 const bulkKey = p.workId ? `${p.eventId}::${p.workId}` : null;
                 const isBulkChecked = bulkKey ? bulkSelected.has(bulkKey) : false;
+                const work = p.workId ? workStore.getWork(p.workId) : null;
+                const coverKey = work ? getCoverImage(work.image, work.coverImageIndex) : null;
+                const coverSrc = coverKey ? (imageUrls[coverKey] || coverKey) : null;
+                const exhibitionTitle = work?.exhibitionName || work?.title || p.name;
+                const artistName = work?.artist?.name ?? (work ? p.name : undefined);
                 return (
                   <TableRow key={p.id}>
                     <TableCell>
@@ -333,7 +341,7 @@ export default function EventParticipants({ compact = false }: { compact?: boole
                           type="checkbox"
                           checked={isBulkChecked}
                           onChange={() => toggleBulk(bulkKey)}
-                          aria-label={`${p.name} 다중 선택`}
+                          aria-label={`${exhibitionTitle} 다중 선택`}
                           className="h-4 w-4"
                         />
                       ) : (
@@ -347,7 +355,7 @@ export default function EventParticipants({ compact = false }: { compact?: boole
                             type="checkbox"
                             checked={isSelected}
                             onChange={() => handleToggleSelected(p.eventId, p.workId!)}
-                            aria-label={`${p.name} 선정 토글`}
+                            aria-label={`${exhibitionTitle} 선정 토글`}
                             className="h-4 w-4"
                           />
                           {isSelected && (
@@ -358,18 +366,35 @@ export default function EventParticipants({ compact = false }: { compact?: boole
                         <span className="text-xs text-muted-foreground/60">—</span>
                       )}
                     </TableCell>
+                    <TableCell>
+                      {coverSrc ? (
+                        <a href={`/exhibitions/${p.workId}`} target="_blank" rel="noopener noreferrer">
+                          <div className="w-12 h-12 rounded overflow-hidden border border-border bg-muted/30 flex items-center justify-center">
+                            <ImageWithFallback src={coverSrc} alt={exhibitionTitle} className="w-full h-full object-cover" />
+                          </div>
+                        </a>
+                      ) : (
+                        <div className="w-12 h-12 rounded border border-dashed border-border bg-muted/20 flex items-center justify-center">
+                          <span className="text-xs text-muted-foreground/60">—</span>
+                        </div>
+                      )}
+                    </TableCell>
                     <TableCell className="font-medium text-foreground">
                       {p.workId ? (
                         <a
                           href={`/exhibitions/${p.workId}`}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="lg:hover:underline lg:hover:text-primary"
+                          className="lg:hover:text-primary"
                         >
-                          {p.name}
+                          <span className="text-sm">{exhibitionTitle}</span>
+                          {artistName && <p className="text-xs text-muted-foreground mt-0.5">{artistName}</p>}
                         </a>
                       ) : (
-                        p.name
+                        <div>
+                          <span className="text-sm">{exhibitionTitle}</span>
+                          {artistName && <p className="text-xs text-muted-foreground mt-0.5">{artistName}</p>}
+                        </div>
                       )}
                     </TableCell>
                     <TableCell className="text-sm text-muted-foreground">{p.email}</TableCell>

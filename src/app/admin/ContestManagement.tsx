@@ -1,4 +1,4 @@
-import { useMemo, useState, useEffect, type FormEvent } from 'react';
+import { useMemo, useState, useEffect, useSyncExternalStore, type FormEvent } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
 import { Pencil, Plus, Trash2, Users, Trophy, ListChecks } from 'lucide-react';
@@ -91,6 +91,19 @@ export default function ContestManagement() {
     const timer = window.setTimeout(() => setLoading(false), 240);
     return () => window.clearTimeout(timer);
   }, []);
+
+  const works = useSyncExternalStore(workStore.subscribe, workStore.getWorks, workStore.getWorks);
+
+  const entryCountByEvent = useMemo(() => {
+    const map = new Map<string, number>();
+    for (const w of works) {
+      if (w.linkedEventId != null) {
+        const key = String(w.linkedEventId);
+        map.set(key, (map.get(key) ?? 0) + 1);
+      }
+    }
+    return map;
+  }, [works]);
 
   const contests = useMemo<ManagedEvent[]>(() => {
     const order: Record<EventStatus, number> = { active: 0, scheduled: 1, ended: 2 };
@@ -377,6 +390,7 @@ export default function ContestManagement() {
                         <th className="px-4 py-3 font-medium">응모전명</th>
                         <th className="px-4 py-3 font-medium">실행 기간</th>
                         <th className="px-4 py-3 font-medium">게시 기간</th>
+                        <th className="px-4 py-3 font-medium text-center">응모</th>
                         <th className="px-4 py-3 font-medium">{t('admin.contest.colStatus')}</th>
                         <th className="px-4 py-3 font-medium text-right">{t('admin.contest.colActions')}</th>
                       </tr>
@@ -395,6 +409,10 @@ export default function ContestManagement() {
                               {ev.displayStartAt || ev.displayEndAt
                                 ? `${ev.displayStartAt ?? ev.startAt} ~ ${ev.displayEndAt ?? ev.endAt}`
                                 : <span className="text-border">—</span>}
+                            </td>
+                            <td className="px-4 py-3 text-center text-sm font-medium text-foreground">
+                              {entryCountByEvent.get(ev.id) ?? 0}
+                              <span className="text-xs font-normal text-muted-foreground ml-0.5">명</span>
                             </td>
                             <td className="px-4 py-3">
                               <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${statusBadgeClass(s)}`}>
