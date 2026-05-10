@@ -9,7 +9,8 @@ import { Separator } from './ui/separator';
 import { cn } from './ui/utils';
 import { Drawer, DrawerContent, DrawerTitle } from './ui/drawer';
 import { Dialog, DialogContent, DialogTitle } from './ui/dialog';
-import { SocialSignupModal, type SocialProvider } from './SocialSignupModal';
+import { SocialSignupModal, type SocialProvider, MOCK_SOCIAL_PROFILE } from './SocialSignupModal';
+import { isEmailRegistered, registerAccount } from '../utils/registeredAccounts';
 
 /**
  * 로그인·가입 시트 (USR-AUT-02).
@@ -56,18 +57,30 @@ export function AuthSheet({
     localStorage.setItem(`artier_social_signed_up__${provider}`, '1');
     localStorage.setItem('artier_pending_signup_nickname', nickname);
     localStorage.setItem('artier_pending_social_signup', provider);
-    if (email) localStorage.setItem('artier_pending_signup_email', email);
+    if (email) {
+      localStorage.setItem('artier_pending_signup_email', email);
+      registerAccount(email, '');
+    }
     onOpenChange(false);
     navigate('/onboarding', { replace: true });
   };
 
   const handleSocialLogin = (provider: SocialProvider) => {
+    // ① 동일 제공자 기존 플래그 체크 (현행 유지)
     const alreadySignedUp = localStorage.getItem(`artier_social_signed_up__${provider}`) === '1';
     if (alreadySignedUp) {
       completeReturningSocialLogin(provider);
-    } else {
-      setPendingSocial(provider);
+      return;
     }
+    // ② 이메일 기반 크로스 제공자 기존 계정 감지
+    const profile = MOCK_SOCIAL_PROFILE[provider];
+    if (profile.email && isEmailRegistered(profile.email)) {
+      localStorage.setItem(`artier_social_signed_up__${provider}`, '1');
+      completeReturningSocialLogin(provider);
+      return;
+    }
+    // ③ 신규 가입
+    setPendingSocial(provider);
   };
 
   const handleSocialSignupComplete = (nickname: string, email: string) => {
