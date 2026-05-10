@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 import { toast } from 'sonner';
-import { Plus, Trash2, X, Search, ExternalLink } from 'lucide-react';
+import { Plus, Trash2, Search, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
 import {
   curationStore,

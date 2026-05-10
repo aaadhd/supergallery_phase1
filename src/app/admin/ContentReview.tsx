@@ -312,11 +312,13 @@ export default function ContentReview() {
                 const imageCount = Array.isArray(w.image) ? w.image.length : 1;
                 const isSelected = selectedWork?.id === w.id;
                 return (
-                  <button
+                  <div
                     key={w.id}
-                    type="button"
+                    role="button"
+                    tabIndex={0}
                     onClick={() => { setSelectedWork(w); setShowRejectForm(false); setActiveImageIndex(0); }}
-                    className={`w-full text-left flex gap-3 items-start px-3 py-2.5 border-b border-border/40 transition-colors ${
+                    onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { setSelectedWork(w); setShowRejectForm(false); setActiveImageIndex(0); } }}
+                    className={`w-full text-left flex gap-3 items-start px-3 py-2.5 border-b border-border/40 transition-colors cursor-pointer ${
                       isSelected ? 'bg-primary/[.06] border-l-2 border-l-primary' : 'lg:hover:bg-muted/50'
                     }`}
                   >
@@ -329,6 +331,13 @@ export default function ContentReview() {
                       onClick={(e) => {
                         e.stopPropagation();
                         featuredStore.toggle(w.id);
+                        appendAuditLog({
+                          action: 'curation_saved',
+                          targetId: w.id,
+                          targetSnapshot: { featured: !featuredSet.has(w.id) },
+                          actorId: 'admin',
+                          actorRole: 'admin',
+                        });
                       }}
                       className={`shrink-0 p-1 rounded transition-colors ${
                         featuredSet.has(w.id)
@@ -373,7 +382,7 @@ export default function ContentReview() {
                         </span>
                       </div>
                     </div>
-                  </button>
+                  </div>
                 );
               })}
               <div className="px-3 py-2">
