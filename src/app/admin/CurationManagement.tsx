@@ -25,7 +25,7 @@ import {
 } from '@dnd-kit/core';
 import {
   arrayMove, SortableContext, sortableKeyboardCoordinates,
-  useSortable, verticalListSortingStrategy,
+  useSortable, horizontalListSortingStrategy,
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 
@@ -262,6 +262,7 @@ export default function CurationManagement() {
     });
     if (!ok) return;
     curationStore.removeCuratedExhibition(c.id);
+    if (selectedCurationId === c.id) closeEditor();
     appendAuditLog({ action: 'curation_deleted', targetId: c.id, targetSnapshot: { title: c.title }, actorId: 'admin', actorRole: 'admin' });
     toast.success(t('admin.curation.toastDeleted'));
   };
@@ -287,11 +288,6 @@ export default function CurationManagement() {
         }));
       });
   }, [allWorks, editor?.search]);
-
-  const selectedPieceKeys = useMemo(
-    () => new Set(editor?.pieces.map(pieceKey) ?? []),
-    [editor?.pieces],
-  );
 
   if (loading) {
     return (
@@ -470,7 +466,7 @@ export default function CurationManagement() {
                 <div className="bg-sky-950 px-4 py-3 flex items-center gap-3 shrink-0">
                   {editor.pieces.length > 0 ? (
                     <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handlePieceDragEnd}>
-                      <SortableContext items={editor.pieces.map(pieceKey)} strategy={verticalListSortingStrategy}>
+                      <SortableContext items={editor.pieces.map(pieceKey)} strategy={horizontalListSortingStrategy}>
                         <div className="flex gap-1.5 overflow-x-auto">
                           {editor.pieces.map((p) => {
                             const w = workStore.getWork(p.workId);
