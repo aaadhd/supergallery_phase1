@@ -1,24 +1,32 @@
 /**
- * 응모전 알림 구독 여부 (계정 단위 boolean).
- * 가입 이메일을 자동 사용하므로 별도 이메일 입력·목록 없음.
- * Phase 1: 로컬 플래그. 백엔드 연동 후 서버 저장으로 전환.
+ * 응모전 공지 알림 구독 여부.
+ * USR-STG-01 `eventAlerts` 알림 토글과 동일 기능 — 어느 쪽을 변경해도 동기 반영된다.
+ * (Policy §31 N-5: 응모전 선정은 강제 발송, 응모전 공지는 eventAlerts 토글 제어)
  */
 
 import { useState, useEffect } from 'react';
 
-const STORAGE_KEY = 'artier_event_subscription';
-const CHANGED = 'artier-event-subscription-changed';
+const NOTIFICATION_SETTINGS_KEY = 'artier_notification_settings';
+const CHANGED = 'artier-notification-prefs';
 
 export function isEventSubscribed(): boolean {
   try {
-    return localStorage.getItem(STORAGE_KEY) === 'true';
+    const stored = localStorage.getItem(NOTIFICATION_SETTINGS_KEY);
+    if (!stored) return false;
+    const parsed = JSON.parse(stored);
+    return parsed.eventAlerts === true;
   } catch {
     return false;
   }
 }
 
 export function setEventSubscribed(value: boolean): void {
-  localStorage.setItem(STORAGE_KEY, value ? 'true' : 'false');
+  try {
+    const stored = localStorage.getItem(NOTIFICATION_SETTINGS_KEY);
+    const current = stored ? JSON.parse(stored) : {};
+    current.eventAlerts = value;
+    localStorage.setItem(NOTIFICATION_SETTINGS_KEY, JSON.stringify(current));
+  } catch { /* ignore */ }
   window.dispatchEvent(new Event(CHANGED));
 }
 

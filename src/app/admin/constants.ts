@@ -47,61 +47,6 @@ export const EXHIBITION_TYPE = {
   GROUP: 'group',
 } as const;
 
-// ===== Admin 상태 값 =====
-export const ISSUE_STATUS = {
-  OPEN: '미결',
-  IN_PROGRESS: '진행 중',
-  RESOLVED: '해결됨',
-  DEFERRED: '보류',
-} as const;
-
-export const ISSUE_PRIORITY = {
-  CRITICAL: '긴급',
-  HIGH: '높음',
-  MEDIUM: '보통',
-  LOW: '낮음',
-} as const;
-
-export const ISSUE_CATEGORY = {
-  DESIGN: '디자인',
-  DEVELOPMENT: '개발',
-  CONTENT: '콘텐츠',
-  LEGAL: '법무',
-  MARKETING: '마케팅',
-  OPERATIONS: '운영',
-} as const;
-
-export const CHECKLIST_CATEGORY = {
-  QA: 'QA',
-  LEGAL: '법무',
-  CONTENT: '콘텐츠',
-  OPERATIONS: '운영',
-  MARKETING: '마케팅',
-} as const;
-
-export const CHECKLIST_STATUS = {
-  NOT_STARTED: '시작 전',
-  IN_PROGRESS: '진행 중',
-  DONE: '완료',
-  BLOCKED: '차단됨',
-} as const;
-
-export const PARTNER_STAGE = {
-  PROSPECT: '후보',
-  CONTACTED: '연락 완료',
-  ONBOARDING: '온보딩 중',
-  ACTIVE: '활성',
-  INACTIVE: '비활성',
-} as const;
-
-export const PARTNER_SUBMISSION = {
-  NOT_SUBMITTED: '미제출',
-  SUBMITTED: '제출 완료',
-  UNDER_REVIEW: '검토 중',
-  APPROVED: '승인',
-  REJECTED: '반려',
-} as const;
-
 // ===== 색상 매핑 =====
 export const STATUS_COLORS: Record<string, string> = {
   '미결': 'bg-red-100 text-red-800',

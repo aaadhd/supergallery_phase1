@@ -123,6 +123,7 @@ export default function EventParticipants({ compact = false }: { compact?: boole
       .replace('{event}', ev.title);
     pushDemoNotification({
       type: 'event',
+      subtype: 'selected',
       message,
       workId,
       eventId: selectedEventId,

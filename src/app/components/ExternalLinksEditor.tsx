@@ -105,10 +105,6 @@ export function resolveExternalLinkUrl(link: ExternalLink): string {
   return `https://${platform.prefix ?? ''}${link.url}`;
 }
 
-export function getExternalLinkPlatformLabel(key: string): string {
-  return PLATFORMS.find(p => p.key === key)?.label ?? key;
-}
-
 /** 표시용 아이콘 + 사람이 읽을 플랫폼 이름 (조회 화면에서 사용) */
 export function getExternalLinkPlatformDisplay(key: string): { icon: React.ReactNode; name: string } | null {
   const p = PLATFORMS.find((x) => x.key === key);

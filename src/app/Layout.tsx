@@ -2,7 +2,6 @@ import { useEffect, useState } from 'react';
 import { Outlet, useLocation, useNavigate } from 'react-router-dom';
 import { Header } from './components/Header';
 import { Footer } from './components/Footer';
-import { CookieConsent } from './components/CookieConsent';
 import { getStoredLocale } from './i18n/uiStrings';
 import { useI18n } from './i18n/I18nProvider';
 import { accountSuspensionStore, authStore } from './store';
@@ -61,7 +60,6 @@ export default function Layout() {
           <Outlet />
         </main>
         <Footer />
-        <CookieConsent />
       </div>
     );
   }
@@ -80,7 +78,6 @@ export default function Layout() {
         <Outlet />
       </main>
       {!hideFooter && <Footer />}
-      <CookieConsent />
     </div>
   );
 }

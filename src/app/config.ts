@@ -8,10 +8,10 @@
 /** 서비스 고객 지원 이메일. Maintenance·Privacy·문의 화면에서 공통 사용. */
 export const SUPPORT_EMAIL = 'iproud@i-screammedia.com';
 
-/** 푸터·일반 연락처 이메일 (운영/홍보/제휴 등 지원 외 용도). TODO: Footer/About에서 사용 예정 */
+/** 푸터·일반 연락처 이메일 (운영/홍보/제휴 등 지원 외 용도). */
 export const CONTACT_EMAIL = 'iproud@i-screammedia.com';
 
-/** 브랜드 표기. TODO: Footer/About/OG태그에서 사용 예정 */
+/** 브랜드 표기. */
 export const BRAND = {
   NAME: 'Proud Gallery',
   PROJECT_NAME: 'SuperGallery',

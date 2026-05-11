@@ -28,6 +28,8 @@ interface Notification {
   curationId?: string;
   /** 라우팅 타깃 — type 'event' 클릭 시 /events/:id 응모전 상세로 이동(PRD USR-NTF-01 §1). */
   eventId?: string;
+  /** type 'event' 세부 구분 — 'selected': 응모전 선정(강제 발송), 'announcement': 응모전 공지(marketing 토글 제어). */
+  subtype?: 'announcement' | 'selected';
   /** explicit 라우팅 override (예: 검수 반려 → /me?rejected=<workId> + USR-PRF-12 모달). */
   navigateTo?: string;
   read: boolean;
@@ -113,6 +115,7 @@ function generateSeedNotifications(): Notification[] {
     {
       id: 'n7',
       type: 'event',
+      subtype: 'announcement',
       messageKey: 'notifications.seedEventActive',
       messageReplacements: { event: '나의 첫 디지털 캔버스' },
       read: false,
@@ -196,23 +199,22 @@ function passesPrefs(n: Notification, p: NotificationSettingsState): boolean {
   if (n.demo) return true;
   switch (n.type) {
     case 'like':
-      return p.like;
     case 'follow':
-      return p.newFollower;
+      return p.reactionAlerts;
     case 'groupInvite':
-      // 그룹 전시 비회원 슬롯 추가 또는 회원 슬롯 직접 지정 시 (PRD USR-NTF-01 §6).
-      return p.groupExhibitionInvite;
     case 'pick':
-      return p.weeklyTheme;
+    case 'curation':
+      // 그룹전시 게시·기획전·Pick — 강제 수신 (A-3).
+      return true;
     case 'event':
-      return p.groupExhibitionInvite;
+      // 선정 알림은 강제, 공지·이벤트 알림은 eventAlerts 토글 제어 (A-3).
+      if (n.subtype === 'selected') return true;
+      return p.eventAlerts;
     case 'system':
-      return p.marketing;
+      // 검수 결과·신고 처리·작품 연결 — IA USR-NTF-01 강제 8종. 마케팅 토글과 무관하게 항상 노출.
+      return true;
     case 'invite':
       // 작가가 직접 보낸 초대 링크의 결과 알림 — 본인 액션의 결과이므로 항상 노출 (Policy §3 v2.14).
-      return true;
-    case 'curation':
-      // 기획전 선정 알림 — 운영팀 직권 큐레이션 결과이므로 항상 노출 (Policy §15.2 — 영구 배지 X, 알림으로만 인지).
       return true;
     default:
       // Unknown type — 향후 확장 시 사용자 동의 없이 노출되지 않도록 보수적으로 차단.
@@ -233,7 +235,6 @@ export default function Notifications() {
   }, [navigate]);
 
   const [notifications, setNotifications] = useState<Notification[]>(loadNotifications);
-  const [typeFilter, setTypeFilter] = useState<'all' | 'like' | 'follow' | 'groupInvite' | 'curation' | 'event' | 'system'>('all');
   const [prefs, setPrefs] = useState<NotificationSettingsState>(() => loadNotificationSettings());
 
   useEffect(() => {
@@ -256,16 +257,10 @@ export default function Notifications() {
     };
   }, []);
 
-  const filtered = useMemo(() => {
-    let list = notifications.filter((n) => passesPrefs(n, prefs));
-    if (typeFilter === 'like') list = list.filter((n) => n.type === 'like');
-    else if (typeFilter === 'follow') list = list.filter((n) => n.type === 'follow');
-    else if (typeFilter === 'groupInvite') list = list.filter((n) => n.type === 'groupInvite');
-    else if (typeFilter === 'curation') list = list.filter((n) => n.type === 'pick' || n.type === 'curation');
-    else if (typeFilter === 'event') list = list.filter((n) => n.type === 'event');
-    else if (typeFilter === 'system') list = list.filter((n) => n.type === 'system' || n.type === 'invite');
-    return list;
-  }, [notifications, typeFilter, prefs]);
+  const filtered = useMemo(
+    () => notifications.filter((n) => passesPrefs(n, prefs)),
+    [notifications, prefs],
+  );
 
   const unreadCount = notifications.filter((n) => !n.read).length;
 
@@ -348,40 +343,6 @@ export default function Notifications() {
             </div>
           </div>
 
-          <div className="flex gap-2 mt-4 sm:mt-5 flex-wrap">
-            {(
-              [
-                { id: 'all', labelKey: 'notifications.filterAll' },
-                { id: 'like', labelKey: 'notifications.filterLike' },
-                { id: 'follow', labelKey: 'notifications.filterFollow' },
-                { id: 'groupInvite', labelKey: 'notifications.filterGroupInvite' },
-                { id: 'curation', labelKey: 'notifications.filterCuration' },
-                { id: 'event', labelKey: 'notifications.filterEvent' },
-                { id: 'system', labelKey: 'notifications.filterSystem' },
-              ] as const
-            ).map(({ id, labelKey }) => (
-              <Button
-                key={id}
-                type="button"
-                onClick={() => setTypeFilter(id)}
-                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors ${
-                  typeFilter === id ? 'bg-foreground text-white' : 'bg-muted text-muted-foreground lg:hover:bg-muted'
-                }`}
-              >
-                {id === 'all' && unreadCount > 0 ? (
-                  <span className="inline-flex items-center gap-1.5">
-                    {t(labelKey)}
-                    <span
-                      aria-label={t('nav.notificationsWithCount').replace('{n}', String(unreadCount))}
-                      className="inline-flex min-w-[20px] h-5 items-center justify-center rounded-full bg-red-500 px-1.5 text-xs font-semibold text-white"
-                    >
-                      {unreadCount > 99 ? '99+' : unreadCount}
-                    </span>
-                  </span>
-                ) : t(labelKey)}
-              </Button>
-            ))}
-          </div>
 
         </div>
       </div>

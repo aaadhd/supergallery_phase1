@@ -125,17 +125,6 @@ export function Footer() {
           <Link to="/about" style={footItemStyle} className="hidden md:inline lg:hover:text-primary transition-colors">
             {t('footer.about')}
           </Link>
-          <button
-            type="button"
-            onClick={() => {
-              localStorage.removeItem('artier_cookie_consent');
-              window.dispatchEvent(new Event('artier-cookie-reset'));
-            }}
-            style={footItemStyle}
-            className="hidden md:inline lg:hover:text-primary transition-colors"
-          >
-            {t('footer.cookieSettings')}
-          </button>
           <span style={footItemStyle} className="ml-auto text-muted-foreground/70 tabular-nums hidden sm:inline">
             © {new Date().getFullYear()} {LABELS.SERVICE_NAME}
           </span>

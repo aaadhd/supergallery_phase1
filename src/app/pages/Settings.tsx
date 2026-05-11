@@ -33,21 +33,17 @@ const WITHDRAW_REASON_KEYS: Record<WithdrawReasonId, MessageKey> = {
   other: 'settings.withdrawReasonOther',
 };
 
-/** 콘텐츠 운영 정책 · 화면 모음 알림 설정 기준 */
+/** 콘텐츠 운영 정책 · 화면 모음 알림 설정 기준 (IA USR-STG-05 A-3) */
 export type NotificationSettingsState = {
-  like: boolean;
-  newFollower: boolean;
-  groupExhibitionInvite: boolean;
-  weeklyTheme: boolean;
-  marketing: boolean;
+  /** 내 작품 반응 알림 — 좋아요·팔로우 묶음 (기본 ON) */
+  reactionAlerts: boolean;
+  /** 이벤트 알림 — 응모전 공지·이벤트 (기본 OFF) */
+  eventAlerts: boolean;
 };
 
 const defaultNotifications: NotificationSettingsState = {
-  like: true,
-  newFollower: true,
-  groupExhibitionInvite: true,
-  weeklyTheme: true,
-  marketing: false,
+  reactionAlerts: true,
+  eventAlerts: false,
 };
 
 export function loadNotificationSettings(): NotificationSettingsState {
@@ -56,14 +52,17 @@ export function loadNotificationSettings(): NotificationSettingsState {
     const raw = localStorage.getItem(STORAGE_KEY);
     if (!raw) return defaultNotifications;
     const parsed = JSON.parse(raw) as Record<string, unknown>;
-    if ('groupExhibitionInvite' in parsed && typeof parsed.groupExhibitionInvite === 'boolean') {
-      return { ...defaultNotifications, ...parsed } as NotificationSettingsState;
+    // 신규 포맷
+    if ('reactionAlerts' in parsed) {
+      return {
+        reactionAlerts: typeof parsed.reactionAlerts === 'boolean' ? parsed.reactionAlerts : true,
+        eventAlerts: typeof parsed.eventAlerts === 'boolean' ? parsed.eventAlerts : false,
+      };
     }
+    // 구 포맷 마이그레이션 (like·newFollower·marketing 키)
     return {
-      ...defaultNotifications,
-      like: typeof parsed.like === 'boolean' ? parsed.like : true,
-      newFollower: typeof parsed.follow === 'boolean' ? parsed.follow : true,
-      marketing: typeof parsed.marketing === 'boolean' ? parsed.marketing : false,
+      reactionAlerts: parsed.like !== false && parsed.newFollower !== false,
+      eventAlerts: parsed.marketing === true,
     };
   } catch {
     return defaultNotifications;
@@ -245,13 +244,20 @@ export default function Settings() {
             {t('settings.sectionNotif')}
           </h2>
 
-          <div className="rounded-xl border border-border/50 bg-card divide-y divide-border/40 overflow-hidden mb-4">
+          <div className="rounded-xl border border-border/50 bg-card divide-y divide-border/40 overflow-hidden">
             <div className="px-4">
-              <ToggleRow label={t('settings.notifLike')} checked={notifications.like} onChange={(v) => handleToggle('like', v)} />
-              <ToggleRow label={t('settings.notifNewFollower')} checked={notifications.newFollower} onChange={(v) => handleToggle('newFollower', v)} />
-              <ToggleRow label={t('settings.notifGroupInvite')} checked={notifications.groupExhibitionInvite} onChange={(v) => handleToggle('groupExhibitionInvite', v)} />
-              <ToggleRow label={t('settings.notifWeeklyTheme')} checked={notifications.weeklyTheme} onChange={(v) => handleToggle('weeklyTheme', v)} />
-              <ToggleRow label={t('settings.notifMarketing')} checked={notifications.marketing} onChange={(v) => handleToggle('marketing', v)} />
+              <ToggleRow
+                label={t('settings.notifReactionAlerts')}
+                checked={notifications.reactionAlerts}
+                onChange={(v) => handleToggle('reactionAlerts', v)}
+                hint={t('settings.notifReactionAlertsHint')}
+              />
+              <ToggleRow
+                label={t('settings.notifMarketing')}
+                checked={notifications.eventAlerts}
+                onChange={(v) => handleToggle('eventAlerts', v)}
+                hint={t('settings.notifEventAlertsHint')}
+              />
             </div>
           </div>
 

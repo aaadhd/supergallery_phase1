@@ -20,6 +20,8 @@ type DemoNotif = {
   curationId?: string;
   /** 알림 라우팅 타깃 — type 'event' 클릭 시 /events/:id 응모전 상세로 이동(PRD USR-NTF-01 §1). */
   eventId?: string;
+  /** type 'event' 세부 구분 — 'selected': 선정(강제 발송), 'announcement': 공지(marketing 토글 제어). */
+  subtype?: 'announcement' | 'selected';
   /** explicit 라우팅 override — 기본 type 분기로 표현 안 되는 라우팅(예: 검수 반려 → 프로필 전시 탭 + USR-PRF-12 모달 자동 오픈). */
   navigateTo?: string;
   read?: boolean;

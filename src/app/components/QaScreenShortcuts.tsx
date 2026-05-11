@@ -110,8 +110,19 @@ export function QaScreenShortcuts() {
                 localStorage.setItem(`artier_social_signed_up__${p}`, '1')
               );
               localStorage.setItem('artier_onboarding_done', 'true');
+              // 프로필이 없으면 Kate(id=1) 기본 프로필 주입
+              if (!localStorage.getItem('artier_profile')) {
+                localStorage.setItem('artier_profile', JSON.stringify({
+                  id: '1',
+                  name: '카테',
+                  nickname: '카테',
+                  avatar: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?w=100&h=100&fit=crop',
+                  bio: '빛과 색을 통해 감정을 표현합니다',
+                  email: 'kate@test.com',
+                }));
+              }
               authStore.login();
-              persistMockSession('qa-relogin-auto');
+              persistMockSession('1');
               window.location.replace('/');
             }}
           >

@@ -73,7 +73,7 @@ export default function FlowDemoTools() {
 
   const pushGroupInvite = () => {
     pushDemoNotification({
-      type: 'event',
+      type: 'groupInvite',
       message: t('demo.notifGroupInviteMsg'),
     });
     toast.success(t('demo.toastNotifPushed'));
