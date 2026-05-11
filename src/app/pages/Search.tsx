@@ -1,10 +1,10 @@
 import { useState, useEffect, useMemo, type ReactElement, type ReactNode } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Search as SearchIcon, X, Clock, Users } from 'lucide-react';
+import { Search as SearchIcon, X, Clock, Users, Image as ImageIcon } from 'lucide-react';
 import { useWorkStore, useAuthStore, useProfileStore, authStore, profileStore } from '../store';
 import { imageUrls } from '../imageUrls';
 import { ImageWithFallback } from '../components/ImageWithFallback';
-import { getCoverImage, getThumbCover } from '../utils/imageHelper';
+import { getCoverImage, getThumbCover, getImageCount } from '../utils/imageHelper';
 import { searchWorks, type SearchResults } from '../utils/searchRank';
 import { isWorkVisibleOnPublicFeed } from '../utils/feedVisibility';
 import { getHiddenWorkIdsForReporter, migrateLegacyReportHiddenOnce } from '../utils/reportStorage';
@@ -343,12 +343,21 @@ export default function Search() {
                         onClick={() => navigate(`/exhibitions/${work.id}`)}
                         className="block w-full text-left"
                       >
-                        <div className="aspect-square bg-white rounded-xl overflow-hidden border border-border mb-2">
+                        <div className="relative aspect-square bg-white rounded-xl overflow-hidden border border-border mb-2">
                           <ImageWithFallback
                             src={imageUrls[getThumbCover(work)] || getThumbCover(work)}
                             alt={displayExhibitionTitle(work, t('work.untitled'))}
                             className="w-full h-full object-contain hover-scale"
                           />
+                          {(() => {
+                            const count = getImageCount(work.image);
+                            return count > 1 ? (
+                              <div className="absolute left-2 top-2 z-10 flex items-center gap-1 rounded-full bg-black/60 px-2 py-0.5 text-xs font-medium text-white backdrop-blur-sm">
+                                <ImageIcon className="h-3 w-3" />
+                                {count}
+                              </div>
+                            ) : null;
+                          })()}
                         </div>
                         <h3 className="text-sm font-medium text-foreground truncate lg:group-hover:text-primary transition-colors mb-0.5">
                           {displayExhibitionTitle(work, t('work.untitled'))}
