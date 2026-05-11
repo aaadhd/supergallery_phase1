@@ -231,12 +231,12 @@ export default function Browse() {
   const closeWork = useCallback(() => {
     setSelectedWork(null);
     if (window.location.pathname.startsWith('/exhibitions/')) {
-      window.history.pushState(null, '', '/');
+      navigate(-1);
     }
     requestAnimationFrame(() => {
       window.scrollTo(0, scrollPosRef.current);
     });
-  }, []);
+  }, [navigate]);
 
   // -- Banner controls (Embla) -----------------------------------------------
   const prevBanner = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);

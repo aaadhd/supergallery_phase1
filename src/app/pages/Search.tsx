@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo } from 'react';
+import { useState, useEffect, useMemo, type ReactElement, type ReactNode } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
-import { Search as SearchIcon, X, Clock } from 'lucide-react';
+import { Search as SearchIcon, X, Clock, Users } from 'lucide-react';
 import { useWorkStore, useAuthStore, useProfileStore, authStore, profileStore } from '../store';
 import { imageUrls } from '../imageUrls';
 import { ImageWithFallback } from '../components/ImageWithFallback';
@@ -8,14 +8,77 @@ import { getCoverImage, getThumbCover } from '../utils/imageHelper';
 import { searchWorks, type SearchResults } from '../utils/searchRank';
 import { isWorkVisibleOnPublicFeed } from '../utils/feedVisibility';
 import { getHiddenWorkIdsForReporter, migrateLegacyReportHiddenOnce } from '../utils/reportStorage';
-import type { Work } from '../data';
+import { type Work, type Artist, artists as allArtists } from '../data';
 import { useI18n } from '../i18n/I18nProvider';
-
+import { usePointerCoarse } from '../hooks/usePointerCoarse';
+import { HoverCard, HoverCardTrigger, HoverCardContent } from '../components/ui/hover-card';
+import { Popover, PopoverContent, PopoverTrigger } from '../components/ui/popover';
 import { Button } from '../components/ui/button';
-import { displayExhibitionTitle, displayProminentHeadline } from '../utils/workDisplay';
+import { displayExhibitionTitle } from '../utils/workDisplay';
 import { openConfirm } from '../components/ConfirmDialog';
 
 const MAX_RECENT = 10;
+
+// 그룹 멤버 hover/popover (Browse의 BrowseArtistPeek + MemberRow 단순화 버전)
+function SearchArtistPeek({ coarse, trigger, children }: { coarse: boolean; trigger: ReactElement; children: ReactNode }) {
+  const [open, setOpen] = useState(false);
+  if (coarse) {
+    return (
+      <Popover open={open} onOpenChange={setOpen}>
+        <PopoverTrigger asChild>{trigger}</PopoverTrigger>
+        <PopoverContent className="w-[min(calc(100vw-2rem),20rem)] max-h-[min(70vh,24rem)] overflow-y-auto p-3 z-[60]" align="start" sideOffset={6} onClick={(e) => e.stopPropagation()}>
+          {children}
+        </PopoverContent>
+      </Popover>
+    );
+  }
+  return (
+    <HoverCard openDelay={200} closeDelay={100}>
+      <HoverCardTrigger asChild>{trigger}</HoverCardTrigger>
+      <HoverCardContent align="start" sideOffset={6} className="w-[min(22rem,calc(100vw-2rem))] p-3 z-[60]" onClick={(e) => e.stopPropagation()}>
+        {children}
+      </HoverCardContent>
+    </HoverCard>
+  );
+}
+
+function SearchMemberRow({ artist, onNavigate }: { artist: Artist; onNavigate: (id: string) => void }) {
+  const go = (e: React.MouseEvent) => { e.stopPropagation(); onNavigate(artist.id); };
+  return (
+    <div role="button" tabIndex={0} onClick={go}
+      onKeyDown={(e) => { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); go(e as unknown as React.MouseEvent); } }}
+      className="flex items-center gap-3 p-2 rounded-lg cursor-pointer lg:hover:bg-muted/50 transition-colors"
+    >
+      <img src={artist.avatar} alt={artist.name} className="h-9 w-9 rounded-full object-cover shrink-0" />
+      <div className="min-w-0">
+        <p className="text-sm font-semibold text-foreground truncate">{artist.name}</p>
+        {artist.bio && <p className="text-xs text-muted-foreground truncate">{artist.bio}</p>}
+      </div>
+    </div>
+  );
+}
+
+function buildPeekMembers(work: Work): { members: Artist[]; nonMembers: string[] } {
+  const deduped = <T extends { id?: string; displayName?: string }>(arr: T[], key: (x: T) => string): T[] => {
+    const seen = new Set<string>();
+    return arr.filter((x) => { const k = key(x); if (seen.has(k)) return false; seen.add(k); return true; });
+  };
+  if (work.imageArtists && work.imageArtists.length > 0) {
+    const members = deduped(
+      work.imageArtists.filter((ia) => ia.type === 'member' && ia.memberId)
+        .map((ia) => allArtists.find((a) => a.id === ia.memberId))
+        .filter((a): a is Artist => Boolean(a)),
+      (a) => a.id,
+    );
+    const nonMembers = deduped(
+      work.imageArtists.filter((ia) => ia.type === 'non-member' && !!ia.displayName),
+      (ia) => ia.displayName as string,
+    ).map((ia) => ia.displayName as string);
+    return { members, nonMembers };
+  }
+  const raw = work.coOwners ?? [];
+  return { members: deduped(raw, (a) => a.id), nonMembers: [] };
+}
 
 // PRD/WBS: 로그인=서버 저장 / 비로그인=로컬스토리지. 데모 환경에서는 양쪽 모두 localStorage에 저장하되 키로 분리. 실서버 연동은 Phase 2.
 const GUEST_RECENT_KEY = 'artier_recent_searches__guest';
@@ -60,6 +123,7 @@ function mergeGuestRecentInto(accountKey: string) {
 
 export default function Search() {
   const { t } = useI18n();
+  const coarsePointer = usePointerCoarse();
   const auth = useAuthStore();
   const profile = useProfileStore();
   const profileSig = `${profile.getProfile().nickname}|${profile.getProfile().name}`;
@@ -268,26 +332,67 @@ export default function Search() {
             {/* 결과 그리드 */}
             {displayedWorks.length > 0 && (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                {displayedWorks.map((work) => (
-                  <button
-                    type="button"
-                    key={work.id}
-                    onClick={() => navigate(`/exhibitions/${work.id}`)}
-                    className="group text-left"
-                  >
-                    <div className="aspect-square bg-white rounded-xl overflow-hidden border border-border mb-2">
-                      <ImageWithFallback
-                        src={imageUrls[getThumbCover(work)] || getThumbCover(work)}
-                        alt={displayProminentHeadline(work, t('work.untitled'))}
-                        className="w-full h-full object-contain hover-scale"
-                      />
+                {displayedWorks.map((work) => {
+                  const isGroup = Boolean(work.groupName?.trim()) &&
+                    (work.primaryExhibitionType === 'group' || Boolean(work.coOwners?.length) || work.owner?.type === 'group');
+                  const { members, nonMembers } = isGroup ? buildPeekMembers(work) : { members: [], nonMembers: [] };
+                  return (
+                    <div key={work.id} className="group">
+                      <button
+                        type="button"
+                        onClick={() => navigate(`/exhibitions/${work.id}`)}
+                        className="block w-full text-left"
+                      >
+                        <div className="aspect-square bg-white rounded-xl overflow-hidden border border-border mb-2">
+                          <ImageWithFallback
+                            src={imageUrls[getThumbCover(work)] || getThumbCover(work)}
+                            alt={displayExhibitionTitle(work, t('work.untitled'))}
+                            className="w-full h-full object-contain hover-scale"
+                          />
+                        </div>
+                        <h3 className="text-sm font-medium text-foreground truncate lg:group-hover:text-primary transition-colors mb-0.5">
+                          {displayExhibitionTitle(work, t('work.untitled'))}
+                        </h3>
+                      </button>
+                      {isGroup ? (
+                        <SearchArtistPeek
+                          coarse={coarsePointer}
+                          trigger={
+                            <button
+                              type="button"
+                              onClick={(e) => e.stopPropagation()}
+                              className="flex items-center gap-1 text-xs text-muted-foreground lg:hover:text-foreground transition-colors max-w-full"
+                            >
+                              <Users className="h-3 w-3 shrink-0" />
+                              <span className="truncate">{work.groupName}</span>
+                            </button>
+                          }
+                        >
+                          <p className="text-sm font-semibold text-foreground px-1 mb-2">{t('browse.groupMembersLabel')}</p>
+                          {members.map((m) => (
+                            <SearchMemberRow key={m.id} artist={m} onNavigate={(id) => navigate(`/profile/${id}`)} />
+                          ))}
+                          {nonMembers.map((name) => (
+                            <div key={name} className="flex items-center gap-3 p-2">
+                              <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center shrink-0">
+                                <Users className="h-4 w-4 text-muted-foreground" />
+                              </div>
+                              <p className="text-sm text-foreground">{name}</p>
+                            </div>
+                          ))}
+                        </SearchArtistPeek>
+                      ) : (
+                        <button
+                          type="button"
+                          onClick={(e) => { e.stopPropagation(); navigate(`/profile/${work.artist.id}`); }}
+                          className="text-xs text-muted-foreground lg:hover:text-foreground transition-colors truncate max-w-full text-left"
+                        >
+                          {work.artist.name}
+                        </button>
+                      )}
                     </div>
-                    <h3 className="text-sm font-medium text-foreground truncate lg:group-hover:text-primary transition-colors">
-                      {displayProminentHeadline(work, t('work.untitled'))}
-                    </h3>
-                    <p className="text-xs text-muted-foreground truncate">{work.artist.name}</p>
-                  </button>
-                ))}
+                  );
+                })}
               </div>
             )}
 
@@ -314,7 +419,7 @@ export default function Search() {
                         <button
                           key={term}
                           type="button"
-                          onClick={() => { setQuery(term); setSearchParams({ q: term }); }}
+                          onClick={() => doSearch(term)}
                           className="min-h-[44px] rounded-full border border-border px-4 text-sm text-foreground lg:hover:bg-muted/50"
                         >
                           {term}
