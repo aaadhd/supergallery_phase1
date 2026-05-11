@@ -38,12 +38,8 @@ function readFromStorage(): string[] {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
     const base: string[] = raw !== null
-      ? (Array.isArray(JSON.parse(raw)) ? (JSON.parse(raw) as string[]) : [])
-      : (() => {
-          // 최초 마운트 — 구 curationStore에서 이관
-          const migrated = migrateFromCurationStore();
-          return migrated;
-        })();
+      ? (() => { const p = JSON.parse(raw); return Array.isArray(p) ? (p as string[]) : []; })()
+      : migrateFromCurationStore();
 
     // images-v1 기본 추천 전시 1회 시드 (신규·기존 사용자 모두)
     if (!localStorage.getItem(SEED_MIGRATION_KEY)) {

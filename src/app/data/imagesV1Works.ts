@@ -77,7 +77,7 @@ export function buildImagesV1Works(artistsList: Artist[]): Work[] {
       feedReviewStatus: 'approved',
       pick: true,
       pickBadge: true,
-      uploadedAt: new Date().toISOString(),
+      uploadedAt: new Date(Date.now() - idx * 86400000).toISOString(),
     };
 
     return work;
