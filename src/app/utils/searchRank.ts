@@ -15,11 +15,8 @@ export function searchWorks(pool: Work[], query: string): SearchResults {
   if (!lower) return empty;
 
   const byArtist = pool.filter((w) => w.artist?.name?.toLowerCase().includes(lower));
-  const byGroup = pool.filter((w) => w.groupName?.toLowerCase().includes(lower));
-  const byExhibition = pool.filter((w) =>
-    (w.exhibitionName?.toLowerCase().includes(lower)) ||
-    (w.title?.toLowerCase().includes(lower))
-  );
+  const byGroup = pool.filter((w) => !!w.groupName?.trim() && w.groupName.toLowerCase().includes(lower));
+  const byExhibition = pool.filter((w) => w.exhibitionName?.toLowerCase().includes(lower));
   const byPiece = pool.filter((w) =>
     w.imagePieceTitles?.some((t) => t?.toLowerCase().includes(lower))
   );

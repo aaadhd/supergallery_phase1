@@ -145,8 +145,15 @@ export default function Search() {
   const paramQuery = searchParams.get('q') || '';
   const [query, setQuery] = useState(paramQuery);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const searchTerm = searchParams.get('q') || '';
   type FilterTab = 'all' | 'artist' | 'group' | 'exhibition' | 'piece';
-  const [filterTab, setFilterTab] = useState<FilterTab>('all');
+  const filterTab = ((searchParams.get('tab') as FilterTab) || 'all');
+  const setFilterTab = (tab: FilterTab) => {
+    const params: Record<string, string> = {};
+    if (searchTerm) params.q = searchTerm;
+    if (tab !== 'all') params.tab = tab;
+    setSearchParams(params);
+  };
   useEffect(() => {
     setQuery(searchParams.get('q') || '');
   }, [searchParams]);
@@ -185,14 +192,11 @@ export default function Search() {
     addRecent(trimmed);
     setSearchParams({ q: trimmed });
     setQuery(trimmed);
-    setFilterTab('all');
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (e.key === 'Enter') doSearch(query);
   };
-
-  const searchTerm = searchParams.get('q') || '';
 
   const results = useMemo((): SearchResults => {
     const empty: SearchResults = { all: [], byArtist: [], byGroup: [], byExhibition: [], byPiece: [] };
@@ -333,9 +337,10 @@ export default function Search() {
             {displayedWorks.length > 0 && (
               <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
                 {displayedWorks.map((work) => {
-                  const isGroup = Boolean(work.groupName?.trim()) &&
+                  const hasGroupName = Boolean(work.groupName?.trim());
+                  const isGroupExhibition = hasGroupName &&
                     (work.primaryExhibitionType === 'group' || Boolean(work.coOwners?.length) || work.owner?.type === 'group');
-                  const { members, nonMembers } = isGroup ? buildPeekMembers(work) : { members: [], nonMembers: [] };
+                  const { members, nonMembers } = isGroupExhibition ? buildPeekMembers(work) : { members: [], nonMembers: [] };
                   return (
                     <div key={work.id} className="group">
                       <button
@@ -363,33 +368,40 @@ export default function Search() {
                           {displayExhibitionTitle(work, t('work.untitled'))}
                         </h3>
                       </button>
-                      {isGroup ? (
-                        <SearchArtistPeek
-                          coarse={coarsePointer}
-                          trigger={
-                            <button
-                              type="button"
-                              onClick={(e) => e.stopPropagation()}
-                              className="flex items-center gap-1 text-xs text-muted-foreground lg:hover:text-foreground transition-colors max-w-full"
-                            >
-                              <Users className="h-3 w-3 shrink-0" />
-                              <span className="truncate">{work.groupName}</span>
-                            </button>
-                          }
-                        >
-                          <p className="text-sm font-semibold text-foreground px-1 mb-2">{t('browse.groupMembersLabel')}</p>
-                          {members.map((m) => (
-                            <SearchMemberRow key={m.id} artist={m} onNavigate={(id) => navigate(`/profile/${id}`)} />
-                          ))}
-                          {nonMembers.map((name) => (
-                            <div key={name} className="flex items-center gap-3 p-2">
-                              <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center shrink-0">
-                                <Users className="h-4 w-4 text-muted-foreground" />
+                      {hasGroupName ? (
+                        isGroupExhibition ? (
+                          <SearchArtistPeek
+                            coarse={coarsePointer}
+                            trigger={
+                              <button
+                                type="button"
+                                onClick={(e) => e.stopPropagation()}
+                                className="flex items-center gap-1 text-xs text-muted-foreground lg:hover:text-foreground transition-colors max-w-full"
+                              >
+                                <Users className="h-3 w-3 shrink-0" />
+                                <span className="truncate">{work.groupName}</span>
+                              </button>
+                            }
+                          >
+                            <p className="text-sm font-semibold text-foreground px-1 mb-2">{t('browse.groupMembersLabel')}</p>
+                            {members.map((m) => (
+                              <SearchMemberRow key={m.id} artist={m} onNavigate={(id) => navigate(`/profile/${id}`)} />
+                            ))}
+                            {nonMembers.map((name) => (
+                              <div key={name} className="flex items-center gap-3 p-2">
+                                <div className="h-9 w-9 rounded-full bg-muted flex items-center justify-center shrink-0">
+                                  <Users className="h-4 w-4 text-muted-foreground" />
+                                </div>
+                                <p className="text-sm text-foreground">{name}</p>
                               </div>
-                              <p className="text-sm text-foreground">{name}</p>
-                            </div>
-                          ))}
-                        </SearchArtistPeek>
+                            ))}
+                          </SearchArtistPeek>
+                        ) : (
+                          <span className="flex items-center gap-1 text-xs text-muted-foreground max-w-full">
+                            <Users className="h-3 w-3 shrink-0" />
+                            <span className="truncate">{work.groupName}</span>
+                          </span>
+                        )
                       ) : (
                         <button
                           type="button"
