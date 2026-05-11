@@ -239,6 +239,7 @@ export default function Search() {
             {query && (
               <Button
                 type="button"
+                variant="ghost"
                 onClick={() => { setQuery(''); setSearchParams({}); }}
                 className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 h-10 w-10 flex items-center justify-center rounded-full lg:hover:bg-muted min-h-[44px] min-w-[44px]"
               >
