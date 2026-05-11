@@ -1,30 +1,33 @@
 import type { Work } from '../data';
 
-export function scoreWorkMatch(w: Work, lowerQuery: string): number {
-  if (!lowerQuery) return 0;
-  let s = 0;
-  const t = w.title?.toLowerCase() ?? '';
-  if (t && t.includes(lowerQuery)) s += 10;
-  if (t && t.startsWith(lowerQuery)) s += 6;
-  const an = w.artist?.name?.toLowerCase() ?? '';
-  if (an && an.includes(lowerQuery)) s += 8;
-  if (an && an.startsWith(lowerQuery)) s += 4;
-  const en = w.exhibitionName?.toLowerCase();
-  if (en && en.includes(lowerQuery)) s += 8;
-  if (en && en.startsWith(lowerQuery)) s += 4;
-  const gn = w.groupName?.toLowerCase();
-  if (gn && gn.includes(lowerQuery)) s += 7;
-  if (w.description?.toLowerCase().includes(lowerQuery)) s += 3;
-  if (w.tags?.some((tag) => tag.toLowerCase().includes(lowerQuery))) s += 4;
-  return s;
-}
+export type SearchResults = {
+  /** 4개 필드 union, 중복 제거, uploadedAt 최신순 */
+  all: Work[];
+  byArtist: Work[];
+  byGroup: Work[];
+  byExhibition: Work[];
+  byPiece: Work[];
+};
 
-export function rankWorksBySearchQuery(works: Work[], query: string): Work[] {
+export function searchWorks(pool: Work[], query: string): SearchResults {
   const lower = query.trim().toLowerCase();
-  if (!lower) return works;
-  return [...works]
-    .map((w) => ({ w, s: scoreWorkMatch(w, lower) }))
-    .filter((x) => x.s > 0)
-    .sort((a, b) => b.s - a.s)
-    .map((x) => x.w);
+  const empty: SearchResults = { all: [], byArtist: [], byGroup: [], byExhibition: [], byPiece: [] };
+  if (!lower) return empty;
+
+  const byArtist = pool.filter((w) => w.artist?.name?.toLowerCase().includes(lower));
+  const byGroup = pool.filter((w) => w.groupName?.toLowerCase().includes(lower));
+  const byExhibition = pool.filter((w) =>
+    (w.exhibitionName?.toLowerCase().includes(lower)) ||
+    (w.title?.toLowerCase().includes(lower))
+  );
+  const byPiece = pool.filter((w) =>
+    w.imagePieceTitles?.some((t) => t?.toLowerCase().includes(lower))
+  );
+
+  const seen = new Set<string>();
+  const all = [...byArtist, ...byGroup, ...byExhibition, ...byPiece]
+    .filter((w) => { if (seen.has(w.id)) return false; seen.add(w.id); return true; })
+    .sort((a, b) => (b.uploadedAt ?? '').localeCompare(a.uploadedAt ?? ''));
+
+  return { all, byArtist, byGroup, byExhibition, byPiece };
 }
