@@ -194,7 +194,6 @@ const koMessages = {
   'footer.contact': '문의',
   'footer.terms': '이용약관',
   'footer.privacy': '개인정보처리방침',
-  'footer.cookieSettings': '쿠키 설정',
   'footer.businessInfo': '사업자 정보',
   'footer.businessInfoOpen': '사업자 정보 열기',
   'footer.businessInfoClose': '사업자 정보 닫기',
@@ -447,6 +446,11 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'search.helpItem3': '그룹·동호회 이름',
   'search.removeRecent': '최근 검색 "{term}" 삭제',
   'search.resultsLine': '"{q}" 검색 결과 {n}건',
+  'search.filterAll': '전체',
+  'search.filterArtist': '작가명',
+  'search.filterGroup': '그룹명',
+  'search.filterExhibition': '전시명',
+  'search.filterPiece': '작품명',
   'search.artistsHeading': '작가 ({n})',
   'search.worksHeading': '작품 ({n})',
   'search.followersLabel': '팔로워',
@@ -1110,11 +1114,10 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'settings.theme_light': '밝게',
   'settings.theme_dark': '어둡게',
   'settings.sectionNotif': '알림 설정',
-  'settings.notifLike': '내 작품에 좋아요',
-  'settings.notifNewFollower': '새 팔로워',
-  'settings.notifGroupInvite': '그룹 전시 게시 알림',
-  'settings.notifWeeklyTheme': '기획전 · Pick 알림',
-  'settings.notifMarketing': '마케팅 알림',
+  'settings.notifReactionAlerts': '내 작품 반응 알림',
+  'settings.notifReactionAlertsHint': '좋아요·팔로우',
+  'settings.notifMarketing': '이벤트 알림',
+  'settings.notifEventAlertsHint': '응모전 공지·이벤트',
   'settings.sectionAccountActions': '계정',
   'settings.logoutRow': '로그아웃',
   'settings.withdrawWarning': '탈퇴하면 모든 데이터가 삭제되며 되돌릴 수 없어요.',
@@ -1155,14 +1158,6 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'report.step2Title': '신고가 도착했어요',
   'report.step2Body':
     '운영팀이 확인해드려요. 관련 법에 따른 긴급 건은 우선 처리돼요. 사실에 근거해 신고해주세요.',
-  'cookie.title': '쿠키 사용 안내',
-  'cookie.body':
-    "Proud Gallery는 서비스 이용에 필요한 필수 쿠키를 사용합니다. '전체 동의'를 선택하시면 서비스 개선을 위한 분석 쿠키도 함께 사용됩니다. 자세한 내용은 ",
-  'cookie.privacyLink': '개인정보처리방침',
-  'cookie.bodyAfter': '을 참고해 주세요.',
-  'cookie.acceptAll': '전체 동의',
-  'cookie.essentialOnly': '필수만 동의',
-  'cookie.close': '닫기',
   'profilePhoto.title': '프로필 사진',
   'profilePhoto.lead': '갤러리에서 보이는 프로필 이미지를 변경해요',
   'profilePhoto.change': '사진 변경',
@@ -1463,7 +1458,6 @@ const enMessages: Record<MessageKey, string> = {
   'footer.terms': 'Terms',
   'footer.privacy': 'Privacy',
   'footer.labelCompany': 'Company',
-  'footer.cookieSettings': 'Cookie settings',
   'footer.businessInfo': 'Business info',
   'footer.businessInfoOpen': 'Open business info',
   'footer.businessInfoClose': 'Close business info',
@@ -1715,6 +1709,11 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'search.helpItem3': 'Group or community name',
   'search.removeRecent': 'Remove recent search "{term}"',
   'search.resultsLine': '{n} results for "{q}"',
+  'search.filterAll': 'All',
+  'search.filterArtist': 'Artist name',
+  'search.filterGroup': 'Group name',
+  'search.filterExhibition': 'Exhibition name',
+  'search.filterPiece': 'Work title',
   'search.artistsHeading': 'Artists ({n})',
   'search.worksHeading': 'Works ({n})',
   'search.followersLabel': 'Followers',
@@ -2380,11 +2379,10 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'settings.theme_light': 'Light',
   'settings.theme_dark': 'Dark',
   'settings.sectionNotif': 'Notifications',
-  'settings.notifLike': 'Likes on my work',
-  'settings.notifNewFollower': 'New followers',
-  'settings.notifGroupInvite': 'Group exhibition posts',
-  'settings.notifWeeklyTheme': 'Curated show & Pick alerts',
-  'settings.notifMarketing': 'Marketing',
+  'settings.notifReactionAlerts': 'Reactions to my work',
+  'settings.notifReactionAlertsHint': 'Likes and follows',
+  'settings.notifMarketing': 'Event alerts',
+  'settings.notifEventAlertsHint': 'Contest announcements and events',
   'settings.sectionAccountActions': 'Account',
   'settings.logoutRow': 'Log out',
   'settings.withdrawWarning': 'Deleting your account will permanently remove all data and cannot be undone.',
@@ -2425,14 +2423,6 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'report.step2Title': 'Report received',
   'report.step2Body':
     'Our team will review. Urgent cases required by law are prioritized. Please report based on facts.',
-  'cookie.title': 'Cookies',
-  'cookie.body':
-    'Proud Gallery uses essential cookies to run the service. If you accept all, we also use analytics cookies to improve the product. See our ',
-  'cookie.privacyLink': 'Privacy Policy',
-  'cookie.bodyAfter': ' for details.',
-  'cookie.acceptAll': 'Accept all',
-  'cookie.essentialOnly': 'Essential only',
-  'cookie.close': 'Close',
   'profilePhoto.title': 'Profile photo',
   'profilePhoto.lead': 'Change the image others see on your profile',
   'profilePhoto.change': 'Change photo',
@@ -2770,7 +2760,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 ### 화면 구성
 
 ```
-[메뉴 행]   소개 · 공지사항 · FAQ · 문의 · 이용약관 · 개인정보처리방침 · 쿠키 설정
+[메뉴 행]   소개 · 공지사항 · FAQ · 문의 · 이용약관 · 개인정보처리방침
 [사업자 정보 토글]   ▼ 사업자 정보
 [법정 고지]   이메일 무단 수집 거부 안내 (정보통신망법 §50의2)
 ```
@@ -2793,10 +2783,9 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 ### 구현 체크
 
-- [ ] 푸터 메뉴 7개 (소개·공지사항·FAQ·문의·이용약관·개인정보처리방침·쿠키 설정) 한·영 동일
+- [ ] 푸터 메뉴 6개 (소개·공지사항·FAQ·문의·이용약관·개인정보처리방침) 한·영 동일
 - [ ] 사업자 정보 토글 펼침/접힘 + 라벨·값 한·영 분기
 - [ ] 법정 고지 ko/en 항상 노출
-- [ ] 쿠키 설정 클릭 → CM-05 배너 재진입
 - [ ] 사업자 정보 placeholder → 회사 확정 시 일괄 갱신
 
 ---
@@ -2827,7 +2816,8 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.19 | 2026-05-10 | PM × Claude | 온보딩 재설계 반영: socialSignup 닉네임→생년월일, onboarding splash 제거, 완료 화면 카피 갱신, claim.findMyWorksSub·invite.memberNotice 신규 |
+| v1.20 | 2026-05-12 | PM × Claude | 검색 UI 개편 — search.filterAll·filterArtist·filterGroup·filterExhibition·filterPiece 키 KO·EN 추가 |
+| v1.19 | 2026-05-10 | PM × Claude | 온보딩 재설계 반영: socialSignup 닉네임→생년월일, onboarding splash 제거, 완료 화면 카피 갱신, claim.findMyWorksSub·invite.memberNotice 신규; settings.notifMarketing KO '이벤트 알림', EN 'Event alerts'; A-3 알림 설정 개편 — notifLike·notifNewFollower·notifGroupInvite·notifWeeklyTheme 삭제, notifReactionAlerts·notifReactionAlertsHint·notifEventAlertsHint 신규(KO·EN) |
 | v1.18 | 2026-05-09 | PM × Claude | workDetail.askAboutWork·workInquiry.title KO "이 작품에 대한 문의"→"문의", EN "Ask about this work"→"Inquiry"; upload.nonMemberPreview* 추가, signup.birthHint 중복 제거, settings.withdrawWarn* 추가, admin.report·notice·curation·contest i18n 키 신설; contactEmailValue iproud@i-screammedia.com 확정; EN 누락 키 추가(upload.consentCurationLabel·admin.nav.featured), KO 누락 키 추가(admin.section.operations); i18n 8건 정합; faq.a9 SLA 제거; 헤더 v1.18 정합; report.notifReporterDismissed 삭제; invite.notifAutoMatched 문구 정정("본인 작품을 연결"); settings.notifGroupInvite·notifications.categoryGroupInvite "그룹 전시 게시"로 개념 정정; notifications.filterGroupInvite KO "그룹 초대"→"그룹 전시 게시", EN "Group Invite"→"Group post"; demo.btnNotifGroup KO "그룹 초대"→"그룹 전시 게시" 정정; 이력 행 파일명 제거(i18n 표현으로 교체); 잔재 키 4개 삭제 — login.haveAccount·login.tagline·signup.hasAccount·signup.loginLink (AuthSheet에서 렌더 제거된 UI 요소, sr-only 포함); 코드 주도 잔재 29키(KO+EN 58항목) 추가 삭제 — upload.groupRole*/role*(instructor 잔재 8개), upload.event*/errDuplicateEvent(4개), settings.notifIntro/Channel/Optional/Required/System/SystemHint/WeeklyThemeHint(7개), browse.heroKicker·demo.sampleWorkTitle·workDetail.participants·review.notifNewWork·groupInvite.notif·invite.shareNotReady·report.leadWork/policyNote/okClose(9개) |
 | v1.17 | 2026-05-07 | PM × Claude | 서비스명 Artier → Proud Gallery 전면 치환(brand.name·splash.alt·Proud's Pick → Proud's Pick); 헤더 버전 동기; i18n 키 동기화 — points·admin 잔재·social·event·onboarding·faq 키 삭제, curation·events.results·evt.admin·notif.contestSelected·notifications.category·profile.editWarn·upload.groupRole·upload.roleInfo·badge·settings.notifWeeklyTheme·admin.notice 그룹 KO·EN 추가; upload.reviewNotice 신설; about feat2Desc·feat4Desc·feat5 정합; onboarding concept step 7키 KO·EN 제거 |
 | v1.16 | 2026-05-06 | PM × Claude | profile.removePieceFromExhibition·Confirm·Success 4키 추가(전시에서 빼기 신규 기능); tabGuideWorks 내 작품 탭 진입점 반영; profile.tabHelpWorks 키 삭제(화면에서 단락 제거); nicknameLockedLabel·Hint·ContactCta·categoryNicknameChange·nicknameChangeNotice·nicknameNew·nicknameReason·errNicknameDuplicate 닉네임 변경 불가 관련 키 일괄 삭제(즉시 자율 변경으로 정책 개정) |
