@@ -157,8 +157,8 @@ export default function Search() {
     <div className="min-h-screen bg-background pb-20 md:pb-0">
       {/* Search bar */}
       <div className="bg-background border-b border-border">
-        <div className="mx-auto max-w-[800px] px-4 sm:px-6 py-6 sm:py-10">
-          <div className="relative">
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-6 sm:py-10">
+          <div className="relative max-w-3xl">
             <SearchIcon className="absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground z-10" />
             <input
               type="text"
@@ -184,7 +184,7 @@ export default function Search() {
         </div>
       </div>
 
-      <div className="mx-auto max-w-[800px] px-4 sm:px-6 py-5 sm:py-8">
+      <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-5 sm:py-8">
         {/* No search term yet - show recent & trending */}
         {!searchTerm && (
           <div className="space-y-6 sm:space-y-10">
