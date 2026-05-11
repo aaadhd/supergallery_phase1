@@ -6,11 +6,19 @@
  */
 
 import { useSyncExternalStore } from 'react';
+import manifestRaw from '../data/imagesV1Manifest.json';
 
 const STORAGE_KEY = 'artier_featured_v1';
 const CHANGED_EVENT = 'artier-featured-changed';
 /** 구 curationStore(artier_curation_v1)에서 featuredExhibitionIds 이관용 */
 const LEGACY_CURATION_KEY = 'artier_curation_v1';
+/** images_1 시드 전시 기본 추천 마이그레이션 키 */
+const SEED_MIGRATION_KEY = 'artier_featured_v1_images1_seeded';
+
+/** public/images_1 전시 ID 목록 (항상 추천 전시 기본 포함) */
+const IMAGES_V1_IDS: string[] = (manifestRaw as { entries: unknown[] }).entries.map(
+  (_, i) => `images-v1-${i}`,
+);
 
 function migrateFromCurationStore(): string[] {
   if (typeof window === 'undefined') return [];
@@ -26,19 +34,28 @@ function migrateFromCurationStore(): string[] {
 }
 
 function readFromStorage(): string[] {
-  if (typeof window === 'undefined') return [];
+  if (typeof window === 'undefined') return IMAGES_V1_IDS;
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw !== null) {
-      const list = JSON.parse(raw);
-      return Array.isArray(list) ? (list as string[]) : [];
+    const base: string[] = raw !== null
+      ? (Array.isArray(JSON.parse(raw)) ? (JSON.parse(raw) as string[]) : [])
+      : (() => {
+          // 최초 마운트 — 구 curationStore에서 이관
+          const migrated = migrateFromCurationStore();
+          return migrated;
+        })();
+
+    // images-v1 기본 추천 전시 1회 시드 (신규·기존 사용자 모두)
+    if (!localStorage.getItem(SEED_MIGRATION_KEY)) {
+      const merged = [...new Set([...IMAGES_V1_IDS, ...base])];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+      localStorage.setItem(SEED_MIGRATION_KEY, '1');
+      return merged;
     }
-    // 최초 마운트 — 구 curationStore에서 이관
-    const migrated = migrateFromCurationStore();
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(migrated));
-    return migrated;
+
+    return base;
   } catch {
-    return [];
+    return IMAGES_V1_IDS;
   }
 }
 

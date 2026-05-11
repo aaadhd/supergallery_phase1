@@ -138,7 +138,7 @@ function cleanupOrphanedPieceIds(workId: string, validPieceIds: string[]) {
  * public/images·manifest가 바뀌면 저장된 work.image 경로가 디스크와 어긋나 썸네일 404가 남.
  * 버전을 올리면 시드(현재 manifest 기반)로 다시 채운 뒤 저장된다.
  */
-const WORKS_STORAGE_VERSION = 'local-gallery-v19';
+const WORKS_STORAGE_VERSION = 'local-gallery-v20';
 
 // 초안 타입 정의
 export interface Draft {
@@ -799,6 +799,10 @@ function loadSuspension(): AccountSuspension {
 let suspension = loadSuspension();
 const suspensionListeners: (() => void)[] = [];
 
+// ===== 계정 정지 상태 (Policy §12.3 — Phase 1 범위 밖, Phase 2 예약) =====
+// Phase 1에서는 계정 차원 제재(주의·시한부 정지·영구 정지)를 적용하지 않는다.
+// 이 스토어는 Phase 2 어드민 권한 3단계 분리(ADM-MBR-03) 구현 시 활성화할 예정.
+// Phase 1 코드에서 set()·clear()를 호출하는 화면은 없어야 한다.
 export const accountSuspensionStore = {
   get: () => suspension,
   set: (next: AccountSuspension) => {
@@ -868,6 +872,17 @@ export function performAccountWithdrawal(currentArtistId: string, withdrawReason
   } catch { /* ignore */ }
   // Policy §4: 탈퇴 시 본인 작품 삭제. 본인이 참여 작가인 슬롯 제거 후 이미지 0장이 된 전시는 cascade 삭제.
   // 전시 컨테이너(본인 업로드)는 다른 작가 작품이 남아 있으면 유지.
+  // Policy §3: 탈퇴 작가가 업로드한 모든 전시의 초대 토큰 영구 revoke.
+  // removeWork() 경로는 내부에서 revoke를 처리하지만, 부분 삭제(타 작가 이미지 잔존) 전시는
+  // removeWork()를 거치지 않으므로 여기서 일괄 revoke한다.
+  const myUploadedWorkIds = workStore.getWorks()
+    .filter(w => w.artistId === currentArtistId)
+    .map(w => w.id);
+  if (myUploadedWorkIds.length > 0) {
+    void import('./utils/inviteTokenStore').then(({ revokeInviteToken }) => {
+      myUploadedWorkIds.forEach(id => revokeInviteToken(id));
+    });
+  }
   for (const work of workStore.getWorks()) {
     const images = Array.isArray(work.image) ? work.image : [work.image];
     const slots = work.imageArtists ?? [];
