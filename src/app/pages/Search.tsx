@@ -1,16 +1,14 @@
-import { useState, useEffect, useMemo, useRef } from 'react';
+import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { Search as SearchIcon, X, Clock } from 'lucide-react';
 import { useWorkStore, useAuthStore, useProfileStore, authStore, profileStore } from '../store';
-import { artists } from '../data';
 import { imageUrls } from '../imageUrls';
 import { ImageWithFallback } from '../components/ImageWithFallback';
-import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { getCoverImage, getThumbCover } from '../utils/imageHelper';
+import { searchWorks, type SearchResults } from '../utils/searchRank';
 import { isWorkVisibleOnPublicFeed } from '../utils/feedVisibility';
-import { getHiddenArtistIdsForReporter, getHiddenWorkIdsForReporter, migrateLegacyReportHiddenOnce } from '../utils/reportStorage';
+import { getHiddenWorkIdsForReporter, migrateLegacyReportHiddenOnce } from '../utils/reportStorage';
 import type { Work } from '../data';
-import { rankWorksBySearchQuery } from '../utils/searchRank';
 import { useI18n } from '../i18n/I18nProvider';
 
 import { Button } from '../components/ui/button';
@@ -83,9 +81,8 @@ export default function Search() {
   const paramQuery = searchParams.get('q') || '';
   const [query, setQuery] = useState(paramQuery);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
-  const [suggestOpen, setSuggestOpen] = useState(false);
-  const searchWrapRef = useRef<HTMLDivElement>(null);
-
+  type FilterTab = 'all' | 'artist' | 'group' | 'exhibition' | 'piece';
+  const [filterTab, setFilterTab] = useState<FilterTab>('all');
   useEffect(() => {
     setQuery(searchParams.get('q') || '');
   }, [searchParams]);
@@ -97,26 +94,6 @@ export default function Search() {
     setRecentSearches(loadRecent(storageKey));
   }, [storageKey]);
 
-  const autocompleteSource = useMemo(() => {
-    const set = new Set<string>();
-    for (const w of works) {
-      if (w.title?.trim()) set.add(w.title.trim());
-      if (w.exhibitionName?.trim()) set.add(w.exhibitionName.trim());
-      if (w.groupName?.trim()) set.add(w.groupName.trim());
-    }
-    for (const a of artists) {
-      if (a.name) set.add(a.name);
-    }
-    return [...set];
-  }, [works]);
-
-  const autocompleteSuggestions = useMemo(() => {
-    const q = query.trim().toLowerCase();
-    if (q.length < 1) return [];
-    return autocompleteSource
-      .filter((s) => s.toLowerCase().includes(q))
-      .slice(0, 8);
-  }, [query, autocompleteSource]);
 
   const addRecent = (term: string) => {
     const trimmed = term.trim();
@@ -144,7 +121,7 @@ export default function Search() {
     addRecent(trimmed);
     setSearchParams({ q: trimmed });
     setQuery(trimmed);
-    setSuggestOpen(false);
+    setFilterTab('all');
   };
 
   const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -153,95 +130,52 @@ export default function Search() {
 
   const searchTerm = searchParams.get('q') || '';
 
-  const results = useMemo(() => {
-    if (!searchTerm) return { works: [] as Work[], artists: [] as typeof artists };
-    const lower = searchTerm.toLowerCase();
+  const results = useMemo((): SearchResults => {
+    const empty: SearchResults = { all: [], byArtist: [], byGroup: [], byExhibition: [], byPiece: [] };
+    if (!searchTerm) return empty;
     const hiddenWorks = getHiddenWorkIdsForReporter();
-    const hiddenArtists = getHiddenArtistIdsForReporter();
-    const pool = works.filter(
-      (w: Work) =>
-        !hiddenWorks.has(w.id) && isWorkVisibleOnPublicFeed(w),
-    );
-    const matchedWorks = rankWorksBySearchQuery(pool, searchTerm);
-    const matchedArtists = artists
-      .filter(
-        (a) =>
-          !hiddenArtists.has(a.id) &&
-          (a.name.toLowerCase().includes(lower) || a.bio?.toLowerCase().includes(lower)),
-      )
-      .sort((a, b) => {
-        const as = a.name.toLowerCase().startsWith(lower) ? 0 : 1;
-        const bs = b.name.toLowerCase().startsWith(lower) ? 0 : 1;
-        return as - bs || a.name.localeCompare(b.name);
-      });
-    return { works: matchedWorks, artists: matchedArtists };
+    const pool = works.filter((w: Work) => !hiddenWorks.has(w.id) && isWorkVisibleOnPublicFeed(w));
+    return searchWorks(pool, searchTerm);
   }, [searchTerm, works, auth.isLoggedIn(), profileSig]);
 
-  const hasResults = results.works.length > 0 || results.artists.length > 0;
-  
+  const hasResults = results.all.length > 0;
 
-  useEffect(() => {
-    const onDoc = (e: MouseEvent) => {
-      if (!searchWrapRef.current?.contains(e.target as Node)) setSuggestOpen(false);
-    };
-    document.addEventListener('mousedown', onDoc);
-    return () => document.removeEventListener('mousedown', onDoc);
-  }, []);
+  const displayedWorks = useMemo(() => {
+    switch (filterTab) {
+      case 'artist': return results.byArtist;
+      case 'group': return results.byGroup;
+      case 'exhibition': return results.byExhibition;
+      case 'piece': return results.byPiece;
+      default: return results.all;
+    }
+  }, [filterTab, results]);
+  
 
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
       {/* Search bar */}
       <div className="bg-background border-b border-border">
         <div className="mx-auto max-w-[800px] px-4 sm:px-6 py-6 sm:py-10">
-          <div className="relative" ref={searchWrapRef}>
+          <div className="relative">
             <SearchIcon className="absolute left-4 sm:left-5 top-1/2 -translate-y-1/2 h-5 w-5 sm:h-6 sm:w-6 text-muted-foreground z-10" />
             <input
               type="text"
               value={query}
-              onChange={(e) => {
-                setQuery(e.target.value);
-                setSuggestOpen(true);
-              }}
-              onFocus={() => setSuggestOpen(true)}
+              onChange={(e) => setQuery(e.target.value)}
               onKeyDown={handleKeyDown}
               placeholder={t('search.placeholder')}
               autoFocus
-              role="combobox"
-              aria-expanded={suggestOpen && autocompleteSuggestions.length > 0}
-              aria-autocomplete="list"
               maxLength={100}
               className="w-full pl-12 sm:pl-14 pr-12 sm:pr-14 py-4 sm:py-5 text-base sm:text-base border-2 border-border rounded-2xl focus:outline-none focus:border-primary focus:ring-[3px] focus:ring-primary/10 transition-all bg-card"
             />
             {query && (
               <Button
                 type="button"
-                onClick={() => { setQuery(''); setSearchParams({}); setSuggestOpen(false); }}
+                onClick={() => { setQuery(''); setSearchParams({}); }}
                 className="absolute right-3 sm:right-4 top-1/2 -translate-y-1/2 h-10 w-10 flex items-center justify-center rounded-full lg:hover:bg-muted min-h-[44px] min-w-[44px]"
               >
                 <X className="h-5 w-5 text-muted-foreground" />
               </Button>
-            )}
-            {suggestOpen && autocompleteSuggestions.length > 0 && !searchTerm && (
-              <ul
-                className="absolute left-0 right-0 top-full mt-2 z-20 rounded-xl border border-border bg-card shadow-lg py-1 max-h-64 overflow-y-auto"
-                role="listbox"
-              >
-                <li className="px-3 py-1.5 text-xs font-medium text-muted-foreground uppercase tracking-wide">
-                  {t('search.autocompleteHeading')}
-                </li>
-                {autocompleteSuggestions.map((s) => (
-                  <li key={s} role="option">
-                    <Button
-                      type="button"
-                      onMouseDown={(e) => e.preventDefault()}
-                      onClick={() => doSearch(s)}
-                      className="w-full text-left px-4 py-2.5 text-sm text-foreground lg:hover:bg-muted transition-colors"
-                    >
-                      {s}
-                    </Button>
-                  </li>
-                ))}
-              </ul>
             )}
           </div>
         </div>
@@ -295,145 +229,83 @@ export default function Search() {
 
         {/* Search results */}
         {searchTerm && (
-          <div className="space-y-6 sm:space-y-10">
-            <p className="text-sm sm:text-sm text-muted-foreground">
-              {t('search.resultsLine')
-                .replace('{q}', searchTerm)
-                .replace('{n}', String(results.works.length + results.artists.length))}
+          <div className="space-y-5 sm:space-y-6">
+            {/* 결과 건수 */}
+            <p className="text-sm text-muted-foreground">
+              {t('search.resultsLine').replace('{q}', searchTerm).replace('{n}', String(results.all.length))}
             </p>
 
-            {/* Top Matches (Unified) — 시니어 사용자를 위한 결과 단일화 및 최적 매칭 우선 노출 */}
+            {/* 필터 탭 */}
             {hasResults && (
-              <div className="mb-0">
-                <h2 className="text-sm font-bold text-primary mb-5 uppercase tracking-wider flex items-center gap-2">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary" />
-                  {t('search.autocompleteHeading')}
-                </h2>
-                <div className="flex flex-col gap-3">
-                  {/* Top Artist match */}
-                  {results.artists[0] && (
-                    <button
-                      type="button"
-                      onClick={() => navigate(`/profile/${results.artists[0].id}`)}
-                      className="flex items-center gap-4 w-full p-4 rounded-2xl bg-primary/[0.03] border border-primary/10 lg:hover:bg-primary/[0.06] transition-colors text-left"
-                    >
-                      <Avatar className="h-12 w-12 border-2 border-primary/20">
-                        <AvatarImage src={results.artists[0].avatar} alt={results.artists[0].name} />
-                        <AvatarFallback>{results.artists[0].name[0]}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-base font-bold text-foreground">{results.artists[0].name}</h3>
-                          <span className="text-xs font-bold text-primary bg-primary/10 px-1.5 py-0.5 rounded">{t('browse.artistLabel')}</span>
-                        </div>
-                        {results.artists[0].bio && (
-                          <p className="text-sm text-muted-foreground truncate italic">"{results.artists[0].bio}"</p>
-                        )}
-                      </div>
-                    </button>
-                  )}
-                  {/* Top 2 Work matches */}
-                  {results.works.slice(0, 2).map((work) => (
-                    <button
-                      type="button"
-                      key={work.id}
-                      onClick={() => navigate(`/exhibitions/${work.id}`)}
-                      className="flex items-center gap-4 w-full p-3 rounded-2xl bg-zinc-50 border border-zinc-200 lg:hover:bg-zinc-100 transition-colors text-left"
-                    >
-                      <div className="w-14 h-14 bg-white rounded-lg overflow-hidden border border-zinc-200 shrink-0">
-                        <ImageWithFallback
-                          src={imageUrls[getThumbCover(work)] || getThumbCover(work)}
-                          alt=""
-                          className="w-full h-full object-contain"
-                        />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <div className="flex items-center gap-2">
-                          <h3 className="text-sm font-bold text-foreground truncate">{displayProminentHeadline(work, t('work.untitled'))}</h3>
-                          <span className="text-xs font-bold text-zinc-500 bg-zinc-200 px-1.5 py-0.5 rounded">{t('browse.workLabel')}</span>
-                        </div>
-                        <p className="text-xs text-muted-foreground">{work.artist.name}</p>
-                      </div>
-                    </button>
-                  ))}
-                </div>
+              <div className="flex gap-2 flex-wrap">
+                {(
+                  [
+                    { tab: 'all' as FilterTab, label: t('search.filterAll'), count: results.all.length },
+                    { tab: 'artist' as FilterTab, label: t('search.filterArtist'), count: results.byArtist.length },
+                    { tab: 'group' as FilterTab, label: t('search.filterGroup'), count: results.byGroup.length },
+                    { tab: 'exhibition' as FilterTab, label: t('search.filterExhibition'), count: results.byExhibition.length },
+                    { tab: 'piece' as FilterTab, label: t('search.filterPiece'), count: results.byPiece.length },
+                  ]
+                ).map(({ tab, label, count }) => (
+                  <button
+                    key={tab}
+                    type="button"
+                    onClick={() => count > 0 && setFilterTab(tab)}
+                    className={`min-h-[44px] px-4 py-2 rounded-full text-sm font-medium transition-colors ${
+                      filterTab === tab
+                        ? 'bg-foreground text-white'
+                        : count === 0
+                        ? 'bg-muted/50 text-muted-foreground/40 cursor-default'
+                        : 'bg-muted text-muted-foreground lg:hover:bg-muted/70'
+                    }`}
+                  >
+                    {label} {count}
+                  </button>
+                ))}
               </div>
             )}
 
-            {/* Artist results */}
-            {results.artists.length > 0 && (
-              <div>
-                <h2 className="text-lg font-semibold text-foreground mb-4">
-                  {t('search.artistsHeading').replace('{n}', String(results.artists.length))}
-                </h2>
-                <div className="space-y-3">
-                  {results.artists.map((artist) => (
-                    <button
-                      type="button"
-                      key={artist.id}
-                      onClick={() => navigate(`/profile/${artist.id}`)}
-                      className="flex items-center gap-3 sm:gap-4 w-full p-3 sm:p-4 border-b border-border/40 lg:hover:bg-muted/50 transition-colors text-left"
-                    >
-                      <Avatar className="h-11 w-11 border-2 border-border/40">
-                        <AvatarImage src={artist.avatar} alt={artist.name} />
-                        <AvatarFallback>{artist.name[0]}</AvatarFallback>
-                      </Avatar>
-                      <div className="flex-1 min-w-0">
-                        <h3 className="text-sm sm:text-base font-semibold text-foreground">{artist.name}</h3>
-                        {artist.bio && (
-                          <p className="text-sm text-muted-foreground truncate">{artist.bio}</p>
-                        )}
-                      </div>
-                      <div className="text-xs text-muted-foreground shrink-0">
-                        {t('search.followersLabel')} {artist.followers?.toLocaleString() || 0}
-                      </div>
-                    </button>
-                  ))}
-                </div>
+            {/* 결과 그리드 */}
+            {displayedWorks.length > 0 && (
+              <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
+                {displayedWorks.map((work) => (
+                  <button
+                    type="button"
+                    key={work.id}
+                    onClick={() => navigate(`/exhibitions/${work.id}`)}
+                    className="group text-left"
+                  >
+                    <div className="aspect-square bg-white rounded-xl overflow-hidden border border-border mb-2">
+                      <ImageWithFallback
+                        src={imageUrls[getThumbCover(work)] || getThumbCover(work)}
+                        alt={displayProminentHeadline(work, t('work.untitled'))}
+                        className="w-full h-full object-contain hover-scale"
+                      />
+                    </div>
+                    <h3 className="text-sm font-medium text-foreground truncate lg:group-hover:text-primary transition-colors">
+                      {displayProminentHeadline(work, t('work.untitled'))}
+                    </h3>
+                    <p className="text-xs text-muted-foreground truncate">{work.artist.name}</p>
+                  </button>
+                ))}
               </div>
             )}
 
-            {/* Work results */}
-            {results.works.length > 0 && (
-              <div>
-                <h2 className="text-lg font-semibold text-foreground mb-4">
-                  {t('search.worksHeading').replace('{n}', String(results.works.length))}
-                </h2>
-                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[1.625rem] sm:gap-[2.275rem] lg:gap-[2.6rem]">
-                  {results.works.map((work) => (
-                    <button
-                      type="button"
-                      key={work.id}
-                      onClick={() => navigate(`/exhibitions/${work.id}`)}
-                      className="group text-left"
-                    >
-                      <div className="aspect-square bg-white rounded-xl overflow-hidden border border-border mb-3">
-                        <ImageWithFallback
-                          src={imageUrls[getThumbCover(work)] || getThumbCover(work)}
-                          alt={displayProminentHeadline(work, t('work.untitled'))}
-                          className="w-full h-full object-contain hover-scale"
-                        />
-                      </div>
-                      <h3 className="text-sm font-medium text-foreground truncate lg:group-hover:text-primary transition-colors">
-                        {displayProminentHeadline(work, t('work.untitled'))}
-                      </h3>
-                      <p className="text-xs text-muted-foreground">{work.artist.name}</p>
-                      <p className="text-xs text-muted-foreground mt-1 truncate">
-                        {t('workDetail.exhibitionLine')} · {displayExhibitionTitle(work, t('work.exhibitionFallback'))}
-                      </p>
-                    </button>
-                  ))}
-                </div>
+            {/* 해당 탭 결과 없음 (전체는 결과 있지만 탭 필터 결과 없음) */}
+            {hasResults && displayedWorks.length === 0 && (
+              <div className="text-center py-10">
+                <p className="text-sm text-muted-foreground">{t('search.noResultsHint')}</p>
               </div>
             )}
 
-            {/* No results */}
+            {/* 전체 결과 없음 */}
             {!hasResults && (
               <div className="text-center py-12 sm:py-20">
                 <SearchIcon className="h-12 w-12 text-muted-foreground/20 mx-auto mb-3" />
-                <h3 className="text-sm sm:text-base font-semibold text-foreground mb-2">{t('search.noResults').replace('{query}', searchTerm)}</h3>
-                <p className="text-sm sm:text-sm text-muted-foreground mb-6">{t('search.noResultsHint')}</p>
-
+                <h3 className="text-sm sm:text-base font-semibold text-foreground mb-2">
+                  {t('search.noResults').replace('{query}', searchTerm)}
+                </h3>
+                <p className="text-sm text-muted-foreground mb-6">{t('search.noResultsHint')}</p>
                 {recentSearches.length > 0 && (
                   <div className="mb-6">
                     <p className="text-xs text-muted-foreground mb-2">{t('search.tryRecent')}</p>
@@ -451,11 +323,10 @@ export default function Search() {
                     </div>
                   </div>
                 )}
-
                 <Button
                   type="button"
                   variant="outline"
-                  onClick={() => navigate('/browse')}
+                  onClick={() => navigate('/')}
                   className="min-h-[44px]"
                 >
                   {t('search.goBrowse')}
