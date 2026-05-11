@@ -12,7 +12,6 @@ import { WorkDetailModal } from '../components/WorkDetailModal';
 import { ReportModal } from '../components/ReportModal';
 import { LoginPromptModal } from '../components/LoginPromptModal';
 import { useLoginPrompt } from '../hooks/useLoginPrompt';
-import { getCoverImage } from '../utils/imageHelper';
 import { isWorkVisibleOnPublicFeed } from '../utils/feedVisibility';
 import { pointsOnBrowseDailyVisit } from '../utils/pointsBackground';
 import { useI18n } from '../i18n/I18nProvider';
