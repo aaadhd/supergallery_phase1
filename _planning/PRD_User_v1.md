@@ -1,8 +1,8 @@
-# Proud Gallery — PRD v2.16 · 사용자 앱 (USR)
+# Proud Gallery — PRD v2.17 · 사용자 앱 (USR)
 
 **작성일**: 2026-04-19
-**최종 갱신**: 2026-05-10
-**버전**: v2.16
+**최종 갱신**: 2026-05-12
+**버전**: v2.17
 **상위 참조**: [README.md](./README.md), [IA_ScreenList_v1.md](./IA_ScreenList_v1.md), [Policy_v1.md](./Policy_v1.md), [Copy_v1.md](./Copy_v1.md)
 **본 문서의 목적**: 화면 목록 문서에 정의된 사용자 앱 화면의 실제 동작 기준(수용기준·의존 엔티티·엣지 케이스)을 단일 소스로 문서화. 외주사 QA가 바로 테스트 케이스로 전환 가능한 수준을 지향.
 

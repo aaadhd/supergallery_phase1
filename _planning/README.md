@@ -29,19 +29,20 @@ _planning/
 ├── README.md                 # 문서 규약·ID 체계·서비스 핵심 결정 (현재 파일)
 ├── DELTA.md                  # 직전 핸드오프 이후의 주요 변경 사항 (커밋 단위 묶음)
 ├── IA_ScreenList_v1.md       # 전체 화면 목록·화면 ID 체계·라우트·우선순위
-├── Policy_v1.md              # 서비스 정책 통합본(가입·업로드·초대·신고·인터랙션·응모전·저작권·다국어·쿠키·법무·런칭 전 미해결 항목·연쇄 정리 등)
+├── Policy_v1.md              # 서비스 정책 통합본(가입·업로드·초대·신고·인터랙션·응모전·저작권·다국어·법무·런칭 전 미해결 항목·연쇄 정리 등)
 ├── Copy_v1.md                # UX 문구 가이드(Voice·Tone) + 전체 다국어 사전 (ko/en)
-├── Handoff_Signup_Consent_v1.md   # 가입/약관 동의 문구(이메일 가입·소셜 가입)
-├── Handoff_Terms_v1.md            # 이용약관 초안 전문
-├── Handoff_Privacy_v1.md          # 개인정보처리방침 초안 전문
-├── Handoff_FAQ_v1.md              # FAQ 14문항 원고
-├── Handoff_UserInfo_Contact_v1.md # 사용자 정보/문의 입력 문구
-├── Handoff_Onboarding_v1.md       # 가입 후 온보딩 다단 흐름 + 본인 작품 찾기(claim) 카피
-├── Handoff_Notifications_v1.md    # 인박스 + 검수·신고·Pick·초대 알림 통합 + 채널 라우팅 매트릭스
-├── Handoff_LegalReview_Checklist_v1.md # 변호사 전달용 검토 체크리스트(약관·처리방침 검토 포인트 일람)
-├── Handoff_Event_Consent_v1.md       # 응모전 응모 동의 문구·정책 결정·검토 포인트(USR-UPL-02 ?event= 분기)
 ├── PRD_User_v1.md            # 사용자 앱 화면별 카드(목적·입력·처리·출력·수용기준)
 ├── PRD_Admin_v1.md           # 어드민 화면별 카드(목적·입력·처리·출력·수용기준)
+├── Handoff/
+│   ├── Handoff_Signup_Consent_v1.md   # 가입/약관 동의 문구(이메일 가입·소셜 가입)
+│   ├── Handoff_Terms_v1.md            # 이용약관 초안 전문
+│   ├── Handoff_Privacy_v1.md          # 개인정보처리방침 초안 전문
+│   ├── Handoff_FAQ_v1.md              # FAQ 14문항 원고
+│   ├── Handoff_UserInfo_Contact_v1.md # 사용자 정보/문의 입력 문구
+│   ├── Handoff_Onboarding_v1.md       # 가입 후 온보딩 다단 흐름 + 본인 작품 찾기(claim) 카피
+│   ├── Handoff_Notifications_v1.md    # 인박스 + 검수·신고·Pick·초대 알림 통합 + 채널 라우팅 매트릭스
+│   ├── Handoff_LegalReview_Checklist_v1.md # 변호사 전달용 검토 체크리스트(약관·처리방침 검토 포인트 일람)
+│   └── Handoff_Event_Consent_v1.md       # 응모전 응모 동의 문구·정책 결정·검토 포인트
 └── _screen_specs/
     └── ProudGallery_Screen_Spec_v1.html  # PC 기준 화면 와이어프레임·플로우 설계서(시각 자료. 정책 원문은 Policy_v1.md 우선)
 ```
@@ -56,15 +57,15 @@ _planning/
 | [IA_ScreenList_v1.md](./IA_ScreenList_v1.md) | PM · 디자이너 · 엔지니어 |
 | [Policy_v1.md](./Policy_v1.md) | PM · CS · 법무 · 엔지니어 |
 | [Copy_v1.md](./Copy_v1.md) | PM · UX Writer · 프런트 엔지니어 · 번역 |
-| [Handoff_Signup_Consent_v1.md](./Handoff_Signup_Consent_v1.md) | PM · 외주 개발사 |
-| [Handoff_Terms_v1.md](./Handoff_Terms_v1.md) | PM · 법무 · 외주 개발사 |
-| [Handoff_Privacy_v1.md](./Handoff_Privacy_v1.md) | PM · 법무 · 외주 개발사 |
-| [Handoff_FAQ_v1.md](./Handoff_FAQ_v1.md) | PM · CS · 외주 개발사 |
-| [Handoff_UserInfo_Contact_v1.md](./Handoff_UserInfo_Contact_v1.md) | PM · CS · 외주 개발사 |
-| [Handoff_Onboarding_v1.md](./Handoff_Onboarding_v1.md) | PM · UX Writer · 외주 개발사 (가입 후 흐름 prose) |
-| [Handoff_Notifications_v1.md](./Handoff_Notifications_v1.md) | PM · 운영 · UX Writer · 외주 개발사 (사용자 도달 알림 통합) |
-| [Handoff_LegalReview_Checklist_v1.md](./Handoff_LegalReview_Checklist_v1.md) | PM · 법무 · DPO (변호사 검토 의뢰 시 동봉) |
-| [Handoff_Event_Consent_v1.md](./Handoff_Event_Consent_v1.md) | PM · 법무 · 외주 개발사 (응모전 응모 동의 문구 단일 소스) |
+| [Handoff_Signup_Consent_v1.md](./Handoff/Handoff_Signup_Consent_v1.md) | PM · 외주 개발사 |
+| [Handoff_Terms_v1.md](./Handoff/Handoff_Terms_v1.md) | PM · 법무 · 외주 개발사 |
+| [Handoff_Privacy_v1.md](./Handoff/Handoff_Privacy_v1.md) | PM · 법무 · 외주 개발사 |
+| [Handoff_FAQ_v1.md](./Handoff/Handoff_FAQ_v1.md) | PM · CS · 외주 개발사 |
+| [Handoff_UserInfo_Contact_v1.md](./Handoff/Handoff_UserInfo_Contact_v1.md) | PM · CS · 외주 개발사 |
+| [Handoff_Onboarding_v1.md](./Handoff/Handoff_Onboarding_v1.md) | PM · UX Writer · 외주 개발사 (가입 후 흐름 prose) |
+| [Handoff_Notifications_v1.md](./Handoff/Handoff_Notifications_v1.md) | PM · 운영 · UX Writer · 외주 개발사 (사용자 도달 알림 통합) |
+| [Handoff_LegalReview_Checklist_v1.md](./Handoff/Handoff_LegalReview_Checklist_v1.md) | PM · 법무 · DPO (변호사 검토 의뢰 시 동봉) |
+| [Handoff_Event_Consent_v1.md](./Handoff/Handoff_Event_Consent_v1.md) | PM · 법무 · 외주 개발사 (응모전 응모 동의 문구 단일 소스) |
 | [PRD_User_v1.md](./PRD_User_v1.md) | 개발사 · QA |
 | [PRD_Admin_v1.md](./PRD_Admin_v1.md) | 개발사 · QA · 운영팀 |
 | [_screen_specs/ProudGallery_Screen_Spec_v1.html](_screen_specs/ProudGallery_Screen_Spec_v1.html) | PM · 디자이너 · 외주 개발사 (PC 와이어프레임·플로우) |
@@ -254,7 +255,7 @@ PC 와이어프레임 HTML은 **정책·화면의 원문 단일 소스가 아니
 | **N종 열거 라벨** (검수 4종·신고 액션·반려 4사유·토큰 4상태·운영자 역할 등) | `Policy_v1.md` (각 § 캐노니컬 — §23/§12.1/§3/§17 등) | PRD/IA는 인용·라벨 직접 열거 최소화 |
 | **프로필 옵션 리스트** (외부 링크 6 / 위치 11 / 관심사 15) | `PRD_User_v1.md` USR-PRF-02 | Policy §27.1은 인용 |
 | **닉네임 정책** (전역 unique·자율 변경 불가·1:1 문의 채널·탈퇴 시 영구 잠금·운영팀 변경 시 옛 닉네임 잠금) | `PRD_User_v1.md` USR-PRF-02 | Policy §4.4는 요약·한 줄. 상세·AC는 PRD SSoT |
-| **알림 종류 13종 + UI 매트릭스** (icon·color·메시지 템플릿. 토글 가능 5종(좋아요·팔로우·그룹 전시 게시·기획전·Pick) + 시스템 강제 8종(검수 2·작품 연결·응모전 2·신고 처리 작가 수신 3)) | `PRD_User_v1.md` USR-NTF-01 매트릭스 | Handoff_Notifications는 prose 인용 |
+| **알림 종류 13종 + UI 매트릭스** (icon·color·메시지 템플릿. 토글 가능 2종(내 작품 반응 알림·이벤트 알림) + 강제 수신: 그룹전시 게시·기획전·Pick + 시스템 강제 8종(검수 2·작품 연결·응모전 2·신고 처리 작가 수신 3)) | `PRD_User_v1.md` USR-NTF-01 매트릭스 | Handoff_Notifications는 prose 인용 |
 | 일반 정책/요건 (허용·금지·법무·운영) | `Policy_v1.md` | PRD는 화면에 반영한 구현 명세 + Policy 인용 |
 | PC 와이어·플로우 시각 | `_screen_specs/ProudGallery_Screen_Spec_v1.html` | **원문이 아님** — IA·PRD의 시각 복제물. 변경 시 같은 작업 범위에서 갱신. 상세는 「화면 스펙 HTML 동기화 의무」 |
 | **일반 UI 카피 (i18n 키)** | `Copy_v1.md` — **엄격 SSoT** | **코드 동기화는 항상 Copy_v1.md 먼저 갱신 → 코드 반영**. 카피 사전 단독 lead 금지(예외: 코드↔Copy 일괄 정합 라운드). |

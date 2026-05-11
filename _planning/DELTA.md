@@ -4,6 +4,20 @@
 
 ---
 
+## 2026-05-11
+
+- **planning ↔ 코드 정합 감사 (문서만 수정, 코드 변경 없음)**:
+  - `README.md` 파일 트리·독자 링크 수정 — Handoff 파일들이 `_planning/` 루트가 아닌 `Handoff/` 서브폴더에 실제로 위치함. 파일 트리와 독자 테이블 링크 경로를 `./Handoff/Handoff_*.md` 형태로 수정.
+  - `IA_ScreenList_v1.md` USR-NTF-01 알림 종류 정합 — "11종(토글 4+마케팅+강제 6)" → **"13종(토글 가능 5+강제 8)"** (PRD_User USR-NTF-01 매트릭스 및 README 충돌 방지 구조표 기준). 칩 매핑의 "초대 수락" → "작품 연결", "그룹 초대" → "그룹 전시 게시" 표준어 정정.
+
+- **풀스캔 발견 코드 버그 수정 (4건)**:
+  - `Notifications.tsx` `passesPrefs` 함수 — `case 'system'` 이 `p.marketing` 에 묶여 검수 반려·신고 처리 등 강제 알림이 숨겨지던 버그 수정 → `return true` (불일치-2)
+  - `Notifications.tsx` `passesPrefs` 함수 — `case 'event'` 가 `p.groupExhibitionInvite` 에 묶여 응모전 선정·공지 알림이 꺼지던 버그 수정 → `return true` (Policy §31 N-5 강제 발송 정합, 불일치-4)
+  - `Notifications.tsx` `passesPrefs` 함수 — `case 'curation'` 이 항상 `true` 였으나 IA USR-NTF-01 토글 가능 5종 분류에 따라 → `return p.weeklyTheme` 으로 수정 ("기획전·Pick" 동일 토글, 불일치-3)
+  - `store.ts` `accountSuspensionStore` — Policy §12.3 "Phase 1 범위 밖" 계정 정지 기능임을 주석으로 명시. Phase 2 ADM-MBR-03 구현 시 활성화 예정 (불일치-1)
+
+---
+
 ## 2026-05-10
 
 - **HTML 스펙 전면 재동기화** (코드 주도 변경 7건 일괄 반영):
