@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-# Artier (SuperGallery Phase 1)
+# Proud Gallery (SuperGallery Phase 1)
 
 ## 명령어
 

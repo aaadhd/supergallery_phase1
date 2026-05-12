@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- Last synced: Policy v2.22 / PRD_User v2.15 / PRD_Admin v1.25 / IA v1.14 / Copy v1.18 (2026-05-09) -->
+<!-- Last synced: Policy v2.22 / PRD_User v2.15 / PRD_Admin v1.25 / IA v1.17 / Copy v1.18 (2026-05-12) -->
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
@@ -693,6 +693,11 @@
  <table class="hx">
  <thead><tr><th class="ver">버전</th><th class="date">날짜</th><th>주요 변경</th></tr></thead>
  <tbody>
+ <tr>
+ <td class="ver">v1.9</td>
+ <td class="date">2026-05-12</td>
+ <td>IA v1.17 정합: AUT-02b 경로 직접 진입으로 수정 · EVT-01 캐러셀 제거 — 진행 중(전체 너비 배너 세로 나열)·예정(그리드)·지난 이벤트(접기/펼치기)·하단 알림 CTA 띠 구조로 재작성 · STG-05 2 토글(반응·이벤트)로 갱신</td>
+ </tr>
  <tr>
  <td class="ver">v1.8</td>
  <td class="date">2026-05-09</td>
@@ -1701,7 +1706,7 @@
  <div class="desc">
  <h3>화면 정보</h3>
  <dl>
- <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> USR-AUT-02 "로그인 하기" · 경로 /login?mode=email</dd>
+ <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> 직접 진입 (경로 /login?mode=email)</dd>
  <dt></dt><dd><strong>플로우</strong> 이메일 입력 → 매직 링크 발송 → 메일에서 링크 클릭 → USR-AUT-08 콜백 → 로그인 완료</dd>
  <dt></dt><dd><strong>비밀번호 없음</strong> 이메일 매직 링크 방식만 지원</dd>
  </dl>
@@ -5194,7 +5199,7 @@
  <div class="slide-pad">
  <div class="slide-head">
  <div><div class="crumb">15 · 이벤트</div><h2>이벤트 목록</h2></div>
- <div class="meta"><span class="role">USR</span><span class="id">USR-EVT-01</span><span class="device">PC</span><span class="ver">v1.4</span></div>
+ <div class="meta"><span class="role">USR</span><span class="id">USR-EVT-01</span><span class="device">PC</span><span class="ver">v1.5</span></div>
  </div>
 
  <div class="screen">
@@ -5204,80 +5209,85 @@
  <span class="dots"><span></span><span></span><span></span></span>
  <span class="url">proudgallery.com/events</span>
  </div>
- <div class="viewport" style="background: white; display: flex; flex-direction: column; padding: 0;">
- <!-- 표준 헤더 -->
+ <div class="viewport" style="background: white; display: flex; flex-direction: column; padding: 0; overflow-y: auto;">
  <div class="pc-header">
  <span class="logo">Proud Gallery</span>
  <div class="nav"><span>둘러보기</span><span class="active">이벤트</span></div>
  <div class="actions" style="display:flex;gap:6px;align-items:center;"><div style="background:var(--ink);color:white;padding:5px 12px;border-radius:20px;font-size:11px;font-weight:600;">+ 작품 올리기</div><span>🔍</span><span>🔔</span><span>🌐</span><span>👤</span></div>
  </div>
- <div style="padding: 18px 24px; flex: 1; overflow-y: auto;">
- <div style="font-size: 18px; font-weight: 700; margin-bottom: 16px;">이벤트</div>
- <div style="aspect-ratio: 16/5; background: linear-gradient(135deg, #fef3c7, #fecaca, #ddd6fe); border-radius: 10px; padding: 24px; display: flex; flex-direction: column; justify-content: flex-end; position: relative; margin-bottom: 24px;">
- <span style="display: inline-block; background: var(--ink); color: white; padding: 3px 10px; border-radius: 12px; font-size: 10.5px; font-weight: 700; align-self: flex-start; margin-bottom: 6px;">진행 중</span>
- <div style="font-size: 18px; font-weight: 800;">나의 첫 디지털 캔버스</div>
- <div style="font-size: 11px; color: var(--ink-2); margin-top: 2px; margin-bottom: 14px;">2026-05-01 ~ 2026-05-31</div>
- <div style="display: flex; gap: 8px; align-items: center; position: relative;">
- <span style="background: var(--ink); color: white; padding: 9px 20px; border-radius: 8px; font-size: 12.5px; font-weight: 700;">참여하기 →</span>
- <span style="background: white; color: var(--ink); padding: 9px 16px; border: 1px solid var(--line-2); border-radius: 8px; font-size: 12.5px;">자세히 보기</span>
- <span class="bub" style="position: absolute; top: -10px; right: -10px;">3</span>
+ <div style="padding: 18px 24px; flex: 1;">
+ <div style="font-size: 18px; font-weight: 700; margin-bottom: 12px;">이벤트</div>
+
+ <!-- 진행 중 섹션 -->
+ <div style="font-size: 13px; font-weight: 600; margin-bottom: 8px;">진행 중</div>
+ <div style="position: relative; border-radius: 14px; overflow: hidden; margin-bottom: 20px; height: 180px; background: linear-gradient(135deg, #fef3c7, #fecaca, #ddd6fe);">
+ <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,.75) 50%, transparent 100%);"></div>
+ <div style="position: absolute; bottom: 0; left: 0; right: 0; padding: 16px 20px;">
+ <span style="display: inline-flex; align-items: center; gap: 4px; background: #10b981; color: white; padding: 3px 10px; border-radius: 12px; font-size: 10px; font-weight: 700; margin-bottom: 6px;">● 진행 중</span>
+ <div style="font-size: 16px; font-weight: 800; color: white;">나의 첫 디지털 캔버스</div>
+ <div style="font-size: 10px; color: rgba(255,255,255,.7); margin-top: 2px;">2026-05-01 ~ 2026-05-31</div>
  </div>
- <div style="position: absolute; bottom: 12px; right: 16px; display: flex; gap: 4px;"><span style="width: 8px; height: 2px; background: white; border-radius: 1px;"></span><span style="width: 8px; height: 2px; background: rgba(255,255,255,.5); border-radius: 1px;"></span></div>
- <span class="bub" style="position: absolute; top: -10px; left: -10px;">1</span>
+ <span class="bub" style="position: absolute; top: 8px; left: 8px;">1</span>
  </div>
- <!-- 하단 구독 CTA 띠 -->
- <div style="background: #f8fafc; border: 1px solid var(--line); border-radius: 10px; padding: 12px 16px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; position: relative;">
- <div style="font-size: 11px; color: var(--ink-2);">이벤트 알림 받기</div>
- <div style="display: flex; gap: 6px;">
- <span style="background: var(--ink); color: white; padding: 5px 12px; border-radius: 6px; font-size: 11px; font-weight: 600;">🔔 알림 받기</span>
+
+ <!-- 예정 섹션 -->
+ <div style="font-size: 13px; font-weight: 600; margin-bottom: 8px; position: relative;">예정
+ <span class="bub" style="position: absolute; top: -6px; left: 28px;">2</span>
  </div>
- <span class="bub" style="position: absolute; top: -10px; right: -10px;">4</span>
+ <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 10px; margin-bottom: 16px;">
+ <div style="border: 1px solid var(--line); border-radius: 8px; overflow: hidden;">
+ <div style="height: 70px; background: linear-gradient(135deg, #d1fae5, #dbeafe);"></div>
+ <div style="padding: 8px; font-size: 11px; font-weight: 700;">여름 컨테스트</div>
+ <div style="padding: 0 8px 8px; font-size: 10px; color: var(--ink-3);">2026.06.01 시작</div>
  </div>
- <div style="font-size: 12px; color: var(--ink-3); letter-spacing: .04em; text-transform: uppercase; margin-bottom: 8px;">예정</div>
- <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 18px; position: relative;">
- <div style="border: 1px solid var(--line); border-radius: 8px; padding: 12px;">
- <div style="aspect-ratio: 16/9; background: linear-gradient(135deg, #d1fae5, #dbeafe); border-radius: 4px; margin-bottom: 8px;"></div>
- <div style="font-size: 12px; font-weight: 700; margin-bottom: 2px;">여름 컨테스트</div>
- <div style="font-size: 10.5px; color: var(--ink-3); margin-bottom: 8px;">2026.06.01 시작</div>
- <div style="display: inline-block; padding: 5px 11px; border: 1px solid var(--line-2); border-radius: 6px; font-size: 11px;">🔔 알림 받기</div>
+ <div style="border: 1px solid var(--line); border-radius: 8px; overflow: hidden;">
+ <div style="height: 70px; background: linear-gradient(135deg, #ddd6fe, #fef3c7);"></div>
+ <div style="padding: 8px; font-size: 11px; font-weight: 700;">동호회 그룹전</div>
+ <div style="padding: 0 8px 8px; font-size: 10px; color: var(--ink-3);">2026.07.10 시작</div>
  </div>
- <div style="border: 1px solid var(--line); border-radius: 8px; padding: 12px;">
- <div style="aspect-ratio: 16/9; background: linear-gradient(135deg, #ddd6fe, #fef3c7); border-radius: 4px; margin-bottom: 8px;"></div>
- <div style="font-size: 12px; font-weight: 700; margin-bottom: 2px;">동호회 그룹전</div>
- <div style="font-size: 10.5px; color: var(--ink-3); margin-bottom: 8px;">2026.07.10 시작</div>
- <div style="display: inline-block; padding: 5px 11px; border: 1px solid var(--line-2); border-radius: 6px; font-size: 11px;">🔔 알림 받기</div>
+ <div style="border: 1px dashed var(--line-2); border-radius: 8px; display:flex;align-items:center;justify-content:center;height:100px;color:var(--ink-4);font-size:11px;">빈 상태 UI</div>
  </div>
- <span class="bub" style="position: absolute; top: -10px; right: -10px;">2</span>
+
+ <!-- 지난 이벤트 접기/펼치기 -->
+ <button style="display: flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: var(--ink-3); background: none; border: none; cursor: pointer; min-height: 44px; position: relative;">지난 이벤트 <span style="font-size: 11px; font-weight: 400;">(3)</span> ▼
+ <span class="bub" style="position: absolute; top: 2px; right: -20px;">3</span>
+ </button>
+ </div>
+
+ <!-- 하단 알림 구독 CTA 띠 -->
+ <div style="background: var(--ink); color: white; padding: 20px 24px; text-align: center; position: relative;">
+ <div style="font-size: 14px; font-weight: 700; margin-bottom: 4px;">새 응모전 소식 받기</div>
+ <div style="font-size: 11px; color: rgba(255,255,255,.7); margin-bottom: 12px;">응모전 시작 전 알림을 드려요</div>
+ <span style="display: inline-flex; align-items: center; gap: 6px; background: white; color: var(--ink); padding: 8px 18px; border-radius: 8px; font-size: 12px; font-weight: 700;">🔔 알림 받기</span>
+ <span class="bub" style="position: absolute; top: 8px; right: 8px;">4</span>
  </div>
  </div>
  </div>
  </div>
- <div class="placeholder-note">PC 헤더 + 히어로 캐러셀 + 진행/예정/종료</div>
+ <div class="placeholder-note">진행 중: 전체 너비 배너 카드 세로 나열 · 예정: 1→2→3열 그리드 · 지난 이벤트: ChevronDown 접기/펼치기(그레이스케일) · 하단: 검정 배경 알림 구독 CTA 띠</div>
  </div>
 
  <div class="desc">
  <h3>화면 정보</h3>
  <dl>
- <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> 경로 /events</dd>
- <dt></dt><dd><strong>탭 구조</strong> 응모전(기본) | 기획전 | 일반 이벤트 — 3탭. 탭 전환 시 URL hash 또는 query 변경</dd>
- <dt></dt><dd><strong>응모전 탭</strong> 상단 캐러셀(진행 중 응모전) → 예정 → 종료 섹션 순</dd>
- <dt></dt><dd><strong>기획전 탭</strong> USR-CUR-01 기획전 목록과 동일 컨텐츠(링크 이동 또는 인라인)</dd>
- <dt></dt><dd><strong>일반 이벤트 탭</strong> 공지 성격의 비응모전 이벤트 카드 목록</dd>
+ <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> /events</dd>
+ <dt></dt><dd><strong>구조</strong> 캐러셀 없음. 섹션 3종(진행 중 · 예정 · 지난 이벤트) + 하단 알림 CTA 띠. 기획전·일반 이벤트는 배너(ADM-BNR)를 통해 홈 피드에 노출 — 별도 탭 없음</dd>
+ <dt></dt><dd><strong>지난 이벤트</strong> 해당 이벤트 없으면 섹션 자체 미노출. 있으면 ChevronDown 접기/펼치기</dd>
  </dl>
 
-     <h3 class="components">구성 요소</h3>
+ <h3 class="components">구성 요소</h3>
  <dl>
- <dt><span class="bub">1</span></dt><dd>3탭 바 — 응모전 / 기획전 / 일반 이벤트 (기본: 응모전)</dd>
- <dt><span class="bub">2</span></dt><dd>응모전 탭 — hero 캐러셀(진행 중) + 예정 카드 그리드. CTA "참여하기 →" → USR-EVT-04 / "자세히 보기" → USR-EVT-02</dd>
- <dt><span class="bub">3</span></dt><dd>알림 구독 CTA 띠 — "알림 받기"·"알림 해지" 인라인 토글. 클릭 시 가입 이메일로 자동 구독/해제 + 토스트. 비로그인 → CM-02 (USR-EVT-03)</dd>
- <dt><span class="bub">4</span></dt><dd>기획전 탭 — 기획전 카드 그리드</dd>
- <dt><span class="bub">5</span></dt><dd>일반 이벤트 탭 — 이벤트 카드 목록</dd>
+ <dt><span class="bub">1</span></dt><dd><strong>진행 중</strong> 전체 너비 배너 카드 세로 나열 — 그라디언트 오버레이 · 초록 "● 진행 중" 배지 · 제목 · 기간. 탭 시 → USR-EVT-02. 없으면 빈 상태 UI(달력 아이콘)</dd>
+ <dt><span class="bub">2</span></dt><dd><strong>예정</strong> 카드 그리드 (모바일 1열 → 태블릿 2열 → PC 3열). 없으면 점선 박스 빈 상태</dd>
+ <dt><span class="bub">3</span></dt><dd><strong>지난 이벤트</strong> ChevronDown 버튼(N건 표시) · 펼치면 그레이스케일 카드 그리드 · hover 시 컬러 복원</dd>
+ <dt><span class="bub">4</span></dt><dd><strong>알림 구독 CTA 띠</strong> 검정 배경 · "알림 받기" / "알림 해지" 버튼 → USR-EVT-03. 비로그인 → CM-02</dd>
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
- <li>탭 전환 시 각 탭 컨텐츠 표시, 기본 탭은 응모전</li>
- <li>응모전 탭 — "참여하기" → USR-EVT-04, "알림 받기"·"알림 해지" → USR-EVT-03</li>
- <li>종료 응모전은 회색 + 클릭 시 결과 페이지 (USR-EVT-05)</li>
+ <li>진행 중 카드 탭 → USR-EVT-02. 없으면 빈 상태 UI</li>
+ <li>지난 이벤트 없으면 섹션 미노출, 있으면 접힌 상태로 시작</li>
+ <li>"알림 받기"·"알림 해지" 즉시 저장 + 토스트. 비로그인 → CM-02</li>
+ <li>종료 응모전 클릭 → USR-EVT-05 (선정작 발표 페이지)</li>
  </ol>
  </div>
  </div>
@@ -6218,15 +6228,12 @@
  <div style="background: white; padding: 22px 28px; height: 100%; overflow-y: auto;">
  <div style="font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .08em; color: var(--ink-3); margin-bottom: 8px;">알림 설정</div>
  <div style="border: 1px solid var(--line-2); border-radius: 10px; overflow: hidden; background: white;">
- <div style="display: flex; padding: 14px 16px; border-bottom: 1px solid var(--line-2); align-items: center; justify-content: space-between;"><span style="font-size: 13px;">내 작품에 좋아요</span><div style="width: 36px; height: 20px; background: var(--ink); border-radius: 12px; position: relative;"><div style="position: absolute; right: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></div></div></div>
- <div style="display: flex; padding: 14px 16px; border-bottom: 1px solid var(--line-2); align-items: center; justify-content: space-between;"><span style="font-size: 13px;">새 팔로워</span><div style="width: 36px; height: 20px; background: var(--ink); border-radius: 12px; position: relative;"><div style="position: absolute; right: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></div></div></div>
- <div style="display: flex; padding: 14px 16px; border-bottom: 1px solid var(--line-2); align-items: center; justify-content: space-between;"><span style="font-size: 13px;">그룹 전시 게시 알림</span><div style="width: 36px; height: 20px; background: var(--ink); border-radius: 12px; position: relative;"><div style="position: absolute; right: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></div></div></div>
- <div style="display: flex; padding: 14px 16px; border-bottom: 1px solid var(--line-2); align-items: center; justify-content: space-between;"><span style="font-size: 13px;">기획전 · Pick 알림</span><div style="width: 36px; height: 20px; background: var(--ink); border-radius: 12px; position: relative;"><div style="position: absolute; right: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></div></div></div>
- <div style="display: flex; padding: 14px 16px; align-items: center; justify-content: space-between;"><span style="font-size: 13px;">마케팅 알림</span><div style="width: 36px; height: 20px; background: var(--line-2); border-radius: 12px; position: relative;"><div style="position: absolute; left: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></div></div></div>
+ <div style="display: flex; padding: 14px 16px; border-bottom: 1px solid var(--line-2); align-items: center; justify-content: space-between;"><div><span style="font-size: 13px;">내 작품 반응 알림</span><div style="font-size: 11px; color: var(--ink-3); margin-top: 2px;">좋아요 · 팔로우</div></div><div style="width: 36px; height: 20px; background: var(--ink); border-radius: 12px; position: relative;"><div style="position: absolute; right: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></div></div></div>
+ <div style="display: flex; padding: 14px 16px; align-items: center; justify-content: space-between;"><div><span style="font-size: 13px;">이벤트 알림</span><div style="font-size: 11px; color: var(--ink-3); margin-top: 2px;">응모전 공지 · 이벤트</div></div><div style="width: 36px; height: 20px; background: var(--line-2); border-radius: 12px; position: relative;"><div style="position: absolute; left: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></div></div></div>
  </div>
  </div>
  </div>
- <div class="placeholder-note">USR-STG-01 인라인 섹션 — 5 토글 (내 작품에 좋아요·새 팔로워·그룹 전시 게시 알림·기획전 · Pick 알림·마케팅 알림). 별도 드릴다운 없음.</div>
+ <div class="placeholder-note">USR-STG-01 인라인 섹션 — 2 토글 (내 작품 반응 알림·이벤트 알림). 별도 드릴다운 없음.</div>
  </div>
 
  <div class="desc">
@@ -6238,12 +6245,12 @@
 
  <h3 class="components">구성 요소</h3>
  <dl>
- <dt>—</dt><dd>5 토글 — 내 작품에 좋아요 / 새 팔로워 / 그룹 전시 게시 알림 / 기획전 · Pick 알림 / 마케팅 알림. 시스템 알림(검수 결과·작품 연결 등)은 토글 없음 — 강제 발송.</dd>
+ <dt>—</dt><dd>2 토글 — 내 작품 반응 알림(좋아요·팔로우 통합) / 이벤트 알림(응모전 공지·이벤트). 시스템 알림(검수 결과·작품 연결 등)은 토글 없음 — 강제 발송.</dd>
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
  <li>토글 클릭 즉시 저장 (별도 저장 버튼 X)</li>
- <li>기본값: 좋아요·새 팔로워·그룹 전시 게시·기획전 · Pick ON, 마케팅 OFF</li>
+ <li>기본값: 내 작품 반응 알림 ON, 이벤트 알림 OFF</li>
  </ol>
  </div>
  </div>

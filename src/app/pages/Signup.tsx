@@ -370,7 +370,7 @@ export default function Signup() {
                   </DialogHeader>
                   <div className="flex-1 overflow-hidden">
                     <iframe
-                      src={viewingDoc === 'terms' ? '/terms' : '/privacy'}
+                      src={viewingDoc === 'terms' ? '/terms?embed=1' : '/privacy?embed=1'}
                       className="w-full h-full border-0"
                       title={viewingDoc === 'terms' ? t('signup.agreeTerms') : t('signup.agreePrivacy')}
                     />
