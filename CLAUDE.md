@@ -119,7 +119,6 @@ src/main.tsx
 
 ### 페이지
 - `src/app/pages/Upload.tsx` — 작품 업로드 전체 플로우
-- `src/app/pages/ExhibitionDetail.tsx` — 전시 상세
 - `src/app/pages/ExhibitionRoute.tsx` — `?invite=<token>` (비회원 초대 토큰) → ExhibitionInviteLanding · `?from=work` (레거시 작품 공유) → ExhibitionWorkShareLanding · 그 외 → Browse + 작품 모달 자동 오픈
 - `src/app/pages/ExhibitionInviteLanding.tsx` — 전시 초대장 오픈 화면
 - `src/app/pages/ExhibitionWorkShareLanding.tsx` — `?from=work` 작품 공유 랜딩
