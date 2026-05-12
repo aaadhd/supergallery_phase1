@@ -964,13 +964,13 @@ UI 기본 언어는 한국어(KO)이며 영어(EN) 전환 지원. 가입 폼은 
 - AUT 10 · BRW 1 · EXH 6 · UPL 9 · PRF 13 · EVT 4 · CUR 1 · SRC 2 · NTF 1 · STG 6 · INF 7
 - 별도: USR-EVT-03(P1) · USR-EXH-04(P2 레거시)
 
-**운영 어드민 (ADM) — 18개 P0 카드**
-- DSH 1 · REV 3 · RPT 3 · PCK 2 · CUR 1 · CON 3 · BNR 2 · MBR 2 · INQ 1
+**운영 어드민 (ADM) — 19개 P0 카드**
+- AUT 1 · DSH 1 · REV 3 · RPT 3 · PCK 2 · CUR 1 · CON 3 · BNR 2 · MBR 2 · INQ 1
 - 별도: ADM-PCK-03·ADM-FTD-01·ADM-GEV-01·ADM-NTC-01(P1) · ADM-WRK·ADM-PTN(폐기)
 
 **공통 (CM) — 6개 P0 카드**: CM-01·02·03·06·07·08 (CM-04·CM-05 없음, CM-09 DEV 한정, CM-10 런칭 빌드 차단)
 
-합계: **USR 60 + ADM 18 + CM 6 = 84개 P0 카드** (Phase 1 런칭 범위)
+합계: **USR 60 + ADM 19 + CM 6 = 85개 P0 카드** (Phase 1 런칭 범위)
 
 ### 5.2 P1 — 런칭 권장
 
@@ -1013,7 +1013,7 @@ UI 기본 언어는 한국어(KO)이며 영어(EN) 전환 지원. 가입 폼은 
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.17 | 2026-05-12 | PM × Claude | 코드-IA 풀스캔 정합: AUT-02 "이미 계정이 있으신가요?" 링크 제거·AUT-02b 경로 직접 진입으로 변경·AUT-03 진행바 1/2·AUT-04 2단계로 통합(AUT-05 폐기)·AUT-10 경로 AUT-04 반영; EVT-01 기획전 탭 제거(배너 전환); STG-05 2 토글로 갱신(PM 결정); CM-07 구성 코드 실제 버튼으로 수정; CM 요약 CM-05 제거·6개 P0; §1.2 CUR 섹션 코드 누락 추가; UPL 헤더 카드 수 10→9·PRF 헤더 14→13 정정; §5.1 EXH P0 5→6·UPL 10→9·PRF 14→13 갱신·P0 합계 62→61; USR-AUT-12(계정 정지 안내)·ADM-MBR-03(정지 모달) 제거 — 계정 정지 개념 Phase 1 범위 밖; AUT 헤더 13→12·MBR-02 구성 정지 관련 항목 제거·ADM-MBR 헤더 3→2; §0.3 10→11 영역; §5.1 AUT P0 12→10·ADM CUR 2→1·ADM-MBR-03 별도 항목 제거; P0 합계 USR 61→59·ADM 19→18·전체 86→83; AUT-04 진행 표시바(2/2)→없음(코드 불일치 정정); ADM-CUR-02(추천 전시) ADM-FTD-01로 독립 분리 — 섹션 3.4b→3.5 FTD 신설·BNR/EVT/RPT/MBR 3.5→3.6→3.7→3.8→3.9 순번 조정·§1.3 FTD 추가·§5.2 ADM-FTD-01 P1 명시; ADM-GEV 신설(3.8, 일반 이벤트 /admin/general-events)·§1.3 GEV 추가·§0.3 ADM 12→13 영역; ADM 섹션 nav 그룹 순서로 전면 재정렬(모더레이션→큐레이션→이벤트→배너→회원·커뮤니케이션)·§1.3 표 순서 동기화; ADM-EVT→ADM-CON 코드 변경(응모전=contest 의미 정합); REV-02 경로 "행 탭 or 모달"→우측 인라인 패널(URL 변경 없음)·REV-03 경로 "반려 탭"→패널 내 인라인 폼으로 정정; PCK-01 구성 2-panel 홈으로 전면 재작성·PCK-02 픽 세션 편집 패널로 재작성·PCK-03 별도 탭 없음(세션 목록 통합) 명시; CON-03 경로 /admin/events→/admin/contests?tab=participants 정정; USR-STG-07 테마 설정(밝게/어둡게) 카드 신설·STG 헤더 5→6 카드·STG-01 글꼴→글꼴·테마 갱신; §5.1 STG 5→6·USR 59→60·합계 83→84 |
+| v1.17 | 2026-05-12 | PM × Claude | 코드-IA 풀스캔 정합: AUT-02 "이미 계정이 있으신가요?" 링크 제거·AUT-02b 경로 직접 진입으로 변경·AUT-03 진행바 1/2·AUT-04 2단계로 통합(AUT-05 폐기)·AUT-10 경로 AUT-04 반영; EVT-01 기획전 탭 제거(배너 전환); STG-05 2 토글로 갱신(PM 결정); CM-07 구성 코드 실제 버튼으로 수정; CM 요약 CM-05 제거·6개 P0; §1.2 CUR 섹션 코드 누락 추가; UPL 헤더 카드 수 10→9·PRF 헤더 14→13 정정; §5.1 EXH P0 5→6·UPL 10→9·PRF 14→13 갱신·P0 합계 62→61; USR-AUT-12(계정 정지 안내)·ADM-MBR-03(정지 모달) 제거 — 계정 정지 개념 Phase 1 범위 밖; AUT 헤더 13→12·MBR-02 구성 정지 관련 항목 제거·ADM-MBR 헤더 3→2; §0.3 10→11 영역; §5.1 AUT P0 12→10·ADM CUR 2→1·ADM-MBR-03 별도 항목 제거; P0 합계 USR 61→59·ADM 19→18·전체 86→83; AUT-04 진행 표시바(2/2)→없음(코드 불일치 정정); ADM-CUR-02(추천 전시) ADM-FTD-01로 독립 분리 — 섹션 3.4b→3.5 FTD 신설·BNR/EVT/RPT/MBR 3.5→3.6→3.7→3.8→3.9 순번 조정·§1.3 FTD 추가·§5.2 ADM-FTD-01 P1 명시; ADM-GEV 신설(3.8, 일반 이벤트 /admin/general-events)·§1.3 GEV 추가·§0.3 ADM 12→13 영역; ADM 섹션 nav 그룹 순서로 전면 재정렬(모더레이션→큐레이션→이벤트→배너→회원·커뮤니케이션)·§1.3 표 순서 동기화; ADM-EVT→ADM-CON 코드 변경(응모전=contest 의미 정합); REV-02 경로 "행 탭 or 모달"→우측 인라인 패널(URL 변경 없음)·REV-03 경로 "반려 탭"→패널 내 인라인 폼으로 정정; PCK-01 구성 2-panel 홈으로 전면 재작성·PCK-02 픽 세션 편집 패널로 재작성·PCK-03 별도 탭 없음(세션 목록 통합) 명시; CON-03 경로 /admin/events→/admin/contests?tab=participants 정정; USR-STG-07 테마 설정(밝게/어둡게) 카드 신설·STG 헤더 5→6 카드·STG-01 글꼴→글꼴·테마 갱신; §5.1 STG 5→6·USR 59→60·합계 83→84; §5.1 ADM AUT 1 추가·ADM 18→19·전체 84→85 |
 | v1.16 | 2026-05-12 | PM × Claude | 검색 UI 개편 — USR-SRC-01 자동완성 제거·Enter 키 검색, USR-SRC-02 필터 탭 5종·?tab= URL 동기화·Browse 동일 카드 그리드로 재작성 |
 | v1.15 | 2026-05-10 | PM × Claude | USR-AUT-09 환영 스텝 제거, USR-AUT-10 트리거 직접 진입으로 갱신, USR-AUT-11 스텝 번호 동적화; USR-EXH-07 작품 문의 모달 신설(기존 구현 WorkInquiryModal에 ID 부여), USR-EXH-01 연결에 EXH-07 추가, 섹션 카드 수 6→7 |
 | v1.14 | 2026-05-09 | PM × Claude | ADM-AUT-01 어드민 로그인 화면 신설(/admin/login), ADM-AUT 섹션 코드 추가; USR-EVT-01 이벤트 목록으로 개명; CM-TOS 약관 변경 강제 동의 모달 신설; USR-AUT-10 전화번호 수집 조건 Policy §2.1 정합; USR-STG-05 "그룹 초대"→"그룹 전시 게시", "초대 수락"→"작품 연결" 정정 |

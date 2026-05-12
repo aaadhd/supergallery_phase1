@@ -139,7 +139,7 @@ src/main.tsx
 - `src/app/components/RequiredMark.tsx` — 필수 입력 표시 (빨간 별 + sr-only 라벨)
 
 ### 유틸 / Store
-- `src/app/store.ts` — `WORKS_STORAGE_VERSION` 스토리지 버전 관리 (현재 값 `local-gallery-v18`, 키 `artier_works_version`). `workStore`·`draftStore`·`profileStore`·`connectMemberToSlot`(가입자가 본인 작품 카드 클릭 시 `'non-member'` → `'member'` 승격, race 차단) 등 핵심 스토어·함수가 본 파일 안에 함께 정의됨.
+- `src/app/store.ts` — `WORKS_STORAGE_VERSION` 스토리지 버전 관리 (현재 값 `local-gallery-v21`, 키 `artier_works_version`). `workStore`·`draftStore`·`profileStore`·`connectMemberToSlot`(가입자가 본인 작품 카드 클릭 시 `'non-member'` → `'member'` 승격, race 차단) 등 핵심 스토어·함수가 본 파일 안에 함께 정의됨.
 - `src/app/utils/inviteTokenStore.ts` — 비회원 초대 토큰 스토어. `issueInviteToken`(전시 발행 직후, status `'inactive'`) · `activateInviteToken`(검수 승인) · `deactivateInviteToken`(검수 반려·대기 회귀) · `revokeInviteToken`(전시 삭제·만료, 영구 무효) · `getInviteToken` lazy 만료 평가. 90일 TTL.
 - `src/app/utils/adminGate.ts` — 운영팀 역할 토글
 - `src/app/utils/feedOrdering.ts` — 둘러보기 피드 랭킹
@@ -241,7 +241,7 @@ Phase 1은 **작품 단위 모더레이션만** 다룬다. 사용자 계정 차�
 - **Deprecated (부팅 시 제거)**: `artier_instructor_public_ids`, `artier_pin_comments`, `artier_upload_guide_seen`, `artier_group_canonical_map`, `artier_signup_region`, `artier_pending_signup_realname`, `artier_pending_sms_invite`, `artier_pending_signup_phone`, `artier_invite_messaging_log`, `artier_invite_match_log`, `artier_invite_decline_log`, `artier_admin_issues`, `artier_admin_checklist` — `PointsBootstrap` 마운트 시 `LEGACY_STORAGE_KEYS`로 일괄 정리. sessionStorage `artier_pending_invite_claims`·`artier_geo_demo_cache` — `LEGACY_SESSION_KEYS`로 동일 시점 정리.
 
 ### 기타
-- **버전 관리**: `WORKS_STORAGE_VERSION` (`local-gallery-v18`) 변경 시 works 데이터 자동 재시드
+- **버전 관리**: `WORKS_STORAGE_VERSION` (`local-gallery-v21`) 변경 시 works 데이터 자동 재시드
 - **이벤트 데이터**: `eventStore.ts` 단일 소스 + `artier_managed_events_v4` 영속화. 이벤트·공지 메일 구독은 `eventSubscriptionStore.ts` + `artier_event_subscriptions`.
 - **포인트 회수**: 업로드 후 24시간 이내 삭제 시 AP -20 (`pointsBackground.ts`)
 
