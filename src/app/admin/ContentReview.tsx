@@ -263,7 +263,17 @@ export default function ContentReview() {
 
   return (
     <div className="min-h-full">
-      <h1 className="text-xl font-bold mb-1 text-foreground">콘텐츠 검수</h1>
+      <div className="flex items-center gap-3 mb-1">
+        <h1 className="text-xl font-bold text-foreground">콘텐츠 검수</h1>
+        {(() => {
+          const pendingCount = rows.filter((r) => r.ui === '대기중').length;
+          return pendingCount > 0 ? (
+            <span className="inline-flex items-center rounded-full bg-amber-100 px-2.5 py-0.5 text-xs font-medium text-amber-800">
+              검수 대기 {pendingCount}건
+            </span>
+          ) : null;
+        })()}
+      </div>
       <p className="text-sm text-muted-foreground mb-6">
         검수 통과 전 전시는 둘러보기 피드에 노출되지 않아요. 본인 프로필에선 바로 보여요. 검수 SLA는 1~24시간.
       </p>
@@ -298,7 +308,15 @@ export default function ContentReview() {
 
       {filtered.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
-          조건에 맞는 항목이 없습니다. 신규 작품을 업로드하면 대기 목록에 표시됩니다.
+          <p>조건에 맞는 항목이 없습니다. 신규 작품을 업로드하면 대기 목록에 표시됩니다.</p>
+          {(statusFilter !== '전체' || from || to) && (
+            <button
+              className="mt-3 text-xs text-primary underline-offset-2 hover:underline"
+              onClick={() => { setStatusFilter('전체'); setFrom(''); setTo(''); }}
+            >
+              필터 초기화
+            </button>
+          )}
         </div>
       ) : (
         <div className="border border-border rounded-lg overflow-hidden">

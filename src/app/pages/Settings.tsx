@@ -259,6 +259,9 @@ export default function Settings() {
                 hint={t('settings.notifEventAlertsHint')}
               />
             </div>
+            <p className="px-4 py-3 text-xs text-muted-foreground">
+              {t('settings.notifSystemAlwaysOn')}
+            </p>
           </div>
 
 

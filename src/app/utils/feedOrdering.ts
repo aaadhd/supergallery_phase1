@@ -45,7 +45,8 @@ function randomNoise(source: FeedSource): number {
   const span =
     source === 'pick' ? 10 :
       source === 'featured' ? 13 :
-        source === 'recent' ? 15 : 20;
+        source === 'personalized' ? 15 :
+          source === 'recent' ? 15 : 20;
   return (Math.random() - 0.5) * span;
 }
 
