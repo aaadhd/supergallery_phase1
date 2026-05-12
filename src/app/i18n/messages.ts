@@ -148,7 +148,7 @@ const koMessages = {
 /|둘러보기 피드
 /exhibitions/1|전시 상세·작업물 모달 딥링크 예시(PRD URL)`,
   'flowMap.section04': `4. 그룹전시(업로드에서 자동 분류)
-/exhibitions/group-nature|그룹 전시 상세 예시`,
+/|둘러보기 피드(그룹전시는 피드에서 확인)`,
   'flowMap.section05': `5. 내 프로필 · 작품 보기 · 설정
 /me|내 프로필 (PRD IA)
 /profile|내 프로필 (동일 화면, 예전 경로)
@@ -1022,15 +1022,6 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'exhibition.ogDesc': '의 전시 — Proud Gallery 디지털 갤러리',
   'exhibition.shareManual': '링크를 수동으로 복사해 주세요.',
   'exhibition.shareFail': '공유를 완료하지 못했어요.',
-  'exhibition.soloLightTitle': '빛의 서사',
-  'exhibition.soloLightDesc':
-    '일상 속 빛과 그림자의 순간을 모은 카테 작가의 개인전이에요. 디지털 회화로 기록한 창가, 계절, 그리고 도시의 아침을 한 공간에서 만나 보실 수 있어요.',
-  'exhibition.groupNatureTitle': '자연의 결 — 연합전',
-  'exhibition.groupNatureDesc':
-    '동양화, 수묵, 섬유·도자, 패션 일러스트를 아우르는 여섯 명의 작가가 자연의 질감과 리듬을 각자의 언어로 풀어냅니다. 전통과 현대가 만나는 갤러리형 연합 전시예요.',
-  'exhibition.soloCeramicTitle': '도자, 빛을 담다',
-  'exhibition.soloCeramicDesc':
-    '강미란 작가의 도자 시리즈를 중심으로 한 소규모 전시예요. 유약과 형태가 만들어내는 은은한 반사와 공간감을 강조합니다.',
   'error.title': '문제가 발생했어요',
   'error.description': '일시적인 오류가 발생했어요.\n다시 시도하거나 홈으로 돌아가 주세요.',
   'error.retry': '다시 시도',
@@ -1424,7 +1415,7 @@ const enMessages: Record<MessageKey, string> = {
 /|Browse feed
 /exhibitions/1|Exhibition / work modal deep link (PRD URL)`,
   'flowMap.section04': `4. Group exhibition (from upload tags)
-/exhibitions/group-nature|Sample group exhibition`,
+/|Browse feed (group exhibitions appear in the main feed)`,
   'flowMap.section05': `5. Profile · works · settings
 /me|My profile (PRD IA)
 /profile|My profile (same screen, legacy path)
@@ -2300,15 +2291,6 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'exhibition.shareManual': 'Please copy the link manually.',
   'exhibition.ogDesc': "'s exhibition — Proud Gallery digital gallery",
   'exhibition.shareFail': 'Sharing could not be completed.',
-  'exhibition.soloLightTitle': 'Narrative of Light',
-  'exhibition.soloLightDesc':
-    'A solo show by Jo Ga-yeong gathering everyday light and shadow. Digital paintings of the window, seasons, and city morning in one place.',
-  'exhibition.groupNatureTitle': 'Texture of Nature — Group show',
-  'exhibition.groupNatureDesc':
-    'Six artists across ink, fiber, ceramics, and fashion illustration interpret nature’s texture and rhythm. A gallery-style group exhibition where tradition meets the present.',
-  'exhibition.soloCeramicTitle': 'Ceramics, Holding Light',
-  'exhibition.soloCeramicDesc':
-    'An intimate show centered on Kang Mi-ran’s ceramic series, emphasizing soft glaze reflections and spatial depth.',
   'error.title': 'Something went wrong',
   'error.description': 'A temporary error occurred.\nPlease try again or go back to the home page.',
   'error.retry': 'Try again',
