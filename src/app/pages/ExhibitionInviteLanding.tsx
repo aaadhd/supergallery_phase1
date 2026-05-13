@@ -1,11 +1,8 @@
 import { useEffect, useMemo } from 'react';
 import { useParams, useNavigate, Link, useSearchParams } from 'react-router-dom';
-import { Share2 } from 'lucide-react';
-import { toast } from 'sonner';
 import { useWorkStore, useAuthStore } from '../store';
 import { ImageWithFallback } from '../components/ImageWithFallback';
 import { imageUrls } from '../imageUrls';
-import { Button } from '../components/ui/button';
 import { getCoverImage, getImageCount } from '../utils/imageHelper';
 import { displayExhibitionTitle, displayProminentHeadline } from '../utils/workDisplay';
 import { useI18n } from '../i18n/I18nProvider';
@@ -143,24 +140,6 @@ export default function ExhibitionInviteLanding() {
   const coverSrc = imageUrls[coverKey] || coverKey;
   const inviterName = seed.artist.name;
 
-  const share = async () => {
-    const url = window.location.href;
-    try {
-      if (navigator.share) {
-        await navigator.share({ title: exhibitionTitle, url });
-        return;
-      }
-    } catch {
-      /* 사용자 취소 등 */
-    }
-    try {
-      await navigator.clipboard.writeText(url);
-      toast.success(t('invite.clipboardOk'));
-    } catch {
-      toast.error(t('invite.clipboardFail'));
-    }
-  };
-
   return (
     <div className="min-h-screen bg-background pb-20">
       {/* 전시 헤더 */}
@@ -205,9 +184,30 @@ export default function ExhibitionInviteLanding() {
         ) : (
           <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4 sm:gap-6">
             {exhibitionWorks.map((w) => {
-              const firstImage = getCoverImage(w.image, w.coverImageIndex);
+              const coverIdx = w.coverImageIndex ?? 0;
+              const firstImage = getCoverImage(w.image, coverIdx);
               const count = getImageCount(w.image);
-              return (
+              const pieceTitle = w.imagePieceTitles?.[coverIdx] || w.imagePieceTitles?.[0] || displayProminentHeadline(w, t('work.untitled'));
+              return isInviteFlow ? (
+                <div key={w.id} className="text-left">
+                  <div className="relative aspect-square bg-muted/30 rounded-xl overflow-hidden border border-border">
+                    <ImageWithFallback
+                      src={imageUrls[firstImage] || firstImage}
+                      alt={pieceTitle}
+                      className="w-full h-full object-contain"
+                    />
+                    {count > 1 && (
+                      <div className="absolute left-2 top-2 rounded-full bg-black/70 px-2 py-0.5 text-xs font-medium text-white">
+                        {count}
+                      </div>
+                    )}
+                    <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-3">
+                      <p className="text-sm font-semibold leading-tight text-white">{pieceTitle}</p>
+                      <p className="text-xs text-white/80">{w.artist.name}</p>
+                    </div>
+                  </div>
+                </div>
+              ) : (
                 <button
                   key={w.id}
                   type="button"
@@ -217,7 +217,7 @@ export default function ExhibitionInviteLanding() {
                   <div className="relative aspect-square bg-muted/30 rounded-xl overflow-hidden border border-border">
                     <ImageWithFallback
                       src={imageUrls[firstImage] || firstImage}
-                      alt={displayProminentHeadline(w, t('work.untitled'))}
+                      alt={pieceTitle}
                       className="w-full h-full object-contain hover-scale"
                     />
                     {count > 1 && (
@@ -226,9 +226,7 @@ export default function ExhibitionInviteLanding() {
                       </div>
                     )}
                     <div className="absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/60 to-transparent p-3 lg:opacity-0 lg:group-hover:opacity-100 transition-opacity">
-                      <p className="text-sm font-semibold leading-tight text-white">
-                        {displayProminentHeadline(w, t('work.untitled'))}
-                      </p>
+                      <p className="text-sm font-semibold leading-tight text-white">{pieceTitle}</p>
                       <p className="text-xs text-white/80">{w.artist.name}</p>
                     </div>
                   </div>
@@ -245,7 +243,7 @@ export default function ExhibitionInviteLanding() {
           <div className="rounded-2xl border border-border bg-gradient-to-br from-primary/10 via-muted/30 to-muted/10 p-6 sm:p-8 text-center">
             <p className="text-base sm:text-lg text-foreground leading-relaxed mb-6 max-w-xl mx-auto">
               {isInviteFlow
-                ? t('invite.landingHeadline').replace('{inviter}', inviterName)
+                ? t('invite.landingCtaBody')
                 : t('workDetail.inspireCtaBody').replace('{artist}', inviterName)}
             </p>
             <div className="flex flex-wrap gap-2 justify-center">
@@ -285,18 +283,6 @@ export default function ExhibitionInviteLanding() {
         </section>
       )}
 
-      {/* 재공유 버튼 */}
-      <div className="max-w-[900px] mx-auto px-4 sm:px-6 pb-16 flex justify-center">
-        <Button
-          type="button"
-          onClick={share}
-          variant="outline"
-          className="inline-flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-medium"
-        >
-          <Share2 className="h-4 w-4" />
-          {t('invite.share')}
-        </Button>
-      </div>
     </div>
   );
 }

@@ -27,8 +27,6 @@ export type ManagedEvent = {
   displayEndAt?: string;
   /** 수동 상태. 없으면 startAt/endAt 기준 자동 계산 */
   status?: EventStatus;
-  /** 참여작 공개 여부 */
-  worksPublic: boolean;
   participantsLabel?: string;
   /** 선정작 발표 페이지 공개 토글 */
   publicationOpen?: boolean;
@@ -58,7 +56,6 @@ const SEED_EVENTS: ManagedEvent[] = [
     startAt: '2026-05-01',
     endAt: '2026-05-31',
     status: 'active',
-    worksPublic: true,
   },
   {
     id: '2',
@@ -73,7 +70,6 @@ const SEED_EVENTS: ManagedEvent[] = [
     startAt: '2026-05-01',
     endAt: '2026-06-30',
     status: 'active',
-    worksPublic: true,
   },
 ];
 

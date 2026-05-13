@@ -16,7 +16,7 @@ export function normalizeStoredPieceTitle(raw: unknown): string {
   return s.slice(0, PIECE_TITLE_MAX_LEN);
 }
 
-/** 화면에 쓰는 작품명: 비어 있으면 무제(또는 i18n 문구) */
+/** 화면에 쓰는 작품명: 비어 있으면 "(제목 없음)"(untitledLabel) */
 export function displayPieceTitle(work: Pick<Work, 'title'>, untitledLabel: string): string {
   const s = normalizeStoredPieceTitle((work as { title?: unknown }).title);
   return s ? s : untitledLabel;

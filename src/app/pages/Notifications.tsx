@@ -222,7 +222,7 @@ function passesPrefs(n: Notification, p: NotificationSettingsState): boolean {
   }
 }
 
-/** 칩 ↔ Notification.type 매핑은 N:1 — 큐레이션 칩 = pick + curation, 시스템 칩 = system + invite(초대 수락). */
+/** 칩 ↔ Notification.type 매핑은 N:1 — 큐레이션 칩 = pick + curation, 시스템 칩 = system + invite(작품 연결). */
 
 export default function Notifications() {
   const navigate = useNavigate();
@@ -292,7 +292,7 @@ export default function Notifications() {
     // PRD USR-NTF-01 §1 라우팅 표 정합:
     //  - 기획전 선정 → USR-CUR-01
     //  - 응모전 선정·공지 → USR-EVT-02 응모전 상세 (eventId 있으면)
-    //  - 초대 수락 → USR-PRF-01 프로필 (PRD: 친구가 토큰 가입해 본인 작품 찾기 한 결과)
+    //  - 작품 연결 → USR-PRF-01 프로필 (PRD: 친구가 토큰 가입해 본인 작품 찾기 한 결과)
     if (notif.type === 'curation' && notif.curationId) {
       navigate(`/curations/${notif.curationId}`);
       return;
@@ -307,7 +307,7 @@ export default function Notifications() {
       return;
     }
     if (notif.type === 'groupInvite' && notif.workId) {
-      // PRD §1 — 그룹 초대 알림 클릭 시 해당 전시 상세로 이동.
+      // PRD §1 — 그룹 전시 게시 알림 클릭 시 해당 전시 상세로 이동.
       navigate(`/exhibitions/${notif.workId}`);
       return;
     }

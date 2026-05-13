@@ -171,14 +171,14 @@ export function buildInviteShareText(
   // 친구는 가입 후 본인 작품을 직접 골라 연결하므로 "자동 연결" 약속을 피한다.
   if (tokenStatus === 'inactive') {
     if (locale === 'en') {
-      return `${inviterName} just submitted "${workTitle}" for review. Sign up now and you can pick your work as soon as it goes public.`;
+      return `${inviterName} submitted "${workTitle}" for review and posted your artwork. Sign up now to check it as soon as it goes public.`;
     }
-    return `${inviterName}님이 '${workTitle}' 전시를 신청했어요. 지금 가입해두시면 공개 즉시 본인 작품을 골라보실 수 있어요.`;
+    return `${inviterName}님이 '${workTitle}' 전시를 신청하고 회원님의 그림을 함께 올렸어요. 지금 가입해두시면 공개 즉시 확인할 수 있어요.`;
   }
   if (locale === 'en') {
-    return `${inviterName} invited you to "${workTitle}". Sign up and pick your work.`;
+    return `${inviterName} posted your artwork in "${workTitle}". Sign up to see and confirm it.`;
   }
-  return `${inviterName}님이 '${workTitle}'에 회원님을 초대했어요. 가입하시면 본인 작품을 골라 연결할 수 있어요.`;
+  return `${inviterName}님이 '${workTitle}' 전시에 회원님의 그림을 게시했어요. 지금 가입하고 확인해보세요.`;
 }
 
 /** 외부 변경 구독 (다른 탭의 storage 이벤트 + 같은 탭의 dispatched 이벤트 모두 처리). */

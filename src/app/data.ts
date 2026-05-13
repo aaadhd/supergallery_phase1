@@ -27,7 +27,7 @@ export interface ImageArtistAssignment {
 
 export interface Work {
   id: string;
-  /** 비어 있으면 UI에서 무제(또는 i18n)로 표시 */
+  /** 비어 있으면 UI에서 "(제목 없음)"으로 표시 */
   title: string;
   image: string | string[]; // 1~10장의 이미지 지원
   artistId: string;
@@ -49,7 +49,7 @@ export interface Work {
   // Phase 1 신규 필드
   primaryExhibitionType?: 'solo' | 'group'; // 전시 유형: 업로드 시 선택한 유형 저장
   imageArtists?: ImageArtistAssignment[]; // 이미지별 작가 지정 (인덱스 = 이미지 인덱스)
-  /** image 배열과 동일 순서·길이. 장별 작품명(비어 있으면 표시는 무제). 업로드 시 빈 칸은 전시명으로 채울 수 있음 */
+  /** image 배열과 동일 순서·길이. 장별 작품명(비어 있으면 "(제목 없음)" 표시). 업로드 시 빈 칸은 전시명으로 채울 수 있음 */
   imagePieceTitles?: string[];
   /**
    * image 배열과 동일 순서·길이. piece 안정 식별자 (Policy §15.4 / §32.1 #8b 정합).

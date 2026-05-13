@@ -30,7 +30,6 @@ type DraftState = {
   displayStartAt: string;
   displayEndAt: string;
   participantsLabel: string;
-  worksPublic: boolean;
   subtype: EventSubtype;
   status: EventStatus | '';
   publicationOpen: boolean;
@@ -47,7 +46,6 @@ const emptyDraft: DraftState = {
   displayStartAt: '',
   displayEndAt: '',
   participantsLabel: '',
-  worksPublic: true,
   subtype: 'irregular',
   status: '',
   publicationOpen: false,
@@ -124,7 +122,6 @@ export default function ContestManagement() {
       displayStartAt: ev.displayStartAt ?? '',
       displayEndAt: ev.displayEndAt ?? '',
       participantsLabel: ev.participantsLabel ?? '',
-      worksPublic: ev.worksPublic,
       subtype: ev.subtype ?? 'irregular',
       status: ev.status ?? '',
       publicationOpen: ev.publicationOpen ?? false,
@@ -195,7 +192,6 @@ export default function ContestManagement() {
       displayStartAt: displayStart,
       displayEndAt: displayEnd,
       participantsLabel: draft.participantsLabel.trim() || undefined,
-      worksPublic: draft.worksPublic,
       status: draft.status || undefined,
       publicationOpen: draft.publicationOpen,
       publishedAt: draft.publishedAt.trim() || undefined,
@@ -338,10 +334,6 @@ export default function ContestManagement() {
                       <option value="regular">{t('admin.contest.subtypeRegular')}</option>
                       <option value="irregular">{t('admin.contest.subtypeIrregular')}</option>
                     </select>
-                    <label className="flex items-center gap-2 text-sm text-foreground px-1">
-                      <input type="checkbox" checked={draft.worksPublic} onChange={(e) => setDraft((d) => ({ ...d, worksPublic: e.target.checked }))} />
-                      {t('admin.contest.worksPublicLabel')}
-                    </label>
                     <div className="sm:col-span-2 pt-3 border-t border-border space-y-2">
                       <p className="text-xs font-semibold text-foreground">{t('admin.contest.publicationTitle')}</p>
                       <label className="flex items-center gap-2 text-sm text-foreground">

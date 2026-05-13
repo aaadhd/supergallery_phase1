@@ -125,7 +125,7 @@ export default function FeaturedManagement() {
                   </div>
                 )}
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate">{displayExhibitionTitle(w, '제목 없음')}</p>
+                  <p className="text-sm font-medium text-foreground truncate">{displayExhibitionTitle(w, '(제목 없음)')}</p>
                   <p className="text-xs text-muted-foreground truncate">{w.artist?.name ?? w.groupName ?? '—'}</p>
                 </div>
                 <div className="flex items-center gap-2 shrink-0">
@@ -210,7 +210,7 @@ export default function FeaturedManagement() {
                           <div className="w-12 h-12 rounded bg-muted border border-border shrink-0" />
                         )}
                         <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-foreground truncate">{displayExhibitionTitle(w, '제목 없음')}</p>
+                          <p className="text-sm font-medium text-foreground truncate">{displayExhibitionTitle(w, '(제목 없음)')}</p>
                           <p className="text-xs text-muted-foreground truncate">{w.artist?.name ?? w.groupName ?? '—'}</p>
                           <p className="text-[10px] text-muted-foreground">{w.uploadedAt?.slice(0, 10) ?? ''}</p>
                         </div>

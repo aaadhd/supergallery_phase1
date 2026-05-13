@@ -33,6 +33,7 @@ export default function EventDetail() {
 
   const eventStatus = event ? deriveEventStatus(event) : null;
   const isEnded = eventStatus === 'ended';
+  const isScheduled = eventStatus === 'scheduled';
 
   const myEntry = useMemo(() => {
     if (!event || !auth.isLoggedIn()) return null;
@@ -58,7 +59,7 @@ export default function EventDetail() {
   // ?entry=open 자동 오픈 (USR-EVT-04 진입 경로)
   useEffect(() => {
     if (searchParams.get('entry') !== 'open') return;
-    if (!event || isEnded || alreadySubmitted) {
+    if (!event || isEnded || isScheduled || alreadySubmitted) {
       // 응모 불가 상태면 쿼리 파라미터만 제거
       const next = new URLSearchParams(searchParams);
       next.delete('entry');
@@ -147,6 +148,10 @@ export default function EventDetail() {
           {isEnded ? (
             <div className="flex sm:inline-flex items-center justify-center gap-2 px-5 sm:px-8 py-3 sm:py-3.5 bg-muted text-muted-foreground rounded-lg text-sm font-medium cursor-not-allowed w-full sm:w-auto">
               {t('events.detailEnded')}
+            </div>
+          ) : isScheduled ? (
+            <div className="flex sm:inline-flex items-center justify-center gap-2 px-5 sm:px-8 py-3 sm:py-3.5 bg-muted text-muted-foreground rounded-lg text-sm font-medium cursor-not-allowed w-full sm:w-auto">
+              {t('events.detailScheduled')}
             </div>
           ) : alreadySubmitted ? (
             <div className="flex flex-wrap gap-2">

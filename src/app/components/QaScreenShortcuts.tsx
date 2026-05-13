@@ -106,6 +106,9 @@ export function QaScreenShortcuts() {
           <DropdownMenuItem
             className="cursor-pointer"
             onSelect={() => {
+              // 계정 정지·탈퇴 상태 초기화 (Layout 강제 로그아웃 방지)
+              localStorage.removeItem('artier_account_suspension');
+              localStorage.removeItem('artier_withdrawn_artists');
               ['kakao', 'google', 'apple'].forEach((p) =>
                 localStorage.setItem(`artier_social_signed_up__${p}`, '1')
               );
@@ -160,11 +163,7 @@ export function QaScreenShortcuts() {
               {t('footer.qaOnboarding')}
             </Link>
           </DropdownMenuItem>
-          <DropdownMenuItem asChild>
-            <Link to="/auth/verify?demo=expired" className={linkCls}>
-              {t('footer.qaAuthVerifyDemoExpired')}
-            </Link>
-          </DropdownMenuItem>
+
 
           <DropdownMenuSeparator />
           <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">

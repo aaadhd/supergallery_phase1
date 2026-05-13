@@ -4,7 +4,7 @@ import { MapPin, Plus, Eye, EyeOff, X, ThumbsUp, Users, Folder, MoreHorizontal, 
 import { Image as ImageIcon, User as UserIcon } from 'lucide-react';
 import ProfileImageModal from '../components/ProfileImageModal';
 import { artists, type Work } from '../data';
-import { workStore, draftStore, profileStore, userInteractionStore, followStore, useFollowStore, useAuthStore, withdrawnArtistStore } from '../store';
+import { workStore, draftStore, profileStore, userInteractionStore, followStore, useFollowStore, withdrawnArtistStore } from '../store';
 import { Avatar, AvatarFallback, AvatarImage } from '../components/ui/avatar';
 import { Button } from '../components/ui/button';
 import {
@@ -46,6 +46,7 @@ import { containsProfanity } from '../utils/profanityFilter';
 import { WorkDetailModal } from '../components/WorkDetailModal';
 import { hydrateGroupWorks } from '../groupData';
 import { isWorkPublic, isWorkHidden } from '../utils/workVisibility';
+import { InviteShareButton } from '../components/InviteShareButton';
 
 const LOCATION_VALUE_TO_KEY: Record<string, MessageKey> = {
   대한민국: 'profile.locKR',
@@ -70,13 +71,22 @@ function locationDisplayLabel(stored: string, tr: (k: MessageKey) => string): st
 type ProfileTabValue = 'exhibition' | 'works' | 'likes' | 'saved' | 'drafts';
 
 // Profile 페이지 — Phase 1 MVP
+// 좋아요·저장 탭: member 슬롯이 존재하고 전부 탈퇴한 경우 미노출 (Policy §4)
+function hasOnlyWithdrawnMemberArtists(w: Work): boolean {
+  const memberIds = (w.imageArtists ?? [])
+    .filter(a => a.type === 'member' && a.memberId)
+    .map(a => a.memberId!);
+  const unique = [...new Set(memberIds)];
+  if (unique.length > 0) return unique.every(mid => withdrawnArtistStore.isWithdrawn(mid));
+  return withdrawnArtistStore.isWithdrawn(w.artistId);
+}
+
 export default function Profile() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const { t, locale } = useI18n();
   const follows = useFollowStore();
-  const auth = useAuthStore();
   const [exhibitionFilter, setExhibitionFilter] = useState<'all' | 'solo' | 'group'>('all');
   const [onlyMyUploads, setOnlyMyUploads] = useState(false);
   const [showFollowersModal, setShowFollowersModal] = useState(false);
@@ -84,6 +94,7 @@ export default function Profile() {
   const loginPrompt = useLoginPrompt();
   const [detailWorkId, setDetailWorkId] = useState<string | null>(null);
   const [worksViewerIndex, setWorksViewerIndex] = useState<number | null>(null);
+  const swipeTouchStartX = useRef<number | null>(null);
   const [profileTab, setProfileTab] = useState<ProfileTabValue>('exhibition');
 
   /**
@@ -114,7 +125,6 @@ export default function Profile() {
   const [savedIds, setSavedIds] = useState(() => userInteractionStore.getSaved());
   const [savedProfile, setSavedProfile] = useState(() => profileStore.getProfile());
   const [rejectedModalWork, setRejectedModalWork] = useState<Work | null>(null);
-  const [showRejectionHistory, setShowRejectionHistory] = useState(false);
   const [renamingFlatImage, setRenamingFlatImage] = useState<{ work: Work; imgIndex: number; pieceTitle: string } | null>(null);
   const [renameValue, setRenameValue] = useState('');
 
@@ -302,8 +312,8 @@ export default function Profile() {
     const seen = new Set<string>();
     return combined.filter(w => { if (seen.has(w.id)) return false; seen.add(w.id); return true; });
   }, [storeWorks]);
-  const likedWorks = useMemo(() => allWorksPool.filter(w => likedIds.includes(w.id) && w.artistId !== profileArtist.id), [allWorksPool, likedIds, profileArtist.id]);
-  const savedWorks = useMemo(() => allWorksPool.filter(w => savedIds.includes(w.id) && w.artistId !== profileArtist.id), [allWorksPool, savedIds, profileArtist.id]);
+  const likedWorks = useMemo(() => allWorksPool.filter(w => likedIds.includes(w.id) && w.artistId !== profileArtist.id && !hasOnlyWithdrawnMemberArtists(w)), [allWorksPool, likedIds, profileArtist.id]);
+  const savedWorks = useMemo(() => allWorksPool.filter(w => savedIds.includes(w.id) && w.artistId !== profileArtist.id && !hasOnlyWithdrawnMemberArtists(w)), [allWorksPool, savedIds, profileArtist.id]);
 
   // 전시 유형 판별 — primaryExhibitionType 우선, 레거시 fallback
   const isGroupExhibition = (w: Work) => {
@@ -1002,7 +1012,7 @@ export default function Profile() {
                                         const hasNonMemberSlots = work.imageArtists?.some((a) => a.type === 'non-member');
                                         const inActiveCuration = curationStore.getCuratedExhibitions().some((c) => c.pieces.some((p) => p.workId === work.id));
                                         const hasActiveCuration = work.pick === true || work.pickBadge === true || inActiveCuration;
-                                        const descParts = [t('profile.deleteWorkPermanent')];
+                                        const descParts = [t('profile.deleteExhibitionPermanent')];
                                         if (hasNonMemberSlots) descParts.push(t('profile.deleteWorkHasPendingInvites'));
                                         if (hasActiveCuration) descParts.push(t('profile.deleteWorkActiveCuration'));
                                         const ok = await openConfirm({
@@ -1035,10 +1045,16 @@ export default function Profile() {
                               </div>
                             )}
 
-                            {/* 하단 배지 (검수 상태) */}
-                            {((isMyUpload || isMyClaimedSlot) && work.feedReviewStatus === 'pending') ||
+                            {/* 하단 배지 (검수 상태 + 비공개) */}
+                            {(isMyUpload && work.isHidden) ||
+                              ((isMyUpload || isMyClaimedSlot) && work.feedReviewStatus === 'pending') ||
                               (isMyUpload && work.feedReviewStatus === 'rejected') ? (
                               <div className="absolute left-2 bottom-2 z-10 flex flex-col gap-1">
+                                {isMyUpload && work.isHidden && (
+                                  <span className="inline-flex rounded-full px-2 py-0.5 text-xs font-medium bg-amber-500/95 text-white backdrop-blur-sm w-fit">
+                                    {t('review.cardBadgeHidden')}
+                                  </span>
+                                )}
                                 {(isMyUpload || isMyClaimedSlot) && work.feedReviewStatus === 'pending' && (
                                   <span
                                     className="inline-flex rounded-full px-2 py-0.5 text-xs font-medium bg-muted/95 text-foreground border border-border backdrop-blur-sm w-fit"
@@ -1074,18 +1090,17 @@ export default function Profile() {
                                 {work.groupName}
                               </p>
                             ) : null}
-                            {isMyUpload && (() => {
-                              // 비회원 슬롯 가시성 (Policy §3 v2.14 — 작가 운영 가시성)
-                              const nonMembers = (work.imageArtists ?? []).filter((ia) => ia?.type === 'non-member');
-                              if (nonMembers.length === 0) return null;
-                              const firstName = (nonMembers[0] as { displayName?: string }).displayName?.trim();
-                              const more = nonMembers.length > 1 ? t('profile.nonMemberSlotsMore').replace('{n}', String(nonMembers.length - 1)) : '';
-                              return (
-                                <p className="text-xs text-muted-foreground mt-0.5 truncate">
-                                  {t('profile.nonMemberSlotsLabel').replace('{name}', firstName || t('profile.nonMemberSlotsUnnamed'))}{more}
-                                </p>
-                              );
-                            })()}
+                            {/* 비회원 슬롯 인라인 알리기 — 업로더 한정, revoked 아닐 때 */}
+                            {isMyUpload && work.imageArtists?.some(a => a.type === 'non-member') && (
+                              <div className="mt-1.5" onClick={e => e.stopPropagation()}>
+                                <InviteShareButton
+                                  workId={work.id}
+                                  workTitle={displayExhibitionTitle(work, t('work.untitled'))}
+                                  inviterName={savedProfile.name || displayName}
+                                  compact
+                                />
+                              </div>
+                            )}
                           </div>
                         </div>
                         );
@@ -1171,22 +1186,16 @@ export default function Profile() {
                               </DropdownMenu>
                             </div>
 
-                            {/* 개별 이미지 상태 뱃지 (내 작품 탭) — Policy §12.2.1 hidden 포함 4종 */}
-                            {((fi.work.feedReviewStatus && fi.work.feedReviewStatus !== 'approved') || fi.work.isHidden) && (
+                            {/* 개별 이미지 상태 뱃지 (내 작품 탭) — pending/rejected만, 비공개는 내 전시 탭에서 표시 */}
+                            {fi.work.feedReviewStatus && fi.work.feedReviewStatus !== 'approved' && (
                               <div className="absolute left-2 bottom-2 z-10">
-                                {fi.work.isHidden ? (
-                                  <span className="inline-flex rounded-full px-2 py-0.5 text-xs font-medium backdrop-blur-sm bg-amber-500/90 text-white">
-                                    {t('review.cardBadgeHidden')}
-                                  </span>
-                                ) : (
-                                  <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium backdrop-blur-sm ${
-                                    fi.work.feedReviewStatus === 'pending'
-                                      ? 'bg-muted/90 text-foreground border border-border'
-                                      : 'bg-red-500/90 text-white'
-                                  }`}>
-                                    {fi.work.feedReviewStatus === 'pending' ? t('review.badgePending') : t('review.badgeRejected')}
-                                  </span>
-                                )}
+                                <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium backdrop-blur-sm ${
+                                  fi.work.feedReviewStatus === 'pending'
+                                    ? 'bg-muted/90 text-foreground border border-border'
+                                    : 'bg-red-500/90 text-white'
+                                }`}>
+                                  {fi.work.feedReviewStatus === 'pending' ? t('review.badgePending') : t('review.badgeRejected')}
+                                </span>
                               </div>
                             )}
 
@@ -1436,8 +1445,8 @@ export default function Profile() {
             <div className="overflow-y-auto flex-1 p-4">
               {(() => {
                 const sampleList = followModalTab === 'followers'
-                  ? artists.filter(a => a.id !== profileArtist.id)
-                  : artists.filter(a => followStore.isFollowing(a.id));
+                  ? artists.filter(a => a.id !== profileArtist.id && !withdrawnArtistStore.isWithdrawn(a.id))
+                  : artists.filter(a => followStore.isFollowing(a.id) && !withdrawnArtistStore.isWithdrawn(a.id));
                 return sampleList.length === 0 ? (
                   <p className="text-center py-12 text-sm text-muted-foreground">
                     {followModalTab === 'followers'
@@ -1538,7 +1547,18 @@ export default function Profile() {
               </div>
 
               {/* 이미지 영역 */}
-              <div className="relative flex-1 flex items-center justify-center px-16">
+              <div
+                className="relative flex-1 flex items-center justify-center px-16"
+                onTouchStart={(e) => { swipeTouchStartX.current = e.touches[0].clientX; }}
+                onTouchEnd={(e) => {
+                  if (swipeTouchStartX.current === null) return;
+                  const dx = e.changedTouches[0].clientX - swipeTouchStartX.current;
+                  swipeTouchStartX.current = null;
+                  if (Math.abs(dx) < 40) return;
+                  if (dx < 0 && hasNext) setWorksViewerIndex(i => i !== null ? i + 1 : i);
+                  if (dx > 0 && hasPrev) setWorksViewerIndex(i => i !== null ? i - 1 : i);
+                }}
+              >
                 {/* 이전 버튼 */}
                 {hasPrev && (
                   <button
@@ -1584,16 +1604,13 @@ export default function Profile() {
       })()}
 
       {rejectedModalWork && (() => {
-        const history = rejectedModalWork.rejectionHistory ?? [];
-        const repeatedCount = history.length;
-        const dateLocale = locale === 'en' ? 'en-US' : 'ko-KR';
         return (
           <div
             className="fixed inset-0 z-50 bg-black/50 flex items-center justify-center p-4"
-            onClick={() => { setRejectedModalWork(null); setShowRejectionHistory(false); }}
+            onClick={() => setRejectedModalWork(null)}
           >
             <div
-              className="bg-card rounded-xl shadow-lg max-w-md w-full p-5 max-h-[85vh] overflow-y-auto"
+              className="bg-card rounded-xl shadow-lg max-w-md w-full p-5"
               onClick={(e) => e.stopPropagation()}
             >
               <h2 className="text-base font-bold text-foreground mb-1">
@@ -1603,39 +1620,14 @@ export default function Profile() {
                 {t('review.rejectedModalDesc')}
               </p>
               {rejectedModalWork.rejectionReason && (
-                <div className="mb-3 p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-900">
+                <div className="mb-5 p-3 rounded-lg bg-red-50 border border-red-200 text-sm text-red-900">
                   {t(REJECTION_REASON_LABEL_KEY[rejectedModalWork.rejectionReason])}
-                </div>
-              )}
-              {repeatedCount >= 2 && (
-                <div className="mb-5 rounded-lg border border-amber-200 bg-amber-50">
-                  <button
-                    type="button"
-                    onClick={() => setShowRejectionHistory((v) => !v)}
-                    className="flex w-full items-center justify-between gap-2 px-3 py-2 text-left text-xs font-semibold text-amber-900 min-h-[44px]"
-                    aria-expanded={showRejectionHistory}
-                  >
-                    <span>{t('review.repeatedRejection').replace('{n}', String(repeatedCount))}</span>
-                    <span className="text-amber-700">{showRejectionHistory ? '−' : '+'}</span>
-                  </button>
-                  {showRejectionHistory && (
-                    <ul className="border-t border-amber-200 px-3 py-2 space-y-1.5 text-xs text-amber-900">
-                      {history.map((entry, idx) => (
-                        <li key={`${entry.rejectedAt}-${idx}`} className="flex items-start gap-2">
-                          <span className="shrink-0 text-amber-700 tabular-nums">
-                            {new Date(entry.rejectedAt).toLocaleDateString(dateLocale, { year: 'numeric', month: 'short', day: 'numeric' })}
-                          </span>
-                          <span className="flex-1">{t(REJECTION_REASON_LABEL_KEY[entry.reason])}</span>
-                        </li>
-                      ))}
-                    </ul>
-                  )}
                 </div>
               )}
               <div className="flex gap-2 justify-end">
                 <Button
                   type="button"
-                  onClick={() => { setRejectedModalWork(null); setShowRejectionHistory(false); }}
+                  onClick={() => setRejectedModalWork(null)}
                   className="text-sm px-3 py-1.5 rounded-lg border border-border min-h-[44px]"
                 >
                   {t('review.rejectedModalClose')}
@@ -1645,7 +1637,6 @@ export default function Profile() {
                   onClick={() => {
                     const id = rejectedModalWork.id;
                     setRejectedModalWork(null);
-                    setShowRejectionHistory(false);
                     navigate(`/upload?edit=${id}`);
                   }}
                   className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90 min-h-[44px]"
@@ -1661,10 +1652,6 @@ export default function Profile() {
       {renamingFlatImage && (() => {
         const saveTitle = () => {
           const trimmed = renameValue.trim();
-          if (!trimmed) {
-            toast.error(t('profile.errEmptyTitle'));
-            return;
-          }
           const workId = renamingFlatImage.work.id;
           const imgIndex = renamingFlatImage.imgIndex;
           // store에 없는 작품(hydrateGroupWorks 출처)은 먼저 추가해 수정 가능 상태로 전환

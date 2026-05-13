@@ -131,7 +131,6 @@ export default function GeneralEventManagement() {
       endAt: end,
       displayStartAt: displayStart,
       displayEndAt: displayEnd,
-      worksPublic: false,
       status: draft.status || undefined,
     };
     if (editingId) {

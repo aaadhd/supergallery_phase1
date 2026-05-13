@@ -583,54 +583,6 @@ export default function Upload() {
       }
     }
 
-    // 그룹 전시 — 총 작가 2명 이상 필수 (게시자 외 1명 이상). Policy §13.2
-    if (uploadType === 'group') {
-      const selfId = artists[0]?.id;
-      const allUniqueArtists = new Set(
-        imageContents
-          .filter((c) => c.artistType === 'member' || (c.artistType === 'non-member' && (c.nonMemberArtist?.displayName ?? '').trim().length > 0))
-          .map((c) => c.artist?.id ?? c.nonMemberArtist?.displayName ?? ''),
-      );
-      if (allUniqueArtists.size < 2) {
-        const hasSelf = imageContents.some(
-          (c) => c.artistType === 'member' && c.artist?.id === selfId,
-        );
-        if (hasSelf) {
-          // 게시자 본인 작품만 있음 → 개인 전시 전환 제안 (신규·편집 공통 카피)
-          const switchToSolo = await openConfirm({
-            title: t('upload.soloSuggestionTitle'),
-            description: t('upload.soloSuggestionDesc'),
-            confirmLabel: t('upload.soloSuggestionConfirm'),
-          });
-          if (switchToSolo) {
-            // 편집 모드: 제거되는 회원 참여 작가에게 시스템 알림 (Policy §13.6.1)
-            if (editingWorkId) {
-              const currentSelfId = artists[0]?.id;
-              const title = exhibitionName || t('work.untitled');
-              imageContents.forEach((c) => {
-                if (c.artistType === 'member' && c.artist?.id && c.artist.id !== currentSelfId) {
-                  pushDemoNotification({
-                    type: 'system',
-                    message: t('notif.removedFromGroupExhibition').replace('{title}', title),
-                  });
-                }
-              });
-            }
-            setUploadType('solo');
-            setGroupName('');
-            setContents((prev) => prev.map((p) => ({ ...p, artist: undefined, nonMemberArtist: undefined, artistType: undefined })));
-            setShowDetailsModal(false);
-            toast.success(t('upload.soloSuggestionSwitched'));
-          }
-          return;
-        } else {
-          // 타인 작품 1장뿐이고 게시자 작품 없음 → 그룹 성립 불가, 개인 전시 전환도 불가
-          toast.error(t('upload.errGroupNeedsTwoArtists'));
-          return;
-        }
-      }
-    }
-
     const currentUser = artists[0];
     const urls = imageContents.map((c) => c.url!);
     // piece 안정 ID — content 순서·정체성을 그대로 work.imagePieceIds로 보존(Policy §15.4 / §32.1 #8b).
@@ -1464,10 +1416,7 @@ export default function Upload() {
                         ? REJECTION_REASON_LABEL_KEY[editingRejectedWork.rejectionReason]
                         : null;
                       const reasonLabel = reasonKey ? t(reasonKey) : '';
-                      const repeated = editingRejectedWork.rejectionHistory?.length ?? 0;
-                      const message = repeated >= 2
-                        ? t('review.editBannerRejectedRepeated').replace('{reason}', reasonLabel).replace('{n}', String(repeated))
-                        : t('review.editBannerRejected').replace('{reason}', reasonLabel);
+                      const message = t('review.editBannerRejected').replace('{reason}', reasonLabel);
                       return (
                         <div className="w-full mb-6 rounded-lg border-2 border-red-300 bg-red-50 px-4 py-3 text-sm text-red-900 leading-relaxed animate-in fade-in duration-500">
                           <p className="font-medium">{message}</p>
@@ -1937,9 +1886,10 @@ export default function Upload() {
                       </button>
                     </div>
                   )}
+                  </div>
 
-                  {/* 하단 최종 제출 박스 (통합 스크롤 영역에 포함) */}
-                  <div className="p-5 md:p-7 border-t border-border/40 bg-white space-y-4 mt-auto">
+                  {/* 하단 최종 제출 박스 */}
+                  <div className="p-5 md:p-7 border-t border-border/40 bg-white space-y-4">
                     <div className="space-y-2.5">
                       <div className={`rounded-xl p-3 border ${publishBlockers.length > 0 ? 'bg-red-50 border-red-200' : 'bg-green-50 border-green-200'}`} role="status" aria-live="polite">
                         <p className={`text-xs font-bold uppercase tracking-wider mb-2 ${publishBlockers.length > 0 ? 'text-red-700' : 'text-green-700'}`}>{t('upload.blockersTitle')}</p>
@@ -1997,7 +1947,6 @@ export default function Upload() {
                         {t('upload.screenPreview')}
                       </Button>
                     </div>
-                  </div>
                   </div>
                 </div>
 

@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect } from 'react';
 import { Dialog, DialogContent, DialogTitle } from './ui/dialog';
 import { Flag } from 'lucide-react';
 import { toast } from 'sonner';
@@ -35,35 +35,22 @@ export function ReportModal({
   onReported,
 }: ReportModalProps) {
   const { t } = useI18n();
-  const [phase, setPhase] = useState<'form' | 'done'>('form');
   const [detail, setDetail] = useState('');
   const [selectedPiece, setSelectedPiece] = useState<number | null>(null);
-  const closeTimerRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   const totalPieces = pieceImages?.length ?? 0;
   const requiresPieceSelection = totalPieces > 1;
 
   useEffect(() => {
     if (!open) {
-      setPhase('form');
       setDetail('');
       setSelectedPiece(null);
-      if (closeTimerRef.current) {
-        clearTimeout(closeTimerRef.current);
-        closeTimerRef.current = null;
-      }
     } else {
       setSelectedPiece(requiresPieceSelection ? null : 0);
     }
   }, [open, requiresPieceSelection]);
 
-  const handleClose = () => {
-    if (closeTimerRef.current) {
-      clearTimeout(closeTimerRef.current);
-      closeTimerRef.current = null;
-    }
-    onClose();
-  };
+  const handleClose = () => onClose();
 
   const handleSubmit = () => {
     if (!authStore.isLoggedIn()) { toast.error(t('loginPrompt.report')); return; }
@@ -93,8 +80,7 @@ export function ReportModal({
     addHiddenForReporter(targetType, targetId);
     toast.success(t('report.toastSuccess'));
     onReported?.();
-    setPhase('done');
-    closeTimerRef.current = setTimeout(() => { closeTimerRef.current = null; handleClose(); }, 2000);
+    handleClose();
   };
 
   return (
@@ -111,13 +97,7 @@ export function ReportModal({
           </div>
         </div>
 
-        {phase === 'done' ? (
-          <div className="px-5 py-8 text-center space-y-2">
-            <p className="font-semibold text-foreground">{t('report.step2Title')}</p>
-            <p className="text-sm text-muted-foreground leading-relaxed">{t('report.step2Body')}</p>
-          </div>
-        ) : (
-          <>
+        <>
             <div className="px-5 py-4 space-y-4">
               {/* 신고 사유 */}
               <div className="rounded-lg bg-red-50 border border-red-100 px-3.5 py-3">
@@ -180,7 +160,6 @@ export function ReportModal({
               </button>
             </div>
           </>
-        )}
       </DialogContent>
     </Dialog>
   );

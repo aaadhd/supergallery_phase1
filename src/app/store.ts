@@ -69,7 +69,7 @@ function cleanupOrphanedWorkId(workId: string) {
 }
 
 /**
- * 전시 삭제 시 모든 응모전(`artier_managed_events_v4`)의 `selectedWorkIds`에서
+ * 전시 삭제 시 모든 응모전(`artier_managed_contests_v1`)의 `selectedWorkIds`에서
  * 해당 workId를 제거. Policy §32.1 #10 — 선정작 역참조 stale 방지.
  * 비공개 유지·신고 처리 시에는 cascade하지 않고 공개 상태 필터로 자연 제외
  * (기각 복원 시 자동 재노출 위해 데이터 보존).
@@ -77,7 +77,7 @@ function cleanupOrphanedWorkId(workId: string) {
 function cleanupOrphanedSelectedWorkId(workId: string) {
   if (typeof window === 'undefined') return;
   try {
-    const raw = localStorage.getItem('artier_managed_events_v4');
+    const raw = localStorage.getItem('artier_managed_contests_v1');
     if (!raw) return;
     const list = JSON.parse(raw);
     if (!Array.isArray(list)) return;
@@ -89,7 +89,7 @@ function cleanupOrphanedSelectedWorkId(workId: string) {
       if (ev.selectedWorkIds.length !== before) changed = true;
     }
     if (changed) {
-      localStorage.setItem('artier_managed_events_v4', JSON.stringify(list));
+      localStorage.setItem('artier_managed_contests_v1', JSON.stringify(list));
       window.dispatchEvent(new Event('artier-events-changed'));
     }
   } catch { /* ignore */ }
@@ -317,7 +317,7 @@ export const workStore = {
     currentWorks = currentWorks.filter(w => w.id !== id);
     userInteractionStore.removeWorkId(id);
     cleanupOrphanedWorkId(id); // 기획전(artier_curation_v1) workIds 정리
-    cleanupOrphanedSelectedWorkId(id); // 응모전(artier_managed_events_v4) selectedWorkIds cascade — Policy §32.1 #10
+    cleanupOrphanedSelectedWorkId(id); // 응모전(artier_managed_contests_v1) selectedWorkIds cascade — Policy §32.1 #10
     forgetSeenWork(id); // 이미 본 작품 목록에서 제거
     cleanupReportRefsForWork(id); // 신고 중복 서명·신고자 숨김 참조 정리
 

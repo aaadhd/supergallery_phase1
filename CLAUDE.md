@@ -198,8 +198,7 @@ src/main.tsx
 - 게시자 본인 작품 포함 시: 타인 1명 이상이면 성립.
 - 게시자 본인 작품 미포함 시: 타인 2명 이상이어야 성립.
 
-- 게시자 본인 작품만 있고 타인 0명 → 개인 전시 전환 다이얼로그(`upload.soloSuggestionTitle`/`Desc`).
-- 게시자 본인 작품 없이 타인 1명만 있는 경우 → 발행 차단 (`upload.errGroupNeedsTwoArtists`). 개인 전시 전환 불가.
+- 조건 미충족 시 다음 → 버튼이 비활성화되어 발행 단계 자체에 진입 불가 (별도 에러 다이얼로그 없음).
 - 혼자 올리기는 정의상 본인 작품만 포함되므로 별도 검증 없음.
 
 ## 환경 변수
@@ -232,16 +231,16 @@ Phase 1은 **작품 단위 모더레이션만** 다룬다. 사용자 계정 차�
 
 - **핵심 앱 상태 (`store.ts`)**: `artier_works_version`, `artier_works`, `artier_drafts`, `artier_profile`, `artier_interactions`, `artier_auth`, `artier_follows`, `artier_account_suspension`, `artier_withdrawn_artists`, `artier_demo_last_withdraw_reason`
 - **작품·피드·알림**: `artier_curation_v1`, `artier_feed_seen_work_ids`, `artier_notifications`, `artier_notification_settings`
-- **배너·이벤트·어드민**: `artier_admin_banners_v3`, `artier_managed_events_v4`, `artier_event_subscriptions`, `artier_admin_members_v1`, `artier_admin_picks_v1`, `artier_admin_audit_log_v1` (운영자 감사 로그 — 런칭 전 백엔드 이관 후 서버 테이블로 재출발)
+- **배너·이벤트·어드민**: `artier_admin_banners_v3`, `artier_managed_contests_v1`, `artier_event_subscriptions`, `artier_admin_members_v1`, `artier_picks_v1`, `artier_admin_audit_log_v1` (운영자 감사 로그 — 런칭 전 백엔드 이관 후 서버 테이블로 재출발)
 - **약관·동의**: `artier_tos_consent_v1` (마지막으로 동의한 약관 버전 문자열. CM-TOS 모달 동의 기록)
 - **초대·포인트·신고·기타**: `artier_invite_tokens_v1` (전시 단위 1개, 90일 TTL), `artier_points_ledger`, `artier_points_state`, `artier_work_publish_times`, `artier_artist_follower_delta`, `artier_reports`, `artier_report_hidden_v2`, `artier_report_signatures_v1`, `artier_reported_works`, `artier_reported_artists`, `artier_social_signed_up__<provider>` (kakao/google/apple), `artier_pending_signup_nickname`·`artier_pending_signup_email`·`artier_pending_social_signup` (Signup/소셜 가입 → Onboarding 프리필 핸드오프, 온보딩 종료 시 정리), `artier_registered_emails_v1`·`artier_registered_phones_v1` (중복 가입 차단, `utils/registeredAccounts.ts`), `artier_last_group_name`, `artier_my_group_names`, `artier_inquiries`
 - **UX·데모**: `artier_locale`, `artier_font_scale`, `artier_onboarding_done`, `artier_splash_seen`, `artier_mock_jwt_session`, `artier_admin_session_v1` (`adminGate`), `artier_recent_searches__guest`, `artier_recent_searches__<slug>` (`Search.tsx`)
 - **sessionStorage** (별도): 접두 `artier_scroll_` + 논리 키 — 스크롤 복원 (`src/app/utils/scrollRestore.ts`). `artier_pending_invite_token` — 초대 링크 랜딩 → 가입 → 온보딩 "본인 작품 찾기" 핸드오프 (가입 종료 시 정리).
-- **Deprecated (부팅 시 제거)**: `artier_instructor_public_ids`, `artier_pin_comments`, `artier_upload_guide_seen`, `artier_group_canonical_map`, `artier_signup_region`, `artier_pending_signup_realname`, `artier_pending_sms_invite`, `artier_pending_signup_phone`, `artier_invite_messaging_log`, `artier_invite_match_log`, `artier_invite_decline_log`, `artier_admin_issues`, `artier_admin_checklist` — `PointsBootstrap` 마운트 시 `LEGACY_STORAGE_KEYS`로 일괄 정리. sessionStorage `artier_pending_invite_claims`·`artier_geo_demo_cache` — `LEGACY_SESSION_KEYS`로 동일 시점 정리.
+- **Deprecated (부팅 시 제거)**: `artier_managed_events_v4` (→ `artier_managed_contests_v1`·`artier_picks_v1` 분리 이관), `artier_admin_picks_v1` (→ `artier_picks_v1`), `artier_event_subscription` (→ `artier_notification_settings`의 `eventAlerts`), `artier_instructor_public_ids`, `artier_pin_comments`, `artier_upload_guide_seen`, `artier_group_canonical_map`, `artier_signup_region`, `artier_pending_signup_realname`, `artier_pending_sms_invite`, `artier_pending_signup_phone`, `artier_invite_messaging_log`, `artier_invite_match_log`, `artier_invite_decline_log`, `artier_admin_issues`, `artier_admin_checklist` — `PointsBootstrap` 마운트 시 `LEGACY_STORAGE_KEYS`로 일괄 정리. sessionStorage `artier_pending_invite_claims`·`artier_geo_demo_cache` — `LEGACY_SESSION_KEYS`로 동일 시점 정리.
 
 ### 기타
 - **버전 관리**: `WORKS_STORAGE_VERSION` (`local-gallery-v21`) 변경 시 works 데이터 자동 재시드
-- **이벤트 데이터**: `eventStore.ts` 단일 소스 + `artier_managed_events_v4` 영속화. 이벤트·공지 메일 구독은 `eventSubscriptionStore.ts` + `artier_event_subscriptions`.
+- **이벤트 데이터**: `eventsStore.ts` 단일 소스 + `artier_managed_contests_v1` 영속화. 이벤트·공지 메일 구독은 `eventSubscriptionStore.ts` + `artier_event_subscriptions`.
 - **포인트 회수**: 업로드 후 24시간 이내 삭제 시 AP -20 (`pointsBackground.ts`)
 
 ## 외부 연동 미완 (런칭 전 백엔드 연동 후)

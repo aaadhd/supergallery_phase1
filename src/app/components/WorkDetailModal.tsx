@@ -599,7 +599,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                         groupMemberArtists.push(found ?? {
                           id: ia.memberId,
                           name: ia.memberName ?? '?',
-                          avatar: ia.memberAvatar,
+                          avatar: ia.memberAvatar ?? '',
                         } as Artist);
                       } else if (ia.type === 'non-member' && ia.displayName) {
                         const key = `non-member::${ia.displayName}`;
@@ -616,7 +616,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                     });
                   }
                 }
-                return isGroupWork && groupMemberArtists.length > 1 ? (
+                return isGroupWork && groupMemberArtists.length >= 1 ? (
                 <div className="bg-zinc-50 rounded-2xl border border-zinc-200 p-5 sm:p-6 shadow-sm">
                   <div className="text-center mb-6 pb-4 border-b border-zinc-200">
                     <h3 className="text-lg font-bold text-zinc-900 mb-2">

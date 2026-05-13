@@ -217,7 +217,7 @@ export default function AdminDashboard() {
                 <CardTitle className="text-3xl">{activeEventsCount}</CardTitle>
               </CardHeader>
               <CardContent>
-                <p className="text-xs text-muted-foreground">참여작 공개·기간·발표 토글 관리</p>
+                <p className="text-xs text-muted-foreground">기간·발표 토글 관리</p>
               </CardContent>
             </Card>
           </Link>

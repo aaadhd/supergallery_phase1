@@ -1,5 +1,6 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { ChevronUp, ChevronDown } from 'lucide-react';
 import { toast } from 'sonner';
 import { Toaster } from 'sonner';
 import { artists } from '../data';
@@ -284,7 +285,12 @@ export default function Settings() {
             </button>
           </div>
 
-          <div className="mt-8 pt-6 border-t border-destructive/20">
+          {/* 서비스 정보 — 모바일 전용 (md 이상은 하단 Footer가 담당) */}
+        <div className="md:hidden mt-10 pt-6 border-t border-border/40">
+          <ServiceInfoSection />
+        </div>
+
+        <div className="mt-8 pt-6 border-t border-destructive/20">
             <p className="text-xs text-muted-foreground mb-3 text-center">{t('settings.withdrawWarning')}</p>
             <Button
               variant="outline"
@@ -393,6 +399,70 @@ export default function Settings() {
         </div>
       )}
 
+    </div>
+  );
+}
+
+function ServiceInfoSection() {
+  const { t } = useI18n();
+  const [bizOpen, setBizOpen] = useState(false);
+  const ref = useRef<HTMLDivElement | null>(null);
+
+  useEffect(() => {
+    if (!bizOpen) return;
+    const onKey = (e: KeyboardEvent) => { if (e.key === 'Escape') setBizOpen(false); };
+    const onClick = (e: MouseEvent) => {
+      if (ref.current && !ref.current.contains(e.target as Node)) setBizOpen(false);
+    };
+    window.addEventListener('keydown', onKey);
+    window.addEventListener('mousedown', onClick);
+    return () => { window.removeEventListener('keydown', onKey); window.removeEventListener('mousedown', onClick); };
+  }, [bizOpen]);
+
+  const links = [
+    { to: '/terms', label: t('footer.terms') },
+    { to: '/privacy', label: t('footer.privacy') },
+    { to: '/contact', label: t('footer.contact') },
+  ];
+
+  return (
+    <div ref={ref}>
+      <h2 className="text-sm font-medium uppercase tracking-wide text-muted-foreground mb-3">
+        {t('settings.sectionServiceInfo')}
+      </h2>
+      <div className="rounded-xl border border-border/50 overflow-hidden bg-card divide-y divide-border/40">
+        {links.map(({ to, label }) => (
+          <Link
+            key={to}
+            to={to}
+            className="flex items-center justify-between px-4 py-3.5 text-sm text-foreground lg:hover:bg-muted/40 transition-colors"
+          >
+            <span>{label}</span>
+            <span className="text-xs text-muted-foreground">→</span>
+          </Link>
+        ))}
+        <button
+          type="button"
+          onClick={() => setBizOpen(v => !v)}
+          aria-expanded={bizOpen}
+          className="w-full flex items-center justify-between px-4 py-3.5 text-sm text-foreground lg:hover:bg-muted/40 transition-colors"
+        >
+          <span>{t('footer.businessInfo')}</span>
+          {bizOpen
+            ? <ChevronUp className="h-4 w-4 text-muted-foreground" />
+            : <ChevronDown className="h-4 w-4 text-muted-foreground" />}
+        </button>
+        {bizOpen && (
+          <div className="px-4 py-4 text-xs text-muted-foreground space-y-1 leading-relaxed bg-muted/30">
+            <p>{t('footer.labelCompany')}: {t('footer.bizCompanyValue')}</p>
+            <p>{t('footer.labelRepresentative')}: {t('footer.bizRepValue')}</p>
+            <p>{t('footer.labelBizReg')}: {t('footer.bizRegValue')}</p>
+            <p>{t('footer.labelMailOrder')}: {t('footer.mailOrderValue')}</p>
+            <p>{t('footer.labelAddress')}: {t('footer.addressValue')}</p>
+            <p>{t('footer.labelEmail')}: {t('footer.contactEmailValue')}</p>
+          </div>
+        )}
+      </div>
     </div>
   );
 }

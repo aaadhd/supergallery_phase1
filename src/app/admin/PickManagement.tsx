@@ -134,7 +134,7 @@ function publishPickSession(newSessionId: string): void {
     if (work) {
       pushDemoNotification({
         type: 'pick',
-        message: `작품 "${displayExhibitionTitle(work, '무제')}"이(가) Proud's Pick에 선정되었습니다.`,
+        message: `작품 "${displayExhibitionTitle(work, '(제목 없음)')}"이(가) Proud's Pick에 선정되었습니다.`,
         workId: wid,
       });
     }
