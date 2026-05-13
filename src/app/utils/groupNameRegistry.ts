@@ -54,6 +54,6 @@ export function collectGroupNameSuggestions(
   const fromWorks = [...new Set(workGroupNames.filter(Boolean))];
   const merged = [...new Set([...mine, ...fromWorks])];
   const q = partial.trim().toLowerCase();
-  if (!q) return merged.slice(0, 30);
-  return merged.filter((name) => name.toLowerCase().includes(q)).slice(0, 20);
+  if (!q) return merged.slice(0, 10);
+  return merged.filter((name) => name.toLowerCase().includes(q)).slice(0, 10);
 }
