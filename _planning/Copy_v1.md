@@ -968,8 +968,8 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'profile.tabDrafts': '초안',
   'profile.tabGuideExhibition': '내가 올리거나 참여한 전시가 모여 있어요. 수정과 삭제는 내가 올린 전시만 할 수 있어요.',
   'profile.tabGuideWorks': '내가 그린 그림이 한 장씩 모여 있어요. 작품명 수정, 전시에서 빼기는 여기서 할 수 있어요.',
-  'profile.tabGuideLikes': '좋아요를 누른 작품이 모여 있어요.',
-  'profile.tabGuideSaves': '저장해 둔 작품이 모여 있어요.',
+  'profile.tabGuideLikes': '좋아요를 누른 전시가 모여 있어요.',
+  'profile.tabGuideSaves': '저장해 둔 전시가 모여 있어요.',
   'profile.tabGuideDrafts': '저장해 둔 초안을 다시 이어서 작업할 수 있어요.',
   'profile.tabGuideClose': '안내 닫기',
   'profile.tabGuideShow': '안내 보기',
@@ -1541,7 +1541,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'search.noResults': "No results for '{query}'",
   'search.noResultsHint': 'Try a different keyword',
   'search.tryRecent': 'Try one of your recent searches:',
-  'search.goBrowse': 'Browse all works',
+  'search.goBrowse': 'Browse all exhibitions',
   'notifications.title': 'Notifications',
   'notifications.confirmMarkAll': 'Mark all notifications as read?',
   'notifications.markAll': 'Mark all read',
@@ -2068,8 +2068,8 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
     'Exhibitions you uploaded or joined. You can only edit or delete ones you uploaded.',
   'profile.tabGuideWorks':
     'Your artworks collected one by one. Rename or remove each piece from here.',
-  'profile.tabGuideLikes': 'Works you liked.',
-  'profile.tabGuideSaves': 'Works you saved to view later.',
+  'profile.tabGuideLikes': 'Exhibitions you liked.',
+  'profile.tabGuideSaves': 'Exhibitions you saved to view later.',
   'profile.tabGuideDrafts': 'Saved drafts you can resume working on.',
   'profile.tabGuideClose': 'Close guide',
   'profile.tabGuideShow': 'Show guide',
@@ -2486,6 +2486,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.24 | 2026-05-14 | PM × Claude | tabGuideLikes·tabGuideSaves·search.goBrowse "작품"→"전시" 누락분 보정(KO+EN); 프로필 빈 상태 prose 예시 정합 |
 | v1.23 | 2026-05-14 | PM × Claude | settings.notifSystemAlwaysOn 강제 수신 7종 전체 열거; browse/profile 빈 상태 카피 "작품"→"전시" 통일(KO+EN) |
 | v1.22 | 2026-05-14 | PM × Claude | 친구 → 비회원 작가 용어 전체 변경(FAQ q11~14·flowMap); 미사용 i18n 키 308개(KO+EN) 일괄 삭제 |
 | v1.21 | 2026-05-13 | PM × Claude | invite.landingCtaBody 신규; events.detailScheduled 신규; report.step2Title·step2Body 삭제; verify.expiredTitle·expiredBody·retrySignup·qaAuthVerifyDemoExpired·invalidTitle·invalidBody·retryLogin·goHome 삭제(AuthVerify 화면 전체 제거 — 모든 오류 /signup 리다이렉트로 통합) |
