@@ -23,7 +23,7 @@
 | 게시 기간 | 응모전별 운영팀 결정 (응모전 공식 종료일 기준) |
 | 게시 면적 | 응모전 상세·결과 발표·관련 배너 등 사이트 내 (외부 SNS·언론 마케팅 자료는 별도 약관 라이선스 적용) |
 | 권리 침해 사유 즉시 제거 | 신고 처리 "삭제"·저작권 침해 강제 삭제·명예훼손 등은 동의 잠금 무관 즉시 제거 |
-| 동의 이력 보존 | Phase 1: 전시-응모전 연결(`connectedEventId`) 자체가 응모 시점 체크박스 통과의 증거로 갈음. 별도 CONSENT_LOG 저장은 백엔드 도입 후 명시 구현(작가 ID·전시 ID·응모전 ID·동의 시각·정보통신망법 §50 마케팅 동의 이력 보관 의무에 준하는 기준 검토). |
+| 동의 이력 보존 | Phase 1: 전시-응모전 연결(`linkedEventId`) 자체가 응모 시점 체크박스 통과의 증거로 갈음. 별도 CONSENT_LOG 저장은 백엔드 도입 후 명시 구현(작가 ID·전시 ID·응모전 ID·동의 시각·정보통신망법 §50 마케팅 동의 이력 보관 의무에 준하는 기준 검토). |
 
 ---
 
@@ -104,7 +104,7 @@ By entering this exhibition into this event, you allow the team to select submis
 
 **2. Display period**
 - The team sets the display period per event, based on the official event end date.
-- When the display period ends, the separately kept copy is also cleaned up automatically (anonymized as “Unknown artist” or fully removed, per operations policy).
+- When the display period ends, the separately kept copy is also permanently deleted automatically.
 
 **3. Self-deletion during the announcement period**
 - If you delete this exhibition yourself during the announcement period, the team may keep a separately stored copy displayed until the end of the announcement period.
@@ -153,6 +153,7 @@ By entering this exhibition into this event, you allow the team to select submis
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v4 | 2026-05-15 | PM × Claude | connectedEventId → linkedEventId 필드명 정정; EN §3.4 #2 익명화 분기 → 영구 삭제 단일화(Policy §32.1 #10 정합) |
 | v3 | 2026-05-07 | PM × Claude | 서비스명 정합; 제목 v1→v3 갱신 |
 | v2 | 2026-05-04 | PM × Claude | **진입점을 USR-EVT-04 응모 모달로 정정** (Policy v2.18·B-3a). USR-UPL-02 ?event= 분기 폐기에 따라 §0 본문·§1 정책 결정 표 동의 시점 컬럼·§5 구현 체크 첫 항목 모두 USR-EVT-04로 정합. [USR-EVT-04](./PRD_User_v1.md#usr-evt-04-응모전-응모-모달) 인용 정의 추가. 이후 append — **응모전 표준어 정합 (B-4d-naming)** — 옛 "이벤트(카테고리 의미)"·"응모형 이벤트"를 **응모전**(영문 Contest)으로 통일. 동의 문구·정책 결정 표·검토 포인트 본문 정합. 슬러그 `#usr-evt-04-응모전-응모-모달` 정합. 코드 식별자(`evt.*`)는 코드 도메인이라 그대로 유지. |
 | v1 | 2026-05-04 | PM × Claude | 최초 작성 — Policy §15.5·§25.2·§32.1 #10 정책 결정 표·체크박스 라벨·약관 본문 ko/en·변호사 검토 5포인트·구현 체크 6건. LP-11 변호사 검토 대기 상태. 이후 append — Phase 1 동의 이력 저장 요구 완화: 전시-응모전 연결(`connectedEventId`) 자체가 응모 시점 체크박스 통과의 증거로 갈음, 명시 CONSENT_LOG는 백엔드 도입 후 자연 흡수. §1 정책 결정 표·§2.4 #6·§3.4 #6·§5 구현 체크 정합. |
