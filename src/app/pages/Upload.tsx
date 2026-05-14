@@ -1,4 +1,5 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
+import { createPortal } from 'react-dom';
 import { Link, useNavigate, useSearchParams, useBlocker } from 'react-router-dom';
 import { Image as ImageIcon, Plus, X, Search, GripVertical, ArrowLeft, ChevronLeft, ChevronRight, Trash2, Replace, ArrowUpDown, Monitor, Users, Star, Check, CircleHelp } from 'lucide-react';
 import { artists } from '../data';
@@ -246,6 +247,7 @@ export default function Upload() {
 
   const [selectedContentId, setSelectedContentId] = useState<string | null>(null);
   const [artistSearch, setArtistSearch] = useState('');
+  const artistSearchRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   /* ── 이탈 방지 ── */
@@ -1824,32 +1826,40 @@ export default function Upload() {
                                     <Button size="icon" variant="ghost" aria-label={t('upload.close')} onClick={() => setContents(contents.map(c => c.id === selectedContentId ? { ...c, artist: undefined, artistType: editingWorkId ? 'unknown' : undefined } : c))} className="text-muted-foreground min-h-[44px] min-w-[44px] h-11 w-11 rounded-full hover:bg-white/50"><X className="h-4 w-4" /></Button>
                                   </div>
                                 ) : (
-                                  <div className="relative">
+                                  <div className="relative" ref={artistSearchRef}>
                                     <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
                                     <input
                                       type="text" value={artistSearch} onChange={(e) => setArtistSearch(e.target.value)}
                                       placeholder={t('upload.memberSearchPh')}
                                       className="w-full pl-11 pr-4 py-3.5 bg-muted/20 border border-border/60 rounded-xl text-sm focus:outline-none focus:ring-[3px] focus:ring-primary focus:border-primary transition-all"
                                     />
-                                    {artistSearch && (
-                                      <div className="absolute z-10 w-full mt-2 bg-white border border-border rounded-xl shadow-xl overflow-hidden max-h-56 overflow-y-auto">
-                                        {artists.filter(a => a.name.toLowerCase().includes(artistSearch.toLowerCase())).slice(0, 10).map(artist => (
-                                          <button key={artist.id}
-                                            type="button"
-                                            onClick={() => {
-                                              setContents(contents.map(c => c.id === selectedContentId ? { ...c, artist: { id: artist.id, name: artist.name, avatar: artist.avatar }, artistType: 'member' } : c));
-                                              setArtistSearch('');
-                                            }}
-                                            className="w-full min-h-[56px] text-left px-5 py-3 flex items-center gap-4 lg:hover:bg-primary/10 focus-visible:bg-primary/10 focus-visible:outline-none border-b border-border/30 last:border-b-0 transition-colors"
-                                          >
-                                            <img src={artist.avatar} alt="" className="h-10 w-10 rounded-full object-cover border border-border/50" />
-                                            <div>
-                                              <div className="text-sm font-bold text-foreground">{artist.name}</div>
-                                            </div>
-                                          </button>
-                                        ))}
-                                      </div>
-                                    )}
+                                    {artistSearch && (() => {
+                                      const rect = artistSearchRef.current?.getBoundingClientRect();
+                                      if (!rect) return null;
+                                      return createPortal(
+                                        <div
+                                          style={{ position: 'fixed', top: rect.bottom + 8, left: rect.left, width: rect.width, zIndex: 9999 }}
+                                          className="bg-white border border-border rounded-xl shadow-xl overflow-hidden max-h-56 overflow-y-auto"
+                                        >
+                                          {artists.filter(a => a.name.toLowerCase().includes(artistSearch.toLowerCase())).slice(0, 10).map(artist => (
+                                            <button key={artist.id}
+                                              type="button"
+                                              onClick={() => {
+                                                setContents(contents.map(c => c.id === selectedContentId ? { ...c, artist: { id: artist.id, name: artist.name, avatar: artist.avatar }, artistType: 'member' } : c));
+                                                setArtistSearch('');
+                                              }}
+                                              className="w-full min-h-[56px] text-left px-5 py-3 flex items-center gap-4 lg:hover:bg-primary/10 focus-visible:bg-primary/10 focus-visible:outline-none border-b border-border/30 last:border-b-0 transition-colors"
+                                            >
+                                              <img src={artist.avatar} alt="" className="h-10 w-10 rounded-full object-cover border border-border/50" />
+                                              <div>
+                                                <div className="text-sm font-bold text-foreground">{artist.name}</div>
+                                              </div>
+                                            </button>
+                                          ))}
+                                        </div>,
+                                        document.body
+                                      );
+                                    })()}
                                   </div>
                                 )}
                               </div>
