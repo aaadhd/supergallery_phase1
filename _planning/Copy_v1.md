@@ -515,7 +515,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'review.badgePending': '확인 중',
   'review.badgePendingHint': '운영팀이 확인하고 있어요. 결과는 알림으로 알려드릴게요.',
   'review.badgePendingHintForParticipant': '이 전시는 운영팀 확인 중이에요. 통과되면 다른 분들도 볼 수 있어요.',
-  'review.notifApprovedForParticipant': '함께 올라간 \\\'{title}\\\' 전시가 공개됐어요. 둘러보기 피드에서 확인하실 수 있어요.',
+  'review.notifApprovedForParticipant': '함께 올라간 \'{title}\' 전시가 공개됐어요. 둘러보기 피드에서 확인하실 수 있어요.',
   'review.badgeRejected': '수정 필요',
   'review.badgeRejectedHint': '검수 기준에 맞지 않아 공개되지 않았어요. 수정해서 다시 올려 주세요.',
   'review.badgeRejectedClickHint': '눌러서 사유 보기',
@@ -537,10 +537,10 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'review.cardBadgeHidden': '비공개',
   'review.notifRejected': '올리신 작품이 검수를 통과하지 못했어요. 사유: {reason}',
   'review.notifApproved': '올리신 작품이 승인됐어요. 둘러보기에서 다른 분들이 볼 수 있어요.',
-  'invite.notifAutoMatched': '\\\'{name}\\\'님이 \\\'{title}\\\' 전시에서 본인 작품을 연결했어요. 잘못 연결됐다면 전시 편집에서 풀 수 있어요.',
-  'report.notifTargetWorkDeleted': '회원님의 전시 \\\'{title}\\\'이 운영 정책 위반으로 삭제됐어요. 자세한 내용은 문의하기로 연락 주세요.',
-  'report.notifTargetWorkHidden': '회원님의 전시 \\\'{title}\\\'이 신고 검토 결과 비공개로 전환됐어요. 피드와 검색에서 제외돼요.',
-  'report.notifTargetWorkRestored': '회원님의 전시 \\\'{title}\\\'이 검토 결과 정상 복원됐어요.',
+  'invite.notifAutoMatched': '\'{name}\'님이 \'{title}\' 전시에서 본인 작품을 연결했어요. 잘못 연결됐다면 전시 편집에서 풀 수 있어요.',
+  'report.notifTargetWorkDeleted': '회원님의 전시 \'{title}\'이 운영 정책 위반으로 삭제됐어요. 자세한 내용은 문의하기로 연락 주세요.',
+  'report.notifTargetWorkHidden': '회원님의 전시 \'{title}\'이 신고 검토 결과 비공개로 전환됐어요. 피드와 검색에서 제외돼요.',
+  'report.notifTargetWorkRestored': '회원님의 전시 \'{title}\'이 검토 결과 정상 복원됐어요.',
   'report.deleteReason.copyright': '저작권 침해 확정',
   'report.deleteReason.illegal': '위법 콘텐츠',
   'report.deleteReason.minor_harmful': '청소년 유해',
@@ -616,7 +616,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.nonMemberPreviewSubtitle': '아래 작가들은 비회원으로 등록됐어요. 발행 직후부터 바로 초대 링크를 보낼 수 있어요.',
   'upload.nonMemberPreviewListLabel': '비회원 작가 {n}명',
   'upload.nonMemberPreviewSlotHint': '이름만 등록됨 · 가입 후 본인이 직접 연결',
-  'upload.nonMemberPreviewInfo': '발행 직후 마이페이지 전시 카드에 \\\'비회원 작가에게 알리기\\\' 버튼이 생겨요. 카톡·문자 등으로 작가님이 직접 보내실 수 있어요.',
+  'upload.nonMemberPreviewInfo': '발행 직후 마이페이지 전시 카드에 \'비회원 작가에게 알리기\' 버튼이 생겨요. 카톡·문자 등으로 작가님이 직접 보내실 수 있어요.',
   'upload.nonMemberPreviewBack': '수정하러 돌아가기',
   'upload.nonMemberPreviewConfirm': '발행 확인',
   'invite.shareCta': '비회원 작가에게 알리기',
@@ -2486,6 +2486,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.25 | 2026-05-14 | PM × Claude | 이중 이스케이프 정리 — notifApprovedForParticipant·notifAutoMatched·notifTargetWork 3종·nonMemberPreviewInfo `\\\'` → `\'` |
 | v1.24 | 2026-05-14 | PM × Claude | tabGuideLikes·tabGuideSaves·search.goBrowse "작품"→"전시" 누락분 보정(KO+EN); 프로필 빈 상태 prose 예시 정합 |
 | v1.23 | 2026-05-14 | PM × Claude | settings.notifSystemAlwaysOn 강제 수신 7종 전체 열거; browse/profile 빈 상태 카피 "작품"→"전시" 통일(KO+EN) |
 | v1.22 | 2026-05-14 | PM × Claude | 친구 → 비회원 작가 용어 전체 변경(FAQ q11~14·flowMap); 미사용 i18n 키 308개(KO+EN) 일괄 삭제 |

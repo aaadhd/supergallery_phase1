@@ -117,14 +117,14 @@ All features of Proud Gallery are currently free to use.
 
 ### Non-member invite category
 
-#### Q11. How do I invite non-member friends to my group exhibition?
-As soon as you publish, the "Notify Non-member Artist" button appears on your exhibition card. From the review-pending stage, share the link with your friends through KakaoTalk, SMS, email, or any channel you usually use. After signing up, friends can claim their own slot, and the exhibition becomes public automatically once review passes — we don't send the link for you.
+#### Q11. How do I invite non-member artists to my group exhibition?
+As soon as you publish, the "Notify Non-member Artist" button appears on your exhibition card. From the review-pending stage, share the link with the non-member artist through KakaoTalk, SMS, email, or any channel you usually use. After signing up, they can claim their own slot, and the exhibition becomes public automatically once review passes — we don't send the link for you.
 
-#### Q12. My friend signed up but their work isn't linked.
-Right after signup, your friend has to tap their own work card on the "Find my work" screen for the link to happen. They may have skipped it, or tapped someone else's spot by mistake. Please ask them to check.
+#### Q12. The non-member artist signed up but their work isn't linked.
+Right after signup, the non-member artist has to tap their own work card on the "Find my work" screen for the link to happen. They may have skipped it, or tapped someone else's spot by mistake. Please ask them to check.
 
-#### Q13. A friend got linked to the wrong spot. How do I fix it?
-On My page, open the exhibition card and tap "Edit". You can re-assign the artist for each spot. Unlinking shows the spot as "Unknown artist", and you can send a new invite link to your friend.
+#### Q13. A non-member artist got linked to the wrong spot. How do I fix it?
+On My page, open the exhibition card and tap "Edit". You can re-assign the artist for each spot. Unlinking shows the spot as "Unknown artist", and you can send a new invite link to them.
 
 #### Q14. How long is an invite link valid?
 Invite links are valid for 90 days from issue. If your friend hasn't signed up by then, the link expires and you can create a new one from My page. While the exhibition is under review or rejected, the link is temporarily inactive — once re-approved, it becomes active again automatically.
@@ -150,6 +150,7 @@ Invite links are valid for 90 days from issue. If your friend hasn't signed up b
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v6 | 2026-05-14 | PM × Claude | Q11~13 EN "friends" → "non-member artist" 용어 정정 |
 | v5 | 2026-05-14 | PM × Claude | Q11~14 "친구" → "비회원 작가" 용어 전체 변경(KO) |
 | v4 | 2026-05-09 | PM × Claude | Q9 신고 처리 문구 완화 — SLA 제거, 운영팀 직접 검토·비공개·삭제 처리 안내로 교체(KO·EN) |
 | v3 | 2026-05-07 | PM × Claude | Artier→Proud Gallery·Proud's Pick 브랜드 정합(KO·EN 전체 7곳) |
