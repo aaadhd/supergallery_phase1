@@ -118,8 +118,8 @@ Proud Gallery는 시니어·중장년 순수미술 작가를 주 고객으로 �
 ```
 
 **예시**
-- `아직 전시가 없어요` / `나만의 첫 작품을 올려보세요.`
-- `좋아요한 작품이 없어요` / `마음에 드는 작품에 좋아요를 눌러보세요.`
+- `아직 전시가 없어요` / `나만의 첫 전시를 올려보세요.`
+- `좋아요한 전시가 없어요` / `마음에 드는 전시에 좋아요를 눌러보세요.`
 
 ### 4.4 알림 (Notification)
 
@@ -417,10 +417,10 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'about.bottomTitle': '지금 시작하세요',
   'about.bottomLead': '가입은 무료이며, 첫 작품 업로드까지 1분이면 돼요.',
   'about.bottomCta': '첫 작품 올리기',
-  'browse.emptyTitle': '표시할 작품이 없어요',
-  'browse.emptyHint': '다른 카테고리를 선택하거나, 직접 작품을 올려보세요',
+  'browse.emptyTitle': '표시할 전시가 없어요',
+  'browse.emptyHint': '다른 카테고리를 선택하거나, 직접 전시를 올려보세요',
   'browse.emptyCtaUpload': '내 작품 올리기',
-  'browse.emptyCtaAll': '전체 작품 보기',
+  'browse.emptyCtaAll': '전체 전시 보기',
   'browse.groupArtistsLabel': '그룹 작가',
   'browse.groupMembersLabel': '그룹 멤버',
   'browse.unliked': '좋아요를 취소했어요',
@@ -443,7 +443,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'search.noResults': '\'{query}\'에 대한 검색 결과가 없어요',
   'search.noResultsHint': '다른 키워드로 검색해 보세요',
   'search.tryRecent': '최근 검색어로 다시 찾아볼까요?',
-  'search.goBrowse': '전체 작품 둘러보기',
+  'search.goBrowse': '전체 전시 둘러보기',
   'notifications.title': '알림',
   'notifications.confirmMarkAll': '모든 알림을 읽음 처리할까요?',
   'notifications.markAll': '모두 읽음',
@@ -1003,17 +1003,17 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'profile.draftNoTitle': '제목 없음',
   'profile.draftImageCount': '{n}개 이미지',
   'profile.emptyExhibitions': '아직 전시가 없어요',
-  'profile.emptyExhibitionsOwnHint': '나만의 첫 작품을 올려보세요.',
+  'profile.emptyExhibitionsOwnHint': '나만의 첫 전시를 올려보세요.',
   'profile.firstUploadCta': '첫 작품 올리기',
-  'profile.emptyWorksManage': '아직 작품이 없어요',
-  'profile.emptyWorksManageHint': '나만의 첫 작품을 올려보세요.',
-  'profile.emptyLikes': '좋아요한 작품이 없어요',
-  'profile.emptyLikesHint': '마음에 드는 작품에 좋아요를 눌러보세요.',
-  'profile.emptySaves': '저장한 작품이 없어요',
-  'profile.emptySavesHint': '관심 있는 작품을 저장해보세요.',
+  'profile.emptyWorksManage': '아직 전시가 없어요',
+  'profile.emptyWorksManageHint': '나만의 첫 전시를 올려보세요.',
+  'profile.emptyLikes': '좋아요한 전시가 없어요',
+  'profile.emptyLikesHint': '마음에 드는 전시에 좋아요를 눌러보세요.',
+  'profile.emptySaves': '저장한 전시가 없어요',
+  'profile.emptySavesHint': '관심 있는 전시를 저장해보세요.',
   'profile.emptyDrafts': '저장된 초안이 없어요',
   'profile.emptyDraftsHint': '업로드 중 "초안으로 저장"하면 여기에 표시돼요.',
-  'profile.browseWorks': '작품 둘러보기',
+  'profile.browseWorks': '전시 둘러보기',
   'profile.uploadWork': '작품 올리기',
   'profile.followModalFollowers': '팔로워',
   'profile.followModalFollowing': '팔로잉',
@@ -1264,7 +1264,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'settings.withdrawConsentLabel': '내 계정과 작품이 삭제되며 되돌릴 수 없음을 이해하고 동의합니다.',
   'settings.withdrawConsentErr': '데이터 삭제 동의에 체크해 주세요.',
   'settings.sectionServiceInfo': '서비스 정보',
-  'settings.notifSystemAlwaysOn': '검수 결과·응모전 선정·작품 연결 알림은 설정과 관계없이 항상 수신돼요.',
+  'settings.notifSystemAlwaysOn': '그룹 전시 게시·기획전 선정·Pick 선정·응모전 선정·검수 결과·작품 연결·신고 처리 결과 알림은 설정과 관계없이 항상 수신돼요.',
 } as const;
 
 const enMessages: Record<MessageKey, string> = {
@@ -1515,10 +1515,10 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'about.bottomTitle': 'Start now',
   'about.bottomLead': 'Sign-up is free, and you can upload your first work in about a minute.',
   'about.bottomCta': 'Upload your first work',
-  'browse.emptyTitle': 'No works to show',
-  'browse.emptyHint': 'Try another category, or upload your own work',
+  'browse.emptyTitle': 'No exhibitions to show',
+  'browse.emptyHint': 'Try another category, or upload your own exhibition',
   'browse.emptyCtaUpload': 'Upload my work',
-  'browse.emptyCtaAll': 'View all works',
+  'browse.emptyCtaAll': 'View all exhibitions',
   'browse.groupArtistsLabel': 'Group artists',
   'browse.groupMembersLabel': 'Group members',
   'browse.unliked': 'Like removed',
@@ -2103,17 +2103,17 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'profile.draftNoTitle': 'Untitled',
   'profile.draftImageCount': '{n} images',
   'profile.emptyExhibitions': 'No exhibitions yet',
-  'profile.emptyExhibitionsOwnHint': 'Upload your first work.',
+  'profile.emptyExhibitionsOwnHint': 'Upload your first exhibition.',
   'profile.firstUploadCta': 'Upload first work',
-  'profile.emptyWorksManage': 'No works yet',
-  'profile.emptyWorksManageHint': 'Upload your first work.',
-  'profile.emptyLikes': 'No liked works yet',
-  'profile.emptyLikesHint': 'Like works you enjoy.',
-  'profile.emptySaves': 'No saved works yet',
-  'profile.emptySavesHint': 'Save works you want to revisit.',
+  'profile.emptyWorksManage': 'No exhibitions yet',
+  'profile.emptyWorksManageHint': 'Upload your first exhibition.',
+  'profile.emptyLikes': 'No liked exhibitions yet',
+  'profile.emptyLikesHint': 'Like exhibitions you enjoy.',
+  'profile.emptySaves': 'No saved exhibitions yet',
+  'profile.emptySavesHint': 'Save exhibitions you want to revisit.',
   'profile.emptyDrafts': 'No drafts yet',
   'profile.emptyDraftsHint': 'Use “Save draft” on upload to see drafts here.',
-  'profile.browseWorks': 'Browse works',
+  'profile.browseWorks': 'Browse exhibitions',
   'profile.uploadWork': 'Upload work',
   'profile.followModalFollowers': 'Followers',
   'profile.followModalFollowing': 'Following',
@@ -2364,7 +2364,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'settings.withdrawConsentLabel': 'I understand my account and works will be deleted and cannot be undone.',
   'settings.withdrawConsentErr': 'Please confirm you agree to delete all data.',
   'settings.sectionServiceInfo': 'Service Info',
-  'settings.notifSystemAlwaysOn': 'Review results, contest selections, and work connection alerts are always sent regardless of your settings.',
+  'settings.notifSystemAlwaysOn': 'Group exhibition posts, curated exhibition picks, Proud\'s Pick selections, contest selections, review results, work connections, and report outcomes are always sent regardless of your settings.',
 } as const;
 
 export function translate(locale: Locale, key: MessageKey): string {
@@ -2486,6 +2486,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.23 | 2026-05-14 | PM × Claude | settings.notifSystemAlwaysOn 강제 수신 7종 전체 열거; browse/profile 빈 상태 카피 "작품"→"전시" 통일(KO+EN) |
 | v1.22 | 2026-05-14 | PM × Claude | 친구 → 비회원 작가 용어 전체 변경(FAQ q11~14·flowMap); 미사용 i18n 키 308개(KO+EN) 일괄 삭제 |
 | v1.21 | 2026-05-13 | PM × Claude | invite.landingCtaBody 신규; events.detailScheduled 신규; report.step2Title·step2Body 삭제; verify.expiredTitle·expiredBody·retrySignup·qaAuthVerifyDemoExpired·invalidTitle·invalidBody·retryLogin·goHome 삭제(AuthVerify 화면 전체 제거 — 모든 오류 /signup 리다이렉트로 통합) |
 | v1.20 | 2026-05-12 | PM × Claude | 검색 UI 개편 — search.filterAll·filterArtist·filterGroup·filterExhibition·filterPiece 키 KO·EN 추가 |

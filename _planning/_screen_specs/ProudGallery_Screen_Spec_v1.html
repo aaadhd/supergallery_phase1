@@ -689,6 +689,11 @@
  <thead><tr><th class="ver">버전</th><th class="date">날짜</th><th>주요 변경</th></tr></thead>
  <tbody>
  <tr>
+ <td class="ver">v1.11</td>
+ <td class="date">2026-05-14</td>
+ <td>문서 정합 6건 — AUT-08 AC #2 보조 CTA 추가; UPL-09 desc 제목 카피 키 기준 정정</td>
+ </tr>
+ <tr>
  <td class="ver">v1.10</td>
  <td class="date">2026-05-13</td>
  <td>코드 전수 대조 5차 정합 — AUT·BRW·EXH·UPL·PRF·SRC·EVT·NTF·INF·ADM 전 화면 갱신; 폐기 슬라이드 삭제(AUT-09·09b·12, ADM-MBR-03); Phase 2 언급 전수 제거; AUT-08 만료 오류 화면 2버튼(재발송·이메일 수정); UPL-01 그룹 성립 조건 다이얼로그·토스트 → 체크리스트 비활성; EXH-01 mock 세로 스크롤로 교체(슬라이더·1/6 카운터·좌 이전 버튼 제거); EXH-01b 응모전 🏆 배지 제거·mock 세로 스크롤 정합·슬라이드 제목 "Pick 배지 변형"으로 수정; EXH-02 mock·desc 코드 기준 재작성(작가 리본·좋아요·저장·공유 제거, 배너+헤더+피스 그리드 구조로 교체); UPL-09 mock 3버튼→2버튼 ConfirmDialog로 교체(제목·본문 카피 코드 기준); PRF-04 탈퇴 작가 미노출 AC 추가; PRF-08·09 탈퇴 작가 전원 전시 미노출 AC 추가; PRF-14 스와이프 미구현 명시·desc 코드 기준 정합; DSH-01 차단 배너 제거·bub 재정렬; REV-02 mock 반려 이력 섹션 추가; PCK-03 별도 이력 탭 미구현 명시; FTD-01 드래그 핸들 제거·순서 변경 AC 삭제; MBR-02 지표 카드 제거</td>
@@ -2026,7 +2031,7 @@
 
  <div class="ac"><h4>완성 기준</h4><ol>
  <li>유효한 토큰 → 로그인·가입 의도에 맞게 자동 처리 후 이동</li>
- <li>만료·무효·재사용 토큰 → "인증 링크가 만료됐어요" 화면 + "인증 메일 다시 보내기" CTA</li>
+ <li>만료·무효·재사용 토큰 → "인증 링크가 만료됐어요" 화면 + "인증 메일 다시 보내기"(주 CTA) / "이메일 주소 수정"(보조 CTA) → 모두 /signup</li>
  </ol></div>
 
  <div class="pol"><h4>관련 정책</h4>매직 링크 · 가입·인증 (07-2)
@@ -3829,7 +3834,7 @@
 
      <h3 class="components">구성 요소</h3>
  <dl>
- <dt><span class="bub">1</span></dt><dd>이탈 방지 다이얼로그 제목 — "저장되지 않은 업로드가 있어요"</dd>
+ <dt><span class="bub">1</span></dt><dd>이탈 방지 다이얼로그 제목 — "페이지를 떠나시겠어요?" (upload.leaveConfirmTitle 기준)</dd>
  <dt><span class="bub">2</span></dt><dd>ConfirmDialog 2종 — "확인" (나가기, destructive) / "취소" (계속 작성하기). 이탈 시 초안 자동 저장 선택지 없음</dd>
  </dl>
 
