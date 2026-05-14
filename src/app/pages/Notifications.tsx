@@ -329,17 +329,13 @@ export default function Notifications() {
               >
                 {t('notifications.settingsLink')}
               </Link>
-              {unreadCount > 0 && (
-                <Button variant="ghost" size="sm" onClick={markAllRead} className="text-sm text-muted-foreground">
-                  <Check className="h-4 w-4 mr-1" />
-                  {t('notifications.markAll')}
-                </Button>
-              )}
-              {notifications.some((n) => n.read) && (
-                <Button variant="ghost" size="sm" onClick={deleteAllRead} className="text-sm text-destructive/70">
-                  {t('notifications.deleteRead')}
-                </Button>
-              )}
+              <Button variant="ghost" size="sm" onClick={markAllRead} disabled={unreadCount === 0} className="text-sm text-muted-foreground disabled:opacity-40">
+                <Check className="h-4 w-4 mr-1" />
+                {t('notifications.markAll')}
+              </Button>
+              <Button variant="ghost" size="sm" onClick={deleteAllRead} disabled={!notifications.some((n) => n.read)} className="text-sm text-destructive/70 disabled:opacity-40">
+                {t('notifications.deleteRead')}
+              </Button>
             </div>
           </div>
 

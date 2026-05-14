@@ -689,6 +689,11 @@
  <thead><tr><th class="ver">버전</th><th class="date">날짜</th><th>주요 변경</th></tr></thead>
  <tbody>
  <tr>
+ <td class="ver">v1.13</td>
+ <td class="date">2026-05-15</td>
+ <td>NTF-01 모두 읽음·읽은 알림 삭제 버튼 "조건부 노출" → "항상 노출·조건 없으면 disabled" (시니어 친화)</td>
+ </tr>
+ <tr>
  <td class="ver">v1.12</td>
  <td class="date">2026-05-15</td>
  <td>STG-05 강제 수신 7종 전체 열거(그룹 전시 게시·기획전·Pick·응모전·검수·작품 연결·신고 처리 결과); PRF-05 AC 탈퇴 게시자 전시 유지 조건 추가</td>
@@ -5647,8 +5652,8 @@
  <dl>
  <dt>—</dt><dd>필터 칩 없음. 단일 전체 목록으로 모든 유형 알림 표시</dd>
  <dt>—</dt><dd>알림 피드 — 시간순 내림차순. 클릭으로 읽음 처리 + 관련 화면 이동</dd>
- <dt>—</dt><dd>"모두 읽음" 버튼 — 조건부 노출 (읽지 않은 알림이 있을 때만 표시)</dd>
- <dt>—</dt><dd>"읽은 알림 삭제" 버튼 — 조건부 노출 (읽은 알림이 있을 때만 표시)</dd>
+ <dt>—</dt><dd>"모두 읽음" 버튼 — 항상 노출, 읽지 않은 알림 없으면 disabled(opacity 40%)</dd>
+ <dt>—</dt><dd>"읽은 알림 삭제" 버튼 — 항상 노출, 읽은 알림 없으면 disabled(opacity 40%)</dd>
  <dt>—</dt><dd>알림 설정 링크 — /settings#notifications 로 이동 (코드에 추가된 항목, 스펙 외 구현)</dd>
  </dl>
 
