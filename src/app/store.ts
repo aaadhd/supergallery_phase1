@@ -346,15 +346,16 @@ export const workStore = {
       }
     } catch { /* ignore */ }
 
-    // Clean up admin picks referencing this work
+    // Clean up pick sessions referencing this work
     try {
-      const pRaw = localStorage.getItem('artier_admin_picks_v1');
+      const pRaw = localStorage.getItem('artier_picks_v1');
       if (pRaw) {
-        const picks = JSON.parse(pRaw) as string[];
-        const cleaned = picks.filter(p => p !== id);
-        if (cleaned.length !== picks.length) {
-          localStorage.setItem('artier_admin_picks_v1', JSON.stringify(cleaned));
-        }
+        const sessions = JSON.parse(pRaw) as Array<{ selectedWorkIds?: string[] }>;
+        const updated = sessions.map(s => ({
+          ...s,
+          selectedWorkIds: s.selectedWorkIds?.filter(wid => wid !== id),
+        }));
+        localStorage.setItem('artier_picks_v1', JSON.stringify(updated));
       }
     } catch { /* ignore */ }
 
