@@ -217,6 +217,18 @@ export default function CurationManagement() {
     const template = t('notif.curationSelected');
     const untitled = t('work.untitled');
 
+    // 첫 번째 piece 이미지를 대표 이미지로 자동 생성
+    const deriveBannerImageUrl = (): string | undefined => {
+      const firstPiece = pieces[0];
+      if (!firstPiece) return undefined;
+      const w = workStore.getWork(firstPiece.workId);
+      if (!w) return undefined;
+      const imgs = Array.isArray(w.image) ? w.image : [w.image];
+      const img = imgs[0];
+      return img ? (imageUrls[img] || img) : undefined;
+    };
+    const bannerImageUrl = deriveBannerImageUrl();
+
     if (editor.mode === 'edit' && editor.editingId) {
       const original = curatedExhibitions.find((c) => c.id === editor.editingId);
       const beforeKeys = new Set((original?.pieces ?? []).map((p) => pieceKey(p)));
@@ -227,6 +239,7 @@ export default function CurationManagement() {
         endAt: editor.endAt.trim() || undefined,
         pageUrl: editor.pageUrl.trim() || undefined,
         pieces,
+        bannerImageUrl,
       });
       // 새로 추가된 piece만 알림
       for (const p of pieces) {
@@ -249,6 +262,7 @@ export default function CurationManagement() {
         endAt: editor.endAt.trim() || undefined,
         pageUrl: editor.pageUrl.trim() || undefined,
         pieces,
+        bannerImageUrl,
       });
       // 모든 piece가 새로 추가됨
       for (const p of pieces) {
