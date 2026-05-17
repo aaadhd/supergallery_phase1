@@ -66,7 +66,7 @@ export default function PickDetail() {
     <div className="h-screen flex flex-col overflow-hidden bg-background pb-20 md:pb-0" style={{ height: '100dvh' }}>
       {/* 헤더 — 다크 배경 + 골드 광선 + 트로피 */}
       <div
-        className="relative overflow-hidden text-center py-4 px-4"
+        className="relative overflow-hidden text-center py-2 px-4"
         style={{ background: 'linear-gradient(180deg, #000000 0%, #0d0900 60%, #1a1000 100%)' }}
       >
         {/* 골드 광선 */}
@@ -131,7 +131,7 @@ export default function PickDetail() {
       <div style={{ height: 1, background: 'linear-gradient(90deg,transparent,rgba(255,200,0,0.3),transparent)' }} />
 
       {/* 선정 전시 캐러셀 */}
-      <div className="flex-1 min-h-0 flex items-center py-4" style={{ background: '#000' }}>
+      <div className="flex-1 min-h-0 flex items-center py-2" style={{ background: '#000' }}>
         {selectedWorks.length === 0 ? (
           <p className="text-center text-sm py-16" style={{ color: '#4a5568' }}>{t('pickDetail.noSelected')}</p>
         ) : (
@@ -154,7 +154,7 @@ export default function PickDetail() {
                 ? (w.groupName?.trim() || `${w.artist.name} 외`)
                 : `${w.artist.name} 작가`;
               const dist = Math.abs(i - focusedIndex);
-              const scale = dist === 0 ? 1 : dist === 1 ? 0.82 : 0.72;
+              const scale = dist === 0 ? 1.18 : dist === 1 ? 0.88 : 0.75;
               const opacity = dist === 0 ? 1 : dist === 1 ? 0.6 : 0.4;
               const isFocused = dist === 0;
 
@@ -166,7 +166,7 @@ export default function PickDetail() {
                   className="text-center flex-shrink-0"
                   style={{
                     scrollSnapAlign: 'center',
-                    width: 'min(58vw, 42vh)',
+                    width: 'min(50vw, 36vh)',
                     transform: `scale(${scale})`,
                     opacity,
                     transition: 'transform 0.35s ease, opacity 0.35s ease',
