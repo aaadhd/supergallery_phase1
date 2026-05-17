@@ -265,7 +265,7 @@ export default function ContestManagement() {
                     <th className="px-4 py-3 font-medium">응모전명</th>
                     <th className="px-4 py-3 font-medium">실행 기간</th>
                     <th className="px-4 py-3 font-medium">게시 기간</th>
-                    <th className="px-4 py-3 font-medium text-center">응모</th>
+                    <th className="px-4 py-3 font-medium text-center whitespace-nowrap">응모</th>
                     <th className="px-4 py-3 font-medium">{t('admin.contest.colStatus')}</th>
                     <th className="px-4 py-3 font-medium text-right">{t('admin.contest.colActions')}</th>
                   </tr>
@@ -302,12 +302,12 @@ export default function ContestManagement() {
                               {statusLabelKo(s)}
                             </span>
                             {ev.publicationOpen && !ev.notifiedAt && (
-                              <span className="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium w-fit bg-amber-50 text-amber-800 border border-amber-200">
+                              <span className="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium w-fit bg-amber-50 text-amber-800 border border-amber-200 whitespace-nowrap">
                                 선정 완료 · 알림 대기
                               </span>
                             )}
                             {ev.notifiedAt && (
-                              <span className="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium w-fit bg-emerald-50 text-emerald-700 border border-emerald-200">
+                              <span className="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium w-fit bg-emerald-50 text-emerald-700 border border-emerald-200 whitespace-nowrap">
                                 알림 발송 완료 {ev.notifiedAt ? `· ${ev.notifiedAt.slice(5)}` : ''}
                               </span>
                             )}
