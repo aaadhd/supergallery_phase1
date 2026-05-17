@@ -434,14 +434,44 @@ export default function PickManagement() {
                   <>
                     {/* 갤러리 영역 */}
                     <div className="p-4 border-b border-border flex items-center gap-3">
-                      <h2 className="text-sm font-bold flex-1 truncate">{draft.title}</h2>
-                      <div className="relative">
+                      {selectedId === 'new' && (
+                        <button
+                          type="button"
+                          onClick={() => setNewStep(1)}
+                          className="text-xs text-muted-foreground lg:hover:text-foreground shrink-0"
+                        >
+                          ← 이전
+                        </button>
+                      )}
+                      <div className="flex-1 flex items-center gap-2 min-w-0">
+                        <input
+                          value={draft.title}
+                          onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
+                          disabled={isEnded}
+                          className="font-semibold text-sm bg-transparent border-b border-transparent focus:border-border focus:outline-none truncate disabled:cursor-default"
+                        />
+                        {!isEnded && (
+                          <div className="flex items-center gap-1 shrink-0 text-xs text-muted-foreground">
+                            <input type="date" value={draft.startAt}
+                              onChange={(e) => setDraft((d) => ({ ...d, startAt: e.target.value }))}
+                              className="border border-border rounded px-1.5 py-0.5 text-xs" />
+                            <span>~</span>
+                            <input type="date" value={draft.endAt}
+                              onChange={(e) => setDraft((d) => ({ ...d, endAt: e.target.value }))}
+                              className="border border-border rounded px-1.5 py-0.5 text-xs" />
+                          </div>
+                        )}
+                        {isEnded && (
+                          <span className="text-xs text-muted-foreground shrink-0">{draft.startAt?.slice(5)} ~ {draft.endAt?.slice(5)}</span>
+                        )}
+                      </div>
+                      <div className="relative shrink-0">
                         <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
                         <input
                           value={pickerSearch}
                           onChange={(e) => setPickerSearch(e.target.value)}
                           placeholder="작품·작가 검색…"
-                          className="pl-7 pr-3 py-1.5 border border-border rounded-lg text-sm w-48"
+                          className="pl-7 pr-3 py-1.5 border border-border rounded-lg text-sm w-40"
                         />
                       </div>
                     </div>
@@ -544,7 +574,7 @@ export default function PickManagement() {
                           <span className="text-slate-500 text-xs">갤러리에서 작품을 클릭해 선정하세요</span>
                         )}
                         <div className="text-violet-300 text-xs font-semibold shrink-0 ml-1">
-                          {draft.workIds.length} / {MAX_PICKS}개
+                          {draft.workIds.length}개 선정 / 최대 {MAX_PICKS}개
                         </div>
                         <div className="flex-1" />
                         <button

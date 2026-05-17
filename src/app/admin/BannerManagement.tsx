@@ -122,7 +122,12 @@ export default function BannerManagement() {
 
   const toggleActive = (id: string, next: boolean) => {
     bannerStore.update(id, { isActive: next });
-    toast.success(next ? '활성화되었습니다.' : '비활성화되었습니다.');
+    if (!next && activeTab === 'live') {
+      setActiveTab('upcoming');
+      toast.success('비활성화되었습니다. 예정 탭으로 이동합니다.');
+    } else {
+      toast.success(next ? '활성화되었습니다.' : '비활성화되었습니다.');
+    }
   };
 
   const handleRemove = async (id: string, title: string) => {
@@ -250,7 +255,10 @@ export default function BannerManagement() {
           onSubmit={submitForm}
           className="mb-6 border border-border rounded-lg p-4 space-y-3 bg-muted/50"
         >
-          <p className="text-sm font-medium text-foreground">{editingId ? '배너 수정' : '새 배너 등록'}</p>
+          <div className="flex items-center gap-2">
+            <p className="text-sm font-medium text-foreground">{editingId ? '배너 수정' : '새 배너 등록'}</p>
+            {editingId && <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">수정 중</span>}
+          </div>
           <div className="grid sm:grid-cols-2 gap-3">
             <div>
               <label className="block text-xs text-muted-foreground mb-1">제목 <span className="text-destructive">*</span></label>
@@ -398,6 +406,7 @@ export default function BannerManagement() {
               key={b.id}
               banner={b}
               index={banners.indexOf(b)}
+              isEditing={editingId === b.id}
               onToggleActive={toggleActive}
               onRemove={handleRemove}
               onEdit={openEdit}
@@ -413,6 +422,7 @@ export default function BannerManagement() {
                   key={b.id}
                   banner={b}
                   index={banners.indexOf(b)}
+                  isEditing={editingId === b.id}
                   onToggleActive={toggleActive}
                   onRemove={handleRemove}
                   onEdit={openEdit}
@@ -429,12 +439,13 @@ export default function BannerManagement() {
 interface SortableBannerRowProps {
   banner: AdminBanner;
   index: number;
+  isEditing: boolean;
   onToggleActive: (id: string, next: boolean) => void;
   onRemove: (id: string, title: string) => void;
   onEdit: (banner: AdminBanner) => void;
 }
 
-function SortableBannerRow({ banner: b, index: idx, onToggleActive, onRemove, onEdit }: SortableBannerRowProps) {
+function SortableBannerRow({ banner: b, index: idx, isEditing, onToggleActive, onRemove, onEdit }: SortableBannerRowProps) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: b.id });
   const expired = isExpired(b);
   const style: React.CSSProperties = {
@@ -448,7 +459,7 @@ function SortableBannerRow({ banner: b, index: idx, onToggleActive, onRemove, on
       ref={setNodeRef}
       style={style}
       className={`border rounded-lg p-4 flex flex-col sm:flex-row gap-4 transition-colors bg-white ${
-        isDragging ? 'border-primary shadow-lg' : 'border-border lg:hover:bg-muted/50'
+        isDragging ? 'border-primary shadow-lg' : isEditing ? 'border-primary ring-2 ring-primary/20' : 'border-border lg:hover:bg-muted/50'
       }`}
     >
       <div className="flex items-start gap-2 shrink-0">

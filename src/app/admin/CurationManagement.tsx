@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { toast } from 'sonner';
 import { Plus, Trash2, Search, ExternalLink } from 'lucide-react';
 import { Link } from 'react-router-dom';
@@ -271,7 +272,9 @@ export default function CurationManagement() {
     toast.success(t('admin.curation.toastDeleted'));
   };
 
-  const allPieces = useMemo((): PieceItem[] => {
+  const [hoverImg, setHoverImg] = useState<{ src: string; x: number; y: number } | null>(null);
+
+  const allWorkGroups = useMemo(() => {
     const q = editor?.search.trim().toLowerCase() ?? '';
     return allWorks
       .filter(isWorkPublic)
@@ -281,16 +284,19 @@ export default function CurationManagement() {
         const artist = (w.artist?.name || '').toLowerCase();
         return title.includes(q) || artist.includes(q);
       })
-      .flatMap((w) => {
+      .map((w) => {
         const images = getWorkImages(w);
         const pieceIds = Array.isArray(w.imagePieceIds) ? w.imagePieceIds : images.map((_, i) => `${w.id}_piece${i}`);
-        return images.map((imgKey, i) => ({
-          workId: w.id,
-          pieceId: pieceIds[i] ?? `${w.id}_piece${i}`,
-          imgKey,
-          workTitle: displayExhibitionTitle(w, ''),
-          isPublic: isWorkPublic(w),
-        }));
+        return {
+          work: w,
+          pieces: images.map((imgKey, i): PieceItem => ({
+            workId: w.id,
+            pieceId: pieceIds[i] ?? `${w.id}_piece${i}`,
+            imgKey,
+            workTitle: displayExhibitionTitle(w, ''),
+            isPublic: true,
+          })),
+        };
       });
   }, [allWorks, editor?.search]);
 
@@ -435,47 +441,54 @@ export default function CurationManagement() {
                   </div>
                 </div>
 
-                {/* 평면 이미지 갤러리 */}
-                <div className="flex-1 overflow-y-auto p-4 bg-muted/10">
-                  {allPieces.length === 0 ? (
+                {/* 전시별 필름스트립 갤러리 */}
+                <div className="flex-1 overflow-y-auto p-3 bg-muted/10">
+                  {allWorkGroups.length === 0 ? (
                     <div className="text-center py-16 text-sm text-muted-foreground">공개된 전시가 없습니다.</div>
                   ) : (
-                    <div className="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-8 gap-3">
-                      {allPieces.map((piece) => {
-                        const key = `${piece.workId}:${piece.pieceId}`;
-                        const src = imageUrls[piece.imgKey] || piece.imgKey;
-                        const orderIdx = editor.pieces.findIndex((p) => pieceKey(p) === key);
-                        const isSelected = orderIdx >= 0;
-                        return (
-                          <button
-                            key={key}
-                            type="button"
-                            disabled={!piece.isPublic}
-                            onClick={() => togglePiece(piece.workId, piece.pieceId)}
-                            title={piece.workTitle}
-                            className={`group relative rounded-lg overflow-hidden border-2 transition-all disabled:opacity-40 disabled:pointer-events-none ${
-                              isSelected ? 'border-primary shadow-md' : 'border-transparent lg:hover:border-primary/40'
-                            }`}
-                          >
-                            <div className="aspect-square bg-muted">
-                              <ImageWithFallback src={src} alt="" className="w-full h-full object-cover" />
-                            </div>
-                            {isSelected && (
-                              <div className="absolute top-1 right-1 bg-primary text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                                {orderIdx + 1}
-                              </div>
-                            )}
-                            {!piece.isPublic && (
-                              <div className="absolute inset-0 bg-black/40 flex items-center justify-center">
-                                <span className="text-white text-[9px] font-medium">비공개</span>
-                              </div>
-                            )}
-                            <div className="absolute inset-x-0 bottom-0 bg-black/60 px-1 py-0.5 text-[9px] text-white truncate opacity-0 group-hover:opacity-100 transition-opacity">
-                              {piece.workTitle}
-                            </div>
-                          </button>
-                        );
-                      })}
+                    <div className="space-y-1">
+                      {allWorkGroups.map(({ work, pieces }) => (
+                        <div key={work.id} className="flex items-center gap-3 px-3 py-2 rounded-lg">
+                          <div className="w-28 shrink-0 min-w-0">
+                            <p className="text-sm font-medium truncate leading-tight">{displayExhibitionTitle(work, '(제목 없음)')}</p>
+                            <p className="text-xs text-muted-foreground truncate">{work.artist?.name ?? work.groupName ?? '—'}</p>
+                          </div>
+                          <div className="flex gap-1 overflow-x-auto flex-1">
+                            {pieces.map((piece) => {
+                              const key = `${piece.workId}:${piece.pieceId}`;
+                              const src = imageUrls[piece.imgKey] || piece.imgKey;
+                              const orderIdx = editor.pieces.findIndex((p) => pieceKey(p) === key);
+                              const isSelected = orderIdx >= 0;
+                              return (
+                                <button
+                                  key={key}
+                                  type="button"
+                                  onClick={() => togglePiece(piece.workId, piece.pieceId)}
+                                  className={`relative w-14 h-14 shrink-0 rounded overflow-hidden border-2 transition-all ${
+                                    isSelected ? 'border-sky-500 shadow-sm' : 'border-transparent lg:hover:border-sky-300'
+                                  }`}
+                                  onMouseEnter={(e) => {
+                                    const r = e.currentTarget.getBoundingClientRect();
+                                    let x = r.right + 8;
+                                    let y = r.top + r.height / 2 - 120;
+                                    if (x + 240 > window.innerWidth) x = r.left - 248;
+                                    y = Math.max(8, Math.min(y, window.innerHeight - 248));
+                                    setHoverImg({ src, x, y });
+                                  }}
+                                  onMouseLeave={() => setHoverImg(null)}
+                                >
+                                  <ImageWithFallback src={src} alt="" className="w-full h-full object-cover" />
+                                  {isSelected && (
+                                    <div className="absolute top-0.5 right-0.5 bg-sky-600 text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                                      {orderIdx + 1}
+                                    </div>
+                                  )}
+                                </button>
+                              );
+                            })}
+                          </div>
+                        </div>
+                      ))}
                     </div>
                   )}
                 </div>
@@ -519,7 +532,7 @@ export default function CurationManagement() {
                   </button>
                   <button type="button" onClick={saveEditor}
                     className="bg-sky-600 text-white rounded-md px-3 py-1.5 text-xs font-semibold lg:hover:bg-sky-700">
-                    게시
+                    저장
                   </button>
                 </div>
               </>
@@ -528,6 +541,17 @@ export default function CurationManagement() {
 
         </div>
       </div>
+
+      {/* 호버 이미지 팝업 포털 */}
+      {hoverImg && createPortal(
+        <div
+          className="fixed z-[9999] pointer-events-none rounded-lg overflow-hidden shadow-xl border border-border"
+          style={{ left: hoverImg.x, top: hoverImg.y, width: 240, height: 240 }}
+        >
+          <img src={hoverImg.src} alt="" className="w-full h-full object-cover" />
+        </div>,
+        document.body,
+      )}
     </div>
   );
 }

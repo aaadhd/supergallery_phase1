@@ -474,9 +474,12 @@ export default function AdminInquiries() {
                     <p className="text-xs font-medium text-muted-foreground">문의 내용</p>
                     <p className="text-xs text-muted-foreground">{selected.email} · {selected.createdAt.slice(0, 10)}</p>
                   </div>
-                  <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{selected.message}</p>
+                  {selected.message
+                    ? <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{selected.message}</p>
+                    : <p className="text-sm text-muted-foreground italic">(내용 없음)</p>
+                  }
                 </div>
-                <div className="space-y-2">
+                <div className="pt-3 border-t border-border/60 space-y-2">
                   <p className="text-xs font-medium text-muted-foreground">빠른 답변 템플릿</p>
                   <select onChange={(e) => { if (e.target.value) setReplyText(e.target.value); }} value=""
                     className="w-full border border-border rounded px-2 py-1.5 text-xs bg-white">
@@ -640,7 +643,10 @@ export default function AdminInquiries() {
                 </div>
                 <div>
                   <p className="text-xs font-medium text-muted-foreground mb-1">본문</p>
-                  <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{selected.message}</p>
+                  {selected.message
+                    ? <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{selected.message}</p>
+                    : <p className="text-sm text-muted-foreground italic">(내용 없음)</p>
+                  }
                 </div>
                 {selected.attachments && selected.attachments.length > 0 && (
                   <div>
