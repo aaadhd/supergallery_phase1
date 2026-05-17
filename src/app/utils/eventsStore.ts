@@ -25,8 +25,6 @@ export type ManagedEvent = {
   /** 게시 기간 — 미설정 시 startAt/endAt 과 동일하게 취급. YYYY-MM-DD */
   displayStartAt?: string;
   displayEndAt?: string;
-  /** 수동 상태. 없으면 startAt/endAt 기준 자동 계산 */
-  status?: EventStatus;
   participantsLabel?: string;
   /** 선정작 발표 페이지 공개 토글 */
   publicationOpen?: boolean;
@@ -61,7 +59,6 @@ const SEED_EVENTS: ManagedEvent[] = [
     endAt: '2026-05-31',
     displayStartAt: '2026-05-01',
     displayEndAt: '2026-05-31',
-    status: 'active',
   },
   {
     id: '2',
@@ -77,7 +74,6 @@ const SEED_EVENTS: ManagedEvent[] = [
     endAt: '2026-06-30',
     displayStartAt: '2026-05-01',
     displayEndAt: '2026-06-30',
-    status: 'active',
   },
   {
     id: 'seed-ended-contest',
@@ -261,11 +257,10 @@ function writeToStorage(list: ManagedEvent[]) {
   window.dispatchEvent(new Event(CHANGED_EVENT));
 }
 
-/** 날짜 기준 자동 상태 계산. 종료일이 지났으면 수동 status 무관하게 ended. */
-export function deriveEventStatus(e: { startAt: string; endAt: string; status?: EventStatus }, now: Date = new Date()): EventStatus {
+/** 날짜 기준 자동 상태 계산. */
+export function deriveEventStatus(e: { startAt: string; endAt: string }, now: Date = new Date()): EventStatus {
   const today = todayLocalIso(now);
   if (today > e.endAt) return 'ended';
-  if (e.status) return e.status;
   if (today < e.startAt) return 'scheduled';
   return 'active';
 }

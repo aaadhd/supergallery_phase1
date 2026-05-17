@@ -5098,11 +5098,8 @@
  <div style="background: var(--ink); color: white; padding: 13px 28px; border-radius: 10px; font-size: 14px; font-weight: 600; display: inline-block; margin-bottom: 10px; position: relative;">참여하기 →
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">2</span>
  </div>
- <div style="border: 1.5px solid var(--ink); padding: 10px 22px; border-radius: 10px; font-size: 13px; font-weight: 600; display: inline-block; margin-left: 8px; margin-bottom: 10px; position: relative;">🏆 선정작 발표 보기
- <span class="bub" style="position: absolute; top: -10px; right: -10px;">4</span>
- </div>
  <div style="border: 1.5px solid #6366f1; padding: 10px 22px; border-radius: 10px; font-size: 13px; font-weight: 600; display: inline-block; margin-left: 8px; margin-bottom: 20px; color: #6366f1; position: relative;">🔗 결과 발표 보기 ↗
- <span class="bub" style="position: absolute; top: -10px; right: -10px;">5</span>
+ <span class="bub" style="position: absolute; top: -10px; right: -10px;">4</span>
  </div>
  <div style="border-top: 1px solid var(--line); padding-top: 18px; position: relative;">
  <div style="font-size: 12px; font-weight: 700; margin-bottom: 10px;">참여 작품 12점</div>
@@ -5117,7 +5114,7 @@
  </div>
  </div>
  </div>
- <div class="placeholder-note">상세 + 참여 CTA + 선정작 발표 보기 CTA</div>
+ <div class="placeholder-note">상세 + 참여 CTA + 결과 발표 보기 CTA</div>
  </div>
 
  <div class="desc">
@@ -5131,8 +5128,7 @@
  <dt><span class="bub">1</span></dt><dd>상태 배지 + D-Day — "진행 중 D-N" 형태</dd>
  <dt><span class="bub">2</span></dt><dd>참여 CTA — "참여하기 →" → USR-EVT-04 응모 모달 오픈</dd>
  <dt><span class="bub">3</span></dt><dd>참여 작품 수 — 현재까지 제출된 작품 수 표시</dd>
- <dt><span class="bub">4</span></dt><dd>선정작 발표 보기 CTA — 선정 발표가 게시된 응모전에만 노출 → USR-EVT-05</dd>
- <dt><span class="bub">5</span></dt><dd>결과 발표 보기 CTA — 종료 + 운영팀 <code>resultUrl</code> 설정 시에만 노출 → 외부 링크 새 탭 열기</dd>
+ <dt><span class="bub">4</span></dt><dd>결과 발표 보기 CTA — 종료 + 운영팀 <code>resultUrl</code> 설정 시에만 노출 → 외부 링크 새 탭 열기</dd>
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
@@ -5141,7 +5137,6 @@
  <li>응모 후 → "내 응모작 보기"(모달) + "응모 취소" 버튼</li>
  <li>응모 취소 확인 다이얼로그 → 확인 시 작품 삭제, 재응모 가능 상태 복귀</li>
  <li>종료 후 → 버튼 비활성</li>
- <li>선정 발표가 게시된 응모전 → "선정작 발표 보기" CTA 노출 → USR-EVT-05</li>
  <li>종료 + resultUrl 설정 → "결과 발표 보기" 외부 링크 CTA 노출 (새 탭)</li>
  <li>응모작은 피드·마이페이지 미노출 (응모전 상세에서만 확인)</li>
  </ol></div>
@@ -5402,7 +5397,7 @@
  <h3>화면 정보</h3>
  <dl>
  <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> /events/:id/results</dd>
- <dt></dt><dd><strong>진입</strong> USR-EVT-02 "선정작 발표 보기" CTA, 발표 배너, 직접 URL</dd>
+ <dt></dt><dd><strong>진입</strong> 발표 배너, 직접 URL</dd>
  <dt></dt><dd><strong>노출 조건</strong> 검수 승인 + 비공개 아님 + selectedWorkIds 포함(선정 여부) 조건 모두 만족. 한 조건이라도 깨지면 즉시 그리드에서 제거 (Policy §32.2)</dd>
  <dt></dt><dd><strong>작품 단위</strong> 응모작이 1장짜리 전시이므로 작품 단위 = 전시 단위 일치 — 별도 piece 식별 불필요</dd>
  </dl>
