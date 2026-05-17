@@ -111,11 +111,18 @@ export default function Events() {
         <div className="flex gap-1 mb-8 border-b border-border">
           {(['events', 'pick', 'curation'] as EventsTab[]).map((tab) => {
             const label = tab === 'events' ? t('events.tabEvents') : tab === 'pick' ? t('events.tabPick') : t('events.tabCuration');
+            const handleClick = () => {
+              if (tab === 'pick' && activePickSession) {
+                navigate(`/picks/${activePickSession.id}`);
+                return;
+              }
+              setTab(tab);
+            };
             return (
               <button
                 key={tab}
                 type="button"
-                onClick={() => setTab(tab)}
+                onClick={handleClick}
                 className={`px-4 py-2.5 text-sm font-semibold border-b-2 -mb-px transition-colors ${
                   activeTab === tab
                     ? 'border-foreground text-foreground'
