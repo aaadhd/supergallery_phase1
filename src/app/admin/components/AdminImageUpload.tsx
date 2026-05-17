@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { ImageWithFallback } from '../../components/ImageWithFallback';
 
 interface AdminImageUploadProps {
@@ -34,6 +34,7 @@ async function compressImage(file: File): Promise<string> {
 }
 
 export function AdminImageUpload({ value, onChange, label, required }: AdminImageUploadProps) {
+  const inputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
 
   const handleFile = async (file: File) => {
@@ -45,6 +46,11 @@ export function AdminImageUpload({ value, onChange, label, required }: AdminImag
     } finally {
       setLoading(false);
     }
+  };
+
+  const open = () => {
+    if (loading) return;
+    inputRef.current?.click();
   };
 
   return (
@@ -59,17 +65,14 @@ export function AdminImageUpload({ value, onChange, label, required }: AdminImag
           </div>
         )}
         <div className="flex flex-col gap-1.5">
-          {/* label로 input을 감싸 — display:none click 트리거 이슈 완전 회피 */}
-          <label className={`relative text-sm px-3 py-1.5 rounded-lg border border-border bg-white text-foreground lg:hover:bg-muted/40 w-fit cursor-pointer select-none ${loading ? 'opacity-50 pointer-events-none' : ''}`}>
+          <button
+            type="button"
+            onClick={open}
+            disabled={loading}
+            className="text-sm px-3 py-1.5 rounded-lg border border-border bg-white text-foreground lg:hover:bg-muted/40 disabled:opacity-50 w-fit"
+          >
             {loading ? '처리 중…' : value ? '이미지 변경' : '이미지 선택'}
-            <input
-              type="file"
-              accept="image/*"
-              className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
-              onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ''; }}
-              disabled={loading}
-            />
-          </label>
+          </button>
           {value && (
             <button
               type="button"
@@ -81,6 +84,14 @@ export function AdminImageUpload({ value, onChange, label, required }: AdminImag
           )}
         </div>
       </div>
+      {/* sr-only: display:none 아님 — 브라우저 보안 제한 없이 .click() 동작 */}
+      <input
+        ref={inputRef}
+        type="file"
+        accept="image/*"
+        className="sr-only"
+        onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ''; }}
+      />
     </div>
   );
 }
