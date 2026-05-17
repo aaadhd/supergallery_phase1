@@ -86,8 +86,8 @@ function writeToStorage(list: PickSession[]) {
 export function derivePickStatus(e: Pick<PickSession, 'startAt' | 'endAt' | 'status'>, now: Date = new Date()): PickStatus {
   const today = todayLocalIso(now);
   if (today > e.endAt) return 'ended';
-  if (e.status) return e.status;
   if (today < e.startAt) return 'scheduled';
+  if (e.status === 'ended') return 'ended';
   return 'active';
 }
 

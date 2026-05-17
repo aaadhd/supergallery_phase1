@@ -134,7 +134,7 @@ function publishPickSession(newSessionId: string): void {
       });
     }
   }
-  pickStore.update(newSessionId, { publicationOpen: true, status: 'active' });
+  pickStore.update(newSessionId, { publicationOpen: true });
 }
 
 
