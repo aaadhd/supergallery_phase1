@@ -40,6 +40,7 @@ type InquiryStatus = '신규' | '처리 중' | '완료' | '보류';
 
 interface StoredInquiry {
   id: string;
+  nickname?: string;
   email: string;
   category: string;
   message: string;
@@ -65,6 +66,7 @@ const STORAGE_KEY = 'artier_inquiries';
 const SEED_INQUIRIES: StoredInquiry[] = [
   {
     id: 'inq-seed-1',
+    nickname: '봄날의화가',
     email: 'minseo.k@example.com',
     category: 'upload',
     message: '작품을 업로드했는데 검수 대기 중이라고만 나오고 3일째 처리가 안 되고 있습니다. 정상적으로 접수된 건지 확인 부탁드립니다.',
@@ -74,6 +76,7 @@ const SEED_INQUIRIES: StoredInquiry[] = [
   },
   {
     id: 'inq-seed-2',
+    nickname: '먹빛서재',
     email: 'hajun.lee@example.com',
     category: 'account',
     message: '닉네임을 변경하고 싶은데 설정에서 수정이 안 됩니다. 혹시 닉네임 변경 횟수 제한이 있나요?',
@@ -89,6 +92,7 @@ const SEED_INQUIRIES: StoredInquiry[] = [
   },
   {
     id: 'inq-seed-3',
+    nickname: '정림수채화',
     email: 'daeun.j@example.com',
     category: 'workInquiry',
     categoryDetail: '작품 구입·소장 문의',
@@ -100,6 +104,7 @@ const SEED_INQUIRIES: StoredInquiry[] = [
   },
   {
     id: 'inq-seed-4',
+    nickname: '고요한붓끝',
     email: 'banned_user@example.com',
     category: 'privacy',
     message: '개인정보보호법 제36조에 따라 본인의 계정 및 관련 데이터 전체 삭제를 요청드립니다. 이메일: banned_user@example.com',
@@ -116,6 +121,7 @@ const SEED_INQUIRIES: StoredInquiry[] = [
   },
   {
     id: 'inq-seed-5',
+    nickname: '소소한하루',
     email: 'sohee.h@example.com',
     category: 'bug',
     message: '갤러리 둘러보기 화면에서 스크롤을 내리면 특정 작품 카드에서 이미지가 로딩되지 않고 빈 화면으로 표시됩니다. 아이폰 15, 사파리 환경입니다.',
@@ -131,6 +137,7 @@ const SEED_INQUIRIES: StoredInquiry[] = [
   },
   {
     id: 'inq-seed-6',
+    nickname: '여백의미학',
     email: 'seoa.y@example.com',
     category: 'suggestion',
     message: '작품에 좋아요를 누른 사용자 목록을 작가가 볼 수 있으면 좋겠습니다. 어떤 분들이 관심 가지는지 알면 교류가 더 활발해질 것 같아요.',
@@ -450,7 +457,9 @@ export default function AdminInquiries() {
                 <div>
                   <div className="flex justify-between items-center mb-1">
                     <p className="text-xs font-medium text-muted-foreground">문의 내용</p>
-                    <p className="text-xs text-muted-foreground">{selected.email} · {selected.createdAt.slice(0, 10)}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {selected.nickname ? `${selected.nickname} · ` : ''}{selected.email} · {selected.createdAt.slice(0, 10)}
+                    </p>
                   </div>
                   {selected.message
                     ? <p className="text-sm text-foreground whitespace-pre-wrap leading-relaxed">{selected.message}</p>
@@ -545,8 +554,7 @@ export default function AdminInquiries() {
                   <tr className="bg-muted text-left text-foreground">
                     <th className="px-3 py-2 font-medium">접수</th>
                     <th className="px-3 py-2 font-medium">카테고리</th>
-                    <th className="px-3 py-2 font-medium">이메일</th>
-                    <th className="px-3 py-2 font-medium">본문</th>
+                    <th className="px-3 py-2 font-medium">닉네임</th>
                     <th className="px-3 py-2 font-medium">상태</th>
                   </tr>
                 </thead>
@@ -574,11 +582,8 @@ export default function AdminInquiries() {
                               {isPrivacy && '🔐 '}{CATEGORY_LABELS[i.category] ?? i.category}
                             </span>
                           </td>
-                          <td className="px-3 py-2 max-w-[180px]">
-                            <div className="truncate text-muted-foreground">{i.email}</div>
-                          </td>
-                          <td className="px-3 py-2 max-w-[220px]">
-                            <div className="truncate text-muted-foreground">{i.message.slice(0, 60)}{i.message.length > 60 ? '…' : ''}</div>
+                          <td className="px-3 py-2">
+                            <div className="text-sm text-foreground">{i.nickname ?? '—'}</div>
                           </td>
                           <td className="px-3 py-2">
                             <span className="inline-flex rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-foreground border border-border">
@@ -599,7 +604,8 @@ export default function AdminInquiries() {
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <p className="text-xs text-muted-foreground">{selected.createdAt.slice(0, 19).replace('T', ' ')}</p>
-                    <p className="text-sm font-semibold text-foreground">{selected.email}</p>
+                    {selected.nickname && <p className="text-sm font-semibold text-foreground">{selected.nickname}</p>}
+                    <p className="text-xs text-muted-foreground">{selected.email}</p>
                   </div>
                   <button type="button" onClick={() => setSelectedId(null)}
                     className="p-1 rounded lg:hover:bg-muted/60" aria-label="닫기">
