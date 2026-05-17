@@ -163,25 +163,29 @@ export default function BannerManagement() {
 
   const submitForm = (e: FormEvent) => {
     e.preventDefault();
-    if (!draft.title.trim() || !draft.imageUrl.trim()) {
-      toast.error('제목과 이미지를 입력해 주세요.');
+    const title = draft.title.trim();
+    const subtitle = draft.subtitle.trim();
+    const linkUrl = draft.linkUrl.trim();
+    const { imageUrl, startAt, endAt } = draft;
+    if (!title || !subtitle || !imageUrl || !linkUrl || !startAt || !endAt) {
+      toast.error('모든 항목을 입력해 주세요.');
       return;
     }
-    if (draft.linkUrl.trim() && !isValidUrl(draft.linkUrl.trim())) {
+    if (!isValidUrl(linkUrl)) {
       toast.error('링크 URL 형식이 올바르지 않아요. (http:// 또는 https:// 로 시작해야 해요)');
       return;
     }
-    if (draft.startAt && draft.endAt && draft.startAt > draft.endAt) {
-      toast.error('게시 기간 시작일이 종료일보다 늦을 수 없습니다.');
+    if (startAt > endAt) {
+      toast.error('게시 시작일이 종료일보다 늦을 수 없습니다.');
       return;
     }
     const base = {
-      title: draft.title.trim(),
-      subtitle: draft.subtitle.trim() || undefined,
-      imageUrl: draft.imageUrl.trim(),
-      linkUrl: draft.linkUrl.trim() || undefined,
-      startAt: draft.startAt || undefined,
-      endAt: draft.endAt || undefined,
+      title,
+      subtitle,
+      imageUrl,
+      linkUrl,
+      startAt,
+      endAt,
     };
     if (editingId) {
       bannerStore.update(editingId, base);
@@ -319,7 +323,7 @@ export default function BannerManagement() {
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-muted-foreground mb-1">부제</label>
+                    <label className="block text-xs text-muted-foreground mb-1">부제 <span className="text-destructive">*</span></label>
                     <input
                       placeholder="봄을 담은 작품들"
                       value={draft.subtitle}
@@ -336,7 +340,7 @@ export default function BannerManagement() {
                     />
                   </div>
                   <div className="sm:col-span-2">
-                    <label className="block text-xs text-muted-foreground mb-1">링크 URL</label>
+                    <label className="block text-xs text-muted-foreground mb-1">링크 URL <span className="text-destructive">*</span></label>
                     <input
                       placeholder="https://..."
                       value={draft.linkUrl}
@@ -347,11 +351,11 @@ export default function BannerManagement() {
                   <div className="sm:col-span-2">
                     <div className="grid sm:grid-cols-2 gap-3">
                       <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-                        게시 시작일
+                        게시 시작일 <span className="text-destructive">*</span>
                         <input type="date" value={draft.startAt} onChange={(e) => setDraft((d) => ({ ...d, startAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
                       </label>
                       <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-                        게시 종료일
+                        게시 종료일 <span className="text-destructive">*</span>
                         <input type="date" value={draft.endAt} onChange={(e) => setDraft((d) => ({ ...d, endAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
                       </label>
                     </div>
