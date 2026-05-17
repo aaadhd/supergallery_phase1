@@ -340,7 +340,7 @@ export default function AdminInquiries() {
         : selected.privacy,
     });
     appendAuditLog({ action: 'inquiry_answered', targetId: selected.id, targetSnapshot: { category: selected.category }, actorId: 'admin', actorRole: 'admin' });
-    toast.success('답변을 저장했습니다. (모의 발송 — 런칭 후 SMTP 연동)');
+    toast.success('답변을 저장했습니다.');
     setReplyText('');
   };
 
@@ -493,7 +493,7 @@ export default function AdminInquiries() {
                   <div className="flex gap-2 items-center">
                     <Button type="button" onClick={sendReply}
                       className="flex-1 text-sm px-3 py-1.5 bg-primary text-white rounded-lg min-h-[44px]">
-                      답변 발송 (모의)
+                      답변 발송
                     </Button>
                     <select value={selected.status ?? '신규'}
                       onChange={(e) => changeStatus(selected.id, e.target.value as InquiryStatus)}
@@ -698,7 +698,7 @@ export default function AdminInquiries() {
                   <div className="flex justify-end gap-2">
                     <Button type="button" onClick={sendReply}
                       className="text-sm px-3 py-1.5 bg-primary text-white rounded-lg min-h-[44px]">
-                      답변 발송 (모의)
+                      답변 발송
                     </Button>
                   </div>
                   {selected.replies && selected.replies.length > 0 && (
