@@ -406,63 +406,119 @@ export function useManagedEvents(): ManagedEvent[] {
 }
 
 /**
- * 응모전 출품 시드 데이터 — 시드 작품에 linkedEventId를 부여해 응모자 관리 탭 데모 구현.
+ * 응모전 출품 시드 데이터 — EventEntryModal 과 동일한 1장짜리 Work 구조로 생성.
  * workStore가 마운트된 이후(PointsBootstrap)에 호출해야 한다.
  */
 export function seedEventParticipantsIfEmpty(): void {
   if (typeof window === 'undefined') return;
-  const SEED_KEY = 'artier_event_participants_seeded_v2';
-  if (localStorage.getItem(SEED_KEY)) return;
+  const SEED_KEY_V3 = 'artier_event_participants_seeded_v3';
+  if (localStorage.getItem(SEED_KEY_V3)) return;
 
   import('../store').then(({ workStore }) => {
-    const works = workStore.getWorks();
-    if (works.length === 0) return;
+    import('../data').then(({ artists }) => {
+      const CONTEST_SEED_IDS = ['1', '2', 'seed-ended-contest', 'seed-ended-3', 'seed-ended-5'];
 
-    // 이미 linkedEventId가 있는 작품이 있으면 스킵
-    const hasLinked = works.some((w) => w.linkedEventId != null);
-    if (hasLinked) { localStorage.setItem(SEED_KEY, '1'); return; }
-
-    // approved 시드 작품만 대상
-    const approved = works.filter((w) => w.feedReviewStatus === 'approved');
-    if (approved.length < 10) return;
-
-    // 이벤트별 작품 배분 (startIdx, count)
-    const assignments: Array<{ eventId: string; start: number; count: number }> = [
-      { eventId: '1',                  start: 0,  count: 5 }, // 나의 첫 디지털 캔버스 (진행중)
-      { eventId: '2',                  start: 5,  count: 4 }, // 동호회 작품전 (진행중)
-      { eventId: 'seed-ended-contest', start: 9,  count: 6 }, // 봄맞이 수채화 (종료)
-      { eventId: 'seed-ended-3',       start: 15, count: 5 }, // 겨울 풍경 드로잉 (종료)
-      { eventId: 'seed-ended-5',       start: 20, count: 5 }, // 연말 결산 (종료)
-    ];
-
-    for (const { eventId, start, count } of assignments) {
-      const slice = approved.slice(start, start + count);
-      for (const w of slice) {
-        workStore.updateWork(w.id, { linkedEventId: eventId });
+      // v2 잔재 정리: gallery 작품(user- 아닌 ID)에 붙었던 linkedEventId 제거
+      const existing = workStore.getWorks();
+      for (const w of existing) {
+        if (
+          w.linkedEventId != null &&
+          CONTEST_SEED_IDS.includes(String(w.linkedEventId)) &&
+          !String(w.id).startsWith('user-') &&
+          !String(w.id).startsWith('contest-seed-')
+        ) {
+          workStore.updateWork(w.id, { linkedEventId: undefined });
+        }
       }
-    }
 
-    // 종료된 응모전에는 selectedWorkIds도 시드 (당선작 시뮬레이션)
-    const endedAssignments: Record<string, number> = {
-      'seed-ended-contest': 3,
-      'seed-ended-3': 2,
-      'seed-ended-5': 2,
-    };
-    const allNow = workStore.getWorks();
-    for (const [eventId, winnerCount] of Object.entries(endedAssignments)) {
-      const eventWorks = allNow.filter((w) => String(w.linkedEventId) === eventId);
-      const winnerIds = eventWorks.slice(0, winnerCount).map((w) => w.id);
-      if (winnerIds.length > 0) {
-        eventsStore.update(eventId, {
-          selectedWorkIds: winnerIds,
-          publicationOpen: true,
-          publishedAt: eventId === 'seed-ended-5' ? '2025-12-31'
-            : eventId === 'seed-ended-3' ? '2026-01-31'
-            : '2026-04-16',
+      const getArtist = (id: string) => artists.find((a) => a.id === id)!;
+
+      type SeedEntry = {
+        contestId: string;
+        n: number;
+        title: string;
+        artistId: string;
+        uploadedAt: string;
+        image: string;
+      };
+
+      const SEED_ENTRIES: SeedEntry[] = [
+        // 나의 첫 디지털 캔버스 (진행중)
+        { contestId: '1', n: 1, title: '처음 그린 디지털 꽃',     artistId: '2',  uploadedAt: '2026-05-03', image: 'https://images.unsplash.com/photo-1578301978693-85fa9c0320b9?w=600&h=600&fit=crop' },
+        { contestId: '1', n: 2, title: '첫 캔버스',               artistId: '3',  uploadedAt: '2026-05-05', image: 'https://images.unsplash.com/photo-1541961017774-22349e4a1262?w=600&h=600&fit=crop' },
+        { contestId: '1', n: 3, title: '나의 시작',               artistId: '4',  uploadedAt: '2026-05-07', image: 'https://images.unsplash.com/photo-1579783902614-a3fb3927b6a5?w=600&h=600&fit=crop' },
+        { contestId: '1', n: 4, title: '디지털로 그린 하늘',       artistId: '5',  uploadedAt: '2026-05-10', image: 'https://images.unsplash.com/photo-1513364776144-60967b0f800f?w=600&h=600&fit=crop' },
+        { contestId: '1', n: 5, title: '설레는 첫 작품',           artistId: '6',  uploadedAt: '2026-05-12', image: 'https://images.unsplash.com/photo-1615184697985-c9bde1b07da7?w=600&h=600&fit=crop' },
+        // 동호회 작품전 참여하기 (진행중)
+        { contestId: '2', n: 1, title: '동호회 봄 풍경',           artistId: '7',  uploadedAt: '2026-05-04', image: 'https://images.unsplash.com/photo-1618005198919-d3d4b5a92ead?w=600&h=600&fit=crop' },
+        { contestId: '2', n: 2, title: '함께 그린 강가',           artistId: '8',  uploadedAt: '2026-05-08', image: 'https://images.unsplash.com/photo-1561839561-b13bcfe95249?w=600&h=600&fit=crop' },
+        { contestId: '2', n: 3, title: '우리 모임의 색',           artistId: '9',  uploadedAt: '2026-05-11', image: 'https://images.unsplash.com/photo-1559887130-0d1be42a06ee?w=600&h=600&fit=crop' },
+        { contestId: '2', n: 4, title: '수업 시간 그린 정물',       artistId: '10', uploadedAt: '2026-05-14', image: 'https://images.unsplash.com/photo-1618172193622-ae2d025f4032?w=600&h=600&fit=crop' },
+        // 봄맞이 수채화 응모전 (종료)
+        { contestId: 'seed-ended-contest', n: 1, title: '봄비 수채화',       artistId: '11', uploadedAt: '2026-03-22', image: 'https://images.unsplash.com/photo-1462275646964-a0e3386b89fa?w=600&h=600&fit=crop' },
+        { contestId: 'seed-ended-contest', n: 2, title: '벚꽃 길',           artistId: '12', uploadedAt: '2026-03-25', image: 'https://images.unsplash.com/photo-1547826039-bfc35e0f1ea8?w=600&h=600&fit=crop' },
+        { contestId: 'seed-ended-contest', n: 3, title: '봄의 정원',         artistId: '13', uploadedAt: '2026-03-28', image: 'https://images.unsplash.com/photo-1580136608688-c8d2700ac8a7?w=600&h=600&fit=crop' },
+        { contestId: 'seed-ended-contest', n: 4, title: '따스한 봄빛',       artistId: '14', uploadedAt: '2026-04-01', image: 'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=600&fit=crop' },
+        { contestId: 'seed-ended-contest', n: 5, title: '봄 여백',           artistId: '15', uploadedAt: '2026-04-05', image: 'https://images.unsplash.com/photo-1589279003513-467d320f47eb?w=600&h=600&fit=crop' },
+        { contestId: 'seed-ended-contest', n: 6, title: '소소한 봄날',       artistId: '16', uploadedAt: '2026-04-10', image: 'https://images.unsplash.com/photo-1621506289937-a8e4df240d0b?w=600&h=600&fit=crop' },
+        // 겨울 풍경 드로잉 응모전 (종료)
+        { contestId: 'seed-ended-3', n: 1, title: '눈 내리는 숲길',          artistId: '17', uploadedAt: '2026-01-08', image: 'https://images.unsplash.com/photo-1491002052546-bf38f186af56?w=600&h=600&fit=crop' },
+        { contestId: 'seed-ended-3', n: 2, title: '겨울 민화',               artistId: '18', uploadedAt: '2026-01-12', image: 'https://images.unsplash.com/photo-1554907984-15263bfd63bd?w=600&h=600&fit=crop' },
+        { contestId: 'seed-ended-3', n: 3, title: '겨울빛 드로잉',           artistId: '19', uploadedAt: '2026-01-15', image: 'https://images.unsplash.com/photo-1561731216-c3a4d99437d5?w=600&h=600&fit=crop' },
+        { contestId: 'seed-ended-3', n: 4, title: '눈꽃 수채화',             artistId: '20', uploadedAt: '2026-01-20', image: 'https://images.unsplash.com/photo-1577083552431-6e5fd01aa342?w=600&h=600&fit=crop' },
+        { contestId: 'seed-ended-3', n: 5, title: '겨울 오후',               artistId: '21', uploadedAt: '2026-01-25', image: 'https://images.unsplash.com/photo-1604871000636-074fa5117945?w=600&h=600&fit=crop' },
+        // 2025 연말 결산 응모전 (종료)
+        { contestId: 'seed-ended-5', n: 1, title: '2025년의 기억',           artistId: '22', uploadedAt: '2025-12-16', image: 'https://images.unsplash.com/photo-1513151233558-d860c5398176?w=600&h=600&fit=crop' },
+        { contestId: 'seed-ended-5', n: 2, title: '한 해의 마지막',          artistId: '23', uploadedAt: '2025-12-18', image: 'https://images.unsplash.com/photo-1520209759809-a9bcb6cb3241?w=600&h=600&fit=crop' },
+        { contestId: 'seed-ended-5', n: 3, title: '올해 가장 아끼는 작품',   artistId: '24', uploadedAt: '2025-12-22', image: 'https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?w=600&h=600&fit=crop' },
+        { contestId: 'seed-ended-5', n: 4, title: '2025 결산',               artistId: '25', uploadedAt: '2025-12-26', image: 'https://images.unsplash.com/photo-1486325212027-8081e485255e?w=600&h=600&fit=crop' },
+        { contestId: 'seed-ended-5', n: 5, title: '나의 올해 작품',          artistId: '2',  uploadedAt: '2025-12-29', image: 'https://images.unsplash.com/photo-1568483063462-aa89e24c0bab?w=600&h=600&fit=crop' },
+      ];
+
+      for (const entry of SEED_ENTRIES) {
+        const artist = getArtist(entry.artistId);
+        if (!artist) continue;
+        const id = `contest-seed-${entry.contestId}-${entry.n}`;
+        workStore.addWork({
+          id,
+          title: entry.title,
+          exhibitionName: entry.title,
+          image: entry.image,
+          artistId: artist.id,
+          artist,
+          likes: 0,
+          saves: 0,
+          description: '',
+          tags: [],
+          primaryExhibitionType: 'solo',
+          imagePieceTitles: [entry.title],
+          imagePieceIds: [`piece-${id}`],
+          imageArtists: [{ type: 'member', memberId: artist.id, memberName: artist.name, memberAvatar: artist.avatar }],
+          visibilityStatus: 'public',
+          feedReviewStatus: 'approved',
+          isHidden: false,
+          uploadedAt: entry.uploadedAt,
+          linkedEventId: entry.contestId,
+          coverImageIndex: 0,
         });
       }
-    }
 
-    localStorage.setItem(SEED_KEY, '1');
+      // 종료된 응모전 selectedWorkIds + 발표 시드
+      const endedSelections: Record<string, { count: number; publishedAt: string }> = {
+        'seed-ended-contest': { count: 3, publishedAt: '2026-04-16' },
+        'seed-ended-3':       { count: 2, publishedAt: '2026-01-31' },
+        'seed-ended-5':       { count: 2, publishedAt: '2025-12-31' },
+      };
+      for (const [contestId, { count, publishedAt }] of Object.entries(endedSelections)) {
+        const winnerIds = Array.from({ length: count }, (_, i) => `contest-seed-${contestId}-${i + 1}`);
+        eventsStore.update(contestId, {
+          selectedWorkIds: winnerIds,
+          publicationOpen: true,
+          publishedAt,
+        });
+      }
+
+      localStorage.setItem(SEED_KEY_V3, '1');
+    });
   });
 }

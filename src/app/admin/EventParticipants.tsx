@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Check, Eye, X, ChevronLeft, ChevronRight, Megaphone } from 'lucide-react';
+import { Check, Eye, X, Megaphone } from 'lucide-react';
 import type { Work } from '../data';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -223,7 +223,7 @@ export default function EventParticipants({ compact = false }: { compact?: boole
 
   return (
     <>
-    <div className="space-y-4 pb-20">
+    <div className="space-y-4 pb-4">
       {!compact && (
         <div>
           <h1 className="text-2xl font-bold text-foreground">응모자 관리</h1>
@@ -298,6 +298,56 @@ export default function EventParticipants({ compact = false }: { compact?: boole
         )}
       </div>
 
+      {/* 선정 완료 / 알림 액션 바 */}
+      {selectedEventId && selectedEvent && (
+        <div className={`rounded-xl px-4 py-3 flex items-center gap-3 ${
+          isNotified
+            ? 'bg-emerald-50 border border-emerald-200'
+            : isPublished
+              ? 'bg-amber-50 border border-amber-200'
+              : 'bg-muted/50 border border-border'
+        }`}>
+          <div className="flex-1 text-sm">
+            {isNotified ? (
+              <span className="text-emerald-700 font-medium">
+                ✓ 알림 발송 완료{selectedEvent.notifiedAt ? ` (${selectedEvent.notifiedAt})` : ''} — {selectedFromParticipants}건
+              </span>
+            ) : isPublished ? (
+              <span className="text-amber-700 font-medium">
+                선정 완료 {selectedFromParticipants}건 — 알림 미발송
+              </span>
+            ) : (
+              <span className="text-muted-foreground">
+                {selectedFromParticipants}건 선정
+              </span>
+            )}
+          </div>
+          <div className="flex gap-2">
+            {!isPublished && (
+              <button
+                type="button"
+                onClick={handleConfirm}
+                disabled={selectedFromParticipants === 0}
+                className="inline-flex items-center gap-1.5 bg-primary text-white rounded-lg px-4 py-2 text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed"
+              >
+                선정 완료
+              </button>
+            )}
+            {isPublished && (
+              <button
+                type="button"
+                onClick={handleNotify}
+                disabled={isNotified}
+                className="inline-flex items-center gap-1.5 bg-sky-600 text-white rounded-lg px-4 py-2 text-sm font-semibold lg:hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed"
+              >
+                <Megaphone className="w-4 h-4" />
+                {isNotified ? '알림 발송 완료' : '알림 보내기'}
+              </button>
+            )}
+          </div>
+        </div>
+      )}
+
       {/* 갤러리 그리드 */}
       {!selectedEventId || contestEvents.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
@@ -316,9 +366,6 @@ export default function EventParticipants({ compact = false }: { compact?: boole
             const coverSrc = coverKey ? (imageUrls[coverKey] || coverKey) : null;
             const exhibitionTitle = work?.exhibitionName || work?.title || p.name;
             const artistName = work?.artist?.name;
-            const allImgs = work
-              ? (Array.isArray(work.image) ? work.image : [work.image]).map((k: string) => imageUrls[k] || k)
-              : [];
             return (
               <li key={p.id}>
                 <div className={`group w-full rounded-xl overflow-hidden border-2 text-left transition-all ${
@@ -349,11 +396,6 @@ export default function EventParticipants({ compact = false }: { compact?: boole
                           <Check className="w-3.5 h-3.5 stroke-[3]" />
                         </div>
                       )}
-                      {allImgs.length > 1 && (
-                        <div className="absolute bottom-2 left-2 bg-black/50 text-white text-[10px] px-1.5 py-0.5 rounded-full">
-                          {allImgs.length}장
-                        </div>
-                      )}
                       {!isPublished && <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/8 transition-colors" />}
                     </div>
                   </button>
@@ -382,52 +424,6 @@ export default function EventParticipants({ compact = false }: { compact?: boole
       )}
     </div>
 
-    {/* 하단 고정 바 */}
-    {selectedEventId && selectedEvent && (
-      <div className="fixed bottom-0 left-0 right-0 z-40 bg-slate-900 px-4 py-3 flex items-center gap-3">
-        <div className="flex-1 text-sm">
-          {isNotified ? (
-            <span className="text-emerald-300 font-medium">
-              ✓ 알림 발송 완료 {selectedEvent.notifiedAt ? `(${selectedEvent.notifiedAt})` : ''} — {selectedFromParticipants}건
-            </span>
-          ) : isPublished ? (
-            <span className="text-amber-300 font-medium">
-              선정 완료 {selectedFromParticipants}건 — 알림 미발송
-            </span>
-          ) : (
-            <span className="text-slate-300">
-              {selectedFromParticipants}건 선정
-            </span>
-          )}
-        </div>
-        <div className="flex gap-2">
-          {/* 1단계: 선정 완료 */}
-          {!isPublished && (
-            <button
-              type="button"
-              onClick={handleConfirm}
-              disabled={selectedFromParticipants === 0}
-              className="inline-flex items-center gap-1.5 bg-primary text-white rounded-lg px-4 py-2 text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed"
-            >
-              선정 완료
-            </button>
-          )}
-          {/* 2단계: 알림 보내기 (선정 완료 후 활성) */}
-          {isPublished && (
-            <button
-              type="button"
-              onClick={handleNotify}
-              disabled={isNotified}
-              className="inline-flex items-center gap-1.5 bg-sky-600 text-white rounded-lg px-4 py-2 text-sm font-semibold lg:hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed"
-            >
-              <Megaphone className="w-4 h-4" />
-              {isNotified ? '알림 발송 완료' : '알림 보내기'}
-            </button>
-          )}
-        </div>
-      </div>
-    )}
-
     {/* 작품 전체 보기 모달 */}
     {previewWork && createPortal(
       <div
@@ -440,41 +436,13 @@ export default function EventParticipants({ compact = false }: { compact?: boole
         >
           <div className="relative aspect-square bg-black">
             <ImageWithFallback
-              src={(Array.isArray(previewWork.work.image) ? previewWork.work.image : [previewWork.work.image])
-                .map((k: string) => imageUrls[k] || k)[previewWork.imgIndex]}
+              src={(() => {
+                const coverKey = getCoverImage(previewWork.work.image, previewWork.work.coverImageIndex);
+                return imageUrls[coverKey] || coverKey;
+              })()}
               alt=""
               className="w-full h-full object-contain"
             />
-            {(() => {
-              const imgs = (Array.isArray(previewWork.work.image) ? previewWork.work.image : [previewWork.work.image])
-                .map((k: string) => imageUrls[k] || k);
-              return imgs.length > 1 && (
-                <>
-                  <button type="button"
-                    onClick={() => setPreviewWork((p) => p ? { ...p, imgIndex: Math.max(0, p.imgIndex - 1) } : p)}
-                    disabled={previewWork.imgIndex === 0}
-                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white rounded-full w-9 h-9 flex items-center justify-center disabled:opacity-20 lg:hover:bg-black/70"
-                  >
-                    <ChevronLeft className="w-5 h-5" />
-                  </button>
-                  <button type="button"
-                    onClick={() => setPreviewWork((p) => p ? { ...p, imgIndex: Math.min(imgs.length - 1, p.imgIndex + 1) } : p)}
-                    disabled={previewWork.imgIndex === imgs.length - 1}
-                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white rounded-full w-9 h-9 flex items-center justify-center disabled:opacity-20 lg:hover:bg-black/70"
-                  >
-                    <ChevronRight className="w-5 h-5" />
-                  </button>
-                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
-                    {imgs.map((_, i) => (
-                      <button key={i} type="button"
-                        onClick={() => setPreviewWork((p) => p ? { ...p, imgIndex: i } : p)}
-                        className={`w-1.5 h-1.5 rounded-full transition-all ${i === previewWork.imgIndex ? 'bg-white' : 'bg-white/40'}`}
-                      />
-                    ))}
-                  </div>
-                </>
-              );
-            })()}
           </div>
           <div className="p-4 flex items-start justify-between gap-3">
             <div>
