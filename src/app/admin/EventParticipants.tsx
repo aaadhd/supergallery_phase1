@@ -105,6 +105,16 @@ export default function EventParticipants({ compact = false }: { compact?: boole
     [allParticipants, selectedEventId],
   );
 
+  // 실제 참가자 workId 집합 — 선정 수는 참가자 내에서만 카운트
+  const participantWorkIds = useMemo(
+    () => new Set(allParticipants.filter(p => p.eventId === selectedEventId && p.workId).map(p => p.workId!)),
+    [allParticipants, selectedEventId],
+  );
+  const selectedFromParticipants = useMemo(
+    () => [...selectedWorkIds].filter(id => participantWorkIds.has(id)).length,
+    [selectedWorkIds, participantWorkIds],
+  );
+
   const pendingCount = useMemo(
     () => allParticipants.filter(p => p.eventId === selectedEventId && p.workId && p.status === '대기 중').length,
     [allParticipants, selectedEventId],
@@ -195,8 +205,8 @@ export default function EventParticipants({ compact = false }: { compact?: boole
           <div className="flex flex-wrap items-center gap-3">
             <p className="text-sm text-muted-foreground">
               총 {totalCount}건 응모
-              {selectedWorkIds.size > 0 && (
-                <span className="ml-2 text-primary font-semibold">· {selectedWorkIds.size}건 선정</span>
+              {selectedFromParticipants > 0 && (
+                <span className="ml-2 text-primary font-semibold">· {selectedFromParticipants}건 선정</span>
               )}
             </p>
             {(pendingCount > 0 || rejectedCount > 0) && (

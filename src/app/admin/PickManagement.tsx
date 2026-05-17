@@ -392,7 +392,7 @@ export default function PickManagement() {
                     <input
                       value={draft.title}
                       onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
-                      placeholder="5월 2주차 Proud's Pick"
+                      placeholder={`${new Date().getMonth() + 1}월 ${Math.ceil(new Date().getDate() / 7)}주차 Proud's Pick`}
                       className="w-full border border-border rounded-lg px-3 py-2 text-sm"
                     />
                   </div>

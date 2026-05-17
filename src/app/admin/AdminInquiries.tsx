@@ -156,7 +156,15 @@ function loadInquiries(): StoredInquiry[] {
       return SEED_INQUIRIES;
     }
     const parsed = JSON.parse(raw);
-    return Array.isArray(parsed) ? parsed : SEED_INQUIRIES;
+    const stored: StoredInquiry[] = Array.isArray(parsed) ? parsed : [];
+    const storedIds = new Set(stored.map((i) => i.id));
+    const missingSeed = SEED_INQUIRIES.filter((s) => !storedIds.has(s.id));
+    if (missingSeed.length > 0) {
+      const merged = [...missingSeed, ...stored];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+      return merged;
+    }
+    return stored;
   } catch {
     return SEED_INQUIRIES;
   }

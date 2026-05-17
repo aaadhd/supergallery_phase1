@@ -361,6 +361,10 @@ export default function CurationManagement() {
                       <div className="flex-1 min-w-0">
                         <div className="font-medium text-sm truncate">{c.title}</div>
                         <div className="text-xs text-muted-foreground">piece {c.pieces.length}개</div>
+                        {c.startAt && c.endAt
+                          ? <div className="text-[10px] text-muted-foreground/70 mt-0.5">{c.startAt.slice(0, 10)} ~ {c.endAt.slice(0, 10)}</div>
+                          : <div className="text-[10px] text-amber-600 mt-0.5">날짜 미설정</div>
+                        }
                       </div>
                     </button>
                     <div className="flex shrink-0 gap-1 items-center">
