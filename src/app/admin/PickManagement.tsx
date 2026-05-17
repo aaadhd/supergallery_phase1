@@ -431,7 +431,7 @@ export default function PickManagement() {
                       type="button"
                       onClick={() => { if (validateDraft()) { setNewStep(2); setGalleryOpen(true); } }}
                       className="flex-1 bg-primary text-white rounded-lg px-4 py-2 text-sm font-medium lg:hover:bg-primary/90">
-                      다음 → 작품 선정
+                      다음
                     </button>
                   </div>
                 </div>

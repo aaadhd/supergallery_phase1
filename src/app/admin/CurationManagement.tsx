@@ -533,7 +533,7 @@ export default function CurationManagement() {
                       type="button"
                       onClick={() => { if (validateStep1()) { setEditorStep(2); setGalleryOpen(true); } }}
                       className="flex-1 bg-sky-600 text-white rounded-lg px-4 py-2 text-sm font-medium lg:hover:bg-sky-700">
-                      다음 → piece 선정
+                      다음
                     </button>
                   </div>
                 </div>
