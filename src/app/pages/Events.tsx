@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Calendar, Bell, ChevronDown } from 'lucide-react';
+import { Calendar, Bell } from 'lucide-react';
 import { ImageWithFallback } from '../components/ImageWithFallback';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { LoginPromptModal } from '../components/LoginPromptModal';
@@ -187,40 +187,41 @@ export default function Events() {
             {/* 지난 이벤트 */}
             {endedEvents.length > 0 && (
               <section className="mb-12 sm:mb-16">
-                <button
-                  type="button"
-                  onClick={() => setShowEnded((v) => !v)}
-                  className="flex items-center gap-2 text-base sm:text-lg font-semibold text-muted-foreground lg:hover:text-foreground transition-colors mb-4 min-h-[44px]"
-                >
+                <h2 className="text-base sm:text-lg font-semibold text-muted-foreground mb-4">
                   {t('events.endedSection')}
-                  <span className="text-sm font-normal opacity-60">({endedEvents.length})</span>
-                  <ChevronDown className={`h-4 w-4 transition-transform duration-200 ${showEnded ? 'rotate-180' : ''}`} />
-                </button>
-                {showEnded && (
-                  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
-                    {endedEvents.map((event) => (
-                      <div
-                        key={event.id}
-                        onClick={() => navigate(`/events/${event.id}`)}
-                        className="group cursor-pointer overflow-hidden rounded-xl border border-border bg-card opacity-70 lg:hover:opacity-100 transition-all duration-300 lg:hover:shadow-md"
-                      >
-                        <div className="relative h-[140px] sm:h-[160px] overflow-hidden grayscale lg:group-hover:grayscale-0 transition-all duration-300">
-                          <ImageWithFallback
-                            src={event.bannerImageUrl}
-                            alt={event.title}
-                            className="w-full h-full object-cover"
-                          />
-                        </div>
-                        <div className="p-4">
-                          <h3 className="text-sm font-bold text-foreground mb-1 leading-snug">{event.title}</h3>
-                          <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
-                            <Calendar className="h-3 w-3" />
-                            <span>{event.startAt} ~ {event.endAt}</span>
-                          </div>
+                </h2>
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+                  {(showEnded ? endedEvents : endedEvents.slice(0, 3)).map((event) => (
+                    <div
+                      key={event.id}
+                      onClick={() => navigate(`/events/${event.id}`)}
+                      className="group cursor-pointer overflow-hidden rounded-xl border border-border bg-card opacity-70 lg:hover:opacity-100 transition-all duration-300 lg:hover:shadow-md"
+                    >
+                      <div className="relative h-[140px] sm:h-[160px] overflow-hidden grayscale lg:group-hover:grayscale-0 transition-all duration-300">
+                        <ImageWithFallback
+                          src={event.bannerImageUrl}
+                          alt={event.title}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="p-4">
+                        <h3 className="text-sm font-bold text-foreground mb-1 leading-snug">{event.title}</h3>
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                          <Calendar className="h-3 w-3" />
+                          <span>{event.startAt} ~ {event.endAt}</span>
                         </div>
                       </div>
-                    ))}
-                  </div>
+                    </div>
+                  ))}
+                </div>
+                {!showEnded && endedEvents.length > 3 && (
+                  <button
+                    type="button"
+                    onClick={() => setShowEnded(true)}
+                    className="mt-4 text-sm text-muted-foreground lg:hover:text-foreground transition-colors min-h-[44px]"
+                  >
+                    {t('events.endedSection')} 더 보기 →
+                  </button>
                 )}
               </section>
             )}
