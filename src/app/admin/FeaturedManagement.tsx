@@ -117,7 +117,7 @@ export default function FeaturedManagement() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           placeholder="추천 중인 전시 검색"
-          className="w-full sm:w-72 border border-border rounded-lg pl-9 pr-3 py-2 text-sm bg-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
+          className="w-full sm:w-72 border border-border rounded-lg h-9 pl-9 pr-3 py-2 text-sm bg-white placeholder:text-muted-foreground focus:outline-none focus:ring-2 focus:ring-primary/30"
         />
       </div>
 
@@ -192,7 +192,7 @@ export default function FeaturedManagement() {
                 value={popupSearch}
                 onChange={(e) => setPopupSearch(e.target.value)}
                 placeholder="전시·작가 검색 (최신순)"
-                className="w-full border border-border rounded-lg pl-9 pr-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/30"
+                className="w-full border border-border rounded-lg h-9 pl-9 pr-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/30"
               />
             </div>
             <div className="overflow-y-auto flex-1 space-y-1">

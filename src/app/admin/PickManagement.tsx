@@ -412,7 +412,7 @@ export default function PickManagement() {
                       value={draft.title}
                       onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
                       placeholder={`${new Date().getMonth() + 1}월 ${Math.ceil(new Date().getDate() / 7)}주차 Proud's Pick`}
-                      className="w-full border border-border rounded-lg px-3 py-2 text-sm"
+                      className="w-full border border-border rounded-lg h-9 px-3 py-2 text-sm"
                     />
                   </div>
                   <div className="flex gap-2 items-center">
@@ -420,14 +420,14 @@ export default function PickManagement() {
                       <label className="block text-xs text-muted-foreground mb-1">시작일 *</label>
                       <input type="date" value={draft.startAt}
                         onChange={(e) => setDraft((d) => ({ ...d, startAt: e.target.value }))}
-                        className="w-full border border-border rounded-lg px-3 py-2 text-sm" />
+                        className="w-full border border-border rounded-lg h-9 px-3 py-2 text-sm" />
                     </div>
                     <span className="mt-4 text-muted-foreground">~</span>
                     <div className="flex-1">
                       <label className="block text-xs text-muted-foreground mb-1">종료일 *</label>
                       <input type="date" value={draft.endAt}
                         onChange={(e) => setDraft((d) => ({ ...d, endAt: e.target.value }))}
-                        className="w-full border border-border rounded-lg px-3 py-2 text-sm" />
+                        className="w-full border border-border rounded-lg h-9 px-3 py-2 text-sm" />
                     </div>
                   </div>
                   <div className="flex gap-2 pt-2">

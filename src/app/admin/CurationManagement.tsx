@@ -487,26 +487,26 @@ export default function CurationManagement() {
                       <input value={editor.title}
                         onChange={(e) => setEditor((prev) => prev ? { ...prev, title: e.target.value } : prev)}
                         placeholder="봄의 기억들"
-                        className="w-full border border-border rounded-lg px-3 py-2 text-sm" />
+                        className="w-full border border-border rounded-lg h-9 px-3 py-2 text-sm" />
                     </div>
                     <div>
                       <label className="block text-xs text-muted-foreground mb-1">부제</label>
                       <input value={editor.subtitle}
                         onChange={(e) => setEditor((prev) => prev ? { ...prev, subtitle: e.target.value } : prev)}
                         placeholder="봄을 담은 작품 모음"
-                        className="w-full border border-border rounded-lg px-3 py-2 text-sm" />
+                        className="w-full border border-border rounded-lg h-9 px-3 py-2 text-sm" />
                     </div>
                     <div>
                       <label className="block text-xs text-muted-foreground mb-1">시작일 <span className="text-destructive">*</span></label>
                       <input type="date" value={editor.startAt}
                         onChange={(e) => setEditor((prev) => prev ? { ...prev, startAt: e.target.value } : prev)}
-                        className="w-full border border-border rounded-lg px-3 py-2 text-sm" />
+                        className="w-full border border-border rounded-lg h-9 px-3 py-2 text-sm" />
                     </div>
                     <div>
                       <label className="block text-xs text-muted-foreground mb-1">종료일 <span className="text-destructive">*</span></label>
                       <input type="date" value={editor.endAt}
                         onChange={(e) => setEditor((prev) => prev ? { ...prev, endAt: e.target.value } : prev)}
-                        className="w-full border border-border rounded-lg px-3 py-2 text-sm" />
+                        className="w-full border border-border rounded-lg h-9 px-3 py-2 text-sm" />
                     </div>
                   </div>
                   <div>
@@ -515,7 +515,7 @@ export default function CurationManagement() {
                       value={editor.pageUrl}
                       onChange={(e) => setEditor((prev) => prev ? { ...prev, pageUrl: e.target.value } : prev)}
                       placeholder="https://notion.so/... 또는 https://..."
-                      className="w-full border border-border rounded-lg px-3 py-2 text-sm"
+                      className="w-full border border-border rounded-lg h-9 px-3 py-2 text-sm"
                     />
                   </div>
                   <AdminImageUpload

@@ -210,7 +210,7 @@ export default function NoticeManagement() {
                   <select
                     value={editor.category}
                     onChange={(e) => setEditor((p) => p && ({ ...p, category: e.target.value as NoticeCategory }))}
-                    className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background"
+                    className="w-full border border-border rounded-lg h-9 px-3 py-2 text-sm bg-background"
                   >
                     {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
                   </select>
@@ -236,7 +236,7 @@ export default function NoticeManagement() {
                   value={editor.title}
                   onChange={(e) => setEditor((p) => p && ({ ...p, title: e.target.value }))}
                   placeholder={t('admin.notice.placeholderTitle')}
-                  className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background"
+                  className="w-full border border-border rounded-lg h-9 px-3 py-2 text-sm bg-background"
                 />
               </div>
               {/* 본문 */}

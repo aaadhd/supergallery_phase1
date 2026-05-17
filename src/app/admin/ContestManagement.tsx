@@ -373,7 +373,7 @@ export default function ContestManagement() {
                       placeholder="5월 드로잉 챌린지"
                       value={draft.title}
                       onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
-                      className="w-full border border-border rounded-lg px-3 py-2 text-sm"
+                      className="w-full border border-border rounded-lg h-9 px-3 py-2 text-sm"
                     />
                   </div>
                   <div>
@@ -382,7 +382,7 @@ export default function ContestManagement() {
                       placeholder={t('admin.contest.placeholderSubtitle')}
                       value={draft.subtitle}
                       onChange={(e) => setDraft((d) => ({ ...d, subtitle: e.target.value }))}
-                      className="w-full border border-border rounded-lg px-3 py-2 text-sm"
+                      className="w-full border border-border rounded-lg h-9 px-3 py-2 text-sm"
                     />
                   </div>
                   <div className="sm:col-span-2">
@@ -408,11 +408,11 @@ export default function ContestManagement() {
                     <div className="grid sm:grid-cols-2 gap-3">
                       <label className="flex flex-col gap-1 text-xs text-muted-foreground">
                         {t('admin.contest.labelStartAt')}
-                        <input type="date" value={draft.startAt} onChange={(e) => setDraft((d) => ({ ...d, startAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
+                        <input type="date" value={draft.startAt} onChange={(e) => setDraft((d) => ({ ...d, startAt: e.target.value }))} className="border border-border rounded-lg h-9 px-3 py-2 text-[14px] text-foreground" />
                       </label>
                       <label className="flex flex-col gap-1 text-xs text-muted-foreground">
                         {t('admin.contest.labelEndAt')}
-                        <input type="date" value={draft.endAt} onChange={(e) => setDraft((d) => ({ ...d, endAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
+                        <input type="date" value={draft.endAt} onChange={(e) => setDraft((d) => ({ ...d, endAt: e.target.value }))} className="border border-border rounded-lg h-9 px-3 py-2 text-[14px] text-foreground" />
                       </label>
                     </div>
                   </div>
@@ -422,11 +422,11 @@ export default function ContestManagement() {
                     <div className="grid sm:grid-cols-2 gap-3">
                       <label className="flex flex-col gap-1 text-xs text-muted-foreground">
                         <span>게시 시작일 <span className="text-destructive">*</span></span>
-                        <input type="date" value={draft.displayStartAt} onChange={(e) => setDraft((d) => ({ ...d, displayStartAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
+                        <input type="date" value={draft.displayStartAt} onChange={(e) => setDraft((d) => ({ ...d, displayStartAt: e.target.value }))} className="border border-border rounded-lg h-9 px-3 py-2 text-[14px] text-foreground" />
                       </label>
                       <label className="flex flex-col gap-1 text-xs text-muted-foreground">
                         <span>게시 종료일 <span className="text-destructive">*</span></span>
-                        <input type="date" value={draft.displayEndAt} onChange={(e) => setDraft((d) => ({ ...d, displayEndAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
+                        <input type="date" value={draft.displayEndAt} onChange={(e) => setDraft((d) => ({ ...d, displayEndAt: e.target.value }))} className="border border-border rounded-lg h-9 px-3 py-2 text-[14px] text-foreground" />
                       </label>
                     </div>
                   </div>
@@ -436,7 +436,7 @@ export default function ContestManagement() {
                     <select
                       value={draft.subtype}
                       onChange={(e) => setDraft((d) => ({ ...d, subtype: e.target.value as EventSubtype }))}
-                      className="w-full border border-border rounded-lg px-3 py-2 text-sm"
+                      className="w-full border border-border rounded-lg h-9 px-3 py-2 text-sm"
                     >
                       <option value="regular">{t('admin.contest.subtypeRegular')}</option>
                       <option value="irregular">{t('admin.contest.subtypeIrregular')}</option>
@@ -450,7 +450,7 @@ export default function ContestManagement() {
                       value={draft.resultUrl}
                       onChange={(e) => setDraft((d) => ({ ...d, resultUrl: e.target.value }))}
                       placeholder="https://..."
-                      className="w-full border border-border rounded-lg px-3 py-2 text-sm"
+                      className="w-full border border-border rounded-lg h-9 px-3 py-2 text-sm"
                     />
                   </div>
 

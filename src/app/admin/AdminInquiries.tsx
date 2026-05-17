@@ -538,14 +538,14 @@ export default function AdminInquiries() {
         <>
           <div className="flex flex-wrap gap-3 mb-4">
             <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}
-              className="border border-border rounded-lg px-2.5 py-1.5 text-xs bg-white min-w-[130px]">
+              className="border border-border rounded-lg px-2.5 py-1.5 text-[12px] bg-white min-w-[130px]">
               <option value="전체">카테고리: 전체</option>
               {Object.entries(CATEGORY_LABELS)
                 .filter(([k]) => k !== 'workInquiry')
                 .map(([k, v]) => (<option key={k} value={k}>{v}</option>))}
             </select>
             <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
-              className="border border-border rounded-lg px-2.5 py-1.5 text-xs bg-white min-w-[130px]">
+              className="border border-border rounded-lg px-2.5 py-1.5 text-[12px] bg-white min-w-[130px]">
               <option value="전체">상태: 전체</option>
               <option value="신규">신규</option>
               <option value="처리 중">처리 중</option>
