@@ -1,5 +1,5 @@
 import { useState, useMemo, useEffect } from 'react';
-import { Calendar, ChevronDown } from 'lucide-react';
+import { Calendar, Bell, ChevronDown } from 'lucide-react';
 import { ImageWithFallback } from '../components/ImageWithFallback';
 import { useNavigate, useSearchParams, Link } from 'react-router-dom';
 import { LoginPromptModal } from '../components/LoginPromptModal';
@@ -227,16 +227,6 @@ export default function Events() {
               </section>
             )}
 
-            {/* 알림받기 */}
-            <div className="mb-12">
-              <Button
-                variant={subscribed ? 'outline' : 'default'}
-                onClick={handleNotifyCta}
-                className="min-h-[44px]"
-              >
-                {subscribed ? t('events.notifySubscribed') : t('events.notifyCta')}
-              </Button>
-            </div>
           </div>
         )}
 
@@ -371,6 +361,26 @@ export default function Events() {
           </div>
         )}
       </div>
+
+      {/* 알림 구독 CTA — 이벤트 탭에서만 노출 */}
+      {activeTab === 'events' && (
+        <div className="bg-foreground text-white">
+          <div className="mx-auto max-w-[1440px] px-4 sm:px-6 py-10 sm:py-12 text-center">
+            <h2 className="text-xl sm:text-2xl font-bold mb-3">{t('events.ctaTitle')}</h2>
+            <p className="text-base text-white/80 mb-8">{t('events.ctaLead')}</p>
+            <div className="flex flex-col items-center gap-4">
+              <Button
+                variant="secondary"
+                onClick={handleNotifyCta}
+                className="inline-flex items-center gap-2 px-6 py-2.5 rounded-lg text-sm font-bold text-foreground bg-white lg:hover:bg-muted min-h-[44px]"
+              >
+                <Bell className="h-5 w-5" aria-hidden />
+                {subscribed ? t('events.ctaUnsubscribe') : t('events.ctaNotify')}
+              </Button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <LoginPromptModal open={loginPromptOpen} onClose={() => setLoginPromptOpen(false)} action="like" />
     </div>
