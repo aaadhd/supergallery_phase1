@@ -239,33 +239,13 @@ export default function NoticeManagement() {
                   className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background"
                 />
               </div>
-              <div>
-                <label className="block text-xs font-semibold text-muted-foreground mb-1">{t('admin.notice.labelTitleEn')}</label>
-                <input
-                  type="text"
-                  value={editor.titleEn}
-                  onChange={(e) => setEditor((p) => p && ({ ...p, titleEn: e.target.value }))}
-                  placeholder="Notice title in English"
-                  className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background"
-                />
-              </div>
-              {/* 본문 ko/en */}
+              {/* 본문 */}
               <div>
                 <label className="block text-xs font-semibold text-muted-foreground mb-1">{t('admin.notice.labelContent')} <span className="text-destructive">*</span></label>
                 <textarea
                   value={editor.content}
                   onChange={(e) => setEditor((p) => p && ({ ...p, content: e.target.value }))}
                   placeholder={t('admin.notice.placeholderContent')}
-                  rows={5}
-                  className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background resize-y"
-                />
-              </div>
-              <div>
-                <label className="block text-xs font-semibold text-muted-foreground mb-1">{t('admin.notice.labelContentEn')}</label>
-                <textarea
-                  value={editor.contentEn}
-                  onChange={(e) => setEditor((p) => p && ({ ...p, contentEn: e.target.value }))}
-                  placeholder="Notice body in English"
                   rows={5}
                   className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-background resize-y"
                 />

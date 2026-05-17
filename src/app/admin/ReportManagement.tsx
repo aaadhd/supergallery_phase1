@@ -391,7 +391,7 @@ export default function ReportManagement() {
               {/* 컬럼 헤더 */}
               <div
                 className="grid px-3 py-2 bg-muted border-b border-border text-[11px] font-semibold text-muted-foreground uppercase tracking-wide"
-                style={{ gridTemplateColumns: '28px 1fr 72px 44px' }}
+                style={{ gridTemplateColumns: '28px 1fr 90px 56px' }}
               >
                 <div />
                 <div className="pl-2">신고 대상</div>
@@ -414,7 +414,7 @@ export default function ReportManagement() {
                     className={`w-full text-left grid px-3 py-2.5 border-b border-border/40 transition-colors items-center ${
                       isSelected ? 'bg-primary/[.06] border-l-2 border-l-primary' : 'lg:hover:bg-muted/50'
                     } ${isDone ? 'opacity-50' : ''}`}
-                    style={{ gridTemplateColumns: '28px 1fr 72px 44px' }}
+                    style={{ gridTemplateColumns: '28px 1fr 90px 56px' }}
                   >
                     <div className="w-7 h-7 rounded overflow-hidden border border-border bg-muted/30 shrink-0 flex items-center justify-center">
                       {thumbSrc ? (
@@ -441,12 +441,12 @@ export default function ReportManagement() {
                       </div>
                     </div>
                     <div>
-                      <span className={`inline-flex rounded-full px-1.5 py-0.5 text-[10px] font-medium ${reasonBadgeClass(r.reason)}`}>
-                        {r.reason.slice(0, 5)}
+                      <span className={`inline-flex rounded-full px-1.5 py-0.5 text-[10px] font-medium truncate max-w-full ${reasonBadgeClass(r.reason)}`}>
+                        {r.reason}
                       </span>
                     </div>
                     <div className="text-[11px] text-muted-foreground">
-                      {r.reportedAt ? r.reportedAt.slice(5, 10) : '—'}
+                      {r.reportedAt ? r.reportedAt.slice(2, 10) : '—'}
                     </div>
                   </button>
                 );

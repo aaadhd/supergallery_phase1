@@ -68,6 +68,8 @@ export default function GeneralEventManagement() {
 
   const startEdit = (ev: ManagedEvent) => {
     setEditingId(ev.id);
+    setShowForm(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     setDraft({
       title: ev.title,
       subtitle: ev.subtitle ?? '',

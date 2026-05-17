@@ -501,14 +501,15 @@ function SortableBannerRow({ banner: b, index: idx, isEditing, onToggleActive, o
         >
           수정
         </button>
-        <button
-          type="button"
-          onClick={() => onToggleActive(b.id, !b.isActive)}
-          disabled={expired}
-          className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground bg-white lg:hover:bg-muted/40 disabled:opacity-50 disabled:pointer-events-none whitespace-nowrap"
-        >
-          {b.isActive ? '비활성으로' : '활성으로'}
-        </button>
+        {!expired && (
+          <button
+            type="button"
+            onClick={() => onToggleActive(b.id, !b.isActive)}
+            className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground bg-white lg:hover:bg-muted/40 whitespace-nowrap"
+          >
+            {b.isActive ? '비활성으로' : '활성으로'}
+          </button>
+        )}
         <button
           type="button"
           onClick={() => onRemove(b.id, b.title)}

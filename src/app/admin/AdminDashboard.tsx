@@ -95,7 +95,7 @@ export default function AdminDashboard() {
                 <p className="text-xs text-muted-foreground">
                   {activePickSession.startAt} ~ {activePickSession.endAt}
                   {' · '}
-                  선정 작품 {activePickSession.selectedWorkIds?.length ?? 0} / 10개
+                  선정 작품 {activePickSession.selectedWorkIds?.length ?? 0}개 선정 / 최대 10개
                 </p>
               </CardContent>
             </Card>
@@ -256,21 +256,6 @@ export default function AdminDashboard() {
 
       <h2 className="text-sm font-semibold text-muted-foreground mb-3">운영 현황</h2>
       <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-        <Link to="/admin/reports">
-          <Card className="lg:hover:shadow-md transition-shadow cursor-pointer">
-            <CardHeader className="pb-2">
-              <CardDescription className="flex items-center gap-2">
-                <Flag className="w-4 h-4" />
-                신고 대기
-              </CardDescription>
-              <CardTitle className="text-3xl">{reportPendingCount}</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <p className="text-xs text-muted-foreground">미처리 신고 건수</p>
-            </CardContent>
-          </Card>
-        </Link>
-
         <Link to="/admin/inquiries">
           <Card className="lg:hover:shadow-md transition-shadow cursor-pointer">
             <CardHeader className="pb-2">

@@ -390,11 +390,13 @@ export default function AdminInquiries() {
           }`}
         >
           💬 일반 문의
-          <span className={`ml-1.5 inline-flex rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
-            activeTab === 'general' ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'
-          }`}>
-            {generalFiltered.length}
-          </span>
+          {generalFiltered.length > 0 && (
+            <span className={`ml-1.5 inline-flex rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
+              activeTab === 'general' ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'
+            }`}>
+              {generalFiltered.length}
+            </span>
+          )}
         </button>
         <button
           type="button"
@@ -406,11 +408,13 @@ export default function AdminInquiries() {
           }`}
         >
           🖼 작품 문의
-          <span className={`ml-1.5 inline-flex rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
-            activeTab === 'work' ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'
-          }`}>
-            {workFiltered.length}
-          </span>
+          {workFiltered.length > 0 && (
+            <span className={`ml-1.5 inline-flex rounded-full px-1.5 py-0.5 text-[10px] font-semibold ${
+              activeTab === 'work' ? 'bg-primary text-white' : 'bg-muted text-muted-foreground'
+            }`}>
+              {workFiltered.length}
+            </span>
+          )}
         </button>
       </div>
 
