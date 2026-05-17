@@ -816,29 +816,8 @@ export default function Upload() {
      *   쌓이므로 단일 사용자 관점에서 "강사 발행 → 본인 알림함에 멤버 수만큼 새 알림"
      *   으로 동작 확인 가능. 백엔드 연동 시 `targetArtistId` 라우팅으로 진짜 수강생에게 전달.
      */
-    if (!editingWorkId && uploadType === 'group') {
-      const memberIds = new Set<string>();
-      newWork.imageArtists?.forEach((ia) => {
-        if (ia.type === 'member' && ia.memberId && ia.memberId !== currentUser.id) {
-          memberIds.add(ia.memberId);
-        }
-      });
-      if (memberIds.size > 0) {
-        const notifTitle = newWork.exhibitionName || newWork.title || t('work.untitled');
-        memberIds.forEach((memberId) => {
-          const memberArtist = artists.find((a) => a.id === memberId);
-          // PRD USR-NTF-01 §1 — 그룹 전시 발행 완료 시 참여 작가에게 발송.
-          pushDemoNotification({
-            type: 'system',
-            message: t('notif.workPublished').replace('{title}', notifTitle),
-            workId: newWork.id,
-            fromUser: memberArtist
-              ? { id: memberArtist.id, name: memberArtist.name, avatar: memberArtist.avatar }
-              : undefined,
-          });
-        });
-      }
-    }
+    // 그룹 전시 게시 시점 알림 제거 — 검수 중 상태에서 알림이 와 혼란을 줄 수 있음.
+    // 참여 작가는 검수 승인 시점(ContentReview.tsx review.notifApprovedForParticipant)에만 알림 수신.
 
     setShowDetailsModal(false);
 
