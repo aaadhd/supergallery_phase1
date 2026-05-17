@@ -130,21 +130,25 @@ export default function PickDetail() {
       {/* 구분선 */}
       <div style={{ height: 1, background: 'linear-gradient(90deg,transparent,rgba(255,200,0,0.3),transparent)' }} />
 
-      {/* 선정 전시 캐러셀 */}
-      <div className="flex-1 min-h-0 flex items-center py-2" style={{ background: '#000' }}>
-        {selectedWorks.length === 0 ? (
-          <p className="text-center text-sm py-16" style={{ color: '#4a5568' }}>{t('pickDetail.noSelected')}</p>
-        ) : (
-          <div
-            ref={carouselRef}
-            onScroll={handleCarouselScroll}
-            className="flex gap-4 overflow-x-auto pb-4 items-center w-full"
-            style={{
-              scrollSnapType: 'x mandatory',
-              scrollbarWidth: 'none',
-              paddingInline: 'max(19vw, 40px)',
-              scrollPaddingInline: 'max(19vw, 40px)',
-            }}
+      {/* 선정 전시 캐러셀 — flex-1로 남은 화면 전체 차지 */}
+      {selectedWorks.length === 0 ? (
+        <div className="flex-1 flex items-center justify-center" style={{ background: '#000' }}>
+          <p className="text-sm" style={{ color: '#4a5568' }}>{t('pickDetail.noSelected')}</p>
+        </div>
+      ) : (
+        <div
+          ref={carouselRef}
+          onScroll={handleCarouselScroll}
+          className="flex-1 min-h-0 flex gap-4 overflow-x-auto items-center"
+          style={{
+            scrollSnapType: 'x mandatory',
+            scrollbarWidth: 'none',
+            background: '#000',
+            paddingInline: 'max(19vw, 40px)',
+            scrollPaddingInline: 'max(19vw, 40px)',
+            paddingTop: 'min(10vw, 9vh)',
+            paddingBottom: 'min(6vw, 5vh)',
+          }}
           >
             {selectedWorks.map((w, i) => {
               const coverKey = getCoverImage(w.image, w.coverImageIndex);
@@ -192,9 +196,8 @@ export default function PickDetail() {
               );
             })}
 
-          </div>
-        )}
-      </div>
+        </div>
+      )}
 
       {/* 전시 상세 모달 */}
       {selectedWorkId && (
