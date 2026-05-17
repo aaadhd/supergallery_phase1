@@ -24,6 +24,7 @@ type DraftState = {
   displayStartAt: string;
   displayEndAt: string;
   status: EventStatus | '';
+  resultUrl: string;
 };
 
 const emptyDraft: DraftState = {
@@ -36,6 +37,7 @@ const emptyDraft: DraftState = {
   displayStartAt: '',
   displayEndAt: '',
   status: '',
+  resultUrl: '',
 };
 
 function statusBadgeClass(s: EventStatus) {
@@ -76,6 +78,7 @@ export default function GeneralEventManagement() {
       displayStartAt: ev.displayStartAt ?? '',
       displayEndAt: ev.displayEndAt ?? '',
       status: ev.status ?? '',
+      resultUrl: ev.resultUrl ?? '',
     });
     setShowForm(true);
   };
@@ -132,6 +135,7 @@ export default function GeneralEventManagement() {
       displayStartAt: displayStart,
       displayEndAt: displayEnd,
       status: draft.status || undefined,
+      resultUrl: draft.resultUrl.trim() || undefined,
     };
     if (editingId) {
       eventsStore.update(editingId, payload);
@@ -244,6 +248,20 @@ export default function GeneralEventManagement() {
               <option value="active">{t('admin.contest.statusActive')}</option>
               <option value="ended">{t('admin.contest.statusEnded')}</option>
             </select>
+
+            <div>
+              <label className="block text-xs text-muted-foreground mb-1">
+                결과 발표 URL
+                <span className="ml-1 text-amber-600">※ 입력 시 종료 후 "결과 발표 보기" 버튼 노출</span>
+              </label>
+              <input
+                type="url"
+                value={draft.resultUrl}
+                onChange={(e) => setDraft((d) => ({ ...d, resultUrl: e.target.value }))}
+                placeholder="https://..."
+                className="w-full border border-border rounded-lg px-3 py-1.5 text-sm"
+              />
+            </div>
           </div>
 
           <div className="flex gap-2">

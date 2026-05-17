@@ -145,7 +145,7 @@ export default function EventDetail() {
           <h2 className="text-base sm:text-lg font-bold text-foreground mb-3 sm:mb-4">{t('events.detailGuide')}</h2>
           <p className="text-sm sm:text-sm lg:text-base text-foreground leading-relaxed mb-6 sm:mb-10">{event.description}</p>
 
-          {isEnded ? (
+          {event.type !== 'contest' ? null : isEnded ? (
             <div className="flex sm:inline-flex items-center justify-center gap-2 px-5 sm:px-8 py-3 sm:py-3.5 bg-muted text-muted-foreground rounded-lg text-sm font-medium cursor-not-allowed w-full sm:w-auto">
               {t('events.detailEnded')}
             </div>
@@ -189,6 +189,21 @@ export default function EventDetail() {
                 {t('events.viewWinners')}
                 <ArrowRight className="h-4 w-4" />
               </Link>
+            </div>
+          )}
+
+          {/* 결과 발표 외부 링크 CTA — resultUrl 설정 + 종료 시 노출 */}
+          {event && isEnded && event.resultUrl && (
+            <div className="mt-3">
+              <a
+                href={event.resultUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 sm:px-6 py-2.5 sm:py-3 border border-border text-foreground rounded-lg text-sm font-medium lg:hover:bg-muted/40 transition-colors"
+              >
+                {t('events.viewResult')}
+                <ArrowRight className="h-4 w-4" />
+              </a>
             </div>
           )}
         </div>

@@ -409,6 +409,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'events.resultsPublishedAt': '발표 {date}',
   'events.resultsCount': '선정작 {n}점',
   'events.viewWinners': '선정작 발표 보기',
+  'events.viewResult': '결과 발표 보기',
   // Events 탭 구조
   'events.tabEvents': '이벤트',
   'events.tabPick': 'Pick',
@@ -1531,6 +1532,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'events.resultsPublishedAt': 'Announced {date}',
   'events.resultsCount': '{n} winners',
   'events.viewWinners': 'See winners',
+  'events.viewResult': 'See results',
   // Events 탭 구조
   'events.tabEvents': '이벤트',
   'events.tabPick': 'Pick',

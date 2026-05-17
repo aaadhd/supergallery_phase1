@@ -34,6 +34,8 @@ export type ManagedEvent = {
   publishedAt?: string;
   /** 선정된 작품(전시) ID 목록 */
   selectedWorkIds?: string[];
+  /** 결과 발표 외부 링크 URL. 종료 후 설정하면 EventDetail에 "결과 발표 보기 →" 버튼 노출. */
+  resultUrl?: string;
 };
 
 // 데이터는 이전 contestStore 키에 이미 저장되어 있으므로 그대로 사용
@@ -78,12 +80,13 @@ const SEED_EVENTS: ManagedEvent[] = [
     title: '봄맞이 수채화 응모전',
     subtitle: '봄의 색깔을 담아 응모해 주세요',
     description:
-      '봄을 주제로 한 수채화 작품을 업로드하고 응모해보세요. 최우수상 1명에게 드로잉 태블릿을, 우수상 3명에게 스타벅스 기프티콘을 드렸습니다. 많은 분들이 참여해 주셨습니다. 감사합니다!',
+      '봄을 주제로 한 수채화 작품을 업로드하고 응모해보세요. 최우수상 1명에게 드로잉 태블릿을, 우수상 3명에게 스타벅스 기프티콘을 드립니다. 지금 나의 봄 작품을 보여주세요!',
     bannerImageUrl:
       'https://images.unsplash.com/photo-1462275646964-a0e3386b89fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080',
     startAt: '2026-03-20',
     endAt: '2026-04-15',
     participantsLabel: '참여 87명',
+    resultUrl: 'https://proud-gallery.notion.site',
   },
   {
     id: 'seed-ended-general',
@@ -91,7 +94,7 @@ const SEED_EVENTS: ManagedEvent[] = [
     title: '4월 작가 오프라인 모임',
     subtitle: '서울 홍대 · 최대 15명 참여',
     description:
-      '지난 4월 12일 홍대 카페에서 진행된 Proud Gallery 작가 모임입니다. 총 12명이 참여하여 서로의 작품을 나누고 디지털 드로잉 노하우를 공유했습니다. 다음 모임에서 뵙겠습니다!',
+      '4월 12일 홍대 카페에서 Proud Gallery 작가 모임을 진행합니다. 서로의 작품을 공유하고 디지털 드로잉 노하우를 나눌 예정입니다. 선착순 15명, 참여 신청은 링크를 통해 해주세요.',
     bannerImageUrl:
       'https://images.unsplash.com/photo-1543269865-cbf427effbad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080',
     startAt: '2026-04-12',
@@ -105,12 +108,13 @@ const SEED_EVENTS: ManagedEvent[] = [
     title: '겨울 풍경 드로잉 응모전',
     subtitle: '눈 내리는 날의 감성을 그려주세요',
     description:
-      '겨울 풍경을 주제로 한 드로잉 응모전입니다. 당선작 5점을 선정하여 Proud Gallery 공식 SNS에 소개했습니다. 참여해 주신 모든 분께 감사드립니다.',
+      '겨울 풍경을 주제로 한 드로잉 작품을 응모해 주세요. 당선작 5점을 선정하여 Proud Gallery 공식 SNS에 소개합니다. 응모 기간 내 작품을 업로드하고 이벤트 태그와 함께 응모해 주세요!',
     bannerImageUrl:
       'https://images.unsplash.com/photo-1491002052546-bf38f186af56?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080',
     startAt: '2026-01-06',
     endAt: '2026-01-31',
     participantsLabel: '참여 63명',
+    resultUrl: 'https://proud-gallery.notion.site',
   },
   {
     id: 'seed-ended-4',
@@ -118,7 +122,7 @@ const SEED_EVENTS: ManagedEvent[] = [
     title: '신년 맞이 작가 소개 이벤트',
     subtitle: '나를 소개하는 작품 한 점을 올려요',
     description:
-      '2026년 새해를 맞아 나를 가장 잘 표현하는 작품 한 점을 올리는 소개 이벤트를 진행했습니다. 참여해 주신 작가님들의 다채로운 자기소개 작품을 통해 서로를 알아가는 시간이 되었습니다.',
+      '2026년 새해를 맞아 나를 가장 잘 표현하는 작품 한 점을 올려주세요. 참여해 주신 모든 분의 작품을 Proud Gallery 큐레이션 리스트에 등록해 드립니다. 새해 첫 작품으로 나를 소개해 보세요!',
     bannerImageUrl:
       'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080',
     startAt: '2026-01-01',
@@ -132,12 +136,13 @@ const SEED_EVENTS: ManagedEvent[] = [
     title: '2025 연말 결산 응모전',
     subtitle: '올해 가장 아끼는 작품을 공유해 주세요',
     description:
-      '2025년을 마무리하며 한 해 동안 가장 애착이 가는 작품을 응모 받았습니다. 최다 좋아요를 받은 작품 3점에 문화상품권을 드렸습니다. 한 해 동안 함께해 주셔서 감사합니다!',
+      '2025년을 마무리하며, 올 한 해 가장 애착이 가는 작품을 응모해 주세요. 최다 좋아요를 받은 작품 3점에 문화상품권을 드립니다. 한 해의 마지막을 내 작품으로 빛내 보세요!',
     bannerImageUrl:
       'https://images.unsplash.com/photo-1513151233558-d860c5398176?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080',
     startAt: '2025-12-15',
     endAt: '2025-12-31',
     participantsLabel: '참여 114명',
+    resultUrl: 'https://proud-gallery.notion.site',
   },
 ];
 

@@ -34,6 +34,7 @@ type DraftState = {
   status: EventStatus | '';
   publicationOpen: boolean;
   publishedAt: string;
+  resultUrl: string;
 };
 
 const emptyDraft: DraftState = {
@@ -50,6 +51,7 @@ const emptyDraft: DraftState = {
   status: '',
   publicationOpen: false,
   publishedAt: '',
+  resultUrl: '',
 };
 
 function statusBadgeClass(s: EventStatus) {
@@ -126,6 +128,7 @@ export default function ContestManagement() {
       status: ev.status ?? '',
       publicationOpen: ev.publicationOpen ?? false,
       publishedAt: ev.publishedAt ?? '',
+      resultUrl: ev.resultUrl ?? '',
     });
     setShowForm(true);
   };
@@ -195,6 +198,7 @@ export default function ContestManagement() {
       status: draft.status || undefined,
       publicationOpen: draft.publicationOpen,
       publishedAt: draft.publishedAt.trim() || undefined,
+      resultUrl: draft.resultUrl.trim() || undefined,
     };
     if (editingId) {
       eventsStore.update(editingId, payload);
@@ -343,6 +347,17 @@ export default function ContestManagement() {
                       <label className="flex flex-col gap-1 text-xs text-muted-foreground sm:max-w-xs">
                         {t('admin.contest.publishedAtLabel')}
                         <input type="date" value={draft.publishedAt} onChange={(e) => setDraft((d) => ({ ...d, publishedAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground" />
+                      </label>
+                      <label className="flex flex-col gap-1 text-xs text-muted-foreground sm:max-w-xs">
+                        결과 발표 URL
+                        <span className="text-[11px] text-amber-600">※ 입력 시 종료 후 "결과 발표 보기" 버튼 노출</span>
+                        <input
+                          type="url"
+                          value={draft.resultUrl}
+                          onChange={(e) => setDraft((d) => ({ ...d, resultUrl: e.target.value }))}
+                          placeholder="https://..."
+                          className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground"
+                        />
                       </label>
                       <p className="text-[11px] text-muted-foreground">{t('admin.contest.selectedWorkHint')}</p>
                     </div>
