@@ -66,7 +66,7 @@ export default function PickDetail() {
     <div className="h-screen flex flex-col overflow-hidden bg-background pb-20 md:pb-0" style={{ height: '100dvh' }}>
       {/* 헤더 — 다크 배경 + 골드 광선 + 트로피 */}
       <div
-        className="relative overflow-hidden text-center py-5 px-4"
+        className="relative overflow-hidden text-center py-4 px-4"
         style={{ background: 'linear-gradient(180deg, #000000 0%, #0d0900 60%, #1a1000 100%)' }}
       >
         {/* 골드 광선 */}
@@ -166,14 +166,14 @@ export default function PickDetail() {
                   className="text-center flex-shrink-0"
                   style={{
                     scrollSnapAlign: 'center',
-                    width: 'min(60vw, 52vh)',
+                    width: 'min(58vw, 42vh)',
                     transform: `scale(${scale})`,
                     opacity,
                     transition: 'transform 0.35s ease, opacity 0.35s ease',
                   }}
                 >
                   <div
-                    className="aspect-square w-full overflow-hidden rounded-2xl mb-3"
+                    className="aspect-square w-full overflow-hidden rounded-2xl mb-2"
                     style={{
                       background: '#161616',
                       border: isFocused ? '1px solid rgba(255,200,0,0.5)' : '1px solid rgba(255,200,0,0.12)',
