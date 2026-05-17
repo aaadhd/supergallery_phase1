@@ -24,6 +24,11 @@ export type CuratedExhibition = {
   startAt?: string;
   /** YYYY-MM-DD. 미입력 시 상시 운영 */
   endAt?: string;
+  /**
+   * 기획전 상세 외부 링크 URL (필수 — 미설정 시 Events 기획전 탭 미노출).
+   * Notion, Framer, 커스텀 HTML 등 자유 제작 후 URL 등록.
+   */
+  pageUrl?: string;
   pieces: CurationPieceRef[];
 };
 
@@ -134,6 +139,7 @@ function readFromStorage(): CurationState {
             bannerImageUrl: typeof t.bannerImageUrl === 'string' ? (t.bannerImageUrl as string) : undefined,
             startAt: typeof t.startAt === 'string' ? (t.startAt as string) : undefined,
             endAt: typeof t.endAt === 'string' ? (t.endAt as string) : undefined,
+            pageUrl: typeof t.pageUrl === 'string' && t.pageUrl ? (t.pageUrl as string) : undefined,
             pieces,
           };
         })
