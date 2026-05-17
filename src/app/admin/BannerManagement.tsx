@@ -243,9 +243,6 @@ export default function BannerManagement() {
           새 배너
         </Button>
       </div>
-      <p className="text-sm text-muted-foreground mb-6">
-        등록한 배너는 둘러보기 히어로 슬라이더에 반영됩니다. 기본 더미 배너는 등록 배너가 없을 때만 노출됩니다.
-      </p>
 
       {showForm && (
         <form
@@ -267,7 +264,7 @@ export default function BannerManagement() {
               />
             </div>
             <div>
-              <label className="block text-xs text-muted-foreground mb-1">부제 <span className="text-muted-foreground font-normal">(선택)</span></label>
+              <label className="block text-xs text-muted-foreground mb-1">부제</label>
               <input
                 placeholder="봄을 담은 작품들"
                 value={draft.subtitle}
@@ -284,7 +281,7 @@ export default function BannerManagement() {
               />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-xs text-muted-foreground mb-1">링크 URL <span className="text-muted-foreground font-normal">(선택)</span></label>
+              <label className="block text-xs text-muted-foreground mb-1">링크 URL</label>
               <input
                 placeholder="https://..."
                 value={draft.linkUrl}
@@ -301,7 +298,7 @@ export default function BannerManagement() {
               등록 즉시 활성화
             </label>
             <div className="sm:col-span-2">
-              <p className="text-xs font-semibold text-foreground mb-2">게시 기간 <span className="font-normal text-muted-foreground">(배너를 슬라이더에 표시할 기간)</span></p>
+              <p className="text-xs font-semibold text-foreground mb-2">게시 기간</p>
               <div className="grid sm:grid-cols-2 gap-3">
                 <label className="flex flex-col gap-1 text-xs text-muted-foreground">
                   게시 시작일
@@ -324,7 +321,7 @@ export default function BannerManagement() {
               </div>
             </div>
             <div className="sm:col-span-2">
-              <p className="text-xs font-semibold text-foreground mb-2">이벤트 실행 기간 <span className="font-normal text-muted-foreground">(선택 — 실제 이벤트 진행 날짜, 게시 기간과 다를 때 입력)</span></p>
+              <p className="text-xs font-semibold text-foreground mb-2">이벤트 실행 기간</p>
               <div className="grid sm:grid-cols-2 gap-3">
                 <label className="flex flex-col gap-1 text-xs text-muted-foreground">
                   이벤트 시작일

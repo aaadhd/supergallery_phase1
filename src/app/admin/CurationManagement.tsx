@@ -148,6 +148,7 @@ export default function CurationManagement() {
   const [editor, setEditor] = useState<EditorState | null>(null);
   const [selectedCurationId, setSelectedCurationId] = useState<string | null>(null);
   const [editorStep, setEditorStep] = useState<1 | 2>(1);
+  const [galleryOpen, setGalleryOpen] = useState(false);
 
   useEffect(() => {
     const tm = window.setTimeout(() => {
@@ -170,18 +171,21 @@ export default function CurationManagement() {
     setEditor(emptyEditor());
     setSelectedCurationId('new');
     setEditorStep(1);
+    setGalleryOpen(false);
   };
 
   const openEdit = (c: CuratedExhibition) => {
     setEditor(fromExhibition(c));
     setSelectedCurationId(c.id);
     setEditorStep(2);
+    setGalleryOpen(false);
   };
 
   const closeEditor = () => {
     setEditor(null);
     setSelectedCurationId(null);
     setEditorStep(1);
+    setGalleryOpen(false);
   };
 
   const togglePiece = (workId: string, pieceId: string) => {
@@ -509,10 +513,7 @@ export default function CurationManagement() {
                     </div>
                   </div>
                   <div>
-                    <label className="block text-xs text-muted-foreground mb-1">
-                      기획전 페이지 URL
-                      <span className="ml-1 text-amber-600 font-medium">※ 없으면 기획전 탭 미노출</span>
-                    </label>
+                    <label className="block text-xs text-muted-foreground mb-1">기획전 페이지 URL <span className="text-amber-600">※ 없으면 이벤트 탭 미노출</span></label>
                     <input
                       value={editor.pageUrl}
                       onChange={(e) => setEditor((prev) => prev ? { ...prev, pageUrl: e.target.value } : prev)}
@@ -533,7 +534,7 @@ export default function CurationManagement() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => { if (validateStep1()) setEditorStep(2); }}
+                      onClick={() => { if (validateStep1()) { setEditorStep(2); setGalleryOpen(true); } }}
                       className="flex-1 bg-sky-600 text-white rounded-lg px-4 py-2 text-sm font-medium lg:hover:bg-sky-700">
                       다음 → piece 선정
                     </button>
@@ -541,80 +542,113 @@ export default function CurationManagement() {
                 </div>
               </div>
             ) : (
-              /* 2단계: piece 선정 갤러리 */
+              /* 2단계: 리뷰 또는 갤러리 */
               <>
-                {/* 헤더 바 */}
+                {/* 헤더 */}
                 <div className="p-4 border-b border-border flex items-center gap-3 shrink-0">
-                  <button
-                    type="button"
-                    onClick={() => setEditorStep(1)}
-                    className="text-xs text-muted-foreground lg:hover:text-foreground shrink-0"
-                  >
-                    {editor.mode === 'create' ? '← 이전' : '← 기본 정보'}
-                  </button>
+                  {galleryOpen ? (
+                    <button type="button" onClick={() => setGalleryOpen(false)}
+                      className="text-xs text-muted-foreground lg:hover:text-foreground shrink-0">
+                      ← 선택 목록
+                    </button>
+                  ) : (
+                    <button type="button" onClick={() => setEditorStep(1)}
+                      className="text-xs text-muted-foreground lg:hover:text-foreground shrink-0">
+                      {editor.mode === 'create' ? '← 이전' : '← 기본 정보'}
+                    </button>
+                  )}
                   <span className="font-semibold text-sm flex-1 truncate text-foreground">
                     {editor.title || '(제목 없음)'}
                   </span>
-                  <div className="relative shrink-0">
-                    <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-                    <input value={editor.search}
-                      onChange={(e) => setEditor((prev) => prev ? { ...prev, search: e.target.value } : prev)}
-                      placeholder="전시·작가 검색…"
-                      className="pl-7 pr-3 py-1.5 border border-border rounded-lg text-sm w-40" />
-                  </div>
-                </div>
-
-                {/* 전시별 필름스트립 갤러리 */}
-                <div className="flex-1 overflow-y-auto p-3 bg-muted/10">
-                  {allWorkGroups.length === 0 ? (
-                    <div className="text-center py-16 text-sm text-muted-foreground">공개된 전시가 없습니다.</div>
-                  ) : (
-                    <div className="space-y-1">
-                      {allWorkGroups.map(({ work, pieces }) => (
-                        <div key={work.id} className="flex items-center gap-3 px-3 py-2 rounded-lg">
-                          <div className="w-48 shrink-0 min-w-0">
-                            <p className="text-sm font-medium truncate leading-tight">{displayExhibitionTitle(work, '(제목 없음)')}</p>
-                            <p className="text-xs text-muted-foreground truncate">{work.artist?.name ?? work.groupName ?? '—'}</p>
-                          </div>
-                          <div className="flex gap-1 overflow-x-auto flex-1">
-                            {pieces.map((piece) => {
-                              const key = `${piece.workId}:${piece.pieceId}`;
-                              const src = imageUrls[piece.imgKey] || piece.imgKey;
-                              const orderIdx = editor.pieces.findIndex((p) => pieceKey(p) === key);
-                              const isSelected = orderIdx >= 0;
-                              return (
-                                <button
-                                  key={key}
-                                  type="button"
-                                  onClick={() => togglePiece(piece.workId, piece.pieceId)}
-                                  className={`relative w-14 h-14 shrink-0 rounded overflow-hidden border-2 transition-all ${
-                                    isSelected ? 'border-sky-500 shadow-sm' : 'border-transparent lg:hover:border-sky-300'
-                                  }`}
-                                  onMouseEnter={(e) => {
-                                    const r = e.currentTarget.getBoundingClientRect();
-                                    let x = r.right + 8;
-                                    let y = r.top + r.height / 2 - 120;
-                                    if (x + 240 > window.innerWidth) x = r.left - 248;
-                                    y = Math.max(8, Math.min(y, window.innerHeight - 248));
-                                    setHoverImg({ src, x, y });
-                                  }}
-                                  onMouseLeave={() => setHoverImg(null)}
-                                >
-                                  <ImageWithFallback src={src} alt="" className="w-full h-full object-cover" />
-                                  {isSelected && (
-                                    <div className="absolute top-0.5 right-0.5 bg-sky-600 text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
-                                      {orderIdx + 1}
-                                    </div>
-                                  )}
-                                </button>
-                              );
-                            })}
-                          </div>
-                        </div>
-                      ))}
+                  {galleryOpen && (
+                    <div className="relative shrink-0">
+                      <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                      <input value={editor.search}
+                        onChange={(e) => setEditor((prev) => prev ? { ...prev, search: e.target.value } : prev)}
+                        placeholder="전시·작가 검색…"
+                        className="pl-7 pr-3 py-1.5 border border-border rounded-lg text-sm w-40" />
                     </div>
                   )}
                 </div>
+
+                {/* 메인 콘텐츠: 리뷰 or 갤러리 */}
+                {galleryOpen ? (
+                  <div className="flex-1 overflow-y-auto p-3 bg-muted/10">
+                    {allWorkGroups.length === 0 ? (
+                      <div className="text-center py-16 text-sm text-muted-foreground">공개된 전시가 없습니다.</div>
+                    ) : (
+                      <div className="space-y-1">
+                        {allWorkGroups.map(({ work, pieces }) => (
+                          <div key={work.id} className="flex items-center gap-3 px-3 py-2 rounded-lg">
+                            <div className="w-48 shrink-0 min-w-0">
+                              <p className="text-sm font-medium truncate leading-tight">{displayExhibitionTitle(work, '(제목 없음)')}</p>
+                              <p className="text-xs text-muted-foreground truncate">{work.artist?.name ?? work.groupName ?? '—'}</p>
+                            </div>
+                            <div className="flex gap-1 overflow-x-auto flex-1">
+                              {pieces.map((piece) => {
+                                const key = `${piece.workId}:${piece.pieceId}`;
+                                const src = imageUrls[piece.imgKey] || piece.imgKey;
+                                const orderIdx = editor.pieces.findIndex((p) => pieceKey(p) === key);
+                                const isSelected = orderIdx >= 0;
+                                return (
+                                  <button key={key} type="button"
+                                    onClick={() => togglePiece(piece.workId, piece.pieceId)}
+                                    className={`relative w-14 h-14 shrink-0 rounded overflow-hidden border-2 transition-all ${
+                                      isSelected ? 'border-sky-500 shadow-sm' : 'border-transparent lg:hover:border-sky-300'
+                                    }`}
+                                    onMouseEnter={(e) => {
+                                      const r = e.currentTarget.getBoundingClientRect();
+                                      let x = r.right + 8; let y = r.top + r.height / 2 - 120;
+                                      if (x + 240 > window.innerWidth) x = r.left - 248;
+                                      y = Math.max(8, Math.min(y, window.innerHeight - 248));
+                                      setHoverImg({ src, x, y });
+                                    }}
+                                    onMouseLeave={() => setHoverImg(null)}
+                                  >
+                                    <ImageWithFallback src={src} alt="" className="w-full h-full object-cover" />
+                                    {isSelected && (
+                                      <div className="absolute top-0.5 right-0.5 bg-sky-600 text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                                        {orderIdx + 1}
+                                      </div>
+                                    )}
+                                  </button>
+                                );
+                              })}
+                            </div>
+                          </div>
+                        ))}
+                      </div>
+                    )}
+                  </div>
+                ) : (
+                  /* 리뷰: 선정된 작품 목록 */
+                  <div className="flex-1 overflow-y-auto p-3 bg-muted/10">
+                    {editor.pieces.length === 0 ? (
+                      <div className="flex flex-col items-center justify-center h-full py-16 gap-2 text-sm text-muted-foreground">
+                        <p>선정된 작품이 없습니다.</p>
+                      </div>
+                    ) : (
+                      <div className="grid grid-cols-4 gap-3">
+                        {editor.pieces.map((p, i) => {
+                          const w = workStore.getWork(p.workId);
+                          const images = w ? getWorkImages(w) : [];
+                          const pieceIds = w && Array.isArray(w.imagePieceIds) ? w.imagePieceIds : images.map((_, idx) => `${p.workId}_piece${idx}`);
+                          const pieceIdx = pieceIds.indexOf(p.pieceId);
+                          const imgKey = images[pieceIdx] ?? '';
+                          const src = imageUrls[imgKey] || imgKey;
+                          return (
+                            <div key={pieceKey(p)} className="relative aspect-square rounded-lg overflow-hidden border-2 border-sky-400/60">
+                              <ImageWithFallback src={src} alt="" className="w-full h-full object-cover" />
+                              <div className="absolute top-1 left-1 bg-sky-600 text-white text-[9px] font-bold rounded-full w-4 h-4 flex items-center justify-center">
+                                {i + 1}
+                              </div>
+                            </div>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </div>
+                )}
 
                 {/* 하단 고정 바 */}
                 <div className="bg-sky-950 px-4 py-3 flex items-center gap-3 shrink-0">
@@ -630,14 +664,7 @@ export default function CurationManagement() {
                             const imgKey = images[idx] ?? '';
                             const src = imageUrls[imgKey] || imgKey;
                             const pKey = pieceKey(p);
-                            return (
-                              <CurationBottomBarItem
-                                key={pKey}
-                                id={pKey}
-                                src={src}
-                                onRemove={() => removeSelected(pKey)}
-                              />
-                            );
+                            return <CurationBottomBarItem key={pKey} id={pKey} src={src} onRemove={() => removeSelected(pKey)} />;
                           })}
                         </div>
                       </SortableContext>
@@ -649,10 +676,17 @@ export default function CurationManagement() {
                     {editor.pieces.length}개 선정
                   </div>
                   <div className="flex-1" />
-                  <button type="button" onClick={saveEditor}
-                    className="bg-sky-600 text-white rounded-md px-3 py-1.5 text-xs font-semibold lg:hover:bg-sky-700">
-                    선택 완료
-                  </button>
+                  {galleryOpen ? (
+                    <button type="button" onClick={saveEditor}
+                      className="bg-sky-600 text-white rounded-md px-3 py-1.5 text-xs font-semibold lg:hover:bg-sky-700">
+                      선택 완료
+                    </button>
+                  ) : (
+                    <button type="button" onClick={() => setGalleryOpen(true)}
+                      className="border border-sky-600 text-sky-300 rounded-md px-3 py-1.5 text-xs font-semibold lg:hover:bg-sky-900">
+                      선택 수정
+                    </button>
+                  )}
                 </div>
               </>
             )}

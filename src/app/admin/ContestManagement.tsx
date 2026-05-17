@@ -288,7 +288,7 @@ export default function ContestManagement() {
                       />
                     </div>
                     <div>
-                      <label className="block text-xs text-muted-foreground mb-1">부제 <span className="text-muted-foreground font-normal">(선택)</span></label>
+                      <label className="block text-xs text-muted-foreground mb-1">부제</label>
                       <input
                         placeholder={t('admin.contest.placeholderSubtitle')}
                         value={draft.subtitle}
@@ -297,7 +297,7 @@ export default function ContestManagement() {
                       />
                     </div>
                     <div className="sm:col-span-2">
-                      <label className="block text-xs text-muted-foreground mb-1">참여 대상 <span className="text-muted-foreground font-normal">(선택)</span></label>
+                      <label className="block text-xs text-muted-foreground mb-1">참여 대상</label>
                       <input
                         placeholder="예: 디지털 드로잉 작가 누구나"
                         value={draft.participantsLabel}
@@ -307,7 +307,7 @@ export default function ContestManagement() {
                     </div>
                     <div className="sm:col-span-2">
                       <AdminImageUpload
-                        label="이벤트 대표 이미지 (카드·상세 페이지 표시용)"
+                        label="이벤트 대표 이미지"
                         required
                         value={draft.bannerImageUrl}
                         onChange={(url) => setDraft((d) => ({ ...d, bannerImageUrl: url }))}
@@ -338,7 +338,7 @@ export default function ContestManagement() {
                     </div>
 
                     <div className="sm:col-span-2">
-                      <p className="text-xs font-semibold text-foreground mb-2">게시 기간 <span className="text-destructive">*</span> <span className="font-normal text-muted-foreground">(이벤트 메뉴 노출 기간 — 실행 기간과 별개)</span></p>
+                      <p className="text-xs font-semibold text-foreground mb-2">게시 기간 <span className="text-destructive">*</span></p>
                       <div className="grid sm:grid-cols-2 gap-3">
                         <label className="flex flex-col gap-1 text-xs text-muted-foreground">
                           게시 시작일 <span className="text-destructive">*</span>
@@ -374,7 +374,6 @@ export default function ContestManagement() {
                       </label>
                       <label className="flex flex-col gap-1 text-xs text-muted-foreground sm:max-w-xs">
                         결과 발표 URL
-                        <span className="text-[11px] text-amber-600">※ 입력 시 종료 후 "결과 발표 보기" 버튼 노출</span>
                         <input
                           type="url"
                           value={draft.resultUrl}

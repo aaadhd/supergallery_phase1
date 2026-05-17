@@ -178,9 +178,6 @@ export default function GeneralEventManagement() {
           새 이벤트
         </Button>
       </div>
-      <p className="text-sm text-muted-foreground mb-6">
-        기간 한정 이벤트를 등록합니다. 응모전은 <a href="/admin/contests" className="text-primary lg:hover:underline">응모전 관리</a>에서 별도로 등록합니다.
-      </p>
 
       {showForm && (
         <form
@@ -240,7 +237,7 @@ export default function GeneralEventManagement() {
 
             {/* 게시 기간 */}
             <div className="sm:col-span-2">
-              <p className="text-xs font-semibold text-foreground mb-2">게시 기간 <span className="text-destructive">*</span> <span className="font-normal text-muted-foreground">(이벤트 메뉴 노출 기간 — 실행 기간과 별개)</span></p>
+              <p className="text-xs font-semibold text-foreground mb-2">게시 기간 <span className="text-destructive">*</span></p>
               <div className="grid sm:grid-cols-2 gap-3">
                 <label className="flex flex-col gap-1 text-xs text-muted-foreground">
                   게시 시작일 <span className="text-destructive">*</span>
@@ -265,10 +262,7 @@ export default function GeneralEventManagement() {
             </select>
 
             <div>
-              <label className="block text-xs text-muted-foreground mb-1">
-                결과 발표 URL
-                <span className="ml-1 text-amber-600">※ 입력 시 종료 후 "결과 발표 보기" 버튼 노출</span>
-              </label>
+              <label className="block text-xs text-muted-foreground mb-1">결과 발표 URL</label>
               <input
                 type="url"
                 value={draft.resultUrl}

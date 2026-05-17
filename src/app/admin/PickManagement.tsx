@@ -145,6 +145,7 @@ export default function PickManagement() {
   const [loading, setLoading] = useState(true);
   const [selectedId, setSelectedId] = useState<string | null>(null);
   const [newStep, setNewStep] = useState<1 | 2>(1);
+  const [galleryOpen, setGalleryOpen] = useState(false);
   const [draft, setDraft] = useState<PickDraft>(emptyDraft);
   const [pickerSearch, setPickerSearch] = useState('');
   const [hoverImg, setHoverImg] = useState<{ src: string; x: number; y: number } | null>(null);
@@ -191,12 +192,14 @@ export default function PickManagement() {
   const openNew = () => {
     setSelectedId('new');
     setNewStep(1);
+    setGalleryOpen(false);
     setDraft(emptyDraft);
     setPickerSearch('');
   };
 
   const openEdit = (session: PickSession) => {
     setSelectedId(session.id);
+    setGalleryOpen(false);
     setDraft({
       title: session.title,
       startAt: session.startAt,
@@ -209,6 +212,7 @@ export default function PickManagement() {
   const closePanel = () => {
     setSelectedId(null);
     setNewStep(1);
+    setGalleryOpen(false);
     setDraft(emptyDraft);
     setPickerSearch('');
   };
@@ -428,7 +432,7 @@ export default function PickManagement() {
                     </button>
                     <button
                       type="button"
-                      onClick={() => { if (validateDraft()) setNewStep(2); }}
+                      onClick={() => { if (validateDraft()) { setNewStep(2); setGalleryOpen(true); } }}
                       className="flex-1 bg-primary text-white rounded-lg px-4 py-2 text-sm font-medium lg:hover:bg-primary/90">
                       다음 → 작품 선정
                     </button>
@@ -436,23 +440,25 @@ export default function PickManagement() {
                 </div>
               </div>
             ) : (
-              /* 기존 세션 편집 — 갤러리 + 하단 바 */
+              /* step 2: 리뷰 또는 갤러리 */
               (() => {
                 const session = sessions.find((s) => s.id === selectedId);
                 const isEnded = session ? getPickStatus(session) === 'ended' : false;
                 return (
                   <>
-                    {/* 갤러리 영역 */}
-                    <div className="p-4 border-b border-border flex items-center gap-3">
-                      {selectedId === 'new' && (
-                        <button
-                          type="button"
-                          onClick={() => setNewStep(1)}
-                          className="text-xs text-muted-foreground lg:hover:text-foreground shrink-0"
-                        >
+                    {/* 헤더 */}
+                    <div className="p-4 border-b border-border flex items-center gap-3 shrink-0">
+                      {galleryOpen ? (
+                        <button type="button" onClick={() => setGalleryOpen(false)}
+                          className="text-xs text-muted-foreground lg:hover:text-foreground shrink-0">
+                          ← 선택 목록
+                        </button>
+                      ) : selectedId === 'new' ? (
+                        <button type="button" onClick={() => setNewStep(1)}
+                          className="text-xs text-muted-foreground lg:hover:text-foreground shrink-0">
                           ← 이전
                         </button>
-                      )}
+                      ) : null}
                       <div className="flex-1 flex items-center gap-2 min-w-0">
                         <input
                           value={draft.title}
@@ -475,107 +481,118 @@ export default function PickManagement() {
                           <span className="text-xs text-muted-foreground shrink-0">{draft.startAt?.slice(5)} ~ {draft.endAt?.slice(5)}</span>
                         )}
                       </div>
-                      <div className="relative shrink-0">
-                        <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
-                        <input
-                          value={pickerSearch}
-                          onChange={(e) => setPickerSearch(e.target.value)}
-                          placeholder="작품·작가 검색…"
-                          className="pl-7 pr-3 py-1.5 border border-border rounded-lg text-sm w-40"
-                        />
-                      </div>
-                    </div>
-                    <div className="flex-1 overflow-y-auto p-3 bg-muted/10">
-                      {galleryWorks.length === 0 ? (
-                        <div className="text-center py-16 text-sm text-muted-foreground">공개된 전시가 없습니다.</div>
-                      ) : (
-                        <div className="space-y-1">
-                          {galleryWorks.map((w) => {
-                            const orderIdx = draft.workIds.indexOf(w.id);
-                            const isSelected = orderIdx >= 0;
-                            const imgs = (Array.isArray(w.image) ? w.image : [w.image])
-                              .filter(Boolean)
-                              .map((k: string) => imageUrls[k] || k);
-                            return (
-                              <button
-                                key={w.id}
-                                type="button"
-                                disabled={isEnded}
-                                onClick={() => toggleWork(w)}
-                                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg border-2 text-left transition-all disabled:pointer-events-none ${
-                                  isSelected
-                                    ? 'border-primary bg-primary/5'
-                                    : 'border-transparent lg:hover:border-primary/20 lg:hover:bg-muted/30'
-                                }`}
-                              >
-                                <div className="w-5 shrink-0 flex justify-center">
-                                  {isSelected ? (
-                                    <span className="bg-primary text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                                      {orderIdx + 1}
-                                    </span>
-                                  ) : (
-                                    <span className="w-4 h-4 rounded-full border-2 border-border" />
-                                  )}
-                                </div>
-                                <div className="w-48 shrink-0 min-w-0">
-                                  <p className="text-sm font-medium truncate leading-tight">
-                                    {displayExhibitionTitle(w, '(제목 없음)')}
-                                  </p>
-                                  <p className="text-xs text-muted-foreground truncate">{w.artist?.name || ''}</p>
-                                </div>
-                                <div className="flex gap-1 overflow-x-auto">
-                                  {imgs.map((src, i) => (
-                                    <div
-                                      key={i}
-                                      className="relative w-14 h-14 shrink-0 rounded overflow-hidden bg-muted"
-                                      onMouseEnter={(e) => {
-                                        e.stopPropagation();
-                                        const r = e.currentTarget.getBoundingClientRect();
-                                        let x = r.right + 8;
-                                        let y = r.top + r.height / 2 - 120;
-                                        if (x + 240 > window.innerWidth) x = r.left - 248;
-                                        y = Math.max(8, Math.min(y, window.innerHeight - 248));
-                                        setHoverImg({ src, x, y });
-                                      }}
-                                      onMouseLeave={(e) => { e.stopPropagation(); setHoverImg(null); }}
-                                      onClick={(e) => {
-                                        e.stopPropagation();
-                                        setModalImgs({ images: imgs, idx: i });
-                                      }}
-                                    >
-                                      <ImageWithFallback src={src} alt="" className="w-full h-full object-cover" />
-                                    </div>
-                                  ))}
-                                </div>
-                              </button>
-                            );
-                          })}
+                      {galleryOpen && (
+                        <div className="relative shrink-0">
+                          <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
+                          <input
+                            value={pickerSearch}
+                            onChange={(e) => setPickerSearch(e.target.value)}
+                            placeholder="작품·작가 검색…"
+                            className="pl-7 pr-3 py-1.5 border border-border rounded-lg text-sm w-40"
+                          />
                         </div>
                       )}
                     </div>
+
+                    {/* 메인 콘텐츠: 리뷰 or 갤러리 */}
+                    {galleryOpen ? (
+                      <div className="flex-1 overflow-y-auto p-3 bg-muted/10">
+                        {galleryWorks.length === 0 ? (
+                          <div className="text-center py-16 text-sm text-muted-foreground">공개된 전시가 없습니다.</div>
+                        ) : (
+                          <div className="space-y-1">
+                            {galleryWorks.map((w) => {
+                              const orderIdx = draft.workIds.indexOf(w.id);
+                              const isSelected = orderIdx >= 0;
+                              const imgs = (Array.isArray(w.image) ? w.image : [w.image])
+                                .filter(Boolean)
+                                .map((k: string) => imageUrls[k] || k);
+                              return (
+                                <button
+                                  key={w.id}
+                                  type="button"
+                                  disabled={isEnded}
+                                  onClick={() => toggleWork(w)}
+                                  className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg border-2 text-left transition-all disabled:pointer-events-none ${
+                                    isSelected ? 'border-primary bg-primary/5' : 'border-transparent lg:hover:border-primary/20 lg:hover:bg-muted/30'
+                                  }`}
+                                >
+                                  <div className="w-5 shrink-0 flex justify-center">
+                                    {isSelected ? (
+                                      <span className="bg-primary text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">{orderIdx + 1}</span>
+                                    ) : (
+                                      <span className="w-4 h-4 rounded-full border-2 border-border" />
+                                    )}
+                                  </div>
+                                  <div className="w-48 shrink-0 min-w-0">
+                                    <p className="text-sm font-medium truncate leading-tight">{displayExhibitionTitle(w, '(제목 없음)')}</p>
+                                    <p className="text-xs text-muted-foreground truncate">{w.artist?.name || ''}</p>
+                                  </div>
+                                  <div className="flex gap-1 overflow-x-auto">
+                                    {imgs.map((src, i) => (
+                                      <div key={i} className="relative w-14 h-14 shrink-0 rounded overflow-hidden bg-muted"
+                                        onMouseEnter={(e) => {
+                                          e.stopPropagation();
+                                          const r = e.currentTarget.getBoundingClientRect();
+                                          let x = r.right + 8; let y = r.top + r.height / 2 - 120;
+                                          if (x + 240 > window.innerWidth) x = r.left - 248;
+                                          y = Math.max(8, Math.min(y, window.innerHeight - 248));
+                                          setHoverImg({ src, x, y });
+                                        }}
+                                        onMouseLeave={(e) => { e.stopPropagation(); setHoverImg(null); }}
+                                        onClick={(e) => { e.stopPropagation(); setModalImgs({ images: imgs, idx: i }); }}
+                                      >
+                                        <ImageWithFallback src={src} alt="" className="w-full h-full object-cover" />
+                                      </div>
+                                    ))}
+                                  </div>
+                                </button>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    ) : (
+                      /* 리뷰: 선정된 전시 목록 */
+                      <div className="flex-1 overflow-y-auto p-3 bg-muted/10">
+                        {draftWorks.length === 0 ? (
+                          <div className="flex-1 flex flex-col items-center justify-center h-full py-16 gap-2 text-sm text-muted-foreground">
+                            <p>선정된 전시가 없습니다.</p>
+                          </div>
+                        ) : (
+                          <div className="space-y-1">
+                            {draftWorks.map((w, i) => {
+                              const coverKey = getCoverImage(w.image, w.coverImageIndex);
+                              const src = imageUrls[coverKey] || coverKey;
+                              return (
+                                <div key={w.id} className="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/5 border border-primary/20">
+                                  <span className="bg-primary text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center shrink-0">{i + 1}</span>
+                                  <div className="w-12 h-12 rounded overflow-hidden border border-border shrink-0">
+                                    <ImageWithFallback src={src} alt="" className="w-full h-full object-cover" />
+                                  </div>
+                                  <div className="flex-1 min-w-0">
+                                    <p className="text-sm font-medium truncate">{displayExhibitionTitle(w, '(제목 없음)')}</p>
+                                    <p className="text-xs text-muted-foreground truncate">{w.artist?.name || ''}</p>
+                                  </div>
+                                </div>
+                              );
+                            })}
+                          </div>
+                        )}
+                      </div>
+                    )}
 
                     {/* 하단 고정 바 */}
                     {!isEnded && (
                       <div className="bg-sky-950 px-4 py-3 flex items-center gap-3 shrink-0">
                         {draftWorks.length > 0 ? (
-                          <DndContext
-                            sensors={sensors}
-                            collisionDetection={closestCenter}
-                            onDragEnd={handleDragEnd}
-                          >
+                          <DndContext sensors={sensors} collisionDetection={closestCenter} onDragEnd={handleDragEnd}>
                             <SortableContext items={draft.workIds} strategy={verticalListSortingStrategy}>
                               <div className="flex gap-1.5 overflow-x-auto">
                                 {draftWorks.map((w) => {
                                   const key = getCoverImage(w.image, w.coverImageIndex);
                                   const src = imageUrls[key] || key;
-                                  return (
-                                    <PickBottomBarItem
-                                      key={w.id}
-                                      id={w.id}
-                                      src={src}
-                                      onRemove={() => removeWork(w.id)}
-                                    />
-                                  );
+                                  return <PickBottomBarItem key={w.id} id={w.id} src={src} onRemove={() => removeWork(w.id)} />;
                                 })}
                               </div>
                             </SortableContext>
@@ -587,13 +604,17 @@ export default function PickManagement() {
                           {draft.workIds.length}개 선정 / 최대 {MAX_PICKS}개
                         </div>
                         <div className="flex-1" />
-                        <button
-                          type="button"
-                          onClick={handlePublish}
-                          className="bg-sky-600 text-white rounded-md px-3 py-1.5 text-xs font-semibold lg:hover:bg-sky-700"
-                        >
-                          게시
-                        </button>
+                        {galleryOpen ? (
+                          <button type="button" onClick={handlePublish}
+                            className="bg-sky-600 text-white rounded-md px-3 py-1.5 text-xs font-semibold lg:hover:bg-sky-700">
+                            선택 완료
+                          </button>
+                        ) : (
+                          <button type="button" onClick={() => setGalleryOpen(true)}
+                            className="border border-sky-600 text-sky-300 rounded-md px-3 py-1.5 text-xs font-semibold lg:hover:bg-sky-900">
+                            선택 수정
+                          </button>
+                        )}
                       </div>
                     )}
                   </>

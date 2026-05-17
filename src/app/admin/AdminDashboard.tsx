@@ -95,7 +95,7 @@ export default function AdminDashboard() {
                 <p className="text-xs text-muted-foreground">
                   {activePickSession.startAt} ~ {activePickSession.endAt}
                   {' · '}
-                  선정 작품 {activePickSession.selectedWorkIds?.length ?? 0}개 선정 / 최대 10개
+                  {activePickSession.selectedWorkIds?.length ?? 0}개 선정 / 최대 10개
                 </p>
               </CardContent>
             </Card>
