@@ -18,12 +18,12 @@ export type CuratedExhibition = {
   id: string;
   title: string;
   subtitle?: string;
-  /** 기획전 대표 이미지 URL (선택). Events 페이지 카드에 노출 */
-  bannerImageUrl?: string;
-  /** YYYY-MM-DD. 미입력 시 상시 운영 */
-  startAt?: string;
-  /** YYYY-MM-DD. 미입력 시 상시 운영 */
-  endAt?: string;
+  /** 기획전 대표 이미지. Events 페이지 카드에 노출 */
+  bannerImageUrl: string;
+  /** YYYY-MM-DD. 이벤트 메뉴 게시 시작일 */
+  startAt: string;
+  /** YYYY-MM-DD. 이벤트 메뉴 게시 종료일 */
+  endAt: string;
   /**
    * 기획전 상세 외부 링크 URL (필수 — 미설정 시 Events 기획전 탭 미노출).
    * Notion, Framer, 커스텀 HTML 등 자유 제작 후 URL 등록.
@@ -154,6 +154,9 @@ function readFromStorage(): CurationState {
           id: 'legacy-default',
           title: legacy.title as string,
           subtitle: typeof legacy.subtitle === 'string' ? (legacy.subtitle as string) : undefined,
+          bannerImageUrl: '',
+          startAt: '',
+          endAt: '',
           pieces,
         },
       ];
@@ -258,11 +261,11 @@ export function seedCurationIfEmpty(): void {
       }).slice(0, count);
 
     // piece의 첫 이미지를 배너로 사용하는 헬퍼
-    const getBanner = (pieces: CurationPieceRef[]): string | undefined => {
+    const getBanner = (pieces: CurationPieceRef[]): string => {
       const w = works.find((x) => x.id === pieces[0]?.workId);
-      if (!w) return undefined;
+      if (!w) return '';
       const img = Array.isArray(w.image) ? w.image[0] : w.image;
-      return img || undefined;
+      return img || '';
     };
 
     // 수채화 계열 작품 우선

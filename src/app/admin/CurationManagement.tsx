@@ -45,16 +45,15 @@ type CurationStatus = 'active' | 'scheduled' | 'ended';
 
 function deriveCurationStatus(c: CuratedExhibition): CurationStatus {
   const today = todayLocalIso();
-  if (!c.startAt || !c.endAt) return 'scheduled';
   if (today > c.endAt) return 'ended';
   if (today < c.startAt) return 'scheduled';
   return 'active';
 }
 
 const CURATION_STATUS_LABEL: Record<CurationStatus, string> = {
-  active: '전시 중',
-  scheduled: '전시 예정',
-  ended: '전시 종료',
+  active: '게시 중',
+  scheduled: '게시 예정',
+  ended: '게시 종료',
 };
 
 const CURATION_STATUS_COLOR: Record<CurationStatus, string> = {
