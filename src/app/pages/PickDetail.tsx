@@ -70,7 +70,7 @@ export default function PickDetail() {
           {/* 뒤로가기 */}
           <Link
             to="/events?tab=pick"
-            className="absolute left-0 top-0 text-xs text-slate-500 hover:text-slate-300 transition-colors"
+            className="absolute left-0 top-0 text-xs text-slate-400 hover:text-slate-200 transition-colors"
           >
             {t('pickDetail.backToEvents')}
           </Link>
