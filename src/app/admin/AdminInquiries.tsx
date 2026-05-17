@@ -166,10 +166,19 @@ function loadInquiries(): StoredInquiry[] {
     }
     const parsed = JSON.parse(raw);
     const stored: StoredInquiry[] = Array.isArray(parsed) ? parsed : [];
+    const seedMap = new Map(SEED_INQUIRIES.map((s) => [s.id, s]));
     const storedIds = new Set(stored.map((i) => i.id));
+    // 누락 씨드 추가
     const missingSeed = SEED_INQUIRIES.filter((s) => !storedIds.has(s.id));
-    if (missingSeed.length > 0) {
-      const merged = [...missingSeed, ...stored];
+    // 기존 씨드 중 nickname 없는 항목 패치
+    let patched = false;
+    const patchedStored = stored.map((i) => {
+      const seed = seedMap.get(i.id);
+      if (seed && !i.nickname && seed.nickname) { patched = true; return { ...i, nickname: seed.nickname }; }
+      return i;
+    });
+    if (missingSeed.length > 0 || patched) {
+      const merged = [...missingSeed, ...patchedStored];
       localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
       return merged;
     }
@@ -823,7 +832,7 @@ function KpiCard({ label, value, emphasize, danger }: { label: string; value: nu
       }`}
     >
       <p className="text-xs text-muted-foreground mb-1">{label}</p>
-      <p className={`text-xl font-semibold ${danger ? 'text-red-700' : emphasize ? 'text-primary' : 'text-foreground'}`}>{value}</p>
+      <p className={`text-base font-semibold ${danger ? 'text-red-700' : emphasize ? 'text-primary' : 'text-foreground'}`}>{value}</p>
     </div>
   );
 }
