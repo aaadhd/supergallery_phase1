@@ -204,7 +204,7 @@ export default function EventParticipants({ compact = false }: { compact?: boole
     <div className="space-y-4 pb-4">
       {!compact && (
         <div>
-          <h1 className="text-2xl font-bold text-foreground">응모자 관리</h1>
+          <h1 className="text-base font-semibold text-foreground">응모자 관리</h1>
           <p className="text-sm text-muted-foreground mt-1">응모전별 제출 작품 확인 및 선정</p>
         </div>
       )}

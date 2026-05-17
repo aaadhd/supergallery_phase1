@@ -372,7 +372,7 @@ export default function AdminInquiries() {
     <div className="min-h-full">
       <div className="flex items-center gap-2 mb-1">
         <MessageSquare className="w-5 h-5 text-foreground" />
-        <h1 className="text-xl font-bold text-foreground">문의함</h1>
+        <h1 className="text-base font-semibold text-foreground">문의함</h1>
       </div>
 
       {/* KPI 4종 */}
@@ -832,7 +832,7 @@ function KpiCard({ label, value, emphasize, danger }: { label: string; value: nu
       }`}
     >
       <p className="text-xs text-muted-foreground mb-1">{label}</p>
-      <p className={`text-2xl font-bold ${danger ? 'text-red-700' : emphasize ? 'text-primary' : 'text-foreground'}`}>{value}</p>
+      <p className={`text-xl font-semibold ${danger ? 'text-red-700' : emphasize ? 'text-primary' : 'text-foreground'}`}>{value}</p>
     </div>
   );
 }

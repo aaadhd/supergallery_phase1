@@ -213,7 +213,7 @@ export default function ContestManagement() {
   return (
     <div className="min-h-full">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
-        <h1 className="text-xl font-bold text-foreground">응모전 관리</h1>
+        <h1 className="text-base font-semibold text-foreground">응모전 관리</h1>
         {activeTab === 'list' && (
           <Button
             type="button"

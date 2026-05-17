@@ -155,7 +155,7 @@ export default function GeneralEventManagement() {
   if (loading) {
     return (
       <div>
-        <h1 className="text-xl font-bold mb-6 text-foreground">일반 이벤트 관리</h1>
+        <h1 className="text-base font-semibold mb-4 text-foreground">일반 이벤트 관리</h1>
         <div className="rounded-lg border border-border py-16 text-center text-sm text-muted-foreground">{t('admin.loading')}</div>
       </div>
     );
@@ -164,7 +164,7 @@ export default function GeneralEventManagement() {
   return (
     <div className="min-h-full">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-1">
-        <h1 className="text-xl font-bold text-foreground">일반 이벤트 관리</h1>
+        <h1 className="text-base font-semibold text-foreground">일반 이벤트 관리</h1>
         <Button
           type="button"
           onClick={() => { setEditingId(null); setDraft(emptyDraft); setShowForm((v) => !v); }}

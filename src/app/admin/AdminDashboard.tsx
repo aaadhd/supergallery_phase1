@@ -72,7 +72,7 @@ export default function AdminDashboard() {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-2xl font-bold text-foreground">운영 대시보드</h1>
+        <h1 className="text-base font-semibold text-foreground">운영 대시보드</h1>
         <p className="text-sm text-muted-foreground mt-1">Proud Gallery Phase 1 운영 현황 · 런칭 준비</p>
       </div>
 
@@ -127,7 +127,7 @@ export default function AdminDashboard() {
                   <Eye className="w-4 h-4" />
                   검수 대기
                 </CardDescription>
-                <CardTitle className="text-3xl">{pendingCount}</CardTitle>
+                <CardTitle className="text-xl">{pendingCount}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-xs text-muted-foreground">
@@ -146,7 +146,7 @@ export default function AdminDashboard() {
                   <RotateCcw className="w-4 h-4" />
                   반려 상태
                 </CardDescription>
-                <CardTitle className="text-3xl">{rejectedCount}</CardTitle>
+                <CardTitle className="text-xl">{rejectedCount}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-xs text-muted-foreground">작가 수정 대기 중</p>
@@ -161,7 +161,7 @@ export default function AdminDashboard() {
                   <Flag className="w-4 h-4" />
                   미결 신고
                 </CardDescription>
-                <CardTitle className="text-3xl">{reportPendingCount}</CardTitle>
+                <CardTitle className="text-xl">{reportPendingCount}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-xs text-muted-foreground">긴급 건은 24시간 SLA</p>
@@ -176,7 +176,7 @@ export default function AdminDashboard() {
                   <ShieldAlert className="w-4 h-4" />
                   비공개 전시
                 </CardDescription>
-                <CardTitle className="text-3xl">{autoHiddenCount}</CardTitle>
+                <CardTitle className="text-xl">{autoHiddenCount}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-xs text-muted-foreground">운영팀 비공개 유지 처리된 전시 수</p>
@@ -191,7 +191,7 @@ export default function AdminDashboard() {
                   <Megaphone className="w-4 h-4" />
                   공지 일감
                 </CardDescription>
-                <CardTitle className="text-3xl">{noticePublishedCount}</CardTitle>
+                <CardTitle className="text-xl">{noticePublishedCount}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-xs text-muted-foreground">
@@ -214,7 +214,7 @@ export default function AdminDashboard() {
                   <Trophy className="w-4 h-4" />
                   진행 중 응모전
                 </CardDescription>
-                <CardTitle className="text-3xl">{activeEventsCount}</CardTitle>
+                <CardTitle className="text-xl">{activeEventsCount}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-xs text-muted-foreground">기간·발표 토글 관리</p>
@@ -228,7 +228,7 @@ export default function AdminDashboard() {
                   <Users className="w-4 h-4" />
                   응모자 현황
                 </CardDescription>
-                <CardTitle className="text-3xl">{contests.reduce((acc, e) => acc + (e.selectedWorkIds?.length ?? 0), 0)}</CardTitle>
+                <CardTitle className="text-xl">{contests.reduce((acc, e) => acc + (e.selectedWorkIds?.length ?? 0), 0)}</CardTitle>
               </CardHeader>
               <CardContent>
                 <p className="text-xs text-muted-foreground">선정 처리·일괄 선정·작품 검토</p>
@@ -243,7 +243,7 @@ export default function AdminDashboard() {
                     <AlertTriangle className="w-4 h-4" />
                     발표 페이지 미작성
                   </CardDescription>
-                  <CardTitle className="text-3xl text-amber-900">{pendingPublication}</CardTitle>
+                  <CardTitle className="text-xl text-amber-900">{pendingPublication}</CardTitle>
                 </CardHeader>
                 <CardContent>
                   <p className="text-xs text-amber-800">발표 토글 ON · 선정작 0건 응모전</p>
@@ -263,7 +263,7 @@ export default function AdminDashboard() {
                 <Megaphone className="w-4 h-4" />
                 미답변 문의
               </CardDescription>
-              <CardTitle className="text-3xl">{unansweredInquiryCount}</CardTitle>
+              <CardTitle className="text-xl">{unansweredInquiryCount}</CardTitle>
             </CardHeader>
             <CardContent>
               <p className="text-xs text-muted-foreground">신규·처리 중</p>

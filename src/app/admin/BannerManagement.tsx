@@ -221,7 +221,7 @@ export default function BannerManagement() {
   if (loading) {
     return (
       <div>
-        <h1 className="text-xl font-bold mb-6 text-foreground">배너 관리</h1>
+        <h1 className="text-base font-semibold mb-4 text-foreground">배너 관리</h1>
         <div className="rounded-lg border border-border py-16 text-center text-sm text-muted-foreground">불러오는 중…</div>
       </div>
     );
@@ -230,7 +230,7 @@ export default function BannerManagement() {
   return (
     <div className="min-h-full">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-1">
-        <h1 className="text-xl font-bold text-foreground">배너 관리</h1>
+        <h1 className="text-base font-semibold text-foreground">배너 관리</h1>
         <Button
           type="button"
           onClick={() => setShowForm((v) => !v)}

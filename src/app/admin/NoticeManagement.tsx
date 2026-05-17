@@ -110,7 +110,7 @@ export default function NoticeManagement() {
       <div className="flex items-center justify-between mb-6">
         <div className="flex items-center gap-2">
           <Megaphone className="w-5 h-5 text-foreground" />
-          <h1 className="text-xl font-bold text-foreground">{t('admin.notice.title')}</h1>
+          <h1 className="text-base font-semibold text-foreground">{t('admin.notice.title')}</h1>
         </div>
         <button type="button" onClick={openCreate} className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/30 flex items-center gap-1.5">
           <Plus className="w-4 h-4" />

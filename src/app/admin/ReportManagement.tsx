@@ -352,7 +352,7 @@ export default function ReportManagement() {
   if (loading) {
     return (
       <div>
-        <h1 className="text-xl font-bold mb-6 text-foreground">신고 관리</h1>
+        <h1 className="text-base font-semibold mb-4 text-foreground">신고 관리</h1>
         <div className="rounded-lg border border-border py-16 text-center text-sm text-muted-foreground">불러오는 중…</div>
       </div>
     );
@@ -360,7 +360,7 @@ export default function ReportManagement() {
 
   return (
     <div className="min-h-full">
-      <h1 className="text-xl font-bold mb-6 text-foreground">신고 관리</h1>
+      <h1 className="text-base font-semibold mb-4 text-foreground">신고 관리</h1>
 
       <div className="flex flex-wrap gap-3 mb-6">
         <select

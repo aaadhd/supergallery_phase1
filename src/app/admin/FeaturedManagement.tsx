@@ -80,7 +80,7 @@ export default function FeaturedManagement() {
   if (loading) {
     return (
       <div>
-        <h1 className="text-xl font-bold mb-6 text-foreground">추천 전시</h1>
+        <h1 className="text-base font-semibold mb-4 text-foreground">추천 전시</h1>
         <div className="rounded-lg border border-border py-16 text-center text-sm text-muted-foreground">불러오는 중…</div>
       </div>
     );
@@ -90,7 +90,7 @@ export default function FeaturedManagement() {
     <div className="min-h-full">
       <div className="flex flex-wrap items-start justify-between gap-3 mb-5">
         <div>
-          <h1 className="text-xl font-bold text-foreground">추천 전시</h1>
+          <h1 className="text-base font-semibold text-foreground">추천 전시</h1>
           <p className="text-sm text-muted-foreground mt-0.5">
             추천된 전시는 둘러보기 피드에서 상위 노출됩니다. 상한 없음.
           </p>
@@ -307,14 +307,14 @@ function FeaturedImageModal({
             <button
               onClick={() => setIdx((i) => Math.max(0, i - 1))}
               disabled={idx === 0}
-              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 text-white text-2xl rounded-full w-10 h-10 flex items-center justify-center disabled:opacity-20 lg:hover:bg-black/80"
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 text-white text-base rounded-full w-10 h-10 flex items-center justify-center disabled:opacity-20 lg:hover:bg-black/80"
             >
               ‹
             </button>
             <button
               onClick={() => setIdx((i) => Math.min(images.length - 1, i + 1))}
               disabled={idx === images.length - 1}
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 text-white text-2xl rounded-full w-10 h-10 flex items-center justify-center disabled:opacity-20 lg:hover:bg-black/80"
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 text-white text-base rounded-full w-10 h-10 flex items-center justify-center disabled:opacity-20 lg:hover:bg-black/80"
             >
               ›
             </button>

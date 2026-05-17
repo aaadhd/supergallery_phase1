@@ -313,7 +313,7 @@ export default function PickManagement() {
   if (loading) {
     return (
       <div>
-        <h1 className="text-xl font-bold mb-6 text-foreground">픽 관리</h1>
+        <h1 className="text-base font-semibold mb-4 text-foreground">픽 관리</h1>
         <div className="rounded-lg border border-border py-16 text-center text-sm text-muted-foreground">불러오는 중…</div>
       </div>
     );
@@ -321,7 +321,7 @@ export default function PickManagement() {
 
   return (
     <div className="min-h-full">
-      <h1 className="text-xl font-bold mb-4 text-foreground">픽 관리</h1>
+      <h1 className="text-base font-semibold mb-4 text-foreground">픽 관리</h1>
 
       <div className="border border-border rounded-lg overflow-hidden">
         <div className="grid" style={{ gridTemplateColumns: '280px 1fr' }}>
@@ -697,14 +697,14 @@ function WorkImageModal({
             <button
               onClick={() => setIdx((i) => Math.max(0, i - 1))}
               disabled={idx === 0}
-              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 text-white text-2xl rounded-full w-10 h-10 flex items-center justify-center disabled:opacity-20 lg:hover:bg-black/80"
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 text-white text-base rounded-full w-10 h-10 flex items-center justify-center disabled:opacity-20 lg:hover:bg-black/80"
             >
               ‹
             </button>
             <button
               onClick={() => setIdx((i) => Math.min(images.length - 1, i + 1))}
               disabled={idx === images.length - 1}
-              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 text-white text-2xl rounded-full w-10 h-10 flex items-center justify-center disabled:opacity-20 lg:hover:bg-black/80"
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 text-white text-base rounded-full w-10 h-10 flex items-center justify-center disabled:opacity-20 lg:hover:bg-black/80"
             >
               ›
             </button>

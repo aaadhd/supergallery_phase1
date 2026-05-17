@@ -255,7 +255,7 @@ export default function ContentReview() {
   if (loading) {
     return (
       <div>
-        <h1 className="text-xl font-bold mb-6 text-foreground">콘텐츠 검수</h1>
+        <h1 className="text-base font-semibold mb-4 text-foreground">콘텐츠 검수</h1>
         <div className="rounded-lg border border-border bg-white py-16 text-center text-sm text-muted-foreground">불러오는 중…</div>
       </div>
     );
@@ -264,7 +264,7 @@ export default function ContentReview() {
   return (
     <div className="min-h-full">
       <div className="flex items-center gap-3 mb-1">
-        <h1 className="text-xl font-bold text-foreground">콘텐츠 검수</h1>
+        <h1 className="text-base font-semibold text-foreground">콘텐츠 검수</h1>
         {(() => {
           const pendingCount = rows.filter((r) => r.ui === '대기중').length;
           return pendingCount > 0 ? (
