@@ -1,4 +1,4 @@
-import { useParams, Link, useSearchParams } from 'react-router-dom';
+import { useParams, Link, useSearchParams, useNavigate } from 'react-router-dom';
 import { Calendar, ArrowLeft, ArrowRight, Users, X } from 'lucide-react';
 import { ImageWithFallback } from '../components/ImageWithFallback';
 import { analytics } from '../utils/analytics';
@@ -17,6 +17,7 @@ import { displayExhibitionTitle } from '../utils/workDisplay';
 export default function EventDetail() {
   const { id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
+  const navigate = useNavigate();
   const { t } = useI18n();
   const auth = useAuthStore();
   const loginPrompt = useLoginPrompt();
@@ -108,14 +109,15 @@ export default function EventDetail() {
         {/* 뒤로가기 — 히어로 좌상단 오버레이 */}
         <div className="absolute top-0 left-0 right-0 px-4 sm:px-6 pt-4 sm:pt-5">
           <div className="mx-auto max-w-[1440px] w-full">
-            <Link
-              to="/events"
+            <button
+              type="button"
+              onClick={() => navigate(-1)}
               className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-white lg:hover:text-white/80 transition-colors"
               style={{ textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}
             >
               <ArrowLeft className="w-4 h-4" style={{ filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.6))' }} />
               {t('eventDetail.backToList')}
-            </Link>
+            </button>
           </div>
         </div>
         <div className="absolute inset-0 flex flex-col justify-end px-4 sm:px-6 pb-6 sm:pb-10">

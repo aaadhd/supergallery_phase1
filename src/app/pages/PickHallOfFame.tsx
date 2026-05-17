@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { useI18n } from '../i18n/I18nProvider';
 import { workStore, useWorkStore } from '../store';
 import { getCoverImage } from '../utils/imageHelper';
@@ -10,6 +10,7 @@ import { displayExhibitionTitle } from '../utils/workDisplay';
 
 export default function PickHallOfFame() {
   const { t } = useI18n();
+  const navigate = useNavigate();
   useWorkStore();
 
   const honoredWorks = useMemo(
@@ -32,12 +33,13 @@ export default function PickHallOfFame() {
             style={{ background: 'linear-gradient(180deg,rgba(255,200,0,0.35),transparent)' }} />
         </div>
         <div className="relative">
-          <Link
-            to="/events?tab=pick"
-            className="absolute left-0 top-0 text-xs text-slate-500 hover:text-slate-300 transition-colors"
+          <button
+            type="button"
+            onClick={() => navigate(-1)}
+            className="absolute left-0 top-0 text-xs text-slate-400 hover:text-slate-200 transition-colors"
           >
             {t('hallOfFame.back')}
-          </Link>
+          </button>
           <h1
             className="text-2xl font-black mb-2"
             style={{
