@@ -4,6 +4,28 @@
 
 ---
 
+## 2026-05-15
+
+- **전체 문서 ↔ 코드 정합 감사 후속 수정 (12건)**:
+  - `messages.ts` `faq.a7` KO — "검수 통과 후" → "발행 직후부터" (Copy_v1.md SSoT 정합)
+  - `Faq.tsx` — FAQ_ROWS·CAT_LABEL_KEYS 순서 정합: "기타(other)" ↔ "비회원 초대(invite)" 교체 (Handoff_FAQ 기준 q9~q10 → q11~q14 순서)
+  - `ContentReview.tsx` — 재검수 배지 라벨 "재검수" / "재검수 N회" → "재검수 요청" / "재검수 N회차" (PRD_Admin ADM-REV-01 정합)
+  - `inviteTokenStore.ts` — 주석 `Policy §31 N-15` → `N-6` 존재하지 않는 항목 참조 수정
+  - `AdminInquiries.tsx` — 폐기된 SLA 배지 스펙 JSDoc 제거 (ADM-INQ-01 기한 배지 전면 미구현 결정 정합)
+  - `PRD_Admin_v1.md` ADM-DSH-01 — 대시보드 구성 2섹션 → 4섹션 정합 (Proud's Pick·콘텐츠 운영·응모전 운영·운영 현황) + 목적 "런칭 준비 상태" 문구 제거
+  - `PRD_Admin_v1.md` ADM-NTC-01·NOTICE 엔티티 — 카테고리 "일반·점검·중요" → "서비스·이벤트·정책·기타" 코드 정합
+  - `Copy_v1.md` — `signup.linkSentAutoFlow` "(미사용)" 항목 제거
+  - `Copy_v1.md` + `messages.ts` — `upload.editSoloConvert*` (Title·Desc·Confirm) KO·EN 신규 (Policy §13.6.1 SSoT)
+  - `Upload.tsx` — Policy §13.6.1 수정 모드 그룹→개인 전환 확인 다이얼로그 구현 (원래 그룹 전시를 편집해 게시자 단독이 되면 발행 전 확인)
+
+- **감사에서 PM 판단 필요로 분류된 항목 (미수정)**:
+  - USR-NTF-01 필터 탭·타입 칩 UI 미구현 (PRD 스펙 있으나 코드 없음 — P2 또는 P1 판단 필요)
+  - USR-STG-06 로그아웃 후 이동 경로 — PRD `/login`, 코드 `/` — PM 결정 필요
+  - ADM-RPT-01 기간 필터, ADM-MBR-01 가입 경로 필터, ADM-MBR-02 회원 삭제 CTA — P1 미구현
+  - 온보딩 관심사 태그 15종, 소셜 미제공 이메일 입력 — P1/P2 판단 필요
+
+---
+
 ## 2026-05-11
 
 - **planning ↔ 코드 정합 감사 (문서만 수정, 코드 변경 없음)**:

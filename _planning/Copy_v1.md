@@ -682,6 +682,10 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.editModeToast': '수정 사항이 검수 대기에 반영됐어요.',
   'upload.editModeToastApprovedKept': '수정 사항이 바로 반영되었어요.',
   'upload.editModeToastPendingFromApproved': '이미지가 바뀌어 잠시 검수 대기예요. 공개되면 알려드릴게요.',
+  // Policy §13.6.1 — 수정 모드에서 그룹 전시를 개인 전시로 전환 시 확인 다이얼로그
+  'upload.editSoloConvertTitle': '그룹 전시를 개인 전시로 전환할까요?',
+  'upload.editSoloConvertDesc': '참여 작가가 모두 제거됩니다. 이미지 변경으로 재검수 대기에 들어가며, 비회원 초대 링크는 비활성화돼요.',
+  'upload.editSoloConvertConfirm': '전환하기',
   'upload.reorderGridBtn': '한눈에 보고 정렬',
   'signup.previous': '이전',
   'upload.uploadingProgress': '이미지 처리 중 ({current}/{total})',
@@ -1231,8 +1235,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   ‘signup.linkSentHelpTitle’: ‘메일이 안 와요?’,
   ‘signup.linkSentSpam’: ‘받은편지함에 없으면 스팸함과 프로모션 탭도 확인해 주세요.’,
   ‘signup.linkSentSenderHint’: ‘보낸 사람에 ‘Proud Gallery’가 들어간 메일을 찾으시면 돼요.’,
-  ‘signup.linkSentAutoFlow’: ‘(미사용)’,
-  'signup.resendLink': '인증 메일 다시 보내기',
+  ‘signup.resendLink’: ‘인증 메일 다시 보내기’,
   'signup.resendCooldown': '{sec}초 후 다시 보낼 수 있어요',
   'signup.resendSuccess': '인증 메일을 다시 보냈어요.',
   'signup.changeEmail': '이메일 주소 수정',
@@ -1241,7 +1244,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'signup.linkExpiredTitle': '인증 링크가 만료됐어요',
   'signup.linkExpiredBody': '30분이 지난 링크예요. 아래에서 다시 발송을 요청할 수 있어요.',
   'signup.emailStepTitle': '이메일로 계속하기',
-  'signup.emailStepDesc': '이메일 주소를 입력하시면 인증 링크를 보내드려요. 비밀번호는 따로 만들 필요 없어요.',
+  'signup.emailStepDesc': '이메일 주소를 입력하시면 인증 링크를 보내드려요.',
   'signup.linkSentSenderHint': '보낸 사람에 ‘Proud Gallery’가 들어간 메일을 찾으시면 돼요.',
   'signup.linkSentSpam': '받은편지함에 없으면 스팸함과 프로모션 탭도 확인해 주세요.',
   'signup.linkSentBody': '{email}으로 인증 링크를 보냈어요.',
@@ -1781,6 +1784,10 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'upload.editModeToast': 'Saved. Your changes are queued for review.',
   'upload.editModeToastApprovedKept': 'Saved. Changes are live.',
   'upload.editModeToastPendingFromApproved': 'Image changed. Paused for review — we\'ll notify you when public again.',
+  // Policy §13.6.1 — edit mode group→solo conversion confirmation dialog
+  'upload.editSoloConvertTitle': 'Convert to a solo exhibition?',
+  'upload.editSoloConvertDesc': 'All participating artists will be removed. The exhibition will go back to review, and any non-member invite link will be deactivated.',
+  'upload.editSoloConvertConfirm': 'Convert',
   'upload.reorderGridBtn': 'Grid view & reorder',
   'signup.previous': 'Previous',
   'upload.uploadingProgress': 'Processing images ({current}/{total})',
@@ -2345,7 +2352,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'signup.linkExpiredTitle': 'Verification link expired',
   'signup.linkExpiredBody': 'The link is older than 30 minutes. Request a new email below.',
   'signup.emailStepTitle': 'Continue with email',
-  'signup.emailStepDesc': "Enter your email and we'll send a verification link. No password needed.",
+  'signup.emailStepDesc': "Enter your email and we'll send a verification link.",
   'login.emailHeading': 'Log in with email',
   'login.emailDesc': "Enter your email and we'll send a sign-in link. No password needed.",
   'login.sendMagicLink': 'Send sign-in link',
@@ -2486,6 +2493,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.26 | 2026-05-15 | PM × Claude | signup.linkSentAutoFlow "(미사용)" 삭제; upload.editSoloConvertTitle·editSoloConvertDesc·editSoloConvertConfirm KO·EN 신규(Policy §13.6.1 SSoT); signup.emailStepDesc "비밀번호는 따로 만들 필요 없어요." 문구 제거(KO·EN) |
 | v1.25 | 2026-05-14 | PM × Claude | 이중 이스케이프 정리 — notifApprovedForParticipant·notifAutoMatched·notifTargetWork 3종·nonMemberPreviewInfo `\\\'` → `\'` |
 | v1.24 | 2026-05-14 | PM × Claude | tabGuideLikes·tabGuideSaves·search.goBrowse "작품"→"전시" 누락분 보정(KO+EN); 프로필 빈 상태 prose 예시 정합 |
 | v1.23 | 2026-05-14 | PM × Claude | settings.notifSystemAlwaysOn 강제 수신 7종 전체 열거; browse/profile 빈 상태 카피 "작품"→"전시" 통일(KO+EN) |
