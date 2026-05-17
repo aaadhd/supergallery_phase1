@@ -63,10 +63,10 @@ export default function PickDetail() {
   const isEnded = status === 'ended';
 
   return (
-    <div className="min-h-screen flex flex-col bg-background pb-20 md:pb-0">
+    <div className="h-screen flex flex-col overflow-hidden bg-background pb-20 md:pb-0" style={{ height: '100dvh' }}>
       {/* 헤더 — 다크 배경 + 골드 광선 + 트로피 */}
       <div
-        className="relative overflow-hidden text-center py-12 px-4"
+        className="relative overflow-hidden text-center py-5 px-4"
         style={{ background: 'linear-gradient(180deg, #000000 0%, #0d0900 60%, #1a1000 100%)' }}
       >
         {/* 골드 광선 */}
@@ -104,14 +104,14 @@ export default function PickDetail() {
           </Link>
 
           {/* 트로피 */}
-          <div className="text-5xl mb-4" style={{ filter: 'drop-shadow(0 0 12px rgba(255,200,0,0.5))' }}>
+          <div className="text-3xl mb-2" style={{ filter: 'drop-shadow(0 0 12px rgba(255,200,0,0.5))' }}>
             🏆
           </div>
 
-          <p className="text-xs font-semibold tracking-[2.5px] uppercase mb-3" style={{ color: '#b8862f' }}>
+          <p className="text-xs font-semibold tracking-[2.5px] uppercase mb-1" style={{ color: '#b8862f' }}>
             {t('pickDetail.heading')}
           </p>
-          <h1 className="text-3xl font-black mb-2" style={{ color: '#ffd700', textShadow: '0 0 20px rgba(255,215,0,0.4)' }}>
+          <h1 className="text-2xl font-black mb-1" style={{ color: '#ffd700', textShadow: '0 0 20px rgba(255,215,0,0.4)' }}>
             {session.title}
           </h1>
           <p className="text-sm" style={{ color: '#4a3f2a' }}>
@@ -131,7 +131,7 @@ export default function PickDetail() {
       <div style={{ height: 1, background: 'linear-gradient(90deg,transparent,rgba(255,200,0,0.3),transparent)' }} />
 
       {/* 선정 전시 캐러셀 */}
-      <div className="flex-1 flex items-center py-8" style={{ background: '#000' }}>
+      <div className="flex-1 min-h-0 flex items-center py-4" style={{ background: '#000' }}>
         {selectedWorks.length === 0 ? (
           <p className="text-center text-sm py-16" style={{ color: '#4a5568' }}>{t('pickDetail.noSelected')}</p>
         ) : (
@@ -166,7 +166,7 @@ export default function PickDetail() {
                   className="text-center flex-shrink-0"
                   style={{
                     scrollSnapAlign: 'center',
-                    width: 'min(62vw, 56vh)',
+                    width: 'min(60vw, 52vh)',
                     transform: `scale(${scale})`,
                     opacity,
                     transition: 'transform 0.35s ease, opacity 0.35s ease',
