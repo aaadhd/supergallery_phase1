@@ -201,17 +201,6 @@ export default function Onboarding() {
       return;
     }
 
-    try {
-      const { pushDemoNotification } = await import('../utils/pushDemoNotification');
-      pushDemoNotification({
-        type: 'invite',
-        message: t('invite.notifAutoMatched')
-          .replace('{name}', slot.displayName)
-          .replace('{title}', claimWork.exhibitionName?.trim() || claimWork.title || t('work.exhibitionFallback')),
-        workId: claimWork.id,
-      });
-    } catch { /* ignore */ }
-
     setClaimedTitle(claimWork.exhibitionName?.trim() || claimWork.title || t('work.exhibitionFallback'));
     setClaimBusy(false);
     try { sessionStorage.removeItem('artier_pending_invite_token'); } catch { /* ignore */ }
