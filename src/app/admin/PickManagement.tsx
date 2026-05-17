@@ -66,7 +66,7 @@ function getPickStatus(e: PickSession): PickSessionStatus {
 }
 
 const STATUS_LABEL: Record<PickSessionStatus, string> = {
-  active: '게시됨',
+  active: '게시 중',
   scheduled: '게시 예정',
   ended: '종료됨',
 };
