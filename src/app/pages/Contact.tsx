@@ -14,7 +14,8 @@ import {
 import { toast } from 'sonner';
 import { useI18n } from '../i18n/I18nProvider';
 import type { MessageKey } from '../i18n/messages';
-import { profileStore } from '../store';
+import { profileStore, authStore } from '../store';
+import { artists } from '../data';
 
 const CATEGORY_VALUES = ['account', 'upload', 'report', 'privacy', 'suggestion', 'bug', 'other'] as const;
 
@@ -64,8 +65,13 @@ export default function Contact() {
     } catch {
       inquiries = [];
     }
+    const profile = profileStore.getProfile();
+    const nickname = profile.nickname?.trim() || profile.name?.trim() || undefined;
+    const artistId = authStore.isLoggedIn() ? artists[0]?.id : undefined;
     inquiries.push({
       id: `inq-${Date.now()}`,
+      ...(nickname ? { nickname } : {}),
+      ...(artistId ? { artistId } : {}),
       email: email.trim(),
       category,
       message: message.trim(),
