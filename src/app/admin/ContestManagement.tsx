@@ -32,7 +32,6 @@ type DraftState = {
   displayEndAt: string;
   participantsLabel: string;
   subtype: EventSubtype;
-  status: EventStatus | '';
   resultUrl: string;
 };
 
@@ -47,7 +46,6 @@ const emptyDraft: DraftState = {
   displayEndAt: '',
   participantsLabel: '',
   subtype: 'irregular',
-  status: '',
   resultUrl: '',
 };
 
@@ -122,7 +120,6 @@ export default function ContestManagement() {
       displayEndAt: ev.displayEndAt ?? '',
       participantsLabel: ev.participantsLabel ?? '',
       subtype: ev.subtype ?? 'irregular',
-      status: ev.status ?? '',
       resultUrl: ev.resultUrl ?? '',
     });
     setShowForm(true);
@@ -186,7 +183,6 @@ export default function ContestManagement() {
       displayStartAt: displayStart,
       displayEndAt: displayEnd,
       participantsLabel: draft.participantsLabel.trim() || undefined,
-      status: draft.status || undefined,
       resultUrl: draft.resultUrl.trim() || undefined,
       // 기존 발표 정보 보존
       publicationOpen: existing?.publicationOpen,
@@ -304,7 +300,6 @@ export default function ContestManagement() {
                           <div className="flex flex-col gap-1">
                             <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium w-fit ${statusBadgeClass(s)}`}>
                               {statusLabelKo(s)}
-                              {ev.status && <span className="ml-1 text-xs opacity-70">{t('admin.contest.manual')}</span>}
                             </span>
                             {ev.publicationOpen && !ev.notifiedAt && (
                               <span className="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium w-fit bg-amber-50 text-amber-800 border border-amber-200">
@@ -472,16 +467,6 @@ export default function ContestManagement() {
                     />
                   </div>
 
-                  <select
-                    value={draft.status}
-                    onChange={(e) => setDraft((d) => ({ ...d, status: e.target.value as EventStatus | '' }))}
-                    className="border border-border rounded-lg px-3 py-2 text-sm sm:col-span-2 sm:max-w-xs"
-                  >
-                    <option value="">{t('admin.contest.statusAuto')}</option>
-                    <option value="scheduled">{t('admin.contest.statusScheduled')}</option>
-                    <option value="active">{t('admin.contest.statusActive')}</option>
-                    <option value="ended">{t('admin.contest.statusEnded')}</option>
-                  </select>
                 </div>
               </div>
 

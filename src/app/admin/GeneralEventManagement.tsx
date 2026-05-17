@@ -24,7 +24,6 @@ type DraftState = {
   endAt: string;
   displayStartAt: string;
   displayEndAt: string;
-  status: EventStatus | '';
   resultUrl: string;
 };
 
@@ -37,7 +36,6 @@ const emptyDraft: DraftState = {
   endAt: '',
   displayStartAt: '',
   displayEndAt: '',
-  status: '',
   resultUrl: '',
 };
 
@@ -80,7 +78,6 @@ export default function GeneralEventManagement() {
       endAt: ev.endAt,
       displayStartAt: ev.displayStartAt ?? '',
       displayEndAt: ev.displayEndAt ?? '',
-      status: ev.status ?? '',
       resultUrl: ev.resultUrl ?? '',
     });
     setShowForm(true);
@@ -141,7 +138,6 @@ export default function GeneralEventManagement() {
       endAt: end,
       displayStartAt: displayStart,
       displayEndAt: displayEnd,
-      status: draft.status || undefined,
       resultUrl: draft.resultUrl.trim() || undefined,
     };
     if (editingId) {
@@ -250,17 +246,6 @@ export default function GeneralEventManagement() {
               </div>
             </div>
 
-            <select
-              value={draft.status}
-              onChange={(e) => setDraft((d) => ({ ...d, status: e.target.value as EventStatus | '' }))}
-              className="border border-border rounded-lg px-3 py-2 text-sm bg-white sm:col-span-2 sm:max-w-xs"
-            >
-              <option value="">{t('admin.contest.statusAuto')}</option>
-              <option value="scheduled">{t('admin.contest.statusScheduled')}</option>
-              <option value="active">{t('admin.contest.statusActive')}</option>
-              <option value="ended">{t('admin.contest.statusEnded')}</option>
-            </select>
-
             <div>
               <label className="block text-xs text-muted-foreground mb-1">결과 발표 URL</label>
               <input
@@ -318,7 +303,6 @@ export default function GeneralEventManagement() {
                     <td className="px-4 py-3">
                       <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${statusBadgeClass(s)}`}>
                         {statusLabelKo(s)}
-                        {ev.status && <span className="ml-1 text-xs opacity-70">{t('admin.contest.manual')}</span>}
                       </span>
                     </td>
                     <td className="px-4 py-3 text-right space-x-2 whitespace-nowrap">
