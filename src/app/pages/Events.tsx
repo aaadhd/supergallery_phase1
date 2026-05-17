@@ -231,7 +231,7 @@ export default function Events() {
 
         {/* Pick 탭 */}
         {activeTab === 'pick' && (
-          <div className="max-w-2xl">
+          <div>
             {activePickSession ? (
               <Link
                 to={`/picks/${activePickSession.id}`}
@@ -279,7 +279,7 @@ export default function Events() {
 
         {/* 기획전 탭 */}
         {activeTab === 'curation' && (
-          <div className="max-w-2xl">
+          <div>
             {/* 진행 중 기획전 */}
             {activeCurations.length > 0 && (
               <section className="mb-10">
