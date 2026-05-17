@@ -1,4 +1,4 @@
-import { useMemo, useState } from 'react';
+import { useMemo, useState, useRef, useCallback } from 'react';
 import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useI18n } from '../i18n/I18nProvider';
 import { pickStore, usePickSessions, derivePickStatus } from '../utils/pickStore';
@@ -31,6 +31,22 @@ export default function PickDetail() {
   }, [session, allWorks]);
 
   const [selectedWorkId, setSelectedWorkId] = useState<string | null>(null);
+  const [focusedIndex, setFocusedIndex] = useState(0);
+  const carouselRef = useRef<HTMLDivElement>(null);
+
+  const handleCarouselScroll = useCallback(() => {
+    const el = carouselRef.current;
+    if (!el) return;
+    const center = el.scrollLeft + el.clientWidth / 2;
+    const cards = Array.from(el.children) as HTMLElement[];
+    let nearest = 0;
+    let nearestDist = Infinity;
+    cards.forEach((card, i) => {
+      const dist = Math.abs(card.offsetLeft + card.offsetWidth / 2 - center);
+      if (dist < nearestDist) { nearestDist = dist; nearest = i; }
+    });
+    setFocusedIndex(nearest);
+  }, []);
 
   if (!session) {
     return (
@@ -120,47 +136,56 @@ export default function PickDetail() {
           <p className="text-center text-sm py-16" style={{ color: '#4a5568' }}>{t('pickDetail.noSelected')}</p>
         ) : (
           <div
-            className="flex gap-4 overflow-x-auto pb-4"
+            ref={carouselRef}
+            onScroll={handleCarouselScroll}
+            className="flex gap-4 overflow-x-auto pb-4 items-center"
             style={{
               scrollSnapType: 'x mandatory',
               scrollbarWidth: 'none',
-              paddingInline: 'max(12vw, 24px)',
-              scrollPaddingInline: 'max(12vw, 24px)',
+              paddingInline: 'max(19vw, 40px)',
+              scrollPaddingInline: 'max(19vw, 40px)',
             }}
           >
-            {selectedWorks.map((w) => {
+            {selectedWorks.map((w, i) => {
               const coverKey = getCoverImage(w.image, w.coverImageIndex);
               const src = imageUrls[coverKey] || coverKey;
               const isGroup = w.primaryExhibitionType === 'group';
               const artistLabel = isGroup
                 ? (w.groupName?.trim() || `${w.artist.name} 외`)
                 : `${w.artist.name} 작가`;
+              const dist = Math.abs(i - focusedIndex);
+              const scale = dist === 0 ? 1 : dist === 1 ? 0.82 : 0.72;
+              const opacity = dist === 0 ? 1 : dist === 1 ? 0.6 : 0.4;
+              const isFocused = dist === 0;
 
               return (
                 <button
                   key={w.id}
                   type="button"
                   onClick={() => setSelectedWorkId(w.id)}
-                  className="text-center flex-shrink-0 transition-transform duration-300 lg:hover:scale-[1.04] active:scale-[0.97]"
+                  className="text-center flex-shrink-0"
                   style={{
                     scrollSnapAlign: 'center',
                     width: 'clamp(200px, 62vw, 300px)',
+                    transform: `scale(${scale})`,
+                    opacity,
+                    transition: 'transform 0.35s ease, opacity 0.35s ease',
                   }}
                 >
                   <div
                     className="aspect-square w-full overflow-hidden rounded-2xl mb-3"
                     style={{
                       background: '#161616',
-                      border: '1px solid rgba(255,200,0,0.25)',
-                      boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
+                      border: isFocused ? '1px solid rgba(255,200,0,0.5)' : '1px solid rgba(255,200,0,0.12)',
+                      boxShadow: isFocused ? '0 8px 40px rgba(255,200,0,0.15), 0 4px 20px rgba(0,0,0,0.8)' : '0 4px 16px rgba(0,0,0,0.5)',
                     }}
                   >
                     <ImageWithFallback src={src} alt="" className="w-full h-full object-cover" />
                   </div>
-                  <p className="text-sm font-bold text-slate-100 leading-snug truncate px-1">
+                  <p className="text-sm font-bold leading-snug truncate px-1" style={{ color: isFocused ? '#f1f5f9' : '#475569' }}>
                     {displayExhibitionTitle(w, '(제목 없음)')}
                   </p>
-                  <p className="text-xs mt-1 truncate px-1" style={{ color: '#64748b' }}>
+                  <p className="text-xs mt-1 truncate px-1" style={{ color: isFocused ? '#64748b' : '#334155' }}>
                     {artistLabel}
                   </p>
                 </button>
