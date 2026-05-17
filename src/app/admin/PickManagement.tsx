@@ -313,10 +313,7 @@ export default function PickManagement() {
 
   return (
     <div className="min-h-full">
-      <h1 className="text-xl font-bold mb-1 text-foreground">픽 관리</h1>
-      <p className="text-sm text-muted-foreground mb-4">
-        Proud's Pick 세션을 만들고 선정 작품을 관리합니다.
-      </p>
+      <h1 className="text-xl font-bold mb-4 text-foreground">픽 관리</h1>
 
       <div className="border border-border rounded-lg overflow-hidden">
         <div className="grid" style={{ gridTemplateColumns: '280px 1fr' }}>

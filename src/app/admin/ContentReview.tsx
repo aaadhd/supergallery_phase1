@@ -274,9 +274,6 @@ export default function ContentReview() {
           ) : null;
         })()}
       </div>
-      <p className="text-sm text-muted-foreground mb-6">
-        검수 통과 전 전시는 둘러보기 피드에 노출되지 않아요. 본인 프로필에선 바로 보여요. 검수 SLA는 1~24시간.
-      </p>
 
       <div className="flex flex-wrap gap-3 mb-6">
         <select

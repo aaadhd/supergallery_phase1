@@ -389,10 +389,7 @@ export default function CurationManagement() {
 
   return (
     <div className="min-h-full">
-      <h1 className="text-xl font-bold mb-1 text-foreground">기획전 관리</h1>
-      <p className="text-sm text-muted-foreground mb-4">
-        테마 기획전을 만들고 개별 이미지(piece)를 큐레이션합니다.
-      </p>
+      <h1 className="text-xl font-bold mb-4 text-foreground">기획전 관리</h1>
 
       <div className="border border-border rounded-lg overflow-hidden">
         <div className="grid" style={{ gridTemplateColumns: '280px 1fr' }}>

@@ -374,9 +374,6 @@ export default function AdminInquiries() {
         <MessageSquare className="w-5 h-5 text-foreground" />
         <h1 className="text-xl font-bold text-foreground">문의함</h1>
       </div>
-      <p className="text-sm text-muted-foreground mb-6">
-        사용자가 보낸 문의를 처리합니다. 개인정보 권리 행사 요청은 상단에 우선 표시돼요.
-      </p>
 
       {/* KPI 4종 */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-6">

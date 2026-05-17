@@ -201,13 +201,13 @@ export default function GeneralEventManagement() {
               <input
                 value={draft.subtitle}
                 onChange={(e) => setDraft((d) => ({ ...d, subtitle: e.target.value }))}
-                placeholder="부제목 (선택)"
+                placeholder="부제목"
                 className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
               />
             </div>
             <div className="sm:col-span-2">
               <AdminImageUpload
-                label="이벤트 대표 이미지 (카드·상세 페이지 표시용)"
+                label="이벤트 대표 이미지"
                 required
                 value={draft.bannerImageUrl}
                 onChange={(url) => setDraft((d) => ({ ...d, bannerImageUrl: url }))}

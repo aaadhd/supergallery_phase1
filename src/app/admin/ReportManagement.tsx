@@ -359,10 +359,7 @@ export default function ReportManagement() {
 
   return (
     <div className="min-h-full">
-      <h1 className="text-xl font-bold text-foreground">신고 관리</h1>
-      <p className="text-sm text-muted-foreground mt-1 mb-6">
-        사용자가 접수한 신고를 처리합니다. 작품 신고를 비공개 처리하면 둘러보기·검색에서 숨겨져요. 신고 직후 이 탭을 열어 두면 목록이 곧바로 갱신됩니다.
-      </p>
+      <h1 className="text-xl font-bold mb-6 text-foreground">신고 관리</h1>
 
       <div className="flex flex-wrap gap-3 mb-6">
         <select
