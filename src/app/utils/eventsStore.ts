@@ -402,3 +402,65 @@ export const eventsStore = {
 export function useManagedEvents(): ManagedEvent[] {
   return useSyncExternalStore(eventsStore.subscribe, getAllStable, () => SEED_EVENTS);
 }
+
+/**
+ * 응모전 출품 시드 데이터 — 시드 작품에 linkedEventId를 부여해 응모자 관리 탭 데모 구현.
+ * workStore가 마운트된 이후(PointsBootstrap)에 호출해야 한다.
+ */
+export function seedEventParticipantsIfEmpty(): void {
+  if (typeof window === 'undefined') return;
+  const SEED_KEY = 'artier_event_participants_seeded_v2';
+  if (localStorage.getItem(SEED_KEY)) return;
+
+  import('../store').then(({ workStore }) => {
+    const works = workStore.getWorks();
+    if (works.length === 0) return;
+
+    // 이미 linkedEventId가 있는 작품이 있으면 스킵
+    const hasLinked = works.some((w) => w.linkedEventId != null);
+    if (hasLinked) { localStorage.setItem(SEED_KEY, '1'); return; }
+
+    // approved 시드 작품만 대상
+    const approved = works.filter((w) => w.feedReviewStatus === 'approved');
+    if (approved.length < 10) return;
+
+    // 이벤트별 작품 배분 (startIdx, count)
+    const assignments: Array<{ eventId: string; start: number; count: number }> = [
+      { eventId: '1',                  start: 0,  count: 5 }, // 나의 첫 디지털 캔버스 (진행중)
+      { eventId: '2',                  start: 5,  count: 4 }, // 동호회 작품전 (진행중)
+      { eventId: 'seed-ended-contest', start: 9,  count: 6 }, // 봄맞이 수채화 (종료)
+      { eventId: 'seed-ended-3',       start: 15, count: 5 }, // 겨울 풍경 드로잉 (종료)
+      { eventId: 'seed-ended-5',       start: 20, count: 5 }, // 연말 결산 (종료)
+    ];
+
+    for (const { eventId, start, count } of assignments) {
+      const slice = approved.slice(start, start + count);
+      for (const w of slice) {
+        workStore.updateWork(w.id, { linkedEventId: eventId });
+      }
+    }
+
+    // 종료된 응모전에는 selectedWorkIds도 시드 (당선작 시뮬레이션)
+    const endedAssignments: Record<string, number> = {
+      'seed-ended-contest': 3,
+      'seed-ended-3': 2,
+      'seed-ended-5': 2,
+    };
+    const allNow = workStore.getWorks();
+    for (const [eventId, winnerCount] of Object.entries(endedAssignments)) {
+      const eventWorks = allNow.filter((w) => String(w.linkedEventId) === eventId);
+      const winnerIds = eventWorks.slice(0, winnerCount).map((w) => w.id);
+      if (winnerIds.length > 0) {
+        eventsStore.update(eventId, {
+          selectedWorkIds: winnerIds,
+          publicationOpen: true,
+          publishedAt: eventId === 'seed-ended-5' ? '2025-12-31'
+            : eventId === 'seed-ended-3' ? '2026-01-31'
+            : '2026-04-16',
+        });
+      }
+    }
+
+    localStorage.setItem(SEED_KEY, '1');
+  });
+}
