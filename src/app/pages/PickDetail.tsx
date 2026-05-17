@@ -173,7 +173,8 @@ export default function PickDetail() {
                     width: 'min(58vw, 44vh)',
                     transform: `scale(${scale})`,
                     opacity,
-                    transition: 'transform 0.35s ease, opacity 0.35s ease',
+                    marginInline: `calc((${scale} - 1) / 2 * min(58vw, 44vh))`,
+                    transition: 'transform 0.35s ease, opacity 0.35s ease, margin 0.35s ease',
                   }}
                 >
                   <div
