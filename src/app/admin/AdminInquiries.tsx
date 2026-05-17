@@ -359,7 +359,7 @@ export default function AdminInquiries() {
 
   return (
     <div className="min-h-full">
-      <div className="flex items-center gap-2 mb-1">
+      <div className="flex items-center gap-2 mb-4">
         <MessageSquare className="w-5 h-5 text-foreground" />
         <h1 className="text-base font-semibold text-foreground">문의함</h1>
       </div>
