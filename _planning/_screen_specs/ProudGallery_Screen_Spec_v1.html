@@ -1,5 +1,5 @@
 <!doctype html>
-<!-- Last synced: Policy v2.29 / PRD_User v2.25 / PRD_Admin v1.25 / IA v1.17 / Copy v1.18 (2026-05-17) -->
+<!-- Last synced: Policy v2.30 / PRD_User v2.28 / PRD_Admin v1.34 / IA v1.28 / Copy v1.18 (2026-05-17) -->
 <html lang="ko">
 <head>
 <meta charset="utf-8" />
@@ -553,6 +553,8 @@
  <li><a href="#USR-EVT-03"><code>EVT-03</code><span>알림 구독·해지</span></a></li>
  <li><a href="#USR-EVT-04"><code>EVT-04</code><span>응모 모달 ⭐</span></a></li>
  <li><a href="#USR-EVT-05"><code>EVT-05</code><span>선정작 발표 페이지 ⭐</span></a></li>
+ <li><a href="#USR-EVT-06"><code>EVT-06</code><span>Pick 세션 상세 ⭐</span></a></li>
+ <li><a href="#USR-EVT-07"><code>EVT-07</code><span>명예의 전당</span></a></li>
  </ul>
  </li>
 
@@ -688,6 +690,11 @@
  <table class="hx">
  <thead><tr><th class="ver">버전</th><th class="date">날짜</th><th>주요 변경</th></tr></thead>
  <tbody>
+ <tr>
+ <td class="ver">v1.17</td>
+ <td class="date">2026-05-17</td>
+ <td>EVT-06 Pick 세션 상세·EVT-07 명예의 전당 슬라이드 신설 + TOC 등록; EVT-02 resultUrl 외부 링크 CTA 추가(구성 요소 5번·AC 7번); EVT-04 약관 보기 인라인 링크 제거; ADM 사이드바 전면 정합 — 모더레이션에 회원 추가·커뮤니케이션에 배너 통합·이벤트 섹션 일반이벤트 추가(18개 슬라이드 일괄); Last synced 갱신(Policy v2.30·PRD_User v2.28·PRD_Admin v1.34·IA v1.28)</td>
+ </tr>
  <tr>
  <td class="ver">v1.16</td>
  <td class="date">2026-05-17</td>
@@ -5081,8 +5088,11 @@
  <div style="background: var(--ink); color: white; padding: 13px 28px; border-radius: 10px; font-size: 14px; font-weight: 600; display: inline-block; margin-bottom: 10px; position: relative;">참여하기 →
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">2</span>
  </div>
- <div style="border: 1.5px solid var(--ink); padding: 10px 22px; border-radius: 10px; font-size: 13px; font-weight: 600; display: inline-block; margin-left: 8px; margin-bottom: 20px; position: relative;">🏆 선정작 발표 보기
+ <div style="border: 1.5px solid var(--ink); padding: 10px 22px; border-radius: 10px; font-size: 13px; font-weight: 600; display: inline-block; margin-left: 8px; margin-bottom: 10px; position: relative;">🏆 선정작 발표 보기
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">4</span>
+ </div>
+ <div style="border: 1.5px solid #6366f1; padding: 10px 22px; border-radius: 10px; font-size: 13px; font-weight: 600; display: inline-block; margin-left: 8px; margin-bottom: 20px; color: #6366f1; position: relative;">🔗 결과 발표 보기 ↗
+ <span class="bub" style="position: absolute; top: -10px; right: -10px;">5</span>
  </div>
  <div style="border-top: 1px solid var(--line); padding-top: 18px; position: relative;">
  <div style="font-size: 12px; font-weight: 700; margin-bottom: 10px;">참여 작품 12점</div>
@@ -5112,6 +5122,7 @@
  <dt><span class="bub">2</span></dt><dd>참여 CTA — "참여하기 →" → USR-EVT-04 응모 모달 오픈</dd>
  <dt><span class="bub">3</span></dt><dd>참여 작품 수 — 현재까지 제출된 작품 수 표시</dd>
  <dt><span class="bub">4</span></dt><dd>선정작 발표 보기 CTA — 선정 발표가 게시된 응모전에만 노출 → USR-EVT-05</dd>
+ <dt><span class="bub">5</span></dt><dd>결과 발표 보기 CTA — 종료 + 운영팀 <code>resultUrl</code> 설정 시에만 노출 → 외부 링크 새 탭 열기</dd>
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
@@ -5121,6 +5132,7 @@
  <li>응모 취소 확인 다이얼로그 → 확인 시 작품 삭제, 재응모 가능 상태 복귀</li>
  <li>종료 후 → 버튼 비활성</li>
  <li>선정 발표가 게시된 응모전 → "선정작 발표 보기" CTA 노출 → USR-EVT-05</li>
+ <li>종료 + resultUrl 설정 → "결과 발표 보기" 외부 링크 CTA 노출 (새 탭)</li>
  <li>응모작은 피드·마이페이지 미노출 (응모전 상세에서만 확인)</li>
  </ol></div>
 
@@ -5255,7 +5267,7 @@
  <!-- 체크박스 2: 게시 보존 동의 -->
  <div style="display: flex; align-items: flex-start; gap: 8px; margin-bottom: 20px; position: relative;">
  <div style="width: 14px; height: 14px; border: 1.5px solid var(--line-2); border-radius: 3px; flex-shrink: 0; margin-top: 1px;"></div>
- <div style="font-size: 11px; color: var(--ink-2); line-height: 1.55;">선정될 경우 응모전 결과 페이지에 일정 기간 게시되며, 게시 기간 중 이 전시를 삭제해도 운영팀이 별도 보관한 사본으로 게시 기간 종료일까지 유지될 수 있음에 동의합니다. <span style="color: #e11d48;">*</span> <span style="text-decoration: underline; font-size: 10.5px;">약관 보기</span></div>
+ <div style="font-size: 11px; color: var(--ink-2); line-height: 1.55;">선정될 경우 응모전 결과 페이지에 일정 기간 게시되며, 게시 기간 중 이 전시를 삭제해도 운영팀이 별도 보관한 사본으로 게시 기간 종료일까지 유지될 수 있음에 동의합니다. <span style="color: #e11d48;">*</span></div>
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">5</span>
  </div>
  <!-- CTA -->
@@ -5285,7 +5297,7 @@
  <dt><span class="bub">2</span></dt><dd>이미지 드롭존 — 1장 강제. 카메라 차단·해상도·파일 크기 검증은 일반 업로드 동일 (Policy §11)</dd>
  <dt><span class="bub">3</span></dt><dd>작품명 입력 — 필수, 20자 카운터, 비속어 검증</dd>
  <dt><span class="bub">4</span></dt><dd>원작 동의 체크박스 — "본인이 직접 그린 원작입니다" 필수</dd>
- <dt><span class="bub">5</span></dt><dd>응모 게시 보존 동의 — 선정 시 게시 기간 중 삭제해도 사본 유지 동의. 필수. 약관 인라인 링크 포함 (Handoff_Event_Consent_v1.md)</dd>
+ <dt><span class="bub">5</span></dt><dd>응모 게시 보존 동의 — 선정 시 게시 기간 중 삭제해도 사본 유지 동의. 필수 (Handoff_Event_Consent_v1.md)</dd>
  <dt><span class="bub">6</span></dt><dd>CTA — "닫기" / "응모하기". 두 체크박스 모두 체크 + 이미지·작품명 입력 후 활성</dd>
  </dl>
 
@@ -5404,6 +5416,148 @@
  </div>
  </div>
  <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.8 (PC)</span><span>USR-EVT-05 · 선정작 발표 페이지</span></div>
+ </section>
+
+ <!-- ───────── 화면: Pick 세션 상세 (PC) ───────── -->
+ <section class="slide" id="USR-EVT-06">
+ <div class="slide-pad">
+ <div class="slide-head">
+ <div><div class="crumb">16 · 이벤트</div><h2>Pick 세션 상세</h2></div>
+ <div class="meta"><span class="role">USR</span><span class="id">USR-EVT-06</span><span class="device">PC</span><span class="ver">v1.0 NEW</span></div>
+ </div>
+
+ <div class="screen">
+ <div class="mock">
+ <div class="pc-frame">
+ <div class="chrome">
+ <span class="dots"><span></span><span></span><span></span></span>
+ <span class="url">proudgallery.com/picks/session-2026-spring</span>
+ </div>
+ <div style="background: linear-gradient(180deg,#0a0600 0%,#080808 100%); height: 100%; overflow-y: auto;">
+ <!-- 다크 골드 헤더 -->
+ <div style="padding: 28px 32px 20px; display: flex; justify-content: space-between; align-items: flex-start; position: relative;">
+ <div>
+ <div style="font-size: 10px; font-weight: 700; letter-spacing: .14em; color: #c8a96e; text-transform: uppercase; margin-bottom: 6px;">Proud's Pick</div>
+ <div style="font-size: 20px; font-weight: 800; color: white; margin-bottom: 4px;">2026 봄 시니어 작가 Pick</div>
+ <div style="font-size: 11px; color: #94a3b8;">2026.04.01 — 2026.04.30 <span style="background: #16a34a; color: white; border-radius: 8px; padding: 2px 8px; font-size: 9.5px; font-weight: 700; margin-left: 6px;">진행 중</span></div>
+ <span class="bub" style="margin-top: 6px; display: inline-block;">1</span>
+ </div>
+ <div style="background: rgba(255,255,255,0.07); border: 1px solid rgba(255,200,0,0.2); color: #c8a96e; font-size: 11px; padding: 6px 12px; border-radius: 20px; white-space: nowrap; position: relative;">명예의 전당 →
+ <span class="bub" style="position: absolute; top: -10px; right: -10px;">2</span>
+ </div>
+ </div>
+ <!-- 무한 캐러셀 -->
+ <div style="display: flex; gap: 12px; padding: 0 20px 28px; overflow: hidden; align-items: center; position: relative;">
+ <div style="flex-shrink: 0; width: 160px; aspect-ratio: 3/4; background: linear-gradient(135deg,#fef3c7,#fecaca); border-radius: 12px; opacity: 0.45; transform: scale(0.85);"></div>
+ <div style="flex-shrink: 0; width: 200px; aspect-ratio: 3/4; background: linear-gradient(135deg,#d1fae5,#dbeafe); border-radius: 12px; box-shadow: 0 8px 32px rgba(0,0,0,0.5); transform: scale(1.0); position: relative;">
+ <span class="bub" style="position: absolute; top: -10px; right: -10px;">3</span>
+ </div>
+ <div style="flex-shrink: 0; width: 160px; aspect-ratio: 3/4; background: linear-gradient(135deg,#ddd6fe,#fbcfe8); border-radius: 12px; opacity: 0.45; transform: scale(0.85);"></div>
+ </div>
+ </div>
+ </div>
+ </div>
+ <div class="placeholder-note">다크 골드 헤더 · 무한 가로 스크롤 캐러셀 (포커스 카드 중앙 강조) · 명예의 전당 버튼(헤더 우상단)</div>
+ </div>
+
+ <div class="desc">
+ <h3>화면 정보</h3>
+ <dl>
+ <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> /picks/:id</dd>
+ <dt></dt><dd><strong>진입</strong> USR-EVT-01 Pick 탭 세션 카드 클릭</dd>
+ </dl>
+
+ <h3 class="components">구성 요소</h3>
+ <dl>
+ <dt><span class="bub">1</span></dt><dd>다크 골드 헤더 — 세션명·기간·상태 배지</dd>
+ <dt><span class="bub">2</span></dt><dd>명예의 전당 버튼 (헤더 우상단) → USR-EVT-07</dd>
+ <dt><span class="bub">3</span></dt><dd>선정 작품 무한 캐러셀 — 터치·마우스 가로 스크롤, 포커스 카드(중앙) 확대 강조. 카드 클릭 → USR-EXH-01</dd>
+ </dl>
+
+ <div class="ac"><h4>완성 기준</h4><ol>
+ <li>활성 세션 + 선정작 N점 → 캐러셀에 N점 표시, 포커스 카드 중앙 정렬</li>
+ <li>카드 탭 → 전시 상세 모달(USR-EXH-01) 오픈</li>
+ <li>선정작 0건 → 빈 상태 안내</li>
+ <li>"명예의 전당" 버튼 탭 → USR-EVT-07로 이동</li>
+ </ol></div>
+
+ <div class="pol"><h4>관련 정책</h4>큐레이션·배지 정책 (§15)
+ </div>
+ </div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.8 (PC)</span><span>USR-EVT-06 · Pick 세션 상세</span></div>
+ </section>
+
+ <!-- ───────── 화면: Proud's Pick 명예의 전당 (PC) ───────── -->
+ <section class="slide" id="USR-EVT-07">
+ <div class="slide-pad">
+ <div class="slide-head">
+ <div><div class="crumb">17 · 이벤트</div><h2>Proud's Pick 명예의 전당</h2></div>
+ <div class="meta"><span class="role">USR</span><span class="id">USR-EVT-07</span><span class="device">PC</span><span class="ver">v1.0 NEW</span></div>
+ </div>
+
+ <div class="screen">
+ <div class="mock">
+ <div class="pc-frame">
+ <div class="chrome">
+ <span class="dots"><span></span><span></span><span></span></span>
+ <span class="url">proudgallery.com/picks/hall-of-fame</span>
+ </div>
+ <div style="background: linear-gradient(180deg,#0a0600 0%,#111 100%); height: 100%; overflow-y: auto;">
+ <!-- 골드 그라디언트 헤더 -->
+ <div style="padding: 32px 32px 24px; text-align: center; position: relative; border-bottom: 1px solid rgba(255,200,0,0.15);">
+ <div style="font-size: 10px; font-weight: 700; letter-spacing: .14em; color: #c8a96e; text-transform: uppercase; margin-bottom: 8px;">Hall of Fame</div>
+ <div style="font-size: 22px; font-weight: 900; margin-bottom: 6px; background: linear-gradient(135deg,#f59e0b,#fbbf24,#f59e0b); -webkit-background-clip: text; -webkit-text-fill-color: transparent;">Proud's Pick 명예의 전당</div>
+ <div style="font-size: 11.5px; color: #94a3b8;">역대 Pick 선정 전시 <strong style="color: #c8a96e;">24점</strong></div>
+ <span class="bub" style="margin-top: 8px; display: inline-block;">1</span>
+ </div>
+ <!-- 3열 갤러리 그리드 -->
+ <div style="padding: 20px 24px; position: relative;">
+ <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px;">
+ <div style="border-radius: 8px; overflow: hidden; position: relative;">
+ <div style="aspect-ratio: 1; background: linear-gradient(135deg,#fef3c7,#fecaca);"></div>
+ <div style="background: #111; padding: 5px 8px;"><div style="font-size: 10px; color: #e2e8f0; font-weight: 600; truncate;">봄꽃 산책</div></div>
+ </div>
+ <div style="border-radius: 8px; overflow: hidden;">
+ <div style="aspect-ratio: 1; background: linear-gradient(135deg,#d1fae5,#dbeafe);"></div>
+ <div style="background: #111; padding: 5px 8px;"><div style="font-size: 10px; color: #e2e8f0; font-weight: 600;">새벽 정원</div></div>
+ </div>
+ <div style="border-radius: 8px; overflow: hidden;">
+ <div style="aspect-ratio: 1; background: linear-gradient(135deg,#ddd6fe,#fbcfe8);"></div>
+ <div style="background: #111; padding: 5px 8px;"><div style="font-size: 10px; color: #e2e8f0; font-weight: 600;">오월의 빛</div></div>
+ </div>
+ </div>
+ <span class="bub" style="position: absolute; top: 10px; right: 14px;">2</span>
+ </div>
+ </div>
+ </div>
+ </div>
+ <div class="placeholder-note">다크 골드 헤더 (선정 건수 표시) · 3열 그리드 갤러리 (카드 하단 전시명) · 0건 시 빈 상태 안내</div>
+ </div>
+
+ <div class="desc">
+ <h3>화면 정보</h3>
+ <dl>
+ <dt><span class="bub outline">i</span></dt><dd><strong>경로</strong> /picks/hall-of-fame</dd>
+ <dt></dt><dd><strong>진입</strong> USR-EVT-06 헤더 우상단 "명예의 전당" 버튼 / USR-EVT-01 Pick 탭 하단 링크</dd>
+ <dt></dt><dd><strong>데이터</strong> <code>pickBadge === true</code> 전시 전체</dd>
+ </dl>
+
+ <h3 class="components">구성 요소</h3>
+ <dl>
+ <dt><span class="bub">1</span></dt><dd>다크 골드 그라디언트 헤더 — 제목 + 역대 선정 전시 총 건수</dd>
+ <dt><span class="bub">2</span></dt><dd>3열 갤러리 그리드 — 카드 하단 전시명 표시. 카드 클릭 → USR-EXH-01</dd>
+ </dl>
+
+ <div class="ac"><h4>완성 기준</h4><ol>
+ <li>pickBadge=true 전시 N점 → 헤더에 N점 카운트 + 3열 그리드 노출</li>
+ <li>카드 탭 → 전시 상세 모달(USR-EXH-01) 오픈</li>
+ <li>0건 → 빈 상태 안내</li>
+ </ol></div>
+
+ <div class="pol"><h4>관련 정책</h4>배지 체계 (§15.2)
+ </div>
+ </div>
+ <div class="slide-foot"><span>Proud Gallery 화면 설계서 v1.8 (PC)</span><span>USR-EVT-07 · Proud's Pick 명예의 전당</span></div>
  </section>
 
  <!-- ───────── 화면: 기획전 페이지 (PC) ───────── -->
@@ -6525,6 +6679,7 @@
  <div style="font-size: 9px; color: #475569; padding: 8px 10px 4px; text-transform: uppercase; letter-spacing:.06em;">모더레이션</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div>
+ <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div>
  <div style="font-size: 9px; color: #475569; padding: 8px 10px 4px; text-transform: uppercase; letter-spacing:.06em;">큐레이션</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div>
@@ -6532,10 +6687,8 @@
  <div style="font-size: 9px; color: #475569; padding: 8px 10px 4px; text-transform: uppercase; letter-spacing:.06em;">이벤트</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">일반 이벤트</div>
- <div style="font-size: 9px; color: #475569; padding: 8px 10px 4px; text-transform: uppercase; letter-spacing:.06em;">배너</div>
+ <div style="font-size: 9px; color: #475569; padding: 8px 10px 4px; text-transform: uppercase; letter-spacing:.06em;">커뮤니케이션</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div>
- <div style="font-size: 9px; color: #475569; padding: 8px 10px 4px; text-transform: uppercase; letter-spacing:.06em;">회원·커뮤니케이션</div>
- <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div>
  <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
@@ -6621,7 +6774,7 @@
  <dt><span class="bub">1</span></dt><dd>콘텐츠 운영 카드 — 검수 대기·반려·미결 신고·비공개 전시·공지 일감 (5종, 각 페이지 링크)</dd>
  <dt><span class="bub">2</span></dt><dd>응모전 운영 카드 — 진행 중 응모전·응모자 현황 (2종)</dd>
  <dt><span class="bub">3</span></dt><dd>운영 현황 카드 — 신고 대기·미답변 문의 (2종)</dd>
- <dt>—</dt><dd>사이드바 그룹 구조 (코드 기준): 모더레이션(검수·신고) / 큐레이션(Pick·기획전·추천 전시) / 이벤트(응모전·일반 이벤트) / 배너 / 회원·커뮤니케이션(회원·공지·문의)</dd>
+ <dt>—</dt><dd>사이드바 그룹 구조 (코드 기준): 모더레이션(검수·신고·<strong>회원</strong>) / 큐레이션(Pick·기획전·추천 전시) / 이벤트(응모전·일반 이벤트) / 커뮤니케이션(<strong>배너</strong>·공지·문의)</dd>
  </dl>
  </div>
  </div>
@@ -6647,7 +6800,7 @@
  <aside class="adm-sidebar">
  <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
- <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
+ <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">일반 이벤트</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -6741,7 +6894,7 @@
  <aside class="adm-sidebar">
  <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
- <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
+ <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">일반 이벤트</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px; display: grid; grid-template-columns: 1.5fr 1fr; gap: 18px; height: calc(100% - 36px);">
@@ -6892,7 +7045,7 @@
  <aside class="adm-sidebar">
  <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
- <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
+ <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">일반 이벤트</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto; display: flex;">
  <!-- 좌 패널 (280px): 픽 세션 목록 -->
@@ -6985,7 +7138,7 @@
  <aside class="adm-sidebar">
  <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
- <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
+ <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">일반 이벤트</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
  <!-- 우 패널: 세션 선택 상태 (편집) -->
  <main style="flex: 1; overflow: auto; display: flex; flex-direction: column;">
@@ -7062,7 +7215,7 @@
  <aside class="adm-sidebar">
  <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
- <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
+ <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">일반 이벤트</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -7125,7 +7278,7 @@
  <aside class="adm-sidebar">
  <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
- <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
+ <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">일반 이벤트</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
  <!-- 2-panel 레이아웃 (좌: 기획전 목록 280px, 우: 편집 패널) -->
  <div style="display: grid; grid-template-columns: 280px 1fr; height: 100%;">
@@ -7247,7 +7400,7 @@
  <aside class="adm-sidebar">
  <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
- <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
+ <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">일반 이벤트</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -7312,7 +7465,7 @@
  <aside class="adm-sidebar">
  <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
- <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
+ <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">일반 이벤트</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -7404,7 +7557,7 @@
  <aside class="adm-sidebar">
  <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
- <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
+ <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">일반 이벤트</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -7476,7 +7629,7 @@
  <aside class="adm-sidebar">
  <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
- <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
+ <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">일반 이벤트</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -7545,7 +7698,7 @@
  <aside class="adm-sidebar">
  <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
- <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
+ <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">일반 이벤트</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -7616,7 +7769,7 @@
  <aside class="adm-sidebar">
  <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
- <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
+ <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">일반 이벤트</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -7684,7 +7837,7 @@
  <aside class="adm-sidebar">
  <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
- <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
+ <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">일반 이벤트</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -7766,7 +7919,7 @@
  <aside class="adm-sidebar">
  <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
- <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
+ <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">일반 이벤트</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px; display: grid; grid-template-columns: 1.2fr 1fr; gap: 18px;">
@@ -7905,7 +8058,7 @@
  <aside class="adm-sidebar">
  <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
- <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
+ <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -7982,7 +8135,7 @@
  <aside class="adm-sidebar">
  <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
- <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
+ <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -8039,7 +8192,7 @@
  <aside class="adm-sidebar">
  <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
- <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">문의</div>
+ <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">일반 이벤트</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto;">
  <div style="padding: 18px 22px;">
@@ -8109,7 +8262,7 @@
  <aside class="adm-sidebar">
  <button class="adm-toggle" onclick="admToggle(this)" title="사이드바 접기/펼치기">☰</button>
  <div style="font-size: 11px; font-weight: 700; padding: 4px 10px; margin-bottom: 16px; color: white;">← Proud Gallery 어드민</div>
- <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
+ <div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">대시보드</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">검수</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">신고</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">Pick</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">기획전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">추천 전시</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">응모전</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">배너</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">회원</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; background: #334155; color: white; margin-bottom: 2px;">공지</div><div style="padding: 6px 10px; border-radius: 6px; font-size: 11px; color: #94a3b8; margin-bottom: 2px;">문의</div>
  </aside>
  <main style="flex: 1; overflow: auto; padding: 18px 22px;">
  <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px; position: relative;">
