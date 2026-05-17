@@ -50,18 +50,20 @@ type EditorState = {
   subtitle: string;
   startAt: string;
   endAt: string;
+  pageUrl: string;
   pieces: SelectedPiece[];
   search: string;
 };
 
 function emptyEditor(): EditorState {
-  return { mode: 'create', title: '', subtitle: '', startAt: '', endAt: '', pieces: [], search: '' };
+  return { mode: 'create', title: '', subtitle: '', startAt: '', endAt: '', pageUrl: '', pieces: [], search: '' };
 }
 
 function fromExhibition(c: CuratedExhibition): EditorState {
   return {
     mode: 'edit', editingId: c.id, title: c.title, subtitle: c.subtitle ?? '',
     startAt: c.startAt ?? '', endAt: c.endAt ?? '',
+    pageUrl: c.pageUrl ?? '',
     pieces: c.pieces.map((p) => ({ workId: p.workId, pieceId: p.pieceId })),
     search: '',
   };
@@ -214,6 +216,7 @@ export default function CurationManagement() {
         subtitle: editor.subtitle.trim() || undefined,
         startAt: editor.startAt.trim() || undefined,
         endAt: editor.endAt.trim() || undefined,
+        pageUrl: editor.pageUrl.trim() || undefined,
         pieces,
       });
       // 새로 추가된 piece만 알림
@@ -235,6 +238,7 @@ export default function CurationManagement() {
         subtitle: editor.subtitle.trim() || undefined,
         startAt: editor.startAt.trim() || undefined,
         endAt: editor.endAt.trim() || undefined,
+        pageUrl: editor.pageUrl.trim() || undefined,
         pieces,
       });
       // 모든 piece가 새로 추가됨
@@ -407,6 +411,19 @@ export default function CurationManagement() {
                         onChange={(e) => setEditor((prev) => prev ? { ...prev, endAt: e.target.value } : prev)}
                         className="w-full border border-border rounded-lg px-3 py-1.5 text-sm" />
                     </div>
+                  </div>
+                  {/* pageUrl 필드 — 기획전 탭 노출 조건 */}
+                  <div>
+                    <label className="block text-xs text-muted-foreground mb-1">
+                      기획전 페이지 URL
+                      <span className="ml-1 text-amber-600 font-medium">※ 없으면 기획전 탭 미노출</span>
+                    </label>
+                    <input
+                      value={editor.pageUrl}
+                      onChange={(e) => setEditor((prev) => prev ? { ...prev, pageUrl: e.target.value } : prev)}
+                      placeholder="https://notion.so/... 또는 https://..."
+                      className="w-full border border-border rounded-lg px-3 py-1.5 text-sm"
+                    />
                   </div>
                   <div className="relative">
                     <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
