@@ -1,13 +1,14 @@
-import { useMemo, useState, useEffect, type FormEvent } from 'react';
+import { useMemo, useState, useEffect } from 'react';
+import { createPortal } from 'react-dom';
 import { toast } from 'sonner';
 import { Plus, Search, Trash2 } from 'lucide-react';
 import { ImageWithFallback } from '../components/ImageWithFallback';
 import { workStore, useWorkStore } from '../store';
+import { isWorkPublic } from '../utils/workVisibility';
 import type { Work } from '../data';
 import { displayExhibitionTitle } from '../utils/workDisplay';
 import { getCoverImage } from '../utils/imageHelper';
 import { imageUrls } from '../imageUrls';
-import { isWorkPublic } from '../utils/workVisibility';
 import { pushDemoNotification } from '../utils/pushDemoNotification';
 import { appendAuditLog } from '../utils/adminAuditLog';
 import { openConfirm } from '../components/ConfirmDialog';
@@ -45,7 +46,6 @@ type PickDraft = {
   title: string;
   startAt: string;
   endAt: string;
-  bannerImageUrl: string;
   workIds: string[];
 };
 
@@ -53,14 +53,12 @@ const emptyDraft: PickDraft = {
   title: '',
   startAt: '',
   endAt: '',
-  bannerImageUrl: '',
   workIds: [],
 };
 
-type PickSessionStatus = 'draft' | 'active' | 'scheduled' | 'ended';
+type PickSessionStatus = 'active' | 'scheduled' | 'ended';
 
 function getPickStatus(e: PickSession): PickSessionStatus {
-  if (!e.publicationOpen) return 'draft';
   const s = deriveStatus(e);
   if (s === 'ended') return 'ended';
   if (s === 'scheduled') return 'scheduled';
@@ -68,14 +66,12 @@ function getPickStatus(e: PickSession): PickSessionStatus {
 }
 
 const STATUS_LABEL: Record<PickSessionStatus, string> = {
-  draft: '임시저장',
   active: '발행됨',
   scheduled: '발행 예정',
   ended: '종료됨',
 };
 
 const STATUS_COLOR: Record<PickSessionStatus, string> = {
-  draft: 'bg-muted/60 text-muted-foreground border border-border',
   active: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
   scheduled: 'bg-amber-50 text-amber-800 border border-amber-200',
   ended: 'bg-muted/40 text-muted-foreground border border-border',
@@ -104,7 +100,6 @@ function migrateLegacyPicks(): void {
     pickStore.add({
       title: '이전 픽 (마이그레이션)',
       description: '',
-      bannerImageUrl: '',
       startAt: today,
       endAt,
       selectedWorkIds: ids,
@@ -142,15 +137,6 @@ function publishPickSession(newSessionId: string): void {
   pickStore.update(newSessionId, { publicationOpen: true, status: 'active' });
 }
 
-/** 픽 세션 게시 종료 — work.pick 플래그 해제, publicationOpen 유지(이력 보존), status='ended' */
-function endPickSession(sessionId: string): void {
-  const session = pickStore.get(sessionId);
-  if (!session) return;
-  for (const wid of session.selectedWorkIds ?? []) {
-    workStore.updateWork(wid, { pick: false });
-  }
-  pickStore.update(sessionId, { status: 'ended' });
-}
 
 export default function PickManagement() {
   const allSessions = usePickSessions();
@@ -158,8 +144,11 @@ export default function PickManagement() {
 
   const [loading, setLoading] = useState(true);
   const [selectedId, setSelectedId] = useState<string | null>(null);
+  const [newStep, setNewStep] = useState<1 | 2>(1);
   const [draft, setDraft] = useState<PickDraft>(emptyDraft);
   const [pickerSearch, setPickerSearch] = useState('');
+  const [hoverImg, setHoverImg] = useState<{ src: string; x: number; y: number } | null>(null);
+  const [modalImgs, setModalImgs] = useState<{ images: string[]; idx: number } | null>(null);
 
   useEffect(() => {
     migrateLegacyPicks();
@@ -171,7 +160,9 @@ export default function PickManagement() {
   const worksById = useMemo(() => new Map(works.map((w) => [w.id, w])), [works]);
 
   const sessions = useMemo(
-    () => [...allSessions].sort((a, b) => b.startAt.localeCompare(a.startAt)),
+    () => [...allSessions]
+      .filter((s) => s.publicationOpen)
+      .sort((a, b) => b.startAt.localeCompare(a.startAt)),
     [allSessions],
   );
 
@@ -189,6 +180,7 @@ export default function PickManagement() {
 
   const openNew = () => {
     setSelectedId('new');
+    setNewStep(1);
     setDraft(emptyDraft);
     setPickerSearch('');
   };
@@ -199,7 +191,6 @@ export default function PickManagement() {
       title: session.title,
       startAt: session.startAt,
       endAt: session.endAt,
-      bannerImageUrl: session.bannerImageUrl ?? '',
       workIds: session.selectedWorkIds ?? [],
     });
     setPickerSearch('');
@@ -207,6 +198,7 @@ export default function PickManagement() {
 
   const closePanel = () => {
     setSelectedId(null);
+    setNewStep(1);
     setDraft(emptyDraft);
     setPickerSearch('');
   };
@@ -243,7 +235,6 @@ export default function PickManagement() {
 
   const buildPayload = () => ({
     title: draft.title.trim(),
-    bannerImageUrl: draft.bannerImageUrl.trim() || '',
     startAt: draft.startAt,
     endAt: draft.endAt,
     selectedWorkIds: draft.workIds,
@@ -256,16 +247,6 @@ export default function PickManagement() {
     if (requireWorks && draft.workIds.length === 0) { toast.error('선정 작품을 최소 1개 이상 추가해 주세요.'); return false; }
     return true;
   };
-
-  const doSave = () => {
-    if (!validateDraft()) return;
-    const payload = buildPayload();
-    const created = pickStore.add({ description: '', publicationOpen: false, ...payload });
-    setSelectedId(created.id);
-    appendAuditLog({ action: 'event_saved', targetId: created.id, targetSnapshot: { title: payload.title }, actorId: 'admin', actorRole: 'admin' });
-  };
-
-  const saveDraft = (e: FormEvent) => { e.preventDefault(); doSave(); };
 
   const handlePublish = async () => {
     if (!validateDraft(true)) return;
@@ -295,8 +276,9 @@ export default function PickManagement() {
   const debouncedGallerySearch = useDebouncedValue(pickerSearch, 300);
   const galleryWorks = useMemo(() => {
     const q = debouncedGallerySearch.trim().toLowerCase();
-    return works
+    return [...works]
       .filter(isWorkPublic)
+      .sort((a, b) => (b.uploadedAt ?? '').localeCompare(a.uploadedAt ?? ''))
       .filter((w) => {
         if (!q) return true;
         return (
@@ -326,7 +308,7 @@ export default function PickManagement() {
         <div className="grid" style={{ gridTemplateColumns: '280px 1fr' }}>
 
           {/* 좌: 세션 목록 */}
-          <div className="border-r border-border bg-muted/30 flex flex-col" style={{ minHeight: '72vh' }}>
+          <div className="border-r border-border bg-muted/30 flex flex-col" style={{ height: '72vh' }}>
             <div className="p-3 border-b border-border flex justify-between items-center">
               <span className="text-sm font-semibold">픽 세션</span>
               <button
@@ -395,16 +377,16 @@ export default function PickManagement() {
           </div>
 
           {/* 우: 폼 또는 갤러리 */}
-          <div className="flex flex-col" style={{ minHeight: '72vh' }}>
+          <div className="flex flex-col overflow-hidden" style={{ height: '72vh' }}>
             {!selectedId ? (
               <div className="flex-1 flex items-center justify-center text-sm text-muted-foreground">
                 세션을 선택하거나 새로 만드세요
               </div>
-            ) : selectedId === 'new' ? (
-              /* 신규 세션 생성 폼 */
+            ) : selectedId === 'new' && newStep === 1 ? (
+              /* 신규 세션 1단계: 기본 정보 입력 */
               <div className="p-6 max-w-md">
                 <h2 className="text-base font-bold mb-4">새 픽 세션</h2>
-                <form onSubmit={saveDraft} className="space-y-4">
+                <div className="space-y-4">
                   <div>
                     <label className="block text-sm font-medium mb-1">제목 <span className="text-destructive">*</span></label>
                     <input
@@ -429,26 +411,19 @@ export default function PickManagement() {
                         className="w-full border border-border rounded-lg px-3 py-2 text-sm" />
                     </div>
                   </div>
-                  <div>
-                    <label className="block text-sm font-medium mb-1">배너 이미지 URL <span className="text-muted-foreground text-xs">(선택)</span></label>
-                    <input
-                      value={draft.bannerImageUrl}
-                      onChange={(e) => setDraft((d) => ({ ...d, bannerImageUrl: e.target.value }))}
-                      placeholder="https://..."
-                      className="w-full border border-border rounded-lg px-3 py-2 text-sm"
-                    />
-                  </div>
                   <div className="flex gap-2 pt-2">
                     <button type="button" onClick={closePanel}
                       className="flex-1 border border-border rounded-lg px-4 py-2 text-sm text-muted-foreground lg:hover:bg-muted/50">
                       취소
                     </button>
-                    <button type="submit"
+                    <button
+                      type="button"
+                      onClick={() => { if (validateDraft()) setNewStep(2); }}
                       className="flex-1 bg-primary text-white rounded-lg px-4 py-2 text-sm font-medium lg:hover:bg-primary/90">
-                      저장 → 작품 선정으로
+                      다음 → 작품 선정
                     </button>
                   </div>
-                </form>
+                </div>
               </div>
             ) : (
               /* 기존 세션 편집 — 갤러리 + 하단 바 */
@@ -470,36 +445,67 @@ export default function PickManagement() {
                         />
                       </div>
                     </div>
-                    <div className="flex-1 overflow-y-auto p-4 bg-muted/10">
+                    <div className="flex-1 overflow-y-auto p-3 bg-muted/10">
                       {galleryWorks.length === 0 ? (
-                        <div className="text-center py-16 text-sm text-muted-foreground">공개된 전시가 없습니다.</div>
+                        <div className="text-center py-16 text-sm text-muted-foreground">전시가 없습니다.</div>
                       ) : (
-                        <div className="grid grid-cols-5 sm:grid-cols-6 lg:grid-cols-8 gap-3">
+                        <div className="space-y-1">
                           {galleryWorks.map((w) => {
-                            const key = getCoverImage(w.image, w.coverImageIndex);
-                            const src = imageUrls[key] || key;
                             const orderIdx = draft.workIds.indexOf(w.id);
                             const isSelected = orderIdx >= 0;
+                            const imgs = (Array.isArray(w.image) ? w.image : [w.image])
+                              .filter(Boolean)
+                              .map((k: string) => imageUrls[k] || k);
                             return (
                               <button
                                 key={w.id}
                                 type="button"
                                 disabled={isEnded}
                                 onClick={() => toggleWork(w)}
-                                className={`group relative rounded-lg overflow-hidden border-2 transition-all disabled:pointer-events-none ${
-                                  isSelected ? 'border-primary shadow-md' : 'border-transparent lg:hover:border-primary/40'
+                                className={`w-full flex items-center gap-3 px-3 py-2 rounded-lg border-2 text-left transition-all disabled:pointer-events-none ${
+                                  isSelected
+                                    ? 'border-primary bg-primary/5'
+                                    : 'border-transparent lg:hover:border-primary/20 lg:hover:bg-muted/30'
                                 }`}
                               >
-                                <div className="aspect-square bg-muted">
-                                  <ImageWithFallback src={src} alt="" className="w-full h-full object-cover" />
+                                <div className="w-5 shrink-0 flex justify-center">
+                                  {isSelected ? (
+                                    <span className="bg-primary text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
+                                      {orderIdx + 1}
+                                    </span>
+                                  ) : (
+                                    <span className="w-4 h-4 rounded-full border-2 border-border" />
+                                  )}
                                 </div>
-                                {isSelected && (
-                                  <div className="absolute top-1 right-1 bg-primary text-white text-[10px] font-bold rounded-full w-5 h-5 flex items-center justify-center">
-                                    {orderIdx + 1}
-                                  </div>
-                                )}
-                                <div className="absolute inset-x-0 bottom-0 bg-black/60 px-1 py-0.5 text-[9px] text-white truncate opacity-0 group-hover:opacity-100 transition-opacity">
-                                  {displayExhibitionTitle(w, '')}
+                                <div className="w-28 shrink-0 min-w-0">
+                                  <p className="text-sm font-medium truncate leading-tight">
+                                    {displayExhibitionTitle(w, '(제목 없음)')}
+                                  </p>
+                                  <p className="text-xs text-muted-foreground truncate">{w.artist?.name || ''}</p>
+                                </div>
+                                <div className="flex gap-1 overflow-x-auto">
+                                  {imgs.map((src, i) => (
+                                    <div
+                                      key={i}
+                                      className="relative w-14 h-14 shrink-0 rounded overflow-hidden bg-muted"
+                                      onMouseEnter={(e) => {
+                                        e.stopPropagation();
+                                        const r = e.currentTarget.getBoundingClientRect();
+                                        let x = r.right + 8;
+                                        let y = r.top + r.height / 2 - 120;
+                                        if (x + 240 > window.innerWidth) x = r.left - 248;
+                                        y = Math.max(8, Math.min(y, window.innerHeight - 248));
+                                        setHoverImg({ src, x, y });
+                                      }}
+                                      onMouseLeave={(e) => { e.stopPropagation(); setHoverImg(null); }}
+                                      onClick={(e) => {
+                                        e.stopPropagation();
+                                        setModalImgs({ images: imgs, idx: i });
+                                      }}
+                                    >
+                                      <ImageWithFallback src={src} alt="" className="w-full h-full object-cover" />
+                                    </div>
+                                  ))}
                                 </div>
                               </button>
                             );
@@ -548,18 +554,6 @@ export default function PickManagement() {
                         >
                           발행
                         </button>
-                        {session && getPickStatus(session) === 'active' && (
-                          <button
-                            type="button"
-                            onClick={async () => {
-                              const ok = await openConfirm({ title: '게시 종료', description: '픽 세션을 종료하면 선정 작품의 픽 배지가 해제됩니다.', confirmLabel: '종료', destructive: true });
-                              if (ok) endPickSession(selectedId);
-                            }}
-                            className="border border-red-800 text-red-400 rounded-md px-3 py-1.5 text-xs lg:hover:bg-red-900/30"
-                          >
-                            게시 종료
-                          </button>
-                        )}
                       </div>
                     )}
                   </>
@@ -569,6 +563,98 @@ export default function PickManagement() {
           </div>
 
         </div>
+      </div>
+
+      {hoverImg && createPortal(
+        <div
+          className="fixed z-50 pointer-events-none rounded-lg overflow-hidden shadow-2xl border border-border"
+          style={{ left: hoverImg.x, top: hoverImg.y, width: 240, height: 240 }}
+        >
+          <ImageWithFallback src={hoverImg.src} alt="" className="w-full h-full object-cover" />
+        </div>,
+        document.body
+      )}
+
+      {modalImgs && createPortal(
+        <WorkImageModal
+          images={modalImgs.images}
+          initialIdx={modalImgs.idx}
+          onClose={() => setModalImgs(null)}
+        />,
+        document.body
+      )}
+    </div>
+  );
+}
+
+function WorkImageModal({
+  images,
+  initialIdx,
+  onClose,
+}: {
+  images: string[];
+  initialIdx: number;
+  onClose: () => void;
+}) {
+  const [idx, setIdx] = useState(initialIdx);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { onClose(); return; }
+      if (e.key === 'ArrowLeft') setIdx((i) => Math.max(0, i - 1));
+      if (e.key === 'ArrowRight') setIdx((i) => Math.min(images.length - 1, i + 1));
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [images.length, onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center"
+      onClick={onClose}
+    >
+      <div
+        className="relative max-w-lg w-full mx-4"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          className="absolute -top-9 right-0 text-white/70 lg:hover:text-white text-sm"
+        >
+          닫기 ✕
+        </button>
+        <div className="rounded-xl overflow-hidden bg-black aspect-square">
+          <ImageWithFallback src={images[idx]} alt="" className="w-full h-full object-contain" />
+        </div>
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={() => setIdx((i) => Math.max(0, i - 1))}
+              disabled={idx === 0}
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 text-white text-2xl rounded-full w-10 h-10 flex items-center justify-center disabled:opacity-20 lg:hover:bg-black/80"
+            >
+              ‹
+            </button>
+            <button
+              onClick={() => setIdx((i) => Math.min(images.length - 1, i + 1))}
+              disabled={idx === images.length - 1}
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 text-white text-2xl rounded-full w-10 h-10 flex items-center justify-center disabled:opacity-20 lg:hover:bg-black/80"
+            >
+              ›
+            </button>
+            <div className="flex justify-center gap-1.5 mt-3">
+              {images.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setIdx(i)}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    i === idx ? 'bg-white' : 'bg-white/40 lg:hover:bg-white/60'
+                  }`}
+                />
+              ))}
+            </div>
+          </>
+        )}
       </div>
     </div>
   );

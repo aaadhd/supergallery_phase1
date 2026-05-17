@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
-import { Star, ExternalLink, Search, Plus, X } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { createPortal } from 'react-dom';
+import { Star, Search, Plus, X } from 'lucide-react';
 import { featuredStore, useFeaturedExhibitions } from '../utils/featuredStore';
 import { workStore, useWorkStore } from '../store';
 import { isWorkPublic } from '../utils/workVisibility';
@@ -8,12 +8,21 @@ import { displayExhibitionTitle } from '../utils/workDisplay';
 import { appendAuditLog } from '../utils/adminAuditLog';
 import { ImageWithFallback } from '../components/ImageWithFallback';
 import { imageUrls } from '../imageUrls';
+import type { Work } from '../data';
+
+function getImgs(w: Work): string[] {
+  return (Array.isArray(w.image) ? w.image : [w.image])
+    .filter(Boolean)
+    .map((k: string) => imageUrls[k] || k);
+}
 
 export default function FeaturedManagement() {
   const [loading, setLoading] = useState(true);
   const [search, setSearch] = useState('');
   const [showAddPopup, setShowAddPopup] = useState(false);
   const [popupSearch, setPopupSearch] = useState('');
+  const [hoverImg, setHoverImg] = useState<{ src: string; x: number; y: number } | null>(null);
+  const [modalImgs, setModalImgs] = useState<{ images: string[]; idx: number } | null>(null);
   const featuredExhibitionIds = useFeaturedExhibitions();
   useWorkStore();
 
@@ -28,12 +37,11 @@ export default function FeaturedManagement() {
   };
 
   const featuredSet = new Set(featuredExhibitionIds);
-  const publicWorks = workStore.getWorks().filter(isWorkPublic);
+  const allWorks = workStore.getWorks();
 
-  // 추천 중인 것만
   const featuredWorks = useMemo(
-    () => publicWorks.filter((w) => featuredSet.has(w.id)),
-    [publicWorks, featuredExhibitionIds],
+    () => allWorks.filter((w) => featuredSet.has(w.id) && isWorkPublic(w)),
+    [allWorks, featuredExhibitionIds],
   );
 
   const filteredFeatured = useMemo(() => {
@@ -45,11 +53,10 @@ export default function FeaturedManagement() {
     );
   }, [featuredWorks, search]);
 
-  // 추천 안 된 것만 (최신순)
   const popupWorks = useMemo(() => {
     const q = popupSearch.trim().toLowerCase();
-    return publicWorks
-      .filter((w) => !featuredSet.has(w.id))
+    return [...allWorks]
+      .filter((w) => isWorkPublic(w) && !featuredSet.has(w.id))
       .filter((w) => {
         if (!q) return true;
         return (
@@ -58,7 +65,17 @@ export default function FeaturedManagement() {
         );
       })
       .sort((a, b) => (b.uploadedAt ?? '').localeCompare(a.uploadedAt ?? ''));
-  }, [publicWorks, featuredExhibitionIds, popupSearch]);
+  }, [allWorks, featuredExhibitionIds, popupSearch]);
+
+  const handleThumbEnter = (e: React.MouseEvent<HTMLDivElement>, src: string) => {
+    e.stopPropagation();
+    const r = e.currentTarget.getBoundingClientRect();
+    let x = r.right + 8;
+    let y = r.top + r.height / 2 - 120;
+    if (x + 240 > window.innerWidth) x = r.left - 248;
+    y = Math.max(8, Math.min(y, window.innerHeight - 248));
+    setHoverImg({ src, x, y });
+  };
 
   if (loading) {
     return (
@@ -115,39 +132,35 @@ export default function FeaturedManagement() {
       ) : (
         <div className="border border-border rounded-lg divide-y divide-border">
           {filteredFeatured.map((w) => {
-            const coverImg = Array.isArray(w.image) ? w.image[0] : w.image;
-            const coverSrc = coverImg ? (imageUrls[coverImg] || coverImg) : '';
+            const imgs = getImgs(w);
             return (
-              <div key={w.id} className="flex items-center gap-3 p-3">
-                {coverSrc && (
-                  <div className="w-12 h-12 rounded overflow-hidden border border-border shrink-0">
-                    <ImageWithFallback src={coverSrc} alt="" className="w-full h-full object-cover" />
-                  </div>
-                )}
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-medium text-foreground truncate">{displayExhibitionTitle(w, '(제목 없음)')}</p>
+              <div key={w.id} className="flex items-center gap-3 px-3 py-2">
+                <div className="w-28 shrink-0 min-w-0">
+                  <p className="text-sm font-medium truncate leading-tight">{displayExhibitionTitle(w, '(제목 없음)')}</p>
                   <p className="text-xs text-muted-foreground truncate">{w.artist?.name ?? w.groupName ?? '—'}</p>
                 </div>
-                <div className="flex items-center gap-2 shrink-0">
-                  <Link
-                    to={`/exhibitions/${w.id}`}
-                    target="_blank"
-                    onClick={(e) => e.stopPropagation()}
-                    className="h-8 w-8 inline-flex items-center justify-center rounded border border-border text-muted-foreground lg:hover:bg-muted/40"
-                    aria-label="전시 보기"
-                  >
-                    <ExternalLink className="w-3.5 h-3.5" />
-                  </Link>
-                  <button
-                    type="button"
-                    onClick={() => toggleFeatured(w.id)}
-                    className="h-8 w-8 inline-flex items-center justify-center rounded border border-amber-200 bg-amber-50 text-amber-600 lg:hover:bg-amber-100"
-                    title="추천 해제"
-                    aria-label="추천 해제"
-                  >
-                    <Star className="w-4 h-4 fill-amber-500" />
-                  </button>
+                <div className="flex gap-1 overflow-x-auto flex-1">
+                  {imgs.map((src, i) => (
+                    <div
+                      key={i}
+                      className="relative w-14 h-14 shrink-0 rounded overflow-hidden bg-muted cursor-pointer"
+                      onMouseEnter={(e) => handleThumbEnter(e, src)}
+                      onMouseLeave={() => setHoverImg(null)}
+                      onClick={() => setModalImgs({ images: imgs, idx: i })}
+                    >
+                      <ImageWithFallback src={src} alt="" className="w-full h-full object-cover" />
+                    </div>
+                  ))}
                 </div>
+                <button
+                  type="button"
+                  onClick={() => toggleFeatured(w.id)}
+                  className="h-8 w-8 inline-flex items-center justify-center rounded border border-amber-200 bg-amber-50 text-amber-600 lg:hover:bg-amber-100 shrink-0"
+                  title="추천 해제"
+                  aria-label="추천 해제"
+                >
+                  <Star className="w-4 h-4 fill-amber-500" />
+                </button>
               </div>
             );
           })}
@@ -182,48 +195,143 @@ export default function FeaturedManagement() {
                 className="w-full border border-border rounded-lg pl-9 pr-3 py-2 text-sm bg-white focus:outline-none focus:ring-2 focus:ring-primary/30"
               />
             </div>
-            <div className="overflow-y-auto flex-1">
+            <div className="overflow-y-auto flex-1 space-y-1">
               {popupWorks.length === 0 ? (
                 <div className="py-10 text-center text-sm text-muted-foreground">
                   {popupSearch ? `"${popupSearch}"에 해당하는 전시가 없습니다.` : '추가할 전시가 없습니다.'}
                 </div>
               ) : (
-                <div className="grid sm:grid-cols-2 gap-2">
-                  {popupWorks.map((w) => {
-                    const coverImg = Array.isArray(w.image) ? w.image[0] : w.image;
-                    const coverSrc = coverImg ? (imageUrls[coverImg] || coverImg) : '';
-                    return (
-                      <button
-                        key={w.id}
-                        type="button"
-                        onClick={() => {
-                          toggleFeatured(w.id);
-                          // 팝업은 열린 상태 유지 (여러 개 추가 가능)
-                        }}
-                        className="flex items-center gap-3 p-3 rounded-lg border border-border text-left lg:hover:border-primary/40 lg:hover:bg-muted/30 transition-colors"
-                      >
-                        {coverSrc ? (
-                          <div className="w-12 h-12 rounded overflow-hidden border border-border shrink-0">
-                            <ImageWithFallback src={coverSrc} alt="" className="w-full h-full object-cover" />
+                popupWorks.map((w) => {
+                  const imgs = getImgs(w);
+                  return (
+                    <button
+                      key={w.id}
+                      type="button"
+                      onClick={() => toggleFeatured(w.id)}
+                      className="w-full flex items-center gap-3 px-3 py-2 rounded-lg border-2 border-transparent text-left lg:hover:border-primary/20 lg:hover:bg-muted/30 transition-all"
+                    >
+                      <div className="w-28 shrink-0 min-w-0">
+                        <p className="text-sm font-medium truncate leading-tight">{displayExhibitionTitle(w, '(제목 없음)')}</p>
+                        <p className="text-xs text-muted-foreground truncate">{w.artist?.name ?? w.groupName ?? '—'}</p>
+                        <p className="text-[10px] text-muted-foreground">{w.uploadedAt?.slice(0, 10) ?? ''}</p>
+                      </div>
+                      <div className="flex gap-1 overflow-x-auto flex-1">
+                        {imgs.map((src, i) => (
+                          <div
+                            key={i}
+                            className="relative w-14 h-14 shrink-0 rounded overflow-hidden bg-muted"
+                            onMouseEnter={(e) => handleThumbEnter(e, src)}
+                            onMouseLeave={() => setHoverImg(null)}
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              setModalImgs({ images: imgs, idx: i });
+                            }}
+                          >
+                            <ImageWithFallback src={src} alt="" className="w-full h-full object-cover" />
                           </div>
-                        ) : (
-                          <div className="w-12 h-12 rounded bg-muted border border-border shrink-0" />
-                        )}
-                        <div className="flex-1 min-w-0">
-                          <p className="text-sm font-medium text-foreground truncate">{displayExhibitionTitle(w, '(제목 없음)')}</p>
-                          <p className="text-xs text-muted-foreground truncate">{w.artist?.name ?? w.groupName ?? '—'}</p>
-                          <p className="text-[10px] text-muted-foreground">{w.uploadedAt?.slice(0, 10) ?? ''}</p>
-                        </div>
-                        <Star className="w-5 h-5 text-muted-foreground/40 shrink-0" />
-                      </button>
-                    );
-                  })}
-                </div>
+                        ))}
+                      </div>
+                      <Star className="w-5 h-5 text-muted-foreground/40 shrink-0" />
+                    </button>
+                  );
+                })
               )}
             </div>
           </div>
         </div>
       )}
+
+      {hoverImg && createPortal(
+        <div
+          className="fixed z-[60] pointer-events-none rounded-lg overflow-hidden shadow-2xl border border-border"
+          style={{ left: hoverImg.x, top: hoverImg.y, width: 240, height: 240 }}
+        >
+          <ImageWithFallback src={hoverImg.src} alt="" className="w-full h-full object-cover" />
+        </div>,
+        document.body
+      )}
+
+      {modalImgs && createPortal(
+        <FeaturedImageModal
+          images={modalImgs.images}
+          initialIdx={modalImgs.idx}
+          onClose={() => setModalImgs(null)}
+        />,
+        document.body
+      )}
+    </div>
+  );
+}
+
+function FeaturedImageModal({
+  images,
+  initialIdx,
+  onClose,
+}: {
+  images: string[];
+  initialIdx: number;
+  onClose: () => void;
+}) {
+  const [idx, setIdx] = useState(initialIdx);
+
+  useEffect(() => {
+    const handler = (e: KeyboardEvent) => {
+      if (e.key === 'Escape') { onClose(); return; }
+      if (e.key === 'ArrowLeft') setIdx((i) => Math.max(0, i - 1));
+      if (e.key === 'ArrowRight') setIdx((i) => Math.min(images.length - 1, i + 1));
+    };
+    window.addEventListener('keydown', handler);
+    return () => window.removeEventListener('keydown', handler);
+  }, [images.length, onClose]);
+
+  return (
+    <div
+      className="fixed inset-0 z-[60] bg-black/80 flex items-center justify-center"
+      onClick={onClose}
+    >
+      <div
+        className="relative max-w-lg w-full mx-4"
+        onClick={(e) => e.stopPropagation()}
+      >
+        <button
+          onClick={onClose}
+          className="absolute -top-9 right-0 text-white/70 lg:hover:text-white text-sm"
+        >
+          닫기 ✕
+        </button>
+        <div className="rounded-xl overflow-hidden bg-black aspect-square">
+          <ImageWithFallback src={images[idx]} alt="" className="w-full h-full object-contain" />
+        </div>
+        {images.length > 1 && (
+          <>
+            <button
+              onClick={() => setIdx((i) => Math.max(0, i - 1))}
+              disabled={idx === 0}
+              className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/60 text-white text-2xl rounded-full w-10 h-10 flex items-center justify-center disabled:opacity-20 lg:hover:bg-black/80"
+            >
+              ‹
+            </button>
+            <button
+              onClick={() => setIdx((i) => Math.min(images.length - 1, i + 1))}
+              disabled={idx === images.length - 1}
+              className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/60 text-white text-2xl rounded-full w-10 h-10 flex items-center justify-center disabled:opacity-20 lg:hover:bg-black/80"
+            >
+              ›
+            </button>
+            <div className="flex justify-center gap-1.5 mt-3">
+              {images.map((_, i) => (
+                <button
+                  key={i}
+                  onClick={() => setIdx(i)}
+                  className={`w-2 h-2 rounded-full transition-all ${
+                    i === idx ? 'bg-white' : 'bg-white/40 lg:hover:bg-white/60'
+                  }`}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
     </div>
   );
 }

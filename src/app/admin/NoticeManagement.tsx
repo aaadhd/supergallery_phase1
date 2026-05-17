@@ -230,7 +230,7 @@ export default function NoticeManagement() {
               </div>
               {/* 제목 ko/en */}
               <div>
-                <label className="block text-xs font-semibold text-muted-foreground mb-1">{t('admin.notice.labelTitle')}</label>
+                <label className="block text-xs font-semibold text-muted-foreground mb-1">{t('admin.notice.labelTitle')} <span className="text-destructive">*</span></label>
                 <input
                   type="text"
                   value={editor.title}
@@ -251,7 +251,7 @@ export default function NoticeManagement() {
               </div>
               {/* 본문 ko/en */}
               <div>
-                <label className="block text-xs font-semibold text-muted-foreground mb-1">{t('admin.notice.labelContent')}</label>
+                <label className="block text-xs font-semibold text-muted-foreground mb-1">{t('admin.notice.labelContent')} <span className="text-destructive">*</span></label>
                 <textarea
                   value={editor.content}
                   onChange={(e) => setEditor((p) => p && ({ ...p, content: e.target.value }))}

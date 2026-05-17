@@ -163,7 +163,7 @@ export default function MemberManagement() {
       <div className="flex flex-wrap gap-3 mb-6">
         <input
           type="search"
-          placeholder="닉네임 또는 이메일 검색"
+          placeholder="닉네임·이메일·전화번호 검색"
           value={q}
           onChange={(e) => setQ(e.target.value)}
           className="border border-border rounded-lg px-3 py-2 text-sm flex-1 min-w-[240px] max-w-md"

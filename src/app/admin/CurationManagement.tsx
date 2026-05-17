@@ -274,6 +274,7 @@ export default function CurationManagement() {
   const allPieces = useMemo((): PieceItem[] => {
     const q = editor?.search.trim().toLowerCase() ?? '';
     return allWorks
+      .filter(isWorkPublic)
       .filter((w) => {
         if (!q) return true;
         const title = (w.exhibitionName || w.title || '').toLowerCase();
@@ -313,7 +314,7 @@ export default function CurationManagement() {
         <div className="grid" style={{ gridTemplateColumns: '280px 1fr' }}>
 
           {/* 좌: 기획전 목록 */}
-          <div className="border-r border-border bg-muted/30 flex flex-col" style={{ minHeight: '72vh' }}>
+          <div className="border-r border-border bg-muted/30 flex flex-col" style={{ height: '72vh' }}>
             <div className="p-3 border-b border-border flex justify-between items-center">
               <span className="text-sm font-semibold">기획전</span>
               <button type="button" onClick={openCreate}
@@ -375,7 +376,7 @@ export default function CurationManagement() {
           </div>
 
           {/* 우: 편집기 */}
-          <div className="flex flex-col" style={{ minHeight: '72vh' }}>
+          <div className="flex flex-col overflow-hidden" style={{ height: '72vh' }}>
             {!editor ? (
               <div className="flex-1 flex items-center justify-center text-sm text-muted-foreground">
                 기획전을 선택하거나 새로 만드세요
@@ -506,7 +507,7 @@ export default function CurationManagement() {
                       </SortableContext>
                     </DndContext>
                   ) : (
-                    <span className="text-sky-400 text-xs">갤러리에서 이미지를 클릭해 piece를 선정하세요</span>
+                    <span className="text-sky-400 text-xs">갤러리에서 이미지를 클릭해 piece를 선정하세요 <span className="text-red-400">(필수)</span></span>
                   )}
                   <div className="text-sky-300 text-xs font-semibold shrink-0 ml-1">
                     {editor.pieces.length}개 선정

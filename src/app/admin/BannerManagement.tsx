@@ -252,30 +252,42 @@ export default function BannerManagement() {
         >
           <p className="text-sm font-medium text-foreground">{editingId ? '배너 수정' : '새 배너 등록'}</p>
           <div className="grid sm:grid-cols-2 gap-3">
-            <input
-              placeholder="제목 *"
-              value={draft.title}
-              onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
-              className="border border-border rounded-lg px-3 py-2 text-sm bg-white"
-            />
-            <input
-              placeholder="부제 (선택)"
-              value={draft.subtitle}
-              onChange={(e) => setDraft((d) => ({ ...d, subtitle: e.target.value }))}
-              className="border border-border rounded-lg px-3 py-2 text-sm bg-white"
-            />
-            <input
-              placeholder="이미지 URL *"
-              value={draft.imageUrl}
-              onChange={(e) => setDraft((d) => ({ ...d, imageUrl: e.target.value }))}
-              className="border border-border rounded-lg px-3 py-2 text-sm bg-white sm:col-span-2"
-            />
-            <input
-              placeholder="링크 URL (선택)"
-              value={draft.linkUrl}
-              onChange={(e) => setDraft((d) => ({ ...d, linkUrl: e.target.value }))}
-              className="border border-border rounded-lg px-3 py-2 text-sm bg-white sm:col-span-2"
-            />
+            <div>
+              <label className="block text-xs text-muted-foreground mb-1">제목 <span className="text-destructive">*</span></label>
+              <input
+                placeholder="봄의 기억들"
+                value={draft.title}
+                onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
+                className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-muted-foreground mb-1">부제 <span className="text-muted-foreground font-normal">(선택)</span></label>
+              <input
+                placeholder="봄을 담은 작품들"
+                value={draft.subtitle}
+                onChange={(e) => setDraft((d) => ({ ...d, subtitle: e.target.value }))}
+                className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-xs text-muted-foreground mb-1">이미지 URL <span className="text-destructive">*</span></label>
+              <input
+                placeholder="https://..."
+                value={draft.imageUrl}
+                onChange={(e) => setDraft((d) => ({ ...d, imageUrl: e.target.value }))}
+                className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
+              />
+            </div>
+            <div className="sm:col-span-2">
+              <label className="block text-xs text-muted-foreground mb-1">링크 URL <span className="text-muted-foreground font-normal">(선택)</span></label>
+              <input
+                placeholder="https://..."
+                value={draft.linkUrl}
+                onChange={(e) => setDraft((d) => ({ ...d, linkUrl: e.target.value }))}
+                className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
+              />
+            </div>
             <label className="flex items-center gap-2 text-sm text-foreground px-1 sm:col-span-2">
               <input
                 type="checkbox"

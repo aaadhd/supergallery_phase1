@@ -14,7 +14,6 @@ export type PickSession = {
   title: string;
   startAt: string;
   endAt: string;
-  bannerImageUrl: string;
   selectedWorkIds: string[];
   /** true = 발행됨(이력 포함), false = 임시저장 */
   publicationOpen: boolean;
@@ -40,14 +39,13 @@ function migrateFromLegacyEventStore(): PickSession[] {
       .filter((e: { type?: string }) => e?.type === 'pick')
       .map((e: {
         id: string; title?: string; startAt?: string; endAt?: string;
-        bannerImageUrl?: string; selectedWorkIds?: string[];
+        selectedWorkIds?: string[];
         publicationOpen?: boolean; status?: string; description?: string;
       }) => ({
         id: e.id,
         title: e.title ?? '',
         startAt: e.startAt ?? todayLocalIso(),
         endAt: e.endAt ?? todayLocalIso(),
-        bannerImageUrl: e.bannerImageUrl ?? '',
         selectedWorkIds: e.selectedWorkIds ?? [],
         publicationOpen: e.publicationOpen ?? false,
         status: (e.status as PickStatus | undefined),
@@ -173,7 +171,7 @@ export function seedPickIfEmpty(): void {
         title: '5월 3주차 Proud\'s Pick',
         startAt: '2026-05-19',
         endAt: '2026-05-25',
-        bannerImageUrl: '',
+
         selectedWorkIds: ids1,
         publicationOpen: true,
       },
@@ -182,7 +180,7 @@ export function seedPickIfEmpty(): void {
         title: '5월 2주차 Proud\'s Pick',
         startAt: '2026-05-12',
         endAt: '2026-05-18',
-        bannerImageUrl: '',
+
         selectedWorkIds: ids2,
         publicationOpen: true,
       },

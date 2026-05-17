@@ -1,4 +1,5 @@
 import { useMemo, useState, useEffect, useCallback } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { artists } from '../data';
 import { toast } from 'sonner';
 import { Trash2, Flag } from 'lucide-react';
@@ -611,6 +612,7 @@ interface ReportDetailPanelProps {
 }
 
 function ReportDetailPanel({ report, reporterNickname, onDelete, onDismiss, onKeepHidden }: ReportDetailPanelProps) {
+  const navigate = useNavigate();
   const reportWork = report.workId ? workStore.getWork(report.workId) : null;
 
   // 신고된 작품 이미지 결정: pieceIndex 있으면 해당 슬롯, 없으면 커버
@@ -679,7 +681,13 @@ function ReportDetailPanel({ report, reporterNickname, onDelete, onDismiss, onKe
         <div className="font-bold text-white text-sm">{report.targetName}</div>
         {reportWork && (
           <div className="flex items-center gap-3 mt-1">
-            <span className="text-slate-400 text-xs">{reportWork.artist?.name ?? '—'}</span>
+            <button
+              type="button"
+              onClick={() => navigate(`/admin/members?artist=${reportWork.artistId}`)}
+              className="text-slate-400 text-xs lg:hover:text-slate-200 underline underline-offset-2"
+            >
+              {reportWork.artist?.name ?? '—'}
+            </button>
             <a
               href={`/exhibitions/${report.workId}`}
               target="_blank"

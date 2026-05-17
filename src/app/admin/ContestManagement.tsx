@@ -271,39 +271,54 @@ export default function ContestManagement() {
                   <p className="text-sm font-medium text-foreground">{editingId ? t('admin.contest.editorEdit') : t('admin.contest.editorCreate')}</p>
 
                   <div className="grid sm:grid-cols-2 gap-3">
-                    <input
-                      placeholder={t('admin.contest.placeholderTitle')}
-                      value={draft.title}
-                      onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
-                      className="border border-border rounded-lg px-3 py-2 text-sm bg-white"
-                    />
-                    <input
-                      placeholder={t('admin.contest.placeholderSubtitle')}
-                      value={draft.subtitle}
-                      onChange={(e) => setDraft((d) => ({ ...d, subtitle: e.target.value }))}
-                      className="border border-border rounded-lg px-3 py-2 text-sm bg-white"
-                    />
-                    <input
-                      placeholder="참여 대상 (예: 디지털 드로잉 작가 누구나)"
-                      value={draft.participantsLabel}
-                      onChange={(e) => setDraft((d) => ({ ...d, participantsLabel: e.target.value }))}
-                      className="border border-border rounded-lg px-3 py-2 text-sm bg-white sm:col-span-2"
-                    />
-                    <input
-                      placeholder={t('admin.contest.placeholderBannerUrl')}
-                      value={draft.bannerImageUrl}
-                      onChange={(e) => setDraft((d) => ({ ...d, bannerImageUrl: e.target.value }))}
-                      className="border border-border rounded-lg px-3 py-2 text-sm bg-white sm:col-span-2"
-                    />
-                    <textarea
-                      placeholder={t('admin.contest.placeholderDesc')}
-                      value={draft.description}
-                      onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
-                      className="border border-border rounded-lg px-3 py-2 text-sm bg-white sm:col-span-2 min-h-[80px]"
-                    />
+                    <div>
+                      <label className="block text-xs text-muted-foreground mb-1">제목 <span className="text-destructive">*</span></label>
+                      <input
+                        placeholder="5월 드로잉 챌린지"
+                        value={draft.title}
+                        onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
+                        className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
+                      />
+                    </div>
+                    <div>
+                      <label className="block text-xs text-muted-foreground mb-1">부제 <span className="text-muted-foreground font-normal">(선택)</span></label>
+                      <input
+                        placeholder={t('admin.contest.placeholderSubtitle')}
+                        value={draft.subtitle}
+                        onChange={(e) => setDraft((d) => ({ ...d, subtitle: e.target.value }))}
+                        className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs text-muted-foreground mb-1">참여 대상 <span className="text-muted-foreground font-normal">(선택)</span></label>
+                      <input
+                        placeholder="예: 디지털 드로잉 작가 누구나"
+                        value={draft.participantsLabel}
+                        onChange={(e) => setDraft((d) => ({ ...d, participantsLabel: e.target.value }))}
+                        className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs text-muted-foreground mb-1">배너 이미지 URL <span className="text-destructive">*</span></label>
+                      <input
+                        placeholder="https://..."
+                        value={draft.bannerImageUrl}
+                        onChange={(e) => setDraft((d) => ({ ...d, bannerImageUrl: e.target.value }))}
+                        className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs text-muted-foreground mb-1">상세 설명 <span className="text-destructive">*</span></label>
+                      <textarea
+                        placeholder="응모전 내용을 입력하세요"
+                        value={draft.description}
+                        onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
+                        className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white min-h-[80px]"
+                      />
+                    </div>
 
                     <div className="sm:col-span-2">
-                      <p className="text-xs font-semibold text-foreground mb-2">실행 기간</p>
+                      <p className="text-xs font-semibold text-foreground mb-2">실행 기간 <span className="text-destructive">*</span></p>
                       <div className="grid sm:grid-cols-2 gap-3">
                         <label className="flex flex-col gap-1 text-xs text-muted-foreground">
                           {t('admin.contest.labelStartAt')}
