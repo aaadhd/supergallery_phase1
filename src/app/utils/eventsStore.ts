@@ -98,6 +98,47 @@ const SEED_EVENTS: ManagedEvent[] = [
     endAt: '2026-04-12',
     participantsLabel: '참여 12명 / 15명',
   },
+  {
+    id: 'seed-ended-3',
+    type: 'contest',
+    subtype: 'irregular',
+    title: '겨울 풍경 드로잉 응모전',
+    subtitle: '눈 내리는 날의 감성을 그려주세요',
+    description:
+      '겨울 풍경을 주제로 한 드로잉 응모전입니다. 당선작 5점을 선정하여 Proud Gallery 공식 SNS에 소개했습니다. 참여해 주신 모든 분께 감사드립니다.',
+    bannerImageUrl:
+      'https://images.unsplash.com/photo-1491002052546-bf38f186af56?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080',
+    startAt: '2026-01-06',
+    endAt: '2026-01-31',
+    participantsLabel: '참여 63명',
+  },
+  {
+    id: 'seed-ended-4',
+    type: 'general',
+    title: '신년 맞이 작가 소개 이벤트',
+    subtitle: '나를 소개하는 작품 한 점을 올려요',
+    description:
+      '2026년 새해를 맞아 나를 가장 잘 표현하는 작품 한 점을 올리는 소개 이벤트를 진행했습니다. 참여해 주신 작가님들의 다채로운 자기소개 작품을 통해 서로를 알아가는 시간이 되었습니다.',
+    bannerImageUrl:
+      'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080',
+    startAt: '2026-01-01',
+    endAt: '2026-01-05',
+    participantsLabel: '참여 41명',
+  },
+  {
+    id: 'seed-ended-5',
+    type: 'contest',
+    subtype: 'irregular',
+    title: '2025 연말 결산 응모전',
+    subtitle: '올해 가장 아끼는 작품을 공유해 주세요',
+    description:
+      '2025년을 마무리하며 한 해 동안 가장 애착이 가는 작품을 응모 받았습니다. 최다 좋아요를 받은 작품 3점에 문화상품권을 드렸습니다. 한 해 동안 함께해 주셔서 감사합니다!',
+    bannerImageUrl:
+      'https://images.unsplash.com/photo-1513151233558-d860c5398176?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080',
+    startAt: '2025-12-15',
+    endAt: '2025-12-31',
+    participantsLabel: '참여 114명',
+  },
 ];
 
 /** 구 artier_managed_events_v4에서 contest/general 항목만 이관 (pick 제외) */
@@ -126,7 +167,7 @@ function migrateFromLegacyEventStore(dest: ManagedEvent[]): ManagedEvent[] {
 }
 
 /** 새로 추가된 시드 이벤트 ID 목록 — 기존 데이터에 없으면 자동 병합 */
-const SEED_IDS_TO_MERGE = ['seed-ended-contest', 'seed-ended-general'] as const;
+const SEED_IDS_TO_MERGE = ['seed-ended-contest', 'seed-ended-general', 'seed-ended-3', 'seed-ended-4', 'seed-ended-5'] as const;
 
 function readFromStorage(): ManagedEvent[] {
   if (typeof window === 'undefined') return SEED_EVENTS;
