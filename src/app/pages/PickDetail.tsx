@@ -139,13 +139,13 @@ export default function PickDetail() {
         <div
           ref={carouselRef}
           onScroll={handleCarouselScroll}
-          className="flex-1 min-h-0 flex gap-4 overflow-x-auto items-center"
+          className="flex-1 min-h-0 flex gap-5 overflow-x-auto items-center"
           style={{
             scrollSnapType: 'x mandatory',
             scrollbarWidth: 'none',
             background: '#000',
-            paddingInline: 'max(19vw, 40px)',
-            scrollPaddingInline: 'max(19vw, 40px)',
+            paddingInline: 'calc((100% - min(50vw, 36vh)) / 2)',
+            scrollPaddingInline: 'calc((100% - min(50vw, 36vh)) / 2)',
             paddingTop: '3vh',
             paddingBottom: '2vh',
           }}
