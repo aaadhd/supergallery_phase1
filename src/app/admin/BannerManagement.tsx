@@ -34,13 +34,8 @@ type DraftState = {
   subtitle: string;
   imageUrl: string;
   linkUrl: string;
-  /** 게시 기간 — 배너를 슬라이더에 표시할 기간 */
   startAt: string;
   endAt: string;
-  /** 이벤트 실행 기간 — 실제 이벤트 진행 날짜 (게시 기간과 다를 때 입력) */
-  eventStartAt: string;
-  eventEndAt: string;
-  isActive: boolean;
 };
 
 const emptyDraft: DraftState = {
@@ -50,9 +45,6 @@ const emptyDraft: DraftState = {
   linkUrl: '',
   startAt: '',
   endAt: '',
-  eventStartAt: '',
-  eventEndAt: '',
-  isActive: true,
 };
 
 function statusBadgeClass(active: boolean, expired: boolean) {
@@ -149,9 +141,6 @@ export default function BannerManagement() {
       linkUrl: b.linkUrl ?? '',
       startAt: b.startAt ?? '',
       endAt: b.endAt ?? '',
-      eventStartAt: b.eventStartAt ?? '',
-      eventEndAt: b.eventEndAt ?? '',
-      isActive: b.isActive,
     });
     setEditingId(b.id);
     setShowForm(true);
@@ -186,33 +175,26 @@ export default function BannerManagement() {
       toast.error('게시 기간 시작일이 종료일보다 늦을 수 없습니다.');
       return;
     }
-    if (draft.eventStartAt && draft.eventEndAt && draft.eventStartAt > draft.eventEndAt) {
-      toast.error('이벤트 기간 시작일이 종료일보다 늦을 수 없습니다.');
-      return;
-    }
-    const patch = {
+    const base = {
       title: draft.title.trim(),
       subtitle: draft.subtitle.trim() || undefined,
       imageUrl: draft.imageUrl.trim(),
       linkUrl: draft.linkUrl.trim() || undefined,
       startAt: draft.startAt || undefined,
       endAt: draft.endAt || undefined,
-      eventStartAt: draft.eventStartAt || undefined,
-      eventEndAt: draft.eventEndAt || undefined,
-      isActive: draft.isActive,
     };
     if (editingId) {
-      bannerStore.update(editingId, patch);
-      appendAuditLog({ action: 'banner_saved', targetId: editingId, targetSnapshot: { title: patch.title }, actorId: 'admin', actorRole: 'admin' });
+      bannerStore.update(editingId, base);
+      appendAuditLog({ action: 'banner_saved', targetId: editingId, targetSnapshot: { title: base.title }, actorId: 'admin', actorRole: 'admin' });
       closeForm();
       toast.success('배너가 수정되었습니다.');
     } else {
-      const result = bannerStore.add(patch);
+      const result = bannerStore.add({ ...base, isActive: true });
       if (!result.ok) {
         toast.error('배너 등록에 실패했습니다.');
         return;
       }
-      appendAuditLog({ action: 'banner_saved', targetId: result.id ?? 'new', targetSnapshot: { title: patch.title }, actorId: 'admin', actorRole: 'admin' });
+      appendAuditLog({ action: 'banner_saved', targetId: result.id ?? 'new', targetSnapshot: { title: base.title }, actorId: 'admin', actorRole: 'admin' });
       closeForm();
       toast.success('배너가 등록되었습니다. 둘러보기에 반영됩니다.');
     }
@@ -286,14 +268,6 @@ export default function BannerManagement() {
                 className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
               />
             </div>
-            <label className="flex items-center gap-2 text-sm text-foreground px-1 sm:col-span-2">
-              <input
-                type="checkbox"
-                checked={draft.isActive}
-                onChange={(e) => setDraft((d) => ({ ...d, isActive: e.target.checked }))}
-              />
-              등록 즉시 활성화
-            </label>
             <div className="sm:col-span-2">
               <p className="text-xs font-semibold text-foreground mb-2">게시 기간</p>
               <div className="grid sm:grid-cols-2 gap-3">
@@ -312,29 +286,6 @@ export default function BannerManagement() {
                     type="date"
                     value={draft.endAt}
                     onChange={(e) => setDraft((d) => ({ ...d, endAt: e.target.value }))}
-                    className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground"
-                  />
-                </label>
-              </div>
-            </div>
-            <div className="sm:col-span-2">
-              <p className="text-xs font-semibold text-foreground mb-2">이벤트 실행 기간</p>
-              <div className="grid sm:grid-cols-2 gap-3">
-                <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-                  이벤트 시작일
-                  <input
-                    type="date"
-                    value={draft.eventStartAt}
-                    onChange={(e) => setDraft((d) => ({ ...d, eventStartAt: e.target.value }))}
-                    className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground"
-                  />
-                </label>
-                <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-                  이벤트 종료일
-                  <input
-                    type="date"
-                    value={draft.eventEndAt}
-                    onChange={(e) => setDraft((d) => ({ ...d, eventEndAt: e.target.value }))}
                     className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground"
                   />
                 </label>
@@ -476,9 +427,6 @@ function SortableBannerRow({ banner: b, index: idx, isEditing, onToggleActive, o
         {b.subtitle && <p className="text-xs text-muted-foreground">{b.subtitle}</p>}
         {b.linkUrl && <p className="text-xs text-primary break-all">{b.linkUrl}</p>}
         <p className="text-xs text-muted-foreground">게시: {formatPeriod(b)}</p>
-        {(b.eventStartAt || b.eventEndAt) && (
-          <p className="text-xs text-muted-foreground">이벤트: {b.eventStartAt ?? '?'} ~ {b.eventEndAt ?? '?'}</p>
-        )}
         <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${statusBadgeClass(b.isActive, expired)}`}>
           {expired ? '기간 종료' : b.isActive ? '활성' : '비활성'}
         </span>
