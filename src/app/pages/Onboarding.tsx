@@ -201,6 +201,18 @@ export default function Onboarding() {
       return;
     }
 
+    // 업로더에게 작품 연결 알림 발송 (Phase 1: 로컬 데모용 — 백엔드 연동 시 업로더 userId로 라우팅 필요)
+    try {
+      const { pushDemoNotification } = await import('../utils/pushDemoNotification');
+      pushDemoNotification({
+        type: 'invite',
+        message: t('invite.notifAutoMatched')
+          .replace('{name}', slot.displayName)
+          .replace('{title}', claimWork.exhibitionName?.trim() || claimWork.title || t('work.exhibitionFallback')),
+        workId: claimWork.id,
+      });
+    } catch { /* ignore */ }
+
     setClaimedTitle(claimWork.exhibitionName?.trim() || claimWork.title || t('work.exhibitionFallback'));
     setClaimBusy(false);
     try { sessionStorage.removeItem('artier_pending_invite_token'); } catch { /* ignore */ }
