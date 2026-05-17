@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
 import { useI18n } from '../i18n/I18nProvider';
 import { pickStore, usePickSessions, derivePickStatus } from '../utils/pickStore';
 import { workStore, useWorkStore } from '../store';
@@ -14,6 +14,8 @@ export default function PickDetail() {
   const { id } = useParams<{ id: string }>();
   const { t } = useI18n();
   const navigate = useNavigate();
+  const location = useLocation();
+  const handleBack = () => location.key !== 'default' ? navigate(-1) : navigate('/events?tab=pick');
   usePickSessions(); // subscribe
   useWorkStore();
 
@@ -34,7 +36,7 @@ export default function PickDetail() {
     return (
       <div className="max-w-2xl mx-auto px-4 py-16 text-center">
         <p className="text-sm text-muted-foreground mb-4">{t('pickDetail.notFound')}</p>
-        <button type="button" onClick={() => navigate(-1)} className="text-sm text-primary hover:underline">
+        <button type="button" onClick={handleBack} className="text-sm text-primary hover:underline">
           {t('pickDetail.backToEvents')}
         </button>
       </div>
@@ -71,7 +73,7 @@ export default function PickDetail() {
           {/* 뒤로가기 */}
           <button
             type="button"
-            onClick={() => navigate(-1)}
+            onClick={handleBack}
             className="absolute left-0 top-0 text-xs text-slate-400 hover:text-slate-200 transition-colors"
           >
             {t('pickDetail.backToEvents')}

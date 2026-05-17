@@ -1,4 +1,4 @@
-import { useParams, Link, useSearchParams, useNavigate } from 'react-router-dom';
+import { useParams, Link, useSearchParams, useNavigate, useLocation } from 'react-router-dom';
 import { Calendar, ArrowLeft, ArrowRight, Users, X } from 'lucide-react';
 import { ImageWithFallback } from '../components/ImageWithFallback';
 import { analytics } from '../utils/analytics';
@@ -18,6 +18,8 @@ export default function EventDetail() {
   const { id } = useParams();
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
+  const location = useLocation();
+  const handleBack = () => location.key !== 'default' ? navigate(-1) : navigate('/events');
   const { t } = useI18n();
   const auth = useAuthStore();
   const loginPrompt = useLoginPrompt();
@@ -111,7 +113,7 @@ export default function EventDetail() {
           <div className="mx-auto max-w-[1440px] w-full">
             <button
               type="button"
-              onClick={() => navigate(-1)}
+              onClick={handleBack}
               className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-white lg:hover:text-white/80 transition-colors"
               style={{ textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}
             >
