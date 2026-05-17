@@ -258,6 +258,14 @@ export default function PickManagement() {
     if (!draft.title.trim()) { toast.error('제목을 입력해 주세요.'); return false; }
     if (!draft.startAt || !draft.endAt) { toast.error('기간을 입력해 주세요.'); return false; }
     if (draft.startAt > draft.endAt) { toast.error('시작일이 종료일보다 늦을 수 없습니다.'); return false; }
+    const overlap = sessions.find((s) =>
+      s.id !== selectedId &&
+      draft.startAt <= s.endAt && s.startAt <= draft.endAt,
+    );
+    if (overlap) {
+      toast.error(`"${overlap.title}"과 날짜가 겹칩니다. 기간을 조정해 주세요.`);
+      return false;
+    }
     if (requireWorks && draft.workIds.length === 0) { toast.error('선정 작품을 최소 1개 이상 추가해 주세요.'); return false; }
     return true;
   };
