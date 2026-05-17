@@ -21,6 +21,8 @@ import Faq from './pages/Faq';
 import Contact from './pages/Contact';
 import Notices from './pages/Notices';
 import NoticeDetail from './pages/NoticeDetail';
+import PickDetail from './pages/PickDetail';
+import PickHallOfFame from './pages/PickHallOfFame';
 import ServerError from './pages/ServerError';
 import AdminLayout from './admin/AdminLayout';
 import AdminLogin from './admin/AdminLogin';
@@ -94,6 +96,8 @@ export const router = createBrowserRouter([
           { path: 'settings/notifications', loader: () => redirect('/settings#notifications') },
           { path: 'exhibitions/:id', Component: ExhibitionRoute },
           { path: 'curations/:id', Component: CurationDetail },
+          { path: 'picks/hall-of-fame', Component: PickHallOfFame },
+          { path: 'picks/:id', Component: PickDetail },
           ...demoRoutes,
           { path: 'about', Component: About },
           { path: 'faq', Component: Faq },
