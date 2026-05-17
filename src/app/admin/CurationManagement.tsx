@@ -10,6 +10,7 @@ import {
   type CurationPieceRef,
 } from '../utils/curationStore';
 import { workStore, useWorkStore } from '../store';
+import { todayLocalIso } from '../utils/localDate';
 import { openConfirm } from '../components/ConfirmDialog';
 import { isWorkPublic } from '../utils/workVisibility';
 import { displayPieceTitleAtIndex, displayExhibitionTitle } from '../utils/workDisplay';
@@ -38,6 +39,34 @@ import { CSS } from '@dnd-kit/utilities';
  * - 비공개·검수 미통과 piece 추가 시도 시 경고 + 저장은 허용(AC-02 — 검수 통과 후 자연 노출).
  * - 저장 시 새로 추가된 piece의 작가에게 알림 발송(B-4c-5, Policy §15.2 정합).
  */
+
+type CurationStatus = 'active' | 'scheduled' | 'ended';
+
+function deriveCurationStatus(c: CuratedExhibition): CurationStatus {
+  const today = todayLocalIso();
+  if (!c.startAt || !c.endAt) return 'scheduled';
+  if (today > c.endAt) return 'ended';
+  if (today < c.startAt) return 'scheduled';
+  return 'active';
+}
+
+const CURATION_STATUS_LABEL: Record<CurationStatus, string> = {
+  active: '전시 중',
+  scheduled: '전시 예정',
+  ended: '전시 종료',
+};
+
+const CURATION_STATUS_COLOR: Record<CurationStatus, string> = {
+  active: 'bg-emerald-50 text-emerald-700 border border-emerald-200',
+  scheduled: 'bg-amber-50 text-amber-800 border border-amber-200',
+  ended: 'bg-muted/40 text-muted-foreground border border-border',
+};
+
+const CURATION_STATUS_ORDER: Record<CurationStatus, number> = {
+  active: 0,
+  scheduled: 1,
+  ended: 2,
+};
 
 type SelectedPiece = CurationPieceRef & {
   workId: string;
@@ -354,8 +383,11 @@ export default function CurationManagement() {
               {curatedExhibitions.length === 0 && (
                 <div className="p-4 text-center text-xs text-muted-foreground">기획전이 없습니다</div>
               )}
-              {curatedExhibitions.map((c) => {
+              {[...curatedExhibitions]
+                .sort((a, b) => CURATION_STATUS_ORDER[deriveCurationStatus(a)] - CURATION_STATUS_ORDER[deriveCurationStatus(b)])
+                .map((c) => {
                 const isSelected = selectedCurationId === c.id;
+                const status = deriveCurationStatus(c);
                 const bannerWork = c.pieces[0]
                   ? workStore.getWork(c.pieces[0].workId) : null;
                 const bannerKey = bannerWork ? getCoverImage(bannerWork.image, bannerWork.coverImageIndex) : '';
@@ -374,7 +406,12 @@ export default function CurationManagement() {
                       )}
                       <div className="flex-1 min-w-0">
                         <div className="font-medium text-sm truncate">{c.title}</div>
-                        <div className="text-xs text-muted-foreground">piece {c.pieces.length}개</div>
+                        <div className="flex items-center gap-1.5 mt-0.5">
+                          <span className={`inline-flex rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${CURATION_STATUS_COLOR[status]}`}>
+                            {CURATION_STATUS_LABEL[status]}
+                          </span>
+                          <span className="text-xs text-muted-foreground">piece {c.pieces.length}개</span>
+                        </div>
                         {c.startAt && c.endAt
                           ? <div className="text-[10px] text-muted-foreground/70 mt-0.5">{c.startAt.slice(0, 10)} ~ {c.endAt.slice(0, 10)}</div>
                           : <div className="text-[10px] text-amber-600 mt-0.5">날짜 미설정</div>
