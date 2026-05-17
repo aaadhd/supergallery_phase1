@@ -260,15 +260,9 @@ export default function PickManagement() {
   const doSave = () => {
     if (!validateDraft()) return;
     const payload = buildPayload();
-    if (selectedId && selectedId !== 'new') {
-      pickStore.update(selectedId, payload);
-      appendAuditLog({ action: 'event_saved', targetId: selectedId, targetSnapshot: { title: payload.title }, actorId: 'admin', actorRole: 'admin' });
-    } else {
-      const created = pickStore.add({ description: '', publicationOpen: false, ...payload });
-      setSelectedId(created.id);
-      appendAuditLog({ action: 'event_saved', targetId: created.id, targetSnapshot: { title: payload.title }, actorId: 'admin', actorRole: 'admin' });
-    }
-    toast.success('임시저장되었습니다.');
+    const created = pickStore.add({ description: '', publicationOpen: false, ...payload });
+    setSelectedId(created.id);
+    appendAuditLog({ action: 'event_saved', targetId: created.id, targetSnapshot: { title: payload.title }, actorId: 'admin', actorRole: 'admin' });
   };
 
   const saveDraft = (e: FormEvent) => { e.preventDefault(); doSave(); };
@@ -475,14 +469,6 @@ export default function PickManagement() {
                           className="pl-7 pr-3 py-1.5 border border-border rounded-lg text-sm w-48"
                         />
                       </div>
-                      {!isEnded && (
-                        <form onSubmit={saveDraft}>
-                          <button type="submit"
-                            className="border border-border rounded-lg px-3 py-1.5 text-xs text-muted-foreground lg:hover:bg-muted/50">
-                            정보 수정
-                          </button>
-                        </form>
-                      )}
                     </div>
                     <div className="flex-1 overflow-y-auto p-4 bg-muted/10">
                       {galleryWorks.length === 0 ? (
@@ -555,13 +541,6 @@ export default function PickManagement() {
                           {draft.workIds.length} / {MAX_PICKS}개
                         </div>
                         <div className="flex-1" />
-                        <button
-                          type="button"
-                          onClick={doSave}
-                          className="border border-slate-600 text-slate-300 rounded-md px-3 py-1.5 text-xs lg:hover:bg-slate-700"
-                        >
-                          임시저장
-                        </button>
                         <button
                           type="button"
                           onClick={handlePublish}
