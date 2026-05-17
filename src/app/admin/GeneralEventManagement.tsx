@@ -213,9 +213,9 @@ export default function GeneralEventManagement() {
                       <button
                         type="button"
                         onClick={() => startEdit(ev)}
-                        className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/30"
+                        className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/30 inline-flex items-center gap-1.5"
                       >
-                        <Pencil className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
+                        <Pencil className="w-3.5 h-3.5" />
                         수정
                       </button>
                       <button
