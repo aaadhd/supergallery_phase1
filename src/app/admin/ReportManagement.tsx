@@ -366,7 +366,7 @@ export default function ReportManagement() {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="border border-border rounded-lg px-3 py-2 text-sm bg-white min-w-[150px]"
+          className="border border-border rounded-lg px-2.5 py-1.5 text-xs bg-white min-w-[130px]"
         >
           <option value="전체">상태: 전체</option>
           <option value="대기">대기</option>
@@ -444,7 +444,7 @@ export default function ReportManagement() {
                       </span>
                     </div>
                     <div className="text-[11px] text-muted-foreground">
-                      {r.reportedAt ? r.reportedAt.slice(2, 10) : '—'}
+                      {r.reportedAt || '—'}
                     </div>
                   </button>
                 );

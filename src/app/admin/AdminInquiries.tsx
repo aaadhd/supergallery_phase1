@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useSearchParams } from 'react-router-dom';
+import { useSearchParams, useNavigate } from 'react-router-dom';
 import { toast } from 'sonner';
 import { MessageSquare, ShieldAlert, ChevronRight, X } from 'lucide-react';
 import { workStore } from '../store';
@@ -51,6 +51,8 @@ interface StoredInquiry {
   workId?: string;
   workTitle?: string;
   pieceIndex?: number;
+  // 제출자 계정 ID (로그인 상태 제출 시 포함)
+  artistId?: string;
   // 어드민 측 누적 필드 (사용자 제출 이후 추가)
   status?: InquiryStatus;
   replies?: Array<{ text: string; repliedAt: string; repliedBy?: string }>;
@@ -214,6 +216,7 @@ const QUICK_REPLIES: Record<string, string[]> = {
 };
 
 export default function AdminInquiries() {
+  const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   type InquiryTab = 'work' | 'general';
   const activeTab: InquiryTab = searchParams.get('tab') === 'work' ? 'work' : 'general';
@@ -458,7 +461,7 @@ export default function AdminInquiries() {
                   <div className="flex justify-between items-center mb-1">
                     <p className="text-xs font-medium text-muted-foreground">문의 내용</p>
                     <p className="text-xs text-muted-foreground">
-                      {selected.nickname ? `${selected.nickname} · ` : ''}{selected.email} · {selected.createdAt.slice(0, 10)}
+                      {selected.nickname ? `${selected.nickname} · ` : ''}{selected.email} · {selected.createdAt.slice(0, 16).replace('T', ' ')}
                     </p>
                   </div>
                   {selected.message
@@ -526,21 +529,21 @@ export default function AdminInquiries() {
         <>
           <div className="flex flex-wrap gap-3 mb-4">
             <select value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)}
-              className="border border-border rounded-lg px-3 py-2 text-sm bg-white min-w-[150px]">
+              className="border border-border rounded-lg px-2.5 py-1.5 text-xs bg-white min-w-[130px]">
               <option value="전체">카테고리: 전체</option>
               {Object.entries(CATEGORY_LABELS)
                 .filter(([k]) => k !== 'workInquiry')
                 .map(([k, v]) => (<option key={k} value={k}>{v}</option>))}
             </select>
             <select value={statusFilter} onChange={(e) => setStatusFilter(e.target.value as typeof statusFilter)}
-              className="border border-border rounded-lg px-3 py-2 text-sm bg-white min-w-[150px]">
+              className="border border-border rounded-lg px-2.5 py-1.5 text-xs bg-white min-w-[130px]">
               <option value="전체">상태: 전체</option>
               <option value="신규">신규</option>
               <option value="처리 중">처리 중</option>
               <option value="완료">완료</option>
               <option value="보류">보류</option>
             </select>
-            <label className="inline-flex items-center gap-2 px-3 py-2 border border-border rounded-lg text-sm bg-white cursor-pointer min-h-[44px]">
+            <label className="inline-flex items-center gap-2 px-2.5 py-1.5 border border-border rounded-lg text-xs bg-white cursor-pointer">
               <input type="checkbox" checked={privacyPriority} onChange={(e) => setPrivacyPriority(e.target.checked)}
                 className="accent-primary" />
               개인정보 우선
@@ -574,7 +577,7 @@ export default function AdminInquiries() {
                           className={`cursor-pointer border-b border-border/40 transition-colors ${
                             selectedId === i.id ? 'bg-primary/5' : 'lg:hover:bg-muted/50'
                           }`}>
-                          <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">{i.createdAt.slice(0, 10)}</td>
+                          <td className="px-3 py-2 whitespace-nowrap text-muted-foreground">{i.createdAt.slice(0, 16).replace('T', ' ')}</td>
                           <td className="px-3 py-2">
                             <span className={`inline-flex rounded-full px-2 py-0.5 text-xs font-medium ${
                               isPrivacy ? 'bg-violet-100 text-violet-800 border border-violet-300' : 'bg-slate-100 text-slate-700 border border-slate-200'
@@ -583,7 +586,17 @@ export default function AdminInquiries() {
                             </span>
                           </td>
                           <td className="px-3 py-2">
-                            <div className="text-sm text-foreground">{i.nickname ?? '—'}</div>
+                            {i.nickname && i.artistId ? (
+                              <button
+                                type="button"
+                                onClick={(e) => { e.stopPropagation(); navigate(`/admin/members?artist=${i.artistId}`); }}
+                                className="text-sm text-foreground underline underline-offset-2 lg:hover:text-primary"
+                              >
+                                {i.nickname}
+                              </button>
+                            ) : (
+                              <div className="text-sm text-foreground">{i.nickname ?? '—'}</div>
+                            )}
                           </td>
                           <td className="px-3 py-2">
                             <span className="inline-flex rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-foreground border border-border">
@@ -604,7 +617,19 @@ export default function AdminInquiries() {
                 <div className="flex items-start justify-between gap-2">
                   <div>
                     <p className="text-xs text-muted-foreground">{selected.createdAt.slice(0, 19).replace('T', ' ')}</p>
-                    {selected.nickname && <p className="text-sm font-semibold text-foreground">{selected.nickname}</p>}
+                    {selected.nickname && (
+                      selected.artistId ? (
+                        <button
+                          type="button"
+                          onClick={() => navigate(`/admin/members?artist=${selected.artistId}`)}
+                          className="text-sm font-semibold text-foreground underline underline-offset-2 lg:hover:text-primary"
+                        >
+                          {selected.nickname}
+                        </button>
+                      ) : (
+                        <p className="text-sm font-semibold text-foreground">{selected.nickname}</p>
+                      )
+                    )}
                     <p className="text-xs text-muted-foreground">{selected.email}</p>
                   </div>
                   <button type="button" onClick={() => setSelectedId(null)}

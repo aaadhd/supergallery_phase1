@@ -166,7 +166,7 @@ export default function MemberManagement() {
           placeholder="닉네임·이메일·전화번호 검색"
           value={q}
           onChange={(e) => setQ(e.target.value)}
-          className="border border-border rounded-lg px-3 py-2 text-sm flex-1 min-w-[240px] max-w-md"
+          className="border border-border rounded-lg px-2.5 py-1.5 text-xs flex-1 min-w-[240px] max-w-md"
         />
       </div>
 

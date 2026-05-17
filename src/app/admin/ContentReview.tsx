@@ -279,7 +279,7 @@ export default function ContentReview() {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="h-9 border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground min-w-[140px]"
+          className="border border-border rounded-lg px-2.5 py-1.5 text-xs bg-white text-foreground min-w-[130px]"
         >
           <option value="전체">상태: 전체</option>
           <option value="대기중">대기중</option>
