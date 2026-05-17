@@ -334,7 +334,7 @@ export default function ContestManagement() {
                     </div>
 
                     <div className="sm:col-span-2">
-                      <p className="text-xs font-semibold text-foreground mb-2">게시 기간 <span className="font-normal text-muted-foreground">(미입력 시 실행 기간과 동일)</span></p>
+                      <p className="text-xs font-semibold text-foreground mb-2">게시 기간 <span className="font-normal text-muted-foreground">(이벤트 메뉴 노출 기간 — 실행 기간과 별개)</span></p>
                       <div className="grid sm:grid-cols-2 gap-3">
                         <label className="flex flex-col gap-1 text-xs text-muted-foreground">
                           게시 시작일
@@ -432,7 +432,7 @@ export default function ContestManagement() {
                             <td className="px-4 py-3 text-muted-foreground whitespace-nowrap text-xs">
                               {ev.displayStartAt || ev.displayEndAt
                                 ? `${ev.displayStartAt ?? ev.startAt} ~ ${ev.displayEndAt ?? ev.endAt}`
-                                : <span className="text-muted-foreground/50 text-[10px]">실행 기간과 동일</span>}
+                                : <span className="text-muted-foreground/40 text-[10px]">미설정</span>}
                             </td>
                             <td className="px-4 py-3 text-center text-sm font-medium text-foreground">
                               {entryCountByEvent.get(ev.id) ?? 0}

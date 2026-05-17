@@ -187,6 +187,14 @@ export default function CurationManagement() {
       toast.error(t('admin.curation.errPieceRequired'));
       return;
     }
+    if (!editor.startAt.trim() || !editor.endAt.trim()) {
+      toast.error('기획전 시작일과 종료일은 필수입니다.');
+      return;
+    }
+    if (editor.startAt > editor.endAt) {
+      toast.error('시작일이 종료일보다 늦을 수 없습니다.');
+      return;
+    }
     // 같은 제목 중복 체크 (편집 모드는 본인 제외)
     const dup = curatedExhibitions.some(
       (c) => c.title.trim() === title && (editor.mode === 'create' || c.id !== editor.editingId),
@@ -407,13 +415,13 @@ export default function CurationManagement() {
                         className="w-full border border-border rounded-lg px-3 py-1.5 text-sm" />
                     </div>
                     <div>
-                      <label className="block text-xs text-muted-foreground mb-1">시작일</label>
+                      <label className="block text-xs text-muted-foreground mb-1">시작일 <span className="text-destructive">*</span></label>
                       <input type="date" value={editor.startAt}
                         onChange={(e) => setEditor((prev) => prev ? { ...prev, startAt: e.target.value } : prev)}
                         className="w-full border border-border rounded-lg px-3 py-1.5 text-sm" />
                     </div>
                     <div>
-                      <label className="block text-xs text-muted-foreground mb-1">종료일</label>
+                      <label className="block text-xs text-muted-foreground mb-1">종료일 <span className="text-destructive">*</span></label>
                       <input type="date" value={editor.endAt}
                         onChange={(e) => setEditor((prev) => prev ? { ...prev, endAt: e.target.value } : prev)}
                         className="w-full border border-border rounded-lg px-3 py-1.5 text-sm" />
