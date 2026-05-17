@@ -2022,7 +2022,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'settings.notifReactionAlerts': 'Reactions to my work',
   'settings.notifReactionAlertsHint': 'Likes and follows',
   'settings.notifEventAlertsHint': 'Contest announcements and events',
-  'settings.notifSystemAlwaysOn': 'Group exhibition posts, curated exhibition picks, Proud\'s Pick selections, contest selections, review results, work connections, and report outcomes are always sent regardless of your settings.',
+  'settings.notifSystemAlwaysOn': 'Curated exhibition picks, Proud\'s Pick selections, contest selections, review results, work connections, and report outcomes are always sent regardless of your settings.',
   'settings.sectionAccountActions': 'Account',
   'settings.sectionServiceInfo': 'Service Info',
   'settings.logoutRow': 'Log out',

@@ -2369,7 +2369,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'settings.withdrawConsentLabel': 'I understand my account and works will be deleted and cannot be undone.',
   'settings.withdrawConsentErr': 'Please confirm you agree to delete all data.',
   'settings.sectionServiceInfo': 'Service Info',
-  'settings.notifSystemAlwaysOn': 'Group exhibition posts, curated exhibition picks, Proud\'s Pick selections, contest selections, review results, work connections, and report outcomes are always sent regardless of your settings.',
+  'settings.notifSystemAlwaysOn': 'Curated exhibition picks, Proud\'s Pick selections, contest selections, review results, work connections, and report outcomes are always sent regardless of your settings.',
 } as const;
 
 export function translate(locale: Locale, key: MessageKey): string {
