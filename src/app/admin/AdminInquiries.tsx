@@ -178,23 +178,6 @@ function saveInquiries(list: StoredInquiry[]): void {
   }
 }
 
-type SlaTier = 'normal' | 'nearing' | 'exceeded';
-function computeSlaTier(inq: StoredInquiry, now: number): SlaTier | null {
-  if (inq.status === '완료' || inq.status === '보류') return null;
-  const createdMs = new Date(inq.createdAt).getTime();
-  if (!Number.isFinite(createdMs)) return null;
-  const hours = (now - createdMs) / (60 * 60 * 1000);
-  // Policy §30.3: privacy 요청은 5영업일 접수 확인 + 30일 처리.
-  // 여기서는 접수 시점 기준 경과 시간으로 간단히 판정 (영업일 계산은 백엔드 연동 후).
-  if (inq.category === 'privacy') {
-    if (hours >= 30 * 24) return 'exceeded';
-    if (hours >= 25 * 24) return 'nearing';
-    return 'normal';
-  }
-  if (hours >= 5 * 24) return 'exceeded';
-  if (hours >= 4 * 24) return 'nearing';
-  return 'normal';
-}
 
 const QUICK_REPLIES: Record<string, string[]> = {
   account: [
@@ -248,13 +231,8 @@ export default function AdminInquiries() {
   const [replyText, setReplyText] = useState('');
   const [internalNote, setInternalNote] = useState('');
   const [subjectVerified, setSubjectVerified] = useState(false);
-  const [, setClockTick] = useState(0);
-
-  // 최초 로드 + 주기적 리렌더(SLA 계산용)
   useEffect(() => {
     setInquiries(loadInquiries());
-    const id = window.setInterval(() => setClockTick((n) => n + 1), 60_000);
-    return () => window.clearInterval(id);
   }, []);
 
   const selected = useMemo(() => inquiries.find((i) => i.id === selectedId) ?? null, [inquiries, selectedId]);
@@ -267,32 +245,25 @@ export default function AdminInquiries() {
   }, [selectedId, selected?.internalNotes, selected?.privacy?.subjectVerified]);
 
   const kpi = useMemo(() => {
-    const now = Date.now();
     let newCount = 0;
     let inProgress = 0;
     let privacyCount = 0;
-    let slaBreach = 0;
     inquiries.forEach((i) => {
       const status = i.status ?? '신규';
       if (status === '신규') newCount++;
       if (status === '처리 중') inProgress++;
       if (i.category === 'privacy' && status !== '완료') privacyCount++;
-      const tier = computeSlaTier(i, now);
-      if (tier === 'nearing' || tier === 'exceeded') slaBreach++;
     });
-    return { newCount, inProgress, privacyCount, slaBreach };
+    return { newCount, inProgress, privacyCount };
   }, [inquiries]);
 
   const workFiltered = useMemo(() => {
-    const now = Date.now();
     return inquiries
       .filter((i) => i.category === 'workInquiry')
-      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime())
-      .map((i) => ({ ...i, _slaTier: computeSlaTier(i, now) }));
+      .sort((a, b) => new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime());
   }, [inquiries]);
 
   const generalFiltered = useMemo(() => {
-    const now = Date.now();
     return inquiries
       .filter((i) => {
         if (i.category === 'workInquiry') return false;
@@ -307,7 +278,6 @@ export default function AdminInquiries() {
         if (aPriv !== bPriv) return aPriv - bPriv;
         return new Date(a.createdAt).getTime() - new Date(b.createdAt).getTime();
       })
-      .map((i) => ({ ...i, _slaTier: computeSlaTier(i, now) }));
   }, [inquiries, categoryFilter, statusFilter, privacyPriority]);
 
   const updateInquiry = (id: string, patch: Partial<StoredInquiry>) => {
@@ -380,7 +350,6 @@ export default function AdminInquiries() {
         <KpiCard label="신규" value={kpi.newCount} />
         <KpiCard label="처리 중" value={kpi.inProgress} />
         <KpiCard label="개인정보 요청" value={kpi.privacyCount} emphasize={kpi.privacyCount > 0} />
-        <KpiCard label="SLA 임박·초과" value={kpi.slaBreach} emphasize={kpi.slaBreach > 0} danger={kpi.slaBreach > 0} />
       </div>
 
       {/* 탭 헤더 */}
@@ -592,7 +561,6 @@ export default function AdminInquiries() {
                     generalFiltered.map((i) => {
                       const isPrivacy = i.category === 'privacy';
                       const status = i.status ?? '신규';
-                      const tier = i._slaTier;
                       return (
                         <tr key={i.id} onClick={() => setSelectedId(i.id)}
                           className={`cursor-pointer border-b border-border/40 transition-colors ${
@@ -613,17 +581,9 @@ export default function AdminInquiries() {
                             <div className="truncate text-muted-foreground">{i.message.slice(0, 60)}{i.message.length > 60 ? '…' : ''}</div>
                           </td>
                           <td className="px-3 py-2">
-                            <div className="flex flex-wrap items-center gap-1.5">
-                              <span className="inline-flex rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-foreground border border-border">
-                                {status}
-                              </span>
-                              {tier === 'nearing' && (
-                                <span className="inline-flex rounded-full bg-yellow-50 text-yellow-800 border border-yellow-200 px-2 py-0.5 text-[10px] font-semibold">SLA 임박</span>
-                              )}
-                              {tier === 'exceeded' && (
-                                <span className="inline-flex rounded-full bg-red-100 text-red-800 border border-red-300 px-2 py-0.5 text-[10px] font-semibold">SLA 초과</span>
-                              )}
-                            </div>
+                            <span className="inline-flex rounded-full bg-muted px-2 py-0.5 text-xs font-medium text-foreground border border-border">
+                              {status}
+                            </span>
                           </td>
                         </tr>
                       );
