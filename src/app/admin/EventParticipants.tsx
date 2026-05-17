@@ -87,6 +87,7 @@ export default function EventParticipants({ compact = false }: { compact?: boole
   const selectedEvent = useMemo(() => events.find(e => e.id === selectedEventId), [events, selectedEventId]);
   const selectedWorkIds = useMemo(() => new Set(selectedEvent?.selectedWorkIds ?? []), [selectedEvent]);
   const isPublished = !!selectedEvent?.publicationOpen;
+  const isNotified = !!selectedEvent?.notifiedAt;
 
   const realParticipants = useParticipantsFromWorks();
   const allParticipants = useMemo(() => [...realParticipants, ...seedParticipants], [realParticipants]);
@@ -166,26 +167,38 @@ export default function EventParticipants({ compact = false }: { compact?: boole
     }
   };
 
-  // 발표하기 — 선정된 모든 작품 일괄 알림 발송
-  const handlePublish = async () => {
+  // 선정 완료 — 선정 잠금만, 알림 미발송
+  const handleConfirm = async () => {
     if (!selectedEvent) return;
     if (selectedFromParticipants === 0) {
       toast.error('선정된 작품이 없습니다.');
       return;
     }
     const ok = await openConfirm({
-      title: `당선작 ${selectedFromParticipants}건을 발표하시겠습니까?`,
-      description: '선정된 모든 작가에게 당선 알림이 발송됩니다. 발표 후 선정 변경이 불가합니다.',
-      confirmLabel: '발표하기',
+      title: `당선작 ${selectedFromParticipants}건을 확정하시겠습니까?`,
+      description: '확정 후 선정을 변경할 수 없습니다. 알림은 별도 "알림 보내기" 버튼으로 발송합니다.',
+      confirmLabel: '선정 완료',
     });
     if (!ok) return;
-
-    const selectedIds = [...selectedWorkIds].filter(id => participantWorkIds.has(id));
-    for (const wid of selectedIds) sendNotification(wid);
-
     eventsStore.update(selectedEventId, { publicationOpen: true, publishedAt: todayLocalIso() });
-    appendAuditLog({ action: 'event_saved', targetId: selectedEventId, targetSnapshot: { published: true, count: selectedIds.length }, actorId: 'admin', actorRole: 'admin' });
-    toast.success(`당선작 ${selectedIds.length}건 발표 완료 — 작가 알림 발송됨`);
+    appendAuditLog({ action: 'event_saved', targetId: selectedEventId, targetSnapshot: { confirmed: true, count: selectedFromParticipants }, actorId: 'admin', actorRole: 'admin' });
+    toast.success(`당선작 ${selectedFromParticipants}건 확정 완료`);
+  };
+
+  // 알림 보내기 — 선정 완료 후 수동 발송
+  const handleNotify = async () => {
+    if (!selectedEvent || !isPublished || isNotified) return;
+    const selectedIds = [...selectedWorkIds].filter(id => participantWorkIds.has(id));
+    const ok = await openConfirm({
+      title: `당선자 ${selectedIds.length}명에게 알림을 보내시겠습니까?`,
+      description: '한 번 발송하면 취소할 수 없습니다.',
+      confirmLabel: '알림 보내기',
+    });
+    if (!ok) return;
+    for (const wid of selectedIds) sendNotification(wid);
+    eventsStore.update(selectedEventId, { notifiedAt: todayLocalIso() });
+    appendAuditLog({ action: 'event_saved', targetId: selectedEventId, targetSnapshot: { notified: true, count: selectedIds.length }, actorId: 'admin', actorRole: 'admin' });
+    toast.success(`당선자 ${selectedIds.length}명에게 알림 발송 완료`);
   };
 
   const handleSelectAll = () => {
@@ -242,10 +255,15 @@ export default function EventParticipants({ compact = false }: { compact?: boole
                 · {selectedFromParticipants}건 선정
               </span>
             </p>
-            {isPublished && (
+            {isNotified && (
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
                 <Check className="w-3 h-3" />
-                발표 완료 {selectedEvent?.publishedAt ? `· ${selectedEvent.publishedAt.slice(5)}` : ''}
+                알림 발송 완료 {selectedEvent?.notifiedAt ? `· ${selectedEvent.notifiedAt.slice(5)}` : ''}
+              </span>
+            )}
+            {isPublished && !isNotified && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-amber-50 text-amber-700 border border-amber-200">
+                선정 완료 · 알림 대기
               </span>
             )}
             {pendingCount > 0 && (
@@ -366,13 +384,15 @@ export default function EventParticipants({ compact = false }: { compact?: boole
 
     {/* 하단 고정 바 */}
     {selectedEventId && selectedEvent && (
-      <div className={`fixed bottom-0 left-0 right-0 z-40 px-4 py-3 flex items-center gap-3 ${
-        isPublished ? 'bg-emerald-900' : 'bg-slate-900'
-      }`}>
+      <div className="fixed bottom-0 left-0 right-0 z-40 bg-slate-900 px-4 py-3 flex items-center gap-3">
         <div className="flex-1 text-sm">
-          {isPublished ? (
+          {isNotified ? (
             <span className="text-emerald-300 font-medium">
-              ✓ 발표 완료 — {selectedFromParticipants}건 당선 {selectedEvent.publishedAt ? `(${selectedEvent.publishedAt})` : ''}
+              ✓ 알림 발송 완료 {selectedEvent.notifiedAt ? `(${selectedEvent.notifiedAt})` : ''} — {selectedFromParticipants}건
+            </span>
+          ) : isPublished ? (
+            <span className="text-amber-300 font-medium">
+              선정 완료 {selectedFromParticipants}건 — 알림 미발송
             </span>
           ) : (
             <span className="text-slate-300">
@@ -380,17 +400,31 @@ export default function EventParticipants({ compact = false }: { compact?: boole
             </span>
           )}
         </div>
-        {!isPublished && (
-          <button
-            type="button"
-            onClick={handlePublish}
-            disabled={selectedFromParticipants === 0}
-            className="inline-flex items-center gap-1.5 bg-primary text-white rounded-lg px-4 py-2 text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed"
-          >
-            <Megaphone className="w-4 h-4" />
-            발표하기
-          </button>
-        )}
+        <div className="flex gap-2">
+          {/* 1단계: 선정 완료 */}
+          {!isPublished && (
+            <button
+              type="button"
+              onClick={handleConfirm}
+              disabled={selectedFromParticipants === 0}
+              className="inline-flex items-center gap-1.5 bg-primary text-white rounded-lg px-4 py-2 text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed"
+            >
+              선정 완료
+            </button>
+          )}
+          {/* 2단계: 알림 보내기 (선정 완료 후 활성) */}
+          {isPublished && (
+            <button
+              type="button"
+              onClick={handleNotify}
+              disabled={isNotified}
+              className="inline-flex items-center gap-1.5 bg-sky-600 text-white rounded-lg px-4 py-2 text-sm font-semibold lg:hover:bg-sky-700 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <Megaphone className="w-4 h-4" />
+              {isNotified ? '알림 발송 완료' : '알림 보내기'}
+            </button>
+          )}
+        </div>
       </div>
     )}
 

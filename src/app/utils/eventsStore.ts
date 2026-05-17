@@ -36,6 +36,8 @@ export type ManagedEvent = {
   selectedWorkIds?: string[];
   /** 결과 발표 외부 링크 URL. 종료 후 설정하면 EventDetail에 "결과 발표 보기 →" 버튼 노출. */
   resultUrl?: string;
+  /** 당선 알림 발송 일시. 설정되면 알림 보내기 버튼 비활성. */
+  notifiedAt?: string;
 };
 
 // 데이터는 이전 contestStore 키에 이미 저장되어 있으므로 그대로 사용

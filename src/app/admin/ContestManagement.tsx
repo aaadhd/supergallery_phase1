@@ -306,9 +306,14 @@ export default function ContestManagement() {
                               {statusLabelKo(s)}
                               {ev.status && <span className="ml-1 text-xs opacity-70">{t('admin.contest.manual')}</span>}
                             </span>
-                            {ev.publicationOpen && (
+                            {ev.publicationOpen && !ev.notifiedAt && (
+                              <span className="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium w-fit bg-amber-50 text-amber-800 border border-amber-200">
+                                선정 완료 · 알림 대기
+                              </span>
+                            )}
+                            {ev.notifiedAt && (
                               <span className="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium w-fit bg-emerald-50 text-emerald-700 border border-emerald-200">
-                                발표 완료 {ev.publishedAt ? `· ${ev.publishedAt.slice(5)}` : ''}
+                                알림 발송 완료 {ev.notifiedAt ? `· ${ev.notifiedAt.slice(5)}` : ''}
                               </span>
                             )}
                           </div>
