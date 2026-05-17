@@ -106,12 +106,20 @@ export default function PickDetail() {
       {/* 구분선 */}
       <div style={{ height: 1, background: 'linear-gradient(90deg,transparent,rgba(255,200,0,0.3),transparent)' }} />
 
-      {/* 선정 전시 그리드 */}
-      <div className="max-w-2xl mx-auto px-4 py-8">
+      {/* 선정 전시 캐러셀 */}
+      <div className="py-8" style={{ background: '#000' }}>
         {selectedWorks.length === 0 ? (
-          <p className="text-center text-sm text-muted-foreground py-16">{t('pickDetail.noSelected')}</p>
+          <p className="text-center text-sm py-16" style={{ color: '#4a5568' }}>{t('pickDetail.noSelected')}</p>
         ) : (
-          <div className="grid grid-cols-2 gap-3">
+          <div
+            className="flex gap-4 overflow-x-auto pb-4"
+            style={{
+              scrollSnapType: 'x mandatory',
+              scrollbarWidth: 'none',
+              paddingInline: 'max(12vw, 24px)',
+              scrollPaddingInline: 'max(12vw, 24px)',
+            }}
+          >
             {selectedWorks.map((w) => {
               const coverKey = getCoverImage(w.image, w.coverImageIndex);
               const src = imageUrls[coverKey] || coverKey;
@@ -125,30 +133,40 @@ export default function PickDetail() {
                   key={w.id}
                   type="button"
                   onClick={() => setSelectedWorkId(w.id)}
-                  className="text-left rounded-xl overflow-hidden transition-transform lg:hover:scale-[1.02]"
-                  style={{ background: '#161616', border: '1px solid rgba(255,200,0,0.15)' }}
+                  className="text-center flex-shrink-0 transition-transform duration-300 lg:hover:scale-[1.04] active:scale-[0.97]"
+                  style={{
+                    scrollSnapAlign: 'center',
+                    width: 'clamp(200px, 62vw, 300px)',
+                  }}
                 >
-                  <div className="aspect-[4/3] overflow-hidden">
+                  <div
+                    className="aspect-square w-full overflow-hidden rounded-2xl mb-3"
+                    style={{
+                      background: '#161616',
+                      border: '1px solid rgba(255,200,0,0.25)',
+                      boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
+                    }}
+                  >
                     <ImageWithFallback src={src} alt="" className="w-full h-full object-cover" />
                   </div>
-                  <div className="p-3">
-                    <p className="text-sm font-bold text-slate-100 leading-snug truncate">
-                      {displayExhibitionTitle(w, '(제목 없음)')}
-                    </p>
-                    <p className="text-xs mt-0.5 truncate" style={{ color: '#64748b' }}>
-                      {artistLabel}
-                    </p>
-                  </div>
+                  <p className="text-sm font-bold text-slate-100 leading-snug truncate px-1">
+                    {displayExhibitionTitle(w, '(제목 없음)')}
+                  </p>
+                  <p className="text-xs mt-1 truncate px-1" style={{ color: '#64748b' }}>
+                    {artistLabel}
+                  </p>
                 </button>
               );
             })}
           </div>
         )}
+      </div>
 
-        {/* 명예의 전당 CTA */}
+      {/* 명예의 전당 CTA */}
+      <div className="px-4 py-6 mx-auto max-w-xl">
         <Link
           to="/picks/hall-of-fame"
-          className="flex items-center justify-between mt-8 px-4 py-4 rounded-xl transition-colors lg:hover:opacity-80"
+          className="flex items-center justify-between px-4 py-4 rounded-xl transition-colors lg:hover:opacity-80"
           style={{ border: '1px solid rgba(255,200,0,0.2)', background: 'rgba(255,200,0,0.04)' }}
         >
           <div>
