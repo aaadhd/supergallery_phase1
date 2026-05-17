@@ -1,6 +1,6 @@
 /**
  * 이메일 매직 링크 모의 저장소 (Phase 1 로컬).
- * 실제 백엔드 붙이면 `/auth/magic-link` 발행 + `/auth/verify?token` 검증으로 대체.
+ * 실제 백엔드 붙이면 `/auth/magic-link` 발급 + `/auth/verify?token` 검증으로 대체.
  */
 
 const STORAGE_KEY = 'artier_pending_magic_links';

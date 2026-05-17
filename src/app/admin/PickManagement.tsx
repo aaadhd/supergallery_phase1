@@ -66,8 +66,8 @@ function getPickStatus(e: PickSession): PickSessionStatus {
 }
 
 const STATUS_LABEL: Record<PickSessionStatus, string> = {
-  active: '발행됨',
-  scheduled: '발행 예정',
+  active: '게시됨',
+  scheduled: '게시 예정',
   ended: '종료됨',
 };
 
@@ -110,7 +110,7 @@ function migrateLegacyPicks(): void {
   } catch { /* ignore */ }
 }
 
-/** 픽 세션 발행 — 이전 활성 세션 비활성화(이력 보존) 후 새 세션 활성화 */
+/** 픽 세션 게시 — 이전 활성 세션 비활성화(이력 보존) 후 새 세션 활성화 */
 function publishPickSession(newSessionId: string): void {
   const all = pickStore.getAll();
   for (const e of all) {
@@ -253,9 +253,9 @@ export default function PickManagement() {
     const hasOtherActive = sessions.some((e) => e.id !== selectedId && getPickStatus(e) === 'active');
     if (hasOtherActive) {
       const ok = await openConfirm({
-        title: '현재 발행 중인 픽 세션이 있습니다',
-        description: '기존 세션을 종료하고 새 세션을 발행합니다. 계속할까요?',
-        confirmLabel: '발행',
+        title: '현재 게시 중인 픽 세션이 있습니다',
+        description: '기존 세션을 종료하고 새 세션을 게시합니다. 계속할까요?',
+        confirmLabel: '게시',
       });
       if (!ok) return;
     }
@@ -270,7 +270,7 @@ export default function PickManagement() {
     }
     publishPickSession(targetId);
     appendAuditLog({ action: 'event_saved', targetId, targetSnapshot: { title: payload.title }, actorId: 'admin', actorRole: 'admin' });
-    toast.success('발행되었습니다.');
+    toast.success('게시되었습니다.');
   };
 
   const debouncedGallerySearch = useDebouncedValue(pickerSearch, 300);
@@ -582,7 +582,7 @@ export default function PickManagement() {
                           onClick={handlePublish}
                           className="bg-primary text-white rounded-md px-3 py-1.5 text-xs font-semibold lg:hover:bg-primary/90"
                         >
-                          발행
+                          게시
                         </button>
                       </div>
                     )}

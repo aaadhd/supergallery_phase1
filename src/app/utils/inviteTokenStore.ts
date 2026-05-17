@@ -73,7 +73,7 @@ function applyLazyExpiry(map: StoreMap): { changed: boolean } {
 }
 
 /**
- * 전시 단위 토큰 1개 발급. 발행 직후 상태는 'inactive' (검수 대기).
+ * 전시 단위 토큰 1개 발급. 등록 직후 상태는 'inactive' (검수 대기).
  * 같은 workId에 기존 토큰이 살아 있으면 그것을 반환(중복 발급 방지).
  */
 export function issueInviteToken(workId: string, inviterUserId: string): InviteToken {

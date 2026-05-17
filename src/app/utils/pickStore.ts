@@ -15,7 +15,7 @@ export type PickSession = {
   startAt: string;
   endAt: string;
   selectedWorkIds: string[];
-  /** true = 발행됨(이력 포함), false = 임시저장 */
+  /** true = 게시됨(이력 포함), false = 임시저장 */
   publicationOpen: boolean;
   /** 수동 상태. 없으면 날짜 기준 자동 계산 */
   status?: PickStatus;
@@ -146,7 +146,7 @@ export function usePickSessions(): PickSession[] {
 }
 
 /**
- * Pick 세션 시드 — 발행된 세션이 없을 때 데모용 2개 생성.
+ * Pick 세션 시드 — 게시된 세션이 없을 때 데모용 2개 생성.
  * workStore가 마운트된 이후(PointsBootstrap)에 호출해야 한다.
  */
 export function seedPickIfEmpty(): void {

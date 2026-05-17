@@ -610,14 +610,14 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.memberSearchPh': '플랫폼에 가입된 작가 검색',
   'upload.nonMemberNamePh': '초대 메시지에 표시할 이름',
   'upload.nonMemberNameLabel2': '작가 이름',
-  'upload.nonMemberNameHelper': '이름만 적어주세요. Proud Gallery가 자동으로 알리지 않아요 — 발행 후 작가님이 직접 카톡·문자로 링크를 보내실 수 있어요.',
-  'upload.nonMemberPreviewTitle': '발행 전 확인',
-  'upload.nonMemberPreviewSubtitle': '아래 작가들은 비회원으로 등록됐어요. 발행 직후부터 바로 초대 링크를 보낼 수 있어요.',
+  'upload.nonMemberNameHelper': '이름만 적어주세요. Proud Gallery가 자동으로 알리지 않아요 — 등록 후 작가님이 직접 카톡·문자로 링크를 보내실 수 있어요.',
+  'upload.nonMemberPreviewTitle': '등록 전 확인',
+  'upload.nonMemberPreviewSubtitle': '아래 작가들은 비회원으로 등록됐어요. 등록 직후부터 바로 초대 링크를 보낼 수 있어요.',
   'upload.nonMemberPreviewListLabel': '비회원 작가 {n}명',
   'upload.nonMemberPreviewSlotHint': '이름만 등록됨 · 가입 후 본인이 직접 연결',
-  'upload.nonMemberPreviewInfo': '발행 직후 마이페이지 전시 카드에 \'비회원 작가에게 알리기\' 버튼이 생겨요. 카톡·문자 등으로 작가님이 직접 보내실 수 있어요.',
+  'upload.nonMemberPreviewInfo': '등록 직후 마이페이지 전시 카드에 \'비회원 작가에게 알리기\' 버튼이 생겨요. 카톡·문자 등으로 작가님이 직접 보내실 수 있어요.',
   'upload.nonMemberPreviewBack': '수정하러 돌아가기',
-  'upload.nonMemberPreviewConfirm': '발행 확인',
+  'upload.nonMemberPreviewConfirm': '등록 확인',
   'invite.shareCta': '비회원 작가에게 알리기',
   'invite.shareDialogTitle': '비회원 작가에게 알리기',
   'invite.shareDialogBody': '이 링크를 비회원 작가에게 보내주세요. 가입하면 본인 작품을 직접 고를 수 있어요.',
@@ -770,7 +770,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
     '프로필 > 작품 탭에서 작품 우측 상단 메뉴(⋯)를 눌러 수정·삭제할 수 있어요.',
   'faq.q7': '그룹 전시는 어떻게 만드나요?',
   'faq.a7':
-    '업로드할 때 "함께 올리기"를 선택하면 그룹명을 입력하고 참여 작가를 한 자리씩 추가할 수 있어요. Proud Gallery 회원이면 이름을 검색해 바로 연결되고, 회원이 아닌 분은 이름만 입력해 자리를 만들어 두면 발행 직후부터 초대 링크로 직접 알릴 수 있어요.',
+    '업로드할 때 "함께 올리기"를 선택하면 그룹명을 입력하고 참여 작가를 한 자리씩 추가할 수 있어요. Proud Gallery 회원이면 이름을 검색해 바로 연결되고, 회원이 아닌 분은 이름만 입력해 자리를 만들어 두면 등록 직후부터 초대 링크로 직접 알릴 수 있어요.',
   'faq.q8': 'Proud\'s Pick은 무엇인가요?',
   'faq.a8':
     '운영팀이 매주 우수 작품을 선정해 배지를 부여해요. 선정된 작품은 피드 상단에 노출되며, 작가에게 알림이 발송돼요.',
@@ -781,7 +781,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'faq.a10': '현재 {brand}의 모든 기능은 무료로 이용하실 수 있어요.',
   'faq.q11': '함께 올린 비회원 작가는 어떻게 초대하나요?',
   'faq.a11':
-    '전시를 발행하면 마이페이지의 전시 카드에 "비회원 작가에게 알리기" 버튼이 바로 생겨요. 검수 신청 단계부터 카카오톡·문자·이메일 등 평소 쓰시던 방법으로 비회원 작가에게 링크를 직접 보내주시면 돼요. 비회원 작가는 가입한 뒤 본인 작품 카드를 골라 연결할 수 있고, 검수가 통과되면 자동으로 공개돼요. 회사가 자동으로 발송하지는 않아요.',
+    '전시를 등록하면 마이페이지의 전시 카드에 "비회원 작가에게 알리기" 버튼이 바로 생겨요. 검수 신청 단계부터 카카오톡·문자·이메일 등 평소 쓰시던 방법으로 비회원 작가에게 링크를 직접 보내주시면 돼요. 비회원 작가는 가입한 뒤 본인 작품 카드를 골라 연결할 수 있고, 검수가 통과되면 자동으로 공개돼요. 회사가 자동으로 발송하지는 않아요.',
   'faq.q12': '비회원 작가가 가입했는데 작품이 자동으로 연결 안 됐어요.',
   'faq.a12':
     '가입 직후 "본인 작품 찾기" 화면에서 비회원 작가분이 본인 그림 카드를 직접 눌러야 연결돼요. "여기 없어요"를 눌러 건너뛰셨거나 다른 분 자리를 잘못 눌렀을 수 있어요. 비회원 작가분께 다시 한번 확인해 주세요.',
@@ -1711,14 +1711,14 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'upload.nonMemberNamePh': 'Name to show in the invite message',
   // (kept) Helper updated to reflect Policy §3 — Proud Gallery does not auto-notify, artist sends directly
   'upload.nonMemberNameLabel2': 'Artist name',
-  'upload.nonMemberNameHelper': "Just the name. Proud Gallery won't auto-notify them — after publishing, you can send them the link directly via your own channel.",
-  'upload.nonMemberPreviewTitle': 'Before Publishing',
-  'upload.nonMemberPreviewSubtitle': 'The artists below are registered as non-members. You can send them an invite link right after publishing.',
+  'upload.nonMemberNameHelper': "Just the name. Proud Gallery won't auto-notify them — after submitting, you can send them the link directly via your own channel.",
+  'upload.nonMemberPreviewTitle': 'Before Submitting',
+  'upload.nonMemberPreviewSubtitle': 'The artists below are registered as non-members. You can send them an invite link right after submitting.',
   'upload.nonMemberPreviewListLabel': '{n} non-member artist(s)',
   'upload.nonMemberPreviewSlotHint': 'Name only · they connect after signing up',
-  'upload.nonMemberPreviewInfo': "Right after publishing, a 'Notify Friends' button appears on your exhibition card. Send the link via KakaoTalk, text, or any channel you prefer.",
+  'upload.nonMemberPreviewInfo': "Right after submitting, a 'Notify Friends' button appears on your exhibition card. Send the link via KakaoTalk, text, or any channel you prefer.",
   'upload.nonMemberPreviewBack': 'Back to editing',
-  'upload.nonMemberPreviewConfirm': 'Confirm & Publish',
+  'upload.nonMemberPreviewConfirm': 'Confirm & Submit',
   'invite.shareCta': 'Notify Non-member Artist',
   'invite.shareDialogTitle': 'Notify Non-member Artist',
   'invite.shareDialogBody': 'Send this link to the non-member artist. After signing up, they can claim their own work.',
@@ -1882,7 +1882,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'faq.a10': 'All features of {brand} are currently free to use.',
   'faq.q11': 'How do I invite non-member artists to my group exhibition?',
   'faq.a11':
-    "As soon as you publish, the 'Notify Non-member Artist' button appears on your exhibition card. From the review-pending stage, share the link with the non-member artist through KakaoTalk, SMS, email, or any channel you usually use. After signing up, the non-member artist can claim their own slot, and the exhibition becomes public automatically once review passes — we don't send the link for you.",
+    "As soon as you submit, the 'Notify Non-member Artist' button appears on your exhibition card. From the review-pending stage, share the link with the non-member artist through KakaoTalk, SMS, email, or any channel you usually use. After signing up, the non-member artist can claim their own slot, and the exhibition becomes public automatically once review passes — we don't send the link for you.",
   'faq.q12': "A non-member artist signed up but their work isn't linked.",
   'faq.a12':
     "Right after signup, the non-member artist has to tap their own work card on the 'Find my work' screen for the link to happen. They may have skipped it, or tapped someone else's spot by mistake. Please ask them to check.",
@@ -2491,6 +2491,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.27 | 2026-05-18 | PM × Claude | settings.notifSystemAlwaysOn EN "Group exhibition posts" 제거; "발행" → "등록" 용어 변경(nonMemberPreview* KO·EN, faq.a7·a11 KO·EN, errPublishFailed KO) |
 | v1.26 | 2026-05-15 | PM × Claude | signup.linkSentAutoFlow "(미사용)" 삭제; upload.editSoloConvertTitle·editSoloConvertDesc·editSoloConvertConfirm KO·EN 신규(Policy §13.6.1 SSoT); signup.emailStepDesc "비밀번호는 따로 만들 필요 없어요." 문구 제거(KO·EN) |
 | v1.25 | 2026-05-14 | PM × Claude | 이중 이스케이프 정리 — notifApprovedForParticipant·notifAutoMatched·notifTargetWork 3종·nonMemberPreviewInfo `\\\'` → `\'` |
 | v1.24 | 2026-05-14 | PM × Claude | tabGuideLikes·tabGuideSaves·search.goBrowse "작품"→"전시" 누락분 보정(KO+EN); 프로필 빈 상태 prose 예시 정합 |
