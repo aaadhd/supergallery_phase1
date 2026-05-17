@@ -388,7 +388,7 @@ export default function ContentReview() {
                           onClick={(e) => { e.stopPropagation(); navigate(`/admin/members?artist=${w.artistId}`); }}
                           className="text-primary lg:hover:underline"
                         >
-                          {w.artist.name}
+                          {w.artist?.name ?? '—'}
                         </button>
                         <span>·</span>
                         <span>{date ? date.slice(0, 10) : '—'}</span>
@@ -514,7 +514,7 @@ function ReviewDetailPanel({
           {work.exhibitionName || work.title}
         </h3>
         <p className="text-slate-400 text-xs mt-0.5">
-          {work.artist.name}
+          {work.artist?.name ?? '—'}
           {images.length > 1 && ` · ${images.length}장`}
           {work.uploadedAt && ` · ${work.uploadedAt.slice(0, 10)}`}
         </p>

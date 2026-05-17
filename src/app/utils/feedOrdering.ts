@@ -120,12 +120,16 @@ export function orderWorksForBrowseFeed(
   const featuredExhibitionIdSet = new Set(featuredStore.getAll());
 
   const used = new Set<string>();
+  const artistCount = new Map<string, number>();
+  const MAX_PER_ARTIST = 3; // 피드 내 작가당 최대 노출 수
   const assign = (pool: Work[], predicate: (w: Work) => boolean, limit?: number): Work[] => {
     const picked: Work[] = [];
     for (const w of pool) {
       if (typeof limit === 'number' && picked.length >= limit) break;
       if (used.has(w.id) || !predicate(w)) continue;
+      if ((artistCount.get(w.artistId) ?? 0) >= MAX_PER_ARTIST) continue;
       used.add(w.id);
+      artistCount.set(w.artistId, (artistCount.get(w.artistId) ?? 0) + 1);
       picked.push(w);
     }
     return picked;
