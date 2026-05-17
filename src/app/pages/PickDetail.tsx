@@ -144,8 +144,8 @@ export default function PickDetail() {
             scrollSnapType: 'x mandatory',
             scrollbarWidth: 'none',
             background: '#000',
-            paddingInline: 'calc((100% - min(50vw, 36vh)) / 2)',
-            scrollPaddingInline: 'calc((100% - min(50vw, 36vh)) / 2)',
+            paddingInline: 'calc((100% - min(58vw, 44vh)) / 2)',
+            scrollPaddingInline: 'calc((100% - min(58vw, 44vh)) / 2)',
             paddingTop: '3vh',
             paddingBottom: '2vh',
           }}
@@ -158,8 +158,8 @@ export default function PickDetail() {
                 ? (w.groupName?.trim() || `${w.artist.name} 외`)
                 : `${w.artist.name} 작가`;
               const dist = Math.abs(i - focusedIndex);
-              const scale = dist === 0 ? 1.18 : dist === 1 ? 0.88 : 0.75;
-              const opacity = dist === 0 ? 1 : dist === 1 ? 0.6 : 0.4;
+              const scale = dist === 0 ? 1 : dist === 1 ? 0.78 : 0.65;
+              const opacity = dist === 0 ? 1 : dist === 1 ? 0.55 : 0.35;
               const isFocused = dist === 0;
 
               return (
@@ -170,7 +170,7 @@ export default function PickDetail() {
                   className="text-center flex-shrink-0"
                   style={{
                     scrollSnapAlign: 'center',
-                    width: 'min(50vw, 36vh)',
+                    width: 'min(58vw, 44vh)',
                     transform: `scale(${scale})`,
                     opacity,
                     transition: 'transform 0.35s ease, opacity 0.35s ease',
