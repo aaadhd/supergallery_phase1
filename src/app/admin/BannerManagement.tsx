@@ -22,7 +22,6 @@ import {
   type DragEndEvent,
 } from '@dnd-kit/core';
 import {
-  arrayMove,
   SortableContext,
   sortableKeyboardCoordinates,
   useSortable,
@@ -117,8 +116,6 @@ export default function BannerManagement() {
     if (oldIndex < 0 || newIndex < 0) return;
     bannerStore.reorder(oldIndex, newIndex);
     toast.success('순서가 변경되었습니다.');
-    // arrayMove 호출은 store가 이미 처리함. 참조용.
-    void arrayMove;
   };
 
   const toggleActive = (id: string, next: boolean) => {
