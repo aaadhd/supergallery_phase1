@@ -57,6 +57,8 @@ const SEED_EVENTS: ManagedEvent[] = [
       'https://images.unsplash.com/photo-1758923530822-3e58cf11011e?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBhcnQlMjBleGhpYml0aW9uJTIwYmFubmVyfGVufDF8fHx8MTc3Mjc3MzI4OXww&ixlib=rb-4.1.0&q=80&w=1080',
     startAt: '2026-05-01',
     endAt: '2026-05-31',
+    displayStartAt: '2026-05-01',
+    displayEndAt: '2026-05-31',
     status: 'active',
   },
   {
@@ -71,6 +73,8 @@ const SEED_EVENTS: ManagedEvent[] = [
       'https://images.unsplash.com/photo-1597306957833-433de12c3af6?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxkaWdpdGFsJTIwYXJ0JTIwc2FsZSUyMHByb21vdGlvbnxlbnwxfHx8fDE3NzI3NzMyODl8MA&ixlib=rb-4.1.0&q=80&w=1080',
     startAt: '2026-05-01',
     endAt: '2026-06-30',
+    displayStartAt: '2026-05-01',
+    displayEndAt: '2026-06-30',
     status: 'active',
   },
   {
@@ -85,6 +89,8 @@ const SEED_EVENTS: ManagedEvent[] = [
       'https://images.unsplash.com/photo-1462275646964-a0e3386b89fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080',
     startAt: '2026-03-20',
     endAt: '2026-04-15',
+    displayStartAt: '2026-03-20',
+    displayEndAt: '2026-04-15',
     participantsLabel: '참여 87명',
     resultUrl: 'https://proud-gallery.notion.site',
   },
@@ -99,6 +105,8 @@ const SEED_EVENTS: ManagedEvent[] = [
       'https://images.unsplash.com/photo-1543269865-cbf427effbad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080',
     startAt: '2026-04-12',
     endAt: '2026-04-12',
+    displayStartAt: '2026-04-01',
+    displayEndAt: '2026-04-12',
     participantsLabel: '참여 12명 / 15명',
   },
   {
@@ -113,6 +121,8 @@ const SEED_EVENTS: ManagedEvent[] = [
       'https://images.unsplash.com/photo-1491002052546-bf38f186af56?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080',
     startAt: '2026-01-06',
     endAt: '2026-01-31',
+    displayStartAt: '2026-01-01',
+    displayEndAt: '2026-01-31',
     participantsLabel: '참여 63명',
     resultUrl: 'https://proud-gallery.notion.site',
   },
@@ -127,6 +137,8 @@ const SEED_EVENTS: ManagedEvent[] = [
       'https://images.unsplash.com/photo-1558618666-fcd25c85cd64?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080',
     startAt: '2026-01-01',
     endAt: '2026-01-05',
+    displayStartAt: '2025-12-25',
+    displayEndAt: '2026-01-05',
     participantsLabel: '참여 41명',
   },
   {
@@ -141,6 +153,8 @@ const SEED_EVENTS: ManagedEvent[] = [
       'https://images.unsplash.com/photo-1513151233558-d860c5398176?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080',
     startAt: '2025-12-15',
     endAt: '2025-12-31',
+    displayStartAt: '2025-12-10',
+    displayEndAt: '2025-12-31',
     participantsLabel: '참여 114명',
     resultUrl: 'https://proud-gallery.notion.site',
   },
@@ -202,12 +216,28 @@ function readFromStorage(): ManagedEvent[] {
     let dirty = false;
     const patched = parsed.map((e: ManagedEvent) => {
       const seed = seedMap.get(e.id);
-      if (!seed) return e;
-      seedMap.delete(e.id); // 처리됨 표시
-      const needsPatch = e.description !== seed.description || e.resultUrl !== seed.resultUrl;
+      if (!seed) {
+        // 시드 외 이벤트도 displayStartAt/displayEndAt 없으면 startAt/endAt으로 보완
+        if (!e.displayStartAt || !e.displayEndAt) {
+          dirty = true;
+          return { ...e, displayStartAt: e.displayStartAt ?? e.startAt, displayEndAt: e.displayEndAt ?? e.endAt };
+        }
+        return e;
+      }
+      seedMap.delete(e.id);
+      const needsPatch =
+        e.description !== seed.description ||
+        e.resultUrl !== seed.resultUrl ||
+        !e.displayStartAt || !e.displayEndAt;
       if (!needsPatch) return e;
       dirty = true;
-      return { ...e, description: seed.description, resultUrl: seed.resultUrl };
+      return {
+        ...e,
+        description: seed.description,
+        resultUrl: seed.resultUrl,
+        displayStartAt: e.displayStartAt ?? seed.displayStartAt ?? e.startAt,
+        displayEndAt: e.displayEndAt ?? seed.displayEndAt ?? e.endAt,
+      };
     });
 
     // 아직 처리 안 된 시드 = 새로 추가
