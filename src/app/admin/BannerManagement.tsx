@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, type FormEvent } from 'react';
 import { toast } from 'sonner';
 import { Plus, Trash2, GripVertical } from 'lucide-react';
+import { AdminImageUpload } from './components/AdminImageUpload';
 import { Button } from '../components/ui/button';
 import {
   bannerStore,
@@ -177,11 +178,7 @@ export default function BannerManagement() {
   const submitForm = (e: FormEvent) => {
     e.preventDefault();
     if (!draft.title.trim() || !draft.imageUrl.trim()) {
-      toast.error('제목과 이미지 URL을 입력해 주세요.');
-      return;
-    }
-    if (!isValidUrl(draft.imageUrl.trim())) {
-      toast.error('이미지 URL 형식이 올바르지 않아요. (http:// 또는 https:// 로 시작해야 해요)');
+      toast.error('제목과 이미지를 입력해 주세요.');
       return;
     }
     if (draft.linkUrl.trim() && !isValidUrl(draft.linkUrl.trim())) {
@@ -279,12 +276,11 @@ export default function BannerManagement() {
               />
             </div>
             <div className="sm:col-span-2">
-              <label className="block text-xs text-muted-foreground mb-1">이미지 URL <span className="text-destructive">*</span></label>
-              <input
-                placeholder="https://..."
+              <AdminImageUpload
+                label="배너 이미지"
+                required
                 value={draft.imageUrl}
-                onChange={(e) => setDraft((d) => ({ ...d, imageUrl: e.target.value }))}
-                className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
+                onChange={(url) => setDraft((d) => ({ ...d, imageUrl: url }))}
               />
             </div>
             <div className="sm:col-span-2">

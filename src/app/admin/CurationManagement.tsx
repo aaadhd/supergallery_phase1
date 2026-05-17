@@ -21,6 +21,7 @@ import { appendAuditLog } from '../utils/adminAuditLog';
 import { getCoverImage } from '../utils/imageHelper';
 import { imageUrls } from '../imageUrls';
 import { ImageWithFallback } from '../components/ImageWithFallback';
+import { AdminImageUpload } from './components/AdminImageUpload';
 import {
   DndContext, closestCenter, KeyboardSensor, PointerSensor, TouchSensor,
   useSensor, useSensors, type DragEndEvent,
@@ -81,12 +82,13 @@ type EditorState = {
   startAt: string;
   endAt: string;
   pageUrl: string;
+  bannerImageUrl: string;
   pieces: SelectedPiece[];
   search: string;
 };
 
 function emptyEditor(): EditorState {
-  return { mode: 'create', title: '', subtitle: '', startAt: '', endAt: '', pageUrl: '', pieces: [], search: '' };
+  return { mode: 'create', title: '', subtitle: '', startAt: '', endAt: '', pageUrl: '', bannerImageUrl: '', pieces: [], search: '' };
 }
 
 function fromExhibition(c: CuratedExhibition): EditorState {
@@ -94,6 +96,7 @@ function fromExhibition(c: CuratedExhibition): EditorState {
     mode: 'edit', editingId: c.id, title: c.title, subtitle: c.subtitle ?? '',
     startAt: c.startAt ?? '', endAt: c.endAt ?? '',
     pageUrl: c.pageUrl ?? '',
+    bannerImageUrl: c.bannerImageUrl ?? '',
     pieces: c.pieces.map((p) => ({ workId: p.workId, pieceId: p.pieceId })),
     search: '',
   };
@@ -246,8 +249,9 @@ export default function CurationManagement() {
     const template = t('notif.curationSelected');
     const untitled = t('work.untitled');
 
-    // 첫 번째 piece 이미지를 대표 이미지로 자동 생성
+    // 업로드 이미지 우선, 없으면 첫 번째 piece 이미지로 자동 생성
     const deriveBannerImageUrl = (): string | undefined => {
+      if (editor.bannerImageUrl.trim()) return editor.bannerImageUrl.trim();
       const firstPiece = pieces[0];
       if (!firstPiece) return undefined;
       const w = workStore.getWork(firstPiece.workId);
@@ -495,6 +499,11 @@ export default function CurationManagement() {
                       className="w-full border border-border rounded-lg px-3 py-1.5 text-sm"
                     />
                   </div>
+                  <AdminImageUpload
+                    label="대문 이미지 (이벤트 메뉴·상세 표시용, 미설정 시 첫 번째 piece 이미지 사용)"
+                    value={editor.bannerImageUrl}
+                    onChange={(url) => setEditor((prev) => prev ? { ...prev, bannerImageUrl: url } : prev)}
+                  />
                   <div className="relative">
                     <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
                     <input value={editor.search}

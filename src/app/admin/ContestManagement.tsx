@@ -17,6 +17,7 @@ import { workStore } from '../store';
 import { appendAuditLog } from '../utils/adminAuditLog';
 import { useI18n } from '../i18n/I18nProvider';
 import EventParticipants from './EventParticipants';
+import { AdminImageUpload } from './components/AdminImageUpload';
 
 type Tab = 'list' | 'participants';
 
@@ -301,12 +302,11 @@ export default function ContestManagement() {
                       />
                     </div>
                     <div className="sm:col-span-2">
-                      <label className="block text-xs text-muted-foreground mb-1">이벤트 대표 이미지 URL <span className="text-destructive">*</span></label>
-                      <input
-                        placeholder="https://... (이벤트 카드·상세 페이지 표시용)"
+                      <AdminImageUpload
+                        label="이벤트 대표 이미지 (카드·상세 페이지 표시용)"
+                        required
                         value={draft.bannerImageUrl}
-                        onChange={(e) => setDraft((d) => ({ ...d, bannerImageUrl: e.target.value }))}
-                        className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
+                        onChange={(url) => setDraft((d) => ({ ...d, bannerImageUrl: url }))}
                       />
                     </div>
                     <div className="sm:col-span-2">

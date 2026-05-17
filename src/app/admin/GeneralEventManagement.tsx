@@ -13,6 +13,7 @@ import {
 } from '../utils/eventsStore';
 import { appendAuditLog } from '../utils/adminAuditLog';
 import { useI18n } from '../i18n/I18nProvider';
+import { AdminImageUpload } from './components/AdminImageUpload';
 
 type DraftState = {
   title: string;
@@ -197,12 +198,14 @@ export default function GeneralEventManagement() {
               onChange={(e) => setDraft((d) => ({ ...d, subtitle: e.target.value }))}
               className="border border-border rounded-lg px-3 py-2 text-sm bg-white"
             />
-            <input
-              placeholder="이벤트 대표 이미지 URL * (이벤트 카드·상세 페이지 표시용)"
-              value={draft.bannerImageUrl}
-              onChange={(e) => setDraft((d) => ({ ...d, bannerImageUrl: e.target.value }))}
-              className="border border-border rounded-lg px-3 py-2 text-sm bg-white sm:col-span-2"
-            />
+            <div className="sm:col-span-2">
+              <AdminImageUpload
+                label="이벤트 대표 이미지 (카드·상세 페이지 표시용)"
+                required
+                value={draft.bannerImageUrl}
+                onChange={(url) => setDraft((d) => ({ ...d, bannerImageUrl: url }))}
+              />
+            </div>
             <textarea
               placeholder="이벤트 내용 *"
               value={draft.description}
