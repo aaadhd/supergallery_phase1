@@ -1,7 +1,9 @@
 import { useState, useMemo, useEffect, useSyncExternalStore } from 'react';
+import { createPortal } from 'react-dom';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Check } from 'lucide-react';
+import { Check, Eye, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import type { Work } from '../data';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
 } from '../components/ui/select';
@@ -60,7 +62,6 @@ function useParticipantsFromWorks(): EventParticipant[] {
   }, [works]);
 }
 
-const STATUS_OPTIONS = ['전체', '참여 완료', '대기 중', '취소'];
 
 export default function EventParticipants({ compact = false }: { compact?: boolean }) {
   const { t } = useI18n();
@@ -70,7 +71,7 @@ export default function EventParticipants({ compact = false }: { compact?: boole
   const contestEvents = useMemo(() => events.filter(e => e.type === 'contest'), [events]);
 
   const [selectedEventId, setSelectedEventId] = useState(searchParams.get('event') ?? '');
-  const [filterStatus, setFilterStatus] = useState('참여 완료');
+  const [previewWork, setPreviewWork] = useState<{ work: Work; imgIndex: number } | null>(null);
 
   useEffect(() => {
     const fromQuery = searchParams.get('event');
@@ -95,10 +96,10 @@ export default function EventParticipants({ compact = false }: { compact?: boole
     return allParticipants.filter(p => {
       if (p.eventId !== selectedEventId) return false;
       if (!p.workId) return false;
-      if (filterStatus !== '전체' && p.status !== filterStatus) return false;
+      if (p.status !== '참여 완료') return false;
       return true;
     });
-  }, [allParticipants, selectedEventId, filterStatus]);
+  }, [allParticipants, selectedEventId]);
 
   const totalCount = useMemo(
     () => allParticipants.filter(p => p.eventId === selectedEventId && p.workId).length,
@@ -177,6 +178,7 @@ export default function EventParticipants({ compact = false }: { compact?: boole
   };
 
   return (
+    <>
     <div className="space-y-5">
       {!compact && (
         <div>
@@ -221,22 +223,8 @@ export default function EventParticipants({ compact = false }: { compact?: boole
         )}
       </div>
 
-      {/* 상태 필터 칩 + 일괄 액션 */}
+      {/* 일괄 액션 */}
       <div className="flex flex-wrap items-center gap-2">
-        {STATUS_OPTIONS.map(s => (
-          <button
-            key={s}
-            type="button"
-            onClick={() => setFilterStatus(s)}
-            className={`px-3 py-1 rounded-full text-xs font-medium border transition-colors ${
-              filterStatus === s
-                ? 'bg-primary text-white border-primary'
-                : 'border-border text-muted-foreground lg:hover:border-foreground lg:hover:text-foreground'
-            }`}
-          >
-            {s}
-          </button>
-        ))}
         {filtered.length > 0 && (
           <div className="ml-auto flex gap-2">
             <button
@@ -275,47 +263,140 @@ export default function EventParticipants({ compact = false }: { compact?: boole
             const coverSrc = coverKey ? (imageUrls[coverKey] || coverKey) : null;
             const exhibitionTitle = work?.exhibitionName || work?.title || p.name;
             const artistName = work?.artist?.name;
+            const allImgs = work
+              ? (Array.isArray(work.image) ? work.image : [work.image]).map((k: string) => imageUrls[k] || k)
+              : [];
             return (
               <li key={p.id}>
-                <button
-                  type="button"
-                  onClick={() => handleToggle(p.workId!)}
-                  className={`group w-full rounded-xl overflow-hidden border-2 text-left transition-all ${
-                    isSelected
-                      ? 'border-primary shadow-md shadow-primary/15'
-                      : 'border-border lg:hover:border-primary/50'
-                  }`}
-                >
-                  <div className="aspect-square bg-muted relative overflow-hidden">
-                    {coverSrc ? (
-                      <ImageWithFallback
-                        src={coverSrc}
-                        alt={exhibitionTitle}
-                        className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-200"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">
-                        이미지 없음
-                      </div>
+                <div className={`group w-full rounded-xl overflow-hidden border-2 text-left transition-all ${
+                  isSelected ? 'border-primary shadow-md shadow-primary/15' : 'border-border lg:hover:border-primary/50'
+                }`}>
+                  <button
+                    type="button"
+                    onClick={() => handleToggle(p.workId!)}
+                    className="w-full text-left"
+                  >
+                    <div className="aspect-square bg-muted relative overflow-hidden">
+                      {coverSrc ? (
+                        <ImageWithFallback
+                          src={coverSrc}
+                          alt={exhibitionTitle}
+                          className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-200"
+                        />
+                      ) : (
+                        <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">
+                          이미지 없음
+                        </div>
+                      )}
+                      {isSelected && (
+                        <div className="absolute top-2 right-2 bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center shadow-sm">
+                          <Check className="w-3.5 h-3.5 stroke-[3]" />
+                        </div>
+                      )}
+                      {allImgs.length > 1 && (
+                        <div className="absolute bottom-2 left-2 bg-black/50 text-white text-[10px] px-1.5 py-0.5 rounded-full">
+                          {allImgs.length}장
+                        </div>
+                      )}
+                      <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/8 transition-colors" />
+                    </div>
+                  </button>
+                  <div className="p-2.5 bg-white flex items-start justify-between gap-1">
+                    <div className="min-w-0">
+                      <p className="text-sm font-medium text-foreground truncate leading-snug">{exhibitionTitle}</p>
+                      {artistName && <p className="text-xs text-muted-foreground mt-0.5 truncate">{artistName}</p>}
+                      <p className="text-[11px] text-muted-foreground/60 mt-1">{p.participatedAt}</p>
+                    </div>
+                    {work && (
+                      <button
+                        type="button"
+                        onClick={() => setPreviewWork({ work, imgIndex: 0 })}
+                        className="shrink-0 p-1 rounded text-muted-foreground lg:hover:text-foreground lg:hover:bg-muted/50 mt-0.5"
+                        title="작품 전체 보기"
+                      >
+                        <Eye className="w-4 h-4" />
+                      </button>
                     )}
-                    {isSelected && (
-                      <div className="absolute top-2 right-2 bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center shadow-sm">
-                        <Check className="w-3.5 h-3.5 stroke-[3]" />
-                      </div>
-                    )}
-                    <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/8 transition-colors" />
                   </div>
-                  <div className="p-2.5 bg-white">
-                    <p className="text-sm font-medium text-foreground truncate leading-snug">{exhibitionTitle}</p>
-                    {artistName && <p className="text-xs text-muted-foreground mt-0.5 truncate">{artistName}</p>}
-                    <p className="text-[11px] text-muted-foreground/60 mt-1">{p.participatedAt}</p>
-                  </div>
-                </button>
+                </div>
               </li>
             );
           })}
         </ul>
       )}
     </div>
+
+    {/* 작품 전체 보기 모달 */}
+    {previewWork && createPortal(
+      <div
+        className="fixed inset-0 z-50 bg-black/80 flex items-center justify-center p-4"
+        onClick={() => setPreviewWork(null)}
+      >
+        <div
+          className="relative bg-white rounded-2xl overflow-hidden max-w-lg w-full shadow-2xl"
+          onClick={(e) => e.stopPropagation()}
+        >
+          <div className="relative aspect-square bg-black">
+            <ImageWithFallback
+              src={(Array.isArray(previewWork.work.image) ? previewWork.work.image : [previewWork.work.image])
+                .map((k: string) => imageUrls[k] || k)[previewWork.imgIndex]}
+              alt=""
+              className="w-full h-full object-contain"
+            />
+            {(() => {
+              const imgs = (Array.isArray(previewWork.work.image) ? previewWork.work.image : [previewWork.work.image])
+                .map((k: string) => imageUrls[k] || k);
+              return imgs.length > 1 && (
+                <>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewWork((p) => p ? { ...p, imgIndex: Math.max(0, p.imgIndex - 1) } : p)}
+                    disabled={previewWork.imgIndex === 0}
+                    className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white rounded-full w-9 h-9 flex items-center justify-center disabled:opacity-20 lg:hover:bg-black/70"
+                  >
+                    <ChevronLeft className="w-5 h-5" />
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setPreviewWork((p) => p ? { ...p, imgIndex: Math.min(imgs.length - 1, p.imgIndex + 1) } : p)}
+                    disabled={previewWork.imgIndex === imgs.length - 1}
+                    className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white rounded-full w-9 h-9 flex items-center justify-center disabled:opacity-20 lg:hover:bg-black/70"
+                  >
+                    <ChevronRight className="w-5 h-5" />
+                  </button>
+                  <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
+                    {imgs.map((_, i) => (
+                      <button
+                        key={i}
+                        type="button"
+                        onClick={() => setPreviewWork((p) => p ? { ...p, imgIndex: i } : p)}
+                        className={`w-1.5 h-1.5 rounded-full transition-all ${i === previewWork.imgIndex ? 'bg-white' : 'bg-white/40'}`}
+                      />
+                    ))}
+                  </div>
+                </>
+              );
+            })()}
+          </div>
+          <div className="p-4 flex items-start justify-between gap-3">
+            <div>
+              <p className="font-semibold text-foreground">{displayExhibitionTitle(previewWork.work, '(제목 없음)')}</p>
+              {previewWork.work.artist?.name && (
+                <p className="text-sm text-muted-foreground mt-0.5">{previewWork.work.artist.name}</p>
+              )}
+            </div>
+            <button
+              type="button"
+              onClick={() => setPreviewWork(null)}
+              className="shrink-0 p-1 rounded-lg text-muted-foreground lg:hover:bg-muted/50"
+            >
+              <X className="w-5 h-5" />
+            </button>
+          </div>
+        </div>
+      </div>,
+      document.body,
+    )}
+    </>
   );
 }
