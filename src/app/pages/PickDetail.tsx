@@ -105,7 +105,7 @@ export default function PickDetail() {
       {/* 선정 전시 그리드 */}
       <div className="max-w-2xl mx-auto px-4 py-8">
         {selectedWorks.length === 0 ? (
-          <p className="text-center text-sm text-muted-foreground py-16">선정된 전시가 없습니다.</p>
+          <p className="text-center text-sm text-muted-foreground py-16">{t('pickDetail.noSelected')}</p>
         ) : (
           <div className="grid grid-cols-2 gap-3">
             {selectedWorks.map((w) => {

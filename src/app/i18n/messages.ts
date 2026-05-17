@@ -431,6 +431,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'pickDetail.notFound': '존재하지 않는 Pick 세션입니다',
   'pickDetail.backToEvents': '← 이벤트로',
   'pickDetail.ended': '종료된 Pick',
+  'pickDetail.noSelected': '선정된 전시가 없습니다.',
   // 명예의 전당
   'hallOfFame.title': '명예의 전당',
   'hallOfFame.subtitle': '역대 Proud\'s Pick 선정 전시',
@@ -1552,6 +1553,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'pickDetail.notFound': 'Pick session not found',
   'pickDetail.backToEvents': '← Events',
   'pickDetail.ended': 'Ended Pick',
+  'pickDetail.noSelected': 'No exhibitions selected.',
   // 명예의 전당
   'hallOfFame.title': '명예의 전당',
   'hallOfFame.subtitle': 'All-time Proud\'s Pick',
