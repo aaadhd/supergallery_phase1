@@ -108,8 +108,7 @@ export default function EventDetail() {
       <div className="relative h-[250px] sm:h-[350px] lg:h-[400px] overflow-hidden">
         <ImageWithFallback src={event.bannerImageUrl} alt={event.title} className="w-full h-full object-cover" loading="eager" />
         <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/40 to-transparent" />
-        {/* 뒤로가기 — 히어로 좌상단 오버레이 */}
-        <div className="absolute top-0 left-0 right-0 px-4 sm:px-6 pt-4 sm:pt-5">
+        <div className="absolute inset-0 flex flex-col justify-between px-4 sm:px-6 pt-4 sm:pt-5 pb-6 sm:pb-10">
           <div className="mx-auto max-w-[1440px] w-full">
             <button
               type="button"
@@ -117,12 +116,10 @@ export default function EventDetail() {
               className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-white lg:hover:text-white/80 transition-colors"
               style={{ textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}
             >
-              <ArrowLeft className="w-4 h-4" style={{ filter: 'drop-shadow(0 1px 3px rgba(0,0,0,0.6))' }} />
+              <ArrowLeft className="w-4 h-4" />
               {t('eventDetail.backToList')}
             </button>
           </div>
-        </div>
-        <div className="absolute inset-0 flex flex-col justify-end px-4 sm:px-6 pb-6 sm:pb-10">
           <div className="mx-auto max-w-[1440px] w-full">
             <span className="inline-block px-4 py-1.5 text-xs font-bold tracking-wider text-white bg-primary rounded-full mb-4">
               {eventStatus === 'active' ? t('eventDetail.statusActive') : eventStatus === 'scheduled' ? t('eventDetail.statusScheduled') : t('eventDetail.statusEnded')}
