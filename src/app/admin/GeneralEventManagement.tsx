@@ -18,6 +18,7 @@ type DraftState = {
   title: string;
   subtitle: string;
   description: string;
+  bannerImageUrl: string;
   startAt: string;
   endAt: string;
   displayStartAt: string;
@@ -30,6 +31,7 @@ const emptyDraft: DraftState = {
   title: '',
   subtitle: '',
   description: '',
+  bannerImageUrl: '',
   startAt: '',
   endAt: '',
   displayStartAt: '',
@@ -72,7 +74,7 @@ export default function GeneralEventManagement() {
       title: ev.title,
       subtitle: ev.subtitle ?? '',
       description: ev.description,
-
+      bannerImageUrl: ev.bannerImageUrl ?? '',
       startAt: ev.startAt,
       endAt: ev.endAt,
       displayStartAt: ev.displayStartAt ?? '',
@@ -105,12 +107,13 @@ export default function GeneralEventManagement() {
   const submit = (e: FormEvent) => {
     e.preventDefault();
     const title = draft.title.trim();
+    const img = draft.bannerImageUrl.trim();
     const start = draft.startAt.trim();
     const end = draft.endAt.trim();
     const desc = draft.description.trim();
 
-    if (!title || !start || !end || !desc) {
-      toast.error('제목·기간·내용은 필수입니다.');
+    if (!title || !img || !start || !end || !desc) {
+      toast.error('제목·이미지·기간·내용은 필수입니다.');
       return;
     }
     if (start > end) {
@@ -128,6 +131,7 @@ export default function GeneralEventManagement() {
       title,
       subtitle: draft.subtitle.trim() || undefined,
       description: desc,
+      bannerImageUrl: img,
       startAt: start,
       endAt: end,
       displayStartAt: displayStart,
@@ -192,6 +196,12 @@ export default function GeneralEventManagement() {
               value={draft.subtitle}
               onChange={(e) => setDraft((d) => ({ ...d, subtitle: e.target.value }))}
               className="border border-border rounded-lg px-3 py-2 text-sm bg-white"
+            />
+            <input
+              placeholder="이벤트 대표 이미지 URL * (이벤트 카드·상세 페이지 표시용)"
+              value={draft.bannerImageUrl}
+              onChange={(e) => setDraft((d) => ({ ...d, bannerImageUrl: e.target.value }))}
+              className="border border-border rounded-lg px-3 py-2 text-sm bg-white sm:col-span-2"
             />
             <textarea
               placeholder="이벤트 내용 *"

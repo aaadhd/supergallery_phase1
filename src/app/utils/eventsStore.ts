@@ -18,7 +18,7 @@ export type ManagedEvent = {
   title: string;
   subtitle?: string;
   description: string;
-  bannerImageUrl?: string;
+  bannerImageUrl: string;
   /** 실행 기간 — 응모전 접수 기간 등. deriveEventStatus 계산 기준. YYYY-MM-DD */
   startAt: string;
   endAt: string;

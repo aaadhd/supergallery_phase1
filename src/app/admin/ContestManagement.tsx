@@ -24,6 +24,7 @@ type DraftState = {
   title: string;
   subtitle: string;
   description: string;
+  bannerImageUrl: string;
   startAt: string;
   endAt: string;
   displayStartAt: string;
@@ -40,6 +41,7 @@ const emptyDraft: DraftState = {
   title: '',
   subtitle: '',
   description: '',
+  bannerImageUrl: '',
   startAt: '',
   endAt: '',
   displayStartAt: '',
@@ -118,7 +120,7 @@ export default function ContestManagement() {
       title: ev.title,
       subtitle: ev.subtitle ?? '',
       description: ev.description,
-
+      bannerImageUrl: ev.bannerImageUrl ?? '',
       startAt: ev.startAt,
       endAt: ev.endAt,
       displayStartAt: ev.displayStartAt ?? '',
@@ -160,11 +162,12 @@ export default function ContestManagement() {
   const submit = (e: FormEvent) => {
     e.preventDefault();
     const title = draft.title.trim();
+    const img = draft.bannerImageUrl.trim();
     const start = draft.startAt.trim();
     const end = draft.endAt.trim();
     const desc = draft.description.trim();
 
-    if (!title || !start || !end || !desc) {
+    if (!title || !img || !start || !end || !desc) {
       toast.error(t('admin.contest.errRequired'));
       return;
     }
@@ -188,6 +191,7 @@ export default function ContestManagement() {
       title,
       subtitle: draft.subtitle.trim() || undefined,
       description: desc,
+      bannerImageUrl: img,
       startAt: start,
       endAt: end,
       displayStartAt: displayStart,
@@ -293,6 +297,15 @@ export default function ContestManagement() {
                         placeholder="예: 디지털 드로잉 작가 누구나"
                         value={draft.participantsLabel}
                         onChange={(e) => setDraft((d) => ({ ...d, participantsLabel: e.target.value }))}
+                        className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
+                      />
+                    </div>
+                    <div className="sm:col-span-2">
+                      <label className="block text-xs text-muted-foreground mb-1">이벤트 대표 이미지 URL <span className="text-destructive">*</span></label>
+                      <input
+                        placeholder="https://... (이벤트 카드·상세 페이지 표시용)"
+                        value={draft.bannerImageUrl}
+                        onChange={(e) => setDraft((d) => ({ ...d, bannerImageUrl: e.target.value }))}
                         className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
                       />
                     </div>
