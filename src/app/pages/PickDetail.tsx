@@ -146,8 +146,8 @@ export default function PickDetail() {
             background: '#000',
             paddingInline: 'max(19vw, 40px)',
             scrollPaddingInline: 'max(19vw, 40px)',
-            paddingTop: 'min(10vw, 9vh)',
-            paddingBottom: 'min(6vw, 5vh)',
+            paddingTop: '3vh',
+            paddingBottom: '2vh',
           }}
           >
             {selectedWorks.map((w, i) => {
