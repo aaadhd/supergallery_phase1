@@ -279,7 +279,7 @@ export default function ContentReview() {
         <select
           value={statusFilter}
           onChange={(e) => setStatusFilter(e.target.value)}
-          className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground min-w-[140px]"
+          className="h-9 border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground min-w-[140px]"
         >
           <option value="전체">상태: 전체</option>
           <option value="대기중">대기중</option>
@@ -290,7 +290,7 @@ export default function ContentReview() {
           type="date"
           value={from}
           onChange={(e) => setFrom(e.target.value)}
-          className="border border-border rounded-lg px-3 py-2 text-sm"
+          className="h-9 border border-border rounded-lg px-3 py-2 text-sm bg-white"
           aria-label="기간 시작"
         />
         <span className="self-center text-sm text-muted-foreground">~</span>
@@ -298,7 +298,7 @@ export default function ContentReview() {
           type="date"
           value={to}
           onChange={(e) => setTo(e.target.value)}
-          className="border border-border rounded-lg px-3 py-2 text-sm"
+          className="h-9 border border-border rounded-lg px-3 py-2 text-sm bg-white"
           aria-label="기간 종료"
         />
       </div>
