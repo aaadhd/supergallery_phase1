@@ -319,7 +319,7 @@ export default function Events() {
                           <p className="text-xs text-muted-foreground truncate mt-0.5">{c.subtitle}</p>
                         )}
                         <p className="text-xs text-muted-foreground mt-0.5">
-                          {c.pieces.length}작품
+                          {t('events.curationPieces').replace('{n}', String(c.pieces.length))}
                           {c.startAt && c.endAt ? ` · ${c.startAt} ~ ${c.endAt}` : ''}
                         </p>
                       </div>
@@ -359,7 +359,7 @@ export default function Events() {
                       <div className="flex-1 min-w-0">
                         <p className="text-sm font-semibold text-foreground truncate">{c.title}</p>
                         <p className="text-xs text-muted-foreground mt-0.5">
-                          {c.pieces.length}작품 · {c.startAt} ~ {c.endAt}
+                          {t('events.curationPieces').replace('{n}', String(c.pieces.length))} · {c.startAt} ~ {c.endAt}
                         </p>
                       </div>
                       <span className="text-xs text-muted-foreground shrink-0">{t('events.curationEndedBlocked')}</span>

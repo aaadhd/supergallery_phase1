@@ -424,6 +424,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'events.curationEnded': '지난 기획전',
   'events.curationNone': '현재 진행 중인 기획전이 없습니다',
   'events.curationEndedBlocked': '종료된 기획전입니다',
+  'events.curationPieces': '{n}작품',
   // PickDetail 페이지
   'pickDetail.heading': 'Proud\'s Pick',
   'pickDetail.selectedCount': '{n}개 전시 선정',
@@ -1544,6 +1545,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'events.curationEnded': '지난 기획전',
   'events.curationNone': '현재 진행 중인 기획전이 없습니다',
   'events.curationEndedBlocked': '종료된 기획전입니다',
+  'events.curationPieces': '{n}작품',
   // PickDetail 페이지
   'pickDetail.heading': 'Proud\'s Pick',
   'pickDetail.selectedCount': '{n} exhibitions selected',
