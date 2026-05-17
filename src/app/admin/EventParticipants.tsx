@@ -62,7 +62,7 @@ function useParticipantsFromWorks(): EventParticipant[] {
   }, [works]);
 }
 
-type SortKey = 'latest' | 'artist' | 'selected';
+type SortKey = 'latest' | 'title' | 'artist';
 
 export default function EventParticipants({ compact = false }: { compact?: boolean }) {
   const { t } = useI18n();
@@ -100,13 +100,11 @@ export default function EventParticipants({ compact = false }: { compact?: boole
 
   const sorted = useMemo(() => {
     const list = [...filtered];
-    if (sortBy === 'selected') {
+    if (sortBy === 'title') {
       list.sort((a, b) => {
-        const aS = selectedWorkIds.has(a.workId!);
-        const bS = selectedWorkIds.has(b.workId!);
-        if (aS && !bS) return -1;
-        if (!aS && bS) return 1;
-        return 0;
+        const aW = workStore.getWork(a.workId!);
+        const bW = workStore.getWork(b.workId!);
+        return (aW?.exhibitionName || aW?.title || a.name).localeCompare(bW?.exhibitionName || bW?.title || b.name, 'ko');
       });
     } else if (sortBy === 'artist') {
       list.sort((a, b) => {
@@ -117,7 +115,7 @@ export default function EventParticipants({ compact = false }: { compact?: boole
     }
     // 'latest': 기본 순서 유지
     return list;
-  }, [filtered, sortBy, selectedWorkIds]);
+  }, [filtered, sortBy]);
 
   const totalCount = useMemo(
     () => allParticipants.filter(p => p.eventId === selectedEventId && p.workId).length,
@@ -201,26 +199,6 @@ export default function EventParticipants({ compact = false }: { compact?: boole
     toast.success(`당선자 ${selectedIds.length}명에게 알림 발송 완료`);
   };
 
-  const handleSelectAll = () => {
-    if (isPublished) return;
-    const workIds = sorted.map(p => p.workId!);
-    const { addedIds } = eventsStore.bulkSelect(selectedEventId, workIds);
-    if (addedIds.length > 0) {
-      appendAuditLog({ action: 'contest_selected', targetId: 'bulk', targetSnapshot: { totalAdded: addedIds.length }, actorId: 'admin', actorRole: 'admin' });
-      toast.success(`${addedIds.length}건 선정`);
-    } else {
-      toast('이미 모두 선정된 상태입니다');
-    }
-  };
-
-  const handleUnselectAll = () => {
-    if (isPublished) return;
-    const workIds = sorted.map(p => p.workId!);
-    eventsStore.bulkUnselect(selectedEventId, workIds);
-    appendAuditLog({ action: 'contest_unselected', targetId: 'bulk', targetSnapshot: { count: workIds.length }, actorId: 'admin', actorRole: 'admin' });
-    toast(`${workIds.length}건 선정 해제`);
-  };
-
   return (
     <>
     <div className="space-y-4 pb-4">
@@ -231,7 +209,7 @@ export default function EventParticipants({ compact = false }: { compact?: boole
         </div>
       )}
 
-      {/* 응모전 선택 + 통계 */}
+      {/* 응모전 선택 + 통계 + 정렬 */}
       <div className="flex flex-wrap items-center gap-3">
         {contestEvents.length === 0 ? (
           <p className="text-sm text-muted-foreground">운영 중인 응모전이 없습니다.</p>
@@ -248,17 +226,15 @@ export default function EventParticipants({ compact = false }: { compact?: boole
           </Select>
         )}
         {selectedEventId && (
-          <div className="flex flex-wrap items-center gap-3">
+          <>
             <p className="text-sm text-muted-foreground">
               총 {totalCount}건 응모
-              <span className="ml-2 font-semibold text-primary">
-                · {selectedFromParticipants}건 선정
-              </span>
+              <span className="ml-2 font-semibold text-primary">· {selectedFromParticipants}건 선정</span>
             </p>
             {isNotified && (
               <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
                 <Check className="w-3 h-3" />
-                알림 발송 완료 {selectedEvent?.notifiedAt ? `· ${selectedEvent.notifiedAt.slice(5)}` : ''}
+                알림 발송 완료{selectedEvent?.notifiedAt ? ` · ${selectedEvent.notifiedAt.slice(5)}` : ''}
               </span>
             )}
             {isPublished && !isNotified && (
@@ -267,34 +243,18 @@ export default function EventParticipants({ compact = false }: { compact?: boole
               </span>
             )}
             {pendingCount > 0 && (
-              <p className="text-xs text-muted-foreground/70">검수 대기 {pendingCount}건 (검수 통과 후 표시)</p>
+              <p className="text-xs text-muted-foreground/70">검수 대기 {pendingCount}건</p>
             )}
-          </div>
-        )}
-      </div>
-
-      {/* 정렬 + 일괄 액션 */}
-      <div className="flex flex-wrap items-center gap-2">
-        <select
-          value={sortBy}
-          onChange={(e) => setSortBy(e.target.value as SortKey)}
-          className="text-xs border border-border rounded-lg px-2.5 py-1.5 bg-white text-foreground"
-        >
-          <option value="latest">최신 응모순</option>
-          <option value="artist">작가명순</option>
-          <option value="selected">선정된 작품 먼저</option>
-        </select>
-        {!isPublished && sorted.length > 0 && (
-          <div className="ml-auto flex gap-2">
-            <button type="button" onClick={handleSelectAll}
-              className="text-xs px-3 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/40">
-              전체 선정
-            </button>
-            <button type="button" onClick={handleUnselectAll}
-              className="text-xs px-3 py-1.5 rounded-lg border border-red-200 text-red-700 lg:hover:bg-red-50">
-              전체 해제
-            </button>
-          </div>
+            <select
+              value={sortBy}
+              onChange={(e) => setSortBy(e.target.value as SortKey)}
+              className="ml-auto text-xs border border-border rounded-lg px-2 py-1 bg-white text-foreground"
+            >
+              <option value="latest">최신순</option>
+              <option value="title">작품명순</option>
+              <option value="artist">작가명순</option>
+            </select>
+          </>
         )}
       </div>
 
