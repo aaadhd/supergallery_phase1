@@ -1,6 +1,6 @@
 import { useMemo, useState, useEffect, type FormEvent } from 'react';
 import { toast } from 'sonner';
-import { Pencil, Plus, Trash2 } from 'lucide-react';
+import { Pencil, Plus, Trash2, X } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { openConfirm } from '../components/ConfirmDialog';
 import {
@@ -67,8 +67,6 @@ export default function GeneralEventManagement() {
 
   const startEdit = (ev: ManagedEvent) => {
     setEditingId(ev.id);
-    setShowForm(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
     setDraft({
       title: ev.title,
       subtitle: ev.subtitle ?? '',
@@ -163,111 +161,17 @@ export default function GeneralEventManagement() {
 
   return (
     <div className="min-h-full">
-      <div className="flex flex-wrap items-center justify-between gap-4 mb-1">
+      <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
         <h1 className="text-base font-semibold text-foreground">일반 이벤트 관리</h1>
         <Button
           type="button"
-          onClick={() => { setEditingId(null); setDraft(emptyDraft); setShowForm((v) => !v); }}
+          onClick={() => { setEditingId(null); setDraft(emptyDraft); setShowForm(true); }}
           className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90 inline-flex items-center gap-1.5"
         >
           <Plus className="w-4 h-4" />
           새 이벤트
         </Button>
       </div>
-
-      {showForm && (
-        <form
-          onSubmit={submit}
-          className="mb-6 border border-border rounded-lg p-4 space-y-4 bg-muted/50"
-        >
-          <p className="text-sm font-medium text-foreground">{editingId ? '이벤트 수정' : '새 이벤트 등록'}</p>
-
-          <div className="grid sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs text-muted-foreground mb-1">이벤트명 <span className="text-destructive">*</span></label>
-              <input
-                value={draft.title}
-                onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
-                placeholder="이벤트명"
-                className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-muted-foreground mb-1">부제목</label>
-              <input
-                value={draft.subtitle}
-                onChange={(e) => setDraft((d) => ({ ...d, subtitle: e.target.value }))}
-                placeholder="부제목"
-                className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
-              />
-            </div>
-            <div className="sm:col-span-2">
-              <AdminImageUpload
-                label="이벤트 대표 이미지"
-                required
-                value={draft.bannerImageUrl}
-                onChange={(url) => setDraft((d) => ({ ...d, bannerImageUrl: url }))}
-              />
-            </div>
-            <textarea
-              placeholder="이벤트 내용 *"
-              value={draft.description}
-              onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
-              className="border border-border rounded-lg px-3 py-2 text-sm bg-white sm:col-span-2 min-h-[80px]"
-            />
-
-            {/* 실행 기간 */}
-            <div className="sm:col-span-2">
-              <p className="text-xs font-semibold text-foreground mb-2">실행 기간 *</p>
-              <div className="grid sm:grid-cols-2 gap-3">
-                <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-                  시작일
-                  <input type="date" value={draft.startAt} onChange={(e) => setDraft((d) => ({ ...d, startAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground" />
-                </label>
-                <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-                  종료일
-                  <input type="date" value={draft.endAt} onChange={(e) => setDraft((d) => ({ ...d, endAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground" />
-                </label>
-              </div>
-            </div>
-
-            {/* 게시 기간 */}
-            <div className="sm:col-span-2">
-              <p className="text-xs font-semibold text-foreground mb-2">게시 기간 <span className="text-destructive">*</span></p>
-              <div className="grid sm:grid-cols-2 gap-3">
-                <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-                  게시 시작일 <span className="text-destructive">*</span>
-                  <input type="date" value={draft.displayStartAt} onChange={(e) => setDraft((d) => ({ ...d, displayStartAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground" />
-                </label>
-                <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-                  게시 종료일 <span className="text-destructive">*</span>
-                  <input type="date" value={draft.displayEndAt} onChange={(e) => setDraft((d) => ({ ...d, displayEndAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground" />
-                </label>
-              </div>
-            </div>
-
-            <div>
-              <label className="block text-xs text-muted-foreground mb-1">결과 발표 URL</label>
-              <input
-                type="url"
-                value={draft.resultUrl}
-                onChange={(e) => setDraft((d) => ({ ...d, resultUrl: e.target.value }))}
-                placeholder="https://..."
-                className="w-full border border-border rounded-lg px-3 py-1.5 text-sm"
-              />
-            </div>
-          </div>
-
-          <div className="flex gap-2">
-            <Button type="submit" className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white">
-              {editingId ? '수정' : '저장'}
-            </Button>
-            <button type="button" onClick={cancelEdit} className="text-sm px-3 py-1.5 rounded-lg border border-border">
-              {t('admin.contest.cancel')}
-            </button>
-          </div>
-        </form>
-      )}
 
       {generalEvents.length === 0 ? (
         <div className="rounded-lg border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
@@ -328,6 +232,115 @@ export default function GeneralEventManagement() {
               })}
             </tbody>
           </table>
+        </div>
+      )}
+
+      {/* 등록/수정 모달 */}
+      {showForm && (
+        <div
+          className="fixed inset-0 z-50 bg-black/50 flex items-start justify-center overflow-y-auto py-8 px-4"
+          onClick={(e) => { if (e.target === e.currentTarget) cancelEdit(); }}
+        >
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl">
+            <form onSubmit={submit}>
+              <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-border">
+                <h2 className="text-base font-semibold text-foreground">
+                  {editingId ? '일반 이벤트 수정' : '새 일반 이벤트 등록'}
+                </h2>
+                <button type="button" onClick={cancelEdit} className="p-1.5 rounded-lg text-muted-foreground lg:hover:bg-muted/50">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="px-6 py-4 space-y-4">
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs text-muted-foreground mb-1">이벤트명 <span className="text-destructive">*</span></label>
+                    <input
+                      value={draft.title}
+                      onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
+                      placeholder="이벤트명"
+                      className="w-full border border-border rounded-lg px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-muted-foreground mb-1">부제목</label>
+                    <input
+                      value={draft.subtitle}
+                      onChange={(e) => setDraft((d) => ({ ...d, subtitle: e.target.value }))}
+                      placeholder="부제목"
+                      className="w-full border border-border rounded-lg px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <AdminImageUpload
+                      label="이벤트 대표 이미지"
+                      required
+                      value={draft.bannerImageUrl}
+                      onChange={(url) => setDraft((d) => ({ ...d, bannerImageUrl: url }))}
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs text-muted-foreground mb-1">이벤트 내용 <span className="text-destructive">*</span></label>
+                    <textarea
+                      value={draft.description}
+                      onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
+                      placeholder="이벤트 내용을 입력하세요"
+                      className="w-full border border-border rounded-lg px-3 py-2 text-sm min-h-[80px]"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <p className="text-xs font-semibold text-foreground mb-2">실행 기간 <span className="text-destructive">*</span></p>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+                        시작일
+                        <input type="date" value={draft.startAt} onChange={(e) => setDraft((d) => ({ ...d, startAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
+                      </label>
+                      <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+                        종료일
+                        <input type="date" value={draft.endAt} onChange={(e) => setDraft((d) => ({ ...d, endAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <p className="text-xs font-semibold text-foreground mb-2">게시 기간 <span className="text-destructive">*</span></p>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+                        게시 시작일 <span className="text-destructive">*</span>
+                        <input type="date" value={draft.displayStartAt} onChange={(e) => setDraft((d) => ({ ...d, displayStartAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
+                      </label>
+                      <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+                        게시 종료일 <span className="text-destructive">*</span>
+                        <input type="date" value={draft.displayEndAt} onChange={(e) => setDraft((d) => ({ ...d, displayEndAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs text-muted-foreground mb-1">결과 발표 URL</label>
+                    <input
+                      type="url"
+                      value={draft.resultUrl}
+                      onChange={(e) => setDraft((d) => ({ ...d, resultUrl: e.target.value }))}
+                      placeholder="https://..."
+                      className="w-full border border-border rounded-lg px-3 py-2 text-sm"
+                    />
+                  </div>
+                </div>
+              </div>
+
+              <div className="px-6 pb-6 pt-4 border-t border-border flex justify-end gap-2">
+                <button type="button" onClick={cancelEdit} className="text-sm px-4 py-2 rounded-lg border border-border text-foreground lg:hover:bg-muted/40">
+                  {t('admin.contest.cancel')}
+                </button>
+                <Button type="submit" className="text-sm px-4 py-2 rounded-lg bg-primary text-white">
+                  {editingId ? '수정' : '저장'}
+                </Button>
+              </div>
+            </form>
+          </div>
         </div>
       )}
     </div>
