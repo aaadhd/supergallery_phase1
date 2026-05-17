@@ -194,18 +194,29 @@ function readFromStorage(): ManagedEvent[] {
       }))
       .filter((e: ManagedEvent) => e.type === 'contest' || e.type === 'general');
 
-    // 종료 시드 이벤트가 없으면 병합 (기존 데이터 있는 경우도 적용)
-    const existingIds = new Set(parsed.map((e: ManagedEvent) => e.id));
-    const toMerge = SEED_EVENTS.filter((s) =>
-      SEED_IDS_TO_MERGE.includes(s.id as typeof SEED_IDS_TO_MERGE[number]) && !existingIds.has(s.id),
-    );
-    if (toMerge.length > 0) {
-      const merged = [...parsed, ...toMerge];
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
-      return merged;
-    }
+    // 시드 이벤트 병합·패치: 없으면 추가, 있어도 description/resultUrl이 최신 시드와 다르면 덮어쓰기
+    const seedMap = new Map(SEED_EVENTS.filter((s) =>
+      SEED_IDS_TO_MERGE.includes(s.id as typeof SEED_IDS_TO_MERGE[number]),
+    ).map((s) => [s.id, s]));
 
-    return parsed;
+    let dirty = false;
+    const patched = parsed.map((e: ManagedEvent) => {
+      const seed = seedMap.get(e.id);
+      if (!seed) return e;
+      seedMap.delete(e.id); // 처리됨 표시
+      const needsPatch = e.description !== seed.description || e.resultUrl !== seed.resultUrl;
+      if (!needsPatch) return e;
+      dirty = true;
+      return { ...e, description: seed.description, resultUrl: seed.resultUrl };
+    });
+
+    // 아직 처리 안 된 시드 = 새로 추가
+    const toAdd = [...seedMap.values()];
+    if (toAdd.length > 0) dirty = true;
+
+    const result = [...patched, ...toAdd];
+    if (dirty) localStorage.setItem(STORAGE_KEY, JSON.stringify(result));
+    return result;
   } catch {
     return SEED_EVENTS;
   }
