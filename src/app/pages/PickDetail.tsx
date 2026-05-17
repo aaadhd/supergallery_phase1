@@ -147,7 +147,7 @@ export default function PickDetail() {
             paddingInline: 'calc((100% - min(58vw, 44vh)) / 2)',
             scrollPaddingInline: 'calc((100% - min(58vw, 44vh)) / 2)',
             paddingTop: '3vh',
-            paddingBottom: '22vh',
+            paddingBottom: '12vh',
           }}
           >
             {selectedWorks.map((w, i) => {
