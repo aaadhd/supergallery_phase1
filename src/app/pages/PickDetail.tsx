@@ -79,6 +79,14 @@ export default function PickDetail() {
             {t('pickDetail.backToEvents')}
           </button>
 
+          {/* 명예의 전당 */}
+          <Link
+            to="/picks/hall-of-fame"
+            className="absolute right-0 top-0 text-xs text-slate-400 hover:text-slate-200 transition-colors"
+          >
+            {t('events.pickHallOfFameCta')}
+          </Link>
+
           {/* 트로피 */}
           <div className="text-5xl mb-4" style={{ filter: 'drop-shadow(0 0 12px rgba(255,200,0,0.5))' }}>
             🏆
@@ -159,40 +167,6 @@ export default function PickDetail() {
               );
             })}
 
-            {/* 명예의 전당 — 캐러셀 마지막 카드 */}
-            <Link
-              to="/picks/hall-of-fame"
-              className="text-center flex-shrink-0 transition-transform duration-300 lg:hover:scale-[1.04] active:scale-[0.97]"
-              style={{
-                scrollSnapAlign: 'center',
-                width: 'clamp(200px, 62vw, 300px)',
-              }}
-            >
-              <div
-                className="aspect-square w-full rounded-2xl mb-3 flex flex-col items-center justify-center gap-3"
-                style={{
-                  background: 'linear-gradient(135deg,#0a0600,#1a1000)',
-                  border: '1px solid rgba(255,200,0,0.35)',
-                  boxShadow: '0 8px 32px rgba(0,0,0,0.6)',
-                }}
-              >
-                <span className="text-4xl" style={{ filter: 'drop-shadow(0 0 12px rgba(255,200,0,0.6))' }}>🏅</span>
-                <p
-                  className="text-base font-black"
-                  style={{
-                    background: 'linear-gradient(90deg,#b8862f,#ffd700,#b8862f)',
-                    WebkitBackgroundClip: 'text',
-                    WebkitTextFillColor: 'transparent',
-                  }}
-                >
-                  {t('events.pickHallOfFameCta')}
-                </p>
-                <p className="text-xs px-4 text-center" style={{ color: '#4a3f2a' }}>
-                  {t('events.pickHallOfFameCtaDesc')}
-                </p>
-              </div>
-              <p className="text-xs" style={{ color: '#4a3f2a' }}>역대 선정 전시 모아보기</p>
-            </Link>
           </div>
         )}
       </div>
