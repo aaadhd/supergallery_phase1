@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, type FormEvent } from 'react';
 import { toast } from 'sonner';
-import { Plus, Trash2, GripVertical } from 'lucide-react';
+import { Plus, Trash2, GripVertical, X } from 'lucide-react';
 import { AdminImageUpload } from './components/AdminImageUpload';
 import { Button } from '../components/ui/button';
 import {
@@ -215,97 +215,13 @@ export default function BannerManagement() {
         <h1 className="text-base font-semibold text-foreground">배너 관리</h1>
         <Button
           type="button"
-          onClick={() => setShowForm((v) => !v)}
+          onClick={() => { setEditingId(null); setDraft(emptyDraft); setShowForm(true); }}
           className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90 inline-flex items-center gap-1.5"
         >
           <Plus className="w-4 h-4" />
           새 배너
         </Button>
       </div>
-
-      {showForm && (
-        <form
-          onSubmit={submitForm}
-          className="mb-6 border border-border rounded-lg p-4 space-y-3 bg-muted/50"
-        >
-          <div className="flex items-center gap-2">
-            <p className="text-sm font-medium text-foreground">{editingId ? '배너 수정' : '새 배너 등록'}</p>
-            {editingId && <span className="text-xs px-2 py-0.5 rounded-full bg-primary/10 text-primary">수정 중</span>}
-          </div>
-          <div className="grid sm:grid-cols-2 gap-3">
-            <div>
-              <label className="block text-xs text-muted-foreground mb-1">제목 <span className="text-destructive">*</span></label>
-              <input
-                placeholder="봄의 기억들"
-                value={draft.title}
-                onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
-                className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
-              />
-            </div>
-            <div>
-              <label className="block text-xs text-muted-foreground mb-1">부제</label>
-              <input
-                placeholder="봄을 담은 작품들"
-                value={draft.subtitle}
-                onChange={(e) => setDraft((d) => ({ ...d, subtitle: e.target.value }))}
-                className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
-              />
-            </div>
-            <div className="sm:col-span-2">
-              <AdminImageUpload
-                label="배너 이미지"
-                required
-                value={draft.imageUrl}
-                onChange={(url) => setDraft((d) => ({ ...d, imageUrl: url }))}
-              />
-            </div>
-            <div className="sm:col-span-2">
-              <label className="block text-xs text-muted-foreground mb-1">링크 URL</label>
-              <input
-                placeholder="https://..."
-                value={draft.linkUrl}
-                onChange={(e) => setDraft((d) => ({ ...d, linkUrl: e.target.value }))}
-                className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
-              />
-            </div>
-            <div className="sm:col-span-2">
-              <p className="text-xs font-semibold text-foreground mb-2">게시 기간</p>
-              <div className="grid sm:grid-cols-2 gap-3">
-                <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-                  게시 시작일
-                  <input
-                    type="date"
-                    value={draft.startAt}
-                    onChange={(e) => setDraft((d) => ({ ...d, startAt: e.target.value }))}
-                    className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground"
-                  />
-                </label>
-                <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-                  게시 종료일
-                  <input
-                    type="date"
-                    value={draft.endAt}
-                    onChange={(e) => setDraft((d) => ({ ...d, endAt: e.target.value }))}
-                    className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground"
-                  />
-                </label>
-              </div>
-            </div>
-          </div>
-          <div className="flex gap-2">
-            <Button type="submit" className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white">
-              저장
-            </Button>
-            <button
-              type="button"
-              onClick={closeForm}
-              className="text-sm px-3 py-1.5 rounded-lg border border-border"
-            >
-              취소
-            </button>
-          </div>
-        </form>
-      )}
 
       {/* 탭 */}
       <div className="flex gap-1 border-b border-border mb-4">
@@ -372,6 +288,89 @@ export default function BannerManagement() {
             </ol>
           </SortableContext>
         </DndContext>
+      )}
+
+      {/* 등록/수정 모달 */}
+      {showForm && (
+        <div
+          className="fixed inset-0 z-50 bg-black/50 flex items-start justify-center overflow-y-auto py-8 px-4"
+          onClick={(e) => { if (e.target === e.currentTarget) closeForm(); }}
+        >
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-lg">
+            <form onSubmit={submitForm}>
+              <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-border">
+                <h2 className="text-base font-semibold text-foreground">
+                  {editingId ? '배너 수정' : '새 배너 등록'}
+                </h2>
+                <button type="button" onClick={closeForm} className="p-1.5 rounded-lg text-muted-foreground lg:hover:bg-muted/50">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="px-6 py-4 space-y-3">
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs text-muted-foreground mb-1">제목 <span className="text-destructive">*</span></label>
+                    <input
+                      placeholder="봄의 기억들"
+                      value={draft.title}
+                      onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
+                      className="w-full border border-border rounded-lg px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-muted-foreground mb-1">부제</label>
+                    <input
+                      placeholder="봄을 담은 작품들"
+                      value={draft.subtitle}
+                      onChange={(e) => setDraft((d) => ({ ...d, subtitle: e.target.value }))}
+                      className="w-full border border-border rounded-lg px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <AdminImageUpload
+                      label="배너 이미지"
+                      required
+                      value={draft.imageUrl}
+                      onChange={(url) => setDraft((d) => ({ ...d, imageUrl: url }))}
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs text-muted-foreground mb-1">링크 URL</label>
+                    <input
+                      placeholder="https://..."
+                      value={draft.linkUrl}
+                      onChange={(e) => setDraft((d) => ({ ...d, linkUrl: e.target.value }))}
+                      className="w-full border border-border rounded-lg px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <p className="text-xs font-semibold text-foreground mb-2">게시 기간</p>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+                        게시 시작일
+                        <input type="date" value={draft.startAt} onChange={(e) => setDraft((d) => ({ ...d, startAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
+                      </label>
+                      <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+                        게시 종료일
+                        <input type="date" value={draft.endAt} onChange={(e) => setDraft((d) => ({ ...d, endAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
+                      </label>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              <div className="px-6 pb-6 pt-4 border-t border-border flex justify-end gap-2">
+                <button type="button" onClick={closeForm} className="text-sm px-4 py-2 rounded-lg border border-border text-foreground lg:hover:bg-muted/40">
+                  취소
+                </button>
+                <Button type="submit" className="text-sm px-4 py-2 rounded-lg bg-primary text-white">
+                  {editingId ? '수정' : '저장'}
+                </Button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );
