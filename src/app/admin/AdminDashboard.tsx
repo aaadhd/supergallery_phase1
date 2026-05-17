@@ -87,6 +87,7 @@ export default function AdminDashboard() {
       <h1 className="text-base font-semibold text-foreground">운영 대시보드</h1>
 
       {/* Pick 세션 */}
+      <section>
       <Link to="/admin/picks">
         {activePickSession ? (
           <div className="flex items-center justify-between px-3 py-2.5 rounded-lg border border-[#B8862F]/30 bg-gradient-to-r from-[#FBF7EE] to-white lg:hover:shadow-sm transition-shadow">
@@ -104,6 +105,7 @@ export default function AdminDashboard() {
           </div>
         )}
       </Link>
+      </section>
 
       {/* 콘텐츠 운영 */}
       <section>
