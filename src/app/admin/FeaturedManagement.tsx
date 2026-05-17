@@ -135,7 +135,7 @@ export default function FeaturedManagement() {
             const imgs = getImgs(w);
             return (
               <div key={w.id} className="flex items-center gap-3 px-3 py-2">
-                <div className="w-28 shrink-0 min-w-0">
+                <div className="w-48 shrink-0 min-w-0">
                   <p className="text-sm font-medium truncate leading-tight">{displayExhibitionTitle(w, '(제목 없음)')}</p>
                   <p className="text-xs text-muted-foreground truncate">{w.artist?.name ?? w.groupName ?? '—'}</p>
                 </div>

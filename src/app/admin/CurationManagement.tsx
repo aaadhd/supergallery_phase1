@@ -449,7 +449,7 @@ export default function CurationManagement() {
                     <div className="space-y-1">
                       {allWorkGroups.map(({ work, pieces }) => (
                         <div key={work.id} className="flex items-center gap-3 px-3 py-2 rounded-lg">
-                          <div className="w-28 shrink-0 min-w-0">
+                          <div className="w-48 shrink-0 min-w-0">
                             <p className="text-sm font-medium truncate leading-tight">{displayExhibitionTitle(work, '(제목 없음)')}</p>
                             <p className="text-xs text-muted-foreground truncate">{work.artist?.name ?? work.groupName ?? '—'}</p>
                           </div>

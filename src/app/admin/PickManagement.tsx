@@ -507,7 +507,7 @@ export default function PickManagement() {
                                     <span className="w-4 h-4 rounded-full border-2 border-border" />
                                   )}
                                 </div>
-                                <div className="w-28 shrink-0 min-w-0">
+                                <div className="w-48 shrink-0 min-w-0">
                                   <p className="text-sm font-medium truncate leading-tight">
                                     {displayExhibitionTitle(w, '(제목 없음)')}
                                   </p>

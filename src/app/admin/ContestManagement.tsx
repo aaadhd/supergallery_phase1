@@ -114,6 +114,8 @@ export default function ContestManagement() {
 
   const startEdit = (ev: ManagedEvent) => {
     setEditingId(ev.id);
+    setShowForm(true);
+    window.scrollTo({ top: 0, behavior: 'smooth' });
     setDraft({
       title: ev.title,
       subtitle: ev.subtitle ?? '',
@@ -430,7 +432,7 @@ export default function ContestManagement() {
                             <td className="px-4 py-3 text-muted-foreground whitespace-nowrap text-xs">
                               {ev.displayStartAt || ev.displayEndAt
                                 ? `${ev.displayStartAt ?? ev.startAt} ~ ${ev.displayEndAt ?? ev.endAt}`
-                                : <span className="text-border">—</span>}
+                                : <span className="text-muted-foreground/50 text-[10px]">실행 기간과 동일</span>}
                             </td>
                             <td className="px-4 py-3 text-center text-sm font-medium text-foreground">
                               {entryCountByEvent.get(ev.id) ?? 0}

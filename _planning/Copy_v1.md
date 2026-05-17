@@ -552,7 +552,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.confirmOriginal': '본인이 직접 창작한 원작임을 확인합니다',
   'upload.consentCurationLabel': 'Proud’s Pick·기획전에 선정될 경우 관련 페이지에 소개될 수 있음에 동의합니다.',
   'upload.cardDone': '완료',
-  'upload.publishing': '전시 등록 중...',
+  'upload.publishing': '전시 신청 중...',
   'upload.confirmDeleteImage': '이 이미지를 삭제할까요?',
   'upload.nextStep': '다음',
   'upload.publish': '전시하기',
@@ -610,14 +610,14 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.memberSearchPh': '플랫폼에 가입된 작가 검색',
   'upload.nonMemberNamePh': '초대 메시지에 표시할 이름',
   'upload.nonMemberNameLabel2': '작가 이름',
-  'upload.nonMemberNameHelper': '이름만 적어주세요. Proud Gallery가 자동으로 알리지 않아요 — 등록 후 작가님이 직접 카톡·문자로 링크를 보내실 수 있어요.',
-  'upload.nonMemberPreviewTitle': '등록 전 확인',
-  'upload.nonMemberPreviewSubtitle': '아래 작가들은 비회원으로 등록됐어요. 등록 직후부터 바로 초대 링크를 보낼 수 있어요.',
+  'upload.nonMemberNameHelper': '이름만 적어주세요. Proud Gallery가 자동으로 알리지 않아요 — 신청 후 작가님이 직접 카톡·문자로 링크를 보내실 수 있어요.',
+  'upload.nonMemberPreviewTitle': '신청 전 확인',
+  'upload.nonMemberPreviewSubtitle': '아래 작가들은 비회원으로 등록됐어요. 신청 직후부터 바로 초대 링크를 보낼 수 있어요.',
   'upload.nonMemberPreviewListLabel': '비회원 작가 {n}명',
   'upload.nonMemberPreviewSlotHint': '이름만 등록됨 · 가입 후 본인이 직접 연결',
-  'upload.nonMemberPreviewInfo': '등록 직후 마이페이지 전시 카드에 \'비회원 작가에게 알리기\' 버튼이 생겨요. 카톡·문자 등으로 작가님이 직접 보내실 수 있어요.',
+  'upload.nonMemberPreviewInfo': '신청 직후 마이페이지 전시 카드에 \'비회원 작가에게 알리기\' 버튼이 생겨요. 카톡·문자 등으로 작가님이 직접 보내실 수 있어요.',
   'upload.nonMemberPreviewBack': '수정하러 돌아가기',
-  'upload.nonMemberPreviewConfirm': '등록 확인',
+  'upload.nonMemberPreviewConfirm': '신청 확인',
   'invite.shareCta': '비회원 작가에게 알리기',
   'invite.shareDialogTitle': '비회원 작가에게 알리기',
   'invite.shareDialogBody': '이 링크를 비회원 작가에게 보내주세요. 가입하면 본인 작품을 직접 고를 수 있어요.',
@@ -655,7 +655,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.toastImageReplaced': '이미지가 교체되었어요.',
   'upload.errMissingArtistAt': '{positions}번째 작품에 작가가 지정되지 않았어요.',
   'upload.errWorkNotFound': '수정하려는 작품을 찾을 수 없어요.',
-  'upload.publishedConfirmTitle': '전시가 등록되었어요',
+  'upload.publishedConfirmTitle': '전시 신청이 완료됐어요',
   'upload.publishedConfirmTitleApproved': '전시가 공개되었어요',
   'upload.publishedConfirmTitleResubmit': '다시 검수 요청이 도착했어요',
   'upload.publishedConfirmDescPending': '지금 검수 중이에요. 24시간 이내 결과를 알림으로 알려드려요. 검수를 통과하면 둘러보기·검색에서 보여요.',
@@ -770,7 +770,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
     '프로필 > 작품 탭에서 작품 우측 상단 메뉴(⋯)를 눌러 수정·삭제할 수 있어요.',
   'faq.q7': '그룹 전시는 어떻게 만드나요?',
   'faq.a7':
-    '업로드할 때 "함께 올리기"를 선택하면 그룹명을 입력하고 참여 작가를 한 자리씩 추가할 수 있어요. Proud Gallery 회원이면 이름을 검색해 바로 연결되고, 회원이 아닌 분은 이름만 입력해 자리를 만들어 두면 등록 직후부터 초대 링크로 직접 알릴 수 있어요.',
+    '업로드할 때 "함께 올리기"를 선택하면 그룹명을 입력하고 참여 작가를 한 자리씩 추가할 수 있어요. Proud Gallery 회원이면 이름을 검색해 바로 연결되고, 회원이 아닌 분은 이름만 입력해 자리를 만들어 두면 신청 직후부터 초대 링크로 직접 알릴 수 있어요.',
   'faq.q8': 'Proud\'s Pick은 무엇인가요?',
   'faq.a8':
     '운영팀이 매주 우수 작품을 선정해 배지를 부여해요. 선정된 작품은 피드 상단에 노출되며, 작가에게 알림이 발송돼요.',
@@ -781,7 +781,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'faq.a10': '현재 {brand}의 모든 기능은 무료로 이용하실 수 있어요.',
   'faq.q11': '함께 올린 비회원 작가는 어떻게 초대하나요?',
   'faq.a11':
-    '전시를 등록하면 마이페이지의 전시 카드에 "비회원 작가에게 알리기" 버튼이 바로 생겨요. 검수 신청 단계부터 카카오톡·문자·이메일 등 평소 쓰시던 방법으로 비회원 작가에게 링크를 직접 보내주시면 돼요. 비회원 작가는 가입한 뒤 본인 작품 카드를 골라 연결할 수 있고, 검수가 통과되면 자동으로 공개돼요. 회사가 자동으로 발송하지는 않아요.',
+    '전시를 신청하면 마이페이지의 전시 카드에 "비회원 작가에게 알리기" 버튼이 바로 생겨요. 검수 신청 단계부터 카카오톡·문자·이메일 등 평소 쓰시던 방법으로 비회원 작가에게 링크를 직접 보내주시면 돼요. 비회원 작가는 가입한 뒤 본인 작품 카드를 골라 연결할 수 있고, 검수가 통과되면 자동으로 공개돼요. 회사가 자동으로 발송하지는 않아요.',
   'faq.q12': '비회원 작가가 가입했는데 작품이 자동으로 연결 안 됐어요.',
   'faq.a12':
     '가입 직후 "본인 작품 찾기" 화면에서 비회원 작가분이 본인 그림 카드를 직접 눌러야 연결돼요. "여기 없어요"를 눌러 건너뛰셨거나 다른 분 자리를 잘못 눌렀을 수 있어요. 비회원 작가분께 다시 한번 확인해 주세요.',
@@ -980,7 +980,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'profile.filterSolo': '개인',
   'profile.filterGroup': '그룹',
   'profile.filterOnlyMine': '내가 올린 전시만',
-  'profile.publishedBannerTitle': '전시가 등록되었어요! 지금은 나만 볼 수 있어요',
+  'profile.publishedBannerTitle': '전시 신청이 완료됐어요! 지금은 나만 볼 수 있어요',
   'profile.publishedBannerDesc': '운영팀이 24시간 이내에 검수한 뒤 둘러보기에 공개돼요. 검수 중에는 배지로 상태를 확인할 수 있고, 공개되면 알림으로 알려드려요.',
   'profile.publishedBannerDismiss': '닫기',
   'profile.uploaderLabel': '게시자',
@@ -1652,7 +1652,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   ‘upload.confirmOriginal’: ‘I confirm this is my own original work’,
   ‘upload.consentCurationLabel’: "I agree that my work may be featured on related pages if selected for Proud’s Pick or a curated exhibition.",
   ‘upload.cardDone’: ‘Done’,
-  'upload.publishing': 'Creating exhibition...',
+  'upload.publishing': 'Submitting exhibition...',
   'upload.confirmDeleteImage': 'Delete this image?',
   'upload.nextStep': 'Next',
   'upload.publish': 'Exhibit',
@@ -2082,7 +2082,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'profile.filterSolo': 'Solo',
   'profile.filterGroup': 'Group',
   'profile.filterOnlyMine': 'Uploaded by me only',
-  'profile.publishedBannerTitle': 'Your exhibition is published — visible only to you for now',
+  'profile.publishedBannerTitle': 'Your exhibition has been submitted — visible only to you for now',
   'profile.publishedBannerDesc': "Our team will review before it appears on Browse. Watch the status badge; you'll get a notification when it goes public.",
   'profile.publishedBannerDismiss': 'Dismiss',
   'profile.uploaderLabel': 'Publisher',
@@ -2491,7 +2491,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.27 | 2026-05-18 | PM × Claude | settings.notifSystemAlwaysOn EN "Group exhibition posts" 제거; "발행" → "등록" 용어 변경(nonMemberPreview* KO·EN, faq.a7·a11 KO·EN, errPublishFailed KO) |
+| v1.27 | 2026-05-18 | PM × Claude | settings.notifSystemAlwaysOn EN "Group exhibition posts" 제거; "발행" → "신청" 용어 변경(nonMemberPreview* KO·EN, faq.a7·a11 KO·EN, errPublishFailed KO, publishing KO·EN, publishedConfirmTitle KO) |
 | v1.26 | 2026-05-15 | PM × Claude | signup.linkSentAutoFlow "(미사용)" 삭제; upload.editSoloConvertTitle·editSoloConvertDesc·editSoloConvertConfirm KO·EN 신규(Policy §13.6.1 SSoT); signup.emailStepDesc "비밀번호는 따로 만들 필요 없어요." 문구 제거(KO·EN) |
 | v1.25 | 2026-05-14 | PM × Claude | 이중 이스케이프 정리 — notifApprovedForParticipant·notifAutoMatched·notifTargetWork 3종·nonMemberPreviewInfo `\\\'` → `\'` |
 | v1.24 | 2026-05-14 | PM × Claude | tabGuideLikes·tabGuideSaves·search.goBrowse "작품"→"전시" 누락분 보정(KO+EN); 프로필 빈 상태 prose 예시 정합 |

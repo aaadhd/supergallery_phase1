@@ -693,7 +693,7 @@
  <tr>
  <td class="ver">v1.19</td>
  <td class="date">2026-05-18</td>
- <td>"발행" → "등록" 용어 변경 — UPL-02·UPL-04·UPL-08 슬라이드 내 발행 → 등록 전환; Last synced Copy v1.27</td>
+ <td>"발행" → "신청"·"게시" 용어 정비 — UPL-02·03·04·08 슬라이드(신청), ADM-PCK Pick 세션(게시); Last synced Copy v1.27 / IA v1.30</td>
  </tr>
  <tr>
  <td class="ver">v1.18</td>
@@ -3266,7 +3266,7 @@
 
      <h3 class="components">구성 요소</h3>
  <dl>
- <dt><span class="bub">1</span></dt><dd>헤더 + 등록 CTA — "전시하기"(upload.publish). 등록 후 pending 검수 대기 상태</dd>
+ <dt><span class="bub">1</span></dt><dd>헤더 + 신청 CTA — "전시하기"(upload.publish). 신청 후 pending 검수 대기 상태</dd>
  <dt><span class="bub">2</span></dt><dd>전시 제목 입력 필드 — 최대 20자. 비속어 차단. (필수)</dd>
  <dt><span class="bub">3</span></dt><dd>이미지 드롭존 — 최대 10장·10MB 이하. JPG·PNG·WEBP·GIF. 드래그 또는 클릭 업로드</dd>
  <dt><span class="bub">4</span></dt><dd>우측 이미지 추가 패널 — 이미지 추가 + 체크리스트("전시까지 남은 항목") + 다음·초안저장 버튼</dd>
@@ -3277,10 +3277,10 @@
  <li>이미지 1~10장. 외 차단 + 토스트</li>
  <li>전시 제목 빈 값 → 에러</li>
  <li>그룹전 + 게시자 외 0명 → 개인 전시 전환 다이얼로그</li>
- <li>그룹전 + 총 1명이고 게시자 본인 작품 없음 → 등록 차단</li>
- <li>등록 후 24h 이내 삭제 시 활동 포인트 회수</li>
- <li>등록 직전 비회원 슬롯 있으면 미리보기 모달</li>
- <li>등록 중 페이지 이탈 → 이탈 방지 다이얼로그</li>
+ <li>그룹전 + 총 1명이고 게시자 본인 작품 없음 → 신청 차단</li>
+ <li>신청 후 24h 이내 삭제 시 활동 포인트 회수</li>
+ <li>신청 직전 비회원 슬롯 있으면 미리보기 모달</li>
+ <li>신청 중 페이지 이탈 → 이탈 방지 다이얼로그</li>
  </ol></div>
 
  <div class="pol"><h4>관련 정책</h4>전시 단위 (07-4) · 비회원 초대 (07-5)
@@ -3309,7 +3309,7 @@
  <div style="display: inline-block; padding: 14px; background: #ecfdf5; border-radius: 50%; margin-bottom: 18px;">
  <div style="width: 48px; height: 48px; background: #059669; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: white; font-size: 28px; font-weight: 800;">✓</div>
  </div>
- <div style="font-size: 22px; font-weight: 800; margin-bottom: 12px; position: relative;">전시가 등록되었어요
+ <div style="font-size: 22px; font-weight: 800; margin-bottom: 12px; position: relative;">전시 신청이 완료됐어요
  <span class="bub" style="position: absolute; top: -8px; right: -10px;">1</span>
  </div>
  <div style="font-size: 13px; color: var(--ink-2); line-height: 1.7; margin-bottom: 18px; position: relative;">
@@ -3344,13 +3344,13 @@
 
      <h3 class="components">구성 요소</h3>
  <dl>
- <dt><span class="bub">1</span></dt><dd>발행 완료 제목 — "전시가 등록되었어요"</dd>
+ <dt><span class="bub">1</span></dt><dd>신청 완료 제목 — "전시 신청이 완료됐어요"</dd>
  <dt><span class="bub">2</span></dt><dd>검수 안내 메시지 — "지금 검수 중이에요. 24시간 이내 결과를 알림으로 알려드려요."</dd>
  <dt><span class="bub">3</span></dt><dd>비회원 슬롯 안내 — 비회원 작가 있을 때만 노출. 검수 승인 후 초대 링크 공유 권유</dd>
  <dt><span class="bub">4</span></dt><dd>CTA 2종 — "내 전시 보기" (primary) / "둘러보기" (outline)</dd>
  </dl>
 
- <div class="copy"><h4>주요 카피</h4><span class="copy-line">"전시가 등록되었어요"</span>
+ <div class="copy"><h4>주요 카피</h4><span class="copy-line">"전시 신청이 완료됐어요"</span>
  <span class="copy-line">"지금 검수 중이에요. 24시간 이내 결과를 알림으로 알려드려요. 검수를 통과하면 둘러보기·검색에서 보여요."</span>
  <span class="copy-line">"비회원 작가 N명에게는 검수 승인 직후 비회원 작가에게 알리기로 직접 공유해주세요."</span>
  <span class="copy-line">CTA: "내 전시 보기" / "둘러보기"</span></div>
@@ -3543,8 +3543,8 @@
  <div class="ac"><h4>완성 기준</h4><ol>
  <li>원작 확인 미체크 시 "전시하기" 비활성 + "위의 원작 확인을 체크해 주세요" 힌트</li>
  <li>커버 미선택 시 첫 번째 이미지 자동 사용</li>
- <li>Pick·기획전 동의는 선택 — 미체크여도 등록 가능</li>
- <li>등록 후 "전시하기 후 운영팀 검수를 거쳐 둘러보기에 공개돼요." 안내 표시</li>
+ <li>Pick·기획전 동의는 선택 — 미체크여도 신청 가능</li>
+ <li>신청 후 "전시하기 후 운영팀 검수를 거쳐 둘러보기에 공개돼요." 안내 표시</li>
  </ol></div>
 
  <div class="pol"><h4>관련 정책</h4>커버 이미지 · 원작 확인 · Pick·기획전 노출 동의
@@ -3815,7 +3815,7 @@
  <div style="background: white; width: 400px; border-radius: 14px; padding: 28px 26px 24px; box-shadow: 0 24px 60px rgba(0,0,0,.35); position: relative;">
  <!-- 헤더 -->
  <div style="margin-bottom: 18px; position: relative;">
- <div style="font-size: 15px; font-weight: 800; margin-bottom: 4px;">등록 전 확인</div>
+ <div style="font-size: 15px; font-weight: 800; margin-bottom: 4px;">신청 전 확인</div>
  <div style="font-size: 12px; color: var(--ink-3); line-height: 1.55;">아래 작가들은 비회원으로 등록됐어요. 검수 통과 후 직접 초대 링크를 보내주세요.</div>
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">1</span>
  </div>
@@ -3842,42 +3842,42 @@
  </div>
  <!-- 안내 메시지 -->
  <div style="background: #eff6ff; border: 1px solid #bfdbfe; border-radius: 8px; padding: 11px 13px; margin-bottom: 20px; font-size: 11.5px; color: #1e40af; line-height: 1.65; position: relative;">
- 📬 등록 직후 마이페이지 전시 카드에 <strong>'비회원 작가에게 알리기'</strong> 버튼이 생겨요. 원하는 앱으로 작가님이 직접 보내실 수 있어요.
+ 📬 신청 직후 마이페이지 전시 카드에 <strong>'비회원 작가에게 알리기'</strong> 버튼이 생겨요. 원하는 앱으로 작가님이 직접 보내실 수 있어요.
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">3</span>
  </div>
  <!-- CTA -->
  <div style="display: flex; gap: 8px; position: relative;">
  <div style="flex: 1; border: 1.5px solid var(--line-2); border-radius: 8px; padding: 11px; text-align: center; font-size: 12.5px; color: var(--ink-2);">수정하러 돌아가기</div>
- <div style="flex: 1.3; background: var(--ink); border-radius: 8px; padding: 11px; text-align: center; font-size: 12.5px; font-weight: 600; color: white;">등록 확인</div>
+ <div style="flex: 1.3; background: var(--ink); border-radius: 8px; padding: 11px; text-align: center; font-size: 12.5px; font-weight: 600; color: white;">신청 확인</div>
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">4</span>
  </div>
  </div>
  </div>
  </div>
- <div class="placeholder-note">"전시하기" 탭 후 비회원 포함 시 등록 직전 인터셉트. 비회원 이름만 표시 (전화·이메일 없음). 비회원 없으면 이 모달 스킵</div>
+ <div class="placeholder-note">"전시하기" 탭 후 비회원 포함 시 신청 직전 인터셉트. 비회원 이름만 표시 (전화·이메일 없음). 비회원 없으면 이 모달 스킵</div>
  </div>
 
  <div class="desc">
  <h3>화면 정보</h3>
  <dl>
- <dt><span class="bub outline">i</span></dt><dd><strong>진입</strong> USR-UPL-02 "전시하기" 탭 후 비회원 작가 슬롯이 1명 이상 포함된 경우에만 표시. 비회원 없으면 스킵 → 바로 등록</dd>
- <dt></dt><dd><strong>목적</strong> 등록 전 업로더에게 비회원 슬롯 현황 인지 + 초대 방식 안내. 전화·이메일은 사전 수집하지 않음 (Policy §3.1 — 회사가 외부 채널 발송 안 함)</dd>
- <dt></dt><dd><strong>등록 시점</strong> "등록 확인" 탭 시 실제 등록(검수 대기 상태). 모달은 정보 확인 게이트일 뿐, 추가 권한·구독 요청 없음</dd>
+ <dt><span class="bub outline">i</span></dt><dd><strong>진입</strong> USR-UPL-02 "전시하기" 탭 후 비회원 작가 슬롯이 1명 이상 포함된 경우에만 표시. 비회원 없으면 스킵 → 바로 신청</dd>
+ <dt></dt><dd><strong>목적</strong> 신청 전 업로더에게 비회원 슬롯 현황 인지 + 초대 방식 안내. 전화·이메일은 사전 수집하지 않음 (Policy §3.1 — 회사가 외부 채널 발송 안 함)</dd>
+ <dt></dt><dd><strong>신청 시점</strong> "신청 확인" 탭 시 실제 신청(검수 대기 상태). 모달은 정보 확인 게이트일 뿐, 추가 권한·구독 요청 없음</dd>
  </dl>
 
  <h3 class="components">구성 요소</h3>
  <dl>
- <dt><span class="bub">1</span></dt><dd>모달 헤더 — "등록 전 확인" + 비회원 안내 부제</dd>
+ <dt><span class="bub">1</span></dt><dd>모달 헤더 — "신청 전 확인" + 비회원 안내 부제</dd>
  <dt><span class="bub">2</span></dt><dd>비회원 슬롯 목록 — 작가가 입력한 표시명만 표시. 전화·이메일 없음. 각 슬롯: 익명 아바타 + 이름 + "가입 후 본인이 직접 연결" 안내</dd>
- <dt><span class="bub">3</span></dt><dd>초대 방식 안내 배너 — "등록 직후 마이페이지 전시 카드에 '비회원 작가에게 알리기' 버튼 생성. 원하는 앱으로 직접 발송" (Policy §3.1)</dd>
- <dt><span class="bub">4</span></dt><dd>CTA — "수정하러 돌아가기"(USR-UPL-02 복귀) / "등록 확인"(실제 등록 진행 → USR-UPL-03)</dd>
+ <dt><span class="bub">3</span></dt><dd>초대 방식 안내 배너 — "신청 직후 마이페이지 전시 카드에 '비회원 작가에게 알리기' 버튼 생성. 원하는 앱으로 직접 발송" (Policy §3.1)</dd>
+ <dt><span class="bub">4</span></dt><dd>CTA — "수정하러 돌아가기"(USR-UPL-02 복귀) / "신청 확인"(실제 신청 진행 → USR-UPL-03)</dd>
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
  <li>비회원 작가 1명 이상 포함 시에만 이 모달 노출 (비회원 없으면 스킵)</li>
  <li>비회원 목록에는 이름(표시명)만 표시 — 전화·이메일 수집·노출 없음</li>
  <li>"수정하러 돌아가기" → USR-UPL-02로 복귀 (입력값 보존)</li>
- <li>"등록 확인" → 등록 실행 → USR-UPL-03 전시 완료 확인으로 이동</li>
+ <li>"신청 확인" → 신청 실행 → USR-UPL-03 전시 완료 확인으로 이동</li>
  </ol></div>
 
  <div class="callout info">비회원 전화·이메일 사전 수집은 친구 동의 없는 제3자 개인정보 수집 — 이름(표시명)만 받는다. 초대 링크는 검수 승인 후 작가가 직접 발송.
@@ -6423,9 +6423,9 @@
  <div style="font-size: 11.5px; color: var(--ink-3); margin-bottom: 22px;">2026.04.05 · Proud Gallery 운영팀</div>
  <div style="font-size: 13.5px; color: var(--ink-2); line-height: 1.85; padding-bottom: 24px; border-bottom: 1px solid var(--line);">
  안녕하세요, Proud Gallery 운영팀입니다.<br><br>
- 전시 등록 후 검수 처리에 걸리는 시간을 <strong>24시간 이내</strong>으로 명시했습니다. 결과는 알림 센터와 가입 시 등록한 이메일로 전달됩니다.<br><br>
+ 전시 신청 후 검수 처리에 걸리는 시간을 <strong>24시간 이내</strong>으로 명시했습니다. 결과는 알림 센터와 가입 시 등록한 이메일로 전달됩니다.<br><br>
  <strong>주요 변경:</strong><br>
- • 등록 직후 안내 메시지에 SLA 명시<br>
+ • 신청 직후 안내 메시지에 SLA 명시<br>
  • 본인 전시 탭에 "검수 중 — 24시간 이내 결과 알림" 배너 노출<br>
  • 24시간 초과 시 운영 알림(내부)
  </div>
