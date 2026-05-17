@@ -1,5 +1,5 @@
 import { useMemo, useState } from 'react';
-import { useParams, Link, useNavigate } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
 import { useI18n } from '../i18n/I18nProvider';
 import { pickStore, usePickSessions, derivePickStatus } from '../utils/pickStore';
 import { workStore, useWorkStore } from '../store';
@@ -13,7 +13,6 @@ import type { Work } from '../data';
 export default function PickDetail() {
   const { id } = useParams<{ id: string }>();
   const { t } = useI18n();
-  const navigate = useNavigate();
   usePickSessions(); // subscribe
   useWorkStore();
 
@@ -94,7 +93,7 @@ export default function PickDetail() {
           </p>
           {isEnded && (
             <span className="inline-block mt-2 text-xs px-3 py-1 rounded-full" style={{ background: 'rgba(255,255,255,0.08)', color: '#64748b' }}>
-              종료된 Pick
+              {t('pickDetail.ended')}
             </span>
           )}
         </div>
