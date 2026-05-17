@@ -21,7 +21,7 @@ import {
 import { pushDemoNotification } from '../utils/pushDemoNotification';
 import { logWorkDeletion, appendAuditLog, type DeletedWorkLogPayload } from '../utils/adminAuditLog';
 import { pointsRecallOnAdminDelete } from '../utils/pointsBackground';
-import { activateInviteToken } from '../utils/inviteTokenStore';
+import { activateInviteToken, deactivateInviteToken } from '../utils/inviteTokenStore';
 import { useI18n } from '../i18n/I18nProvider';
 import { usePagination } from '../hooks/usePagination';
 import { PaginationBar } from './components/PaginationBar';
@@ -224,6 +224,7 @@ export default function ReportManagement() {
     if (!raw) return;
     if (raw.targetType === 'work' && raw.targetId) {
       workStore.updateWork(raw.targetId, { ...buildVisibilityPatch('hidden_admin') });
+      deactivateInviteToken(raw.targetId);
       updateUserReport(id, { adminStatus: 'hidden' });
       appendAuditLog({
         action: 'report_kept_hidden',
