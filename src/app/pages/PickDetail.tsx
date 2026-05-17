@@ -63,7 +63,7 @@ export default function PickDetail() {
   const isEnded = status === 'ended';
 
   return (
-    <div className="min-h-screen bg-background pb-20 md:pb-0">
+    <div className="min-h-screen flex flex-col bg-background pb-20 md:pb-0">
       {/* 헤더 — 다크 배경 + 골드 광선 + 트로피 */}
       <div
         className="relative overflow-hidden text-center py-12 px-4"
@@ -131,14 +131,14 @@ export default function PickDetail() {
       <div style={{ height: 1, background: 'linear-gradient(90deg,transparent,rgba(255,200,0,0.3),transparent)' }} />
 
       {/* 선정 전시 캐러셀 */}
-      <div className="py-8" style={{ background: '#000' }}>
+      <div className="flex-1 flex items-center py-8" style={{ background: '#000' }}>
         {selectedWorks.length === 0 ? (
           <p className="text-center text-sm py-16" style={{ color: '#4a5568' }}>{t('pickDetail.noSelected')}</p>
         ) : (
           <div
             ref={carouselRef}
             onScroll={handleCarouselScroll}
-            className="flex gap-4 overflow-x-auto pb-4 items-center"
+            className="flex gap-4 overflow-x-auto pb-4 items-center w-full"
             style={{
               scrollSnapType: 'x mandatory',
               scrollbarWidth: 'none',
@@ -166,7 +166,7 @@ export default function PickDetail() {
                   className="text-center flex-shrink-0"
                   style={{
                     scrollSnapAlign: 'center',
-                    width: 'clamp(200px, 62vw, 300px)',
+                    width: 'min(62vw, 56vh)',
                     transform: `scale(${scale})`,
                     opacity,
                     transition: 'transform 0.35s ease, opacity 0.35s ease',
