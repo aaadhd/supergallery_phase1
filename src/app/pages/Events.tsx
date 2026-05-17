@@ -107,8 +107,6 @@ export default function Events() {
   return (
     <div className="min-h-screen bg-background pb-20 md:pb-0">
       <div className="mx-auto max-w-[1440px] px-4 sm:px-6 pt-6 sm:pt-10">
-        <h1 className="text-xl sm:text-2xl font-bold text-foreground mb-6">{t('events.title')}</h1>
-
         {/* 탭 */}
         <div className="flex gap-1 mb-8 border-b border-border">
           {(['events', 'pick', 'curation'] as EventsTab[]).map((tab) => {
