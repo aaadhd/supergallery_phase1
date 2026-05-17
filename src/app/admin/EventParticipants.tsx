@@ -2,7 +2,7 @@ import { useState, useMemo, useEffect, useSyncExternalStore } from 'react';
 import { createPortal } from 'react-dom';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Check, Eye, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Check, Eye, X, ChevronLeft, ChevronRight, Megaphone } from 'lucide-react';
 import type { Work } from '../data';
 import {
   Select, SelectContent, SelectItem, SelectTrigger, SelectValue,
@@ -16,6 +16,8 @@ import { appendAuditLog } from '../utils/adminAuditLog';
 import { getCoverImage } from '../utils/imageHelper';
 import { imageUrls } from '../imageUrls';
 import { ImageWithFallback } from '../components/ImageWithFallback';
+import { openConfirm } from '../components/ConfirmDialog';
+import { todayLocalIso } from '../utils/localDate';
 
 interface EventParticipant {
   id: string;
@@ -51,17 +53,16 @@ function useParticipantsFromWorks(): EventParticipant[] {
         eventId: String(w.linkedEventId),
         name: w.artist?.name || '-',
         status:
-          w.feedReviewStatus === 'approved'
-            ? '참여 완료'
-            : w.feedReviewStatus === 'rejected'
-              ? '취소'
-              : '대기 중',
+          w.feedReviewStatus === 'approved' ? '참여 완료'
+          : w.feedReviewStatus === 'rejected' ? '취소'
+          : '대기 중',
         participatedAt: (w.uploadedAt || '').slice(0, 10),
         workId: w.id,
       }));
   }, [works]);
 }
 
+type SortKey = 'latest' | 'artist' | 'selected';
 
 export default function EventParticipants({ compact = false }: { compact?: boolean }) {
   const { t } = useI18n();
@@ -72,41 +73,56 @@ export default function EventParticipants({ compact = false }: { compact?: boole
 
   const [selectedEventId, setSelectedEventId] = useState(searchParams.get('event') ?? '');
   const [previewWork, setPreviewWork] = useState<{ work: Work; imgIndex: number } | null>(null);
+  const [sortBy, setSortBy] = useState<SortKey>('latest');
 
   useEffect(() => {
     const fromQuery = searchParams.get('event');
     if (fromQuery && fromQuery !== selectedEventId) setSelectedEventId(fromQuery);
   }, [searchParams]);
 
-  // URL에 event 없으면 첫 응모전으로 자동 선택
   useEffect(() => {
-    if (!selectedEventId && contestEvents.length > 0) {
-      setSelectedEventId(contestEvents[0].id);
-    }
+    if (!selectedEventId && contestEvents.length > 0) setSelectedEventId(contestEvents[0].id);
   }, [contestEvents, selectedEventId]);
 
   const selectedEvent = useMemo(() => events.find(e => e.id === selectedEventId), [events, selectedEventId]);
   const selectedWorkIds = useMemo(() => new Set(selectedEvent?.selectedWorkIds ?? []), [selectedEvent]);
+  const isPublished = !!selectedEvent?.publicationOpen;
 
   const realParticipants = useParticipantsFromWorks();
   const allParticipants = useMemo(() => [...realParticipants, ...seedParticipants], [realParticipants]);
 
-  // 갤러리는 workId 있는 실제 작품만 표시
   const filtered = useMemo(() => {
-    return allParticipants.filter(p => {
-      if (p.eventId !== selectedEventId) return false;
-      if (!p.workId) return false;
-      if (p.status !== '참여 완료') return false;
-      return true;
-    });
+    return allParticipants.filter(p =>
+      p.eventId === selectedEventId && !!p.workId && p.status === '참여 완료',
+    );
   }, [allParticipants, selectedEventId]);
+
+  const sorted = useMemo(() => {
+    const list = [...filtered];
+    if (sortBy === 'selected') {
+      list.sort((a, b) => {
+        const aS = selectedWorkIds.has(a.workId!);
+        const bS = selectedWorkIds.has(b.workId!);
+        if (aS && !bS) return -1;
+        if (!aS && bS) return 1;
+        return 0;
+      });
+    } else if (sortBy === 'artist') {
+      list.sort((a, b) => {
+        const aW = workStore.getWork(a.workId!);
+        const bW = workStore.getWork(b.workId!);
+        return (aW?.artist?.name || a.name).localeCompare(bW?.artist?.name || b.name, 'ko');
+      });
+    }
+    // 'latest': 기본 순서 유지
+    return list;
+  }, [filtered, sortBy, selectedWorkIds]);
 
   const totalCount = useMemo(
     () => allParticipants.filter(p => p.eventId === selectedEventId && p.workId).length,
     [allParticipants, selectedEventId],
   );
 
-  // 실제 참가자 workId 집합 — 선정 수는 참가자 내에서만 카운트
   const participantWorkIds = useMemo(
     () => new Set(allParticipants.filter(p => p.eventId === selectedEventId && p.workId).map(p => p.workId!)),
     [allParticipants, selectedEventId],
@@ -120,10 +136,7 @@ export default function EventParticipants({ compact = false }: { compact?: boole
     () => allParticipants.filter(p => p.eventId === selectedEventId && p.workId && p.status === '대기 중').length,
     [allParticipants, selectedEventId],
   );
-  const rejectedCount = useMemo(
-    () => allParticipants.filter(p => p.eventId === selectedEventId && p.workId && p.status === '취소').length,
-    [allParticipants, selectedEventId],
-  );
+
 
   const sendNotification = (workId: string) => {
     const ev = events.find(e => e.id === selectedEventId);
@@ -133,53 +146,71 @@ export default function EventParticipants({ compact = false }: { compact?: boole
       .replace('{title}', displayExhibitionTitle(w, t('work.untitled')))
       .replace('{event}', ev.title);
     pushDemoNotification({
-      type: 'event',
-      subtype: 'selected',
-      message,
-      workId,
-      eventId: selectedEventId,
-      fromUser: { name: '운영팀', avatar: '', id: 'admin' },
-      demo: false,
+      type: 'event', subtype: 'selected', message, workId, eventId: selectedEventId,
+      fromUser: { name: '운영팀', avatar: '', id: 'admin' }, demo: false,
     });
   };
 
+  // 선정 토글 — 알림 발송 없음 (발표하기 시 일괄 발송)
   const handleToggle = (workId: string) => {
-    if (!selectedEvent) return;
+    if (!selectedEvent || isPublished) return;
     const result = eventsStore.toggleSelected(selectedEventId, workId);
     const w = workStore.getWork(workId);
     const title = w ? displayExhibitionTitle(w, '') : workId;
     if (result.added) {
-      sendNotification(workId);
       appendAuditLog({ action: 'contest_selected', targetId: workId, targetSnapshot: { eventId: selectedEventId, eventTitle: selectedEvent.title }, actorId: 'admin', actorRole: 'admin' });
-      toast.success(`${title} 선정 + 작가 알림 발송`);
+      toast.success(`${title} 선정`);
     } else {
       appendAuditLog({ action: 'contest_unselected', targetId: workId, targetSnapshot: { eventId: selectedEventId, eventTitle: selectedEvent.title }, actorId: 'admin', actorRole: 'admin' });
       toast(`${title} 선정 해제`);
     }
   };
 
+  // 발표하기 — 선정된 모든 작품 일괄 알림 발송
+  const handlePublish = async () => {
+    if (!selectedEvent) return;
+    if (selectedFromParticipants === 0) {
+      toast.error('선정된 작품이 없습니다.');
+      return;
+    }
+    const ok = await openConfirm({
+      title: `당선작 ${selectedFromParticipants}건을 발표하시겠습니까?`,
+      description: '선정된 모든 작가에게 당선 알림이 발송됩니다. 발표 후 선정 변경이 불가합니다.',
+      confirmLabel: '발표하기',
+    });
+    if (!ok) return;
+
+    const selectedIds = [...selectedWorkIds].filter(id => participantWorkIds.has(id));
+    for (const wid of selectedIds) sendNotification(wid);
+
+    eventsStore.update(selectedEventId, { publicationOpen: true, publishedAt: todayLocalIso() });
+    appendAuditLog({ action: 'event_saved', targetId: selectedEventId, targetSnapshot: { published: true, count: selectedIds.length }, actorId: 'admin', actorRole: 'admin' });
+    toast.success(`당선작 ${selectedIds.length}건 발표 완료 — 작가 알림 발송됨`);
+  };
+
   const handleSelectAll = () => {
-    const workIds = filtered.map(p => p.workId!);
+    if (isPublished) return;
+    const workIds = sorted.map(p => p.workId!);
     const { addedIds } = eventsStore.bulkSelect(selectedEventId, workIds);
     if (addedIds.length > 0) {
-      addedIds.forEach(wid => sendNotification(wid));
       appendAuditLog({ action: 'contest_selected', targetId: 'bulk', targetSnapshot: { totalAdded: addedIds.length }, actorId: 'admin', actorRole: 'admin' });
-      toast.success(`${addedIds.length}건 선정 + 작가 알림 발송`);
+      toast.success(`${addedIds.length}건 선정`);
     } else {
       toast('이미 모두 선정된 상태입니다');
     }
   };
 
   const handleUnselectAll = () => {
-    const workIds = filtered.map(p => p.workId!);
+    if (isPublished) return;
+    const workIds = sorted.map(p => p.workId!);
     eventsStore.bulkUnselect(selectedEventId, workIds);
     appendAuditLog({ action: 'contest_unselected', targetId: 'bulk', targetSnapshot: { count: workIds.length }, actorId: 'admin', actorRole: 'admin' });
-    toast(`${workIds.length}건 선정 해제 (알림 보존)`);
+    toast(`${workIds.length}건 선정 해제`);
   };
 
   return (
     <>
-    <div className="space-y-5">
+    <div className="space-y-4 pb-20">
       {!compact && (
         <div>
           <h1 className="text-2xl font-bold text-foreground">응모자 관리</h1>
@@ -207,38 +238,42 @@ export default function EventParticipants({ compact = false }: { compact?: boole
           <div className="flex flex-wrap items-center gap-3">
             <p className="text-sm text-muted-foreground">
               총 {totalCount}건 응모
-              {selectedFromParticipants > 0 && (
-                <span className="ml-2 text-primary font-semibold">· {selectedFromParticipants}건 선정</span>
-              )}
+              <span className="ml-2 font-semibold text-primary">
+                · {selectedFromParticipants}건 선정
+              </span>
             </p>
-            {(pendingCount > 0 || rejectedCount > 0) && (
-              <p className="text-xs text-muted-foreground/70">
-                {pendingCount > 0 && `검수 대기 ${pendingCount}건`}
-                {pendingCount > 0 && rejectedCount > 0 && ' · '}
-                {rejectedCount > 0 && `반려 ${rejectedCount}건`}
-                {pendingCount > 0 && ' (검수 통과 후 선정 가능)'}
-              </p>
+            {isPublished && (
+              <span className="inline-flex items-center gap-1 px-2.5 py-0.5 rounded-full text-xs font-medium bg-emerald-50 text-emerald-700 border border-emerald-200">
+                <Check className="w-3 h-3" />
+                발표 완료 {selectedEvent?.publishedAt ? `· ${selectedEvent.publishedAt.slice(5)}` : ''}
+              </span>
+            )}
+            {pendingCount > 0 && (
+              <p className="text-xs text-muted-foreground/70">검수 대기 {pendingCount}건 (검수 통과 후 표시)</p>
             )}
           </div>
         )}
       </div>
 
-      {/* 일괄 액션 */}
+      {/* 정렬 + 일괄 액션 */}
       <div className="flex flex-wrap items-center gap-2">
-        {filtered.length > 0 && (
+        <select
+          value={sortBy}
+          onChange={(e) => setSortBy(e.target.value as SortKey)}
+          className="text-xs border border-border rounded-lg px-2.5 py-1.5 bg-white text-foreground"
+        >
+          <option value="latest">최신 응모순</option>
+          <option value="artist">작가명순</option>
+          <option value="selected">선정된 작품 먼저</option>
+        </select>
+        {!isPublished && sorted.length > 0 && (
           <div className="ml-auto flex gap-2">
-            <button
-              type="button"
-              onClick={handleSelectAll}
-              className="text-xs px-3 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/40"
-            >
+            <button type="button" onClick={handleSelectAll}
+              className="text-xs px-3 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/40">
               전체 선정
             </button>
-            <button
-              type="button"
-              onClick={handleUnselectAll}
-              className="text-xs px-3 py-1.5 rounded-lg border border-red-200 text-red-700 lg:hover:bg-red-50"
-            >
+            <button type="button" onClick={handleUnselectAll}
+              className="text-xs px-3 py-1.5 rounded-lg border border-red-200 text-red-700 lg:hover:bg-red-50">
               전체 해제
             </button>
           </div>
@@ -250,13 +285,13 @@ export default function EventParticipants({ compact = false }: { compact?: boole
         <div className="rounded-xl border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
           응모전을 선택해 주세요.
         </div>
-      ) : filtered.length === 0 ? (
+      ) : sorted.length === 0 ? (
         <div className="rounded-xl border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
           제출된 작품이 없습니다.
         </div>
       ) : (
-        <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-3">
-          {filtered.map(p => {
+        <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3">
+          {sorted.map(p => {
             const isSelected = selectedWorkIds.has(p.workId!);
             const work = workStore.getWork(p.workId!);
             const coverKey = work ? getCoverImage(work.image, work.coverImageIndex) : null;
@@ -269,12 +304,17 @@ export default function EventParticipants({ compact = false }: { compact?: boole
             return (
               <li key={p.id}>
                 <div className={`group w-full rounded-xl overflow-hidden border-2 text-left transition-all ${
-                  isSelected ? 'border-primary shadow-md shadow-primary/15' : 'border-border lg:hover:border-primary/50'
+                  isSelected
+                    ? 'border-primary shadow-md shadow-primary/15'
+                    : isPublished
+                      ? 'border-border opacity-50'
+                      : 'border-border lg:hover:border-primary/50'
                 }`}>
                   <button
                     type="button"
                     onClick={() => handleToggle(p.workId!)}
-                    className="w-full text-left"
+                    disabled={isPublished}
+                    className="w-full text-left disabled:cursor-default"
                   >
                     <div className="aspect-square bg-muted relative overflow-hidden">
                       {coverSrc ? (
@@ -284,9 +324,7 @@ export default function EventParticipants({ compact = false }: { compact?: boole
                           className="w-full h-full object-cover group-hover:scale-[1.02] transition-transform duration-200"
                         />
                       ) : (
-                        <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">
-                          이미지 없음
-                        </div>
+                        <div className="w-full h-full flex items-center justify-center text-xs text-muted-foreground">이미지 없음</div>
                       )}
                       {isSelected && (
                         <div className="absolute top-2 right-2 bg-primary text-white rounded-full w-6 h-6 flex items-center justify-center shadow-sm">
@@ -298,7 +336,7 @@ export default function EventParticipants({ compact = false }: { compact?: boole
                           {allImgs.length}장
                         </div>
                       )}
-                      <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/8 transition-colors" />
+                      {!isPublished && <div className="absolute inset-0 bg-primary/0 group-hover:bg-primary/8 transition-colors" />}
                     </div>
                   </button>
                   <div className="p-2.5 bg-white flex items-start justify-between gap-1">
@@ -326,6 +364,36 @@ export default function EventParticipants({ compact = false }: { compact?: boole
       )}
     </div>
 
+    {/* 하단 고정 바 */}
+    {selectedEventId && selectedEvent && (
+      <div className={`fixed bottom-0 left-0 right-0 z-40 px-4 py-3 flex items-center gap-3 ${
+        isPublished ? 'bg-emerald-900' : 'bg-slate-900'
+      }`}>
+        <div className="flex-1 text-sm">
+          {isPublished ? (
+            <span className="text-emerald-300 font-medium">
+              ✓ 발표 완료 — {selectedFromParticipants}건 당선 {selectedEvent.publishedAt ? `(${selectedEvent.publishedAt})` : ''}
+            </span>
+          ) : (
+            <span className="text-slate-300">
+              {selectedFromParticipants}건 선정
+            </span>
+          )}
+        </div>
+        {!isPublished && (
+          <button
+            type="button"
+            onClick={handlePublish}
+            disabled={selectedFromParticipants === 0}
+            className="inline-flex items-center gap-1.5 bg-primary text-white rounded-lg px-4 py-2 text-sm font-semibold lg:hover:bg-primary/90 disabled:opacity-40 disabled:cursor-not-allowed"
+          >
+            <Megaphone className="w-4 h-4" />
+            발표하기
+          </button>
+        )}
+      </div>
+    )}
+
     {/* 작품 전체 보기 모달 */}
     {previewWork && createPortal(
       <div
@@ -348,16 +416,14 @@ export default function EventParticipants({ compact = false }: { compact?: boole
                 .map((k: string) => imageUrls[k] || k);
               return imgs.length > 1 && (
                 <>
-                  <button
-                    type="button"
+                  <button type="button"
                     onClick={() => setPreviewWork((p) => p ? { ...p, imgIndex: Math.max(0, p.imgIndex - 1) } : p)}
                     disabled={previewWork.imgIndex === 0}
                     className="absolute left-2 top-1/2 -translate-y-1/2 bg-black/50 text-white rounded-full w-9 h-9 flex items-center justify-center disabled:opacity-20 lg:hover:bg-black/70"
                   >
                     <ChevronLeft className="w-5 h-5" />
                   </button>
-                  <button
-                    type="button"
+                  <button type="button"
                     onClick={() => setPreviewWork((p) => p ? { ...p, imgIndex: Math.min(imgs.length - 1, p.imgIndex + 1) } : p)}
                     disabled={previewWork.imgIndex === imgs.length - 1}
                     className="absolute right-2 top-1/2 -translate-y-1/2 bg-black/50 text-white rounded-full w-9 h-9 flex items-center justify-center disabled:opacity-20 lg:hover:bg-black/70"
@@ -366,9 +432,7 @@ export default function EventParticipants({ compact = false }: { compact?: boole
                   </button>
                   <div className="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5">
                     {imgs.map((_, i) => (
-                      <button
-                        key={i}
-                        type="button"
+                      <button key={i} type="button"
                         onClick={() => setPreviewWork((p) => p ? { ...p, imgIndex: i } : p)}
                         className={`w-1.5 h-1.5 rounded-full transition-all ${i === previewWork.imgIndex ? 'bg-white' : 'bg-white/40'}`}
                       />
@@ -385,11 +449,8 @@ export default function EventParticipants({ compact = false }: { compact?: boole
                 <p className="text-sm text-muted-foreground mt-0.5">{previewWork.work.artist.name}</p>
               )}
             </div>
-            <button
-              type="button"
-              onClick={() => setPreviewWork(null)}
-              className="shrink-0 p-1 rounded-lg text-muted-foreground lg:hover:bg-muted/50"
-            >
+            <button type="button" onClick={() => setPreviewWork(null)}
+              className="shrink-0 p-1 rounded-lg text-muted-foreground lg:hover:bg-muted/50">
               <X className="w-5 h-5" />
             </button>
           </div>

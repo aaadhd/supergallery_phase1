@@ -1,7 +1,7 @@
 import { useMemo, useState, useEffect, useSyncExternalStore, type FormEvent } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
-import { Pencil, Plus, Trash2, Users, Trophy, ListChecks } from 'lucide-react';
+import { Pencil, Plus, Trash2, Users, Trophy, ListChecks, X } from 'lucide-react';
 import { Button } from '../components/ui/button';
 import { openConfirm } from '../components/ConfirmDialog';
 import {
@@ -33,8 +33,6 @@ type DraftState = {
   participantsLabel: string;
   subtype: EventSubtype;
   status: EventStatus | '';
-  publicationOpen: boolean;
-  publishedAt: string;
   resultUrl: string;
 };
 
@@ -50,8 +48,6 @@ const emptyDraft: DraftState = {
   participantsLabel: '',
   subtype: 'irregular',
   status: '',
-  publicationOpen: false,
-  publishedAt: '',
   resultUrl: '',
 };
 
@@ -75,17 +71,11 @@ export default function ContestManagement() {
   const switchTab = (tab: Tab) => {
     setSearchParams((prev) => {
       const next = new URLSearchParams(prev);
-      if (tab === 'list') {
-        next.delete('tab');
-        next.delete('event');
-      } else {
-        next.set('tab', tab);
-      }
+      if (tab === 'list') { next.delete('tab'); next.delete('event'); }
+      else next.set('tab', tab);
       return next;
     }, { replace: true });
-    if (tab === 'list') {
-      setShowForm(false);
-    }
+    if (tab === 'list') setShowForm(false);
   };
 
   useEffect(() => {
@@ -113,10 +103,14 @@ export default function ContestManagement() {
       .sort((a, b) => order[deriveEventStatus(a)] - order[deriveEventStatus(b)]);
   }, [allEvents]);
 
+  const openCreate = () => {
+    setEditingId(null);
+    setDraft(emptyDraft);
+    setShowForm(true);
+  };
+
   const startEdit = (ev: ManagedEvent) => {
     setEditingId(ev.id);
-    setShowForm(true);
-    window.scrollTo({ top: 0, behavior: 'smooth' });
     setDraft({
       title: ev.title,
       subtitle: ev.subtitle ?? '',
@@ -129,8 +123,6 @@ export default function ContestManagement() {
       participantsLabel: ev.participantsLabel ?? '',
       subtype: ev.subtype ?? 'irregular',
       status: ev.status ?? '',
-      publicationOpen: ev.publicationOpen ?? false,
-      publishedAt: ev.publishedAt ?? '',
       resultUrl: ev.resultUrl ?? '',
     });
     setShowForm(true);
@@ -152,9 +144,7 @@ export default function ContestManagement() {
     if (!ok) return;
     eventsStore.remove(ev.id);
     workStore.getWorks().forEach((w) => {
-      if (w.linkedEventId?.toString() === ev.id) {
-        workStore.updateWork(w.id, { linkedEventId: undefined });
-      }
+      if (w.linkedEventId?.toString() === ev.id) workStore.updateWork(w.id, { linkedEventId: undefined });
     });
     appendAuditLog({ action: 'event_deleted', targetId: ev.id, targetSnapshot: { title: ev.title }, actorId: 'admin', actorRole: 'admin' });
     toast.success(t('admin.contest.toastDeleted'));
@@ -172,10 +162,7 @@ export default function ContestManagement() {
       toast.error(t('admin.contest.errRequired'));
       return;
     }
-    if (start > end) {
-      toast.error(t('admin.contest.errDateOrder'));
-      return;
-    }
+    if (start > end) { toast.error(t('admin.contest.errDateOrder')); return; }
     const displayStart = draft.displayStartAt.trim();
     const displayEnd = draft.displayEndAt.trim();
     if (!displayStart || !displayEnd) {
@@ -187,9 +174,6 @@ export default function ContestManagement() {
       return;
     }
     const existing = editingId ? eventsStore.get(editingId) : null;
-    if (draft.publicationOpen && (existing?.selectedWorkIds?.length ?? 0) === 0) {
-      toast.warning(t('admin.contest.warnEmptySelected'));
-    }
     const payload: Omit<ManagedEvent, 'id'> = {
       type: 'contest',
       subtype: draft.subtype,
@@ -203,9 +187,11 @@ export default function ContestManagement() {
       displayEndAt: displayEnd,
       participantsLabel: draft.participantsLabel.trim() || undefined,
       status: draft.status || undefined,
-      publicationOpen: draft.publicationOpen,
-      publishedAt: draft.publishedAt.trim() || undefined,
       resultUrl: draft.resultUrl.trim() || undefined,
+      // 기존 발표 정보 보존
+      publicationOpen: existing?.publicationOpen,
+      publishedAt: existing?.publishedAt,
+      selectedWorkIds: existing?.selectedWorkIds,
     };
     if (editingId) {
       eventsStore.update(editingId, payload);
@@ -219,6 +205,15 @@ export default function ContestManagement() {
     cancelEdit();
   };
 
+  const goToParticipants = (eventId: string) => {
+    setSearchParams((prev) => {
+      const next = new URLSearchParams(prev);
+      next.set('tab', 'participants');
+      next.set('event', eventId);
+      return next;
+    }, { replace: true });
+  };
+
   return (
     <div className="min-h-full">
       <div className="flex flex-wrap items-center justify-between gap-4 mb-4">
@@ -226,7 +221,7 @@ export default function ContestManagement() {
         {activeTab === 'list' && (
           <Button
             type="button"
-            onClick={() => { setEditingId(null); setDraft(emptyDraft); setShowForm((v) => !v); }}
+            onClick={openCreate}
             className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white lg:hover:bg-primary/90 inline-flex items-center gap-1.5"
           >
             <Plus className="w-4 h-4" />
@@ -241,9 +236,7 @@ export default function ContestManagement() {
           type="button"
           onClick={() => switchTab('list')}
           className={`inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-            activeTab === 'list'
-              ? 'border-primary text-primary'
-              : 'border-transparent text-muted-foreground lg:hover:text-foreground'
+            activeTab === 'list' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground lg:hover:text-foreground'
           }`}
         >
           <Trophy className="w-4 h-4" />
@@ -253,9 +246,7 @@ export default function ContestManagement() {
           type="button"
           onClick={() => switchTab('participants')}
           className={`inline-flex items-center gap-1.5 px-4 py-2 text-sm font-medium border-b-2 transition-colors ${
-            activeTab === 'participants'
-              ? 'border-primary text-primary'
-              : 'border-transparent text-muted-foreground lg:hover:text-foreground'
+            activeTab === 'participants' ? 'border-primary text-primary' : 'border-transparent text-muted-foreground lg:hover:text-foreground'
           }`}
         >
           <ListChecks className="w-4 h-4" />
@@ -268,236 +259,238 @@ export default function ContestManagement() {
         <>
           {loading ? (
             <div className="rounded-lg border border-border py-16 text-center text-sm text-muted-foreground">{t('admin.loading')}</div>
+          ) : contests.length === 0 ? (
+            <div className="rounded-lg border border-dashed border-border py-16 text-center text-sm text-muted-foreground">{t('admin.contest.empty')}</div>
           ) : (
-            <>
-              {showForm && (
-                <form
-                  onSubmit={submit}
-                  className="mb-6 border border-border rounded-lg p-4 space-y-4 bg-muted/50"
-                >
-                  <p className="text-sm font-medium text-foreground">{editingId ? t('admin.contest.editorEdit') : t('admin.contest.editorCreate')}</p>
-
-                  <div className="grid sm:grid-cols-2 gap-3">
-                    <div>
-                      <label className="block text-xs text-muted-foreground mb-1">제목 <span className="text-destructive">*</span></label>
-                      <input
-                        placeholder="5월 드로잉 챌린지"
-                        value={draft.title}
-                        onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
-                        className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
-                      />
-                    </div>
-                    <div>
-                      <label className="block text-xs text-muted-foreground mb-1">부제</label>
-                      <input
-                        placeholder={t('admin.contest.placeholderSubtitle')}
-                        value={draft.subtitle}
-                        onChange={(e) => setDraft((d) => ({ ...d, subtitle: e.target.value }))}
-                        className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
-                      />
-                    </div>
-                    <div className="sm:col-span-2">
-                      <label className="block text-xs text-muted-foreground mb-1">참여 대상</label>
-                      <input
-                        placeholder="예: 디지털 드로잉 작가 누구나"
-                        value={draft.participantsLabel}
-                        onChange={(e) => setDraft((d) => ({ ...d, participantsLabel: e.target.value }))}
-                        className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
-                      />
-                    </div>
-                    <div className="sm:col-span-2">
-                      <AdminImageUpload
-                        label="이벤트 대표 이미지"
-                        required
-                        value={draft.bannerImageUrl}
-                        onChange={(url) => setDraft((d) => ({ ...d, bannerImageUrl: url }))}
-                      />
-                    </div>
-                    <div className="sm:col-span-2">
-                      <label className="block text-xs text-muted-foreground mb-1">상세 설명 <span className="text-destructive">*</span></label>
-                      <textarea
-                        placeholder="응모전 내용을 입력하세요"
-                        value={draft.description}
-                        onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
-                        className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white min-h-[80px]"
-                      />
-                    </div>
-
-                    <div className="sm:col-span-2">
-                      <p className="text-xs font-semibold text-foreground mb-2">실행 기간 <span className="text-destructive">*</span></p>
-                      <div className="grid sm:grid-cols-2 gap-3">
-                        <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-                          {t('admin.contest.labelStartAt')}
-                          <input type="date" value={draft.startAt} onChange={(e) => setDraft((d) => ({ ...d, startAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground" />
-                        </label>
-                        <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-                          {t('admin.contest.labelEndAt')}
-                          <input type="date" value={draft.endAt} onChange={(e) => setDraft((d) => ({ ...d, endAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground" />
-                        </label>
-                      </div>
-                    </div>
-
-                    <div className="sm:col-span-2">
-                      <p className="text-xs font-semibold text-foreground mb-2">게시 기간 <span className="text-destructive">*</span></p>
-                      <div className="grid sm:grid-cols-2 gap-3">
-                        <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-                          게시 시작일 <span className="text-destructive">*</span>
-                          <input type="date" value={draft.displayStartAt} onChange={(e) => setDraft((d) => ({ ...d, displayStartAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground" />
-                        </label>
-                        <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-                          게시 종료일 <span className="text-destructive">*</span>
-                          <input type="date" value={draft.displayEndAt} onChange={(e) => setDraft((d) => ({ ...d, displayEndAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground" />
-                        </label>
-                      </div>
-                    </div>
-
-                    <div>
-                      <label className="block text-xs text-muted-foreground mb-1">응모 유형</label>
-                      <select
-                        value={draft.subtype}
-                        onChange={(e) => setDraft((d) => ({ ...d, subtype: e.target.value as EventSubtype }))}
-                        className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
-                      >
-                        <option value="regular">{t('admin.contest.subtypeRegular')}</option>
-                        <option value="irregular">{t('admin.contest.subtypeIrregular')}</option>
-                      </select>
-                    </div>
-                    <div className="sm:col-span-2 pt-3 border-t border-border space-y-2">
-                      <p className="text-xs font-semibold text-foreground">{t('admin.contest.publicationTitle')}</p>
-                      <label className="flex items-center gap-2 text-sm text-foreground">
-                        <input type="checkbox" checked={draft.publicationOpen} onChange={(e) => setDraft((d) => ({ ...d, publicationOpen: e.target.checked }))} />
-                        {t('admin.contest.publicationOpenLabel')}
-                      </label>
-                      <label className="flex flex-col gap-1 text-xs text-muted-foreground sm:max-w-xs">
-                        {t('admin.contest.publishedAtLabel')}
-                        <input type="date" value={draft.publishedAt} onChange={(e) => setDraft((d) => ({ ...d, publishedAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground" />
-                      </label>
-                      <label className="flex flex-col gap-1 text-xs text-muted-foreground sm:max-w-xs">
-                        결과 발표 URL
-                        <input
-                          type="url"
-                          value={draft.resultUrl}
-                          onChange={(e) => setDraft((d) => ({ ...d, resultUrl: e.target.value }))}
-                          placeholder="https://..."
-                          className="border border-border rounded-lg px-3 py-2 text-sm bg-white text-foreground"
-                        />
-                      </label>
-                      <p className="text-[11px] text-muted-foreground">{t('admin.contest.selectedWorkHint')}</p>
-                    </div>
-
-                    <select
-                      value={draft.status}
-                      onChange={(e) => setDraft((d) => ({ ...d, status: e.target.value as EventStatus | '' }))}
-                      className="border border-border rounded-lg px-3 py-2 text-sm bg-white sm:col-span-2 sm:max-w-xs"
-                    >
-                      <option value="">{t('admin.contest.statusAuto')}</option>
-                      <option value="scheduled">{t('admin.contest.statusScheduled')}</option>
-                      <option value="active">{t('admin.contest.statusActive')}</option>
-                      <option value="ended">{t('admin.contest.statusEnded')}</option>
-                    </select>
-                  </div>
-
-                  <div className="flex gap-2">
-                    <Button type="submit" className="text-sm px-3 py-1.5 rounded-lg bg-primary text-white">
-                      {editingId ? t('admin.contest.edit') : t('admin.contest.save')}
-                    </Button>
-                    <button type="button" onClick={cancelEdit} className="text-sm px-3 py-1.5 rounded-lg border border-border">
-                      {t('admin.contest.cancel')}
-                    </button>
-                  </div>
-                </form>
-              )}
-
-              {contests.length === 0 ? (
-                <div className="rounded-lg border border-dashed border-border py-16 text-center text-sm text-muted-foreground">
-                  {t('admin.contest.empty')}
-                </div>
-              ) : (
-                <div className="border border-border rounded-lg overflow-hidden overflow-x-auto">
-                  <table className="w-full text-sm min-w-[700px]">
-                    <thead>
-                      <tr className="bg-muted text-left text-foreground">
-                        <th className="px-4 py-3 font-medium">응모전명</th>
-                        <th className="px-4 py-3 font-medium">실행 기간</th>
-                        <th className="px-4 py-3 font-medium">게시 기간</th>
-                        <th className="px-4 py-3 font-medium text-center">응모</th>
-                        <th className="px-4 py-3 font-medium">{t('admin.contest.colStatus')}</th>
-                        <th className="px-4 py-3 font-medium text-right">{t('admin.contest.colActions')}</th>
-                      </tr>
-                    </thead>
-                    <tbody>
-                      {contests.map((ev) => {
-                        const s = deriveEventStatus(ev);
-                        return (
-                          <tr key={ev.id} className="border-b border-border/40 lg:hover:bg-muted/50 transition-colors">
-                            <td className="px-4 py-3 font-medium text-foreground">
-                              {ev.title}
-                              {ev.subtitle && <p className="text-xs text-muted-foreground mt-0.5">{ev.subtitle}</p>}
-                            </td>
-                            <td className="px-4 py-3 text-muted-foreground whitespace-nowrap text-xs">{ev.startAt} ~ {ev.endAt}</td>
-                            <td className="px-4 py-3 text-muted-foreground whitespace-nowrap text-xs">
-                              {ev.displayStartAt || ev.displayEndAt
-                                ? `${ev.displayStartAt ?? ev.startAt} ~ ${ev.displayEndAt ?? ev.endAt}`
-                                : <span className="text-muted-foreground/40 text-[10px]">미설정</span>}
-                            </td>
-                            <td className="px-4 py-3 text-center text-sm font-medium text-foreground">
-                              {entryCountByEvent.get(ev.id) ?? 0}
-                              <span className="text-xs font-normal text-muted-foreground ml-0.5">명</span>
-                            </td>
-                            <td className="px-4 py-3">
-                              <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium ${statusBadgeClass(s)}`}>
-                                {statusLabelKo(s)}
-                                {ev.status && <span className="ml-1 text-xs opacity-70">{t('admin.contest.manual')}</span>}
+            <div className="border border-border rounded-lg overflow-hidden overflow-x-auto">
+              <table className="w-full text-sm min-w-[700px]">
+                <thead>
+                  <tr className="bg-muted text-left text-foreground">
+                    <th className="px-4 py-3 font-medium">응모전명</th>
+                    <th className="px-4 py-3 font-medium">실행 기간</th>
+                    <th className="px-4 py-3 font-medium">게시 기간</th>
+                    <th className="px-4 py-3 font-medium text-center">응모</th>
+                    <th className="px-4 py-3 font-medium">{t('admin.contest.colStatus')}</th>
+                    <th className="px-4 py-3 font-medium text-right">{t('admin.contest.colActions')}</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {contests.map((ev) => {
+                    const s = deriveEventStatus(ev);
+                    const entryCount = entryCountByEvent.get(ev.id) ?? 0;
+                    return (
+                      <tr key={ev.id} className="border-b border-border/40 lg:hover:bg-muted/50 transition-colors">
+                        <td className="px-4 py-3 font-medium text-foreground">
+                          {ev.title}
+                          {ev.subtitle && <p className="text-xs text-muted-foreground mt-0.5">{ev.subtitle}</p>}
+                        </td>
+                        <td className="px-4 py-3 text-muted-foreground whitespace-nowrap text-xs">{ev.startAt} ~ {ev.endAt}</td>
+                        <td className="px-4 py-3 text-muted-foreground whitespace-nowrap text-xs">
+                          {ev.displayStartAt || ev.displayEndAt
+                            ? `${ev.displayStartAt ?? ev.startAt} ~ ${ev.displayEndAt ?? ev.endAt}`
+                            : <span className="text-muted-foreground/40 text-[10px]">미설정</span>}
+                        </td>
+                        <td className="px-4 py-3 text-center">
+                          <button
+                            type="button"
+                            onClick={() => goToParticipants(ev.id)}
+                            className="text-sm font-medium text-primary lg:hover:underline"
+                          >
+                            {entryCount}
+                            <span className="text-xs font-normal text-muted-foreground ml-0.5">명</span>
+                          </button>
+                        </td>
+                        <td className="px-4 py-3">
+                          <div className="flex flex-col gap-1">
+                            <span className={`inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium w-fit ${statusBadgeClass(s)}`}>
+                              {statusLabelKo(s)}
+                              {ev.status && <span className="ml-1 text-xs opacity-70">{t('admin.contest.manual')}</span>}
+                            </span>
+                            {ev.publicationOpen && (
+                              <span className="inline-flex rounded-full px-2.5 py-0.5 text-xs font-medium w-fit bg-emerald-50 text-emerald-700 border border-emerald-200">
+                                발표 완료 {ev.publishedAt ? `· ${ev.publishedAt.slice(5)}` : ''}
                               </span>
-                            </td>
-                            <td className="px-4 py-3 text-right space-x-2 whitespace-nowrap">
-                              <button
-                                type="button"
-                                onClick={() => {
-                                  setSearchParams((prev) => {
-                                    const next = new URLSearchParams(prev);
-                                    next.set('tab', 'participants');
-                                    next.set('event', ev.id);
-                                    return next;
-                                  }, { replace: true });
-                                }}
-                                className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/30 inline-flex items-center gap-1.5"
-                              >
-                                <Users className="w-3.5 h-3.5" />
-                                {t('admin.contest.participants')}
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => startEdit(ev)}
-                                className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/30"
-                              >
-                                <Pencil className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
-                                {t('admin.contest.edit')}
-                              </button>
-                              <button
-                                type="button"
-                                onClick={() => removeContest(ev)}
-                                className="text-sm px-3 py-1.5 rounded-lg border border-red-200 text-red-700 lg:hover:bg-red-50 inline-flex items-center gap-1.5"
-                              >
-                                <Trash2 className="w-3.5 h-3.5" />
-                                {t('admin.notice.delete')}
-                              </button>
-                            </td>
-                          </tr>
-                        );
-                      })}
-                    </tbody>
-                  </table>
-                </div>
-              )}
-            </>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-4 py-3 text-right space-x-2 whitespace-nowrap">
+                          <button
+                            type="button"
+                            onClick={() => goToParticipants(ev.id)}
+                            className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/30 inline-flex items-center gap-1.5"
+                          >
+                            <Users className="w-3.5 h-3.5" />
+                            {t('admin.contest.participants')}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => startEdit(ev)}
+                            className="text-sm px-3 py-1.5 rounded-lg border border-border text-foreground lg:hover:bg-muted/30"
+                          >
+                            <Pencil className="w-3.5 h-3.5 inline mr-1 -mt-0.5" />
+                            {t('admin.contest.edit')}
+                          </button>
+                          <button
+                            type="button"
+                            onClick={() => removeContest(ev)}
+                            className="text-sm px-3 py-1.5 rounded-lg border border-red-200 text-red-700 lg:hover:bg-red-50 inline-flex items-center gap-1.5"
+                          >
+                            <Trash2 className="w-3.5 h-3.5" />
+                            {t('admin.notice.delete')}
+                          </button>
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
           )}
         </>
       )}
 
       {/* 응모자 관리 탭 */}
-      {activeTab === 'participants' && (
-        <EventParticipants compact />
+      {activeTab === 'participants' && <EventParticipants compact />}
+
+      {/* 등록/수정 모달 */}
+      {showForm && (
+        <div
+          className="fixed inset-0 z-50 bg-black/50 flex items-start justify-center overflow-y-auto py-8 px-4"
+          onClick={(e) => { if (e.target === e.currentTarget) cancelEdit(); }}
+        >
+          <div className="bg-white rounded-2xl shadow-xl w-full max-w-2xl">
+            <form onSubmit={submit}>
+              <div className="flex items-center justify-between px-6 pt-6 pb-4 border-b border-border">
+                <h2 className="text-base font-semibold text-foreground">
+                  {editingId ? '응모전 수정' : '새 응모전 등록'}
+                </h2>
+                <button type="button" onClick={cancelEdit} className="p-1.5 rounded-lg text-muted-foreground lg:hover:bg-muted/50">
+                  <X className="w-5 h-5" />
+                </button>
+              </div>
+
+              <div className="px-6 py-4 space-y-4">
+                <div className="grid sm:grid-cols-2 gap-3">
+                  <div>
+                    <label className="block text-xs text-muted-foreground mb-1">제목 <span className="text-destructive">*</span></label>
+                    <input
+                      placeholder="5월 드로잉 챌린지"
+                      value={draft.title}
+                      onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
+                      className="w-full border border-border rounded-lg px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div>
+                    <label className="block text-xs text-muted-foreground mb-1">부제</label>
+                    <input
+                      placeholder={t('admin.contest.placeholderSubtitle')}
+                      value={draft.subtitle}
+                      onChange={(e) => setDraft((d) => ({ ...d, subtitle: e.target.value }))}
+                      className="w-full border border-border rounded-lg px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs text-muted-foreground mb-1">참여 대상</label>
+                    <input
+                      placeholder="예: 디지털 드로잉 작가 누구나"
+                      value={draft.participantsLabel}
+                      onChange={(e) => setDraft((d) => ({ ...d, participantsLabel: e.target.value }))}
+                      className="w-full border border-border rounded-lg px-3 py-2 text-sm"
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <AdminImageUpload
+                      label="이벤트 대표 이미지"
+                      required
+                      value={draft.bannerImageUrl}
+                      onChange={(url) => setDraft((d) => ({ ...d, bannerImageUrl: url }))}
+                    />
+                  </div>
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs text-muted-foreground mb-1">상세 설명 <span className="text-destructive">*</span></label>
+                    <textarea
+                      placeholder="응모전 내용을 입력하세요"
+                      value={draft.description}
+                      onChange={(e) => setDraft((d) => ({ ...d, description: e.target.value }))}
+                      className="w-full border border-border rounded-lg px-3 py-2 text-sm min-h-[80px]"
+                    />
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <p className="text-xs font-semibold text-foreground mb-2">실행 기간 <span className="text-destructive">*</span></p>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+                        {t('admin.contest.labelStartAt')}
+                        <input type="date" value={draft.startAt} onChange={(e) => setDraft((d) => ({ ...d, startAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
+                      </label>
+                      <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+                        {t('admin.contest.labelEndAt')}
+                        <input type="date" value={draft.endAt} onChange={(e) => setDraft((d) => ({ ...d, endAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <p className="text-xs font-semibold text-foreground mb-2">게시 기간 <span className="text-destructive">*</span></p>
+                    <div className="grid sm:grid-cols-2 gap-3">
+                      <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+                        게시 시작일 <span className="text-destructive">*</span>
+                        <input type="date" value={draft.displayStartAt} onChange={(e) => setDraft((d) => ({ ...d, displayStartAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
+                      </label>
+                      <label className="flex flex-col gap-1 text-xs text-muted-foreground">
+                        게시 종료일 <span className="text-destructive">*</span>
+                        <input type="date" value={draft.displayEndAt} onChange={(e) => setDraft((d) => ({ ...d, displayEndAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
+                      </label>
+                    </div>
+                  </div>
+
+                  <div>
+                    <label className="block text-xs text-muted-foreground mb-1">응모 유형</label>
+                    <select
+                      value={draft.subtype}
+                      onChange={(e) => setDraft((d) => ({ ...d, subtype: e.target.value as EventSubtype }))}
+                      className="w-full border border-border rounded-lg px-3 py-2 text-sm"
+                    >
+                      <option value="regular">{t('admin.contest.subtypeRegular')}</option>
+                      <option value="irregular">{t('admin.contest.subtypeIrregular')}</option>
+                    </select>
+                  </div>
+
+                  <div className="sm:col-span-2">
+                    <label className="block text-xs text-muted-foreground mb-1">결과 발표 URL</label>
+                    <input
+                      type="url"
+                      value={draft.resultUrl}
+                      onChange={(e) => setDraft((d) => ({ ...d, resultUrl: e.target.value }))}
+                      placeholder="https://..."
+                      className="w-full border border-border rounded-lg px-3 py-2 text-sm"
+                    />
+                  </div>
+
+                  <select
+                    value={draft.status}
+                    onChange={(e) => setDraft((d) => ({ ...d, status: e.target.value as EventStatus | '' }))}
+                    className="border border-border rounded-lg px-3 py-2 text-sm sm:col-span-2 sm:max-w-xs"
+                  >
+                    <option value="">{t('admin.contest.statusAuto')}</option>
+                    <option value="scheduled">{t('admin.contest.statusScheduled')}</option>
+                    <option value="active">{t('admin.contest.statusActive')}</option>
+                    <option value="ended">{t('admin.contest.statusEnded')}</option>
+                  </select>
+                </div>
+              </div>
+
+              <div className="flex gap-2 px-6 py-4 border-t border-border">
+                <Button type="submit" className="text-sm px-4 py-2 rounded-lg bg-primary text-white">
+                  {editingId ? t('admin.contest.edit') : t('admin.contest.save')}
+                </Button>
+                <button type="button" onClick={cancelEdit} className="text-sm px-4 py-2 rounded-lg border border-border text-muted-foreground lg:hover:bg-muted/50">
+                  {t('admin.contest.cancel')}
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
       )}
     </div>
   );
