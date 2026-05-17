@@ -41,6 +41,7 @@ const navSections: NavSection[] = [
     items: [
       { to: '/admin/content-review', icon: FileSearch, labelKey: 'admin.nav.contentReview' },
       { to: '/admin/reports', icon: Flag, labelKey: 'admin.nav.reports' },
+      { to: '/admin/members', icon: UserCog, labelKey: 'admin.nav.members' },
     ],
   },
   {
@@ -59,15 +60,9 @@ const navSections: NavSection[] = [
     ],
   },
   {
-    sectionLabelKey: 'admin.section.banners',
+    sectionLabelKey: 'admin.section.communication',
     items: [
       { to: '/admin/banners', icon: PanelTop, labelKey: 'admin.nav.banners' },
-    ],
-  },
-  {
-    sectionLabelKey: 'admin.section.members',
-    items: [
-      { to: '/admin/members', icon: UserCog, labelKey: 'admin.nav.members' },
       { to: '/admin/notices', icon: Megaphone, labelKey: 'admin.nav.notices' },
       { to: '/admin/inquiries', icon: MessageSquare, labelKey: 'admin.nav.inquiries' },
     ],

@@ -1,5 +1,6 @@
 import { useMemo, useState } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
+import { ChevronLeft } from 'lucide-react';
 import { useI18n } from '../i18n/I18nProvider';
 import { workStore, useWorkStore } from '../store';
 import { getCoverImage } from '../utils/imageHelper';
@@ -38,8 +39,10 @@ export default function PickHallOfFame() {
           <button
             type="button"
             onClick={handleBack}
-            className="absolute left-0 top-0 text-xs text-slate-400 hover:text-slate-200 transition-colors"
+            className="absolute left-0 top-0 inline-flex items-center gap-1 px-3 py-2 rounded-full text-xs font-medium transition-colors min-h-[36px]"
+            style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,200,0,0.2)', color: '#c8a96e' }}
           >
+            <ChevronLeft className="w-3.5 h-3.5" />
             {t('hallOfFame.back')}
           </button>
           <h1

@@ -37,9 +37,11 @@ interface WorkDetailModalProps {
   isPreview?: boolean;
   /** USR-CUR-01에서 piece 카드 클릭 시 해당 piece 슬라이드로 자동 스크롤 (Policy §15.4 / PRD AC-02). */
   initialPieceId?: string;
+  /** 이전/다음 탐색이 첫/마지막에서 루프되도록 */
+  loop?: boolean;
 }
 
-export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: providedWorks, onWorkReported, isPreview, initialPieceId }: WorkDetailModalProps) {
+export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: providedWorks, onWorkReported, isPreview, initialPieceId, loop }: WorkDetailModalProps) {
   const { t } = useI18n();
   const defaultWorks = [...works, ...hydrateGroupWorks(allArtists)] as Work[];
   const allWorks = providedWorks || defaultWorks;
@@ -159,8 +161,12 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
   const totalImages = images.length;
 
   const currentIndex = allWorks.findIndex(w => w.id === workId);
-  const prevWork = currentIndex > 0 ? allWorks[currentIndex - 1] : null;
-  const nextWork = currentIndex < allWorks.length - 1 ? allWorks[currentIndex + 1] : null;
+  const prevWork = loop && allWorks.length > 1
+    ? allWorks[(currentIndex - 1 + allWorks.length) % allWorks.length]
+    : (currentIndex > 0 ? allWorks[currentIndex - 1] : null);
+  const nextWork = loop && allWorks.length > 1
+    ? allWorks[(currentIndex + 1) % allWorks.length]
+    : (currentIndex < allWorks.length - 1 ? allWorks[currentIndex + 1] : null);
 
   // 관련 작품 노출 규칙 (2026-04-17):
   //  - 개인 전시: 같은 작가 최신 3개. 같은 작가 작품이 3개를 **초과**할 때만 [더보기] 버튼(→ 작가 프로필)
@@ -407,7 +413,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
           </div>
 
           {/* Header: artist info + follow */}
-          <div className="w-full flex items-center justify-between px-4 sm:px-8 lg:px-10 py-5 bg-white border-b border-zinc-200 z-20">
+          <div className="w-full flex items-center justify-between px-4 sm:px-8 lg:px-10 py-5 bg-[#1a1a2e] sm:bg-white border-b border-white/10 sm:border-zinc-200 z-20">
             <div className="flex items-center gap-3 min-w-0">
               {!isGroupWork && (
                 <button
@@ -415,23 +421,23 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                   onClick={() => handleArtistClick(work.artist.id)}
                   className="h-auto w-auto rounded-full p-0 flex-shrink-0 lg:hover:opacity-80 transition-opacity"
                 >
-                  <Avatar className="h-11 w-11 shadow-sm border border-black/5 cursor-pointer">
+                  <Avatar className="h-11 w-11 shadow-sm border border-white/10 sm:border-black/5 cursor-pointer">
                     <AvatarImage src={work.artist.avatar} alt={work.artist.name} />
-                    <AvatarFallback className="text-sm bg-zinc-100 text-zinc-900">{work.artist.name[0]}</AvatarFallback>
+                    <AvatarFallback className="text-sm bg-zinc-700 text-white sm:bg-zinc-100 sm:text-zinc-900">{work.artist.name[0]}</AvatarFallback>
                   </Avatar>
                 </button>
               )}
               <div className="flex flex-col gap-0.5 min-w-0">
-                <h2 className="text-zinc-900 text-base sm:text-lg font-extrabold leading-tight truncate">{headline}</h2>
+                <h2 className="text-white sm:text-zinc-900 text-base sm:text-lg font-extrabold leading-tight truncate">{headline}</h2>
                 {isGroupWork ? (
                   (work.groupName?.trim() || groupOrgLine) && (
-                    <span className="text-zinc-600 font-medium text-sm truncate">
+                    <span className="text-white/70 sm:text-zinc-600 font-medium text-sm truncate">
                       {work.groupName?.trim() || groupOrgLine}
                     </span>
                   )
                 ) : (
                   <span
-                    className="text-zinc-600 font-medium text-sm cursor-pointer lg:hover:text-zinc-900 lg:hover:underline transition-colors"
+                    className="text-white/70 sm:text-zinc-600 font-medium text-sm cursor-pointer lg:hover:text-zinc-900 lg:hover:underline transition-colors"
                     onClick={() => handleArtistClick(uploaderArtist.id)}
                   >
                     {uploaderName}
@@ -454,7 +460,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
           {/* Scrollable image + info area */}
           <div
             ref={scrollContainerRef}
-            className="relative flex-1 overflow-auto scroll-smooth flex flex-col items-center dark-scrollbar bg-white"
+            className="relative flex-1 overflow-auto scroll-smooth flex flex-col items-center dark-scrollbar bg-[#1a1a2e] sm:bg-white"
             onClick={(e) => {
               e.stopPropagation();
               if (isZoomed) { setIsZoomed(false); setZoomOrigin('center center'); }
@@ -940,41 +946,47 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
             ) : <div />}
           </div>
         )}
-        {/* Action buttons */}
-        <div className="flex items-center justify-around px-4 py-3">
+        {/* Action buttons — pill 스타일 (탭 오인 방지) */}
+        <div className="flex items-center justify-around gap-2 px-4 py-3">
           <button
             type="button"
             onClick={() => requireAuth(handleLike, 'like')}
-            className="flex flex-col items-center gap-1 p-1.5 -m-1 border-0 bg-transparent shadow-none cursor-pointer"
+            className={`flex items-center gap-1.5 min-h-[44px] px-4 py-2 rounded-full border transition-colors cursor-pointer ${
+              isLiked ? 'border-[#FF2E63] bg-[#FF2E63]/20 text-[#FF2E63]' : 'border-white/30 bg-white/10 text-white'
+            }`}
           >
-            <Heart className={`h-6 w-6 ${isLiked ? 'text-[#FF2E63] fill-[#FF2E63]' : 'text-white'}`} />
-            <span className="text-xs text-white/90">{t('workDetail.like')}</span>
+            <Heart className={`h-5 w-5 shrink-0 ${isLiked ? 'fill-[#FF2E63]' : ''}`} />
+            <span className="text-sm font-medium">{t('workDetail.like')}</span>
           </button>
           <button
             type="button"
             onClick={() => requireAuth(handleSave, 'save')}
-            className="flex flex-col items-center gap-1 p-1.5 -m-1 border-0 bg-transparent shadow-none cursor-pointer"
+            className={`flex items-center gap-1.5 min-h-[44px] px-4 py-2 rounded-full border transition-colors cursor-pointer ${
+              isSaved ? 'border-white bg-white/20 text-white' : 'border-white/30 bg-white/10 text-white'
+            }`}
           >
-            <Bookmark className={`h-6 w-6 ${isSaved ? 'text-white fill-white' : 'text-white'}`} />
-            <span className="text-xs text-white/90">{t('workDetail.save')}</span>
+            <Bookmark className={`h-5 w-5 shrink-0 ${isSaved ? 'fill-white' : ''}`} />
+            <span className="text-sm font-medium">{t('workDetail.save')}</span>
           </button>
           <button
             type="button"
             onClick={handleShare}
-            className="flex flex-col items-center gap-1 p-1.5 -m-1 border-0 bg-transparent shadow-none cursor-pointer"
+            className="flex items-center gap-1.5 min-h-[44px] px-4 py-2 rounded-full border border-white/30 bg-white/10 text-white cursor-pointer"
           >
-            <Share2 className="h-6 w-6 text-white" />
-            <span className="text-xs text-white/90">{t('workDetail.share')}</span>
+            <Share2 className="h-5 w-5 shrink-0" />
+            <span className="text-sm font-medium">{t('workDetail.share')}</span>
           </button>
           {/* 그룹·내 작품은 팔로우 버튼 숨김 */}
           {!isGroupWork && work.artist.id !== allArtists[0]?.id && (
             <button
               type="button"
               onClick={() => requireAuth(() => followStore.toggle(work.artist.id), 'follow')}
-              className="flex flex-col items-center gap-1 p-1.5 -m-1 border-0 bg-transparent shadow-none cursor-pointer"
+              className={`flex items-center gap-1.5 min-h-[44px] px-4 py-2 rounded-full border transition-colors cursor-pointer ${
+                follows.isFollowing(work.artist.id) ? 'border-primary bg-primary/20 text-primary' : 'border-white/30 bg-white/10 text-white'
+              }`}
             >
-              <UserPlus className={`h-6 w-6 ${follows.isFollowing(work.artist.id) ? 'text-primary' : 'text-white'}`} />
-              <span className="text-xs text-white/90">
+              <UserPlus className="h-5 w-5 shrink-0" />
+              <span className="text-sm font-medium">
                 {follows.isFollowing(work.artist.id) ? t('social.following') : t('social.follow')}
               </span>
             </button>

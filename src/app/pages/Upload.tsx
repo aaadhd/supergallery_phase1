@@ -678,6 +678,26 @@ export default function Upload() {
     }
     nonMemberModalConfirmed.current = false;
 
+    // Policy §13.6.1 — 수정 모드에서 원래 그룹 전시를 게시자 단독으로 전환하는 경우 확인 다이얼로그.
+    if (editingWorkId) {
+      const originalWork = workStore.getWork(editingWorkId);
+      if (originalWork?.primaryExhibitionType === 'group') {
+        const hasOtherArtists = imageArtists.some(
+          (ia) =>
+            (ia.type === 'member' && ia.memberId !== currentUser.id) ||
+            ia.type === 'non-member',
+        );
+        if (!hasOtherArtists) {
+          const confirmed = await openConfirm({
+            title: t('upload.editSoloConvertTitle'),
+            description: t('upload.editSoloConvertDesc'),
+            confirmLabel: t('upload.editSoloConvertConfirm'),
+          });
+          if (!confirmed) return;
+        }
+      }
+    }
+
     setIsPublishing(true);
     const targetId = editingWorkId || newWork.id;
     const wasEditingExistingWork = Boolean(editingWorkId);

@@ -423,7 +423,18 @@ export default function ReportManagement() {
                       )}
                     </div>
                     <div className="pl-2 min-w-0">
-                      <div className="font-medium text-sm text-foreground truncate">{r.targetName}</div>
+                      <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
+                        <div className="font-medium text-sm text-foreground truncate">{r.targetName}</div>
+                        {(() => {
+                          const key = r.workId ? `work:${r.workId}` : r.artistId ? `artist:${r.artistId}` : '';
+                          const cnt = key ? (reportCountByTarget.get(key) ?? 0) : 0;
+                          return cnt >= 2 ? (
+                            <span className="shrink-0 inline-flex rounded-full bg-red-100 text-red-700 border border-red-200 px-1.5 py-0.5 text-[10px] font-semibold">
+                              {cnt}건 누적
+                            </span>
+                          ) : null;
+                        })()}
+                      </div>
                       <div className="text-[11px] text-muted-foreground truncate">
                         {r.reporterId ? (reporterNicknameMap.get(r.reporterId) ?? r.reporterId) : '—'}
                       </div>
@@ -601,21 +612,62 @@ interface ReportDetailPanelProps {
 
 function ReportDetailPanel({ report, reporterNickname, onDelete, onDismiss, onKeepHidden }: ReportDetailPanelProps) {
   const reportWork = report.workId ? workStore.getWork(report.workId) : null;
-  const coverKey = reportWork ? getCoverImage(reportWork.image, reportWork.coverImageIndex) : '';
-  const coverSrc = coverKey ? (imageUrls[coverKey] || coverKey) : '';
+
+  // 신고된 작품 이미지 결정: pieceIndex 있으면 해당 슬롯, 없으면 커버
+  const workImages = reportWork
+    ? (Array.isArray(reportWork.image) ? reportWork.image : [reportWork.image])
+    : [];
+  const hasPieceIndex = typeof report.pieceIndex === 'number' && workImages.length > 1;
+  const activeImgKey = hasPieceIndex
+    ? (workImages[report.pieceIndex!] ?? '')
+    : reportWork ? getCoverImage(reportWork.image, reportWork.coverImageIndex) : '';
+  const activeSrc = activeImgKey ? (imageUrls[activeImgKey] || activeImgKey) : '';
 
   return (
     <div className="flex flex-col h-full">
 
       {/* 어두운 배경: 작품 이미지 */}
       <div className="bg-slate-900 p-4 shrink-0">
-        {coverSrc ? (
-          <div
-            className="bg-slate-800 rounded-lg overflow-hidden flex items-center justify-center mb-3"
-            style={{ height: 120 }}
-          >
-            <ImageWithFallback src={coverSrc} alt="" className="w-full h-full object-contain" />
-          </div>
+        {activeSrc ? (
+          <>
+            <div
+              className="bg-slate-800 rounded-lg overflow-hidden flex items-center justify-center mb-2"
+              style={{ height: 120 }}
+            >
+              <ImageWithFallback src={activeSrc} alt="" className="w-full h-full object-contain" />
+            </div>
+            {/* 다중 이미지 썸네일 — 신고된 작품 번호 강조 */}
+            {workImages.length > 1 && (
+              <div className="flex gap-1.5 mb-2 flex-wrap">
+                {workImages.map((imgKey, i) => {
+                  const src = imageUrls[imgKey] || imgKey;
+                  const isReported = hasPieceIndex && i === report.pieceIndex;
+                  return (
+                    <div
+                      key={i}
+                      className={`relative w-9 h-9 rounded overflow-hidden border-2 shrink-0 ${
+                        isReported ? 'border-red-400' : 'border-slate-600/60'
+                      }`}
+                    >
+                      <ImageWithFallback src={src} alt={`${i + 1}번 작품`} className="w-full h-full object-cover" />
+                      {isReported && (
+                        <div className="absolute inset-0 bg-red-500/25 flex items-end justify-center pb-0.5">
+                          <span className="text-[8px] font-bold text-white leading-none">{i + 1}</span>
+                        </div>
+                      )}
+                    </div>
+                  );
+                })}
+              </div>
+            )}
+            {hasPieceIndex && (
+              <div className="mb-2">
+                <span className="inline-flex rounded-full bg-red-900/70 text-red-200 px-2 py-0.5 text-[10px] font-medium">
+                  {report.pieceIndex! + 1}번 작품 신고
+                </span>
+              </div>
+            )}
+          </>
         ) : (
           <div
             className="bg-slate-800 rounded-lg flex items-center justify-center mb-3 text-slate-500 text-xs"

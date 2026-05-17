@@ -160,10 +160,27 @@ export default function BannerManagement() {
     setEditingId(null);
   };
 
+  const isValidUrl = (url: string) => {
+    try {
+      const u = new URL(url);
+      return u.protocol === 'http:' || u.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  };
+
   const submitForm = (e: FormEvent) => {
     e.preventDefault();
     if (!draft.title.trim() || !draft.imageUrl.trim()) {
       toast.error('제목과 이미지 URL을 입력해 주세요.');
+      return;
+    }
+    if (!isValidUrl(draft.imageUrl.trim())) {
+      toast.error('이미지 URL 형식이 올바르지 않아요. (http:// 또는 https:// 로 시작해야 해요)');
+      return;
+    }
+    if (draft.linkUrl.trim() && !isValidUrl(draft.linkUrl.trim())) {
+      toast.error('링크 URL 형식이 올바르지 않아요. (http:// 또는 https:// 로 시작해야 해요)');
       return;
     }
     if (draft.startAt && draft.endAt && draft.startAt > draft.endAt) {

@@ -118,6 +118,7 @@ export default function Settings() {
   const [withdrawOpen, setWithdrawOpen] = useState(false);
   const [withdrawConsent, setWithdrawConsent] = useState(false);
   const [withdrawReason, setWithdrawReason] = useState<WithdrawReasonId | ''>('');
+  const [withdrawOtherText, setWithdrawOtherText] = useState('');
   const [withdrawBusy, setWithdrawBusy] = useState(false);
   const [withdrawWarnings, setWithdrawWarnings] = useState<string[]>([]);
 
@@ -163,6 +164,10 @@ export default function Settings() {
       toast.error(t('settings.withdrawReasonPickErr'));
       return;
     }
+    if (withdrawReason === 'other' && !withdrawOtherText.trim()) {
+      toast.error(t('settings.withdrawOtherErr'));
+      return;
+    }
     if (!withdrawConsent) {
       toast.error(t('settings.withdrawConsentErr'));
       return;
@@ -174,6 +179,7 @@ export default function Settings() {
       setWithdrawOpen(false);
       setWithdrawConsent(false);
       setWithdrawReason('');
+      setWithdrawOtherText('');
       toast.success(t('settings.toastWithdrawDone'));
       navigate('/');
     }, 400);
@@ -358,6 +364,15 @@ export default function Settings() {
                   </label>
                 ))}
               </div>
+              {withdrawReason === 'other' && (
+                <textarea
+                  value={withdrawOtherText}
+                  onChange={(e) => setWithdrawOtherText(e.target.value.slice(0, 200))}
+                  placeholder={t('settings.withdrawOtherPlaceholder')}
+                  rows={3}
+                  className="w-full mt-1 rounded-lg border border-border bg-background px-3 py-2.5 text-sm text-foreground placeholder:text-muted-foreground resize-none focus:outline-none focus:ring-2 focus:ring-primary/40"
+                />
+              )}
             </div>
             <div className="flex items-start gap-3 rounded-lg border border-border/40 bg-muted/40 p-3">
               <Checkbox
@@ -380,6 +395,7 @@ export default function Settings() {
                   setWithdrawOpen(false);
                   setWithdrawConsent(false);
                   setWithdrawReason('');
+                  setWithdrawOtherText('');
                   setWithdrawWarnings([]);
                 }}
                 className="min-h-[44px] px-4 py-2.5 text-sm font-medium rounded-lg border border-border lg:hover:bg-muted/50"

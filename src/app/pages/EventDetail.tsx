@@ -113,8 +113,7 @@ export default function EventDetail() {
             <button
               type="button"
               onClick={handleBack}
-              className="inline-flex items-center gap-1.5 text-xs sm:text-sm text-white lg:hover:text-white/80 transition-colors"
-              style={{ textShadow: '0 1px 4px rgba(0,0,0,0.6)' }}
+              className="inline-flex items-center gap-1.5 px-3 py-2 rounded-full bg-black/40 text-white text-xs sm:text-sm font-medium hover:bg-black/60 backdrop-blur-sm transition-colors min-h-[36px]"
             >
               <ArrowLeft className="w-4 h-4" />
               {t('eventDetail.backToList')}

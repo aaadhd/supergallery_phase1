@@ -127,9 +127,14 @@ export function InviteShareButton({
             <DialogDescription>{t('invite.shareDialogBody')}</DialogDescription>
           </DialogHeader>
 
+          {/* 메시지 미리보기 박스 */}
+          <div className="rounded-lg border border-dashed border-border bg-muted/40 px-3.5 py-3 text-sm text-muted-foreground leading-relaxed whitespace-pre-wrap break-all select-all">
+            {fullMessage}
+          </div>
+
           {/* 만료 안내 */}
           {isActive && expiresInDays !== null && (
-            <p className="text-xs text-muted-foreground -mt-1">
+            <p className="text-xs text-muted-foreground">
               {t('invite.shareLinkExpiresIn').replace('{n}', String(expiresInDays))}
             </p>
           )}

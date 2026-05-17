@@ -3,52 +3,11 @@ import { featuredStore } from './featuredStore';
 import { isWorkVisibleOnPublicFeed } from './feedVisibility';
 
 export type FeedRankContext = {
-  /** 현재 로그인 유저가 팔로우 중인 작가 ID 집합 (팔로우 신호 가중치용) */
+  /** 현재 로그인 유저가 팔로우 중인 작가 ID 집합 (팔로우 버킷 배정용) */
   followingArtistIds?: Set<string>;
 };
 
 type FeedSource = 'pick' | 'featured' | 'personalized' | 'recent' | 'rest';
-
-/**
- * 작품 점수.
- * 명세: 좋아요·저장·**팔로우** 신호 가중치.
- * 댓글은 Phase 2 Out of Scope이라 비활성.
- */
-function scoreWork(w: Work, ctx: FeedRankContext): number {
-  // 절대 수치(좋아요/저장)가 큰 데이터에서 상단이 고정되지 않도록 로그 스케일 사용
-  const likes = Math.log1p(Math.max(0, w.likes ?? 0));
-  const saves = Math.log1p(Math.max(0, w.saves ?? 0));
-  const base = likes * 2.2 + saves * 3.2;
-  const follow = ctx.followingArtistIds?.has(w.artistId) ? 3.5 : 0;
-  return base + follow;
-}
-
-function sourceBoost(source: FeedSource): number {
-  switch (source) {
-    case 'pick':
-      return 14;
-    case 'featured':
-      return 6;
-    case 'personalized':
-      return 7;
-    case 'recent':
-      return 3;
-    case 'rest':
-    default:
-      return 0;
-  }
-}
-
-function randomNoise(source: FeedSource): number {
-  // 새로고침마다 피드가 확실히 바뀌도록 랜덤 노이즈를 키운다.
-  // 우선순위 소스일수록 노이즈 폭을 조금 줄여 운영 의도를 유지.
-  const span =
-    source === 'pick' ? 10 :
-      source === 'featured' ? 13 :
-        source === 'personalized' ? 15 :
-          source === 'recent' ? 15 : 20;
-  return (Math.random() - 0.5) * span;
-}
 
 function isPickWork(w: Work): boolean {
   // 주간 Pick 버킷은 "현재 활성 Pick"만 사용한다.
@@ -63,25 +22,11 @@ function isRecentUpload(w: Work): boolean {
   return Date.now() - t < 14 * 86400000;
 }
 
-/** 같은 소스 안에서 점수 정렬 + 본 작품 하향 */
-function rankSourcePool(
-  items: Work[],
-  source: FeedSource,
-  seenIds: Set<string>,
-  ctx: FeedRankContext,
-): Work[] {
-  const rank = (arr: Work[]) => {
-    const scored = [...arr].map((work) => ({
-      work,
-      score: scoreWork(work, ctx) + sourceBoost(source) + randomNoise(source),
-    }));
-    scored.sort((a, b) => b.score - a.score);
-    return scored.map((x) => x.work);
-  };
-
-  const unseen = items.filter((work) => !seenIds.has(work.id));
-  const seen = items.filter((work) => seenIds.has(work.id));
-  return [...rank(unseen), ...rank(seen)];
+/** 버킷 내부 랜덤 셔플. 이미 본 작품은 뒤로. */
+function shufflePool(items: Work[], seenIds: Set<string>): Work[] {
+  const unseen = [...items].filter((w) => !seenIds.has(w.id)).sort(() => Math.random() - 0.5);
+  const seen = [...items].filter((w) => seenIds.has(w.id)).sort(() => Math.random() - 0.5);
+  return [...unseen, ...seen];
 }
 
 /**
@@ -135,59 +80,70 @@ function interleaveByPattern(
 }
 
 /**
+ * 같은 작가 연속 노출 방지 (Policy §16.1 다양성 룰).
+ * 인터리빙 결과를 순회하며 직전 작품과 artistId가 같으면 다음 다른 작가 작품과 교체.
+ * 남은 작품이 모두 같은 작가인 경우 예외 허용.
+ */
+function diversifyFeed(works: Work[]): Work[] {
+  if (works.length <= 1) return works;
+  const result: Work[] = [];
+  const pool = [...works];
+  while (pool.length > 0) {
+    const lastArtistId = result.at(-1)?.artistId;
+    const nextIdx = pool.findIndex((w) => w.artistId !== lastArtistId);
+    if (nextIdx === -1) {
+      result.push(...pool.splice(0));
+    } else {
+      result.push(...pool.splice(nextIdx, 1));
+    }
+  }
+  return result;
+}
+
+/**
  * 피드 노출 순서 (Policy §15.1·§16.1 — 일반 피드는 전시 단위 카드).
  *
- *   Proud's Pick  →  추천 전시  →  팔로잉  →  신규(14일)  →  일반
+ *   Proud's Pick  →  팔로잉  →  추천 전시  →  신규(14일)  →  일반
  *
- * 각 작품은 **하나의 버킷에만** 배정 (중복 제거). 버킷 내부는 가중 랜덤.
- * 이미 본 작품은 각 버킷 내 뒤쪽으로.
+ * 각 작품은 하나의 버킷에만 배정 (중복 제거). 버킷 내부는 랜덤 셔플.
+ * 이미 본 작품은 각 버킷 내 뒤쪽으로. 인터리빙 후 같은 작가 연속 노출 방지.
  *
- * 기획전(CuratedExhibition)은 §15.1 노출 표면상 [USR-CUR-01] 기획전 페이지에서만
- * 노출되며 일반 피드 부스트 대상이 아니다. 응모전 응모작(linkedEventId != null)은
- * isWorkVisibleOnPublicFeed 사전 필터로 피드에서 완전 제외된다 (Policy §15.5).
+ * 기획전은 §15.1 노출 표면상 USR-CUR-01 페이지 전용 (일반 피드 부스트 없음).
+ * 응모전 응모작(linkedEventId != null)은 피드에서 완전 제외 (Policy §15.5).
  */
 export function orderWorksForBrowseFeed(
   works: Work[],
   seenIds: Set<string>,
   ctx: FeedRankContext = {},
 ): Work[] {
-  // 버킷 할당 전 순서를 섞어, 새로고침마다 동일한 작품만 앞에 고정되는 현상을 줄인다.
-  // hidden/pending 작품이 rest 버킷으로 유입되지 않도록 공개 작품만 추린다.
   const randomizedWorks = [...works].filter(isWorkVisibleOnPublicFeed).sort(() => Math.random() - 0.5);
   const featuredExhibitionIdSet = new Set(featuredStore.getAll());
 
   const used = new Set<string>();
-  const assign = (pool: Work[], predicate: (w: Work) => boolean, source: FeedSource, limit?: number): Array<{ work: Work; source: FeedSource }> => {
-    const picked: Array<{ work: Work; source: FeedSource }> = [];
+  const assign = (pool: Work[], predicate: (w: Work) => boolean, limit?: number): Work[] => {
+    const picked: Work[] = [];
     for (const w of pool) {
       if (typeof limit === 'number' && picked.length >= limit) break;
-      if (used.has(w.id)) continue;
-      if (!predicate(w)) continue;
+      if (used.has(w.id) || !predicate(w)) continue;
       used.add(w.id);
-      picked.push({ work: w, source });
+      picked.push(w);
     }
     return picked;
   };
 
-  // 2026-04-22: 기본 Pick 10개 가정에서 확장 — public/images_1 Featured 전시가 모두 pick:true로
-  // 시드되므로, 이들이 일반 rest 버킷으로 밀리지 않도록 상한을 60으로 넓힌다.
-  const picks = assign(randomizedWorks, isPickWork, 'pick', 60).map((x) => x.work);
-  const featured = assign(randomizedWorks, (w) => featuredExhibitionIdSet.has(w.id), 'featured').map((x) => x.work);
-  const personalized = assign(
-    randomizedWorks,
-    (w) => Boolean(ctx.followingArtistIds?.has(w.artistId)),
-    'personalized',
-  ).map((x) => x.work);
-  const recent = assign(randomizedWorks, isRecentUpload, 'recent').map((x) => x.work);
-  const rest = assign(randomizedWorks, () => true, 'rest').map((x) => x.work);
+  const picks = assign(randomizedWorks, isPickWork);
+  const featured = assign(randomizedWorks, (w) => featuredExhibitionIdSet.has(w.id));
+  const personalized = assign(randomizedWorks, (w) => Boolean(ctx.followingArtistIds?.has(w.artistId)));
+  const recent = assign(randomizedWorks, isRecentUpload);
+  const rest = assign(randomizedWorks, () => true);
 
-  const rankedPools: Record<FeedSource, Work[]> = {
-    pick: rankSourcePool(picks, 'pick', seenIds, ctx),
-    featured: rankSourcePool(featured, 'featured', seenIds, ctx),
-    personalized: rankSourcePool(personalized, 'personalized', seenIds, ctx),
-    recent: rankSourcePool(recent, 'recent', seenIds, ctx),
-    rest: rankSourcePool(rest, 'rest', seenIds, ctx),
+  const pools: Record<FeedSource, Work[]> = {
+    pick: shufflePool(picks, seenIds),
+    featured: shufflePool(featured, seenIds),
+    personalized: shufflePool(personalized, seenIds),
+    recent: shufflePool(recent, seenIds),
+    rest: shufflePool(rest, seenIds),
   };
 
-  return interleaveByPattern(rankedPools);
+  return diversifyFeed(interleaveByPattern(pools));
 }

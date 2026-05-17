@@ -191,7 +191,7 @@ const typeColors = {
   pick: 'bg-[#B8862F]/10 text-[#B8862F]',
   system: 'bg-muted/50 text-muted-foreground',
   event: 'bg-emerald-50 text-emerald-500',
-  invite: 'bg-violet-50 text-violet-500',
+  invite: 'bg-gray-50 text-gray-400',
   curation: 'bg-orange-50 text-orange-500',
 } as const;
 

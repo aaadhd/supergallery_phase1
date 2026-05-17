@@ -378,7 +378,7 @@ export default function ContentReview() {
                         )}
                         {ui === '대기중' && (w.rejectionHistory?.length ?? 0) > 0 && (
                           <span className="text-[10px] bg-amber-100 text-amber-700 rounded-full px-1.5 py-0.5 shrink-0">
-                            재검수 {w.rejectionHistory!.length > 1 ? `${w.rejectionHistory!.length}회` : ''}
+                            재검수 {w.rejectionHistory!.length > 1 ? `${w.rejectionHistory!.length}회차` : '요청'}
                           </span>
                         )}
                       </div>

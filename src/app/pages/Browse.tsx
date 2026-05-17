@@ -354,7 +354,14 @@ export default function Browse() {
                   <div
                     key={banner.id}
                     className={`min-w-0 flex-[0_0_100%] relative ${banner.linkUrl ? 'cursor-pointer' : ''}`}
-                    onClick={() => banner.linkUrl && navigate(banner.linkUrl)}
+                    onClick={() => {
+                      if (!banner.linkUrl) return;
+                      if (banner.linkUrl.startsWith('http://') || banner.linkUrl.startsWith('https://')) {
+                        window.open(banner.linkUrl, '_blank', 'noopener,noreferrer');
+                      } else {
+                        navigate(banner.linkUrl);
+                      }
+                    }}
                   >
                     <div className="relative h-[170px] sm:h-[220px] lg:h-[280px] overflow-hidden">
                       <ImageWithFallback

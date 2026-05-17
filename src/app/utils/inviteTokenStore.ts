@@ -7,7 +7,7 @@
  *   - 검수 승인 시 active. 검수 대기·반려 시 inactive(친구 링크 보존, 재승인 시 active 복귀).
  *   - 전시 삭제·작가 탈퇴·비회원 자리 0·만료 시 revoked (영구 무효).
  * - 만료 평가는 lazy: getInviteToken/findActiveTokenForWork 호출 시점에 expiresAt 검사 후 즉석 revoke.
- * - Phase 1 한계: localStorage 보관 → 다른 기기 미동기. 백엔드 도입 시 정합(Policy §31 N-15).
+ * - Phase 1 한계: localStorage 보관 → 다른 기기 미동기. 백엔드 도입 시 정합(Policy §31 N-6).
  */
 
 const STORAGE_KEY = 'artier_invite_tokens_v1';

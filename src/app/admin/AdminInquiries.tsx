@@ -11,10 +11,9 @@ import { openConfirm } from '../components/ConfirmDialog';
 import { appendAuditLog } from '../utils/adminAuditLog';
 
 /**
- * ADM-INQ-01 · 문의함 (Policy §30 연동 · PRD_Admin §11.5).
+ * ADM-INQ-01 · 문의함 (Policy §30 · PRD_Admin §11).
  * - 사용자 USR-INF-07(`/contact`) 제출 문의를 `artier_inquiries` localStorage에서 읽는다.
  * - 카테고리 8종 (사용자 제출 7종 + 작품 문의). `privacy`는 개인정보 권리 행사 요청(Policy §30 · 30일 SLA).
- * - SLA 배지: privacy는 25일 임박 / 30일 초과. 그 외는 4일 임박 / 5일 초과(영업일 기준은 런칭 후).
  */
 
 const CATEGORY_LABELS: Record<string, string> = {

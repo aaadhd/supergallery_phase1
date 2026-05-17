@@ -56,6 +56,7 @@ export default function Events() {
     [allManagedEvents],
   );
   const [showEnded, setShowEnded] = useState(false);
+  const [showEndedCuration, setShowEndedCuration] = useState(false);
 
   // 이벤트 알림 구독
   const [subscribed, setSubscription] = useEventSubscription();
@@ -238,7 +239,7 @@ export default function Events() {
 
         {/* Pick 탭 */}
         {activeTab === 'pick' && (
-          <div>
+          <div className="max-w-2xl mx-auto">
             {activePickSession ? (
               <Link
                 to={`/picks/${activePickSession.id}`}
@@ -289,37 +290,54 @@ export default function Events() {
           <div>
             {/* 진행 중 기획전 */}
             {activeCurations.length > 0 && (
-              <section className="mb-10">
-                <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-4">
-                  {t('events.curationActive')}
-                </h2>
-                <div className="flex flex-col gap-3">
+              <section className="mb-12 sm:mb-16">
+                <h2 className="text-base sm:text-lg font-semibold text-foreground mb-4">{t('events.curationActive')}</h2>
+                <div className="flex flex-col gap-3 sm:gap-4">
                   {activeCurations.map((c) => (
                     <a
                       key={c.id}
                       href={c.pageUrl}
                       target="_blank"
                       rel="noopener noreferrer"
-                      className="flex items-center gap-4 px-4 py-3 rounded-xl border border-border bg-card lg:hover:shadow-sm transition-shadow"
+                      className="group relative overflow-hidden rounded-2xl block"
                     >
-                      {c.bannerImageUrl ? (
-                        <div className="w-14 h-14 rounded-lg overflow-hidden shrink-0 border border-border">
-                          <ImageWithFallback src={c.bannerImageUrl} alt="" className="w-full h-full object-cover" />
-                        </div>
-                      ) : (
-                        <div className="w-14 h-14 rounded-lg bg-muted border border-border shrink-0" />
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-bold text-foreground truncate">{c.title}</p>
-                        {c.subtitle && (
-                          <p className="text-xs text-muted-foreground truncate mt-0.5">{c.subtitle}</p>
+                      <div className="relative h-[200px] sm:h-[260px] lg:h-[320px] w-full overflow-hidden">
+                        {c.bannerImageUrl ? (
+                          <ImageWithFallback
+                            src={c.bannerImageUrl}
+                            alt={c.title}
+                            className="w-full h-full object-cover transition-transform duration-700 lg:group-hover:scale-[1.03]"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-muted" />
                         )}
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          {t('events.curationPieces').replace('{n}', String(c.pieces.length))}
-                          {c.startAt && c.endAt ? ` · ${c.startAt} ~ ${c.endAt}` : ''}
-                        </p>
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent" />
+                        <div className="absolute inset-x-0 bottom-0 p-5 sm:p-8">
+                          <div className="flex items-center gap-2 mb-2">
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-primary/90 backdrop-blur-sm text-white text-xs font-bold">
+                              {t('events.curationActive')}
+                            </span>
+                          </div>
+                          <h3 className="text-xl sm:text-2xl lg:text-3xl font-bold text-white leading-tight mb-1.5">
+                            {c.title}
+                          </h3>
+                          {c.subtitle && (
+                            <p className="text-sm sm:text-base text-white/80 leading-relaxed mb-2 max-w-2xl">
+                              {c.subtitle}
+                            </p>
+                          )}
+                          <div className="flex items-center gap-2 text-xs sm:text-sm text-white/70">
+                            <Calendar className="h-3.5 w-3.5 shrink-0" />
+                            {c.startAt && c.endAt
+                              ? <span>{c.startAt} ~ {c.endAt}</span>
+                              : <span>{t('events.curationPieces').replace('{n}', String(c.pieces.length))}</span>
+                            }
+                            {c.startAt && c.endAt && (
+                              <span className="opacity-80">· {t('events.curationPieces').replace('{n}', String(c.pieces.length))}</span>
+                            )}
+                          </div>
+                        </div>
                       </div>
-                      <span className="text-xs text-primary shrink-0">{t('events.curationViewPage')} ↗</span>
                     </a>
                   ))}
                 </div>
@@ -334,34 +352,46 @@ export default function Events() {
 
             {/* 지난 기획전 */}
             {endedCurations.length > 0 && (
-              <section className="mb-10">
-                <h2 className="text-sm font-semibold text-muted-foreground uppercase tracking-wide mb-4">
+              <section className="mb-12 sm:mb-16">
+                <h2 className="text-base sm:text-lg font-semibold text-muted-foreground mb-4">
                   {t('events.curationEnded')}
                 </h2>
-                <div className="flex flex-col gap-3">
-                  {endedCurations.map((c) => (
+                <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 sm:gap-5">
+                  {(showEndedCuration ? endedCurations : endedCurations.slice(0, 3)).map((c) => (
                     <div
                       key={c.id}
-                      className="flex items-center gap-4 px-4 py-3 rounded-xl border border-border bg-card opacity-50 cursor-not-allowed"
-                      title={t('events.curationEndedBlocked')}
+                      className="overflow-hidden rounded-xl border border-border bg-card opacity-70"
                     >
-                      {c.bannerImageUrl ? (
-                        <div className="w-14 h-14 rounded-lg overflow-hidden shrink-0 border border-border">
-                          <ImageWithFallback src={c.bannerImageUrl} alt="" className="w-full h-full object-cover grayscale" />
-                        </div>
-                      ) : (
-                        <div className="w-14 h-14 rounded-lg bg-muted border border-border shrink-0" />
-                      )}
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-foreground truncate">{c.title}</p>
-                        <p className="text-xs text-muted-foreground mt-0.5">
-                          {t('events.curationPieces').replace('{n}', String(c.pieces.length))} · {c.startAt} ~ {c.endAt}
-                        </p>
+                      <div className="relative h-[140px] sm:h-[160px] overflow-hidden grayscale">
+                        {c.bannerImageUrl ? (
+                          <ImageWithFallback
+                            src={c.bannerImageUrl}
+                            alt={c.title}
+                            className="w-full h-full object-cover"
+                          />
+                        ) : (
+                          <div className="w-full h-full bg-muted" />
+                        )}
                       </div>
-                      <span className="text-xs text-muted-foreground shrink-0">{t('events.curationEndedBlocked')}</span>
+                      <div className="p-4">
+                        <h3 className="text-sm font-bold text-foreground mb-1 leading-snug">{c.title}</h3>
+                        <div className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                          <Calendar className="h-3 w-3" />
+                          <span>{c.startAt} ~ {c.endAt}</span>
+                        </div>
+                      </div>
                     </div>
                   ))}
                 </div>
+                {!showEndedCuration && endedCurations.length > 3 && (
+                  <button
+                    type="button"
+                    onClick={() => setShowEndedCuration(true)}
+                    className="mt-4 text-sm text-muted-foreground lg:hover:text-foreground transition-colors min-h-[44px]"
+                  >
+                    {t('events.curationEnded')} 더 보기 →
+                  </button>
+                )}
               </section>
             )}
           </div>

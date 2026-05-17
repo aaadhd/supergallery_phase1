@@ -242,18 +242,28 @@ export function seedCurationIfEmpty(): void {
 
     const current = readFromStorage();
 
-    // 기존 seed-curation-1이 pageUrl 없이 생성된 경우 pageUrl 추가 마이그레이션
+    const seedIds = ['seed-curation-1','seed-curation-2','seed-curation-3','seed-curation-4','seed-curation-5','seed-curation-6'];
     const hasSeed1 = current.curatedExhibitions.some((c) => c.id === 'seed-curation-1');
     const seed1NeedsUrl = current.curatedExhibitions.some((c) => c.id === 'seed-curation-1' && !c.pageUrl);
     const hasSeed2 = current.curatedExhibitions.some((c) => c.id === 'seed-curation-2');
+    const existingSeedIds = new Set(current.curatedExhibitions.map((c) => c.id));
+    const hasNonSeed = current.curatedExhibitions.some((c) => !seedIds.includes(c.id));
 
-    if (!hasSeed1 && !hasSeed2 && current.curatedExhibitions.length > 0) return; // 사용자 데이터 있음 — 건드리지 않음
+    if (hasNonSeed && !hasSeed1) return; // 사용자 데이터만 있음 — 건드리지 않음
 
     const makePieces = (pool: typeof works, count: number): CurationPieceRef[] =>
       pool.flatMap((w) => {
         const ids = w.imagePieceIds ?? [];
         return ids[0] ? [{ workId: w.id, pieceId: ids[0] }] : [];
       }).slice(0, count);
+
+    // piece의 첫 이미지를 배너로 사용하는 헬퍼
+    const getBanner = (pieces: CurationPieceRef[]): string | undefined => {
+      const w = works.find((x) => x.id === pieces[0]?.workId);
+      if (!w) return undefined;
+      const img = Array.isArray(w.image) ? w.image[0] : w.image;
+      return img || undefined;
+    };
 
     // 수채화 계열 작품 우선
     const watercolor = works.filter((w) => {
@@ -262,46 +272,77 @@ export function seedCurationIfEmpty(): void {
     });
     const pool1 = (watercolor.length >= 3 ? watercolor : works).slice(0, 6);
     const pool2 = works.slice(6, 12);
+    const pool3 = works.slice(2, 7);
+    const pool4 = works.slice(8, 13);
+    const pool5 = works.slice(1, 6);
+    const pool6 = works.slice(4, 9);
 
     const pieces1 = makePieces(pool1, 5);
     const pieces2 = makePieces(pool2, 5);
+    const pieces3 = makePieces(pool3, 5);
+    const pieces4 = makePieces(pool4, 4);
+    const pieces5 = makePieces(pool5, 5);
+    const pieces6 = makePieces(pool6, 4);
 
     if (pieces1.length === 0) return;
 
-    let updated = current.curatedExhibitions.map((c) =>
-      c.id === 'seed-curation-1' && seed1NeedsUrl
-        ? { ...c, pageUrl: 'https://proud-gallery.notion.site', startAt: '2026-05-01', endAt: '2026-06-30' }
-        : c,
-    );
+    // 기존 seed 데이터에 bannerImageUrl 없으면 보완
+    let updated = current.curatedExhibitions.map((c) => {
+      if (c.id === 'seed-curation-1') {
+        return {
+          ...c,
+          ...(seed1NeedsUrl ? { pageUrl: 'https://proud-gallery.notion.site', startAt: '2026-05-01', endAt: '2026-06-30' } : {}),
+          ...(!c.bannerImageUrl ? { bannerImageUrl: getBanner(c.pieces.length ? c.pieces : pieces1) } : {}),
+        };
+      }
+      if (c.id === 'seed-curation-2' && !c.bannerImageUrl) {
+        return { ...c, bannerImageUrl: getBanner(c.pieces.length ? c.pieces : pieces2) };
+      }
+      return c;
+    });
 
     if (!hasSeed1) {
-      updated = [
-        ...updated,
-        {
-          id: 'seed-curation-1',
-          title: '봄의 감성 — 수채화 기획전',
-          subtitle: '봄빛을 담은 작가들의 섬세한 수채화 모음',
-          startAt: '2026-05-01',
-          endAt: '2026-06-30',
-          pageUrl: 'https://proud-gallery.notion.site',
-          pieces: pieces1,
-        },
-      ];
+      updated = [...updated, {
+        id: 'seed-curation-1',
+        title: '봄의 감성 — 수채화 기획전',
+        subtitle: '봄빛을 담은 작가들의 섬세한 수채화 모음',
+        startAt: '2026-05-01',
+        endAt: '2026-06-30',
+        pageUrl: 'https://proud-gallery.notion.site',
+        bannerImageUrl: getBanner(pieces1),
+        pieces: pieces1,
+      }];
     }
 
     if (!hasSeed2 && pieces2.length > 0) {
-      updated = [
-        ...updated,
-        {
-          id: 'seed-curation-2',
-          title: '사계의 표정 — 봄·여름展',
-          subtitle: '계절의 변화를 담은 작가 6인의 연작',
-          startAt: '2026-03-01',
-          endAt: '2026-04-30',
-          pageUrl: 'https://proud-gallery.notion.site/spring-summer',
-          pieces: pieces2,
-        },
-      ];
+      updated = [...updated, {
+        id: 'seed-curation-2',
+        title: '사계의 표정 — 봄·여름展',
+        subtitle: '계절의 변화를 담은 작가 6인의 연작',
+        startAt: '2026-03-01',
+        endAt: '2026-04-30',
+        pageUrl: 'https://proud-gallery.notion.site/spring-summer',
+        bannerImageUrl: getBanner(pieces2),
+        pieces: pieces2,
+      }];
+    }
+
+    // 지난 기획전 4종 시드
+    const pastSeeds = [
+      { id: 'seed-curation-3', title: '겨울 서정 — 설경과 정물', subtitle: '고요한 계절을 담은 작가들의 겨울 연작', startAt: '2025-12-01', endAt: '2026-01-31', pieces: pieces3 },
+      { id: 'seed-curation-4', title: '빛과 색채 — 추상의 세계', subtitle: '색의 언어로 말하는 작가 5인의 추상 작품전', startAt: '2025-10-01', endAt: '2025-11-30', pieces: pieces4 },
+      { id: 'seed-curation-5', title: '일상의 단면 — 정물화 특별전', subtitle: '소박한 일상을 예술로 담아낸 정물화 모음', startAt: '2025-08-01', endAt: '2025-09-30', pieces: pieces5 },
+      { id: 'seed-curation-6', title: '자연을 담다 — 풍경화 기획전', subtitle: '산과 들, 바다를 캔버스에 옮긴 풍경화 선집', startAt: '2025-06-01', endAt: '2025-07-31', pieces: pieces6 },
+    ];
+
+    for (const s of pastSeeds) {
+      if (!existingSeedIds.has(s.id) && s.pieces.length > 0) {
+        updated = [...updated, {
+          ...s,
+          pageUrl: 'https://proud-gallery.notion.site',
+          bannerImageUrl: getBanner(s.pieces),
+        }];
+      }
     }
 
     writeToStorage({ ...current, curatedExhibitions: updated });

@@ -186,7 +186,7 @@ export function EventEntryModal({ open, onClose, eventId, eventTitle, eventStart
       onClose();
       navigate(`/events/${eventId}`, { replace: true });
     } catch {
-      toast.error('발행 중 문제가 생겼어요. 잠시 후 다시 시도해 주세요.');
+      toast.error(t('evt.errPublishFailed'));
       setIsPublishing(false);
     }
   };
@@ -200,7 +200,7 @@ export function EventEntryModal({ open, onClose, eventId, eventTitle, eventStart
         {/* 헤더 */}
         <div className="px-5 pt-5 pb-4 border-b border-border">
           <p className="text-xs text-muted-foreground mb-0.5">{eventTitle}</p>
-          <DialogTitle className="text-base font-bold">응모하기</DialogTitle>
+          <DialogTitle className="text-base font-bold">{t('evt.entryModalTitle')}</DialogTitle>
           {dateRange && <p className="text-xs text-muted-foreground mt-0.5">{dateRange}</p>}
         </div>
 
@@ -235,8 +235,8 @@ export function EventEntryModal({ open, onClose, eventId, eventTitle, eventStart
               <div className="w-10 h-10 rounded-full bg-muted flex items-center justify-center">
                 <ImageIcon className="h-5 w-5 text-muted-foreground" />
               </div>
-              <p className="text-sm text-muted-foreground">이미지 선택 또는 드래그</p>
-              <p className="text-xs text-muted-foreground/70">JPG · PNG · WEBP · 최대 10MB</p>
+              <p className="text-sm text-muted-foreground">{t('evt.entryImageDrop')}</p>
+              <p className="text-xs text-muted-foreground/70">{t('evt.entryImageFormats')}</p>
             </div>
           )}
           {cameraBlocked && (
@@ -246,7 +246,7 @@ export function EventEntryModal({ open, onClose, eventId, eventTitle, eventStart
           {/* 작품명 */}
           <div className="space-y-1.5">
             <label htmlFor="evt-entry-artwork" className="text-sm font-medium text-foreground">
-              작품명 <span className="text-destructive">*</span>
+              {t('evt.entryModalArtworkLabel')} <span className="text-destructive">*</span>
             </label>
             <Input
               id="evt-entry-artwork"
