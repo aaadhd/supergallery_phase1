@@ -1,4 +1,4 @@
-import { useRef, useState } from 'react';
+import { useState } from 'react';
 import { ImageWithFallback } from '../../components/ImageWithFallback';
 
 interface AdminImageUploadProps {
@@ -8,7 +8,6 @@ interface AdminImageUploadProps {
   required?: boolean;
 }
 
-/** 이미지를 canvas로 압축(최대 1200px, JPEG 0.85)해 data URL로 반환 */
 async function compressImage(file: File): Promise<string> {
   return new Promise((resolve, reject) => {
     const img = new Image();
@@ -35,7 +34,6 @@ async function compressImage(file: File): Promise<string> {
 }
 
 export function AdminImageUpload({ value, onChange, label, required }: AdminImageUploadProps) {
-  const inputRef = useRef<HTMLInputElement>(null);
   const [loading, setLoading] = useState(false);
 
   const handleFile = async (file: File) => {
@@ -51,24 +49,27 @@ export function AdminImageUpload({ value, onChange, label, required }: AdminImag
 
   return (
     <div>
-      <label className="block text-xs text-muted-foreground mb-1">
+      <p className="text-xs text-muted-foreground mb-1">
         {label}{required && <span className="text-destructive ml-0.5">*</span>}
-      </label>
+      </p>
       <div className="flex gap-3 items-start">
         {value && (
           <div className="w-24 h-16 rounded-lg overflow-hidden border border-border shrink-0 bg-muted">
             <ImageWithFallback src={value} alt="" className="w-full h-full object-cover" />
           </div>
         )}
-        <div className="flex flex-col gap-1.5 flex-1">
-          <button
-            type="button"
-            onClick={() => inputRef.current?.click()}
-            disabled={loading}
-            className="text-sm px-3 py-1.5 rounded-lg border border-border bg-white text-foreground lg:hover:bg-muted/40 disabled:opacity-50 w-fit"
-          >
+        <div className="flex flex-col gap-1.5">
+          {/* label로 input을 감싸 — display:none click 트리거 이슈 완전 회피 */}
+          <label className={`relative text-sm px-3 py-1.5 rounded-lg border border-border bg-white text-foreground lg:hover:bg-muted/40 w-fit cursor-pointer select-none ${loading ? 'opacity-50 pointer-events-none' : ''}`}>
             {loading ? '처리 중…' : value ? '이미지 변경' : '이미지 선택'}
-          </button>
+            <input
+              type="file"
+              accept="image/*"
+              className="absolute inset-0 opacity-0 w-full h-full cursor-pointer"
+              onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ''; }}
+              disabled={loading}
+            />
+          </label>
           {value && (
             <button
               type="button"
@@ -80,13 +81,6 @@ export function AdminImageUpload({ value, onChange, label, required }: AdminImag
           )}
         </div>
       </div>
-      <input
-        ref={inputRef}
-        type="file"
-        accept="image/*"
-        className="hidden"
-        onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); e.target.value = ''; }}
-      />
     </div>
   );
 }

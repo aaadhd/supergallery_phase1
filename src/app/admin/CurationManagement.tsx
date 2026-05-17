@@ -230,7 +230,7 @@ export default function CurationManagement() {
     if (!editor.title.trim()) { toast.error(t('admin.curation.errTitleRequired')); return false; }
     if (!editor.startAt.trim() || !editor.endAt.trim()) { toast.error('기획전 시작일과 종료일은 필수입니다.'); return false; }
     if (editor.startAt > editor.endAt) { toast.error('시작일이 종료일보다 늦을 수 없습니다.'); return false; }
-    if (!editor.bannerImageUrl.trim()) { toast.error('대문 이미지를 등록해 주세요.'); return false; }
+    if (!editor.bannerImageUrl.trim()) { toast.error('기획전 대표 이미지를 등록해 주세요.'); return false; }
     const dup = curatedExhibitions.some(
       (c) => c.title.trim() === editor.title.trim() && (editor.mode === 'create' || c.id !== editor.editingId),
     );
@@ -258,7 +258,7 @@ export default function CurationManagement() {
       return;
     }
     if (!editor.bannerImageUrl.trim()) {
-      toast.error('대문 이미지를 등록해 주세요.');
+      toast.error('기획전 대표 이미지를 등록해 주세요.');
       return;
     }
     // 같은 제목 중복 체크 (편집 모드는 본인 제외)
@@ -519,7 +519,7 @@ export default function CurationManagement() {
                     />
                   </div>
                   <AdminImageUpload
-                    label="대문 이미지"
+                    label="기획전 대표 이미지"
                     required
                     value={editor.bannerImageUrl}
                     onChange={(url) => setEditor((prev) => prev ? { ...prev, bannerImageUrl: url } : prev)}
