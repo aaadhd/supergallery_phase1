@@ -227,6 +227,10 @@ export default function CurationManagement() {
       toast.error('시작일이 종료일보다 늦을 수 없습니다.');
       return;
     }
+    if (!editor.bannerImageUrl.trim()) {
+      toast.error('대문 이미지를 등록해 주세요.');
+      return;
+    }
     // 같은 제목 중복 체크 (편집 모드는 본인 제외)
     const dup = curatedExhibitions.some(
       (c) => c.title.trim() === title && (editor.mode === 'create' || c.id !== editor.editingId),
@@ -249,18 +253,7 @@ export default function CurationManagement() {
     const template = t('notif.curationSelected');
     const untitled = t('work.untitled');
 
-    // 업로드 이미지 우선, 없으면 첫 번째 piece 이미지로 자동 생성
-    const deriveBannerImageUrl = (): string | undefined => {
-      if (editor.bannerImageUrl.trim()) return editor.bannerImageUrl.trim();
-      const firstPiece = pieces[0];
-      if (!firstPiece) return undefined;
-      const w = workStore.getWork(firstPiece.workId);
-      if (!w) return undefined;
-      const imgs = Array.isArray(w.image) ? w.image : [w.image];
-      const img = imgs[0];
-      return img ? (imageUrls[img] || img) : undefined;
-    };
-    const bannerImageUrl = deriveBannerImageUrl();
+    const bannerImageUrl = editor.bannerImageUrl.trim();
 
     if (editor.mode === 'edit' && editor.editingId) {
       const original = curatedExhibitions.find((c) => c.id === editor.editingId);
@@ -268,8 +261,8 @@ export default function CurationManagement() {
       curationStore.updateCuratedExhibition(editor.editingId, {
         title,
         subtitle: editor.subtitle.trim() || undefined,
-        startAt: editor.startAt.trim() || undefined,
-        endAt: editor.endAt.trim() || undefined,
+        startAt: editor.startAt.trim(),
+        endAt: editor.endAt.trim(),
         pageUrl: editor.pageUrl.trim() || undefined,
         pieces,
         bannerImageUrl,
@@ -291,8 +284,8 @@ export default function CurationManagement() {
       const created = curationStore.addCuratedExhibition({
         title,
         subtitle: editor.subtitle.trim() || undefined,
-        startAt: editor.startAt.trim() || undefined,
-        endAt: editor.endAt.trim() || undefined,
+        startAt: editor.startAt.trim(),
+        endAt: editor.endAt.trim(),
         pageUrl: editor.pageUrl.trim() || undefined,
         pieces,
         bannerImageUrl,
@@ -500,7 +493,8 @@ export default function CurationManagement() {
                     />
                   </div>
                   <AdminImageUpload
-                    label="대문 이미지 (이벤트 메뉴·상세 표시용, 미설정 시 첫 번째 piece 이미지 사용)"
+                    label="대문 이미지"
+                    required
                     value={editor.bannerImageUrl}
                     onChange={(url) => setEditor((prev) => prev ? { ...prev, bannerImageUrl: url } : prev)}
                   />
