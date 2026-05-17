@@ -2,6 +2,7 @@ import { useEffect } from 'react';
 import { artists } from '../data';
 import { pointsOnFollowerCount } from '../utils/pointsBackground';
 import { seedCurationIfEmpty } from '../utils/curationStore';
+import { seedPickIfEmpty } from '../utils/pickStore';
 
 /** 부트 시점에 더 이상 사용하지 않는 레거시 localStorage 키 정리 */
 const LEGACY_STORAGE_KEYS = [
@@ -49,6 +50,7 @@ export function PointsBootstrap() {
   useEffect(() => {
     cleanupLegacyStorage();
     seedCurationIfEmpty();
+    seedPickIfEmpty();
     const demo = artists[0];
     if (demo?.followers != null) pointsOnFollowerCount(demo.followers);
   }, []);

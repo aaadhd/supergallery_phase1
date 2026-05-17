@@ -235,42 +235,75 @@ export function useCuration(): CurationState {
  */
 export function seedCurationIfEmpty(): void {
   if (typeof window === 'undefined') return;
-  const current = readFromStorage();
-  if (current.curatedExhibitions.length > 0) return;
 
-  // 동적 import로 순환 의존성 없이 workStore 접근
   import('../store').then(({ workStore }) => {
     const works = workStore.getWorks();
     if (works.length === 0) return;
 
-    // 수채화 작품전: 수채 관련 작품 우선, 없으면 앞 5개
-    const watercolorWorks = works.filter((w) => {
-      const name = (w.exhibitionName || w.title || '').toLowerCase();
-      return name.includes('수채') || name.includes('블룸') || name.includes('꽃') || name.includes('일러스트');
+    const current = readFromStorage();
+
+    // 기존 seed-curation-1이 pageUrl 없이 생성된 경우 pageUrl 추가 마이그레이션
+    const hasSeed1 = current.curatedExhibitions.some((c) => c.id === 'seed-curation-1');
+    const seed1NeedsUrl = current.curatedExhibitions.some((c) => c.id === 'seed-curation-1' && !c.pageUrl);
+    const hasSeed2 = current.curatedExhibitions.some((c) => c.id === 'seed-curation-2');
+
+    if (!hasSeed1 && !hasSeed2 && current.curatedExhibitions.length > 0) return; // 사용자 데이터 있음 — 건드리지 않음
+
+    const makePieces = (pool: typeof works, count: number): CurationPieceRef[] =>
+      pool.flatMap((w) => {
+        const ids = w.imagePieceIds ?? [];
+        return ids[0] ? [{ workId: w.id, pieceId: ids[0] }] : [];
+      }).slice(0, count);
+
+    // 수채화 계열 작품 우선
+    const watercolor = works.filter((w) => {
+      const n = (w.exhibitionName || w.title || '').toLowerCase();
+      return n.includes('수채') || n.includes('블룸') || n.includes('꽃') || n.includes('일러스트');
     });
-    const targetWorks = (watercolorWorks.length >= 3 ? watercolorWorks : works).slice(0, 5);
+    const pool1 = (watercolor.length >= 3 ? watercolor : works).slice(0, 6);
+    const pool2 = works.slice(6, 12);
 
-    const pieces = targetWorks.flatMap((w) => {
-      const ids = w.imagePieceIds ?? [];
-      if (ids.length === 0) return [];
-      return [{ workId: w.id, pieceId: ids[0] }];
-    }).slice(0, 5);
+    const pieces1 = makePieces(pool1, 5);
+    const pieces2 = makePieces(pool2, 5);
 
-    if (pieces.length === 0) return;
+    if (pieces1.length === 0) return;
 
-    const refreshed = readFromStorage();
-    if (refreshed.curatedExhibitions.length > 0) return;
+    let updated = current.curatedExhibitions.map((c) =>
+      c.id === 'seed-curation-1' && seed1NeedsUrl
+        ? { ...c, pageUrl: 'https://proud-gallery.notion.site', startAt: '2026-05-01', endAt: '2026-06-30' }
+        : c,
+    );
 
-    writeToStorage({
-      ...refreshed,
-      curatedExhibitions: [
+    if (!hasSeed1) {
+      updated = [
+        ...updated,
         {
           id: 'seed-curation-1',
-          title: '봄 수채화 기획전',
-          subtitle: '감성 넘치는 수채화 작가들의 작품을 만나보세요',
-          pieces,
+          title: '봄의 감성 — 수채화 기획전',
+          subtitle: '봄빛을 담은 작가들의 섬세한 수채화 모음',
+          startAt: '2026-05-01',
+          endAt: '2026-06-30',
+          pageUrl: 'https://proud-gallery.notion.site',
+          pieces: pieces1,
         },
-      ],
-    });
+      ];
+    }
+
+    if (!hasSeed2 && pieces2.length > 0) {
+      updated = [
+        ...updated,
+        {
+          id: 'seed-curation-2',
+          title: '사계의 표정 — 봄·여름展',
+          subtitle: '계절의 변화를 담은 작가 6인의 연작',
+          startAt: '2026-03-01',
+          endAt: '2026-04-30',
+          pageUrl: 'https://proud-gallery.notion.site/spring-summer',
+          pieces: pieces2,
+        },
+      ];
+    }
+
+    writeToStorage({ ...current, curatedExhibitions: updated });
   });
 }

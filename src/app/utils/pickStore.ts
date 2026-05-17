@@ -146,3 +146,48 @@ export const pickStore = {
 export function usePickSessions(): PickSession[] {
   return useSyncExternalStore(pickStore.subscribe, getAllStable, () => []);
 }
+
+/**
+ * Pick 세션 시드 — 발행된 세션이 없을 때 데모용 2개 생성.
+ * workStore가 마운트된 이후(PointsBootstrap)에 호출해야 한다.
+ */
+export function seedPickIfEmpty(): void {
+  if (typeof window === 'undefined') return;
+  const existing = getAllStable();
+  const hasPublished = existing.some((s) => s.publicationOpen);
+  if (hasPublished) return;
+
+  import('../store').then(({ workStore }) => {
+    const works = workStore.getWorks().filter((w) => w.feedReviewStatus === 'approved' || w.visibilityStatus === 'public');
+    if (works.length === 0) return;
+
+    const currentCheck = getAllStable();
+    if (currentCheck.some((s) => s.publicationOpen)) return;
+
+    const ids1 = works.slice(0, 6).map((w) => w.id);
+    const ids2 = works.slice(6, 12).map((w) => w.id);
+
+    const sessions: PickSession[] = [
+      {
+        id: 'seed-pick-2026-w20',
+        title: '5월 3주차 Proud\'s Pick',
+        startAt: '2026-05-19',
+        endAt: '2026-05-25',
+        bannerImageUrl: '',
+        selectedWorkIds: ids1,
+        publicationOpen: true,
+      },
+      {
+        id: 'seed-pick-2026-w19',
+        title: '5월 2주차 Proud\'s Pick',
+        startAt: '2026-05-12',
+        endAt: '2026-05-18',
+        bannerImageUrl: '',
+        selectedWorkIds: ids2,
+        publicationOpen: true,
+      },
+    ];
+
+    writeToStorage([...currentCheck, ...sessions]);
+  });
+}
