@@ -71,6 +71,33 @@ const SEED_EVENTS: ManagedEvent[] = [
     endAt: '2026-06-30',
     status: 'active',
   },
+  {
+    id: 'seed-ended-contest',
+    type: 'contest',
+    subtype: 'irregular',
+    title: '봄맞이 수채화 응모전',
+    subtitle: '봄의 색깔을 담아 응모해 주세요',
+    description:
+      '봄을 주제로 한 수채화 작품을 업로드하고 응모해보세요. 최우수상 1명에게 드로잉 태블릿을, 우수상 3명에게 스타벅스 기프티콘을 드렸습니다. 많은 분들이 참여해 주셨습니다. 감사합니다!',
+    bannerImageUrl:
+      'https://images.unsplash.com/photo-1462275646964-a0e3386b89fa?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080',
+    startAt: '2026-03-20',
+    endAt: '2026-04-15',
+    participantsLabel: '참여 87명',
+  },
+  {
+    id: 'seed-ended-general',
+    type: 'general',
+    title: '4월 작가 오프라인 모임',
+    subtitle: '서울 홍대 · 최대 15명 참여',
+    description:
+      '지난 4월 12일 홍대 카페에서 진행된 Proud Gallery 작가 모임입니다. 총 12명이 참여하여 서로의 작품을 나누고 디지털 드로잉 노하우를 공유했습니다. 다음 모임에서 뵙겠습니다!',
+    bannerImageUrl:
+      'https://images.unsplash.com/photo-1543269865-cbf427effbad?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixlib=rb-4.1.0&q=80&w=1080',
+    startAt: '2026-04-12',
+    endAt: '2026-04-12',
+    participantsLabel: '참여 12명 / 15명',
+  },
 ];
 
 /** 구 artier_managed_events_v4에서 contest/general 항목만 이관 (pick 제외) */
@@ -98,6 +125,9 @@ function migrateFromLegacyEventStore(dest: ManagedEvent[]): ManagedEvent[] {
   }
 }
 
+/** 새로 추가된 시드 이벤트 ID 목록 — 기존 데이터에 없으면 자동 병합 */
+const SEED_IDS_TO_MERGE = ['seed-ended-contest', 'seed-ended-general'] as const;
+
 function readFromStorage(): ManagedEvent[] {
   if (typeof window === 'undefined') return SEED_EVENTS;
   try {
@@ -109,7 +139,7 @@ function readFromStorage(): ManagedEvent[] {
     }
     const list = JSON.parse(raw);
     if (!Array.isArray(list)) return SEED_EVENTS;
-    return list
+    const parsed = list
       .map((e: ManagedEvent) => ({
         ...e,
         type: (e.type === 'contest' || e.type === 'general') ? e.type : 'general',
@@ -117,6 +147,19 @@ function readFromStorage(): ManagedEvent[] {
         displayEndAt: e.displayEndAt ?? undefined,
       }))
       .filter((e: ManagedEvent) => e.type === 'contest' || e.type === 'general');
+
+    // 종료 시드 이벤트가 없으면 병합 (기존 데이터 있는 경우도 적용)
+    const existingIds = new Set(parsed.map((e: ManagedEvent) => e.id));
+    const toMerge = SEED_EVENTS.filter((s) =>
+      SEED_IDS_TO_MERGE.includes(s.id as typeof SEED_IDS_TO_MERGE[number]) && !existingIds.has(s.id),
+    );
+    if (toMerge.length > 0) {
+      const merged = [...parsed, ...toMerge];
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(merged));
+      return merged;
+    }
+
+    return parsed;
   } catch {
     return SEED_EVENTS;
   }

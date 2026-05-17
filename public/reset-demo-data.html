@@ -4,50 +4,93 @@
   <meta charset="utf-8">
   <title>Reset Demo Data</title>
   <style>
-    body { font-family: system-ui; padding: 40px; background: #0a0a0a; color: #e5e5e5; }
-    button { background: #ef4444; color: white; border: none; padding: 12px 24px; border-radius: 8px; font-size: 15px; cursor: pointer; margin: 8px; }
-    button.green { background: #22c55e; }
-    pre { background: #1a1a1a; padding: 16px; border-radius: 8px; font-size: 13px; color: #86efac; overflow: auto; }
+    body { font-family: system-ui; padding: 40px; background: #0a0a0a; color: #e5e5e5; max-width: 620px; }
+    h2 { margin-bottom: 6px; }
+    .section { margin: 20px 0; padding: 16px; background: #141414; border-radius: 10px; border: 1px solid #262626; }
+    .section h3 { margin: 0 0 12px; font-size: 13px; color: #9ca3af; text-transform: uppercase; letter-spacing: 1px; }
+    button { border: none; padding: 10px 18px; border-radius: 7px; font-size: 13px; cursor: pointer; margin: 4px; font-weight: 600; }
+    button.red { background: #ef4444; color: white; }
+    button.green { background: #22c55e; color: #0a0a0a; }
+    button.blue { background: #3b82f6; color: white; }
+    pre { background: #0d0d0d; padding: 14px; border-radius: 8px; font-size: 12px; color: #86efac; overflow: auto; margin-top: 16px; border: 1px solid #1f2937; white-space: pre-wrap; }
   </style>
 </head>
 <body>
   <h2>🔧 Demo Data Manager</h2>
-  <p>Pick 세션과 기획전 시드 데이터를 초기화합니다.</p>
-  <button onclick="clearPicks()">artier_picks_v1 삭제</button>
-  <button onclick="clearCurations()">artier_curation_v1 삭제</button>
-  <button onclick="clearAll()">둘 다 삭제</button>
-  <button class="green" onclick="goAdmin()">어드민으로 이동 →</button>
-  <button class="green" onclick="goEvents()">Events 탭으로 이동 →</button>
-  <pre id="log">로그...</pre>
+  <p style="color:#6b7280;font-size:14px;">Proud Gallery 데모 데이터 리셋 도구 (개발용)</p>
+
+  <div class="section">
+    <h3>Pick 세션</h3>
+    <button class="red" onclick="clearKey('artier_picks_v1')">artier_picks_v1 삭제</button>
+    <button class="green" onclick="goTo('/admin/picks')">어드민 Picks →</button>
+    <button class="green" onclick="goTo('/events?tab=pick')">Events Pick 탭 →</button>
+  </div>
+
+  <div class="section">
+    <h3>기획전</h3>
+    <button class="red" onclick="clearKey('artier_curation_v1')">artier_curation_v1 삭제</button>
+    <button class="green" onclick="goTo('/admin/curation')">어드민 기획전 →</button>
+    <button class="green" onclick="goTo('/events?tab=curation')">Events 기획전 탭 →</button>
+  </div>
+
+  <div class="section">
+    <h3>이벤트 (응모전·일반)</h3>
+    <button class="red" onclick="clearKey('artier_managed_contests_v1')">artier_managed_contests_v1 삭제</button>
+    <button class="green" onclick="goTo('/admin/events')">어드민 이벤트 →</button>
+    <button class="green" onclick="goTo('/events')">Events 이벤트 탭 →</button>
+  </div>
+
+  <div class="section">
+    <h3>전체</h3>
+    <button class="red" onclick="clearAll()">모두 삭제 후 홈으로</button>
+    <button class="blue" onclick="showStatus()">현재 상태 새로고침</button>
+  </div>
+
+  <pre id="log">로딩 중...</pre>
 
   <script>
-    const log = (msg) => {
-      document.getElementById('log').textContent = msg;
-    };
-    function clearPicks() {
-      localStorage.removeItem('artier_picks_v1');
-      log('artier_picks_v1 삭제 완료.\n페이지를 새로고침하면 시드가 다시 생성됩니다.');
-    }
-    function clearCurations() {
-      localStorage.removeItem('artier_curation_v1');
-      log('artier_curation_v1 삭제 완료.\n앱 재로드 시 시드가 다시 생성됩니다.');
+    function clearKey(key) {
+      localStorage.removeItem(key);
+      log('✅ ' + key + ' 삭제 완료.\n앱 재로드 시 시드가 자동 생성됩니다.');
     }
     function clearAll() {
-      localStorage.removeItem('artier_picks_v1');
-      localStorage.removeItem('artier_curation_v1');
-      log('Pick + 기획전 데이터 모두 삭제 완료.\n/으로 이동하면 시드가 자동 생성됩니다.');
+      ['artier_picks_v1','artier_curation_v1','artier_managed_contests_v1'].forEach(k => localStorage.removeItem(k));
+      log('✅ 모두 삭제. 홈으로 이동합니다...');
+      setTimeout(() => window.location.href = '/', 700);
     }
-    function goAdmin() { window.location.href = '/admin/picks'; }
-    function goEvents() { window.location.href = '/events?tab=pick'; }
+    function goTo(path) { window.location.href = path; }
+    function log(msg) { document.getElementById('log').textContent = msg; }
 
-    // 현재 상태 표시
-    const picks = localStorage.getItem('artier_picks_v1');
-    const curations = localStorage.getItem('artier_curation_v1');
-    const status = [
-      'artier_picks_v1: ' + (picks ? JSON.parse(picks).length + '개 세션' : '없음'),
-      'artier_curation_v1: ' + (curations ? JSON.parse(curations)?.curatedExhibitions?.length + '개 기획전' : '없음'),
-    ].join('\n');
-    log(status);
+    function showStatus() {
+      const picks = localStorage.getItem('artier_picks_v1');
+      const curations = localStorage.getItem('artier_curation_v1');
+      const events = localStorage.getItem('artier_managed_contests_v1');
+      const lines = [
+        '=== 현재 데이터 상태 ===',
+        '',
+        '[ Pick 세션 ] artier_picks_v1',
+      ];
+      if (picks) {
+        JSON.parse(picks).forEach(s => lines.push('  ' + (s.publicationOpen ? '✅' : '📝') + ' ' + s.title + ' (' + s.startAt + '~' + s.endAt + ')'));
+      } else {
+        lines.push('  없음 (앱 재로드 시 시드 생성)');
+      }
+      lines.push('', '[ 기획전 ] artier_curation_v1');
+      if (curations) {
+        JSON.parse(curations).curatedExhibitions.forEach(c => lines.push('  ' + (c.pageUrl ? '🔗' : '⚠️ ') + ' ' + c.title + ' pageUrl=' + (c.pageUrl ? '있음' : '없음')));
+      } else {
+        lines.push('  없음 (앱 재로드 시 시드 생성)');
+      }
+      lines.push('', '[ 이벤트 ] artier_managed_contests_v1');
+      if (events) {
+        JSON.parse(events).forEach(e => lines.push('  [' + e.type + '] ' + e.title + ' (' + e.startAt + '~' + e.endAt + ')'));
+      } else {
+        lines.push('  없음 (앱 재로드 시 시드 생성)');
+      }
+      log(lines.join('\n'));
+    }
+
+    showStatus();
   </script>
 </body>
 </html>
