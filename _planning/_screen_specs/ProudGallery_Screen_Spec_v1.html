@@ -7065,12 +7065,12 @@
  <div style="font-size: 11px; background: var(--ink); color: white; padding: 5px 10px; border-radius: 5px; cursor: pointer;">+ 새로</div>
  </div>
  <div style="flex: 1; overflow-y: auto; padding: 8px;">
- <!-- 세션 카드 1: 발행됨 -->
+ <!-- 세션 카드 1: 게시됨 -->
  <div style="border: 1px solid var(--ink); border-radius: 7px; padding: 10px 12px; margin-bottom: 6px; background: #f8fafc; position: relative;">
  <span class="bub" style="position: absolute; top: -8px; right: -8px;">1</span>
  <div style="font-size: 12px; font-weight: 700; margin-bottom: 4px;">2026 봄 Pick</div>
  <div style="display: flex; gap: 5px; align-items: center; margin-bottom: 4px;">
- <span style="font-size: 10px; background: #dcfce7; color: #166534; padding: 1px 6px; border-radius: 8px;">발행됨</span>
+ <span style="font-size: 10px; background: #dcfce7; color: #166534; padding: 1px 6px; border-radius: 8px;">게시됨</span>
  </div>
  <div style="font-size: 10px; color: var(--ink-3);">2026.03.01 ~ 2026.05.31</div>
  <div style="font-size: 10px; color: var(--ink-3);">작품 7개</div>
@@ -7112,13 +7112,13 @@
  <div class="desc">
      <h3 class="components">구성 요소</h3>
  <dl>
- <dt><span class="bub">1</span></dt><dd>좌 패널 세션 카드 — 제목·상태 배지(임시저장/발행됨/발행예정/종료됨)·기간·작품 수. 클릭 시 우 패널에 ADM-PCK-02 편집 패널 전환</dd>
+ <dt><span class="bub">1</span></dt><dd>좌 패널 세션 카드 — 제목·상태 배지(임시저장/게시됨/게시예정/종료됨)·기간·작품 수. 클릭 시 우 패널에 ADM-PCK-02 편집 패널 전환</dd>
  <dt><span class="bub">2</span></dt><dd>우 패널 빈 상태 — 세션 미선택 시 "세션을 선택하거나 새로 만드세요" 안내. "새로" 버튼 클릭 시 새 세션 생성 폼(제목·기간·배너 URL) + "저장 → 작품 선정으로" CTA 노출</dd>
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
  <li>세션 내 작품 10건 초과 선정 시도 → 차단 "Pick은 최대 10개입니다"</li>
- <li>발행 확정 → Pick 버킷 피드 진입 + 카드 배지 + 작가 알림 1건 발송</li>
+ <li>게시 확정 → Pick 버킷 피드 진입 + 카드 배지 + 작가 알림 1건 발송</li>
  <li>게시 종료 확정 → Pick 활성 해제. 배지는 영구 유지</li>
  <li>반려·비공개·삭제된 전시는 선정 불가</li>
  </ol></div>
@@ -7178,14 +7178,14 @@
  </div>
  <div style="font-size: 11px; color: var(--ink-3); white-space: nowrap;">1 / 10</div>
  <div style="font-size: 11px; border: 1px solid var(--line-2); padding: 6px 10px; border-radius: 5px; color: var(--ink-2); white-space: nowrap;">임시저장</div>
- <div style="font-size: 11px; background: var(--ink); color: white; padding: 6px 12px; border-radius: 5px; white-space: nowrap;">발행</div>
+ <div style="font-size: 11px; background: var(--ink); color: white; padding: 6px 12px; border-radius: 5px; white-space: nowrap;">게시</div>
  <div style="font-size: 11px; border: 1px solid #fca5a5; color: #dc2626; padding: 6px 10px; border-radius: 5px; white-space: nowrap;">게시 종료</div>
  <span class="bub" style="position: absolute; top: -8px; right: -8px;">3</span>
  </div>
  </main>
  </div>
  </div>
- <div class="placeholder-note">ADM-PCK-01 우 패널 — 세션 선택 시 전환. 상단(세션명·검색·정보 수정) + 갤러리 그리드(클릭 선정·해제 토글) + 하단 고정 바(DnD 썸네일·N/10 카운트·임시저장·발행·게시 종료)</div>
+ <div class="placeholder-note">ADM-PCK-01 우 패널 — 세션 선택 시 전환. 상단(세션명·검색·정보 수정) + 갤러리 그리드(클릭 선정·해제 토글) + 하단 고정 바(DnD 썸네일·N/10 카운트·임시저장·게시·게시 종료)</div>
  </div>
 
  <div class="desc">
@@ -7193,13 +7193,13 @@
  <dl>
  <dt><span class="bub">1</span></dt><dd>상단 — 세션명·작품·작가 검색 필드·"정보 수정" 버튼(세션 제목·기간·배너 URL 수정)</dd>
  <dt><span class="bub">2</span></dt><dd>갤러리 그리드 — 공개·승인된 전시 목록. 클릭으로 선정·해제 토글. 선정된 카드는 테두리 강조 + "선정" 배지</dd>
- <dt><span class="bub">3</span></dt><dd>하단 고정 바 — 선정 작품 DnD 썸네일·N/10 카운트·임시저장·발행·게시 종료 버튼</dd>
+ <dt><span class="bub">3</span></dt><dd>하단 고정 바 — 선정 작품 DnD 썸네일·N/10 카운트·임시저장·게시·게시 종료 버튼</dd>
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>
  <li>카드 클릭 시 선정·해제 즉시 토글 (선정 시 테두리+배지 추가)</li>
  <li>하단 바 DnD 썸네일 순서 변경 → 갤러리 그리드 선정 순서와 동기화</li>
- <li>임시저장 → 세션 상태 "임시저장", 발행 → "발행됨", 게시 종료 → "종료됨"</li>
+ <li>임시저장 → 세션 상태 "임시저장", 게시 → "게시됨", 게시 종료 → "종료됨"</li>
  </ol>
  </div>
  </div>
