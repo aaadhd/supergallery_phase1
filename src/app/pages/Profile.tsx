@@ -440,13 +440,6 @@ export default function Profile() {
     }
   }, [searchParams, allowedProfileTabs, setSearchParams]);
 
-  // 전시 생성 직후 도착 시 검수 공개 안내 배너 (dismissible)
-  const [publishedBannerDismissed, setPublishedBannerDismissed] = useState(false);
-  const publishedFlag = searchParams.get('published');
-  const publishedWorkId = searchParams.get('workId');
-  const showPublishedBanner =
-    isOwnProfile && !publishedBannerDismissed && publishedFlag === 'pending' && !!publishedWorkId;
-
   useEffect(() => {
     setProfileTab((prev) => (allowedProfileTabs.includes(prev) ? prev : 'exhibition'));
   }, [allowedProfileTabs]);
@@ -900,27 +893,7 @@ export default function Profile() {
 
                 {/* ===== 전시 탭 ===== */}
                 <TabsContent value="exhibition" className="mt-6">
-                  {showPublishedBanner && (
-                    <div className="mb-6 rounded-xl border border-amber-200 bg-amber-50 p-4 flex items-start gap-3">
-                      <span className="mt-0.5 inline-flex h-6 w-6 shrink-0 items-center justify-center rounded-full bg-amber-500 text-white text-xs font-bold" aria-hidden>✓</span>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold text-amber-900">
-                          {t('profile.publishedBannerTitle')}
-                        </p>
-                        <p className="text-sm text-amber-800 mt-1 leading-relaxed">
-                          {t('profile.publishedBannerDesc')}
-                        </p>
-                      </div>
-                      <button
-                        type="button"
-                        onClick={() => setPublishedBannerDismissed(true)}
-                        aria-label={t('profile.publishedBannerDismiss')}
-                        className="shrink-0 -mr-1 -mt-1 h-11 w-11 min-h-[44px] min-w-[44px] flex items-center justify-center rounded-full text-amber-700 lg:hover:text-amber-900 lg:hover:bg-amber-100 transition-colors"
-                      >
-                        <X className="h-5 w-5" />
-                      </button>
-                    </div>
-                  )}
+
                   <div className="flex flex-wrap items-center gap-2 mb-5">
                     {(['all', 'solo', 'group'] as const).map((f) => {
                       const label =
