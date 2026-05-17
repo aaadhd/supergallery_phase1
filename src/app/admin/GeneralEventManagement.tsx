@@ -190,18 +190,24 @@ export default function GeneralEventManagement() {
           <p className="text-sm font-medium text-foreground">{editingId ? '이벤트 수정' : '새 이벤트 등록'}</p>
 
           <div className="grid sm:grid-cols-2 gap-3">
-            <input
-              placeholder="이벤트명 *"
-              value={draft.title}
-              onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
-              className="border border-border rounded-lg px-3 py-2 text-sm bg-white"
-            />
-            <input
-              placeholder="부제목 (선택)"
-              value={draft.subtitle}
-              onChange={(e) => setDraft((d) => ({ ...d, subtitle: e.target.value }))}
-              className="border border-border rounded-lg px-3 py-2 text-sm bg-white"
-            />
+            <div>
+              <label className="block text-xs text-muted-foreground mb-1">이벤트명 <span className="text-destructive">*</span></label>
+              <input
+                value={draft.title}
+                onChange={(e) => setDraft((d) => ({ ...d, title: e.target.value }))}
+                placeholder="이벤트명"
+                className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
+              />
+            </div>
+            <div>
+              <label className="block text-xs text-muted-foreground mb-1">부제목</label>
+              <input
+                value={draft.subtitle}
+                onChange={(e) => setDraft((d) => ({ ...d, subtitle: e.target.value }))}
+                placeholder="부제목 (선택)"
+                className="w-full border border-border rounded-lg px-3 py-2 text-sm bg-white"
+              />
+            </div>
             <div className="sm:col-span-2">
               <AdminImageUpload
                 label="이벤트 대표 이미지 (카드·상세 페이지 표시용)"

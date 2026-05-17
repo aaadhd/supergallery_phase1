@@ -152,7 +152,17 @@ export default function PickManagement() {
 
   useEffect(() => {
     migrateLegacyPicks();
-    const t = window.setTimeout(() => setLoading(false), 240);
+    const t = window.setTimeout(() => {
+      setLoading(false);
+      const all = pickStore.getAll()
+        .filter((s) => s.publicationOpen)
+        .sort((a, b) => b.startAt.localeCompare(a.startAt));
+      if (all.length > 0) {
+        const first = all[0];
+        setSelectedId(first.id);
+        setDraft({ title: first.title, startAt: first.startAt, endAt: first.endAt, workIds: first.selectedWorkIds ?? [] });
+      }
+    }, 240);
     return () => window.clearTimeout(t);
   }, []);
 
@@ -477,7 +487,7 @@ export default function PickManagement() {
                     </div>
                     <div className="flex-1 overflow-y-auto p-3 bg-muted/10">
                       {galleryWorks.length === 0 ? (
-                        <div className="text-center py-16 text-sm text-muted-foreground">전시가 없습니다.</div>
+                        <div className="text-center py-16 text-sm text-muted-foreground">공개된 전시가 없습니다.</div>
                       ) : (
                         <div className="space-y-1">
                           {galleryWorks.map((w) => {
@@ -546,7 +556,7 @@ export default function PickManagement() {
 
                     {/* 하단 고정 바 */}
                     {!isEnded && (
-                      <div className="bg-slate-900 px-4 py-3 flex items-center gap-3 shrink-0">
+                      <div className="bg-sky-950 px-4 py-3 flex items-center gap-3 shrink-0">
                         {draftWorks.length > 0 ? (
                           <DndContext
                             sensors={sensors}
@@ -571,16 +581,16 @@ export default function PickManagement() {
                             </SortableContext>
                           </DndContext>
                         ) : (
-                          <span className="text-slate-500 text-xs">갤러리에서 작품을 클릭해 선정하세요</span>
+                          <span className="text-sky-400 text-xs">전시를 선정하세요 <span className="text-red-400">(필수)</span></span>
                         )}
-                        <div className="text-violet-300 text-xs font-semibold shrink-0 ml-1">
+                        <div className="text-sky-300 text-xs font-semibold shrink-0 ml-1">
                           {draft.workIds.length}개 선정 / 최대 {MAX_PICKS}개
                         </div>
                         <div className="flex-1" />
                         <button
                           type="button"
                           onClick={handlePublish}
-                          className="bg-primary text-white rounded-md px-3 py-1.5 text-xs font-semibold lg:hover:bg-primary/90"
+                          className="bg-sky-600 text-white rounded-md px-3 py-1.5 text-xs font-semibold lg:hover:bg-sky-700"
                         >
                           게시
                         </button>
@@ -698,7 +708,7 @@ function PickBottomBarItem({ id, src, onRemove }: { id: string; src: string; onR
       {...attributes}
       {...listeners}
       style={{ transform: CSS.Transform.toString(transform), transition, opacity: isDragging ? 0.5 : 1 }}
-      className="relative w-10 h-10 rounded overflow-hidden border-2 border-violet-500 shrink-0 cursor-grab"
+      className="relative w-10 h-10 rounded overflow-hidden border-2 border-sky-400 shrink-0 cursor-grab"
     >
       <ImageWithFallback src={src} alt="" className="w-full h-full object-cover" />
       <button

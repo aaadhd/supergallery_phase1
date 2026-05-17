@@ -147,9 +147,20 @@ export default function CurationManagement() {
   const [loading, setLoading] = useState(true);
   const [editor, setEditor] = useState<EditorState | null>(null);
   const [selectedCurationId, setSelectedCurationId] = useState<string | null>(null);
+  const [editorStep, setEditorStep] = useState<1 | 2>(1);
 
   useEffect(() => {
-    const tm = window.setTimeout(() => setLoading(false), 200);
+    const tm = window.setTimeout(() => {
+      setLoading(false);
+      const curations = curationStore.getCuratedExhibitions()
+        .sort((a, b) => CURATION_STATUS_ORDER[deriveCurationStatus(a)] - CURATION_STATUS_ORDER[deriveCurationStatus(b)]);
+      if (curations.length > 0) {
+        const first = curations[0];
+        setEditor(fromExhibition(first));
+        setSelectedCurationId(first.id);
+        setEditorStep(2);
+      }
+    }, 200);
     return () => window.clearTimeout(tm);
   }, []);
 
@@ -158,16 +169,19 @@ export default function CurationManagement() {
   const openCreate = () => {
     setEditor(emptyEditor());
     setSelectedCurationId('new');
+    setEditorStep(1);
   };
 
   const openEdit = (c: CuratedExhibition) => {
     setEditor(fromExhibition(c));
     setSelectedCurationId(c.id);
+    setEditorStep(2);
   };
 
   const closeEditor = () => {
     setEditor(null);
     setSelectedCurationId(null);
+    setEditorStep(1);
   };
 
   const togglePiece = (workId: string, pieceId: string) => {
@@ -205,6 +219,19 @@ export default function CurationManagement() {
       if (oldIdx < 0 || newIdx < 0) return prev;
       return { ...prev, pieces: arrayMove(prev.pieces, oldIdx, newIdx) };
     });
+  };
+
+  const validateStep1 = (): boolean => {
+    if (!editor) return false;
+    if (!editor.title.trim()) { toast.error(t('admin.curation.errTitleRequired')); return false; }
+    if (!editor.startAt.trim() || !editor.endAt.trim()) { toast.error('기획전 시작일과 종료일은 필수입니다.'); return false; }
+    if (editor.startAt > editor.endAt) { toast.error('시작일이 종료일보다 늦을 수 없습니다.'); return false; }
+    if (!editor.bannerImageUrl.trim()) { toast.error('대문 이미지를 등록해 주세요.'); return false; }
+    const dup = curatedExhibitions.some(
+      (c) => c.title.trim() === editor.title.trim() && (editor.mode === 'create' || c.id !== editor.editingId),
+    );
+    if (dup) { toast.error(t('admin.curation.errDuplicateTitle')); return false; }
+    return true;
   };
 
   const saveEditor = () => {
@@ -403,13 +430,13 @@ export default function CurationManagement() {
                       <div className="flex-1 min-w-0">
                         <div className="font-medium text-sm truncate">{c.title}</div>
                         <div className="flex items-center gap-1.5 mt-0.5">
-                          <span className={`inline-flex rounded-full px-1.5 py-0.5 text-[9px] font-semibold ${CURATION_STATUS_COLOR[status]}`}>
+                          <span className={`inline-flex rounded-full px-2 py-0.5 text-[10px] font-semibold ${CURATION_STATUS_COLOR[status]}`}>
                             {CURATION_STATUS_LABEL[status]}
                           </span>
                           <span className="text-xs text-muted-foreground">piece {c.pieces.length}개</span>
                         </div>
                         {c.startAt && c.endAt
-                          ? <div className="text-[10px] text-muted-foreground/70 mt-0.5">{c.startAt.slice(0, 10)} ~ {c.endAt.slice(0, 10)}</div>
+                          ? <div className="text-[10px] text-muted-foreground/70 mt-0.5">{c.startAt.slice(5)} ~ {c.endAt.slice(5)}</div>
                           : <div className="text-[10px] text-amber-600 mt-0.5">날짜 미설정</div>
                         }
                       </div>
@@ -446,39 +473,41 @@ export default function CurationManagement() {
               <div className="flex-1 flex items-center justify-center text-sm text-muted-foreground">
                 기획전을 선택하거나 새로 만드세요
               </div>
-            ) : (
-              <>
-                {/* 기획전 메타 + 검색 */}
-                <div className="p-4 border-b border-border space-y-3">
+            ) : editorStep === 1 ? (
+              /* 1단계: 기본 정보 */
+              <div className="p-6 overflow-y-auto flex-1">
+                <h2 className="text-base font-bold mb-5 text-foreground">
+                  {editor.mode === 'create' ? '새 기획전' : '기획전 기본 정보'}
+                </h2>
+                <div className="space-y-4 max-w-lg">
                   <div className="grid grid-cols-2 gap-3">
                     <div>
-                      <label className="block text-xs text-muted-foreground mb-1">제목 *</label>
+                      <label className="block text-xs text-muted-foreground mb-1">제목 <span className="text-destructive">*</span></label>
                       <input value={editor.title}
                         onChange={(e) => setEditor((prev) => prev ? { ...prev, title: e.target.value } : prev)}
                         placeholder="봄의 기억들"
-                        className="w-full border border-border rounded-lg px-3 py-1.5 text-sm" />
+                        className="w-full border border-border rounded-lg px-3 py-2 text-sm" />
                     </div>
                     <div>
                       <label className="block text-xs text-muted-foreground mb-1">부제</label>
                       <input value={editor.subtitle}
                         onChange={(e) => setEditor((prev) => prev ? { ...prev, subtitle: e.target.value } : prev)}
                         placeholder="봄을 담은 작품 모음"
-                        className="w-full border border-border rounded-lg px-3 py-1.5 text-sm" />
+                        className="w-full border border-border rounded-lg px-3 py-2 text-sm" />
                     </div>
                     <div>
                       <label className="block text-xs text-muted-foreground mb-1">시작일 <span className="text-destructive">*</span></label>
                       <input type="date" value={editor.startAt}
                         onChange={(e) => setEditor((prev) => prev ? { ...prev, startAt: e.target.value } : prev)}
-                        className="w-full border border-border rounded-lg px-3 py-1.5 text-sm" />
+                        className="w-full border border-border rounded-lg px-3 py-2 text-sm" />
                     </div>
                     <div>
                       <label className="block text-xs text-muted-foreground mb-1">종료일 <span className="text-destructive">*</span></label>
                       <input type="date" value={editor.endAt}
                         onChange={(e) => setEditor((prev) => prev ? { ...prev, endAt: e.target.value } : prev)}
-                        className="w-full border border-border rounded-lg px-3 py-1.5 text-sm" />
+                        className="w-full border border-border rounded-lg px-3 py-2 text-sm" />
                     </div>
                   </div>
-                  {/* pageUrl 필드 — 기획전 탭 노출 조건 */}
                   <div>
                     <label className="block text-xs text-muted-foreground mb-1">
                       기획전 페이지 URL
@@ -488,7 +517,7 @@ export default function CurationManagement() {
                       value={editor.pageUrl}
                       onChange={(e) => setEditor((prev) => prev ? { ...prev, pageUrl: e.target.value } : prev)}
                       placeholder="https://notion.so/... 또는 https://..."
-                      className="w-full border border-border rounded-lg px-3 py-1.5 text-sm"
+                      className="w-full border border-border rounded-lg px-3 py-2 text-sm"
                     />
                   </div>
                   <AdminImageUpload
@@ -497,12 +526,41 @@ export default function CurationManagement() {
                     value={editor.bannerImageUrl}
                     onChange={(url) => setEditor((prev) => prev ? { ...prev, bannerImageUrl: url } : prev)}
                   />
-                  <div className="relative">
+                  <div className="flex gap-2 pt-2">
+                    <button type="button" onClick={closeEditor}
+                      className="flex-1 border border-border rounded-lg px-4 py-2 text-sm text-muted-foreground lg:hover:bg-muted/50">
+                      취소
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => { if (validateStep1()) setEditorStep(2); }}
+                      className="flex-1 bg-sky-600 text-white rounded-lg px-4 py-2 text-sm font-medium lg:hover:bg-sky-700">
+                      다음 → piece 선정
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ) : (
+              /* 2단계: piece 선정 갤러리 */
+              <>
+                {/* 헤더 바 */}
+                <div className="p-4 border-b border-border flex items-center gap-3 shrink-0">
+                  <button
+                    type="button"
+                    onClick={() => setEditorStep(1)}
+                    className="text-xs text-muted-foreground lg:hover:text-foreground shrink-0"
+                  >
+                    {editor.mode === 'create' ? '← 이전' : '← 기본 정보'}
+                  </button>
+                  <span className="font-semibold text-sm flex-1 truncate text-foreground">
+                    {editor.title || '(제목 없음)'}
+                  </span>
+                  <div className="relative shrink-0">
                     <Search className="absolute left-2 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-muted-foreground" />
                     <input value={editor.search}
                       onChange={(e) => setEditor((prev) => prev ? { ...prev, search: e.target.value } : prev)}
                       placeholder="전시·작가 검색…"
-                      className="w-full pl-7 pr-3 py-1.5 border border-border rounded-lg text-sm" />
+                      className="pl-7 pr-3 py-1.5 border border-border rounded-lg text-sm w-40" />
                   </div>
                 </div>
 
@@ -585,19 +643,15 @@ export default function CurationManagement() {
                       </SortableContext>
                     </DndContext>
                   ) : (
-                    <span className="text-sky-400 text-xs">갤러리에서 이미지를 클릭해 piece를 선정하세요 <span className="text-red-400">(필수)</span></span>
+                    <span className="text-sky-400 text-xs">작품을 선정하세요 <span className="text-red-400">(필수)</span></span>
                   )}
                   <div className="text-sky-300 text-xs font-semibold shrink-0 ml-1">
                     {editor.pieces.length}개 선정
                   </div>
                   <div className="flex-1" />
-                  <button type="button" onClick={closeEditor}
-                    className="border border-sky-700 text-sky-300 rounded-md px-3 py-1.5 text-xs lg:hover:bg-sky-900">
-                    취소
-                  </button>
                   <button type="button" onClick={saveEditor}
                     className="bg-sky-600 text-white rounded-md px-3 py-1.5 text-xs font-semibold lg:hover:bg-sky-700">
-                    저장
+                    선택 완료
                   </button>
                 </div>
               </>
@@ -613,7 +667,7 @@ export default function CurationManagement() {
           className="fixed z-[9999] pointer-events-none rounded-lg overflow-hidden shadow-xl border border-border"
           style={{ left: hoverImg.x, top: hoverImg.y, width: 240, height: 240 }}
         >
-          <img src={hoverImg.src} alt="" className="w-full h-full object-cover" />
+          <ImageWithFallback src={hoverImg.src} alt="" className="w-full h-full object-cover" />
         </div>,
         document.body,
       )}
