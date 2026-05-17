@@ -691,6 +691,11 @@
  <thead><tr><th class="ver">버전</th><th class="date">날짜</th><th>주요 변경</th></tr></thead>
  <tbody>
  <tr>
+ <td class="ver">v1.18</td>
+ <td class="date">2026-05-17</td>
+ <td>NTF-01 알림 템플릿 13종 재정합 — 그룹 전시 게시 제거·검수 승인 업로더/참여자 분리; STG-01·STG-05 강제 수신 목록 정합(그룹 전시 게시 제거)</td>
+ </tr>
+ <tr>
  <td class="ver">v1.17</td>
  <td class="date">2026-05-17</td>
  <td>EVT-06 Pick 세션 상세·EVT-07 명예의 전당 슬라이드 신설 + TOC 등록; EVT-02 resultUrl 외부 링크 CTA 추가(구성 요소 5번·AC 7번); EVT-04 약관 보기 인라인 링크 제거; ADM 사이드바 전면 정합 — 모더레이션에 회원 추가·커뮤니케이션에 배너 통합·이벤트 섹션 일반이벤트 추가(18개 슬라이드 일괄); Last synced 갱신(Policy v2.30·PRD_User v2.28·PRD_Admin v1.34·IA v1.28)</td>
@@ -5863,7 +5868,7 @@
  </div>
  </div>
  </div>
- <div class="placeholder-note">필터 칩 없음 — 단일 전체 목록. 액션(모두 읽음·읽은 알림 삭제) + 13종 메시지 템플릿(신고 처리 결과 작가 수신 3종 포함). 90일 자동 만료, 200건 상한</div>
+ <div class="placeholder-note">필터 칩 없음 — 단일 전체 목록. 액션(모두 읽음·읽은 알림 삭제) + 13종 메시지 템플릿(검수 승인 업로더·참여자 분리, 신고 처리 결과 3종 포함). 90일 자동 만료, 200건 상한</div>
  </div>
 
  <div class="desc">
@@ -5885,13 +5890,13 @@
  <div class="copy"><h4>알림 메시지 템플릿 (13종)</h4>
  <span class="copy-line">좋아요: "[작가명]님이 '작품명'을 좋아했어요"</span>
  <span class="copy-line">팔로우: "[작가명]님이 회원님을 팔로우하기 시작했어요"</span>
- <span class="copy-line">그룹 전시 게시: "'{업로더명}'님이 회원님의 작품을 '전시명' 전시에 함께 게시했어요."</span>
- <span class="copy-line">큐레이션 — Pick 선정: "회원님의 전시 '{title}'이 Proud's Pick으로 뽑혔어요. 축하드려요!"</span>
- <span class="copy-line">큐레이션 — 기획전 선정: "회원님의 작품 '작품명'이(가) '기획전명' 기획전에 선정됐어요"</span>
+ <span class="copy-line">큐레이션 — Pick 선정: "축하해요! '전시명'이(가) Proud's Pick으로 뽑혔어요"</span>
+ <span class="copy-line">큐레이션 — 기획전 선정: "'작품명' 작품이 '기획전명' 기획전에 선정됐어요. 페이지에서 확인해 보세요."</span>
  <span class="copy-line">응모전 — 선정: "축하해요! '전시명'이(가) '응모전명' 선정작으로 뽑혔어요"</span>
  <span class="copy-line">응모전 — 공지: 운영팀 작성 메시지</span>
- <span class="copy-line">시스템 — 검수 승인: "'전시명'이 게시되었습니다"</span>
- <span class="copy-line">시스템 — 검수 반려: "'전시명'이 반려되었습니다 — 사유: ..."</span>
+ <span class="copy-line">시스템 — 검수 승인(업로더): "올리신 작품이 승인됐어요. 둘러보기에서 다른 분들이 볼 수 있어요."</span>
+ <span class="copy-line">시스템 — 검수 승인(참여 작가): "함께 올라간 '전시명' 전시가 공개됐어요. 둘러보기 피드에서 확인하실 수 있어요."</span>
+ <span class="copy-line">시스템 — 검수 반려: "올리신 작품이 검수를 통과하지 못했어요. 사유: ..."</span>
  <span class="copy-line">시스템 — 작품 연결(업로더 수신): "'{이름}'님이 '{전시명}' 전시에서 본인 작품을 연결했어요. 잘못 연결됐다면 전시 편집에서 풀 수 있어요."</span>
  <span class="copy-line">시스템 — 신고 처리(삭제, 작가 수신): "회원님의 전시 '{전시명}'이 운영 정책 위반으로 삭제됐어요. 자세한 내용은 문의하기로 연락 주세요."</span>
  <span class="copy-line">시스템 — 신고 처리(비공개 유지, 작가 수신): "회원님의 전시 '{전시명}'이 신고 검토 결과 비공개로 전환됐어요. 피드와 검색에서 제외돼요."</span>
@@ -5953,7 +5958,7 @@
  <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 14px;"><span style="font-size: 12.5px;">이벤트 알림<br><span style="font-size: 10.5px; color: var(--ink-3);">응모전 공지 · 이벤트</span></span><div style="width: 36px; height: 20px; background: var(--line-2); border-radius: 10px; position: relative;"><div style="position: absolute; left: 2px; top: 2px; width: 16px; height: 16px; background: white; border-radius: 50%;"></div></div></div>
  <span class="bub" style="position: absolute; top: -10px; right: -10px;">3</span>
  </div>
- <div style="font-size: 10.5px; color: var(--ink-3); margin-bottom: 22px; padding: 0 2px;">그룹 전시 게시·기획전 선정·Pick 선정·응모전 선정·검수 결과·작품 연결·신고 처리 결과 알림은 설정과 관계없이 항상 수신돼요.</div>
+ <div style="font-size: 10.5px; color: var(--ink-3); margin-bottom: 22px; padding: 0 2px;">기획전 선정·Pick 선정·응모전 선정·검수 결과·작품 연결·신고 처리 결과 알림은 설정과 관계없이 항상 수신돼요.</div>
 
  <!-- 계정 (로그아웃 + 탈퇴) -->
  <div style="font-size: 11px; color: var(--ink-3); letter-spacing: .06em; text-transform: uppercase; margin-bottom: 8px; font-weight: 600;">계정</div>
@@ -5981,7 +5986,7 @@
  </div>
  </div>
  </div>
- <div class="placeholder-note">단일 스크롤 페이지 — 글자 크기(3버튼) · 화면 테마(2버튼) · 알림(2토글 인라인 + 강제 수신 안내 "그룹 전시 게시·기획전·Pick·응모전 선정·검수 결과·작품 연결·신고 처리 결과 알림은 항상 수신") · 계정(로그아웃 행 + 탈퇴 버튼) · 모바일 전용: 서비스 정보 섹션(이용약관·개인정보처리방침·문의·사업자정보). 메뉴 드릴다운 없음</div>
+ <div class="placeholder-note">단일 스크롤 페이지 — 글자 크기(3버튼) · 화면 테마(2버튼) · 알림(2토글 인라인 + 강제 수신 안내 "기획전·Pick·응모전 선정·검수 결과·작품 연결·신고 처리 결과 알림은 항상 수신") · 계정(로그아웃 행 + 탈퇴 버튼) · 모바일 전용: 서비스 정보 섹션(이용약관·개인정보처리방침·문의·사업자정보). 메뉴 드릴다운 없음</div>
  </div>
 
  <div class="desc">
@@ -5996,7 +6001,7 @@
  <dl>
  <dt><span class="bub">1</span></dt><dd>글자 크기 — 작게·보통·크게 인라인 3-버튼 세그먼트. 선택 즉시 적용</dd>
  <dt><span class="bub">2</span></dt><dd>화면 테마 — 밝게·어둡게 인라인 2-버튼 세그먼트. 시스템 자동 감지 없음 (Policy §19.4)</dd>
- <dt><span class="bub">3</span></dt><dd>알림 설정 — 2개 토글 인라인. 내 작품 반응 알림(좋아요·팔로우 통합)·이벤트 알림(마케팅). 그룹 전시 게시·기획전 선정·Pick 선정·응모전 선정·검수 결과·작품 연결·신고 처리 결과 알림은 강제 수신(토글 없음, 항상 수신). 즉시 저장</dd>
+ <dt><span class="bub">3</span></dt><dd>알림 설정 — 2개 토글 인라인. 내 작품 반응 알림(좋아요·팔로우 통합)·이벤트 알림(마케팅). 기획전 선정·Pick 선정·응모전 선정·검수 결과·작품 연결·신고 처리 결과 알림은 강제 수신(토글 없음, 항상 수신). 즉시 저장</dd>
  <dt><span class="bub">4</span></dt><dd>로그아웃 — 확인 다이얼로그 후 로그아웃</dd>
  <dt><span class="bub">5</span></dt><dd>서비스 정보 (모바일 전용, md:hidden PC에서 미노출) — 이용약관(→/terms)·개인정보처리방침(→/privacy)·문의하기(→/contact) 링크 + 사업자정보 아코디언(회사명·대표·사업자번호·주소·이메일)</dd>
  <dt><span class="bub">6</span></dt><dd>회원 탈퇴 — 경고 문구 + 탈퇴 버튼 클릭 시 탈퇴 사유(5종 라디오) + 동의 체크박스 인라인 모달</dd>
@@ -6165,7 +6170,7 @@
 
  <h3 class="components">구성 요소</h3>
  <dl>
- <dt>—</dt><dd>2 토글 — 내 작품 반응 알림(좋아요·팔로우 통합) / 이벤트 알림(응모전 공지·이벤트). 그룹 전시 게시·기획전 선정·Pick 선정·응모전 선정·검수 결과·작품 연결·신고 처리 결과는 토글 없음 — 강제 수신.</dd>
+ <dt>—</dt><dd>2 토글 — 내 작품 반응 알림(좋아요·팔로우 통합) / 이벤트 알림(응모전 공지·이벤트). 기획전 선정·Pick 선정·응모전 선정·검수 결과·작품 연결·신고 처리 결과는 토글 없음 — 강제 수신.</dd>
  </dl>
 
  <div class="ac"><h4>완성 기준</h4><ol>

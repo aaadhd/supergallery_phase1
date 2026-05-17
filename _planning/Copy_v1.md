@@ -570,7 +570,6 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.reviewInfoEditMeta': '제목·그룹명만 고치는 건 즉시 반영돼요.',
   'upload.reviewInfoReject': '반려되면 사유를 함께 알려드려요. 수정 후 다시 전시하면 새로 검수해 드려요.',
   'upload.reviewNotice': '전시하기 후 운영팀 검수를 거쳐 둘러보기에 공개돼요.',
-  'notif.workPublished': '"{title}" 전시가 공개됐어요. 내 작품을 확인해 보세요.',
   'notif.curationSelected': '"{pieceTitle}" 작품이 "{curationTitle}" 기획전에 선정됐어요. 페이지에서 확인해 보세요.',
   'notif.contestSelected': '축하해요! "{title}"이(가) "{event}" 응모전 선정작으로 뽑혔어요.',
   'upload.labelOptional': '(선택)',
@@ -1267,7 +1266,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'settings.withdrawConsentLabel': '내 계정과 작품이 삭제되며 되돌릴 수 없음을 이해하고 동의합니다.',
   'settings.withdrawConsentErr': '데이터 삭제 동의에 체크해 주세요.',
   'settings.sectionServiceInfo': '서비스 정보',
-  'settings.notifSystemAlwaysOn': '그룹 전시 게시·기획전 선정·Pick 선정·응모전 선정·검수 결과·작품 연결·신고 처리 결과 알림은 설정과 관계없이 항상 수신돼요.',
+  'settings.notifSystemAlwaysOn': '기획전 선정·Pick 선정·응모전 선정·검수 결과·작품 연결·신고 처리 결과 알림은 설정과 관계없이 항상 수신돼요.',
 } as const;
 
 const enMessages: Record<MessageKey, string> = {
@@ -1671,7 +1670,6 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'upload.reviewInfoEditMeta': 'Editing only title or group name is reflected immediately.',
   'upload.reviewInfoReject': 'If rejected, we share the reason. You can edit and resubmit for a new review.',
   'upload.reviewNotice': 'After submitting, our team reviews your work before it appears on Browse.',
-  'notif.workPublished': 'Your work in "{title}" is now public.',
   'notif.curationSelected': 'Your work “{pieceTitle}” was selected for the “{curationTitle}” curation. View it on the page.',
   'notif.contestSelected': 'Congrats! “{title}” was selected as a winner of “{event}”.',
   'upload.labelOptional': '(optional)',
