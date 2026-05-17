@@ -31,7 +31,7 @@ Events 메뉴 (하단 네비 "이벤트" 슬롯 재사용, 이름 변경 없음)
 | `/picks/:id` | 픽 세션 상세 — 선정 전시 그리드 |
 | `/picks/hall-of-fame` | 명예의 전당 — 역대 픽 선정 전시 갤러리 |
 
-기존 `/curations/:id`는 변경 없음.
+기존 `/curations/:id`는 신규 기획전에서 사용하지 않음 (레거시 시드 데이터 호환만).
 
 ---
 
@@ -48,10 +48,14 @@ Events 메뉴 (하단 네비 "이벤트" 슬롯 재사용, 이름 변경 없음)
 
 **구성**: 진행중 / 지난 기획전 섹션 구분 목록
 
-- **진행중 섹션**: 가로 썸네일 + 제목 + 작품 수 + 기간. 클릭 → `/curations/:id`
-- **지난 기획전 섹션**: 동일 레이아웃, 흐리게(opacity 감소). 클릭 → **접근 불가** ("종료된 기획전입니다" 안내 표시)
-- `endAt`이 없는 기획전(상설)은 항상 진행중 처리
-- **Phase 2**: 종료 기획전을 포인트 소모로 잠금 해제 (현재 미구현)
+**노출 조건**: `curation.pageUrl`이 설정된 기획전만 표시. pageUrl 없으면 탭에 노출하지 않음 (미게시 상태).
+
+- **진행중 섹션**: 가로 썸네일 + 제목 + 작품 수 + 기간. 클릭 → `pageUrl`을 새 탭으로 열기 (`window.open`)
+- **지난 기획전 섹션**: 동일 레이아웃, 흐리게(opacity 감소). 클릭 불가 (이력 표시만)
+- `endAt`이 없는 기획전은 항상 진행중 처리
+- **Phase 2**: 종료 기획전을 포인트(AP) 소모로 잠금 해제하여 pageUrl 접근 가능
+
+**기획전 상세 페이지 방식**: 외부 링크 (Notion, Framer, 커스텀 HTML 등 자유 제작). `/curations/:id` 내부 페이지 미사용.
 
 ### 3.3 /picks/:id — 픽 세션 상세
 
@@ -109,10 +113,11 @@ Events 메뉴 (하단 네비 "이벤트" 슬롯 재사용, 이름 변경 없음)
 | Pick 탭 현재 세션 | `pickStore` — `publicationOpen:true` + `status:'active'` 세션 |
 | Pick 상세 선정 전시 | `pickStore.selectedWorkIds` → `workStore` 조회 |
 | 명예의 전당 | `workStore` — `pickBadge:true` 필터 |
-| 기획전 목록 | `curationStore.curatedExhibitions` |
+| 기획전 목록 | `curationStore.curatedExhibitions` — `pageUrl` 있는 것만 |
 | 기획전 진행중/종료 판단 | `curation.endAt` vs `todayLocalIso()` |
+| 기획전 외부 링크 | `curation.pageUrl` → `window.open(pageUrl, '_blank')` |
 | 그룹전시 판단 | `work.primaryExhibitionType === 'group'` |
-| 그룹명 표시 | `work.groupName` |
+| 그룹명 표시 | `work.groupName` (없으면 `work.artist.name + " 외"`) |
 
 ---
 
@@ -120,10 +125,12 @@ Events 메뉴 (하단 네비 "이벤트" 슬롯 재사용, 이름 변경 없음)
 
 | 파일 | 역할 |
 |---|---|
-| `src/app/pages/PickDetail.tsx` | /picks/:id 픽 세션 상세 페이지 |
-| `src/app/pages/PickHallOfFame.tsx` | /picks/hall-of-fame 명예의 전당 |
+| `src/app/pages/PickDetail.tsx` | /picks/:id 픽 세션 상세 페이지 (신규) |
+| `src/app/pages/PickHallOfFame.tsx` | /picks/hall-of-fame 명예의 전당 (신규) |
 | `src/app/pages/Events.tsx` (수정) | Pick·기획전 탭 추가 |
 | `src/app/routes.ts` (수정) | 신규 라우트 등록 |
+| `src/app/utils/curationStore.ts` (수정) | `pageUrl` 필드 추가 |
+| `src/app/admin/CurationManagement.tsx` (수정) | `pageUrl` 입력 필드 추가 (게시 시 필수 검증) |
 
 ---
 
