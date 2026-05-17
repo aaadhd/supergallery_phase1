@@ -308,11 +308,11 @@ export default function GeneralEventManagement() {
                     <p className="text-xs font-semibold text-foreground mb-2">게시 기간 <span className="text-destructive">*</span></p>
                     <div className="grid sm:grid-cols-2 gap-3">
                       <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-                        게시 시작일 <span className="text-destructive">*</span>
+                        <span>게시 시작일 <span className="text-destructive">*</span></span>
                         <input type="date" value={draft.displayStartAt} onChange={(e) => setDraft((d) => ({ ...d, displayStartAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
                       </label>
                       <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-                        게시 종료일 <span className="text-destructive">*</span>
+                        <span>게시 종료일 <span className="text-destructive">*</span></span>
                         <input type="date" value={draft.displayEndAt} onChange={(e) => setDraft((d) => ({ ...d, displayEndAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
                       </label>
                     </div>

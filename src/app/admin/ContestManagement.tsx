@@ -30,7 +30,6 @@ type DraftState = {
   endAt: string;
   displayStartAt: string;
   displayEndAt: string;
-  participantsLabel: string;
   subtype: EventSubtype;
   resultUrl: string;
 };
@@ -44,7 +43,6 @@ const emptyDraft: DraftState = {
   endAt: '',
   displayStartAt: '',
   displayEndAt: '',
-  participantsLabel: '',
   subtype: 'irregular',
   resultUrl: '',
 };
@@ -118,7 +116,6 @@ export default function ContestManagement() {
       endAt: ev.endAt,
       displayStartAt: ev.displayStartAt ?? '',
       displayEndAt: ev.displayEndAt ?? '',
-      participantsLabel: ev.participantsLabel ?? '',
       subtype: ev.subtype ?? 'irregular',
       resultUrl: ev.resultUrl ?? '',
     });
@@ -182,7 +179,6 @@ export default function ContestManagement() {
       endAt: end,
       displayStartAt: displayStart,
       displayEndAt: displayEnd,
-      participantsLabel: draft.participantsLabel.trim() || undefined,
       resultUrl: draft.resultUrl.trim() || undefined,
       // 기존 발표 정보 보존
       publicationOpen: existing?.publicationOpen,
@@ -390,15 +386,6 @@ export default function ContestManagement() {
                     />
                   </div>
                   <div className="sm:col-span-2">
-                    <label className="block text-xs text-muted-foreground mb-1">참여 대상</label>
-                    <input
-                      placeholder="예: 디지털 드로잉 작가 누구나"
-                      value={draft.participantsLabel}
-                      onChange={(e) => setDraft((d) => ({ ...d, participantsLabel: e.target.value }))}
-                      className="w-full border border-border rounded-lg px-3 py-2 text-sm"
-                    />
-                  </div>
-                  <div className="sm:col-span-2">
                     <AdminImageUpload
                       label="이벤트 대표 이미지"
                       required
@@ -434,11 +421,11 @@ export default function ContestManagement() {
                     <p className="text-xs font-semibold text-foreground mb-2">게시 기간 <span className="text-destructive">*</span></p>
                     <div className="grid sm:grid-cols-2 gap-3">
                       <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-                        게시 시작일 <span className="text-destructive">*</span>
+                        <span>게시 시작일 <span className="text-destructive">*</span></span>
                         <input type="date" value={draft.displayStartAt} onChange={(e) => setDraft((d) => ({ ...d, displayStartAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
                       </label>
                       <label className="flex flex-col gap-1 text-xs text-muted-foreground">
-                        게시 종료일 <span className="text-destructive">*</span>
+                        <span>게시 종료일 <span className="text-destructive">*</span></span>
                         <input type="date" value={draft.displayEndAt} onChange={(e) => setDraft((d) => ({ ...d, displayEndAt: e.target.value }))} className="border border-border rounded-lg px-3 py-2 text-sm text-foreground" />
                       </label>
                     </div>
