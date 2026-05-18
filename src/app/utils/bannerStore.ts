@@ -48,36 +48,28 @@ const SEED_BANNERS: AdminBanner[] = [
     isActive: true,
   },
   {
-    id: 'bn-seed-1',
-    title: '봄 수채화 기획전',
-    subtitle: '감성 넘치는 수채화 작가들의 작품을 만나보세요',
+    id: 'bn-seed-pick-1',
+    title: "5월 Proud's Pick",
+    subtitle: '이번 달 가장 빛나는 작품을 만나보세요',
+    imageUrl: 'https://images.unsplash.com/photo-1531913764164-f85c52e6e654?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
+    linkUrl: '/events?tab=pick',
+    startAt: '2026-05-12',
+    endAt: '2026-06-01',
+    isActive: true,
+  },
+  {
+    id: 'bn-seed-curation-1',
+    title: '봄의 감성 — 수채화 기획전',
+    subtitle: '봄빛을 담은 작가들의 섬세한 수채화 모음',
     imageUrl: 'https://images.unsplash.com/photo-1713779490284-a81ff6a8ffae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcnQlMjBnYWxsZXJ5JTIwZXhoaWJpdGlvbnxlbnwxfHx8fDE3NzI3MTU0NTN8MA&ixlib=rb-4.1.0&q=80&w=1080',
-    linkUrl: '/curations/seed-curation-1',
-    startAt: '2026-04-01',
-    endAt: '2026-04-30',
-    isActive: true,
-  },
-  {
-    id: 'bn-seed-2',
-    title: '디지털 드로잉 워크샵',
-    subtitle: '처음 시작하는 디지털 드로잉 기초 과정',
-    imageUrl: 'https://images.unsplash.com/photo-1702325597300-f3d68b5b9499?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxtb2Rlcm4lMjBhcnQlMjBtdXNldW18ZW58MXx8fHwxNzcyNzIwMjk4fDA&ixlib=rb-4.1.0&q=80&w=1080',
-    linkUrl: 'https://forms.google.com',
-    startAt: '2026-04-15',
-    endAt: '2026-04-15',
-    isActive: true,
-  },
-  {
-    id: 'bn-seed-3',
-    title: '작가 네트워킹 데이',
-    subtitle: '작가들과 함께하는 소통의 시간',
-    imageUrl: 'https://images.unsplash.com/photo-1764709125089-740593af301d?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcnQlMjBjb2xsZWN0aW9uJTIwZGlzcGxheXxlbnwxfHx8fDE3NzI3NzM1MDZ8MA&ixlib=rb-4.1.0&q=80&w=1080',
-    linkUrl: 'https://forms.google.com',
+    linkUrl: '/events?tab=curation',
     startAt: '2026-05-01',
-    endAt: '2026-05-01',
+    endAt: '2026-06-30',
     isActive: true,
   },
 ];
+
+const SEED_IDS = new Set(SEED_BANNERS.map((b) => b.id));
 
 function readFromStorage(): AdminBanner[] {
   if (typeof window === 'undefined') return SEED_BANNERS;
@@ -135,7 +127,6 @@ function getVisibleStable(): AdminBanner[] {
 }
 
 if (typeof window !== 'undefined') {
-  // 다른 탭·수동 이벤트로 변경이 알림되면 캐시 무효화
   const invalidate = () => {
     cachedAll = null;
     cachedVisible = null;
@@ -144,6 +135,18 @@ if (typeof window !== 'undefined') {
   window.addEventListener('storage', (e) => {
     if (e.key === STORAGE_KEY) invalidate();
   });
+
+  // 누락된 시드 배너 자동 merge — 새 시드가 추가되면 기존 localStorage에도 반영
+  (() => {
+    const stored = readFromStorage();
+    const storedIds = new Set(stored.map((b) => b.id));
+    const missing = SEED_BANNERS.filter((b) => !storedIds.has(b.id));
+    if (missing.length > 0) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([...stored, ...missing]));
+      cachedAll = null;
+      cachedVisible = null;
+    }
+  })();
 }
 
 export const bannerStore = {
