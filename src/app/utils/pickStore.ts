@@ -105,6 +105,26 @@ if (typeof window !== 'undefined') {
   window.addEventListener('storage', (e) => {
     if (e.key === STORAGE_KEY) invalidate();
   });
+
+  // 모듈 로드 시점에 동기 복구 — 게시된 세션이 있지만 active가 없으면 즉시 보정.
+  // useEffect보다 먼저 실행되므로 첫 렌더에서 바로 active 세션을 표시할 수 있다.
+  (() => {
+    const list = readFromStorage();
+    if (list.length === 0) return;
+    const today = todayLocalIso();
+    const hasActive = list.some(
+      (s) => s.publicationOpen && derivePickStatus(s) === 'active',
+    );
+    if (hasActive) return;
+    const candidates = list.filter(
+      (s) => s.publicationOpen && derivePickStatus(s) !== 'ended',
+    );
+    if (candidates.length === 0) return;
+    const target = candidates.sort((a, b) => b.startAt.localeCompare(a.startAt))[0];
+    const fixed = list.map((s) => (s.id === target.id ? { ...s, startAt: today } : s));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(fixed));
+    cachedAll = null;
+  })();
 }
 
 export const pickStore = {
