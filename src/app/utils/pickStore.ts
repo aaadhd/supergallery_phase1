@@ -169,14 +169,15 @@ export function seedPickIfEmpty(): void {
       (s) => s.publicationOpen && derivePickStatus(s) === 'active',
     );
     if (!hasActive) {
-      const SEED_IDS = ['seed-pick-2026-w20', 'seed-pick-2026-w19'];
-      const fixed = existing.map((s) => {
-        if (SEED_IDS.includes(s.id) && s.publicationOpen && s.startAt > today) {
-          return { ...s, startAt: today };
-        }
-        return s;
-      });
-      writeToStorage(fixed);
+      // 게시된 세션 중 active가 없으면 — 가장 마지막 게시 세션의 startAt을 오늘로 당긴다.
+      const published = existing.filter((s) => s.publicationOpen && derivePickStatus(s) !== 'ended');
+      if (published.length > 0) {
+        const target = published.sort((a, b) => b.startAt.localeCompare(a.startAt))[0];
+        const fixed = existing.map((s) =>
+          s.id === target.id ? { ...s, startAt: today } : s,
+        );
+        writeToStorage(fixed);
+      }
     }
     return;
   }
