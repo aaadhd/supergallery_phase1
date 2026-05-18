@@ -113,8 +113,8 @@ export default function Events() {
           {(['events', 'pick', 'curation'] as EventsTab[]).map((tab) => {
             const label = tab === 'events' ? t('events.tabEvents') : tab === 'pick' ? t('events.tabPick') : t('events.tabCuration');
             const handleClick = () => {
-              if (tab === 'pick' && activePickSession) {
-                navigate(`/picks/${activePickSession.id}`);
+              if (tab === 'pick') {
+                navigate(activePickSession ? `/picks/${activePickSession.id}` : '/picks/hall-of-fame');
                 return;
               }
               setTab(tab);
@@ -237,53 +237,6 @@ export default function Events() {
           </div>
         )}
 
-        {/* Pick 탭 */}
-        {activeTab === 'pick' && (
-          <div className="max-w-2xl mx-auto">
-            {activePickSession ? (
-              <Link
-                to={`/picks/${activePickSession.id}`}
-                className="block rounded-2xl overflow-hidden border border-border bg-card lg:hover:shadow-md transition-shadow mb-8"
-                style={{ background: 'linear-gradient(135deg,#0d0900,#1a1000)' }}
-              >
-                <div className="p-6 text-center">
-                  <p className="text-2xl mb-3" style={{ filter: 'drop-shadow(0 0 8px rgba(255,200,0,0.4))' }}>🏆</p>
-                  <p className="text-xs font-semibold tracking-widest uppercase mb-2" style={{ color: '#b8862f' }}>
-                    {t('pickDetail.heading')}
-                  </p>
-                  <h2 className="text-xl font-black mb-2" style={{ color: '#ffd700' }}>
-                    {activePickSession.title}
-                  </h2>
-                  <p className="text-xs mb-4" style={{ color: '#4a3f2a' }}>
-                    {activePickSession.startAt} ~ {activePickSession.endAt}
-                    {' · '}
-                    {t('pickDetail.selectedCount').replace('{n}', String(activePickSession.selectedWorkIds?.length ?? 0))}
-                  </p>
-                  <span className="inline-block text-xs font-semibold px-4 py-2 rounded-lg" style={{ background: 'rgba(255,200,0,0.15)', color: '#ffd700' }}>
-                    {t('events.pickViewSelected')} →
-                  </span>
-                </div>
-              </Link>
-            ) : (
-              <div className="rounded-2xl bg-muted/40 h-[140px] flex items-center justify-center mb-8">
-                <p className="text-sm text-muted-foreground">{t('events.pickNoActive')}</p>
-              </div>
-            )}
-
-            {/* 명예의 전당 CTA */}
-            <Link
-              to="/picks/hall-of-fame"
-              className="flex items-center justify-between px-5 py-4 rounded-xl transition-colors lg:hover:opacity-80"
-              style={{ border: '1px solid rgba(255,200,0,0.25)', background: 'rgba(255,200,0,0.03)' }}
-            >
-              <div>
-                <p className="text-sm font-bold" style={{ color: '#ffd700' }}>{t('events.pickHallOfFameCta')}</p>
-                <p className="text-xs mt-0.5 text-muted-foreground">{t('events.pickHallOfFameCtaDesc')}</p>
-              </div>
-              <span className="text-sm" style={{ color: '#b8862f' }}>→</span>
-            </Link>
-          </div>
-        )}
 
         {/* 기획전 탭 */}
         {activeTab === 'curation' && (
