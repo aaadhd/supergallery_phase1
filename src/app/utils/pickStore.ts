@@ -149,29 +149,36 @@ export function usePickSessions(): PickSession[] {
  * Pick 세션 시드 — 게시된 세션이 없을 때 데모용 2개 생성.
  * workStore가 마운트된 이후(PointsBootstrap)에 호출해야 한다.
  */
-const SEED_DATES: Record<string, { startAt: string; endAt: string }> = {
-  'seed-pick-2026-w20': { startAt: '2026-05-12', endAt: '2026-05-25' },
-  'seed-pick-2026-w19': { startAt: '2026-04-28', endAt: '2026-05-11' },
-};
+function isoOffset(days: number): string {
+  const d = new Date();
+  d.setDate(d.getDate() + days);
+  return todayLocalIso(d);
+}
 
 export function seedPickIfEmpty(): void {
   if (typeof window === 'undefined') return;
   const existing = getAllStable();
 
-  // 기존 시드 날짜 패치 (이미 localStorage에 저장된 세션도 갱신)
-  let patched = false;
-  const patchedList = existing.map((s) => {
-    const fix = SEED_DATES[s.id];
-    if (fix && (s.startAt !== fix.startAt || s.endAt !== fix.endAt)) {
-      patched = true;
-      return { ...s, ...fix };
+  // 게시된 세션이 있지만 활성(active) 세션이 없는 경우 —
+  // 시드 세션의 startAt이 미래로 저장돼 있을 때 오늘로 당겨 준다.
+  const hasPublished = existing.some((s) => s.publicationOpen);
+  if (hasPublished) {
+    const today = todayLocalIso();
+    const hasActive = existing.some(
+      (s) => s.publicationOpen && derivePickStatus(s) === 'active',
+    );
+    if (!hasActive) {
+      const SEED_IDS = ['seed-pick-2026-w20', 'seed-pick-2026-w19'];
+      const fixed = existing.map((s) => {
+        if (SEED_IDS.includes(s.id) && s.publicationOpen && s.startAt > today) {
+          return { ...s, startAt: today };
+        }
+        return s;
+      });
+      writeToStorage(fixed);
     }
-    return s;
-  });
-  if (patched) writeToStorage(patchedList);
-
-  const hasPublished = patchedList.some((s) => s.publicationOpen);
-  if (hasPublished) return;
+    return;
+  }
 
   import('../store').then(({ workStore }) => {
     const works = workStore.getWorks().filter((w) => w.feedReviewStatus === 'approved' || w.visibilityStatus === 'public');
@@ -187,16 +194,16 @@ export function seedPickIfEmpty(): void {
       {
         id: 'seed-pick-2026-w20',
         title: '5월 3주차 Proud\'s Pick',
-        startAt: '2026-05-12',
-        endAt: '2026-05-25',
+        startAt: isoOffset(-7),
+        endAt: isoOffset(14),
         selectedWorkIds: ids1,
         publicationOpen: true,
       },
       {
         id: 'seed-pick-2026-w19',
         title: '5월 2주차 Proud\'s Pick',
-        startAt: '2026-04-28',
-        endAt: '2026-05-11',
+        startAt: isoOffset(-21),
+        endAt: isoOffset(-8),
         selectedWorkIds: ids2,
         publicationOpen: true,
       },
