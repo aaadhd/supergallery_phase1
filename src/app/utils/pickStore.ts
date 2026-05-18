@@ -6,6 +6,7 @@
 
 import { useSyncExternalStore } from 'react';
 import { todayLocalIso } from './localDate';
+import { works as seedWorks } from '../data';
 
 export type PickStatus = 'scheduled' | 'active' | 'ended';
 
@@ -180,35 +181,28 @@ export function seedPickIfEmpty(): void {
     return;
   }
 
-  import('../store').then(({ workStore }) => {
-    const works = workStore.getWorks().filter((w) => w.feedReviewStatus === 'approved' || w.visibilityStatus === 'public');
-    if (works.length === 0) return;
+  const publicWorks = seedWorks.filter((w) => !w.isHidden && w.feedReviewStatus !== 'rejected');
+  const ids1 = publicWorks.slice(0, 6).map((w) => w.id);
+  const ids2 = publicWorks.slice(6, 12).map((w) => w.id);
 
-    const currentCheck = getAllStable();
-    if (currentCheck.some((s) => s.publicationOpen)) return;
+  const sessions: PickSession[] = [
+    {
+      id: 'seed-pick-2026-w20',
+      title: '5월 3주차 Proud\'s Pick',
+      startAt: isoOffset(-7),
+      endAt: isoOffset(14),
+      selectedWorkIds: ids1,
+      publicationOpen: true,
+    },
+    {
+      id: 'seed-pick-2026-w19',
+      title: '5월 2주차 Proud\'s Pick',
+      startAt: isoOffset(-21),
+      endAt: isoOffset(-8),
+      selectedWorkIds: ids2,
+      publicationOpen: true,
+    },
+  ];
 
-    const ids1 = works.slice(0, 6).map((w) => w.id);
-    const ids2 = works.slice(6, 12).map((w) => w.id);
-
-    const sessions: PickSession[] = [
-      {
-        id: 'seed-pick-2026-w20',
-        title: '5월 3주차 Proud\'s Pick',
-        startAt: isoOffset(-7),
-        endAt: isoOffset(14),
-        selectedWorkIds: ids1,
-        publicationOpen: true,
-      },
-      {
-        id: 'seed-pick-2026-w19',
-        title: '5월 2주차 Proud\'s Pick',
-        startAt: isoOffset(-21),
-        endAt: isoOffset(-8),
-        selectedWorkIds: ids2,
-        publicationOpen: true,
-      },
-    ];
-
-    writeToStorage([...currentCheck, ...sessions]);
-  });
+  writeToStorage(sessions);
 }
