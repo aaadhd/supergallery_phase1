@@ -52,7 +52,7 @@ const SEED_BANNERS: AdminBanner[] = [
     title: "5월 Proud's Pick",
     subtitle: '이번 달 가장 빛나는 작품을 만나보세요',
     imageUrl: 'https://images.unsplash.com/photo-1531913764164-f85c52e6e654?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&q=80&w=1080',
-    linkUrl: '/events?tab=pick',
+    linkUrl: '/picks/seed-pick-2026-w20',
     startAt: '2026-05-12',
     endAt: '2026-06-01',
     isActive: true,
@@ -62,7 +62,7 @@ const SEED_BANNERS: AdminBanner[] = [
     title: '봄의 감성 — 수채화 기획전',
     subtitle: '봄빛을 담은 작가들의 섬세한 수채화 모음',
     imageUrl: 'https://images.unsplash.com/photo-1713779490284-a81ff6a8ffae?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3Nzg4Nzd8MHwxfHNlYXJjaHwxfHxhcnQlMjBnYWxsZXJ5JTIwZXhoaWJpdGlvbnxlbnwxfHx8fDE3NzI3MTU0NTN8MA&ixlib=rb-4.1.0&q=80&w=1080',
-    linkUrl: '/events?tab=curation',
+    linkUrl: '/curations/seed-curation-1',
     startAt: '2026-05-01',
     endAt: '2026-06-30',
     isActive: true,
@@ -136,13 +136,20 @@ if (typeof window !== 'undefined') {
     if (e.key === STORAGE_KEY) invalidate();
   });
 
-  // 누락된 시드 배너 자동 merge — 새 시드가 추가되면 기존 localStorage에도 반영
+  // 누락된 시드 배너 추가 + 기존 시드의 linkUrl 패치
   (() => {
     const stored = readFromStorage();
     const storedIds = new Set(stored.map((b) => b.id));
     const missing = SEED_BANNERS.filter((b) => !storedIds.has(b.id));
-    if (missing.length > 0) {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify([...stored, ...missing]));
+    const seedMap = new Map(SEED_BANNERS.map((b) => [b.id, b]));
+    let patched = false;
+    const patchedStored = stored.map((b) => {
+      const seed = seedMap.get(b.id);
+      if (seed && b.linkUrl !== seed.linkUrl) { patched = true; return { ...b, linkUrl: seed.linkUrl }; }
+      return b;
+    });
+    if (missing.length > 0 || patched) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify([...patchedStored, ...missing]));
       cachedAll = null;
       cachedVisible = null;
     }
