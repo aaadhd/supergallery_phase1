@@ -295,7 +295,7 @@ CM-<번호>          공통 팝업·다이얼로그
 | 코드 | 영역 | 예 |
 |---|---|---|
 | AUT | 인증·온보딩 | USR-AUT-01 |
-| BRW | 둘러보기 | USR-BRW-01 |
+| BRW | 전시 | USR-BRW-01 |
 | EXH | 전시·작품 상세 | USR-EXH-01 |
 | UPL | 업로드 | USR-UPL-01 |
 | PRF | 프로필 | USR-PRF-01 |

@@ -170,7 +170,7 @@ Proud Gallery는 시니어·중장년 순수미술 작가를 주 고객으로 �
 
 ```ts
 const koMessages = {
-  'nav.browse': '둘러보기',
+  'nav.browse': '전시',
   'nav.events': '이벤트',
   'nav.upload': '작품 올리기',
   'nav.uploadShort': '올리기',
@@ -362,9 +362,9 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
 /demo/reference|모의 JWT·이메일 템플릿·발송 조건 표`,
   // ── 런칭 빌드 제거 대상 끝 ───────────────────────────────
   'loginDemo.suspendReason': '콘텐츠·신고 정책 위반 (시연)',
-  'browse.tabAll': '전체',
-  'browse.tabSolo': '개인전시',
-  'browse.tabGroup': '그룹전시',
+  'browse.tabBrowse': '둘러보기',
+  'browse.tabCuration': '기획전',
+  'browse.tabPick': 'Pick',
   'login.email': '이메일',
   'login.or': '또는',
   'socialSignup.title': '{provider} 계정으로 가입',
@@ -418,9 +418,11 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'about.bottomLead': '가입은 무료이며, 첫 작품 업로드까지 1분이면 돼요.',
   'about.bottomCta': '첫 작품 올리기',
   'browse.emptyTitle': '표시할 전시가 없어요',
-  'browse.emptyHint': '다른 카테고리를 선택하거나, 직접 전시를 올려보세요',
+  'browse.emptyHint': '직접 전시를 올려보세요',
   'browse.emptyCtaUpload': '내 작품 올리기',
-  'browse.emptyCtaAll': '전체 전시 보기',
+  'browse.curationEmpty': '진행 중인 기획전이 없어요',
+  'browse.pickEmpty': '현재 Pick이 없어요',
+  'browse.pickHallOfFame': '명예의 전당',
   'browse.groupArtistsLabel': '그룹 작가',
   'browse.groupMembersLabel': '그룹 멤버',
   'browse.unliked': '좋아요를 취소했어요',
@@ -1267,7 +1269,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
 } as const;
 
 const enMessages: Record<MessageKey, string> = {
-  'nav.browse': 'Browse',
+  'nav.browse': 'Exhibitions',
   'nav.events': 'Events',
   'nav.upload': 'Upload work',
   'nav.uploadShort': 'Upload',
@@ -1459,9 +1461,9 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
 /demo/reference|Mock JWT, email templates, send-rule table`,
   // ── 런칭 빌드 제거 대상 끝 ───────────────────────────────
   'loginDemo.suspendReason': 'Policy violation (demo suspension)',
-  'browse.tabAll': 'All',
-  'browse.tabSolo': 'Solo',
-  'browse.tabGroup': 'Group',
+  'browse.tabBrowse': 'Browse',
+  'browse.tabCuration': 'Curated',
+  'browse.tabPick': 'Pick',
   'login.email': 'Email',
   'login.or': 'or',
   'socialSignup.title': 'Sign up with {provider}',
@@ -1515,9 +1517,11 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'about.bottomLead': 'Sign-up is free, and you can upload your first work in about a minute.',
   'about.bottomCta': 'Upload your first work',
   'browse.emptyTitle': 'No exhibitions to show',
-  'browse.emptyHint': 'Try another category, or upload your own exhibition',
+  'browse.emptyHint': 'Upload your own exhibition',
   'browse.emptyCtaUpload': 'Upload my work',
-  'browse.emptyCtaAll': 'View all exhibitions',
+  'browse.curationEmpty': 'No curated exhibitions right now',
+  'browse.pickEmpty': 'No Pick this week',
+  'browse.pickHallOfFame': 'Hall of Fame',
   'browse.groupArtistsLabel': 'Group artists',
   'browse.groupMembersLabel': 'Group members',
   'browse.unliked': 'Like removed',
@@ -2488,6 +2492,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 | v1.27 | 2026-05-18 | PM × Claude | settings.notifSystemAlwaysOn EN "Group exhibition posts" 제거; "발행" → "신청" 용어 변경(nonMemberPreview* KO·EN, faq.a7·a11 KO·EN, errPublishFailed KO, publishing KO·EN, publishedConfirmTitle KO) |
 | v1.26 | 2026-05-15 | PM × Claude | signup.linkSentAutoFlow "(미사용)" 삭제; upload.editSoloConvertTitle·editSoloConvertDesc·editSoloConvertConfirm KO·EN 신규(Policy §13.6.1 SSoT); signup.emailStepDesc "비밀번호는 따로 만들 필요 없어요." 문구 제거(KO·EN) |
 | v1.25 | 2026-05-14 | PM × Claude | 이중 이스케이프 정리 — notifApprovedForParticipant·notifAutoMatched·notifTargetWork 3종·nonMemberPreviewInfo `\\\'` → `\'` |
+| v1.25 | 2026-05-18 | PM × Claude | nav.browse 둘러보기→전시(KO)/Browse→Exhibitions(EN); browse.tabAll/tabSolo/tabGroup → tabBrowse/tabCuration/tabPick; emptyHint 카테고리 문구 제거; browse.curationEmpty·pickEmpty·pickHallOfFame 신규(KO+EN); browse.emptyCtaAll 삭제 |
 | v1.24 | 2026-05-14 | PM × Claude | tabGuideLikes·tabGuideSaves·search.goBrowse "작품"→"전시" 누락분 보정(KO+EN); 프로필 빈 상태 prose 예시 정합 |
 | v1.23 | 2026-05-14 | PM × Claude | settings.notifSystemAlwaysOn 강제 수신 7종 전체 열거; browse/profile 빈 상태 카피 "작품"→"전시" 통일(KO+EN) |
 | v1.22 | 2026-05-14 | PM × Claude | 친구 → 비회원 작가 용어 전체 변경(FAQ q11~14·flowMap); 미사용 i18n 키 308개(KO+EN) 일괄 삭제 |
