@@ -340,29 +340,6 @@ export default function ContentReview() {
                     <div className="w-9 h-9 rounded overflow-hidden border border-border bg-muted/30 shrink-0">
                       <ImageWithFallback src={src} alt="" className="w-full h-full object-contain" />
                     </div>
-                    <button
-                      type="button"
-                      onPointerDown={(e) => e.stopPropagation()}
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        featuredStore.toggle(w.id);
-                        appendAuditLog({
-                          action: 'curation_saved',
-                          targetId: w.id,
-                          targetSnapshot: { featured: !featuredSet.has(w.id) },
-                          actorId: 'admin',
-                          actorRole: 'admin',
-                        });
-                      }}
-                      className={`shrink-0 p-1 rounded transition-colors ${
-                        featuredSet.has(w.id)
-                          ? 'text-amber-500 lg:hover:text-amber-400'
-                          : 'text-muted-foreground/40 lg:hover:text-amber-400'
-                      }`}
-                      title={featuredSet.has(w.id) ? '추천 중 — 클릭해서 해제' : '클릭해서 추천'}
-                    >
-                      <Star className={`w-3.5 h-3.5 ${featuredSet.has(w.id) ? 'fill-amber-500' : ''}`} />
-                    </button>
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center gap-1.5 mb-0.5 flex-wrap">
                         <span className="font-medium text-sm text-foreground truncate">
@@ -397,6 +374,29 @@ export default function ContentReview() {
                         </span>
                       </div>
                     </div>
+                    <button
+                      type="button"
+                      onPointerDown={(e) => e.stopPropagation()}
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        featuredStore.toggle(w.id);
+                        appendAuditLog({
+                          action: 'curation_saved',
+                          targetId: w.id,
+                          targetSnapshot: { featured: !featuredSet.has(w.id) },
+                          actorId: 'admin',
+                          actorRole: 'admin',
+                        });
+                      }}
+                      className={`shrink-0 p-1.5 rounded transition-colors ${
+                        featuredSet.has(w.id)
+                          ? 'text-amber-500 lg:hover:text-amber-400'
+                          : 'text-muted-foreground/30 lg:hover:text-amber-400'
+                      }`}
+                      title={featuredSet.has(w.id) ? '추천 중 — 클릭해서 해제' : '추천 전시로 지정'}
+                    >
+                      <Star className={`w-4 h-4 ${featuredSet.has(w.id) ? 'fill-amber-500' : ''}`} />
+                    </button>
                   </div>
                 );
               })}
