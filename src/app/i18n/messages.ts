@@ -3,7 +3,7 @@ import type { Locale } from './uiStrings';
 export type MessageKey = keyof typeof koMessages;
 
 const koMessages = {
-  'nav.browse': '둘러보기',
+  'nav.browse': '전시',
   'nav.events': '이벤트',
   'nav.upload': '작품 올리기',
   'nav.uploadShort': '올리기',
@@ -181,9 +181,9 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'flowMap.section15': `15. 기획 검수 — reference 도구
 /demo/reference|모의 JWT·이메일 템플릿·발송 조건 표`,
   'loginDemo.suspendReason': '콘텐츠·신고 정책 위반 (시연)',
-  'browse.tabAll': '전체',
-  'browse.tabSolo': '개인전시',
-  'browse.tabGroup': '그룹전시',
+  'browse.tabBrowse': '둘러보기',
+  'browse.tabCuration': '기획전',
+  'browse.tabPick': 'Pick',
   'login.email': '이메일',
   'login.or': '또는',
   'socialSignup.title': '{provider} 계정으로 가입',
@@ -237,9 +237,12 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'about.bottomLead': '가입은 무료이며, 첫 작품 업로드까지 1분이면 돼요.',
   'about.bottomCta': '첫 작품 올리기',
   'browse.emptyTitle': '표시할 전시가 없어요',
-  'browse.emptyHint': '다른 카테고리를 선택하거나, 직접 전시를 올려보세요',
+  'browse.emptyHint': '직접 전시를 올려보세요',
   'browse.emptyCtaUpload': '내 작품 올리기',
-  'browse.emptyCtaAll': '전체 전시 보기',
+  'browse.curationTagline': '주제와 감성으로 엮은 Proud Gallery 큐레이션 팀의 기획 전시',
+  'browse.curationEmpty': '진행 중인 기획전이 없어요',
+  'browse.pickEmpty': '현재 Pick이 없어요',
+  'browse.pickHallOfFame': '명예의 전당',
   'browse.groupArtistsLabel': '그룹 작가',
   'browse.groupMembersLabel': '그룹 멤버',
   'browse.unliked': '좋아요를 취소했어요',
@@ -1130,7 +1133,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
 } as const;
 
 const enMessages: Record<MessageKey, string> = {
-  'nav.browse': 'Browse',
+  'nav.browse': 'Exhibitions',
   'nav.events': 'Events',
   'nav.upload': 'Upload work',
   'nav.uploadShort': 'Upload',
@@ -1308,9 +1311,9 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'flowMap.section15': `15. PM review — reference demo
 /demo/reference|Mock JWT, email templates, send-rule table`,
   'loginDemo.suspendReason': 'Policy violation (demo suspension)',
-  'browse.tabAll': 'All',
-  'browse.tabSolo': 'Solo',
-  'browse.tabGroup': 'Group',
+  'browse.tabBrowse': 'Browse',
+  'browse.tabCuration': 'Curated',
+  'browse.tabPick': 'Pick',
   'login.email': 'Email',
   'login.or': 'or',
   'socialSignup.title': 'Sign up with {provider}',
@@ -1364,9 +1367,12 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'about.bottomLead': 'Sign-up is free, and you can upload your first work in about a minute.',
   'about.bottomCta': 'Upload your first work',
   'browse.emptyTitle': 'No exhibitions to show',
-  'browse.emptyHint': 'Try another category, or upload your own exhibition',
+  'browse.emptyHint': 'Upload your own exhibition',
   'browse.emptyCtaUpload': 'Upload my work',
-  'browse.emptyCtaAll': 'View all exhibitions',
+  'browse.curationTagline': 'Curated exhibitions by the Proud Gallery curation team',
+  'browse.curationEmpty': 'No curated exhibitions right now',
+  'browse.pickEmpty': 'No Pick this week',
+  'browse.pickHallOfFame': 'Hall of Fame',
   'browse.groupArtistsLabel': 'Group artists',
   'browse.groupMembersLabel': 'Group members',
   'browse.unliked': 'Like removed',

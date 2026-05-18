@@ -12,6 +12,8 @@ export type CurationPieceRef = {
   workId: string;
   /** Work.imagePieceIds[i] 안정 식별자 */
   pieceId: string;
+  /** 큐레이터 멘트 (선택) */
+  curatorNote?: string;
 };
 
 export type CuratedExhibition = {
@@ -93,9 +95,13 @@ function parsePieces(raw: unknown): CurationPieceRef[] {
   const out: CurationPieceRef[] = [];
   for (const p of raw) {
     if (!p || typeof p !== 'object') continue;
-    const obj = p as { workId?: unknown; pieceId?: unknown };
+    const obj = p as { workId?: unknown; pieceId?: unknown; curatorNote?: unknown };
     if (typeof obj.workId === 'string' && obj.workId && typeof obj.pieceId === 'string' && obj.pieceId) {
-      out.push({ workId: obj.workId, pieceId: obj.pieceId });
+      out.push({
+        workId: obj.workId,
+        pieceId: obj.pieceId,
+        ...(typeof obj.curatorNote === 'string' && obj.curatorNote ? { curatorNote: obj.curatorNote } : {}),
+      });
     }
   }
   return out;
@@ -254,11 +260,14 @@ export function seedCurationIfEmpty(): void {
 
     if (hasNonSeed && !hasSeed1) return; // 사용자 데이터만 있음 — 건드리지 않음
 
-    const makePieces = (pool: typeof works, count: number): CurationPieceRef[] =>
+    const makePieces = (pool: typeof works, count: number, notes?: string[]): CurationPieceRef[] =>
       pool.flatMap((w) => {
         const ids = w.imagePieceIds ?? [];
         return ids[0] ? [{ workId: w.id, pieceId: ids[0] }] : [];
-      }).slice(0, count);
+      }).slice(0, count).map((p, i) => ({
+        ...p,
+        ...(notes?.[i] ? { curatorNote: notes[i] } : {}),
+      }));
 
     // piece의 첫 이미지를 배너로 사용하는 헬퍼
     const getBanner = (pieces: CurationPieceRef[]): string => {
@@ -273,14 +282,31 @@ export function seedCurationIfEmpty(): void {
       const n = (w.exhibitionName || w.title || '').toLowerCase();
       return n.includes('수채') || n.includes('블룸') || n.includes('꽃') || n.includes('일러스트');
     });
-    const pool1 = (watercolor.length >= 3 ? watercolor : works).slice(0, 6);
+    // 작가가 겹치지 않도록 작가별 첫 작품씩 선택
+    const seenArtists = new Set<string>();
+    const diversePool: typeof works = [];
+    for (const w of works) {
+      if (!seenArtists.has(w.artistId)) {
+        seenArtists.add(w.artistId);
+        diversePool.push(w);
+      }
+      if (diversePool.length >= 6) break;
+    }
+    const pool1 = diversePool.length >= 3 ? diversePool : works.slice(0, 6);
     const pool2 = works.slice(6, 12);
     const pool3 = works.slice(2, 7);
     const pool4 = works.slice(8, 13);
     const pool5 = works.slice(1, 6);
     const pool6 = works.slice(4, 9);
 
-    const pieces1 = makePieces(pool1, 5);
+    const notes1 = [
+      '봄의 설렘이 섬세한 붓질 하나하나에 깃들어 있습니다. 화면을 가득 채우는 따뜻한 색감이 보는 이의 마음에도 봄을 불러옵니다.',
+      '작가는 일상의 풍경 속에서 시간이 잠시 멈춘 순간을 포착합니다. 수채화 특유의 투명한 질감이 그 고요함을 더욱 선명하게 전달합니다.',
+      '겹겹이 쌓인 색의 층위에서 계절의 깊이가 느껴집니다. 화면 구석구석에 숨겨진 작가의 섬세한 감각을 천천히 음미해 보세요.',
+      '이 작품에서 작가는 자연과 인간 사이의 조용한 대화를 그려냅니다. 단순한 구도 안에 담긴 풍부한 감정의 결이 오래 여운을 남깁니다.',
+      '봄비 내린 뒤처럼 촉촉하고 신선한 화면. 작가 특유의 부드러운 윤곽선이 작품 전체에 포근한 리듬감을 만들어냅니다.',
+    ];
+    const pieces1 = makePieces(pool1, 5, notes1);
     const pieces2 = makePieces(pool2, 5);
     const pieces3 = makePieces(pool3, 5);
     const pieces4 = makePieces(pool4, 4);
@@ -312,7 +338,7 @@ export function seedCurationIfEmpty(): void {
         startAt: '2026-05-01',
         endAt: '2026-06-30',
         pageUrl: 'https://proud-gallery.notion.site',
-        bannerImageUrl: getBanner(pieces1),
+        bannerImageUrl: '/images_1/황서현/초록의 휴식.JPG',
         pieces: pieces1,
       }];
     }
@@ -332,10 +358,10 @@ export function seedCurationIfEmpty(): void {
 
     // 지난 기획전 4종 시드
     const pastSeeds = [
-      { id: 'seed-curation-3', title: '겨울 서정 — 설경과 정물', subtitle: '고요한 계절을 담은 작가들의 겨울 연작', startAt: '2025-12-01', endAt: '2026-01-31', pieces: pieces3 },
-      { id: 'seed-curation-4', title: '빛과 색채 — 추상의 세계', subtitle: '색의 언어로 말하는 작가 5인의 추상 작품전', startAt: '2025-10-01', endAt: '2025-11-30', pieces: pieces4 },
-      { id: 'seed-curation-5', title: '일상의 단면 — 정물화 특별전', subtitle: '소박한 일상을 예술로 담아낸 정물화 모음', startAt: '2025-08-01', endAt: '2025-09-30', pieces: pieces5 },
-      { id: 'seed-curation-6', title: '자연을 담다 — 풍경화 기획전', subtitle: '산과 들, 바다를 캔버스에 옮긴 풍경화 선집', startAt: '2025-06-01', endAt: '2025-07-31', pieces: pieces6 },
+      { id: 'seed-curation-3', title: '겨울 서정 — 설경과 정물', subtitle: '고요한 계절을 담은 작가들의 겨울 연작', startAt: '2025-12-01', endAt: '2026-01-31', bannerImageUrl: '/images_1/구월/눈 내리는 밤.jpeg', pieces: pieces3 },
+      { id: 'seed-curation-4', title: '빛과 색채 — 추상의 세계', subtitle: '색의 언어로 말하는 작가 5인의 추상 작품전', startAt: '2025-10-01', endAt: '2025-11-30', bannerImageUrl: '/images_1/이고은/01_Still Light · 靜光 · 고요한 빛.png', pieces: pieces4 },
+      { id: 'seed-curation-5', title: '일상의 단면 — 정물화 특별전', subtitle: '소박한 일상을 예술로 담아낸 정물화 모음', startAt: '2025-08-01', endAt: '2025-09-30', bannerImageUrl: '/images_1/구월/노부부의 티타임.jpg', pieces: pieces5 },
+      { id: 'seed-curation-6', title: '자연을 담다 — 풍경화 기획전', subtitle: '산과 들, 바다를 캔버스에 옮긴 풍경화 선집', startAt: '2025-06-01', endAt: '2025-07-31', bannerImageUrl: '/images_1/황서현/빛나는 여름날.JPG', pieces: pieces6 },
     ];
 
     for (const s of pastSeeds) {
@@ -343,7 +369,7 @@ export function seedCurationIfEmpty(): void {
         updated = [...updated, {
           ...s,
           pageUrl: 'https://proud-gallery.notion.site',
-          bannerImageUrl: getBanner(s.pieces),
+          bannerImageUrl: s.bannerImageUrl || getBanner(s.pieces),
         }];
       }
     }

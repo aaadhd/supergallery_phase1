@@ -1,6 +1,6 @@
 import { useMemo, useState, useRef, useCallback, useEffect } from 'react';
-import { useParams, Link, useNavigate, useLocation } from 'react-router-dom';
-import { ChevronLeft, ChevronRight } from 'lucide-react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { ChevronLeft } from 'lucide-react';
 import { useI18n } from '../i18n/I18nProvider';
 import { pickStore, usePickSessions, derivePickStatus } from '../utils/pickStore';
 import { workStore, useWorkStore } from '../store';
@@ -16,7 +16,7 @@ export default function PickDetail() {
   const { t } = useI18n();
   const navigate = useNavigate();
   const location = useLocation();
-  const handleBack = () => location.key !== 'default' ? navigate(-1) : navigate('/events?tab=pick');
+  const handleBack = () => location.key !== 'default' ? navigate(-1) : navigate('/?tab=pick');
   usePickSessions(); // subscribe
   useWorkStore();
 
@@ -127,7 +127,7 @@ export default function PickDetail() {
   const realFocused = n > 0 ? focusedIndex % n : 0;
 
   return (
-    <div className="h-screen flex flex-col overflow-hidden bg-background pb-20 md:pb-0" style={{ height: '100dvh' }}>
+    <div className="flex flex-col overflow-hidden" style={{ height: '100dvh', background: '#000' }}>
       {/* 헤더 — 다크 배경 + 골드 광선 + 트로피 */}
       <div
         className="relative overflow-hidden text-center py-6"
@@ -150,25 +150,17 @@ export default function PickDetail() {
         </div>
 
         <div className="relative mx-auto max-w-[1440px] px-4 sm:px-6">
-          {/* 버튼 행 */}
-          <div className="flex items-center justify-between mb-4">
+          {/* 뒤로가기 */}
+          <div className="flex items-center mb-4">
             <button
               type="button"
               onClick={handleBack}
-              className="inline-flex items-center gap-1 px-3 py-2 rounded-full text-xs font-medium transition-colors min-h-[36px]"
+              className="inline-flex items-center gap-1 px-3 py-2 rounded-full text-xs font-medium transition-colors min-h-[44px]"
               style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,200,0,0.2)', color: '#c8a96e' }}
             >
               <ChevronLeft className="w-3.5 h-3.5" />
               {t('pickDetail.backToEvents')}
             </button>
-            <Link
-              to="/picks/hall-of-fame"
-              className="inline-flex items-center gap-1 px-3 py-2 rounded-full text-xs font-medium transition-colors min-h-[36px]"
-              style={{ background: 'rgba(255,255,255,0.07)', border: '1px solid rgba(255,200,0,0.2)', color: '#c8a96e' }}
-            >
-              {t('events.pickHallOfFameCta')}
-              <ChevronRight className="w-3.5 h-3.5" />
-            </Link>
           </div>
 
           {/* 트로피 */}

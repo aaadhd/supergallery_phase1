@@ -1,12 +1,11 @@
 import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
-import { ChevronRight, ChevronLeft, MoreHorizontal, Flag } from 'lucide-react';
+import { Palette } from 'lucide-react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
-import { toast } from 'sonner';
 import { ImageWithFallback } from '../components/ImageWithFallback';
 import { Work, artists as allArtists } from '../data';
 import { WorkCard } from '../components/WorkCard';
-import { workStore, userInteractionStore, useInteractionStore, useAuthStore, followStore, useFollowStore, useProfileStore } from '../store';
-import { hydrateGroupWorks, type WorkOwner } from '../groupData';
+import { workStore, useInteractionStore, useAuthStore, followStore, useFollowStore, useProfileStore } from '../store';
+import { hydrateGroupWorks } from '../groupData';
 import { imageUrls } from '../imageUrls';
 import { WorkDetailModal } from '../components/WorkDetailModal';
 import { ReportModal } from '../components/ReportModal';
@@ -15,23 +14,18 @@ import { useLoginPrompt } from '../hooks/useLoginPrompt';
 import { isWorkVisibleOnPublicFeed } from '../utils/feedVisibility';
 import { pointsOnBrowseDailyVisit } from '../utils/pointsBackground';
 import { useI18n } from '../i18n/I18nProvider';
-import type { MessageKey } from '../i18n/messages';
 import { AnimatePresence } from 'framer-motion';
 import { orderWorksForBrowseFeed } from '../utils/feedOrdering';
 import { loadSeenWorkIds, rememberSeenWork } from '../utils/seenFeedWorks';
 import { restoreScrollTop, saveScrollTop } from '../utils/scrollRestore';
 import { Button } from '../components/ui/button';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from '../components/ui/dropdown-menu';
 import { getHiddenWorkIdsForReporter, migrateLegacyReportHiddenOnce } from '../utils/reportStorage';
-import { displayExhibitionTitle } from '../utils/workDisplay';
-import useEmblaCarousel from 'embla-carousel-react';
+import { getCoverImage } from '../utils/imageHelper';
 import { useVisibleAdminBanners } from '../utils/bannerStore';
 import { useManagedEvents, deriveEventStatus } from '../utils/eventsStore';
+import { useCuration } from '../utils/curationStore';
+import { usePickSessions, derivePickStatus } from '../utils/pickStore';
+import { todayLocalIso } from '../utils/localDate';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -39,9 +33,50 @@ import { useManagedEvents, deriveEventStatus } from '../utils/eventsStore';
 
 const FEED_PAGE_SIZE = 24;
 
-/** Resolve an image key through the imageUrls map, falling back to the raw key. */
-function resolveImage(key: string): string {
-  return imageUrls[key] || key;
+function EndedCurationsSection({
+  endedCurations,
+}: {
+  endedCurations: import('../utils/curationStore').CuratedExhibition[];
+}) {
+  const [showAll, setShowAll] = useState(false);
+  const visible = showAll ? endedCurations : endedCurations.slice(0, 3);
+  return (
+    <section className="mt-14 sm:mt-16">
+      <h2 className="text-sm font-semibold text-muted-foreground mb-5">지난 기획전</h2>
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-5">
+        {visible.map((c) => (
+          <div
+            key={c.id}
+            className="relative overflow-hidden rounded-lg aspect-[3/4] grayscale opacity-50"
+          >
+            <ImageWithFallback
+              src={c.bannerImageUrl}
+              alt={c.title}
+              className="w-full h-full object-cover"
+            />
+            <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-black/80 to-transparent" />
+            <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4">
+              {(c.startAt && c.endAt) && (
+                <p className="text-[10px] text-white/50 mb-1">
+                  {c.startAt.replace(/-/g, '.')} — {c.endAt.replace(/-/g, '.')}
+                </p>
+              )}
+              <p className="text-xs sm:text-sm font-bold text-white leading-snug line-clamp-2">{c.title}</p>
+            </div>
+          </div>
+        ))}
+      </div>
+      {!showAll && endedCurations.length > 3 && (
+        <button
+          type="button"
+          onClick={() => setShowAll(true)}
+          className="mt-5 text-sm text-muted-foreground lg:hover:text-foreground transition-colors min-h-[44px]"
+        >
+          지난 기획전 더 보기 →
+        </button>
+      )}
+    </section>
+  );
 }
 
 // ---------------------------------------------------------------------------
@@ -51,16 +86,7 @@ export default function Browse() {
   const navigate = useNavigate();
   const { t } = useI18n();
   const params = useParams();
-
-  const categories = useMemo(
-    () =>
-      [
-        { id: 'all' as const, label: t('browse.tabAll') },
-        { id: 'individual' as const, label: t('browse.tabSolo') },
-        { id: 'group' as const, label: t('browse.tabGroup') },
-      ] as const,
-    [t],
-  );
+  const today = todayLocalIso();
 
   useEffect(() => {
     pointsOnBrowseDailyVisit();
@@ -96,6 +122,29 @@ export default function Browse() {
     [t, adminBanners, managedEvents],
   );
 
+  // -- 기획전 데이터 -----------------------------------------------------------
+  const { curatedExhibitions } = useCuration();
+  const activeCurations = useMemo(
+    () => curatedExhibitions.filter((c) => c.bannerImageUrl && (!c.endAt || today <= c.endAt)),
+    [curatedExhibitions, today],
+  );
+  const endedCurations = useMemo(
+    () => curatedExhibitions.filter((c) => c.bannerImageUrl && c.endAt && today > c.endAt),
+    [curatedExhibitions, today],
+  );
+
+  // -- Pick 데이터 ------------------------------------------------------------
+  const pickSessions = usePickSessions();
+  const activePickSession = useMemo(
+    () => pickSessions.find((s) => s.publicationOpen && derivePickStatus(s) === 'active') ?? null,
+    [pickSessions],
+  );
+  // 배너용: active 없으면 가장 최근 published 세션
+  const bannerPickSession = useMemo(
+    () => activePickSession ?? pickSessions.filter((s) => s.publicationOpen).at(-1) ?? null,
+    [activePickSession, pickSessions],
+  );
+
   // -- Stores ---------------------------------------------------------------
   const interactions = useInteractionStore();
   const auth = useAuthStore();
@@ -111,66 +160,48 @@ export default function Browse() {
     migrateLegacyReportHiddenOnce();
   }, [auth.isLoggedIn(), profileSig]);
 
-  // -- Work data from store (includes user-uploaded works) -------------------
   const [works, setWorks] = useState(workStore.getWorks());
   useEffect(() => {
     const unsubscribe = workStore.subscribe(() => setWorks(workStore.getWorks()));
     return unsubscribe;
   }, []);
 
-  // -- UI state -------------------------------------------------------------
-  // 탭 상태 ↔ URL `?tab=all|individual|group` 동기화.
-  // - 초기 진입: URL 쿼리가 유효 값이면 해당 탭으로 시작.
-  // - 사용자 탭 변경: setSearchParams로 URL 갱신(뒤로가기·북마크·공유 가능).
-  // - 'all'은 기본값이라 URL에서 생략(기본 상태 = 깔끔한 URL).
+  // -- 탭 상태 ↔ URL 동기화 --------------------------------------------------
+  // browse=기본(쿼리 생략), curation=?tab=curation, pick=?tab=pick
   const [searchParams, setSearchParams] = useSearchParams();
-  const VALID_TABS = ['all', 'individual', 'group'] as const;
+  const VALID_TABS = ['browse', 'curation', 'pick'] as const;
   type BrowseTab = (typeof VALID_TABS)[number];
   const initialTab = ((): BrowseTab => {
     const q = searchParams.get('tab');
-    return q && (VALID_TABS as readonly string[]).includes(q) ? (q as BrowseTab) : 'all';
+    return q && (VALID_TABS as readonly string[]).includes(q) ? (q as BrowseTab) : 'browse';
   })();
-  const [activeCategory, setActiveCategoryState] = useState<BrowseTab>(initialTab);
-  const setActiveCategory = useCallback((next: string) => {
-    const valid = (VALID_TABS as readonly string[]).includes(next) ? (next as BrowseTab) : 'all';
-    setActiveCategoryState(valid);
+  const [activeTab, setActiveTabState] = useState<BrowseTab>(initialTab);
+  const setActiveTab = useCallback((next: BrowseTab) => {
+    setActiveTabState(next);
     setSearchParams(
       (prev) => {
         const sp = new URLSearchParams(prev);
-        if (valid === 'all') sp.delete('tab');
-        else sp.set('tab', valid);
+        if (next === 'browse') sp.delete('tab');
+        else sp.set('tab', next);
         return sp;
       },
       { replace: true },
     );
   }, [setSearchParams]);
 
-  // 외부에서 URL이 바뀐 경우(뒤로가기 등) 탭 동기화
   useEffect(() => {
     const q = searchParams.get('tab');
     const next: BrowseTab =
-      q && (VALID_TABS as readonly string[]).includes(q) ? (q as BrowseTab) : 'all';
-    setActiveCategoryState((prev) => (prev === next ? prev : next));
+      q && (VALID_TABS as readonly string[]).includes(q) ? (q as BrowseTab) : 'browse';
+    setActiveTabState((prev) => (prev === next ? prev : next));
   }, [searchParams]);
 
   const [selectedWork, setSelectedWork] = useState<string | null>(null);
 
-  // -- Embla banner carousel (터치 스와이프 + 자동 회전) ----------------------
-  const [emblaRef, emblaApi] = useEmblaCarousel({ loop: true, duration: 30 });
-  const [currentBanner, setCurrentBanner] = useState(0);
 
-  useEffect(() => {
-    if (!emblaApi) return;
-    const onSelect = () => setCurrentBanner(emblaApi.selectedScrollSnap());
-    emblaApi.on('select', onSelect);
-    onSelect();
-    return () => { emblaApi.off('select', onSelect); };
-  }, [emblaApi]);
-
-  // -- Scroll position tracking for modal open/close -----------------------
+  // -- Scroll position tracking -----------------------------------------------
   const scrollPosRef = useRef<number>(0);
 
-  // -- Open modal from URL (PRD: /exhibitions/:id 딥링크) ----------------------
   useEffect(() => {
     if (params.id && params.id !== selectedWork) {
       setSelectedWork(params.id);
@@ -180,9 +211,7 @@ export default function Browse() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [params.id]);
 
-  // -- 피드 스크롤 복원: 다른 페이지 다녀온 뒤 / 새 탭에서 돌아왔을 때 최근 위치 유지 -----
   useEffect(() => {
-    // 모달로 딥링크 진입 중이면 스크롤 복원 생략
     if (params.id) return;
     restoreScrollTop('browse', 'browse-scroll-root');
     const saveCurrent = () => saveScrollTop('browse', 'browse-scroll-root');
@@ -196,7 +225,6 @@ export default function Browse() {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  // -- Browser back/forward handling for modal URL -------------------------
   useEffect(() => {
     const handlePopState = () => {
       const match = window.location.pathname.match(/^\/exhibitions\/(.+)$/);
@@ -204,9 +232,7 @@ export default function Browse() {
         setSelectedWork(match[1]);
       } else {
         setSelectedWork(null);
-        requestAnimationFrame(() => {
-          window.scrollTo(0, scrollPosRef.current);
-        });
+        requestAnimationFrame(() => { window.scrollTo(0, scrollPosRef.current); });
       }
     };
     window.addEventListener('popstate', handlePopState);
@@ -218,7 +244,6 @@ export default function Browse() {
   const openWork = useCallback((workId: string) => {
     rememberSeenWork(workId);
     scrollPosRef.current = window.scrollY;
-    // 모달 열기 직전 피드 스크롤 위치를 sessionStorage에도 저장 (페이지 이탈 대비)
     saveScrollTop('browse', 'browse-scroll-root');
     setSelectedWork(workId);
     window.history.pushState({ workId }, '', `/exhibitions/${workId}`);
@@ -229,43 +254,11 @@ export default function Browse() {
     if (window.location.pathname.startsWith('/exhibitions/')) {
       navigate(-1);
     }
-    requestAnimationFrame(() => {
-      window.scrollTo(0, scrollPosRef.current);
-    });
+    requestAnimationFrame(() => { window.scrollTo(0, scrollPosRef.current); });
   }, [navigate]);
 
-  // -- Banner controls (Embla) -----------------------------------------------
-  const prevBanner = useCallback(() => emblaApi?.scrollPrev(), [emblaApi]);
-  const nextBanner = useCallback(() => emblaApi?.scrollNext(), [emblaApi]);
 
-  // Auto-rotate banner every 5 seconds
-  useEffect(() => {
-    if (!emblaApi) return;
-    let timer: ReturnType<typeof setInterval> | null = null;
-    const stop = () => {
-      if (timer !== null) { clearInterval(timer); timer = null; }
-    };
-    const start = () => {
-      stop();
-      if (document.visibilityState === 'hidden') return;
-      timer = setInterval(() => emblaApi.scrollNext(), 5000);
-    };
-    const onVisibility = () => { document.visibilityState === 'hidden' ? stop() : start(); };
-    start();
-    emblaApi.on('pointerDown', stop);
-    emblaApi.on('pointerUp', start);
-    document.addEventListener('visibilitychange', onVisibility);
-    return () => {
-      stop();
-      emblaApi.off('pointerDown', stop);
-      emblaApi.off('pointerUp', start);
-      document.removeEventListener('visibilitychange', onVisibility);
-    };
-  }, [emblaApi]);
-
-  // -- Combine + PRD 근사 피드 순서(Pick → 신규 → 가중) + 시청 이력 반영 -------
-  // 시니어 UX: 좋아요/저장 인터랙션 시 피드가 뒤섞이는 현상(Shifting)을 방지하기 위해 
-  // 순서 계산 로직은 '작품 개수'가 변하거나 '새로고침(epoch)'할 때만 실행되도록 제한합니다.
+  // -- 피드 데이터 (둘러보기 탭) -----------------------------------------------
   const allWorks = useMemo(() => {
     const hydrated = hydrateGroupWorks(allArtists);
     const combined = [...workStore.getWorks(), ...hydrated] as Work[];
@@ -273,10 +266,8 @@ export default function Browse() {
     const followingArtistIds = new Set(follows.getFollows());
     return orderWorksForBrowseFeed(combined, seen, { followingArtistIds });
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [works.length, feedEpoch, follows.getCount()]); 
-  // interaction(likes) 변화에는 반응하지 않고, 개수 변화나 수동 갱신 시에만 순서 재계산
+  }, [works.length, feedEpoch, follows.getCount()]);
 
-  // -- Category filtering (신고자 본인에게만 작품 숨김) ------------------------
   const hiddenWorkIds = useMemo(
     () => getHiddenWorkIdsForReporter(),
     [works, auth.isLoggedIn(), profileSig, hideRevision],
@@ -287,35 +278,34 @@ export default function Browse() {
     return allWorks.find((w) => w.id === reportWorkId) ?? null;
   }, [reportWorkId, allWorks]);
 
-  const filteredWorks = useMemo(() => {
-    const visibleWorks = allWorks.filter(
-      (w) => !hiddenWorkIds.has(w.id) && isWorkVisibleOnPublicFeed(w),
-    );
-    if (activeCategory === 'all') return visibleWorks;
+  const filteredWorks = useMemo(
+    () => allWorks.filter((w) => !hiddenWorkIds.has(w.id) && isWorkVisibleOnPublicFeed(w)),
+    [allWorks, hiddenWorkIds],
+  );
 
-    const isGroupWork = (w: Work) => {
-      if (w.primaryExhibitionType === 'group') return true;
-      if (w.primaryExhibitionType === 'solo') return false;
-      const owner = w.owner as WorkOwner | undefined;
-      if (owner?.type === 'group') return true;
-      return false;
-    };
-
-    if (activeCategory === 'individual') {
-      return visibleWorks.filter((w) => !isGroupWork(w));
+  // -- Pick 탭 작품 목록 (전 세션 누적) ----------------------------------------
+  const pickWorks = useMemo(() => {
+    const seen = new Set<string>();
+    const result: Work[] = [];
+    for (const session of pickSessions.filter((s) => s.publicationOpen)) {
+      for (const id of session.selectedWorkIds ?? []) {
+        if (seen.has(id)) continue;
+        seen.add(id);
+        const w = filteredWorks.find((fw) => fw.id === id);
+        if (w) result.push(w);
+      }
     }
-    // group
-    return visibleWorks.filter((w) => isGroupWork(w));
-  }, [allWorks, activeCategory, hiddenWorkIds]);
+    return result;
+  }, [pickSessions, filteredWorks]);
+
 
   const [feedVisibleCount, setFeedVisibleCount] = useState(FEED_PAGE_SIZE);
   useEffect(() => {
     setFeedVisibleCount(FEED_PAGE_SIZE);
-    // 탭 전환 시 스크롤 최상단으로 초기화
     const scrollRoot = document.getElementById('browse-scroll-root');
     if (scrollRoot) scrollRoot.scrollTo({ top: 0, behavior: 'instant' });
     else window.scrollTo({ top: 0, behavior: 'instant' });
-  }, [activeCategory]);
+  }, [activeTab]);
 
   const displayedWorks = useMemo(
     () => filteredWorks.slice(0, feedVisibleCount),
@@ -337,198 +327,303 @@ export default function Browse() {
     return () => ob.disconnect();
   }, [filteredWorks.length, displayedWorks.length]);
 
+  const tabs = useMemo(() => [
+    { id: 'browse' as const, label: t('browse.tabBrowse') },
+    { id: 'pick' as const, label: t('browse.tabPick') },
+    { id: 'curation' as const, label: t('browse.tabCuration') },
+  ], [t]);
+
+  type PromoItem = { kind: 'promo'; data: typeof promotionBanners[0] };
+  type WorkItem = { kind: 'work'; data: typeof displayedWorks[0] };
+  const PROMO_INTERVAL = 6;
+  const interleavedFeed = useMemo((): (PromoItem | WorkItem)[] => {
+    const result: (PromoItem | WorkItem)[] = [];
+    let promoIdx = 0;
+    displayedWorks.forEach((work, i) => {
+      result.push({ kind: 'work', data: work });
+      if ((i + 1) % PROMO_INTERVAL === 0 && promoIdx < promotionBanners.length) {
+        result.push({ kind: 'promo', data: promotionBanners[promoIdx++] });
+      }
+    });
+    return result;
+  }, [promotionBanners, displayedWorks]);
+
   // =========================================================================
   // RENDER
   // =========================================================================
   return (
     <div className="min-h-full bg-background overflow-x-hidden">
-      {/* ----------------------------------------------------------------- */}
-      {/* HERO — 에디토리얼 갤러리 톤                                              */}
-      {/* ----------------------------------------------------------------- */}
-      <div className="bg-background">
-        <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 pt-4 sm:pt-6 pb-2 sm:pb-3">
-          <div className="relative group">
-            <div className="overflow-hidden sm:rounded-sm ring-1 ring-foreground/[0.08] shadow-[0_28px_80px_-32px_rgba(35,32,40,0.45)]" ref={emblaRef}>
-              <div className="flex">
-                {promotionBanners.map((banner) => (
-                  <div
-                    key={banner.id}
-                    className={`min-w-0 flex-[0_0_100%] relative ${banner.linkUrl ? 'cursor-pointer' : ''}`}
-                    onClick={() => {
-                      if (!banner.linkUrl) return;
-                      if (banner.linkUrl.startsWith('http://') || banner.linkUrl.startsWith('https://')) {
-                        window.open(banner.linkUrl, '_blank', 'noopener,noreferrer');
-                      } else {
-                        navigate(banner.linkUrl);
-                      }
-                    }}
-                  >
-                    <div className="relative h-[120px] sm:h-[220px] lg:h-[280px] overflow-hidden">
-                      <ImageWithFallback
-                        src={banner.image}
-                        alt={banner.title}
-                        className="w-full h-full object-cover"
-                      />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/85 via-black/30 to-transparent" />
-                      <div className="absolute inset-x-0 bottom-0 px-8 sm:px-12 lg:px-20 pb-6 sm:pb-8 lg:pb-10">
-                        <div className="max-w-[720px]">
-                          {banner.tag && (
-                            <span className="inline-block px-2.5 py-1 text-xs sm:text-xs font-semibold tracking-[0.14em] uppercase text-white border border-white/35 bg-white/5 backdrop-blur-[2px] mb-3">
-                              {banner.tag}
-                            </span>
-                          )}
-                          <h2 className="text-xl sm:text-3xl lg:text-4xl font-bold text-white mb-2 sm:mb-2.5 leading-tight tracking-tight drop-shadow-md">
-                            {banner.title}
-                          </h2>
-                          <p className="text-sm sm:text-base text-white/90 font-medium max-w-xl leading-relaxed hidden sm:block">
-                            {banner.subtitle}
-                          </p>
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-
-            <Button
-              variant="ghost"
-              onClick={prevBanner}
-              className="absolute left-0 top-1/2 -translate-x-1/2 -translate-y-1/2 h-10 w-10 sm:h-12 sm:w-12 hidden sm:flex items-center justify-center bg-white text-foreground rounded-full shadow-lg border border-black/5 transition-all hover:scale-110 active:scale-95 z-20"
-            >
-              <ChevronLeft className="h-5 w-5 sm:h-6 sm:w-6" />
-            </Button>
-            <Button
-              variant="ghost"
-              onClick={nextBanner}
-              className="absolute right-0 top-1/2 translate-x-1/2 -translate-y-1/2 h-10 w-10 sm:h-12 sm:w-12 hidden sm:flex items-center justify-center bg-white text-foreground rounded-full shadow-lg border border-black/5 transition-all hover:scale-110 active:scale-95 z-20"
-            >
-              <ChevronRight className="h-5 w-5 sm:h-6 sm:w-6" />
-            </Button>
-
-            <div className="absolute bottom-3 sm:bottom-5 left-1/2 -translate-x-1/2 flex items-center gap-1.5">
-              {promotionBanners.map((_, i) => (
-                <Button
-                  variant="ghost"
-                  key={i}
-                  onClick={() => emblaApi?.scrollTo(i)}
-                  aria-label={`${t('nav.browse')} ${i + 1}`}
-                  className={`h-1 sm:h-1.5 rounded-full transition-all p-0 min-h-0 min-w-0 ${
-                    currentBanner === i
-                      ? 'w-8 sm:w-10 bg-white'
-                      : 'w-1.5 sm:w-1.5 bg-white/45 lg:hover:bg-white/65'
-                  }`}
-                />
-              ))}
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* ----------------------------------------------------------------- */}
-      {/* CATEGORY — 언더라인 탭                                                  */}
-      {/* ----------------------------------------------------------------- */}
+      {/* 탭 바 */}
       <div className="sticky top-0 z-40 border-b border-border/60 bg-background/90 backdrop-blur-lg backdrop-saturate-150">
         <div className="mx-auto flex min-h-11 sm:min-h-12 max-w-[1440px] items-end gap-5 sm:gap-7 px-4 sm:px-8 lg:px-12">
-          {categories.map((cat) => (
+          {tabs.map((tab) => (
             <Button
               variant="ghost"
-              key={cat.id}
-              onClick={() => setActiveCategory(cat.id)}
+              key={tab.id}
+              onClick={() => setActiveTab(tab.id)}
               className={`relative shrink-0 h-auto rounded-md px-1.5 pb-2.5 pt-1.5 text-xs sm:text-sm transition-colors shadow-none hover:bg-transparent focus-visible:ring-[3px] focus-visible:ring-primary focus-visible:ring-offset-2 focus-visible:outline-none ${
-                activeCategory === cat.id
+                activeTab === tab.id
                   ? 'text-foreground font-bold after:absolute after:left-1.5 after:right-1.5 after:bottom-0 after:h-0.5 after:bg-primary'
                   : 'text-muted-foreground font-medium hover:text-foreground'
               }`}
             >
-              {cat.label}
+              {tab.label}
             </Button>
           ))}
-
         </div>
       </div>
 
-      {/* ----------------------------------------------------------------- */}
-      {/* WORK GRID                                                           */}
-      {/* ----------------------------------------------------------------- */}
-      <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-6 sm:py-8 pb-6 md:pb-8">
-        {filteredWorks.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 sm:py-24 text-center rounded-2xl border border-dashed border-border bg-muted/20 px-6">
-            <p className="text-sm text-foreground font-medium mb-2">{t('browse.emptyTitle')}</p>
-            <p className="text-sm text-muted-foreground mb-6">{t('browse.emptyHint')}</p>
-            <div className="flex flex-wrap items-center justify-center gap-2">
-              <Button
-                type="button"
-                variant="default"
-                onClick={() => navigate('/upload')}
-                className="min-h-[44px]"
-              >
+      {/* ── 둘러보기 탭 ── */}
+      {activeTab === 'browse' && (
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-6 sm:py-8 pb-6 md:pb-8">
+          {filteredWorks.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 sm:py-24 text-center rounded-2xl border border-dashed border-border bg-muted/20 px-6">
+              <p className="text-sm text-foreground font-medium mb-2">{t('browse.emptyTitle')}</p>
+              <p className="text-sm text-muted-foreground mb-6">{t('browse.emptyHint')}</p>
+              <Button type="button" variant="default" onClick={() => navigate('/upload')} className="min-h-[44px]">
                 {t('browse.emptyCtaUpload')}
               </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => setActiveCategory('all')}
-                className="min-h-[44px]"
-              >
-                {t('browse.emptyCtaAll')}
-              </Button>
             </div>
-          </div>
-        ) : (
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[1.625rem] sm:gap-[2.275rem] lg:gap-[2.6rem]">
-            {displayedWorks.map((work, idx) => (
-              <WorkCard
-                key={work.id}
-                work={work}
-                index={idx}
-                onSelect={() => openWork(work.id)}
-                onArtistClick={(artistId) => navigate(`/profile/${artistId}`)}
-                isFollowing={(artistId) => follows.isFollowing(artistId)}
-                onToggleFollow={(artistId) => {
-                  if (!requestLogin()) return;
-                  followStore.toggle(artistId);
-                }}
-                onReport={(w) => {
-                  if (!requestLogin()) return;
-                  setReportWorkId(w.id);
-                }}
-              />
-            ))}
-            {displayedWorks.length < filteredWorks.length ? (
-              <>
-                <div
-                  ref={feedSentinelRef}
-                  className="col-span-full"
-                  aria-hidden
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[1.625rem] sm:gap-[2.275rem] lg:gap-[2.6rem]">
+              {interleavedFeed.map((item, idx) => {
+                if (item.kind === 'promo') {
+                  const banner = item.data;
+                  return (
+                    <div
+                      key={`promo-${banner.id}`}
+                      onClick={() => {
+                        if (!banner.linkUrl) return;
+                        if (banner.linkUrl.startsWith('http://') || banner.linkUrl.startsWith('https://')) {
+                          window.open(banner.linkUrl, '_blank', 'noopener,noreferrer');
+                        } else {
+                          navigate(banner.linkUrl);
+                        }
+                      }}
+                      className={`group self-stretch ${banner.linkUrl ? 'cursor-pointer' : ''}`}
+                    >
+                      <div className="relative h-full overflow-hidden rounded-sm bg-black ring-2 ring-primary/25">
+                        <ImageWithFallback
+                          src={banner.image}
+                          alt=""
+                          className="absolute inset-0 w-full h-full object-cover opacity-80 transition-transform duration-500 lg:group-hover:scale-[1.03]"
+                        />
+                        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-black/20" />
+                        {/* 상단 배지 */}
+                        <div className="absolute top-3 left-3">
+                          <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wide bg-primary text-primary-foreground shadow-sm">
+                            <Palette className="h-3 w-3" />
+                            Proud Gallery
+                          </span>
+                        </div>
+                        <div className="absolute inset-0 flex items-end p-5 sm:p-6 lg:p-8">
+                          <h3 className="text-sm sm:text-base lg:text-lg font-bold text-white leading-snug drop-shadow-sm">
+                            {banner.title}
+                          </h3>
+                        </div>
+                      </div>
+                    </div>
+                  );
+                }
+                const work = item.data;
+                return (
+                <WorkCard
+                  key={work.id}
+                  work={work}
+                  index={idx}
+                  onSelect={() => openWork(work.id)}
+                  onArtistClick={(artistId) => navigate(`/profile/${artistId}`)}
+                  isFollowing={(artistId) => follows.isFollowing(artistId)}
+                  onToggleFollow={(artistId) => {
+                    if (!requestLogin()) return;
+                    followStore.toggle(artistId);
+                  }}
+                  onReport={(w) => {
+                    if (!requestLogin()) return;
+                    setReportWorkId(w.id);
+                  }}
                 />
-                {/* Skeleton loading cards */}
-                {Array.from({ length: 3 }).map((_, i) => (
-                  <div key={`skeleton-${i}`} className="animate-pulse">
-                    <div className="aspect-square w-full rounded-sm bg-muted/60" />
-                    <div className="px-1 pt-3 space-y-2.5">
-                      <div className="h-4 w-3/4 rounded bg-muted/60" />
-                      <div className="flex items-center gap-2">
-                        <div className="h-7 w-7 rounded-full bg-muted/60" />
-                        <div className="h-3.5 w-20 rounded bg-muted/60" />
+                );
+              })}
+              {displayedWorks.length < filteredWorks.length ? (
+                <>
+                  <div ref={feedSentinelRef} className="col-span-full" aria-hidden />
+                  {Array.from({ length: 3 }).map((_, i) => (
+                    <div key={`skeleton-${i}`} className="animate-pulse">
+                      <div className="aspect-square w-full rounded-sm bg-muted/60" />
+                      <div className="px-1 pt-3 space-y-2.5">
+                        <div className="h-4 w-3/4 rounded bg-muted/60" />
+                        <div className="flex items-center gap-2">
+                          <div className="h-7 w-7 rounded-full bg-muted/60" />
+                          <div className="h-3.5 w-20 rounded bg-muted/60" />
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </>
+              ) : displayedWorks.length > 0 ? (
+                <div className="col-span-full flex flex-col items-center py-12 text-center">
+                  <p className="text-sm text-muted-foreground">{t('browse.feedEnd')}</p>
+                  <p className="text-xs text-muted-foreground/60 mt-1">{t('browse.feedEndHint')}</p>
+                </div>
+              ) : null}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* ── 기획전 탭 ── */}
+      {activeTab === 'curation' && (
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-4 sm:py-5 pb-8 md:pb-12">
+          {activeCurations.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 text-center rounded-2xl border border-dashed border-border bg-muted/20 px-6">
+              <p className="text-sm text-foreground font-medium">{t('browse.curationEmpty')}</p>
+            </div>
+          ) : (
+            <div className={`flex items-start justify-center gap-6 sm:gap-8 ${activeCurations.length === 1 ? '' : 'flex-wrap sm:flex-nowrap'}`}>
+              {(() => {
+                return activeCurations.map((c, i) => {
+                  const seen = new Set<string>();
+                const artistNames: string[] = [];
+                const allWorksMap = new Map([...workStore.getWorks(), ...allWorks].map((w) => [w.id, w]));
+                for (const piece of (c.pieces ?? [])) {
+                  const work = allWorksMap.get(piece.workId);
+                  if (!work) continue;
+                  const artist = allArtists.find((a) => a.id === work.artistId);
+                  const name = artist?.name ?? work.artist?.name ?? '';
+                  if (name && !seen.has(name)) { seen.add(name); artistNames.push(name); }
+                }
+                return (
+                  <div
+                    key={c.id}
+                    onClick={() => navigate(`/curations/${c.id}`)}
+                    className={`group cursor-pointer ${activeCurations.length === 1 ? 'w-full max-w-[360px] sm:max-w-[400px] lg:max-w-[440px]' : 'w-full sm:w-1/2 max-w-[360px]'}`}
+                  >
+                    <div className="relative overflow-hidden rounded-lg aspect-[3/4] max-h-[calc(100svh-210px)] shadow-[0_12px_48px_-8px_rgba(0,0,0,0.22)] transition-all duration-500 lg:group-hover:shadow-[0_24px_64px_-8px_rgba(0,0,0,0.32)] lg:group-hover:scale-[1.02]">
+                      <ImageWithFallback
+                        src={c.bannerImageUrl}
+                        alt={c.title}
+                        className="w-full h-full object-cover"
+                      />
+                      {/* 상단: 기획전 레이블 + 날짜 */}
+                      <div className="absolute inset-x-0 top-0 h-28" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.55), transparent)' }} />
+                      <div className="absolute top-5 left-5 right-5 flex items-center justify-between">
+                        <span className="text-[10px] font-semibold tracking-[0.22em] uppercase text-white/70">
+                          {t('browse.tabCuration')} {String(i + 1).padStart(2, '0')}
+                        </span>
+                        {(c.startAt && c.endAt) && (
+                          <span className="text-[10px] text-white/60 tracking-wide">
+                            {c.startAt.replace(/-/g, '.')} — {c.endAt.replace(/-/g, '.')}
+                          </span>
+                        )}
+                      </div>
+                      {/* 하단: 작가명 + 제목 + 서브타이틀 */}
+                      <div className="absolute inset-x-0 bottom-0 h-60" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85), transparent)' }} />
+                      <div className="absolute inset-x-0 bottom-0 p-5 sm:p-7">
+                        {artistNames.length > 0 && (
+                          <div className="mb-3">
+                            {artistNames.map((name) => (
+                              <span key={name} className="inline-block text-[11px] sm:text-xs font-medium text-white/70 mr-3 mb-1">
+                                {name}
+                              </span>
+                            ))}
+                          </div>
+                        )}
+                        <h3 className="text-xl sm:text-2xl font-bold text-white leading-snug mb-1.5">
+                          {c.title}
+                        </h3>
+                        {c.subtitle && (
+                          <p className="text-xs text-white/65 leading-relaxed line-clamp-2">
+                            {c.subtitle}
+                          </p>
+                        )}
                       </div>
                     </div>
                   </div>
-                ))}
-              </>
-            ) : displayedWorks.length > 0 ? (
-              <div className="col-span-full flex flex-col items-center py-12 text-center">
-                <p className="text-sm text-muted-foreground">{t('browse.feedEnd')}</p>
-                <p className="text-xs text-muted-foreground/60 mt-1">{t('browse.feedEndHint')}</p>
-              </div>
-            ) : null}
-          </div>
-        )}
-      </div>
+                );
+              });
+              })()}
+            </div>
+          )}
 
-      {/* ----------------------------------------------------------------- */}
-      {/* WORK DETAIL MODAL                                                 */}
-      {/* ----------------------------------------------------------------- */}
+          {/* 지난 기획전 */}
+          {endedCurations.length > 0 && <EndedCurationsSection endedCurations={endedCurations} />}
+        </div>
+      )}
+
+      {/* ── Pick 탭 ── */}
+      {activeTab === 'pick' && (
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-6 sm:py-8 pb-6 md:pb-8">
+          {pickWorks.length === 0 && !bannerPickSession ? (
+            <div className="flex flex-col items-center justify-center py-20 text-center rounded-2xl border border-dashed border-border bg-muted/20 px-6">
+              <p className="text-sm text-muted-foreground">{t('browse.pickEmpty')}</p>
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[1.625rem] sm:gap-[2.275rem] lg:gap-[2.6rem]">
+              {/* Pick 배너 카드 → PickDetail */}
+              {bannerPickSession && (
+              <div
+                onClick={() => navigate(`/picks/${bannerPickSession.id}`)}
+                className="group self-stretch cursor-pointer"
+              >
+                <div className="relative h-full overflow-hidden rounded-sm bg-black">
+                  {(() => {
+                    const firstWork = pickWorks[0];
+                    const coverKey = firstWork ? getCoverImage(firstWork.image, firstWork.coverImageIndex) : null;
+                    const src = coverKey ? (imageUrls[coverKey] || coverKey) : null;
+                    return src ? (
+                      <ImageWithFallback
+                        src={src}
+                        alt=""
+                        className="absolute inset-0 w-full h-full object-cover opacity-60 transition-transform duration-500 lg:group-hover:scale-[1.03]"
+                      />
+                    ) : null;
+                  })()}
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
+                  <div className="absolute top-3 left-3 flex items-center gap-1.5">
+                    <Palette className="h-3.5 w-3.5 text-white/90 drop-shadow-sm" />
+                    <span className="text-[11px] font-semibold text-white/90 tracking-tight drop-shadow-sm">Proud Gallery</span>
+                  </div>
+                  <div className="absolute inset-0 flex items-end p-5 sm:p-6 lg:p-8">
+                    <div>
+                      <p className="text-[10px] font-semibold tracking-[2px] uppercase text-white/60 mb-1">PROUD'S PICK</p>
+                      <h3 className="text-sm sm:text-base lg:text-lg font-bold text-white leading-snug drop-shadow-sm">
+                        {bannerPickSession.title}
+                      </h3>
+                      <p className="text-xs text-white/55 mt-1 drop-shadow-sm">
+                        {t('pickDetail.selectedCount').replace('{n}', String(pickWorks.length))}
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              )}
+
+              {/* 선정 작품 그리드 */}
+              {pickWorks.map((work, idx) => (
+                <WorkCard
+                  key={work.id}
+                  work={work}
+                  index={idx + 1}
+                  onSelect={() => openWork(work.id)}
+                  onArtistClick={(artistId) => navigate(`/profile/${artistId}`)}
+                  isFollowing={(artistId) => follows.isFollowing(artistId)}
+                  onToggleFollow={(artistId) => {
+                    if (!requestLogin()) return;
+                    followStore.toggle(artistId);
+                  }}
+                  onReport={(w) => {
+                    if (!requestLogin()) return;
+                    setReportWorkId(w.id);
+                  }}
+                />
+              ))}
+            </div>
+          )}
+        </div>
+      )}
+
+      {/* 전시 상세 모달 */}
       <AnimatePresence>
         {selectedWork !== null && (
           <WorkDetailModal
@@ -563,8 +658,3 @@ export default function Browse() {
     </div>
   );
 }
-
-
-// ===========================================================================
-// 상대 시간 헬퍼 (알림 페이지와 동일 키 재활용)
-// ===========================================================================

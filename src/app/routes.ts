@@ -22,7 +22,6 @@ import Contact from './pages/Contact';
 import Notices from './pages/Notices';
 import NoticeDetail from './pages/NoticeDetail';
 import PickDetail from './pages/PickDetail';
-import PickHallOfFame from './pages/PickHallOfFame';
 import ServerError from './pages/ServerError';
 import AdminLayout from './admin/AdminLayout';
 import AdminLogin from './admin/AdminLogin';
@@ -95,9 +94,6 @@ export const router = createBrowserRouter([
           { path: 'settings', Component: Settings },
           { path: 'settings/notifications', loader: () => redirect('/settings#notifications') },
           { path: 'exhibitions/:id', Component: ExhibitionRoute },
-          { path: 'curations/:id', Component: CurationDetail },
-          { path: 'picks/hall-of-fame', Component: PickHallOfFame },
-          { path: 'picks/:id', Component: PickDetail },
           ...demoRoutes,
           { path: 'about', Component: About },
           { path: 'faq', Component: Faq },
@@ -110,6 +106,9 @@ export const router = createBrowserRouter([
           { path: '*', Component: NotFound },
         ],
       },
+      // Pick·기획전 상세 (Layout 밖 — 전체 화면)
+      { path: '/picks/:id', Component: PickDetail },
+      { path: '/curations/:id', Component: CurationDetail },
       // 온보딩·초대·로그인 (Layout 밖 — Header/Footer 없음)
       { path: '/onboarding', Component: Onboarding },
       { path: '/login', Component: Login },

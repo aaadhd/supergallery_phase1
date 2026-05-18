@@ -75,18 +75,18 @@ export function Header() {
     <>
       <TooltipProvider delayDuration={150}>
       <header className="sticky top-0 z-50 w-full border-b border-border/60 bg-background/85 backdrop-blur-xl backdrop-saturate-150 supports-[backdrop-filter]:bg-background/80">
-        <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-3 sm:py-3.5">
+        <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-2 sm:py-2.5">
           <div className="flex items-center gap-3 sm:gap-4">
             {/* 왼쪽: 로고 + 네비 */}
             <div className="flex items-center gap-1 shrink-0">
             <Link
               to="/"
-              className="flex items-center gap-2.5 rounded-xl pr-2 -ml-1 pl-1 lg:hover:bg-muted/60 transition-colors"
+              className="flex items-center gap-2 rounded-xl pr-2 -ml-1 pl-1 lg:hover:bg-muted/60 transition-colors"
             >
-              <div className="h-9 w-9 sm:h-10 sm:w-10 flex items-center justify-center rounded-xl bg-primary/10 text-primary shadow-sm ring-1 ring-border/10 shrink-0">
-                <Palette className="h-5 w-5 sm:h-5 sm:w-5" />
+              <div className="h-7 w-7 sm:h-8 sm:w-8 flex items-center justify-center rounded-lg bg-primary/10 text-primary shadow-sm ring-1 ring-border/10 shrink-0">
+                <Palette className="h-4 w-4" />
               </div>
-              <span className="text-base sm:text-lg font-semibold tracking-tight text-foreground">{t('brand.name')}</span>
+              <span className="text-sm sm:text-base font-semibold tracking-tight text-foreground">{t('brand.name')}</span>
             </Link>
 
             <nav className="hidden md:flex items-center gap-1 ml-1">

@@ -1,6 +1,6 @@
 import { useMemo } from 'react';
-import { Link, useParams } from 'react-router-dom';
-import { ChevronLeft } from 'lucide-react';
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { X } from 'lucide-react';
 import { useI18n } from '../i18n/I18nProvider';
 import { useCuration, type CurationPieceRef } from '../utils/curationStore';
 import { useWorkStore } from '../store';
@@ -9,18 +9,12 @@ import { CopyrightProtectedImage } from '../components/work/CopyrightProtectedIm
 import { displayPieceTitleAtIndex } from '../utils/workDisplay';
 import type { Work } from '../data';
 
-/**
- * USR-CUR-01 기획전 페이지 (Policy §15.1·§15.4).
- * - 작품(piece) 카드 그리드 — 다중 이미지 전시에서도 운영팀이 고른 piece 1장만 노출.
- * - 노출 필터: 검수 승인 + 비공개 아님 (Policy §32.2).
- * - 카드 클릭 → 그 piece가 속한 전시 상세 모달(`/exhibitions/:workId?piece=<pieceId>`).
- * - 진입은 어드민 배너([ADM-BNR-01]) 또는 직접 URL.
- */
 type ResolvedPiece = {
   ref: CurationPieceRef;
   work: Work;
   imageUrl: string;
   pieceTitle: string;
+  artistName: string;
 };
 
 function resolvePiece(ref: CurationPieceRef, work: Work | undefined, untitledLabel: string): ResolvedPiece | null {
@@ -33,12 +27,17 @@ function resolvePiece(ref: CurationPieceRef, work: Work | undefined, untitledLab
   const imageUrl = images[idx];
   if (typeof imageUrl !== 'string' || !imageUrl) return null;
   const pieceTitle = displayPieceTitleAtIndex(work, idx, untitledLabel);
-  return { ref, work, imageUrl, pieceTitle };
+  const artistName = work.artist?.name ?? '';
+  return { ref, work, imageUrl, pieceTitle, artistName };
 }
 
 export default function CurationDetail() {
   const { id } = useParams<{ id: string }>();
   const { t } = useI18n();
+  const navigate = useNavigate();
+  const location = useLocation();
+  const handleClose = () => location.key !== 'default' ? navigate(-1) : navigate('/?tab=curation');
+
   const { curatedExhibitions } = useCuration();
   const store = useWorkStore();
   const works = store.getWorks();
@@ -46,98 +45,170 @@ export default function CurationDetail() {
   const curation = useMemo(() => curatedExhibitions.find((c) => c.id === id), [curatedExhibitions, id]);
 
   const untitledLabel = t('work.untitled');
-  const resolved = useMemo<ResolvedPiece[]>(() => {
+  const pieces = useMemo<ResolvedPiece[]>(() => {
     if (!curation) return [];
     const worksMap = new Map<string, Work>(works.map((w) => [w.id, w]));
-    const out: ResolvedPiece[] = [];
-    for (const ref of curation.pieces) {
-      const r = resolvePiece(ref, worksMap.get(ref.workId), untitledLabel);
-      if (r) out.push(r);
-    }
-    return out;
+    return curation.pieces
+      .map((ref) => resolvePiece(ref, worksMap.get(ref.workId), untitledLabel))
+      .filter((p): p is ResolvedPiece => p !== null);
   }, [curation, works, untitledLabel]);
 
-  if (!curation || resolved.length === 0) {
+  if (!curation) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-8">
-        <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4">
-          <ChevronLeft className="h-4 w-4" /> {t('common.back')}
-        </Link>
-        <div className="text-center py-16 text-sm text-muted-foreground">{t('curation.notFound')}</div>
+      <div className="flex flex-col items-center justify-center bg-background" style={{ minHeight: '100dvh' }}>
+        <p className="text-sm text-muted-foreground mb-4">{t('curation.notFound')}</p>
+        <button type="button" onClick={handleClose} className="text-sm text-primary hover:underline min-h-[44px]">
+          {t('common.back')}
+        </button>
       </div>
     );
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-6 sm:py-8">
-      <Link to="/" className="inline-flex items-center gap-1 text-sm text-muted-foreground hover:text-foreground mb-4">
-        <ChevronLeft className="h-4 w-4" /> {t('common.back')}
-      </Link>
+    <div className="bg-[#f8f6f2]" style={{ minHeight: '100dvh' }}>
+      {/* X 버튼 */}
+      <button
+        type="button"
+        onClick={handleClose}
+        aria-label="닫기"
+        className="fixed top-4 right-4 z-50 flex h-11 w-11 items-center justify-center rounded-full bg-black/70 text-white backdrop-blur-sm transition-opacity hover:opacity-80"
+      >
+        <X className="h-5 w-5" />
+      </button>
 
-      {curation.bannerImageUrl && (
-        <div className="w-full rounded-xl overflow-hidden mb-6 aspect-[3/1] bg-muted">
-          <img
-            src={curation.bannerImageUrl}
-            alt={curation.title}
-            className="w-full h-full object-cover"
-            loading="eager"
-          />
-        </div>
-      )}
-
-      <header className="mb-6 sm:mb-8">
-        <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-2">{curation.title}</h1>
-        {curation.subtitle && (
-          <p className="text-sm sm:text-base text-muted-foreground">{curation.subtitle}</p>
-        )}
-        {(curation.startAt || curation.endAt) && (
-          <p className="text-xs text-muted-foreground mt-2">
-            {curation.startAt && curation.endAt
-              ? `${curation.startAt} ~ ${curation.endAt}`
-              : curation.startAt
-                ? `${curation.startAt} ~`
-                : `~ ${curation.endAt}`}
+      {/* 전시 타이틀 섹션 */}
+      <header className="mx-auto max-w-3xl px-6 pt-16 pb-14 sm:pt-20 sm:pb-16 text-center">
+        {(curation.startAt && curation.endAt) && (
+          <p className="text-xs tracking-[3px] uppercase text-neutral-400 mb-5">
+            {curation.startAt.replace(/-/g, '.')} — {curation.endAt.replace(/-/g, '.')}
           </p>
         )}
-        <p className="text-xs text-muted-foreground mt-2">
-          {t('curation.pieceCount').replace('{n}', String(resolved.length))}
-        </p>
+        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-900 leading-tight mb-5">
+          {curation.title}
+        </h1>
+        {curation.subtitle && (
+          <p className="text-base sm:text-lg text-neutral-500 leading-relaxed max-w-xl mx-auto">
+            {curation.subtitle}
+          </p>
+        )}
+        <div className="mt-10 w-12 h-px bg-neutral-300 mx-auto" />
       </header>
 
-      {resolved.length === 0 ? (
-        <div className="rounded-xl border border-dashed border-border bg-muted/20 px-6 py-16 text-center text-sm text-muted-foreground">
-          {t('curation.empty')}
-        </div>
-      ) : (
-        <ul className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-3 sm:gap-4">
-          {resolved.map((p) => (
-            <li key={`${p.ref.workId}:${p.ref.pieceId}`}>
-              <Link
-                to={`/exhibitions/${p.ref.workId}?piece=${encodeURIComponent(p.ref.pieceId)}`}
-                className="group block rounded-xl overflow-hidden bg-white border border-border/60 hover:border-primary transition-colors"
+      {/* 작품 목록 */}
+      <div className="pb-24">
+        {pieces.map((p, idx) => {
+          // 3가지 레이아웃 패턴으로 리듬감 생성
+          // 0: 이미지 크게 중앙 + 멘트 하단 중앙
+          // 1: 이미지 좌 + 멘트 우 (side-by-side)
+          // 2: 이미지 우 + 멘트 좌 (side-by-side 반전)
+          const pattern = idx % 3;
+
+          const imageEl = (
+            <div className="flex justify-center">
+              <CopyrightProtectedImage
+                src={p.imageUrl}
+                alt={p.pieceTitle}
+                className="rounded-sm shadow-[0_8px_40px_rgba(0,0,0,0.12)]"
+                style={{ maxHeight: '65vh', maxWidth: '100%', width: 'auto', height: 'auto', display: 'block' }}
+                loading="lazy"
+              />
+            </div>
+          );
+
+          const noteEl = p.ref.curatorNote ? (
+            <div className="flex gap-3 items-start">
+              <span
+                className="shrink-0 leading-none select-none"
+                style={{ fontSize: '3.5rem', lineHeight: 0.75, color: '#d4c9b8', fontFamily: 'Georgia, serif' }}
+                aria-hidden
               >
-                <div className="aspect-square bg-muted/40 relative">
-                  <CopyrightProtectedImage
-                    src={p.imageUrl}
-                    alt={p.pieceTitle}
-                    className="w-full h-full object-cover"
-                    loading="lazy"
-                  />
-                </div>
-                <div className="p-3 space-y-1">
-                  <p className="text-sm font-medium text-foreground line-clamp-2 leading-snug">{p.pieceTitle}</p>
-                  <p className="text-xs text-muted-foreground line-clamp-1">{p.work.artist?.name}</p>
-                  {p.work.exhibitionName && p.work.exhibitionName !== p.pieceTitle && (
-                    <p className="text-[11px] text-muted-foreground/80 line-clamp-1">
-                      {t('curation.fromExhibition').replace('{name}', p.work.exhibitionName)}
-                    </p>
+                "
+              </span>
+              <div className="pt-1.5">
+                <p
+                  className="text-[15px] leading-[1.95] text-neutral-500"
+                  style={{ fontFamily: 'Georgia, "Noto Serif KR", serif', fontStyle: 'italic' }}
+                >
+                  {p.ref.curatorNote}
+                </p>
+                <p className="mt-4 text-[10px] tracking-[2.5px] text-neutral-300 uppercase">Curator's Note</p>
+              </div>
+            </div>
+          ) : null;
+
+          const labelEl = (
+            <div className={pattern === 0 ? 'text-center' : ''}>
+              <p className="text-base font-semibold text-neutral-800 leading-snug">{p.pieceTitle}</p>
+              <p className="text-sm text-neutral-400 mt-1">{p.artistName}</p>
+            </div>
+          );
+
+          return (
+            <section
+              key={`${p.ref.workId}:${p.ref.pieceId}`}
+              className="mb-28 sm:mb-36"
+            >
+              {/* 작품 번호 */}
+              <p className="text-[10px] tracking-[3px] uppercase text-neutral-300 mb-8 text-center">
+                {String(idx + 1).padStart(2, '0')}
+              </p>
+
+              {pattern === 0 && (
+                /* 패턴 0: 이미지 크게 중앙, 멘트 하단 중앙 */
+                <div className="mx-auto max-w-4xl px-6 sm:px-10">
+                  {imageEl}
+                  <div className="mt-6 text-center">
+                    {labelEl}
+                  </div>
+                  {noteEl && (
+                    <div className="mt-10 mx-auto max-w-lg">
+                      {noteEl}
+                    </div>
                   )}
                 </div>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      )}
+              )}
+
+              {pattern === 1 && (
+                /* 패턴 1: 좌 이미지 + 우 멘트 */
+                <div className="mx-auto max-w-5xl px-6 sm:px-10">
+                  <div className="flex flex-col sm:flex-row gap-10 sm:gap-14 items-start">
+                    <div className="w-full sm:w-1/2 shrink-0">
+                      {imageEl}
+                      <div className="mt-5">{labelEl}</div>
+                    </div>
+                    {noteEl && (
+                      <div className="w-full sm:w-1/2 sm:pt-16">
+                        {noteEl}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+
+              {pattern === 2 && (
+                /* 패턴 2: 우 이미지 + 좌 멘트 */
+                <div className="mx-auto max-w-5xl px-6 sm:px-10">
+                  <div className="flex flex-col sm:flex-row-reverse gap-10 sm:gap-14 items-start">
+                    <div className="w-full sm:w-1/2 shrink-0">
+                      {imageEl}
+                      <div className="mt-5">{labelEl}</div>
+                    </div>
+                    {noteEl && (
+                      <div className="w-full sm:w-1/2 sm:pt-16">
+                        {noteEl}
+                      </div>
+                    )}
+                  </div>
+                </div>
+              )}
+            </section>
+          );
+        })}
+
+        {pieces.length === 0 && (
+          <p className="text-center text-sm text-neutral-400 py-20">{t('curation.empty')}</p>
+        )}
+      </div>
     </div>
   );
 }

@@ -847,7 +847,7 @@ export default function Profile() {
             {/* 오른쪽: 탭 컨텐츠 */}
             <div className="flex-1 py-4 sm:py-8">
               <Tabs value={profileTab} onValueChange={(v) => changeProfileTab(v as ProfileTabValue)} className="w-full">
-                <TabsList className="h-auto p-0 bg-transparent border-b border-border/40 rounded-none w-full justify-start flex flex-row gap-0 overflow-x-auto">
+                {isOwnProfile && <TabsList className="h-auto p-0 bg-transparent border-b border-border/40 rounded-none w-full justify-start flex flex-row gap-0 overflow-x-auto">
                   {([
                     { value: 'exhibition', label: t('profile.exhibition') },
                     ...(isOwnProfile ? [
@@ -865,7 +865,7 @@ export default function Profile() {
                       {tab.label}
                     </TabsTrigger>
                   ))}
-                </TabsList>
+                </TabsList>}
 
                 {isOwnProfile && (guideOpen ? (
                   <div className="mt-3 relative rounded-lg border border-border/60 bg-muted/30 pl-3.5 pr-12 py-2.5 text-xs sm:text-sm text-muted-foreground">
@@ -892,7 +892,7 @@ export default function Profile() {
                 ))}
 
                 {/* ===== 전시 탭 ===== */}
-                <TabsContent value="exhibition" className="mt-6">
+                <TabsContent value="exhibition" className={isOwnProfile ? "mt-6" : "mt-8"}>
 
                   <div className="flex flex-wrap items-center gap-2 mb-5">
                     {(['all', 'solo', 'group'] as const).map((f) => {
