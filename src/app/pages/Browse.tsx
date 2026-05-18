@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
+import { useState, useMemo, useEffect, useCallback, useRef, Fragment } from 'react';
 import { ChevronRight, ChevronLeft, MoreHorizontal, Flag } from 'lucide-react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { toast } from 'sonner';
@@ -345,7 +345,7 @@ export default function Browse() {
       {/* ----------------------------------------------------------------- */}
       {/* HERO — 에디토리얼 갤러리 톤                                              */}
       {/* ----------------------------------------------------------------- */}
-      <div className="bg-background">
+      <div className="bg-background hidden sm:block">
         <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 pt-4 sm:pt-6 pb-2 sm:pb-3">
           <div className="relative group">
             <div className="overflow-hidden sm:rounded-sm ring-1 ring-foreground/[0.08] shadow-[0_28px_80px_-32px_rgba(35,32,40,0.45)]" ref={emblaRef}>
@@ -478,22 +478,56 @@ export default function Browse() {
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-[1.625rem] sm:gap-[2.275rem] lg:gap-[2.6rem]">
             {displayedWorks.map((work, idx) => (
-              <WorkCard
-                key={work.id}
-                work={work}
-                index={idx}
-                onSelect={() => openWork(work.id)}
-                onArtistClick={(artistId) => navigate(`/profile/${artistId}`)}
-                isFollowing={(artistId) => follows.isFollowing(artistId)}
-                onToggleFollow={(artistId) => {
-                  if (!requestLogin()) return;
-                  followStore.toggle(artistId);
-                }}
-                onReport={(w) => {
-                  if (!requestLogin()) return;
-                  setReportWorkId(w.id);
-                }}
-              />
+              <Fragment key={work.id}>
+                <WorkCard
+                  work={work}
+                  index={idx}
+                  onSelect={() => openWork(work.id)}
+                  onArtistClick={(artistId) => navigate(`/profile/${artistId}`)}
+                  isFollowing={(artistId) => follows.isFollowing(artistId)}
+                  onToggleFollow={(artistId) => {
+                    if (!requestLogin()) return;
+                    followStore.toggle(artistId);
+                  }}
+                  onReport={(w) => {
+                    if (!requestLogin()) return;
+                    setReportWorkId(w.id);
+                  }}
+                />
+                {idx === 2 && promotionBanners.length > 0 && (
+                  <div
+                    className="col-span-full sm:hidden rounded-xl overflow-hidden cursor-pointer"
+                    onClick={() => {
+                      const b = promotionBanners[0];
+                      if (!b.linkUrl) return;
+                      if (b.linkUrl.startsWith('http://') || b.linkUrl.startsWith('https://')) {
+                        window.open(b.linkUrl, '_blank', 'noopener,noreferrer');
+                      } else {
+                        navigate(b.linkUrl);
+                      }
+                    }}
+                  >
+                    <div className="relative h-[130px] overflow-hidden">
+                      <ImageWithFallback
+                        src={promotionBanners[0].image}
+                        alt={promotionBanners[0].title}
+                        className="w-full h-full object-cover"
+                      />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/25 to-transparent" />
+                      <div className="absolute inset-x-0 bottom-0 px-5 pb-4">
+                        {promotionBanners[0].tag && (
+                          <span className="inline-block px-2 py-0.5 text-[10px] font-semibold tracking-widest uppercase text-white border border-white/35 bg-white/5 mb-1.5">
+                            {promotionBanners[0].tag}
+                          </span>
+                        )}
+                        <h2 className="text-base font-bold text-white leading-tight drop-shadow-md">
+                          {promotionBanners[0].title}
+                        </h2>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </Fragment>
             ))}
             {displayedWorks.length < filteredWorks.length ? (
               <>
