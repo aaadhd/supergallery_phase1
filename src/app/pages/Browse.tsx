@@ -87,7 +87,7 @@ function EndedCurationsSection({
                     <p className="text-white/65 text-[11px] leading-snug">{c.subtitle}</p>
                   )}
                   {(c.startAt && c.endAt) && (
-                    <p className="text-white/38 text-[9px] tracking-[1.5px] mt-2">
+                    <p className="text-white/65 text-[9px] tracking-[1.5px] mt-2">
                       {c.startAt.replace(/-/g, '.')} — {c.endAt.replace(/-/g, '.')}
                     </p>
                   )}
@@ -562,7 +562,7 @@ export default function Browse() {
                             <p className="text-white/40 text-xs tracking-wide">{singleCurationArtistNames.join(' · ')}</p>
                           )}
                           {(activeCurations[0].startAt && activeCurations[0].endAt) && (
-                            <p className="text-white/40 text-xs tracking-[2px]">{activeCurations[0].startAt.replace(/-/g, '.')} — {activeCurations[0].endAt.replace(/-/g, '.')}</p>
+                            <p className="text-white/70 text-xs tracking-[2px]">{activeCurations[0].startAt.replace(/-/g, '.')} — {activeCurations[0].endAt.replace(/-/g, '.')}</p>
                           )}
                         </div>
                       </div>

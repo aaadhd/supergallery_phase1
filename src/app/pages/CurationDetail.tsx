@@ -118,7 +118,7 @@ export default function CurationDetail() {
                       <p className="text-white/40 text-[11px] tracking-wide">{bannerArtistNames.join(' · ')}</p>
                     )}
                     {(curation.startAt && curation.endAt) && (
-                      <p className="text-white/40 text-[11px] tracking-[2px]">{curation.startAt.replace(/-/g, '.')} — {curation.endAt.replace(/-/g, '.')}</p>
+                      <p className="text-white/70 text-[11px] tracking-[2px]">{curation.startAt.replace(/-/g, '.')} — {curation.endAt.replace(/-/g, '.')}</p>
                     )}
                   </div>
                 </div>

@@ -97,7 +97,7 @@ export function CurationCarousel({ curations }: Props) {
                       <p className="text-white/40 text-xs tracking-wide">{artistNames.join(' · ')}</p>
                     )}
                     {(c.startAt && c.endAt) && (
-                      <p className="text-white/40 text-xs tracking-[2px]">{c.startAt.replace(/-/g, '.')} — {c.endAt.replace(/-/g, '.')}</p>
+                      <p className="text-white/70 text-xs tracking-[2px]">{c.startAt.replace(/-/g, '.')} — {c.endAt.replace(/-/g, '.')}</p>
                     )}
                   </div>
                 </div>
