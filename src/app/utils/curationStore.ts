@@ -40,7 +40,7 @@ export type CurationState = {
   curatedExhibitions: CuratedExhibition[];
 };
 
-const STORAGE_KEY = 'artier_curation_v1';
+const STORAGE_KEY = 'artier_curation_v2';
 const CHANGED_EVENT = 'artier-curation-changed';
 
 const DEFAULT_STATE: CurationState = {

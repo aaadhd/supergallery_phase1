@@ -230,7 +230,7 @@ Phase 1은 **작품 단위 모더레이션만** 다룬다. 사용자 계정 차�
 작품 JSON은 **`artier_works` 단일 키**이며, `artier_works_*` 와일드카드 표기는 사용하지 않는다.
 
 - **핵심 앱 상태 (`store.ts`)**: `artier_works_version`, `artier_works`, `artier_drafts`, `artier_profile`, `artier_interactions`, `artier_auth`, `artier_follows`, `artier_account_suspension`, `artier_withdrawn_artists`, `artier_demo_last_withdraw_reason`
-- **작품·피드·알림**: `artier_curation_v1`, `artier_feed_seen_work_ids`, `artier_notifications`, `artier_notification_settings`
+- **작품·피드·알림**: `artier_curation_v2`, `artier_feed_seen_work_ids`, `artier_notifications`, `artier_notification_settings`
 - **배너·이벤트·어드민**: `artier_admin_banners_v3`, `artier_managed_contests_v1`, `artier_event_subscriptions`, `artier_admin_members_v1`, `artier_picks_v1`, `artier_admin_audit_log_v1` (운영자 감사 로그 — 런칭 전 백엔드 이관 후 서버 테이블로 재출발)
 - **약관·동의**: `artier_tos_consent_v1` (마지막으로 동의한 약관 버전 문자열. CM-TOS 모달 동의 기록)
 - **초대·포인트·신고·기타**: `artier_invite_tokens_v1` (전시 단위 1개, 90일 TTL), `artier_points_ledger`, `artier_points_state`, `artier_work_publish_times`, `artier_artist_follower_delta`, `artier_reports`, `artier_report_hidden_v2`, `artier_report_signatures_v1`, `artier_reported_works`, `artier_reported_artists`, `artier_social_signed_up__<provider>` (kakao/google/apple), `artier_pending_signup_nickname`·`artier_pending_signup_email`·`artier_pending_social_signup` (Signup/소셜 가입 → Onboarding 프리필 핸드오프, 온보딩 종료 시 정리), `artier_registered_emails_v1`·`artier_registered_phones_v1` (중복 가입 차단, `utils/registeredAccounts.ts`), `artier_last_group_name`, `artier_my_group_names`, `artier_inquiries`

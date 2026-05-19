@@ -23,6 +23,7 @@ const LEGACY_STORAGE_KEYS = [
   'artier_admin_picks_v1',          // PickManagement 세션 모델로 마이그레이션(2026-05-10) 후 orphan
   'artier_managed_events_v4',       // contestStore(v1)+pickStore(v1) 분리 이관(2026-05-10) 후 orphan
   'artier_event_subscription',      // eventSubscriptionStore → marketing 토글 통합(2026-05-11) 후 orphan
+  'artier_curation_v1',             // curationStore v2 마이그레이션(2026-05-19) 후 orphan
 ];
 
 const LEGACY_SESSION_KEYS = [
