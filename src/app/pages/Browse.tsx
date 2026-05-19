@@ -77,20 +77,20 @@ function EndedCurationsSection({
             />
             {c.bannerOverlay && (
               <>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/[0.08] to-transparent pointer-events-none" />
-                <div className="absolute bottom-0 left-0 right-0 p-4 pointer-events-none">
-                  {artistNames.length > 0 && (
-                    <p className="text-[9px] text-white/50 mb-1 leading-relaxed tracking-wide">{artistNames.join(' · ')}</p>
-                  )}
-                  <p className="text-white font-bold text-base leading-tight mb-0.5">{c.title}</p>
-                  {c.subtitle && (
-                    <p className="text-white/65 text-[11px] leading-snug">{c.subtitle}</p>
-                  )}
-                  {(c.startAt && c.endAt) && (
-                    <p className="text-white/65 text-[9px] tracking-[1.5px] mt-2">
-                      {c.startAt.replace(/-/g, '.')} — {c.endAt.replace(/-/g, '.')}
-                    </p>
-                  )}
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/[0.08] to-transparent pointer-events-none" />
+                <div className="absolute bottom-0 left-0 right-0 px-4 py-3 pointer-events-none">
+                  <div className="flex flex-col space-y-1">
+                    <p className="text-white font-bold text-base leading-tight">{c.title}</p>
+                    {c.subtitle && (
+                      <p className="text-white/55 text-[10px] leading-snug">{c.subtitle}</p>
+                    )}
+                    {artistNames.length > 0 && (
+                      <p className="text-white/40 text-[9px] tracking-wide">{artistNames.join(' · ')}</p>
+                    )}
+                    {(c.startAt && c.endAt) && (
+                      <p className="text-white/70 text-[9px] tracking-[2px]">{c.startAt.replace(/-/g, '.')} — {c.endAt.replace(/-/g, '.')}</p>
+                    )}
+                  </div>
                 </div>
               </>
             )}
