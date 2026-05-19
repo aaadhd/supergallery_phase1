@@ -615,8 +615,8 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.nonMemberPreviewListLabel': '비회원 작가 {n}명',
   'upload.nonMemberPreviewSlotHint': '이름만 등록됨 · 가입 후 본인이 직접 연결',
   'upload.nonMemberPreviewInfo': '신청 직후 마이페이지 전시 카드에 \'비회원 작가에게 알리기\' 버튼이 생겨요. 카톡·문자 등으로 작가님이 직접 보내실 수 있어요.',
-  'upload.nonMemberPreviewBack': '수정하러 돌아가기',
-  'upload.nonMemberPreviewConfirm': '신청 확인',
+  'upload.nonMemberPreviewBack': '이름 수정하기',
+  'upload.nonMemberPreviewConfirm': '전시 신청하기',
   'invite.shareCta': '비회원 작가에게 알리기',
   'invite.shareDialogTitle': '비회원 작가에게 알리기',
   'invite.shareDialogBody': '이 링크를 비회원 작가에게 보내주세요. 가입하면 본인 작품을 직접 고를 수 있어요.',
@@ -1699,8 +1699,8 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'upload.nonMemberPreviewListLabel': '{n} non-member artist(s)',
   'upload.nonMemberPreviewSlotHint': 'Name only · they connect after signing up',
   'upload.nonMemberPreviewInfo': "Right after submitting, a 'Notify Friends' button appears on your exhibition card. Send the link via KakaoTalk, text, or any channel you prefer.",
-  'upload.nonMemberPreviewBack': 'Back to editing',
-  'upload.nonMemberPreviewConfirm': 'Confirm & Submit',
+  'upload.nonMemberPreviewBack': 'Edit names',
+  'upload.nonMemberPreviewConfirm': 'Submit Exhibition',
   'invite.shareCta': 'Notify Non-member Artist',
   'invite.shareDialogTitle': 'Notify Non-member Artist',
   'invite.shareDialogBody': 'Send this link to the non-member artist. After signing up, they can claim their own work.',
@@ -2450,6 +2450,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.33 | 2026-05-20 | PM × Claude | nonMemberPreviewBack "수정하러 돌아가기"→"이름 수정하기"; nonMemberPreviewConfirm "신청 확인"→"전시 신청하기"; step3SearchPlaceholder·step3SearchHint·hintCheckConsent 신규 |
 | v1.32 | 2026-05-19 | PM × Claude | curation.endedTitle·endedDesc KO/EN 신규; dead key 일괄 삭제: curation.pieceCount·fromExhibition·empty, events.results* 8종·viewWinners·title·tab*·notifyCta·notifySubscribed·pick*·curation{Active,None,EndedBlocked,Pieces,ViewPage}·noUpcoming·upcomingSection·comingSoonBadge·endedBadge·detailTarget·detailGuide·detailEnded, browse.curationEmpty, admin.contest 미사용 15종, admin.notice.label*En, signup.openMockLink; upload.publish "전시하기" → "전시 신청하기"; dead key 추가 삭제: upload.toastPublished·toastPublishedImmediate(발행 완료 화면 별도 제공으로 불필요), review.badgePendingHintForParticipant(참여 작품 승인 후 노출 정책 변경으로 배지 제거); notifApprovedForParticipant "둘러보기 피드에서" → "내 프로필에서" |
 | v1.31 | 2026-05-19 | PM × Claude | browse.curationOnView KO/EN 신규 — Browse 기획전 탭 활성 전시 섹션 레이블; browse.carousel.* 5종 신규 — CurationCarousel aria-label i18n |
 | v1.30 | 2026-05-19 | PM × Claude | 코드 누락 키 추가 — browse.curationTagline; events.tab*/pick*/curation*(15종); evt.entryModal*/entryImage*/errPublishFailed(5종); pickDetail.*(6종) 신설; settings.withdrawOther*(2종); admin.section.communication |
