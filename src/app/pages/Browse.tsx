@@ -491,17 +491,17 @@ export default function Browse() {
               </div>
               {/* 1개: 정적 배너 / 2개 이상: 캐러셀 */}
               {activeCurations.length === 1 ? (
-                <div
-                  className="aspect-[21/9] w-full overflow-hidden rounded-xl cursor-pointer"
+                <button
+                  type="button"
+                  className="aspect-[21/9] w-full overflow-hidden rounded-xl cursor-pointer block"
                   onClick={() => navigate(`/curations/${activeCurations[0].id}`)}
                 >
-                  <img
+                  <ImageWithFallback
                     src={activeCurations[0].bannerImageUrl}
                     alt={activeCurations[0].title}
                     className="w-full h-full object-cover"
-                    draggable={false}
                   />
-                </div>
+                </button>
               ) : (
                 <CurationCarousel curations={activeCurations} />
               )}

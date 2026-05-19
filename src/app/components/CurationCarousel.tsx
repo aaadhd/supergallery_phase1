@@ -3,6 +3,7 @@ import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
 import type { CuratedExhibition } from '../utils/curationStore';
 import { useI18n } from '../i18n/I18nProvider';
+import { ImageWithFallback } from '../components/ImageWithFallback';
 
 type Props = {
   curations: CuratedExhibition[];
@@ -49,20 +50,20 @@ export function CurationCarousel({ curations }: Props) {
     >
       {/* 슬라이드: 모두 렌더, opacity로 fade 전환 */}
       {curations.map((c, i) => (
-        <div
+        <button
           key={c.id}
-          className={`absolute inset-0 transition-opacity duration-[450ms] cursor-pointer ${
+          type="button"
+          className={`absolute inset-0 transition-opacity duration-[450ms] cursor-pointer w-full text-left ${
             i === current ? 'opacity-100 z-[1]' : 'opacity-0 z-0 pointer-events-none'
           }`}
           onClick={() => navigate(`/curations/${c.id}`)}
         >
-          <img
+          <ImageWithFallback
             src={c.bannerImageUrl}
             alt={c.title}
             className="w-full h-full object-cover"
-            draggable={false}
           />
-        </div>
+        </button>
       ))}
 
       {showControls && (
