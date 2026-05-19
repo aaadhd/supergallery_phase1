@@ -203,21 +203,6 @@ export default function WorkImageViewer({
         <X className="h-5 w-5" />
       </button>
 
-      {/* 좌상단: 배율 + 원래 크기 (확대 시만) */}
-      {isZoomed && (
-        <div className="absolute left-3 top-3 z-10 flex items-center gap-2">
-          <span className="rounded-lg bg-black/60 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-sm">
-            ×{scale.toFixed(1)}
-          </span>
-          <button
-            type="button"
-            onClick={resetView}
-            className="rounded-2xl bg-black/60 px-3 py-3 text-sm text-white backdrop-blur-sm"
-          >
-            {t('viewer.fitScreen')}
-          </button>
-        </div>
-      )}
 
       {/* 이미지 영역 */}
       <div
@@ -286,8 +271,23 @@ export default function WorkImageViewer({
         <span className="text-sm font-semibold text-white drop-shadow">{current.title}</span>
       </div>
 
-      {/* 우하단: − + */}
-      <div className="absolute bottom-4 right-4 z-10 flex gap-2">
+      {/* 우하단: 줌 컨트롤 그룹 */}
+      <div className="absolute bottom-4 right-4 z-10 flex items-center gap-2">
+        {isZoomed && (
+          <>
+            <button
+              type="button"
+              onClick={resetView}
+              className="rounded-2xl bg-black/55 px-3 py-3 text-sm text-white backdrop-blur-sm lg:hover:bg-black/70"
+              aria-label={t('viewer.fitScreen')}
+            >
+              {t('viewer.fitScreen')}
+            </button>
+            <span className="rounded-lg bg-black/55 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-sm">
+              ×{scale.toFixed(1)}
+            </span>
+          </>
+        )}
         <button
           type="button"
           onClick={() => setScale(s => clamp(s - ZOOM_STEP, MIN_SCALE, MAX_SCALE))}
