@@ -29,7 +29,7 @@ export function WizardProgress({ currentStep, isGroup, onStepClick }: Props) {
 
   return (
     <div className="border-b border-border/40 bg-white sticky top-0 z-10 py-3 px-4">
-      <div className="relative flex items-center justify-center">
+      <div className="relative flex items-center justify-center max-w-4xl mx-auto">
         {/* 모드 뱃지 — 맨 왼쪽 */}
         <span className="absolute left-0 text-[10px] font-semibold text-primary bg-primary/10 rounded-full px-2.5 py-0.5 shrink-0">
           {isGroup ? t('upload.typeGroup') : t('upload.typeSolo')}
