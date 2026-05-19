@@ -165,7 +165,7 @@ export function Step4Submit({
           </span>
         </label>
 
-        {/* Optional — curation consent */}
+        {/* 선택 (사전 체크) — curation consent */}
         <label
           className="flex items-start gap-3 rounded-xl border border-border/60 bg-white px-4 py-3 cursor-pointer min-h-[44px]"
         >
