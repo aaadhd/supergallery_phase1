@@ -273,25 +273,23 @@ export default function WorkImageViewer({
 
       {/* 우하단: 줌 컨트롤 그룹 */}
       <div className="absolute bottom-4 right-4 z-10 flex items-center gap-2">
-        {isZoomed && (
-          <>
-            <button
-              type="button"
-              onClick={resetView}
-              className="rounded-2xl bg-black/55 px-3 py-3 text-sm text-white backdrop-blur-sm lg:hover:bg-black/70"
-              aria-label={t('viewer.fitScreen')}
-            >
-              {t('viewer.fitScreen')}
-            </button>
-            <span className="rounded-lg bg-black/55 px-2.5 py-1 text-xs font-medium text-white backdrop-blur-sm">
-              ×{scale.toFixed(1)}
-            </span>
-          </>
-        )}
+        <button
+          type="button"
+          onClick={resetView}
+          disabled={!isZoomed}
+          className={`rounded-2xl bg-black/55 px-3 py-3 text-sm backdrop-blur-sm transition ${isZoomed ? 'text-white lg:hover:bg-black/70' : 'pointer-events-none text-white/30'}`}
+          aria-label={t('viewer.fitScreen')}
+        >
+          {t('viewer.fitScreen')}
+        </button>
+        <span className={`rounded-lg bg-black/55 px-2.5 py-1 text-xs font-medium backdrop-blur-sm transition ${isZoomed ? 'text-white' : 'text-white/30'}`}>
+          ×{scale.toFixed(1)}
+        </span>
         <button
           type="button"
           onClick={() => setScale(s => clamp(s - ZOOM_STEP, MIN_SCALE, MAX_SCALE))}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-black/55 text-white backdrop-blur-sm lg:hover:bg-black/70"
+          disabled={scale <= MIN_SCALE}
+          className={`flex h-11 w-11 items-center justify-center rounded-full bg-black/55 backdrop-blur-sm transition ${scale <= MIN_SCALE ? 'pointer-events-none text-white/30' : 'text-white lg:hover:bg-black/70'}`}
           aria-label={t('viewer.zoomOut')}
         >
           <Minus className="h-5 w-5" />
@@ -299,7 +297,8 @@ export default function WorkImageViewer({
         <button
           type="button"
           onClick={() => setScale(s => clamp(s + ZOOM_STEP, MIN_SCALE, MAX_SCALE))}
-          className="flex h-11 w-11 items-center justify-center rounded-full bg-black/55 text-white backdrop-blur-sm lg:hover:bg-black/70"
+          disabled={scale >= MAX_SCALE}
+          className={`flex h-11 w-11 items-center justify-center rounded-full bg-black/55 backdrop-blur-sm transition ${scale >= MAX_SCALE ? 'pointer-events-none text-white/30' : 'text-white lg:hover:bg-black/70'}`}
           aria-label={t('viewer.zoomIn')}
         >
           <Plus className="h-5 w-5" />
