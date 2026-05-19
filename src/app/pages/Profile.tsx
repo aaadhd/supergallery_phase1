@@ -1,6 +1,6 @@
-import { useState, useEffect, useMemo, useCallback, useRef } from 'react';
+import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useParams, useNavigate, useSearchParams } from 'react-router-dom';
-import { MapPin, Plus, Eye, EyeOff, X, ThumbsUp, Users, Folder, MoreHorizontal, Trash2, Tag, UserPlus, Camera, ChevronLeft, ChevronRight, Pencil, CircleHelp } from 'lucide-react';
+import { MapPin, Plus, Eye, EyeOff, X, ThumbsUp, Users, Folder, MoreHorizontal, Trash2, Tag, UserPlus, Camera, ChevronRight, Pencil, CircleHelp } from 'lucide-react';
 import { Image as ImageIcon, User as UserIcon } from 'lucide-react';
 import ProfileImageModal from '../components/ProfileImageModal';
 import { artists, type Work } from '../data';

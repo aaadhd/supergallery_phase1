@@ -188,7 +188,7 @@ export default function WorkImageViewer({
 
   return (
     <div
-      className="fixed inset-0 z-[100] bg-black"
+      className="fixed inset-0 z-[110] bg-black"
       role="dialog"
       aria-modal="true"
       aria-label={current.title}

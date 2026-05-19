@@ -77,6 +77,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
   useEffect(() => {
     setIsLiked(userInteractionStore.isLiked(workId));
     setIsSaved(userInteractionStore.isSaved(workId));
+    setViewerIndex(null);
     if (scrollContainerRef.current) scrollContainerRef.current.scrollTop = 0;
   }, [workId]);
 
@@ -483,7 +484,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
 
                   <div className="relative z-10 w-full flex flex-col items-center justify-center px-4 sm:px-6">
                     <div
-                      className="relative flex justify-center text-center shadow-[0_15px_50px_rgba(0,0,0,0.2)] bg-black/5 cursor-pointer"
+                      className={`relative flex justify-center text-center shadow-[0_15px_50px_rgba(0,0,0,0.2)] bg-black/5 ${!isCoverSlide ? 'cursor-pointer' : ''}`}
                       onClick={!isCoverSlide ? (e) => { e.stopPropagation(); setViewerIndex(workImageIndex); } : undefined}
                     >
                       <CopyrightProtectedImage
