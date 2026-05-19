@@ -24,6 +24,8 @@ export type ConfirmOptions = {
   cancelLabel?: string;
   /** 복구 불가 작업(삭제 등) — 확인 버튼을 destructive 색으로 */
   destructive?: boolean;
+  /** true → 취소 버튼 숨김 (정보 알림용 단일 버튼 다이얼로그) */
+  hideCancel?: boolean;
 };
 
 type State = { open: boolean; opts: ConfirmOptions | null };
@@ -70,9 +72,11 @@ export function ConfirmDialogRoot() {
           )}
         </AlertDialogHeader>
         <AlertDialogFooter>
-          <AlertDialogCancel onClick={() => close(false)}>
-            {opts?.cancelLabel ?? t('confirm.cancel')}
-          </AlertDialogCancel>
+          {!opts?.hideCancel && (
+            <AlertDialogCancel onClick={() => close(false)}>
+              {opts?.cancelLabel ?? t('confirm.cancel')}
+            </AlertDialogCancel>
+          )}
           <AlertDialogAction
             onClick={() => close(true)}
             className={opts?.destructive ? 'bg-destructive text-destructive-foreground lg:hover:bg-destructive/90' : undefined}

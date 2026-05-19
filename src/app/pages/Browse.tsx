@@ -2,6 +2,7 @@ import { useState, useMemo, useEffect, useCallback, useRef } from 'react';
 import { Palette } from 'lucide-react';
 import { useNavigate, useParams, useSearchParams } from 'react-router-dom';
 import { ImageWithFallback } from '../components/ImageWithFallback';
+import { openConfirm } from '../components/ConfirmDialog';
 import { Work, artists as allArtists } from '../data';
 import { WorkCard } from '../components/WorkCard';
 import { workStore, useInteractionStore, useAuthStore, followStore, useFollowStore, useProfileStore } from '../store';
@@ -40,6 +41,7 @@ function EndedCurationsSection({
   endedCurations: import('../utils/curationStore').CuratedExhibition[];
 }) {
   const [showAll, setShowAll] = useState(false);
+  const { t } = useI18n();
   const visible = showAll ? endedCurations : endedCurations.slice(0, 4);
   const works = workStore.getWorks();
   const worksMap = useMemo(() => new Map(works.map((w) => [w.id, w])), [works]);
@@ -62,9 +64,11 @@ function EndedCurationsSection({
         {visible.map((c) => {
           const artistNames = c.bannerOverlay ? getArtistNames(c) : [];
           return (
-          <div
+          <button
             key={c.id}
-            className="relative overflow-hidden rounded-lg aspect-[21/9] grayscale opacity-50 hover:opacity-75 hover:grayscale-0 transition-all duration-300"
+            type="button"
+            onClick={() => openConfirm({ title: t('curation.endedTitle'), description: t('curation.endedDesc'), hideCancel: true })}
+            className="relative overflow-hidden rounded-lg aspect-[21/9] grayscale opacity-50 hover:opacity-75 hover:grayscale-0 transition-all duration-300 w-full block text-left cursor-pointer"
           >
             <ImageWithFallback
               src={c.bannerImageUrl}
@@ -90,7 +94,7 @@ function EndedCurationsSection({
                 </div>
               </>
             )}
-          </div>
+          </button>
           );
         })}
       </div>
