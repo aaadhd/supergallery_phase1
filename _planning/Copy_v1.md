@@ -419,7 +419,6 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'browse.emptyTitle': '표시할 전시가 없어요',
   'browse.emptyHint': '직접 전시를 올려보세요',
   'browse.emptyCtaUpload': '내 작품 올리기',
-  'browse.curationEmpty': '진행 중인 기획전이 없어요',
   'browse.curationOnView': '현재 전시 중',
   'browse.carousel.prev': '이전 전시',
   'browse.carousel.next': '다음 전시',
@@ -486,9 +485,6 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.eventConsentLabel': '선정 시 결과 페이지에 게시될 수 있음에 동의합니다.',
   'upload.errEventConsentRequired': '응모전에 응모하시려면 게시 보존 동의에 체크해 주세요.',
   'events.detailPeriod': '기간',
-  'events.detailTarget': '참여 대상',
-  'events.detailGuide': '응모전 안내',
-  'events.detailEnded': '참여가 마감된 응모전이에요',
   'events.detailScheduled': '아직 시작 전이에요',
   'events.detailBackLink': '이벤트 목록으로 돌아가기',
   'events.viewMyEntry': '내 응모작 보기',
@@ -1510,7 +1506,6 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'browse.emptyHint': 'Upload your own exhibition',
   'browse.emptyCtaUpload': 'Upload my work',
   'browse.curationTagline': 'Curated exhibitions by the Proud Gallery curation team',
-  'browse.curationEmpty': 'No curated exhibitions right now',
   'browse.curationOnView': 'On View',
   'browse.carousel.prev': 'Previous exhibition',
   'browse.carousel.next': 'Next exhibition',
@@ -1578,9 +1573,6 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'upload.errEventConsentRequired': 'Please check the display retention consent to enter the event.',
   'events.detailBackLink': 'Back to events',
   'events.detailPeriod': 'Period',
-  'events.detailTarget': 'Participants',
-  'events.detailGuide': 'Event details',
-  'events.detailEnded': 'This event has ended',
   'events.detailScheduled': 'Not open yet',
   'events.viewMyEntry': 'View My Entry',
   'events.cancelEntry': 'Cancel Entry',
@@ -2465,7 +2457,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.32 | 2026-05-19 | PM × Claude | curation.endedTitle·endedDesc KO/EN 신규 — 지난 기획전 클릭 종료 알림 모달; curation.pieceCount·fromExhibition·empty 삭제; events.results* 8종·viewWinners·title·tab*·notifyCta·notifySubscribed·pick*·curation{Active,None,EndedBlocked,Pieces,ViewPage}·noUpcoming·upcomingSection·comingSoonBadge·endedBadge 삭제; admin.contest 미사용 editor/placeholder/status/publication/manual/warnEmpty 삭제; admin.notice.label*En 삭제; signup.openMockLink 삭제 |
+| v1.32 | 2026-05-19 | PM × Claude | curation.endedTitle·endedDesc KO/EN 신규; dead key 일괄 삭제: curation.pieceCount·fromExhibition·empty, events.results* 8종·viewWinners·title·tab*·notifyCta·notifySubscribed·pick*·curation{Active,None,EndedBlocked,Pieces,ViewPage}·noUpcoming·upcomingSection·comingSoonBadge·endedBadge·detailTarget·detailGuide·detailEnded, browse.curationEmpty, admin.contest 미사용 15종, admin.notice.label*En, signup.openMockLink |
 | v1.31 | 2026-05-19 | PM × Claude | browse.curationOnView KO/EN 신규 — Browse 기획전 탭 활성 전시 섹션 레이블; browse.carousel.* 5종 신규 — CurationCarousel aria-label i18n |
 | v1.30 | 2026-05-19 | PM × Claude | 코드 누락 키 추가 — browse.curationTagline; events.tab*/pick*/curation*(15종); evt.entryModal*/entryImage*/errPublishFailed(5종); pickDetail.*(6종) 신설; settings.withdrawOther*(2종); admin.section.communication |
 | v1.29 | 2026-05-19 | PM × Claude | browse.pickHallOfFame 삭제(KO+EN) — USR-EVT-07 Deprecated; §6 i18n 사전 TypeScript 래퍼(const·export function) 제거 — README 코드링크 금지 규칙 준수; §6.2 영어 섹션 헤딩 신설 |

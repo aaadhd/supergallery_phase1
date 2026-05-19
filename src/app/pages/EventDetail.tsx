@@ -141,25 +141,11 @@ export default function EventDetail() {
                 <p className="font-medium">{event.startAt} ~ {event.endAt}</p>
               </div>
             </div>
-            {event.participantsLabel && (
-              <div className="flex items-center gap-3 text-base text-foreground">
-                <Users className="w-5 h-5 text-muted-foreground" />
-                <div>
-                  <p className="text-xs text-muted-foreground">{t('events.detailTarget')}</p>
-                  <p className="font-medium">{event.participantsLabel}</p>
-                </div>
-              </div>
-            )}
           </div>
 
-          <h2 className="text-base sm:text-lg font-bold text-foreground mb-3 sm:mb-4">{t('events.detailGuide')}</h2>
           <p className="text-sm sm:text-sm lg:text-base text-foreground leading-relaxed mb-6 sm:mb-10">{event.description}</p>
 
-          {event.type !== 'contest' ? null : isEnded ? (
-            <div className="flex sm:inline-flex items-center justify-center gap-2 px-5 sm:px-8 py-3 sm:py-3.5 bg-muted text-muted-foreground rounded-lg text-sm font-medium cursor-not-allowed w-full sm:w-auto">
-              {t('events.detailEnded')}
-            </div>
-          ) : isScheduled ? (
+          {event.type !== 'contest' ? null : isEnded ? null : isScheduled ? (
             <div className="flex sm:inline-flex items-center justify-center gap-2 px-5 sm:px-8 py-3 sm:py-3.5 bg-muted text-muted-foreground rounded-lg text-sm font-medium cursor-not-allowed w-full sm:w-auto">
               {t('events.detailScheduled')}
             </div>
