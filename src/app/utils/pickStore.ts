@@ -180,27 +180,7 @@ export function seedPickIfEmpty(): void {
   if (typeof window === 'undefined') return;
   const existing = getAllStable();
 
-  // 게시된 세션이 있지만 활성(active) 세션이 없는 경우 —
-  // 시드 세션의 startAt이 미래로 저장돼 있을 때 오늘로 당겨 준다.
-  const hasPublished = existing.some((s) => s.publicationOpen);
-  if (hasPublished) {
-    const today = todayLocalIso();
-    const hasActive = existing.some(
-      (s) => s.publicationOpen && derivePickStatus(s) === 'active',
-    );
-    if (!hasActive) {
-      // 게시된 세션 중 active가 없으면 — 가장 마지막 게시 세션의 startAt을 오늘로 당긴다.
-      const published = existing.filter((s) => s.publicationOpen && derivePickStatus(s) !== 'ended');
-      if (published.length > 0) {
-        const target = published.sort((a, b) => b.startAt.localeCompare(a.startAt))[0];
-        const fixed = existing.map((s) =>
-          s.id === target.id ? { ...s, startAt: today } : s,
-        );
-        writeToStorage(fixed);
-      }
-    }
-    return;
-  }
+  if (existing.some((s) => s.publicationOpen)) return;
 
   const publicWorks = seedWorks.filter((w) => !w.isHidden && w.feedReviewStatus !== 'rejected');
   const ids1 = publicWorks.slice(0, 6).map((w) => w.id);
@@ -210,16 +190,16 @@ export function seedPickIfEmpty(): void {
     {
       id: 'seed-pick-2026-w20',
       title: '5월 3주차 Proud\'s Pick',
-      startAt: isoOffset(-7),
-      endAt: isoOffset(14),
+      startAt: '2026-05-12',
+      endAt: '2026-06-02',
       selectedWorkIds: ids1,
       publicationOpen: true,
     },
     {
       id: 'seed-pick-2026-w19',
       title: '5월 2주차 Proud\'s Pick',
-      startAt: isoOffset(-21),
-      endAt: isoOffset(-8),
+      startAt: '2026-04-28',
+      endAt: '2026-05-11',
       selectedWorkIds: ids2,
       publicationOpen: true,
     },

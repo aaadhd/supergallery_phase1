@@ -136,7 +136,7 @@ if (typeof window !== 'undefined') {
     if (e.key === STORAGE_KEY) invalidate();
   });
 
-  // 누락된 시드 배너 추가 + 기존 시드의 linkUrl 패치
+  // 누락된 시드 배너 추가 + 기존 시드의 linkUrl·isActive 패치
   (() => {
     const stored = readFromStorage();
     const storedIds = new Set(stored.map((b) => b.id));
@@ -145,7 +145,9 @@ if (typeof window !== 'undefined') {
     let patched = false;
     const patchedStored = stored.map((b) => {
       const seed = seedMap.get(b.id);
-      if (seed && b.linkUrl !== seed.linkUrl) { patched = true; return { ...b, linkUrl: seed.linkUrl }; }
+      if (!seed) return b;
+      const needsPatch = b.linkUrl !== seed.linkUrl || b.isActive !== seed.isActive;
+      if (needsPatch) { patched = true; return { ...b, linkUrl: seed.linkUrl, isActive: seed.isActive }; }
       return b;
     });
     if (missing.length > 0 || patched) {
