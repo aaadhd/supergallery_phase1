@@ -45,6 +45,9 @@ export function Step2Titles({
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-8 animate-in fade-in duration-300">
+      <span className="inline-block text-xs font-semibold text-primary bg-primary/10 rounded-full px-3 py-1 mb-3">
+        {uploadType === 'group' ? t('upload.typeGroup') : t('upload.typeSolo')}
+      </span>
       <h1 className="text-2xl font-bold text-foreground mb-2">{t('upload.step2Title')}</h1>
       <p className="text-sm text-muted-foreground mb-8">{t('upload.step2Subtitle')}</p>
 

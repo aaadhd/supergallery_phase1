@@ -163,6 +163,9 @@ export function Step1Images({
         </div>
       )}
 
+      <span className="inline-block text-xs font-semibold text-primary bg-primary/10 rounded-full px-3 py-1 mb-3">
+        {uploadType === 'group' ? t('upload.typeGroup') : t('upload.typeSolo')}
+      </span>
       <h1 className="text-2xl font-bold text-foreground mb-2">{t('upload.step1Title')}</h1>
       <p className="text-sm text-muted-foreground mb-6">{t('upload.step1Subtitle')}</p>
 

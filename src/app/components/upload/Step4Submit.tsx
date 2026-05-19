@@ -68,6 +68,9 @@ export function Step4Submit({
   return (
     <div className="max-w-4xl mx-auto px-4 py-8">
       {/* 1. Header */}
+      <span className="inline-block text-xs font-semibold text-primary bg-primary/10 rounded-full px-3 py-1 mb-3">
+        {uploadType === 'group' ? t('upload.typeGroup') : t('upload.typeSolo')}
+      </span>
       <h1 className="text-2xl font-bold text-foreground mb-2">{t('upload.step4Title')}</h1>
       <p className="text-sm text-muted-foreground mb-6">{t('upload.step4Subtitle')}</p>
 
