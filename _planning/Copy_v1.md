@@ -559,7 +559,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.publishing': '전시 신청 중...',
   'upload.confirmDeleteImage': '이 이미지를 삭제할까요?',
   'upload.nextStep': '다음',
-  'upload.publish': '전시하기',
+  'upload.publish': '전시 신청하기',
   'upload.hintCheckOriginal': '위의 원작 확인을 체크해 주세요',
   'upload.leaveConfirmTitle': '페이지를 떠나시겠어요?',
   'upload.leaveConfirmDesc': '작성 중인 내용이 저장되지 않고 사라져요. 나가기 전에 "초안 저장" 버튼으로 저장할 수 있어요.',
@@ -2458,7 +2458,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.32 | 2026-05-19 | PM × Claude | curation.endedTitle·endedDesc KO/EN 신규; dead key 일괄 삭제: curation.pieceCount·fromExhibition·empty, events.results* 8종·viewWinners·title·tab*·notifyCta·notifySubscribed·pick*·curation{Active,None,EndedBlocked,Pieces,ViewPage}·noUpcoming·upcomingSection·comingSoonBadge·endedBadge·detailTarget·detailGuide·detailEnded, browse.curationEmpty, admin.contest 미사용 15종, admin.notice.label*En, signup.openMockLink |
+| v1.32 | 2026-05-19 | PM × Claude | curation.endedTitle·endedDesc KO/EN 신규; dead key 일괄 삭제: curation.pieceCount·fromExhibition·empty, events.results* 8종·viewWinners·title·tab*·notifyCta·notifySubscribed·pick*·curation{Active,None,EndedBlocked,Pieces,ViewPage}·noUpcoming·upcomingSection·comingSoonBadge·endedBadge·detailTarget·detailGuide·detailEnded, browse.curationEmpty, admin.contest 미사용 15종, admin.notice.label*En, signup.openMockLink; upload.publish "전시하기" → "전시 신청하기" |
 | v1.31 | 2026-05-19 | PM × Claude | browse.curationOnView KO/EN 신규 — Browse 기획전 탭 활성 전시 섹션 레이블; browse.carousel.* 5종 신규 — CurationCarousel aria-label i18n |
 | v1.30 | 2026-05-19 | PM × Claude | 코드 누락 키 추가 — browse.curationTagline; events.tab*/pick*/curation*(15종); evt.entryModal*/entryImage*/errPublishFailed(5종); pickDetail.*(6종) 신설; settings.withdrawOther*(2종); admin.section.communication |
 | v1.29 | 2026-05-19 | PM × Claude | browse.pickHallOfFame 삭제(KO+EN) — USR-EVT-07 Deprecated; §6 i18n 사전 TypeScript 래퍼(const·export function) 제거 — README 코드링크 금지 규칙 준수; §6.2 영어 섹션 헤딩 신설 |
