@@ -551,19 +551,19 @@ export default function Browse() {
                   />
                   {activeCurations[0].bannerOverlay && (
                     <>
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/[0.06] to-transparent pointer-events-none" />
-                      <div className="absolute bottom-0 left-0 right-0 px-5 py-4 pointer-events-none">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/[0.08] to-transparent pointer-events-none" />
+                      <div className="absolute bottom-0 left-0 right-0 px-7 py-6 pointer-events-none">
                         {singleCurationArtistNames.length > 0 && (
-                          <p className="text-[10px] text-white/50 mb-1.5 leading-relaxed tracking-wide">
+                          <p className="text-sm text-white/50 mb-2 leading-relaxed tracking-wide">
                             {singleCurationArtistNames.join(' · ')}
                           </p>
                         )}
-                        <p className="text-white font-bold text-xl leading-tight mb-0.5">{activeCurations[0].title}</p>
+                        <p className="text-white font-bold text-3xl leading-tight mb-1">{activeCurations[0].title}</p>
                         {activeCurations[0].subtitle && (
-                          <p className="text-white/65 text-[13px] leading-snug">{activeCurations[0].subtitle}</p>
+                          <p className="text-white/65 text-xl leading-snug">{activeCurations[0].subtitle}</p>
                         )}
                         {(activeCurations[0].startAt && activeCurations[0].endAt) && (
-                          <p className="text-white/38 text-[10px] tracking-[2px] mt-2.5">
+                          <p className="text-white/38 text-sm tracking-[2px] mt-3">
                             {activeCurations[0].startAt.replace(/-/g, '.')} — {activeCurations[0].endAt.replace(/-/g, '.')}
                           </p>
                         )}
