@@ -40,34 +40,25 @@ function EndedCurationsSection({
   endedCurations: import('../utils/curationStore').CuratedExhibition[];
 }) {
   const [showAll, setShowAll] = useState(false);
-  const visible = showAll ? endedCurations : endedCurations.slice(0, 3);
+  const visible = showAll ? endedCurations : endedCurations.slice(0, 4);
   return (
     <section className="mt-14 sm:mt-16">
       <h2 className="text-sm font-semibold text-muted-foreground mb-5">지난 기획전</h2>
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 sm:gap-5">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
         {visible.map((c) => (
           <div
             key={c.id}
-            className="relative overflow-hidden rounded-lg aspect-[3/4] grayscale opacity-50"
+            className="overflow-hidden rounded-lg aspect-[21/9] grayscale opacity-50 hover:opacity-75 hover:grayscale-0 transition-all duration-300"
           >
             <ImageWithFallback
               src={c.bannerImageUrl}
               alt={c.title}
               className="w-full h-full object-cover"
             />
-            <div className="absolute inset-x-0 bottom-0 h-36 bg-gradient-to-t from-black/80 to-transparent" />
-            <div className="absolute inset-x-0 bottom-0 p-3 sm:p-4">
-              {(c.startAt && c.endAt) && (
-                <p className="text-[10px] text-white/50 mb-1">
-                  {c.startAt.replace(/-/g, '.')} — {c.endAt.replace(/-/g, '.')}
-                </p>
-              )}
-              <p className="text-xs sm:text-sm font-bold text-white leading-snug line-clamp-2">{c.title}</p>
-            </div>
           </div>
         ))}
       </div>
-      {!showAll && endedCurations.length > 3 && (
+      {!showAll && endedCurations.length > 4 && (
         <button
           type="button"
           onClick={() => setShowAll(true)}
