@@ -1061,7 +1061,7 @@ export default function UploadWizard() {
               type="button"
               variant="outline"
               className="flex-1 min-h-[44px] text-sm"
-              onClick={() => setNonMemberPreviewModal(null)}
+              onClick={() => { setNonMemberPreviewModal(null); setWizardStep(3); }}
             >
               {t('upload.nonMemberPreviewBack')}
             </Button>
