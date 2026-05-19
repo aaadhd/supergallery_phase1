@@ -2487,11 +2487,11 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.29 | 2026-05-19 | PM × Claude | browse.pickHallOfFame 삭제(KO+EN) — USR-EVT-07 Deprecated |
+| v1.28 | 2026-05-18 | PM × Claude | nav.browse; browse.tabBrowse/tabPick/tabCuration 재정의; browse.curationEmpty·pickEmpty 신규; browse.emptyCtaAll 삭제 |
 | v1.27 | 2026-05-18 | PM × Claude | settings.notifSystemAlwaysOn EN "Group exhibition posts" 제거; "발행" → "신청" 용어 변경(nonMemberPreview* KO·EN, faq.a7·a11 KO·EN, errPublishFailed KO, publishing KO·EN, publishedConfirmTitle KO) |
 | v1.26 | 2026-05-15 | PM × Claude | signup.linkSentAutoFlow "(미사용)" 삭제; upload.editSoloConvertTitle·editSoloConvertDesc·editSoloConvertConfirm KO·EN 신규(Policy §13.6.1 SSoT); signup.emailStepDesc "비밀번호는 따로 만들 필요 없어요." 문구 제거(KO·EN) |
 | v1.25 | 2026-05-14 | PM × Claude | 이중 이스케이프 정리 — notifApprovedForParticipant·notifAutoMatched·notifTargetWork 3종·nonMemberPreviewInfo `\\\'` → `\'` |
-| v1.26 | 2026-05-19 | PM × Claude | browse.pickHallOfFame 삭제(KO+EN) — USR-EVT-07 명예의 전당 Deprecated |
-| v1.25 | 2026-05-18 | PM × Claude | nav.browse 둘러보기→전시(KO)/Browse→Exhibitions(EN); browse.tabAll/tabSolo/tabGroup → tabBrowse/tabCuration/tabPick; emptyHint 카테고리 문구 제거; browse.curationEmpty·pickEmpty·pickHallOfFame 신규(KO+EN); browse.emptyCtaAll 삭제 |
 | v1.24 | 2026-05-14 | PM × Claude | tabGuideLikes·tabGuideSaves·search.goBrowse "작품"→"전시" 누락분 보정(KO+EN); 프로필 빈 상태 prose 예시 정합 |
 | v1.23 | 2026-05-14 | PM × Claude | settings.notifSystemAlwaysOn 강제 수신 7종 전체 열거; browse/profile 빈 상태 카피 "작품"→"전시" 통일(KO+EN) |
 | v1.22 | 2026-05-14 | PM × Claude | 친구 → 비회원 작가 용어 전체 변경(FAQ q11~14·flowMap); 미사용 i18n 키 308개(KO+EN) 일괄 삭제 |
