@@ -206,7 +206,7 @@ export default function WorkImageViewer({
           <button
             type="button"
             onClick={resetView}
-            className="rounded-2xl bg-black/60 px-3 py-1.5 text-sm text-white backdrop-blur-sm"
+            className="rounded-2xl bg-black/60 px-3 py-3 text-sm text-white backdrop-blur-sm"
           >
             {t('viewer.fitScreen')}
           </button>
