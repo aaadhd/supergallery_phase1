@@ -23,11 +23,19 @@ const STEP_DEFS: StepDef[] = [
 ];
 
 export function WizardProgress({ currentStep, isGroup, onStepClick }: Props) {
+  const { t } = useI18n();
   // 내 작품 올리기: step 3 숨김
   const steps = isGroup ? STEP_DEFS : STEP_DEFS.filter((s) => s.number !== 3);
 
   return (
-    <div className="flex items-center justify-center gap-0 py-3 px-4 border-b border-border/40 bg-white sticky top-0 z-10">
+    <div className="border-b border-border/40 bg-white sticky top-0 z-10">
+      {/* 모드 표시 */}
+      <div className="flex justify-center pt-2 pb-0">
+        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-primary bg-primary/10 rounded-full px-3 py-0.5">
+          {isGroup ? t('upload.typeGroup') : t('upload.typeSolo')}
+        </span>
+      </div>
+      <div className="flex items-center justify-center gap-0 py-2 px-4">
       {steps.map((step, idx) => {
         const isDone = step.number < currentStep;
         const isCurrent = step.number === currentStep;
@@ -81,6 +89,7 @@ export function WizardProgress({ currentStep, isGroup, onStepClick }: Props) {
           </div>
         );
       })}
+      </div>
     </div>
   );
 }
