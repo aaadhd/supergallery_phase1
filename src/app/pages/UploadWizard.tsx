@@ -1047,9 +1047,6 @@ export default function UploadWizard() {
         {pubHasInvites && (
           <p className="text-sm text-primary mb-4 max-w-md">{t('upload.publishedConfirmInviteNote')}</p>
         )}
-        <p className="mt-4 text-xs text-muted-foreground max-w-md">
-          {t('upload.publishedConfirmSlaNote')}
-        </p>
         {pubHasInvites && publishedWork && (
           <div className="mt-6">
             <InviteShareButton
