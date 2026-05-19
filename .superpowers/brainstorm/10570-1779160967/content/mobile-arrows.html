@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;background:#f2f0ec;padding:20px}
+  h2{font-size:16px;font-weight:700;color:#1a1a1a;margin-bottom:5px}
+  .subtitle{font-size:12px;color:#888;margin-bottom:20px}
+
+  .row{display:flex;gap:16px}
+  .col{flex:1;min-width:0}
+  .col-label{font-size:11px;font-weight:700;color:#555;margin-bottom:8px;letter-spacing:0.3px}
+
+  /* 모바일 프레임 */
+  .phone{
+    width:180px;margin:0 auto;
+    background:#1a1a1a;border-radius:28px;
+    padding:10px 6px;
+    box-shadow:0 8px 32px rgba(0,0,0,0.25);
+  }
+  .phone-screen{background:#f9f8f6;border-radius:20px;overflow:hidden}
+
+  /* 배지 */
+  .badge-live{display:inline-flex;align-items:center;gap:5px;background:#f0fdf4;border:1px solid #bbf7d0;color:#16a34a;font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 8px;border-radius:14px;margin:8px 0 6px 8px}
+  .dot-g{width:5px;height:5px;border-radius:50%;background:#4ade80;display:inline-block;animation:pulse 1.8s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,0.6)}50%{box-shadow:0 0 0 3px rgba(74,222,128,0)}}
+
+  /* 캐러셀 */
+  .carousel{position:relative;aspect-ratio:21/9;background:linear-gradient(135deg,#2c2a36,#4a3f5c,#8a7090,#c4957a);overflow:hidden}
+
+  /* hover 화살표 (데스크톱) */
+  .arr{position:absolute;top:50%;transform:translateY(-50%);z-index:4;width:28px;height:28px;border-radius:50%;background:rgba(0,0,0,0.4);border:1px solid rgba(255,255,255,0.15);color:#fff;display:flex;align-items:center;justify-content:center;font-size:12px;opacity:0;transition:opacity .2s}
+  .arr-l{left:6px}.arr-r{right:6px}
+
+  /* 컨트롤 (우하단) */
+  .fc{position:absolute;bottom:6px;right:7px;display:inline-flex;align-items:center;background:rgba(0,0,0,0.42);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.14);border-radius:20px;padding:4px 7px;gap:0}
+  .fd{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,0.4);margin:0 3px;border:none;cursor:pointer;flex-shrink:0}
+  .fd.on{background:transparent;border:1.5px solid #fff;width:6px;height:6px}
+  .fdi{width:1px;height:8px;background:rgba(255,255,255,0.2);margin:0 4px;flex-shrink:0}
+  .fp{width:14px;height:14px;background:none;border:none;color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;padding:0}
+  .fp svg{width:7px;height:7px;fill:#fff}
+
+  /* 옵션 A: 스와이프만 — 화살표 없음 */
+  /* 옵션 B: 컨트롤 바깥에 작은 화살표 */
+  .ext-controls{display:flex;align-items:center;justify-content:center;gap:8px;padding:6px 8px;background:#fff;border-top:1px solid #f0f0f0}
+  .ext-arr{width:28px;height:28px;border-radius:50%;background:#f5f5f5;border:1px solid #e0e0e0;color:#555;display:flex;align-items:center;justify-content:center;font-size:13px;cursor:pointer;flex-shrink:0}
+  .ext-dots{display:flex;align-items:center;gap:5px}
+  .ext-dot{width:5px;height:5px;border-radius:50%;background:#ddd}
+  .ext-dot.on{background:transparent;border:1.5px solid #555;width:7px;height:7px}
+  .ext-pp{width:28px;height:28px;border-radius:50%;background:#f5f5f5;border:1px solid #e0e0e0;color:#555;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .ext-pp svg{width:8px;height:8px;fill:#555}
+
+  .note{font-size:10px;color:#888;line-height:1.65;margin-top:10px;padding:8px 10px;background:#fff;border-radius:8px;border:1px solid #eee}
+  .note strong{color:#444}
+</style>
+</head>
+<body>
+
+<h2>모바일 — 화살표 처리 방식</h2>
+<p class="subtitle">데스크톱은 hover 시 표시로 확정. 모바일은 두 가지 방향이에요</p>
+
+<div class="row">
+
+  <!-- 옵션 A: 스와이프만 -->
+  <div class="col">
+    <p class="col-label">A. 스와이프만 (화살표 없음)</p>
+    <div class="phone">
+      <div class="phone-screen">
+        <div><div class="badge-live"><span class="dot-g"></span> 현재 전시 중</div></div>
+        <div class="carousel">
+          <!-- 화살표 없음 -->
+          <div class="fc">
+            <div class="fd on"></div><div class="fd"></div><div class="fd"></div>
+            <div class="fdi"></div>
+            <button class="fp"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="4" height="16" rx="1"/><rect x="15" y="4" width="4" height="16" rx="1"/></svg></button>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="note">
+      포스터 완전히 깨끗하게 보임.<br>
+      스와이프 + 자동전환 + 도트 클릭.<br>
+      <strong>단점:</strong> 스와이프를 모르는 시니어는 넘기는 방법을 못 찾을 수 있음
+    </div>
+  </div>
+
+  <!-- 옵션 B: 이미지 밖 컨트롤 바 -->
+  <div class="col">
+    <p class="col-label">B. 이미지 아래 컨트롤 바 ✦ 추천</p>
+    <div class="phone">
+      <div class="phone-screen">
+        <div><div class="badge-live"><span class="dot-g"></span> 현재 전시 중</div></div>
+        <div class="carousel">
+          <!-- 이미지 위 컨트롤 없음 -->
+        </div>
+        <!-- 이미지 밖 바 -->
+        <div class="ext-controls">
+          <div class="ext-arr">‹</div>
+          <div class="ext-dots">
+            <div class="ext-dot on"></div>
+            <div class="ext-dot"></div>
+            <div class="ext-dot"></div>
+          </div>
+          <div class="ext-pp"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="4" height="16" rx="1"/><rect x="15" y="4" width="4" height="16" rx="1"/></svg></div>
+          <div class="ext-arr">›</div>
+        </div>
+      </div>
+    </div>
+    <div class="note">
+      포스터 완전히 깨끗.<br>
+      화살표가 이미지 밖에 있어서 명확히 보임.<br>
+      <strong>장점:</strong> 시니어도 버튼으로 직접 조작 가능
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

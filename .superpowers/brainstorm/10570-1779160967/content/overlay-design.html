@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;background:#f2f0ec;padding:20px}
+  h2{font-size:15px;font-weight:700;color:#1a1a1a;margin-bottom:5px}
+  .subtitle-txt{font-size:12px;color:#888;margin-bottom:18px}
+  .row{display:flex;gap:16px}
+  .col{flex:1;min-width:0}
+  .col-label{font-size:11px;font-weight:700;color:#555;margin-bottom:8px}
+
+  .banner{position:relative;aspect-ratio:21/9;overflow:hidden;border-radius:10px;background:linear-gradient(135deg,#2c2a36 0%,#4a3f5c 35%,#8a7090 65%,#c4957a 100%);box-shadow:0 8px 32px rgba(0,0,0,0.2)}
+  .overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.75) 0%,rgba(0,0,0,0.15) 45%,transparent 70%)}
+  .info{position:absolute;bottom:0;left:0;right:0;padding:14px 18px}
+  .artists{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px}
+  .artist-chip{font-size:10px;color:rgba(255,255,255,0.65);letter-spacing:.5px}
+  .artist-chip+.artist-chip::before{content:'·';margin-right:6px;color:rgba(255,255,255,0.3)}
+  .title{color:#fff;font-size:16px;font-weight:700;margin-bottom:4px;line-height:1.3}
+  .sub{color:rgba(255,255,255,0.65);font-size:10px;line-height:1.6}
+  .dates{color:rgba(255,255,255,0.4);font-size:9px;letter-spacing:2px;margin-top:6px}
+</style>
+</head>
+<body>
+<h2>배너 오버레이 — 조건부 표시</h2>
+<p class="subtitle-txt">subtitle / 날짜 / 아티스트 중 하나라도 있으면 오버레이 표시. 없으면 이미지만.</p>
+
+<div class="row">
+  <!-- 풀 오버레이 -->
+  <div class="col">
+    <p class="col-label">필드 모두 입력된 경우</p>
+    <div class="banner">
+      <div class="overlay"></div>
+      <div class="info">
+        <div class="artists">
+          <span class="artist-chip">황서현</span>
+          <span class="artist-chip">이고은</span>
+          <span class="artist-chip">구월</span>
+        </div>
+        <div class="title">봄의 서정 — 꽃과 빛의 기록</div>
+        <div class="sub">봄을 캔버스에 담은 작가 7인의 기획전</div>
+        <div class="dates">2026.05.01 — 2026.06.30</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 날짜만 -->
+  <div class="col">
+    <p class="col-label">제목 + 날짜만 (subtitle 없음)</p>
+    <div class="banner" style="background:linear-gradient(135deg,#1a3040,#2d5a6e,#5a9aaa,#a0d4c4)">
+      <div class="overlay"></div>
+      <div class="info">
+        <div class="title">빛의 기억 — 수채화 특별전</div>
+        <div class="dates">2026.05.15 — 2026.07.15</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="row" style="margin-top:14px">
+  <!-- subtitle만 -->
+  <div class="col">
+    <p class="col-label">제목 + subtitle만 (날짜 없음)</p>
+    <div class="banner" style="background:linear-gradient(135deg,#3a2418,#6b4532,#a87050,#d4b080)">
+      <div class="overlay"></div>
+      <div class="info">
+        <div class="title">황혼의 팔레트 — 노을 드로잉전</div>
+        <div class="sub">하루의 끝을 그림으로 기록한 작가들</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 오버레이 없음 (이미지만) -->
+  <div class="col">
+    <p class="col-label">subtitle·날짜 없음 → 이미지만</p>
+    <div class="banner" style="background:linear-gradient(135deg,#1e2a1e,#3a5a3a,#5a9a5a,#90c490)">
+      <!-- 오버레이 없음 -->
+    </div>
+  </div>
+</div>
+
+<p style="margin-top:14px;font-size:11px;color:#888;background:#fff;padding:10px 14px;border-radius:8px;border:1px solid #eee;line-height:1.7">
+  <strong>오버레이 트리거:</strong> <code>subtitle</code> OR <code>startAt</code> OR <code>endAt</code> 중 하나라도 있으면 오버레이 활성.<br>
+  <strong>표시 항목:</strong> 아티스트(pieces에서 추출, 있을 때만) · 제목(항상) · subtitle(있을 때만) · 날짜(startAt·endAt 둘 다 있을 때만)
+</p>
+</body>
+</html>

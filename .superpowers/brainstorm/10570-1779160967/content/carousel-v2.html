@@ -1,0 +1,210 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carousel v2</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif; background: #f2f0ec; padding: 24px; }
+  h2 { font-size: 17px; font-weight: 700; color: #1a1a1a; margin-bottom: 6px; }
+  .subtitle { font-size: 12px; color: #888; margin-bottom: 20px; line-height: 1.6; }
+
+  .carousel-wrap {
+    border-radius: 14px; overflow: hidden;
+    background: #111018;
+    box-shadow: 0 16px 56px -8px rgba(0,0,0,0.28);
+    max-width: 760px; margin: 0 auto 24px;
+    position: relative;
+  }
+
+  /* 슬라이드 */
+  .slide { position: relative; aspect-ratio: 21/9; display: none; }
+  .slide.active { display: block; }
+  .slide-bg { position: absolute; inset: 0; background-size: cover; background-position: center; }
+  .slide-bg-1 { background: linear-gradient(135deg,#2c2a36 0%,#4a3f5c 35%,#8a7090 65%,#c4957a 100%); }
+  .slide-bg-2 { background: linear-gradient(135deg,#1a3040 0%,#2d5a6e 35%,#5a9aaa 65%,#a0d4c4 100%); }
+  .slide-bg-3 { background: linear-gradient(135deg,#3a2418 0%,#6b4532 35%,#a87050 65%,#d4b080 100%); }
+  .slide-overlay { position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.72) 0%,rgba(0,0,0,0.04) 55%,transparent 100%); }
+
+  /* 진행중 배지 */
+  .badge-live {
+    position:absolute; top:16px; left:18px; z-index:3;
+    display:inline-flex; align-items:center; gap:6px;
+    background:rgba(0,0,0,0.45); backdrop-filter:blur(8px);
+    border:1px solid rgba(255,255,255,0.2);
+    color:#fff; font-size:10px; font-weight:700; letter-spacing:2px; text-transform:uppercase;
+    padding:5px 12px; border-radius:20px;
+  }
+  .dot-live { width:7px;height:7px;border-radius:50%;background:#4ade80;animation:pulse 1.8s ease-in-out infinite; }
+  @keyframes pulse { 0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,0.6)} 50%{box-shadow:0 0 0 5px rgba(74,222,128,0)} }
+
+  /* 슬라이드 텍스트 */
+  .slide-text { position:absolute;bottom:0;left:0;right:0;padding:18px 22px;z-index:2; }
+  .slide-text h3 { color:#fff;font-size:18px;font-weight:700;margin:0 0 5px;line-height:1.3; }
+  .slide-text .sub { color:rgba(255,255,255,0.6);font-size:11px; }
+  .slide-text .dates { color:rgba(255,255,255,0.4);font-size:9px;letter-spacing:2px;margin-top:7px; }
+
+  /* 좌우 화살표 버튼 */
+  .arrow {
+    position:absolute; top:50%; transform:translateY(-50%); z-index:4;
+    width:40px; height:40px; border-radius:50%;
+    background:rgba(0,0,0,0.4); backdrop-filter:blur(6px);
+    border:1px solid rgba(255,255,255,0.18);
+    color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition:background 0.2s;
+    font-size:16px; line-height:1;
+  }
+  .arrow:hover { background:rgba(0,0,0,0.65); }
+  .arrow-left { left:14px; }
+  .arrow-right { right:14px; }
+
+  /* 슬라이드 전환 fade */
+  .slide.fade-in { animation: fadeIn 0.45s ease; }
+  @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+
+  /* ---- 인디케이터 바 ---- */
+  .indicator-bar {
+    background:#111018;
+    padding:11px 18px;
+    display:flex; align-items:center; justify-content:center; gap:14px;
+  }
+
+  /* 정지/플레이 버튼 */
+  .ctrl-btn {
+    width:28px; height:28px; border-radius:50%;
+    background:rgba(255,255,255,0.1); border:1px solid rgba(255,255,255,0.2);
+    color:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center;
+    transition:background 0.2s; flex-shrink:0;
+  }
+  .ctrl-btn:hover { background:rgba(255,255,255,0.2); }
+  .ctrl-btn svg { width:11px; height:11px; fill:#fff; }
+
+  /* 인디케이터 도트 */
+  .indicator-dots { display:flex; align-items:center; gap:7px; }
+  .ind-dot {
+    width:7px; height:7px; border-radius:50%;
+    background:rgba(255,255,255,0.25);
+    cursor:pointer; transition:all 0.3s;
+    border:none;
+  }
+  .ind-dot.active { background:#fff; width:22px; border-radius:3.5px; }
+  .ind-dot:hover:not(.active) { background:rgba(255,255,255,0.5); }
+
+  /* 슬라이드 카운트 */
+  .slide-count { color:rgba(255,255,255,0.3); font-size:9px; letter-spacing:1.5px; min-width:28px; text-align:right; }
+
+  /* 지난 기획전 */
+  .ended-section { max-width:760px; margin:0 auto; }
+  .ended-label { font-size:10px;font-weight:700;color:#bbb;letter-spacing:2px;text-transform:uppercase;margin:0 0 12px; }
+  .ended-grid { display:grid;grid-template-columns:1fr 1fr;gap:10px; }
+  .ended-card { position:relative;overflow:hidden;border-radius:8px;aspect-ratio:21/9;filter:grayscale(1);opacity:0.5;cursor:pointer; }
+  .ec-bg1{background:linear-gradient(135deg,#2c2a36,#7a6580,#c4957a)}
+  .ec-bg2{background:linear-gradient(135deg,#1a3040,#5a9aaa,#a0d4c4)}
+  .ec-bg3{background:linear-gradient(135deg,#3a2418,#a87050,#d4b080)}
+  .ec-bg4{background:linear-gradient(135deg,#1e2a1e,#4a7a4a,#a0c480)}
+  .ended-overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 55%)}
+  .ended-text{position:absolute;bottom:0;left:0;right:0;padding:8px 10px}
+  .ended-text .ecd{color:rgba(255,255,255,0.45);font-size:8px;letter-spacing:1px;margin:0 0 2px}
+  .ended-text .ect{color:#fff;font-size:10px;font-weight:700;margin:0;line-height:1.3}
+</style>
+</head>
+<body>
+
+<h2>캐러셀 v2 — 인디케이터 + 정지/플레이 + 좌우 버튼</h2>
+<p class="subtitle">3초 자동 전환, 하단에 컨트롤 모아두기</p>
+
+<div class="carousel-wrap">
+  <!-- 슬라이드 -->
+  <div class="slide active fade-in" id="s0">
+    <div class="slide-bg slide-bg-1"></div>
+    <div class="slide-overlay"></div>
+    <div class="badge-live"><span class="dot-live"></span> 현재 전시 중</div>
+    <div class="slide-text">
+      <h3>봄의 서정 — 꽃과 빛의 기록</h3>
+      <p class="sub">봄을 캔버스에 담은 작가 7인의 기획전</p>
+      <p class="dates">2026.05.01 — 2026.06.30</p>
+    </div>
+  </div>
+  <div class="slide" id="s1">
+    <div class="slide-bg slide-bg-2"></div>
+    <div class="slide-overlay"></div>
+    <div class="badge-live"><span class="dot-live"></span> 현재 전시 중</div>
+    <div class="slide-text">
+      <h3>빛의 기억 — 수채화 특별전</h3>
+      <p class="sub">물과 빛으로 빚어낸 수채화 작가 5인</p>
+      <p class="dates">2026.05.15 — 2026.07.15</p>
+    </div>
+  </div>
+  <div class="slide" id="s2">
+    <div class="slide-bg slide-bg-3"></div>
+    <div class="slide-overlay"></div>
+    <div class="badge-live"><span class="dot-live"></span> 현재 전시 중</div>
+    <div class="slide-text">
+      <h3>황혼의 팔레트 — 노을 드로잉전</h3>
+      <p class="sub">하루의 끝을 그림으로 기록한 작가들</p>
+      <p class="dates">2026.05.20 — 2026.07.31</p>
+    </div>
+  </div>
+
+  <!-- 좌우 화살표 -->
+  <button class="arrow arrow-left" onclick="move(-1)" aria-label="이전">‹</button>
+  <button class="arrow arrow-right" onclick="move(1)" aria-label="다음">›</button>
+
+  <!-- 인디케이터 바 -->
+  <div class="indicator-bar">
+    <!-- 정지/플레이 버튼 -->
+    <button class="ctrl-btn" id="ctrlBtn" onclick="togglePlay()" aria-label="정지">
+      <!-- pause icon (default: playing) -->
+      <svg id="iconPause" viewBox="0 0 24 24"><rect x="5" y="4" width="4" height="16" rx="1"/><rect x="15" y="4" width="4" height="16" rx="1"/></svg>
+      <!-- play icon (hidden when playing) -->
+      <svg id="iconPlay" viewBox="0 0 24 24" style="display:none"><polygon points="5,3 19,12 5,21"/></svg>
+    </button>
+
+    <!-- 도트 인디케이터 -->
+    <div class="indicator-dots">
+      <button class="ind-dot active" onclick="goTo(0)" aria-label="1번 슬라이드"></button>
+      <button class="ind-dot" onclick="goTo(1)" aria-label="2번 슬라이드"></button>
+      <button class="ind-dot" onclick="goTo(2)" aria-label="3번 슬라이드"></button>
+    </div>
+
+    <!-- 카운트 -->
+    <span class="slide-count" id="cnt">1 / 3</span>
+  </div>
+</div>
+
+<!-- 지난 기획전 -->
+<div class="ended-section">
+  <p class="ended-label">지난 기획전</p>
+  <div class="ended-grid">
+    <div class="ended-card ec-bg1"><div class="ended-overlay"></div><div class="ended-text"><p class="ecd">2026.03.01 — 04.30</p><p class="ect">겨울 서정 — 설경과 정물</p></div></div>
+    <div class="ended-card ec-bg2"><div class="ended-overlay"></div><div class="ended-text"><p class="ecd">2026.01.01 — 02.28</p><p class="ect">빛과 색채 — 추상의 세계</p></div></div>
+    <div class="ended-card ec-bg3"><div class="ended-overlay"></div><div class="ended-text"><p class="ecd">2025.11.01 — 12.31</p><p class="ect">일상의 단면 — 정물화 특별전</p></div></div>
+    <div class="ended-card ec-bg4"><div class="ended-overlay"></div><div class="ended-text"><p class="ecd">2025.09.01 — 10.31</p><p class="ect">자연을 담다 — 풍경화 기획전</p></div></div>
+  </div>
+</div>
+
+<script>
+  let cur = 0, total = 3, playing = true, timer = null;
+
+  function goTo(idx) {
+    document.getElementById('s' + cur).classList.remove('active','fade-in');
+    cur = (idx + total) % total;
+    const s = document.getElementById('s' + cur);
+    s.classList.add('active');
+    requestAnimationFrame(() => s.classList.add('fade-in'));
+    document.querySelectorAll('.ind-dot').forEach((d,i) => d.classList.toggle('active', i === cur));
+    document.getElementById('cnt').textContent = (cur+1) + ' / ' + total;
+  }
+  function move(d) { goTo(cur + d); if(playing) resetTimer(); }
+  function resetTimer() { clearTimeout(timer); if(playing) timer = setTimeout(() => { goTo(cur+1); resetTimer(); }, 3000); }
+  function togglePlay() {
+    playing = !playing;
+    document.getElementById('iconPause').style.display = playing ? '' : 'none';
+    document.getElementById('iconPlay').style.display  = playing ? 'none' : '';
+    playing ? resetTimer() : clearTimeout(timer);
+  }
+  resetTimer();
+</script>
+</body>
+</html>

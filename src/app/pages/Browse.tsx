@@ -41,22 +41,58 @@ function EndedCurationsSection({
 }) {
   const [showAll, setShowAll] = useState(false);
   const visible = showAll ? endedCurations : endedCurations.slice(0, 4);
+  const works = workStore.getWorks();
+  const worksMap = useMemo(() => new Map(works.map((w) => [w.id, w])), [works]);
+  const getArtistNames = useCallback((c: import('../utils/curationStore').CuratedExhibition): string[] => {
+    const seen = new Set<string>();
+    const names: string[] = [];
+    for (const piece of c.pieces ?? []) {
+      const work = worksMap.get(piece.workId);
+      if (!work) continue;
+      const artist = allArtists.find((a) => a.id === work.artistId);
+      const name = artist?.name ?? work.artist?.name ?? '';
+      if (name && !seen.has(name)) { seen.add(name); names.push(name); }
+    }
+    return names;
+  }, [worksMap]);
   return (
     <section className="mt-14 sm:mt-16">
       <h2 className="text-sm font-semibold text-muted-foreground mb-5">지난 기획전</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
-        {visible.map((c) => (
+        {visible.map((c) => {
+          const artistNames = c.bannerOverlay ? getArtistNames(c) : [];
+          return (
           <div
             key={c.id}
-            className="overflow-hidden rounded-lg aspect-[21/9] grayscale opacity-50 hover:opacity-75 hover:grayscale-0 transition-all duration-300"
+            className="relative overflow-hidden rounded-lg aspect-[21/9] grayscale opacity-50 hover:opacity-75 hover:grayscale-0 transition-all duration-300"
           >
             <ImageWithFallback
               src={c.bannerImageUrl}
               alt={c.title}
               className="w-full h-full object-cover"
             />
+            {c.bannerOverlay && (
+              <>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/[0.08] to-transparent pointer-events-none" />
+                <div className="absolute bottom-0 left-0 right-0 p-4 pointer-events-none">
+                  {artistNames.length > 0 && (
+                    <p className="text-xs text-white/65 mb-2 leading-relaxed">{artistNames.join(' · ')}</p>
+                  )}
+                  <p className="text-white font-bold text-base leading-snug mb-1">{c.title}</p>
+                  {c.subtitle && (
+                    <p className="text-white/65 text-sm leading-relaxed">{c.subtitle}</p>
+                  )}
+                  {(c.startAt && c.endAt) && (
+                    <p className="text-white/45 text-xs tracking-[2px] mt-2">
+                      {c.startAt.replace(/-/g, '.')} — {c.endAt.replace(/-/g, '.')}
+                    </p>
+                  )}
+                </div>
+              </>
+            )}
           </div>
-        ))}
+          );
+        })}
       </div>
       {!showAll && endedCurations.length > 4 && (
         <button
@@ -512,18 +548,18 @@ export default function Browse() {
                   {activeCurations[0].bannerOverlay && (
                     <>
                       <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/[0.08] to-transparent pointer-events-none" />
-                      <div className="absolute bottom-0 left-0 right-0 p-4 pointer-events-none">
+                      <div className="absolute bottom-0 left-0 right-0 p-5 pointer-events-none">
                         {singleCurationArtistNames.length > 0 && (
-                          <p className="text-[9px] text-white/60 mb-1.5 leading-relaxed">
+                          <p className="text-xs text-white/65 mb-2 leading-relaxed">
                             {singleCurationArtistNames.join(' · ')}
                           </p>
                         )}
-                        <p className="text-white font-bold text-[15px] leading-snug mb-1">{activeCurations[0].title}</p>
+                        <p className="text-white font-bold text-lg leading-snug mb-1.5">{activeCurations[0].title}</p>
                         {activeCurations[0].subtitle && (
-                          <p className="text-white/60 text-[10px] leading-relaxed">{activeCurations[0].subtitle}</p>
+                          <p className="text-white/65 text-sm leading-relaxed">{activeCurations[0].subtitle}</p>
                         )}
                         {(activeCurations[0].startAt && activeCurations[0].endAt) && (
-                          <p className="text-white/40 text-[8px] tracking-[2px] mt-1.5">
+                          <p className="text-white/45 text-xs tracking-[2px] mt-2">
                             {activeCurations[0].startAt.replace(/-/g, '.')} — {activeCurations[0].endAt.replace(/-/g, '.')}
                           </p>
                         )}

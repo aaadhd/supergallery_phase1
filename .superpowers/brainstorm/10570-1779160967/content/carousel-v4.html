@@ -1,0 +1,154 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;background:#f2f0ec;padding:24px}
+  h2{font-size:16px;font-weight:700;color:#1a1a1a;margin-bottom:5px}
+  .subtitle{font-size:12px;color:#888;margin-bottom:20px}
+
+  .carousel-wrap{border-radius:14px;overflow:hidden;box-shadow:0 16px 56px -8px rgba(0,0,0,0.28);max-width:760px;margin:0 auto 24px;position:relative}
+
+  .slide{position:relative;aspect-ratio:21/9;display:none}
+  .slide.active{display:block}
+  .slide-bg{position:absolute;inset:0;background-size:cover;background-position:center}
+  .bg1{background:linear-gradient(135deg,#2c2a36 0%,#4a3f5c 35%,#8a7090 65%,#c4957a 100%)}
+  .bg2{background:linear-gradient(135deg,#1a3040 0%,#2d5a6e 35%,#5a9aaa 65%,#a0d4c4 100%)}
+  .bg3{background:linear-gradient(135deg,#3a2418 0%,#6b4532 35%,#a87050 65%,#d4b080 100%)}
+  .overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.68) 0%,rgba(0,0,0,0.04) 55%,transparent 100%)}
+
+  .badge{position:absolute;top:14px;left:16px;z-index:3;display:inline-flex;align-items:center;gap:6px;background:rgba(0,0,0,0.42);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.18);color:#fff;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:5px 12px;border-radius:20px}
+  .dot-g{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:pulse 1.8s ease-in-out infinite}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,0.6)}50%{box-shadow:0 0 0 5px rgba(74,222,128,0)}}
+
+  /* 좌하단 텍스트 — 컨트롤과 겹치지 않게 오른쪽 여백 확보 */
+  .slide-text{position:absolute;bottom:0;left:0;right:100px;padding:16px 20px;z-index:2}
+  .slide-text h3{color:#fff;font-size:17px;font-weight:700;margin:0 0 4px;line-height:1.3}
+  .slide-text .sub{color:rgba(255,255,255,0.58);font-size:10px}
+  .slide-text .dates{color:rgba(255,255,255,0.38);font-size:9px;letter-spacing:2px;margin-top:6px}
+
+  .arr{position:absolute;top:50%;transform:translateY(-50%);z-index:4;width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,0.35);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.15);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:background .2s}
+  .arr:hover{background:rgba(0,0,0,0.6)}
+  .arr-l{left:12px}.arr-r{right:12px}
+
+  /* ── 우하단 플로팅 컨트롤 ── */
+  .float-controls{
+    position:absolute;bottom:14px;right:16px;
+    z-index:5;
+    display:inline-flex;align-items:center;gap:0;
+    background:rgba(0,0,0,0.45);
+    backdrop-filter:blur(10px);
+    border:1px solid rgba(255,255,255,0.15);
+    border-radius:30px;
+    padding:6px 10px;
+  }
+  .fc-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.45);margin:0 5px;cursor:pointer;transition:all .25s;border:none;display:block;flex-shrink:0}
+  .fc-dot.active{background:transparent;border:2px solid #fff;width:10px;height:10px}
+  .fc-dot:hover:not(.active){background:rgba(255,255,255,0.7)}
+  .fc-divider{width:1px;height:12px;background:rgba(255,255,255,0.2);margin:0 6px;flex-shrink:0}
+  .fc-play{width:22px;height:22px;background:none;border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0}
+  .fc-play svg{width:11px;height:11px;fill:#fff}
+
+  .slide.fade-in{animation:fadeIn .45s ease}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+  /* 지난 기획전 */
+  .ended-section{max-width:760px;margin:0 auto}
+  .ended-label{font-size:10px;font-weight:700;color:#bbb;letter-spacing:2px;text-transform:uppercase;margin:0 0 12px}
+  .ended-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .ended-card{position:relative;overflow:hidden;border-radius:8px;aspect-ratio:21/9;filter:grayscale(1);opacity:0.5;cursor:pointer}
+  .ec1{background:linear-gradient(135deg,#2c2a36,#7a6580,#c4957a)}
+  .ec2{background:linear-gradient(135deg,#1a3040,#5a9aaa,#a0d4c4)}
+  .ec3{background:linear-gradient(135deg,#3a2418,#a87050,#d4b080)}
+  .ec4{background:linear-gradient(135deg,#1e2a1e,#4a7a4a,#a0c480)}
+  .ec-ov{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 55%)}
+  .ec-tx{position:absolute;bottom:0;left:0;right:0;padding:8px 10px}
+  .ec-tx .d{color:rgba(255,255,255,0.45);font-size:8px;letter-spacing:1px;margin:0 0 2px}
+  .ec-tx .t{color:#fff;font-size:10px;font-weight:700;margin:0;line-height:1.3}
+</style>
+</head>
+<body>
+
+<h2>캐러셀 v4 — 컨트롤 우하단</h2>
+<p class="subtitle">좌하단 전시명·날짜 / 우하단 도트+정지 — 자연스럽게 분리돼요</p>
+
+<div class="carousel-wrap">
+  <div class="slide active fade-in" id="s0">
+    <div class="slide-bg bg1"></div><div class="overlay"></div>
+    <div class="badge"><span class="dot-g"></span> 현재 전시 중</div>
+    <div class="slide-text">
+      <h3>봄의 서정 — 꽃과 빛의 기록</h3>
+      <p class="sub">봄을 캔버스에 담은 작가 7인의 기획전</p>
+      <p class="dates">2026.05.01 — 2026.06.30</p>
+    </div>
+  </div>
+  <div class="slide" id="s1">
+    <div class="slide-bg bg2"></div><div class="overlay"></div>
+    <div class="badge"><span class="dot-g"></span> 현재 전시 중</div>
+    <div class="slide-text">
+      <h3>빛의 기억 — 수채화 특별전</h3>
+      <p class="sub">물과 빛으로 빚어낸 수채화 작가 5인</p>
+      <p class="dates">2026.05.15 — 2026.07.15</p>
+    </div>
+  </div>
+  <div class="slide" id="s2">
+    <div class="slide-bg bg3"></div><div class="overlay"></div>
+    <div class="badge"><span class="dot-g"></span> 현재 전시 중</div>
+    <div class="slide-text">
+      <h3>황혼의 팔레트 — 노을 드로잉전</h3>
+      <p class="sub">하루의 끝을 그림으로 기록한 작가들</p>
+      <p class="dates">2026.05.20 — 2026.07.31</p>
+    </div>
+  </div>
+
+  <div class="arr arr-l" onclick="move(-1)">‹</div>
+  <div class="arr arr-r" onclick="move(1)">›</div>
+
+  <!-- 우하단 플로팅 컨트롤 -->
+  <div class="float-controls">
+    <button class="fc-dot active" onclick="goTo(0)" aria-label="1번"></button>
+    <button class="fc-dot" onclick="goTo(1)" aria-label="2번"></button>
+    <button class="fc-dot" onclick="goTo(2)" aria-label="3번"></button>
+    <div class="fc-divider"></div>
+    <button class="fc-play" id="fcBtn" onclick="togglePlay()" aria-label="정지">
+      <svg id="icPause" viewBox="0 0 24 24"><rect x="5" y="4" width="4" height="16" rx="1"/><rect x="15" y="4" width="4" height="16" rx="1"/></svg>
+      <svg id="icPlay"  viewBox="0 0 24 24" style="display:none"><polygon points="5,3 19,12 5,21"/></svg>
+    </button>
+  </div>
+</div>
+
+<div class="ended-section">
+  <p class="ended-label">지난 기획전</p>
+  <div class="ended-grid">
+    <div class="ended-card ec1"><div class="ec-ov"></div><div class="ec-tx"><p class="d">2026.03.01 — 04.30</p><p class="t">겨울 서정 — 설경과 정물</p></div></div>
+    <div class="ended-card ec2"><div class="ec-ov"></div><div class="ec-tx"><p class="d">2026.01.01 — 02.28</p><p class="t">빛과 색채 — 추상의 세계</p></div></div>
+    <div class="ended-card ec3"><div class="ec-ov"></div><div class="ec-tx"><p class="d">2025.11.01 — 12.31</p><p class="t">일상의 단면 — 정물화 특별전</p></div></div>
+    <div class="ended-card ec4"><div class="ec-ov"></div><div class="ec-tx"><p class="d">2025.09.01 — 10.31</p><p class="t">자연을 담다 — 풍경화 기획전</p></div></div>
+  </div>
+</div>
+
+<script>
+  let cur=0,total=3,playing=true,timer=null;
+  function goTo(idx){
+    document.getElementById('s'+cur).classList.remove('active','fade-in');
+    cur=(idx+total)%total;
+    const s=document.getElementById('s'+cur);
+    s.classList.add('active');
+    requestAnimationFrame(()=>s.classList.add('fade-in'));
+    document.querySelectorAll('.fc-dot').forEach((d,i)=>d.classList.toggle('active',i===cur));
+    if(playing)resetTimer();
+  }
+  function move(d){goTo(cur+d)}
+  function resetTimer(){clearTimeout(timer);if(playing)timer=setTimeout(()=>{goTo(cur+1)},3000)}
+  function togglePlay(){
+    playing=!playing;
+    document.getElementById('icPause').style.display=playing?'':'none';
+    document.getElementById('icPlay').style.display=playing?'none':'';
+    playing?resetTimer():clearTimeout(timer);
+  }
+  resetTimer();
+</script>
+</body>
+</html>

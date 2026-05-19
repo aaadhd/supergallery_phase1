@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;background:#f2f0ec;padding:20px}
+  h2{font-size:16px;font-weight:700;color:#1a1a1a;margin-bottom:5px}
+  .subtitle{font-size:12px;color:#888;margin-bottom:18px}
+
+  .col{display:flex;flex-direction:column;gap:10px;flex:1;min-width:0}
+  .row{display:flex;gap:14px;margin-bottom:16px}
+  label{font-size:11px;font-weight:700;color:#666;letter-spacing:0.5px;margin-bottom:6px;display:block}
+
+  /* 캐러셀 공통 */
+  .c{border-radius:10px;overflow:hidden;background:#111018;box-shadow:0 8px 32px -4px rgba(0,0,0,0.25)}
+  .slide-area{position:relative;aspect-ratio:21/9;background:linear-gradient(135deg,#2c2a36 0%,#4a3f5c 35%,#8a7090 65%,#c4957a 100%)}
+  .overlay{position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.68) 0%,transparent 55%)}
+  .badge{position:absolute;top:12px;left:14px;display:inline-flex;align-items:center;gap:5px;background:rgba(0,0,0,0.42);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.18);color:#fff;font-size:9px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:4px 10px;border-radius:16px}
+  .dot-g{width:6px;height:6px;border-radius:50%;background:#4ade80}
+  .txt{position:absolute;bottom:0;left:0;right:0;padding:14px 16px}
+  .txt h3{color:#fff;font-size:14px;font-weight:700;margin:0 0 3px;line-height:1.3}
+  .txt p{color:rgba(255,255,255,0.5);font-size:9px;letter-spacing:1.5px}
+  .arr{position:absolute;top:50%;transform:translateY(-50%);width:34px;height:34px;border-radius:50%;background:rgba(0,0,0,0.38);backdrop-filter:blur(5px);border:1px solid rgba(255,255,255,0.16);color:#fff;display:flex;align-items:center;justify-content:center;font-size:14px;cursor:pointer}
+  .arr-l{left:10px}.arr-r{right:10px}
+  .ind-bar{background:#111018;padding:9px 14px;display:flex;align-items:center;gap:10px}
+  .dots{display:flex;align-items:center;gap:6px}
+  .d{width:6px;height:6px;border-radius:50%;background:rgba(255,255,255,0.25)}
+  .d.on{background:#fff;width:18px;border-radius:3px}
+  .cnt{color:rgba(255,255,255,0.3);font-size:9px;letter-spacing:1.5px}
+  .pbtn{width:26px;height:26px;border-radius:50%;background:rgba(255,255,255,0.1);border:1px solid rgba(255,255,255,0.18);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer;flex-shrink:0}
+  .pbtn svg{width:10px;height:10px;fill:#fff}
+
+  /* 슬라이드 위 플로팅 컨트롤 */
+  .float-ctrl{position:absolute;bottom:14px;right:14px;width:30px;height:30px;border-radius:50%;background:rgba(0,0,0,0.45);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.18);color:#fff;display:flex;align-items:center;justify-content:center;cursor:pointer}
+  .float-ctrl svg{width:10px;height:10px;fill:#fff}
+</style>
+</head>
+<body>
+
+<h2>정지/플레이 버튼 위치 비교</h2>
+<p class="subtitle">어느 위치가 자연스러운지 봐요</p>
+
+<div class="row">
+
+  <!-- A: 인디케이터 바 왼쪽 (현재) -->
+  <div class="col">
+    <label>A. 인디케이터 바 왼쪽 (현재)</label>
+    <div class="c">
+      <div class="slide-area">
+        <div class="overlay"></div>
+        <div class="badge"><span class="dot-g"></span> 현재 전시 중</div>
+        <div class="arr arr-l">‹</div><div class="arr arr-r">›</div>
+        <div class="txt"><h3>봄의 서정 — 꽃과 빛의 기록</h3><p>2026.05.01 — 06.30</p></div>
+      </div>
+      <div class="ind-bar">
+        <div class="pbtn"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="4" height="16" rx="1"/><rect x="15" y="4" width="4" height="16" rx="1"/></svg></div>
+        <div class="dots"><div class="d on"></div><div class="d"></div><div class="d"></div></div>
+        <div style="flex:1"></div>
+        <span class="cnt">1 / 3</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- B: 인디케이터 바 오른쪽 -->
+  <div class="col">
+    <label>B. 인디케이터 바 오른쪽</label>
+    <div class="c">
+      <div class="slide-area">
+        <div class="overlay"></div>
+        <div class="badge"><span class="dot-g"></span> 현재 전시 중</div>
+        <div class="arr arr-l">‹</div><div class="arr arr-r">›</div>
+        <div class="txt"><h3>봄의 서정 — 꽃과 빛의 기록</h3><p>2026.05.01 — 06.30</p></div>
+      </div>
+      <div class="ind-bar">
+        <span class="cnt">1 / 3</span>
+        <div style="flex:1"></div>
+        <div class="dots"><div class="d on"></div><div class="d"></div><div class="d"></div></div>
+        <div style="flex:1"></div>
+        <div class="pbtn"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="4" height="16" rx="1"/><rect x="15" y="4" width="4" height="16" rx="1"/></svg></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="row">
+
+  <!-- C: 슬라이드 우하단 플로팅 -->
+  <div class="col">
+    <label>C. 슬라이드 위 우하단 플로팅 ✦ 추천</label>
+    <div class="c">
+      <div class="slide-area">
+        <div class="overlay"></div>
+        <div class="badge"><span class="dot-g"></span> 현재 전시 중</div>
+        <div class="arr arr-l">‹</div><div class="arr arr-r">›</div>
+        <div class="txt"><h3>봄의 서정 — 꽃과 빛의 기록</h3><p>2026.05.01 — 06.30</p></div>
+        <!-- 플로팅 버튼 -->
+        <div class="float-ctrl"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="4" height="16" rx="1"/><rect x="15" y="4" width="4" height="16" rx="1"/></svg></div>
+      </div>
+      <div class="ind-bar" style="justify-content:center">
+        <div class="dots"><div class="d on"></div><div class="d"></div><div class="d"></div></div>
+        <span class="cnt" style="margin-left:8px">1 / 3</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- D: 인디케이터 바 중앙 묶음 -->
+  <div class="col">
+    <label>D. 바 중앙 — ‹ ⏸ dots ›</label>
+    <div class="c">
+      <div class="slide-area">
+        <div class="overlay"></div>
+        <div class="badge"><span class="dot-g"></span> 현재 전시 중</div>
+        <div class="txt"><h3>봄의 서정 — 꽃과 빛의 기록</h3><p>2026.05.01 — 06.30</p></div>
+      </div>
+      <div class="ind-bar" style="justify-content:center;gap:12px">
+        <div class="arr" style="position:static;transform:none;width:28px;height:28px;font-size:13px">‹</div>
+        <div class="pbtn"><svg viewBox="0 0 24 24"><rect x="5" y="4" width="4" height="16" rx="1"/><rect x="15" y="4" width="4" height="16" rx="1"/></svg></div>
+        <div class="dots"><div class="d on"></div><div class="d"></div><div class="d"></div></div>
+        <div class="arr" style="position:static;transform:none;width:28px;height:28px;font-size:13px">›</div>
+        <span class="cnt">1 / 3</span>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+</body>
+</html>

@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<style>
+  *{box-sizing:border-box;margin:0;padding:0}
+  body{font-family:'Pretendard','Apple SD Gothic Neo',sans-serif;background:#f2f0ec;padding:24px}
+  h2{font-size:16px;font-weight:700;color:#1a1a1a;margin-bottom:5px}
+  .subtitle{font-size:12px;color:#888;margin-bottom:20px}
+
+  .curation-section{max-width:760px;margin:0 auto 28px}
+
+  .section-header{display:flex;align-items:center;gap:10px;margin-bottom:12px}
+  .badge-live{display:inline-flex;align-items:center;gap:6px;background:#f0fdf4;border:1px solid #bbf7d0;color:#16a34a;font-size:10px;font-weight:700;letter-spacing:2px;text-transform:uppercase;padding:5px 12px;border-radius:20px}
+  .dot-g{width:7px;height:7px;border-radius:50%;background:#4ade80;animation:pulse 1.8s ease-in-out infinite;display:inline-block}
+  @keyframes pulse{0%,100%{box-shadow:0 0 0 0 rgba(74,222,128,0.6)}50%{box-shadow:0 0 0 5px rgba(74,222,128,0)}}
+
+  .carousel-wrap{border-radius:12px;overflow:hidden;box-shadow:0 12px 48px -8px rgba(0,0,0,0.22);position:relative}
+  .slide{position:relative;aspect-ratio:21/9;display:none}
+  .slide.active{display:block}
+  .slide-bg{position:absolute;inset:0;background-size:cover;background-position:center}
+  .bg1{background:linear-gradient(135deg,#2c2a36 0%,#4a3f5c 35%,#8a7090 65%,#c4957a 100%)}
+  .bg2{background:linear-gradient(135deg,#1a3040 0%,#2d5a6e 35%,#5a9aaa 65%,#a0d4c4 100%)}
+  .bg3{background:linear-gradient(135deg,#3a2418 0%,#6b4532 35%,#a87050 65%,#d4b080 100%)}
+
+  .arr{position:absolute;top:50%;transform:translateY(-50%);z-index:4;width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,0.35);backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,0.15);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;cursor:pointer;transition:background .2s}
+  .arr:hover{background:rgba(0,0,0,0.6)}
+  .arr-l{left:12px}.arr-r{right:12px}
+
+  .float-controls{position:absolute;bottom:12px;right:14px;z-index:5;display:inline-flex;align-items:center;background:rgba(0,0,0,0.42);backdrop-filter:blur(10px);border:1px solid rgba(255,255,255,0.14);border-radius:30px;padding:6px 10px}
+  .fc-dot{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,0.4);margin:0 5px;cursor:pointer;transition:all .25s;border:none;display:block;flex-shrink:0}
+  .fc-dot.active{background:transparent;border:2px solid #fff;width:10px;height:10px}
+  .fc-dot:hover:not(.active){background:rgba(255,255,255,0.7)}
+  .fc-divider{width:1px;height:12px;background:rgba(255,255,255,0.2);margin:0 6px;flex-shrink:0}
+  .fc-play{width:22px;height:22px;background:none;border:none;color:#fff;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;padding:0}
+  .fc-play svg{width:11px;height:11px;fill:#fff}
+
+  .slide.fade-in{animation:fadeIn .45s ease}
+  @keyframes fadeIn{from{opacity:0}to{opacity:1}}
+
+  /* 지난 기획전 — 텍스트 오버레이 없음, 이미지만 */
+  .ended-section{max-width:760px;margin:0 auto}
+  .ended-label{font-size:10px;font-weight:700;color:#bbb;letter-spacing:2px;text-transform:uppercase;margin:0 0 12px}
+  .ended-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  .ended-card{
+    overflow:hidden;border-radius:8px;aspect-ratio:21/9;
+    filter:grayscale(1);opacity:0.55;cursor:pointer;
+    transition:opacity .2s, filter .2s;
+  }
+  .ended-card:hover{opacity:0.75;filter:grayscale(0.6)}
+  .ended-card .bg{width:100%;height:100%;background-size:cover;background-position:center}
+  .ec1{background:linear-gradient(135deg,#2c2a36,#7a6580,#c4957a)}
+  .ec2{background:linear-gradient(135deg,#1a3040,#5a9aaa,#a0d4c4)}
+  .ec3{background:linear-gradient(135deg,#3a2418,#a87050,#d4b080)}
+  .ec4{background:linear-gradient(135deg,#1e2a1e,#4a7a4a,#a0c480)}
+</style>
+</head>
+<body>
+
+<h2>최종 — 모든 기획전 이미지만, 텍스트 오버레이 없음</h2>
+<p class="subtitle">활성·지난 기획전 모두 포스터 이미지 그대로. 코드는 네비게이션만 담당</p>
+
+<div class="curation-section">
+  <div class="section-header">
+    <div class="badge-live"><span class="dot-g"></span> 현재 전시 중</div>
+  </div>
+
+  <div class="carousel-wrap">
+    <div class="slide active fade-in" id="s0"><div class="slide-bg bg1"></div></div>
+    <div class="slide" id="s1"><div class="slide-bg bg2"></div></div>
+    <div class="slide" id="s2"><div class="slide-bg bg3"></div></div>
+
+    <div class="arr arr-l" onclick="move(-1)">‹</div>
+    <div class="arr arr-r" onclick="move(1)">›</div>
+
+    <div class="float-controls">
+      <button class="fc-dot active" onclick="goTo(0)"></button>
+      <button class="fc-dot" onclick="goTo(1)"></button>
+      <button class="fc-dot" onclick="goTo(2)"></button>
+      <div class="fc-divider"></div>
+      <button class="fc-play" onclick="togglePlay()">
+        <svg id="icPause" viewBox="0 0 24 24"><rect x="5" y="4" width="4" height="16" rx="1"/><rect x="15" y="4" width="4" height="16" rx="1"/></svg>
+        <svg id="icPlay" viewBox="0 0 24 24" style="display:none"><polygon points="5,3 19,12 5,21"/></svg>
+      </button>
+    </div>
+  </div>
+</div>
+
+<div class="ended-section">
+  <p class="ended-label">지난 기획전</p>
+  <div class="ended-grid">
+    <div class="ended-card"><div class="bg ec1"></div></div>
+    <div class="ended-card"><div class="bg ec2"></div></div>
+    <div class="ended-card"><div class="bg ec3"></div></div>
+    <div class="ended-card"><div class="bg ec4"></div></div>
+  </div>
+</div>
+
+<script>
+  let cur=0,total=3,playing=true,timer=null;
+  function goTo(idx){
+    document.getElementById('s'+cur).classList.remove('active','fade-in');
+    cur=(idx+total)%total;
+    const s=document.getElementById('s'+cur);
+    s.classList.add('active');
+    requestAnimationFrame(()=>s.classList.add('fade-in'));
+    document.querySelectorAll('.fc-dot').forEach((d,i)=>d.classList.toggle('active',i===cur));
+    if(playing)resetTimer();
+  }
+  function move(d){goTo(cur+d)}
+  function resetTimer(){clearTimeout(timer);if(playing)timer=setTimeout(()=>{goTo(cur+1)},3000)}
+  function togglePlay(){
+    playing=!playing;
+    document.getElementById('icPause').style.display=playing?'':'none';
+    document.getElementById('icPlay').style.display=playing?'none':'';
+    playing?resetTimer():clearTimeout(timer);
+  }
+  resetTimer();
+</script>
+</body>
+</html>
