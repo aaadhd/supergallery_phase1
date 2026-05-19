@@ -125,6 +125,23 @@ export default function Browse() {
     [curatedExhibitions, today],
   );
 
+  // 단일 기획전 배너 오버레이용 아티스트 이름
+  const singleCurationArtistNames = useMemo((): string[] => {
+    const c = activeCurations.length === 1 ? activeCurations[0] : null;
+    if (!c) return [];
+    const wMap = new Map(workStore.getWorks().map((w) => [w.id, w]));
+    const seen = new Set<string>();
+    const names: string[] = [];
+    for (const piece of c.pieces ?? []) {
+      const work = wMap.get(piece.workId);
+      if (!work) continue;
+      const artist = allArtists.find((a) => a.id === work.artistId);
+      const name = artist?.name ?? work.artist?.name ?? '';
+      if (name && !seen.has(name)) { seen.add(name); names.push(name); }
+    }
+    return names;
+  }, [activeCurations]);
+
   // -- Pick 데이터 ------------------------------------------------------------
   const pickSessions = usePickSessions();
   const activePickSession = useMemo(
@@ -484,7 +501,7 @@ export default function Browse() {
               {activeCurations.length === 1 ? (
                 <button
                   type="button"
-                  className="aspect-[21/9] w-full overflow-hidden rounded-xl cursor-pointer block"
+                  className="relative aspect-[21/9] w-full overflow-hidden rounded-xl cursor-pointer block"
                   onClick={() => navigate(`/curations/${activeCurations[0].id}`)}
                 >
                   <ImageWithFallback
@@ -492,6 +509,27 @@ export default function Browse() {
                     alt={activeCurations[0].title}
                     className="w-full h-full object-cover"
                   />
+                  {activeCurations[0].bannerOverlay && (
+                    <>
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/[0.08] to-transparent pointer-events-none" />
+                      <div className="absolute bottom-0 left-0 right-0 p-4 pointer-events-none">
+                        {singleCurationArtistNames.length > 0 && (
+                          <p className="text-[9px] text-white/60 mb-1.5 leading-relaxed">
+                            {singleCurationArtistNames.join(' · ')}
+                          </p>
+                        )}
+                        <p className="text-white font-bold text-[15px] leading-snug mb-1">{activeCurations[0].title}</p>
+                        {activeCurations[0].subtitle && (
+                          <p className="text-white/60 text-[10px] leading-relaxed">{activeCurations[0].subtitle}</p>
+                        )}
+                        {(activeCurations[0].startAt && activeCurations[0].endAt) && (
+                          <p className="text-white/40 text-[8px] tracking-[2px] mt-1.5">
+                            {activeCurations[0].startAt.replace(/-/g, '.')} — {activeCurations[0].endAt.replace(/-/g, '.')}
+                          </p>
+                        )}
+                      </div>
+                    </>
+                  )}
                 </button>
               ) : (
                 <CurationCarousel curations={activeCurations} />

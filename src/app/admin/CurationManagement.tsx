@@ -82,12 +82,13 @@ type EditorState = {
   endAt: string;
   pageUrl: string;
   bannerImageUrl: string;
+  bannerOverlay: boolean;
   pieces: SelectedPiece[];
   search: string;
 };
 
 function emptyEditor(): EditorState {
-  return { mode: 'create', title: '', subtitle: '', startAt: '', endAt: '', pageUrl: '', bannerImageUrl: '', pieces: [], search: '' };
+  return { mode: 'create', title: '', subtitle: '', startAt: '', endAt: '', pageUrl: '', bannerImageUrl: '', bannerOverlay: false, pieces: [], search: '' };
 }
 
 function fromExhibition(c: CuratedExhibition): EditorState {
@@ -96,6 +97,7 @@ function fromExhibition(c: CuratedExhibition): EditorState {
     startAt: c.startAt ?? '', endAt: c.endAt ?? '',
     pageUrl: c.pageUrl ?? '',
     bannerImageUrl: c.bannerImageUrl ?? '',
+    bannerOverlay: c.bannerOverlay ?? false,
     pieces: c.pieces.map((p) => ({ workId: p.workId, pieceId: p.pieceId })),
     search: '',
   };
@@ -296,6 +298,7 @@ export default function CurationManagement() {
         pageUrl: editor.pageUrl.trim() || undefined,
         pieces,
         bannerImageUrl,
+        bannerOverlay: editor.bannerOverlay,
       });
       // 새로 추가된 piece만 알림
       for (const p of pieces) {
@@ -319,6 +322,7 @@ export default function CurationManagement() {
         pageUrl: editor.pageUrl.trim() || undefined,
         pieces,
         bannerImageUrl,
+        bannerOverlay: editor.bannerOverlay,
       });
       // 모든 piece가 새로 추가됨
       for (const p of pieces) {
@@ -524,6 +528,18 @@ export default function CurationManagement() {
                     value={editor.bannerImageUrl}
                     onChange={(url) => setEditor((prev) => prev ? { ...prev, bannerImageUrl: url } : prev)}
                   />
+                  <div className="flex items-center gap-3 min-h-[44px]">
+                    <label className="flex items-center gap-2 cursor-pointer">
+                      <input
+                        type="checkbox"
+                        checked={editor.bannerOverlay ?? false}
+                        onChange={(e) => setEditor((prev) => prev ? { ...prev, bannerOverlay: e.target.checked } : prev)}
+                        className="w-4 h-4 rounded"
+                      />
+                      <span className="text-sm">배너에 전시 정보 표시</span>
+                    </label>
+                    <span className="text-xs text-muted-foreground">(제목·참가자·날짜 오버레이)</span>
+                  </div>
                   <div className="flex gap-2 pt-2">
                     <button type="button" onClick={closeEditor}
                       className="flex-1 border border-border rounded-lg px-4 py-2 text-sm text-muted-foreground lg:hover:bg-muted/50">

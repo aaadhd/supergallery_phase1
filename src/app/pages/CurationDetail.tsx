@@ -4,6 +4,7 @@ import { X } from 'lucide-react';
 import { useI18n } from '../i18n/I18nProvider';
 import { useCuration, type CurationPieceRef } from '../utils/curationStore';
 import { useWorkStore } from '../store';
+import { artists as allArtists } from '../data';
 import { isWorkPublic } from '../utils/workVisibility';
 import { CopyrightProtectedImage } from '../components/work/CopyrightProtectedImage';
 import { displayPieceTitleAtIndex } from '../utils/workDisplay';
@@ -55,6 +56,21 @@ export default function CurationDetail() {
       .filter((p): p is ResolvedPiece => p !== null);
   }, [curation, works, untitledLabel]);
 
+  const bannerArtistNames = useMemo((): string[] => {
+    if (!curation) return [];
+    const worksMap = new Map<string, Work>(works.map((w) => [w.id, w]));
+    const seen = new Set<string>();
+    const names: string[] = [];
+    for (const piece of curation.pieces ?? []) {
+      const work = worksMap.get(piece.workId);
+      if (!work) continue;
+      const artist = allArtists.find((a) => a.id === work.artistId);
+      const name = artist?.name ?? work.artist?.name ?? '';
+      if (name && !seen.has(name)) { seen.add(name); names.push(name); }
+    }
+    return names;
+  }, [curation, works]);
+
   if (!curation) {
     return (
       <div className="flex flex-col items-center justify-center bg-background" style={{ minHeight: '100dvh' }}>
@@ -81,7 +97,7 @@ export default function CurationDetail() {
       {/* 배너: bannerImageUrl 있으면 21:9 이미지, 없으면 기존 텍스트 헤더 폴백 */}
       {curation.bannerImageUrl ? (
         <>
-          <div className="w-full aspect-[21/9]">
+          <div className="relative w-full aspect-[21/9]">
             <img
               src={curation.bannerImageUrl}
               alt={curation.title}
@@ -89,6 +105,27 @@ export default function CurationDetail() {
               loading="lazy"
               draggable={false}
             />
+            {curation.bannerOverlay && (
+              <>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/[0.08] to-transparent pointer-events-none" />
+                <div className="absolute bottom-0 left-0 right-0 p-4 pointer-events-none">
+                  {bannerArtistNames.length > 0 && (
+                    <p className="text-[9px] text-white/60 mb-1.5 leading-relaxed">
+                      {bannerArtistNames.join(' · ')}
+                    </p>
+                  )}
+                  <p className="text-white font-bold text-[15px] leading-snug mb-1">{curation.title}</p>
+                  {curation.subtitle && (
+                    <p className="text-white/60 text-[10px] leading-relaxed">{curation.subtitle}</p>
+                  )}
+                  {(curation.startAt && curation.endAt) && (
+                    <p className="text-white/40 text-[8px] tracking-[2px] mt-1.5">
+                      {curation.startAt.replace(/-/g, '.')} — {curation.endAt.replace(/-/g, '.')}
+                    </p>
+                  )}
+                </div>
+              </>
+            )}
           </div>
           <div className="flex justify-center py-12">
             <div className="w-12 h-px bg-neutral-300" />

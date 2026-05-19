@@ -1,9 +1,12 @@
-import { useState, useEffect, useRef, useCallback } from 'react';
+import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
 import type { CuratedExhibition } from '../utils/curationStore';
 import { useI18n } from '../i18n/I18nProvider';
 import { ImageWithFallback } from '../components/ImageWithFallback';
+import { useWorkStore } from '../store';
+import { artists as allArtists } from '../data';
+import type { Work } from '../data';
 
 type Props = {
   curations: CuratedExhibition[];
@@ -16,6 +19,22 @@ export function CurationCarousel({ curations }: Props) {
   const [isPlaying, setIsPlaying] = useState(true);
   const touchStartX = useRef<number | null>(null);
   const total = curations.length;
+
+  const works = useWorkStore().getWorks();
+  const worksMap = useMemo(() => new Map<string, Work>(works.map((w) => [w.id, w])), [works]);
+
+  const getArtistNames = useCallback((curation: CuratedExhibition): string[] => {
+    const seen = new Set<string>();
+    const names: string[] = [];
+    for (const piece of curation.pieces ?? []) {
+      const work = worksMap.get(piece.workId);
+      if (!work) continue;
+      const artist = allArtists.find((a) => a.id === work.artistId);
+      const name = artist?.name ?? (work as Work & { artist?: { name?: string } }).artist?.name ?? '';
+      if (name && !seen.has(name)) { seen.add(name); names.push(name); }
+    }
+    return names;
+  }, [worksMap]);
 
   const goTo = useCallback(
     (idx: number) => setCurrent(((idx % total) + total) % total),
@@ -63,6 +82,30 @@ export function CurationCarousel({ curations }: Props) {
             alt={c.title}
             className="w-full h-full object-cover"
           />
+          {c.bannerOverlay && (() => {
+            const artistNames = getArtistNames(c);
+            return (
+              <>
+                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/[0.08] to-transparent pointer-events-none" />
+                <div className="absolute bottom-0 left-0 right-0 p-4 pointer-events-none">
+                  {artistNames.length > 0 && (
+                    <p className="text-[9px] text-white/60 mb-1.5 leading-relaxed">
+                      {artistNames.join(' · ')}
+                    </p>
+                  )}
+                  <p className="text-white font-bold text-[15px] leading-snug mb-1">{c.title}</p>
+                  {c.subtitle && (
+                    <p className="text-white/60 text-[10px] leading-relaxed">{c.subtitle}</p>
+                  )}
+                  {(c.startAt && c.endAt) && (
+                    <p className="text-white/40 text-[8px] tracking-[2px] mt-1.5">
+                      {c.startAt.replace(/-/g, '.')} — {c.endAt.replace(/-/g, '.')}
+                    </p>
+                  )}
+                </div>
+              </>
+            );
+          })()}
         </button>
       ))}
 
