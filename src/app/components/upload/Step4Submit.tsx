@@ -206,7 +206,9 @@ export function Step4Submit({
 
         {/* Hint text when original work not checked */}
         {!isOriginalWork && (
-          <p className="text-xs text-red-500 text-center">{t('upload.hintCheckOriginal')}</p>
+          <p className="text-xs text-red-500 text-center">
+            {t(uploadType === 'group' ? 'upload.hintCheckConsent' : 'upload.hintCheckOriginal')}
+          </p>
         )}
 
         {/* Secondary row */}

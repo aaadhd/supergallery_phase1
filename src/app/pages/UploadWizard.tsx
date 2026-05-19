@@ -102,23 +102,6 @@ export default function UploadWizard() {
     }
   }, [auth, navigate]);
 
-  // 기존 초안 감지 — 빈 양식으로 진입했을 때 저장된 초안이 있으면 안내
-  useEffect(() => {
-    const hasDraftParam = searchParams.get('draft');
-    const hasEditParam = searchParams.get('edit');
-    if (hasDraftParam || hasEditParam) return;
-    const drafts = draftStore.getDrafts();
-    if (drafts.length === 0) return;
-    const latest = drafts[0];
-    toast(t('upload.existingDraftNotice'), {
-      duration: 8000,
-      action: {
-        label: t('upload.existingDraftResume'),
-        onClick: () => navigate(`/upload?draft=${latest.id}`, { replace: true }),
-      },
-    });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
 
   const tn = (key: MessageKey, replacements: Record<string, string>) => {
     let s = t(key);
@@ -800,10 +783,6 @@ export default function UploadWizard() {
         toastKey = 'upload.editModeToast';
       }
       toast.success(t(toastKey as MessageKey));
-    } else if (!import.meta.env.PROD && import.meta.env.VITE_UPLOAD_AUTO_APPROVE === 'true') {
-      toast.success(t('upload.toastPublishedImmediate'));
-    } else {
-      toast.success(t('upload.toastPublished'));
     }
 
     setTimeout(() => {
@@ -1012,9 +991,7 @@ export default function UploadWizard() {
         <p className="text-base text-muted-foreground mb-2 max-w-md whitespace-pre-line leading-relaxed">
           {t(descKey)}
         </p>
-        {pubHasInvites && (
-          <p className="text-sm text-primary mb-4 max-w-md">{t('upload.publishedConfirmInviteNote')}</p>
-        )}
+
         {pubHasInvites && publishedWork && (
           <div className="mt-6">
             <InviteShareButton

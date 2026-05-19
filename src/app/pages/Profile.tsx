@@ -287,7 +287,7 @@ export default function Profile() {
     const storeParticipating = storeWorks.filter(w => {
       if (ownIds.has(w.id)) return false;
       if (w.artistId === profileArtist.id) return false;
-      if (!isOwnProfile && !isWorkPublic(w)) return false;
+      if (!isWorkPublic(w)) return false; // 참여 작품은 승인 후에만 노출
       return w.imageArtists?.some(ia => ia.type === 'member' && ia.memberId === profileArtist.id) ?? false;
     });
 
@@ -297,8 +297,8 @@ export default function Profile() {
     const participating = hydrated.filter(gw => {
       if (ownIds.has(gw.id)) return false;
       if (storeIds.has(gw.id)) return false;
-      if (!isOwnProfile && isWorkHidden(gw)) return false;
-      if (gw.artistId === profileArtist.id) return true;
+      if (gw.artistId === profileArtist.id) return isOwnProfile || isWorkPublic(gw);
+      if (!isWorkPublic(gw)) return false; // 참여 작품은 승인 후에만 노출
       return gw.imageArtists?.some(ia => ia.type === 'member' && ia.memberId === profileArtist.id) ?? false;
     });
 
@@ -1007,7 +1007,7 @@ const allowedProfileTabs = useMemo((): ProfileTabValue[] => {
 
                             {/* 하단 배지 (검수 상태 + 비공개) */}
                             {(isMyUpload && work.isHidden) ||
-                              ((isMyUpload || isMyClaimedSlot) && work.feedReviewStatus === 'pending') ||
+                              (isMyUpload && work.feedReviewStatus === 'pending') ||
                               (isMyUpload && work.feedReviewStatus === 'rejected') ? (
                               <div className="absolute left-2 bottom-2 z-10 flex flex-col gap-1">
                                 {isMyUpload && work.isHidden && (
@@ -1015,11 +1015,11 @@ const allowedProfileTabs = useMemo((): ProfileTabValue[] => {
                                     {t('review.cardBadgeHidden')}
                                   </span>
                                 )}
-                                {(isMyUpload || isMyClaimedSlot) && work.feedReviewStatus === 'pending' && (
+                                {isMyUpload && work.feedReviewStatus === 'pending' && (
                                   <span
                                     className="inline-flex rounded-full px-2 py-0.5 text-xs font-medium bg-muted/95 text-foreground border border-border backdrop-blur-sm w-fit"
-                                    title={isMyUpload ? t('review.badgePendingHint') : t('review.badgePendingHintForParticipant')}
-                                    aria-label={`${t('review.badgePending')} · ${isMyUpload ? t('review.badgePendingHint') : t('review.badgePendingHintForParticipant')}`}
+                                    title={t('review.badgePendingHint')}
+                                    aria-label={`${t('review.badgePending')} · ${t('review.badgePendingHint')}`}
                                   >
                                     {t('review.badgePending')}
                                   </span>

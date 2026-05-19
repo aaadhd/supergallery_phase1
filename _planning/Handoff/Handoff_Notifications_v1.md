@@ -89,10 +89,10 @@
 
 ### 2.3 검수 승인 시 참여 회원 작가에게
 
-- 한국어: 함께 올라간 '{title}' 전시가 공개됐어요. 둘러보기 피드에서 확인하실 수 있어요.
-- English: '{title}' that you joined has been published. You can find it in the Browse feed.
+- 한국어: 함께 올라간 '{title}' 전시가 공개됐어요. 내 프로필에서 확인하실 수 있어요.
+- English: '{title}' that you joined has been published. You can now view it on your profile.
 
-→ 검수 신청 단계에서 미리 본인 작품을 클레임한 회원 공동 작가에게 정보용 1건. ([Policy §3.3](./Policy_v1.md#3-3-자동-연결-후-알림과-동시-선택))
+→ 승인 후 참여 작가 프로필에 전시가 노출되므로 해당 시점에 정보용 1건 발송. ([Policy §3.3](./Policy_v1.md#3-3-자동-연결-후-알림과-동시-선택))
 
 ### 2.4 검수 반려 (작가)
 

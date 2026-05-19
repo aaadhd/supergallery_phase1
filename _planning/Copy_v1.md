@@ -514,12 +514,9 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.errMinOneImage': '이미지를 최소 1장 추가해주세요.',
   'upload.errCheckOriginal': '본인 창작물 확인에 체크해주세요.',
   'upload.errCheckGroupConsent': '참여 작가들의 동의 확인에 체크해주세요.',
-  'upload.toastPublished':
-    '작품이 등록되었어요. 결과는 알림으로 알려드릴게요.',
   'review.badgePending': '확인 중',
   'review.badgePendingHint': '운영팀이 확인하고 있어요. 결과는 알림으로 알려드릴게요.',
-  'review.badgePendingHintForParticipant': '이 전시는 운영팀 확인 중이에요. 통과되면 다른 분들도 볼 수 있어요.',
-  'review.notifApprovedForParticipant': '함께 올라간 \'{title}\' 전시가 공개됐어요. 둘러보기 피드에서 확인하실 수 있어요.',
+  'review.notifApprovedForParticipant': '함께 올라간 \'{title}\' 전시가 공개됐어요. 내 프로필에서 확인하실 수 있어요.',
   'review.badgeRejected': '수정 필요',
   'review.badgeRejectedHint': '검수 기준에 맞지 않아 공개되지 않았어요. 수정해서 다시 올려 주세요.',
   'review.badgeRejectedClickHint': '눌러서 사유 보기',
@@ -549,7 +546,6 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'report.deleteReason.illegal': '위법 콘텐츠',
   'report.deleteReason.minor_harmful': '청소년 유해',
   'report.deleteReason.abuse': '어뷰즈',
-  'upload.toastPublishedImmediate': '작품이 등록됐어요. 둘러보기 피드에서 바로 보여요.',
   'upload.toastDraftSaved': '초안이 저장되었어요.',
   'upload.toastOrderSaved': '순서가 저장되었어요.',
   'upload.confirmStudent': '참여 작가들의 동의를 얻었습니다',
@@ -1601,12 +1597,9 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'upload.errMinOneImage': 'Add at least one image.',
   'upload.errCheckOriginal': 'Please confirm this is your own work.',
   'upload.errCheckGroupConsent': "Please confirm you have the participating artists' consent.",
-  'upload.toastPublished':
-    'Your work has been submitted. We will notify you of the result.',
   'review.badgePending': 'Under Review',
   'review.badgePendingHint': "Under review. We'll notify you of the result.",
-  'review.badgePendingHintForParticipant': "This exhibition is under review. Once approved, others will see it too.",
-  'review.notifApprovedForParticipant': "'{title}' that you joined has been published. You can find it in the Browse feed.",
+  'review.notifApprovedForParticipant': "'{title}' that you joined has been published. You can now view it on your profile.",
   'review.badgeRejected': 'Needs Edit',
   'review.badgeRejectedHint': 'Did not meet review standards. Edit and re-upload for another review.',
   'review.badgeRejectedClickHint': 'Tap to see reason',
@@ -1636,7 +1629,6 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'report.deleteReason.illegal': 'Illegal content',
   'report.deleteReason.minor_harmful': 'Harmful to minors',
   'report.deleteReason.abuse': 'Abuse',
-  'upload.toastPublishedImmediate': 'Exhibited and shown on Browse immediately.',
   'upload.toastDraftSaved': 'Draft saved.',
   'upload.toastOrderSaved': 'Order saved.',
   ‘upload.confirmStudent’: ‘I confirm consent from all participating artists’,
@@ -2458,7 +2450,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.32 | 2026-05-19 | PM × Claude | curation.endedTitle·endedDesc KO/EN 신규; dead key 일괄 삭제: curation.pieceCount·fromExhibition·empty, events.results* 8종·viewWinners·title·tab*·notifyCta·notifySubscribed·pick*·curation{Active,None,EndedBlocked,Pieces,ViewPage}·noUpcoming·upcomingSection·comingSoonBadge·endedBadge·detailTarget·detailGuide·detailEnded, browse.curationEmpty, admin.contest 미사용 15종, admin.notice.label*En, signup.openMockLink; upload.publish "전시하기" → "전시 신청하기" |
+| v1.32 | 2026-05-19 | PM × Claude | curation.endedTitle·endedDesc KO/EN 신규; dead key 일괄 삭제: curation.pieceCount·fromExhibition·empty, events.results* 8종·viewWinners·title·tab*·notifyCta·notifySubscribed·pick*·curation{Active,None,EndedBlocked,Pieces,ViewPage}·noUpcoming·upcomingSection·comingSoonBadge·endedBadge·detailTarget·detailGuide·detailEnded, browse.curationEmpty, admin.contest 미사용 15종, admin.notice.label*En, signup.openMockLink; upload.publish "전시하기" → "전시 신청하기"; dead key 추가 삭제: upload.toastPublished·toastPublishedImmediate(발행 완료 화면 별도 제공으로 불필요), review.badgePendingHintForParticipant(참여 작품 승인 후 노출 정책 변경으로 배지 제거); notifApprovedForParticipant "둘러보기 피드에서" → "내 프로필에서" |
 | v1.31 | 2026-05-19 | PM × Claude | browse.curationOnView KO/EN 신규 — Browse 기획전 탭 활성 전시 섹션 레이블; browse.carousel.* 5종 신규 — CurationCarousel aria-label i18n |
 | v1.30 | 2026-05-19 | PM × Claude | 코드 누락 키 추가 — browse.curationTagline; events.tab*/pick*/curation*(15종); evt.entryModal*/entryImage*/errPublishFailed(5종); pickDetail.*(6종) 신설; settings.withdrawOther*(2종); admin.section.communication |
 | v1.29 | 2026-05-19 | PM × Claude | browse.pickHallOfFame 삭제(KO+EN) — USR-EVT-07 Deprecated; §6 i18n 사전 TypeScript 래퍼(const·export function) 제거 — README 코드링크 금지 규칙 준수; §6.2 영어 섹션 헤딩 신설 |
