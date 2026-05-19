@@ -80,17 +80,17 @@ function EndedCurationsSection({
                 <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none" />
                 <div className="absolute bottom-0 left-0 right-0 px-4 py-3 pointer-events-none">
                   <div>
-                    <p className="text-white font-bold text-lg leading-tight">{c.title}</p>
+                    <p className="text-white font-bold text-xl leading-tight">{c.title}</p>
                     {c.subtitle && (
-                      <p className="text-white/75 text-[10px] leading-snug mt-0.5">{c.subtitle}</p>
+                      <p className="text-white/75 text-xs leading-snug mt-0.5">{c.subtitle}</p>
                     )}
                     {(artistNames.length > 0 || (c.startAt && c.endAt)) && (
                       <div className="mt-2.5 flex flex-col space-y-0.5">
                         {artistNames.length > 0 && (
-                          <p className="text-white text-[10px] tracking-wide">{artistNames.join(' · ')}</p>
+                          <p className="text-white text-xs tracking-wide">{artistNames.join(' · ')}</p>
                         )}
                         {(c.startAt && c.endAt) && (
-                          <p className="text-white text-[10px] tracking-[2px]">{c.startAt.replace(/-/g, '.')} — {c.endAt.replace(/-/g, '.')}</p>
+                          <p className="text-white text-xs tracking-[2px]">{c.startAt.replace(/-/g, '.')} — {c.endAt.replace(/-/g, '.')}</p>
                         )}
                       </div>
                     )}
