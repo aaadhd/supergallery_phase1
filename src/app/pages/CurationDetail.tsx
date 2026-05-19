@@ -78,23 +78,39 @@ export default function CurationDetail() {
         <X className="h-5 w-5" />
       </button>
 
-      {/* 전시 타이틀 섹션 */}
-      <header className="mx-auto max-w-3xl px-6 pt-16 pb-14 sm:pt-20 sm:pb-16 text-center">
-        {(curation.startAt && curation.endAt) && (
-          <p className="text-xs tracking-[3px] uppercase text-neutral-400 mb-5">
-            {curation.startAt.replace(/-/g, '.')} — {curation.endAt.replace(/-/g, '.')}
-          </p>
-        )}
-        <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-900 leading-tight mb-5">
-          {curation.title}
-        </h1>
-        {curation.subtitle && (
-          <p className="text-base sm:text-lg text-neutral-500 leading-relaxed max-w-xl mx-auto">
-            {curation.subtitle}
-          </p>
-        )}
-        <div className="mt-10 w-12 h-px bg-neutral-300 mx-auto" />
-      </header>
+      {/* 배너: bannerImageUrl 있으면 21:9 이미지, 없으면 기존 텍스트 헤더 폴백 */}
+      {curation.bannerImageUrl ? (
+        <>
+          <div className="w-full aspect-[21/9]">
+            <img
+              src={curation.bannerImageUrl}
+              alt={curation.title}
+              className="w-full h-full object-cover"
+              draggable={false}
+            />
+          </div>
+          <div className="flex justify-center py-12">
+            <div className="w-12 h-px bg-neutral-300" />
+          </div>
+        </>
+      ) : (
+        <header className="mx-auto max-w-3xl px-6 pt-16 pb-14 sm:pt-20 sm:pb-16 text-center">
+          {(curation.startAt && curation.endAt) && (
+            <p className="text-xs tracking-[3px] uppercase text-neutral-400 mb-5">
+              {curation.startAt.replace(/-/g, '.')} — {curation.endAt.replace(/-/g, '.')}
+            </p>
+          )}
+          <h1 className="text-3xl sm:text-4xl lg:text-5xl font-bold text-neutral-900 leading-tight mb-5">
+            {curation.title}
+          </h1>
+          {curation.subtitle && (
+            <p className="text-base sm:text-lg text-neutral-500 leading-relaxed max-w-xl mx-auto">
+              {curation.subtitle}
+            </p>
+          )}
+          <div className="mt-10 w-12 h-px bg-neutral-300 mx-auto" />
+        </header>
+      )}
 
       {/* 작품 목록 */}
       <div className="pb-24">
