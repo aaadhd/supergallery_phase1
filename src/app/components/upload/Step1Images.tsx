@@ -85,10 +85,11 @@ function SortableImageItem({ c, idx, onReplace, onDelete, replaceLabel, deleteLa
         type="button"
         onClick={(e) => { e.stopPropagation(); onDelete(c.id); }}
         onPointerDown={(e) => e.stopPropagation()}
-        className="absolute bottom-2 right-2 min-h-[44px] min-w-[44px] flex items-center justify-center bg-red-500/80 rounded-full text-white hover:bg-red-600 transition-colors"
+        className="absolute bottom-2 right-2 min-h-[44px] flex items-center gap-1 bg-red-500/80 rounded-xl text-white text-xs font-medium px-2.5 hover:bg-red-600 transition-colors"
         aria-label={deleteLabel}
       >
-        <Trash2 className="h-4 w-4" />
+        <Trash2 className="h-3.5 w-3.5 shrink-0" />
+        삭제
       </button>
     </div>
   );
