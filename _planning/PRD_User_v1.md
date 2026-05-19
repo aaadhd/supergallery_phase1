@@ -1181,7 +1181,7 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 
 #### 수용기준
 - AC-01: Given 비회원 슬롯 2개 / When "전시하기" 탭 / Then 슬롯 이름 2건 목록 + 초대 안내 박스 노출.
-- AC-02: Given 비회원 슬롯 0개 (혼자 올리기 또는 회원만 포함) / When "전시하기" / Then 이 모달 표시 안 함.
+- AC-02: Given 비회원 슬롯 0개 (내 작품 올리기 또는 회원만 포함) / When "전시하기" / Then 이 모달 표시 안 함.
 - AC-03: Given "수정하러 돌아가기" 탭 / When 클릭 / Then 모달 닫힘 + USR-UPL-02 유지.
 - AC-04: Given "발행 확인" 탭 / When 클릭 / Then 발행 진행 → USR-UPL-03.
 
@@ -2349,7 +2349,7 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v2.32 | 2026-05-19 | PM × Claude | EVT-07 Deprecated; INF-03·04 카테고리 제거; Pick 상한 누적 무제한 정정; PICK_SESSION 엔티티 신설; AUT-02b 트리거 "이미 계정이 있으신가요?" 제거 → 직접 진입으로 정정; STG-01 USR-STG-02 연결 제거; Copy tabPick↔tabCuration 순서 동기화; EXH-01 인터랙션 표 이미지 탭→WorkImageViewer 진입 행 추가; BRW-01 Pick 탭 프로모 배너 카드 Proud Gallery 배지 명세 추가; BRW-01 기획전 탭 — 21:9 와이드 배너·CurationCarousel·현재 전시 중 배지·bannerOverlay·지난 기획전 종료 모달·AC-12 갱신·AC-12.2 신설 |
+| v2.32 | 2026-05-19 | PM × Claude | EVT-07 Deprecated; INF-03·04 카테고리 제거; Pick 상한 누적 무제한 정정; PICK_SESSION 엔티티 신설; AUT-02b 트리거 "이미 계정이 있으신가요?" 제거 → 직접 진입으로 정정; STG-01 USR-STG-02 연결 제거; Copy tabPick↔tabCuration 순서 동기화; EXH-01 인터랙션 표 이미지 탭→WorkImageViewer 진입 행 추가; BRW-01 Pick 탭 프로모 배너 카드 Proud Gallery 배지 명세 추가; BRW-01 기획전 탭 — 21:9 와이드 배너·CurationCarousel·현재 전시 중 배지·bannerOverlay·지난 기획전 종료 모달·AC-12 갱신·AC-12.2 신설; UPL-08 AC-02 "혼자 올리기"→"내 작품 올리기" |
 | v2.31 | 2026-05-18 | PM × Claude | BRW-01 배너→프로모 인터리빙·탭 순서·Pick 탭 누적 그리드·기획전 탭 중앙 포스터; EVT-06 전체화면·트리거 정정; EVT-07 Deprecated; CUR-01 전체화면·curatorNote |
 | v2.30 | 2026-05-18 | PM × Claude | EVT-02 "선정작 발표 보기" CTA 제거 — 결과 발표는 resultUrl 외부 링크 단일 CTA로 통일; AC-05 삭제; EVT-05 트리거에서 USR-EVT-02 "선정작 발표 보기" 제거; EVT-02 연결 화면에서 USR-EVT-05 제거 |
 | v2.29 | 2026-05-17 | PM × Claude | NTF-01 알림 14→13종 — 그룹 전시 게시 알림(게시 시점) 제거. 참여 작가는 검수 승인 시점에만 수신(검수 통과 참여자 행 분리 명시). AC-08·강제 수신 목록 정합 |
