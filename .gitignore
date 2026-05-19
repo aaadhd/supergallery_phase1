@@ -34,3 +34,4 @@ audits/
 
 # PM 변경 제안서 (개발자에게 전달하지 않는 PM 내부 작업본 — 확정된 결정만 _planning/*.md로 흡수)
 _planning/_change_proposals/
+.claude/worktrees/
