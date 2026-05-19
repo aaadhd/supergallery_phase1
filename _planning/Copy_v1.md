@@ -1,10 +1,10 @@
-# Copy Guide (UX Writing) · v1.21
+# Copy Guide (UX Writing) · v1.27
 
 Proud Gallery(SuperGallery Phase 1)의 UX 문구 가이드. 본 문서는 **톤·구조 기준(§1~5, §7~8)**과 **전체 i18n 사전(§6)**을 단일 소스로 제공한다. 구현은 §6의 한국어·영어 사전을 그대로 코드 i18n 사전으로 옮기고, §7 기술 규칙을 따른다.
 
 **작성일**: 2026-04-20
-**최종 갱신**: 2026-05-12
-**버전**: v1.21
+**최종 갱신**: 2026-05-19
+**버전**: v1.27
 
 ---
 
@@ -773,7 +773,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
     '프로필 > 작품 탭에서 작품 우측 상단 메뉴(⋯)를 눌러 수정·삭제할 수 있어요.',
   'faq.q7': '그룹 전시는 어떻게 만드나요?',
   'faq.a7':
-    '업로드할 때 "함께 올리기"를 선택하면 그룹명을 입력하고 참여 작가를 한 자리씩 추가할 수 있어요. Proud Gallery 회원이면 이름을 검색해 바로 연결되고, 회원이 아닌 분은 이름만 입력해 자리를 만들어 두면 신청 직후부터 초대 링크로 직접 알릴 수 있어요.',
+    '업로드할 때 "여러 작가 함께 올리기"를 선택하면 그룹명을 입력하고 참여 작가를 한 자리씩 추가할 수 있어요. Proud Gallery 회원이면 이름을 검색해 바로 연결되고, 회원이 아닌 분은 이름만 입력해 자리를 만들어 두면 신청 직후부터 초대 링크로 직접 알릴 수 있어요.',
   'faq.q8': 'Proud\'s Pick은 무엇인가요?',
   'faq.a8':
     '운영팀이 매주 우수 작품을 선정해 배지를 부여해요. 선정된 작품은 피드 상단에 노출되며, 작가에게 알림이 발송돼요.',
@@ -2464,6 +2464,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
 | v1.29 | 2026-05-19 | PM × Claude | browse.pickHallOfFame 삭제(KO+EN) — USR-EVT-07 Deprecated; §6 i18n 사전 TypeScript 래퍼(const·export function) 제거 — README 코드링크 금지 규칙 준수; §6.2 영어 섹션 헤딩 신설 |
 | v1.28 | 2026-05-18 | PM × Claude | nav.browse; browse.tabBrowse/tabPick/tabCuration 재정의; browse.curationEmpty·pickEmpty 신규; browse.emptyCtaAll 삭제 |
 | v1.27 | 2026-05-18 | PM × Claude | settings.notifSystemAlwaysOn EN "Group exhibition posts" 제거; "발행" → "신청" 용어 변경(nonMemberPreview* KO·EN, faq.a7·a11 KO·EN, errPublishFailed KO, publishing KO·EN, publishedConfirmTitle KO) |
+| v1.27 | 2026-05-19 | PM × Claude | faq.a7 "함께 올리기"→"여러 작가 함께 올리기" |
 | v1.26 | 2026-05-15 | PM × Claude | signup.linkSentAutoFlow "(미사용)" 삭제; upload.editSoloConvertTitle·editSoloConvertDesc·editSoloConvertConfirm KO·EN 신규(Policy §13.6.1 SSoT); signup.emailStepDesc "비밀번호는 따로 만들 필요 없어요." 문구 제거(KO·EN) |
 | v1.25 | 2026-05-14 | PM × Claude | 이중 이스케이프 정리 — notifApprovedForParticipant·notifAutoMatched·notifTargetWork 3종·nonMemberPreviewInfo `\\\'` → `\'` |
 | v1.24 | 2026-05-14 | PM × Claude | tabGuideLikes·tabGuideSaves·search.goBrowse "작품"→"전시" 누락분 보정(KO+EN); 프로필 빈 상태 prose 예시 정합 |
