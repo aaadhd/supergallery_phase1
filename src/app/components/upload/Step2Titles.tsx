@@ -18,7 +18,6 @@ interface Props {
   groupSuggestions: string[];
   groupSuggestOpen: boolean;
   setGroupSuggestOpen: (v: boolean) => void;
-  workTick: number;
   onNext: () => void;
   onBack: () => void;
   onSaveDraft: () => void;

@@ -10,7 +10,7 @@ import { REJECTION_REASON_LABEL_KEY } from '../utils/reviewLabels';
 import { buildVisibilityPatch } from '../utils/workVisibility';
 
 /* ─── @dnd-kit 리오더 아이템 ─── */
-function SortableReorderItem({ item, index, isDragOverlay }: { item: ContentItem; index: number; isDragOverlay?: boolean }) {
+function SortableReorderItem({ item, index }: { item: ContentItem; index: number }) {
   const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
   const style: React.CSSProperties = {
     transform: CSS.Transform.toString(transform),
@@ -99,7 +99,6 @@ import { Step4Submit } from '../components/upload/Step4Submit';
 import type { RegisteredArtist, WizardStep } from '../components/upload/types';
 
 /* ─── 상수 ─── */
-const CONTENT_SPACING = 10; // px — Phase 1 고정값
 const MIN_SHORT_SIDE = 800; // px — v1.7 단변 최소 해상도
 
 /* ─── 타입 ─── */
@@ -1345,7 +1344,6 @@ export default function UploadWizard() {
               groupSuggestions={groupSuggestions}
               groupSuggestOpen={groupSuggestOpen}
               setGroupSuggestOpen={setGroupSuggestOpen}
-              workTick={workTick}
               onNext={goNext}
               onBack={goBack}
               onSaveDraft={handleSaveDraft}
