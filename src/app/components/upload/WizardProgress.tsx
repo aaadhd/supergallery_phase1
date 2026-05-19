@@ -28,14 +28,13 @@ export function WizardProgress({ currentStep, isGroup, onStepClick }: Props) {
   const steps = isGroup ? STEP_DEFS : STEP_DEFS.filter((s) => s.number !== 3);
 
   return (
-    <div className="border-b border-border/40 bg-white sticky top-0 z-10">
-      {/* 모드 표시 */}
-      <div className="flex justify-center pt-2 pb-0">
-        <span className="inline-flex items-center gap-1 text-[10px] font-semibold text-primary bg-primary/10 rounded-full px-3 py-0.5">
+    <div className="border-b border-border/40 bg-white sticky top-0 z-10 py-2 px-4">
+      {/* 모드 + 스텝 한 줄 */}
+      <div className="flex items-center justify-center gap-3">
+        <span className="text-[10px] font-semibold text-primary bg-primary/10 rounded-full px-2.5 py-0.5 shrink-0">
           {isGroup ? t('upload.typeGroup') : t('upload.typeSolo')}
         </span>
-      </div>
-      <div className="flex items-center justify-center gap-0 py-2 px-4">
+      <div className="flex items-center gap-0">
       {steps.map((step, idx) => {
         const isDone = step.number < currentStep;
         const isCurrent = step.number === currentStep;
@@ -89,6 +88,7 @@ export function WizardProgress({ currentStep, isGroup, onStepClick }: Props) {
           </div>
         );
       })}
+      </div>
       </div>
     </div>
   );
