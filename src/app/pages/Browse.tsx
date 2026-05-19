@@ -79,16 +79,20 @@ function EndedCurationsSection({
               <>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/[0.08] to-transparent pointer-events-none" />
                 <div className="absolute bottom-0 left-0 right-0 px-4 py-3 pointer-events-none">
-                  <div className="flex flex-col space-y-1">
+                  <div>
                     <p className="text-white font-bold text-base leading-tight">{c.title}</p>
                     {c.subtitle && (
-                      <p className="text-white/55 text-[10px] leading-snug">{c.subtitle}</p>
+                      <p className="text-white/40 text-[9px] leading-snug mt-0.5">{c.subtitle}</p>
                     )}
-                    {artistNames.length > 0 && (
-                      <p className="text-white/40 text-[9px] tracking-wide">{artistNames.join(' · ')}</p>
-                    )}
-                    {(c.startAt && c.endAt) && (
-                      <p className="text-white/70 text-[9px] tracking-[2px]">{c.startAt.replace(/-/g, '.')} — {c.endAt.replace(/-/g, '.')}</p>
+                    {(artistNames.length > 0 || (c.startAt && c.endAt)) && (
+                      <div className="mt-2.5 flex flex-col space-y-0.5">
+                        {artistNames.length > 0 && (
+                          <p className="text-white/65 text-[9px] tracking-wide">{artistNames.join(' · ')}</p>
+                        )}
+                        {(c.startAt && c.endAt) && (
+                          <p className="text-white/70 text-[9px] tracking-[2px]">{c.startAt.replace(/-/g, '.')} — {c.endAt.replace(/-/g, '.')}</p>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
@@ -553,16 +557,20 @@ export default function Browse() {
                     <>
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/[0.08] to-transparent pointer-events-none" />
                       <div className="absolute bottom-0 left-0 right-0 px-7 py-6 pointer-events-none">
-                        <div className="flex flex-col space-y-1.5">
+                        <div>
                           <p className="text-white font-bold text-3xl leading-tight">{activeCurations[0].title}</p>
                           {activeCurations[0].subtitle && (
-                            <p className="text-white/55 text-sm leading-snug">{activeCurations[0].subtitle}</p>
+                            <p className="text-white/40 text-xs leading-snug mt-0.5">{activeCurations[0].subtitle}</p>
                           )}
-                          {singleCurationArtistNames.length > 0 && (
-                            <p className="text-white/40 text-xs tracking-wide">{singleCurationArtistNames.join(' · ')}</p>
-                          )}
-                          {(activeCurations[0].startAt && activeCurations[0].endAt) && (
-                            <p className="text-white/70 text-xs tracking-[2px]">{activeCurations[0].startAt.replace(/-/g, '.')} — {activeCurations[0].endAt.replace(/-/g, '.')}</p>
+                          {(singleCurationArtistNames.length > 0 || (activeCurations[0].startAt && activeCurations[0].endAt)) && (
+                            <div className="mt-4 flex flex-col space-y-1">
+                              {singleCurationArtistNames.length > 0 && (
+                                <p className="text-white/65 text-xs tracking-wide">{singleCurationArtistNames.join(' · ')}</p>
+                              )}
+                              {(activeCurations[0].startAt && activeCurations[0].endAt) && (
+                                <p className="text-white/70 text-xs tracking-[2px]">{activeCurations[0].startAt.replace(/-/g, '.')} — {activeCurations[0].endAt.replace(/-/g, '.')}</p>
+                              )}
+                            </div>
                           )}
                         </div>
                       </div>

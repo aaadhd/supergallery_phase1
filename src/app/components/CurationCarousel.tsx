@@ -88,16 +88,20 @@ export function CurationCarousel({ curations }: Props) {
               <>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/[0.08] to-transparent pointer-events-none" />
                 <div className="absolute bottom-0 left-0 right-0 px-7 py-6 pointer-events-none">
-                  <div className="flex flex-col space-y-1.5">
+                  <div>
                     <p className="text-white font-bold text-3xl leading-tight">{c.title}</p>
                     {c.subtitle && (
-                      <p className="text-white/55 text-sm leading-snug">{c.subtitle}</p>
+                      <p className="text-white/40 text-xs leading-snug mt-0.5">{c.subtitle}</p>
                     )}
-                    {artistNames.length > 0 && (
-                      <p className="text-white/40 text-xs tracking-wide">{artistNames.join(' · ')}</p>
-                    )}
-                    {(c.startAt && c.endAt) && (
-                      <p className="text-white/70 text-xs tracking-[2px]">{c.startAt.replace(/-/g, '.')} — {c.endAt.replace(/-/g, '.')}</p>
+                    {(artistNames.length > 0 || (c.startAt && c.endAt)) && (
+                      <div className="mt-4 flex flex-col space-y-1">
+                        {artistNames.length > 0 && (
+                          <p className="text-white/65 text-xs tracking-wide">{artistNames.join(' · ')}</p>
+                        )}
+                        {(c.startAt && c.endAt) && (
+                          <p className="text-white/70 text-xs tracking-[2px]">{c.startAt.replace(/-/g, '.')} — {c.endAt.replace(/-/g, '.')}</p>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>

@@ -109,16 +109,20 @@ export default function CurationDetail() {
               <>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/[0.06] to-transparent pointer-events-none" />
                 <div className="absolute bottom-0 left-0 right-0 px-6 py-5 pointer-events-none">
-                  <div className="flex flex-col space-y-1.5">
+                  <div>
                     <p className="text-white font-bold text-2xl leading-tight">{curation.title}</p>
                     {curation.subtitle && (
-                      <p className="text-white/55 text-xs leading-snug">{curation.subtitle}</p>
+                      <p className="text-white/40 text-[11px] leading-snug mt-0.5">{curation.subtitle}</p>
                     )}
-                    {bannerArtistNames.length > 0 && (
-                      <p className="text-white/40 text-[11px] tracking-wide">{bannerArtistNames.join(' · ')}</p>
-                    )}
-                    {(curation.startAt && curation.endAt) && (
-                      <p className="text-white/70 text-[11px] tracking-[2px]">{curation.startAt.replace(/-/g, '.')} — {curation.endAt.replace(/-/g, '.')}</p>
+                    {(bannerArtistNames.length > 0 || (curation.startAt && curation.endAt)) && (
+                      <div className="mt-4 flex flex-col space-y-1">
+                        {bannerArtistNames.length > 0 && (
+                          <p className="text-white/65 text-[11px] tracking-wide">{bannerArtistNames.join(' · ')}</p>
+                        )}
+                        {(curation.startAt && curation.endAt) && (
+                          <p className="text-white/70 text-[11px] tracking-[2px]">{curation.startAt.replace(/-/g, '.')} — {curation.endAt.replace(/-/g, '.')}</p>
+                        )}
+                      </div>
                     )}
                   </div>
                 </div>
