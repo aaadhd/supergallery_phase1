@@ -174,7 +174,7 @@ Proud Gallery는 시니어·중장년 순수미술 작가를 주 고객으로 �
   'nav.upload': '작품 올리기',
   'nav.uploadShort': '올리기',
   'nav.search': '검색',
-  'nav.profile': '프로필',
+  'nav.profile': '마이 프로필',
   'nav.my': '로그인·가입',
   'nav.settings': '설정',
   'nav.notifications': '알림',
@@ -660,10 +660,8 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.publishedConfirmDescPending': '지금 검수 중이에요. 24시간 이내 결과를 알림으로 알려드려요. 검수를 통과하면 둘러보기·검색에서 보여요.',
   'upload.publishedConfirmDescApproved': '전시가 즉시 공개되었어요. 둘러보기에서 확인할 수 있어요.',
   'upload.publishedConfirmDescResubmit': '수정 사항이 반영되어 다시 검수가 시작됐어요. 결과는 알림으로 알려드려요.',
-  'upload.publishedConfirmInviteNote': '비회원 작가에게는 작가님이 직접 카톡·문자로 링크를 보내주세요. 지금 바로 알릴 수 있어요.',
-  'upload.publishedConfirmSlaNote': '검수는 보통 24시간 이내 처리되며, 결과(승인·반려)는 알림 센터와 가입 시 등록한 채널로 전달돼요.',
-  'upload.publishedConfirmGoProfile': '내 전시 보기',
-  'upload.publishedConfirmGoBrowse': '둘러보기',
+  'upload.publishedConfirmGoProfile': '마이 프로필 가기',
+  'upload.publishedConfirmGoBrowse': '다른 전시 둘러보기',
   'upload.existingDraftNotice': '저장된 초안이 있어요.',
   'upload.existingDraftResume': '이어서 작업',
   'upload.blockersTitle': '전시까지 남은 항목',
@@ -1257,7 +1255,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'nav.upload': 'Upload work',
   'nav.uploadShort': 'Upload',
   'nav.search': 'Search',
-  'nav.profile': 'Profile',
+  'nav.profile': 'My Profile',
   'nav.my': 'Sign in',
   'nav.settings': 'Settings',
   'nav.notifications': 'Notifications',
@@ -1744,10 +1742,8 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'upload.publishedConfirmDescPending': "Under review. We'll notify you of the result. Once approved, it appears on Browse and Search.",
   'upload.publishedConfirmDescApproved': 'Your exhibition is now live on Browse.',
   'upload.publishedConfirmDescResubmit': 'Your edits have been submitted for review. We\'ll notify you of the result.',
-  'upload.publishedConfirmInviteNote': 'Send the link to non-member artists yourself via KakaoTalk or text. You can do it right now.',
-  'upload.publishedConfirmSlaNote': 'Results (approval or rejection) are delivered via the Notifications center and your registered channel.',
-  'upload.publishedConfirmGoProfile': 'View my exhibitions',
-  'upload.publishedConfirmGoBrowse': 'Browse',
+  'upload.publishedConfirmGoProfile': 'Go to My Profile',
+  'upload.publishedConfirmGoBrowse': 'Browse other exhibitions',
   'upload.existingDraftNotice': 'You have a saved draft.',
   'upload.existingDraftResume': 'Resume',
   'upload.blockersTitle': 'To exhibit, complete:',
@@ -2450,6 +2446,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.34 | 2026-05-20 | PM × Claude | nav.profile "프로필"→"마이 프로필"; publishedConfirmGoProfile "내 전시 보기"→"마이 프로필 가기"; publishedConfirmGoBrowse "둘러보기"→"다른 전시 둘러보기"; dead key 삭제: publishedConfirmSlaNote·publishedConfirmInviteNote |
 | v1.33 | 2026-05-20 | PM × Claude | nonMemberPreviewBack "수정하러 돌아가기"→"이름 수정하기"; nonMemberPreviewConfirm "신청 확인"→"전시 신청하기"; step3SearchPlaceholder·step3SearchHint·hintCheckConsent 신규 |
 | v1.32 | 2026-05-19 | PM × Claude | curation.endedTitle·endedDesc KO/EN 신규; dead key 일괄 삭제: curation.pieceCount·fromExhibition·empty, events.results* 8종·viewWinners·title·tab*·notifyCta·notifySubscribed·pick*·curation{Active,None,EndedBlocked,Pieces,ViewPage}·noUpcoming·upcomingSection·comingSoonBadge·endedBadge·detailTarget·detailGuide·detailEnded, browse.curationEmpty, admin.contest 미사용 15종, admin.notice.label*En, signup.openMockLink; upload.publish "전시하기" → "전시 신청하기"; dead key 추가 삭제: upload.toastPublished·toastPublishedImmediate(발행 완료 화면 별도 제공으로 불필요), review.badgePendingHintForParticipant(참여 작품 승인 후 노출 정책 변경으로 배지 제거); notifApprovedForParticipant "둘러보기 피드에서" → "내 프로필에서" |
 | v1.31 | 2026-05-19 | PM × Claude | browse.curationOnView KO/EN 신규 — Browse 기획전 탭 활성 전시 섹션 레이블; browse.carousel.* 5종 신규 — CurationCarousel aria-label i18n |
