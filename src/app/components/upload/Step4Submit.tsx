@@ -55,18 +55,13 @@ export function Step4Submit({
   const confirmLabel =
     uploadType === 'group' ? t('upload.confirmStudent') : t('upload.confirmOriginal');
 
-  let publishLabel: string;
-  if (isPublishing && editingWorkId) {
-    publishLabel = t('upload.editModeSaving');
-  } else if (isPublishing && !editingWorkId) {
-    publishLabel = t('upload.publishing');
-  } else if (editingRejectedWork) {
-    publishLabel = t('review.editCtaResubmit');
-  } else if (editingWorkId) {
-    publishLabel = t('upload.editModeSave');
-  } else {
-    publishLabel = t('upload.publish');
-  }
+  const publishLabel = isPublishing
+    ? t('upload.editModeSaving')
+    : editingRejectedWork
+    ? t('review.editCtaResubmit')
+    : editingWorkId
+    ? t('upload.editModeSave')
+    : t('upload.publish');
 
   const isPublishDisabled = isPublishing || !isOriginalWork;
 
@@ -103,6 +98,11 @@ export function Step4Submit({
                   alt={c.title || `${i + 1}`}
                   className="w-full h-full object-cover"
                 />
+              )}
+              {coverImageIndex === i && !customCoverUrl && (
+                <div className="absolute bottom-0 left-0 right-0 bg-primary/80 text-white text-[9px] font-bold text-center py-0.5">
+                  선택됨
+                </div>
               )}
             </button>
           ))}
