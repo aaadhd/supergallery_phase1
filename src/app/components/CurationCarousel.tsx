@@ -130,7 +130,7 @@ export function CurationCarousel({ curations }: Props) {
           </button>
 
           {/* 우하단 플로팅 컨트롤: 도트 + 구분선 + 정지/플레이 */}
-          <div className="absolute bottom-3 right-3 z-10 flex items-center bg-black/40 backdrop-blur-md border border-white/[0.14] rounded-full px-2.5 py-1.5">
+          <div className="absolute bottom-3 right-3 z-10 flex items-center bg-black/40 backdrop-blur-md border border-white/[0.14] rounded-full pl-3 pr-3 py-1.5">
             {curations.map((c, i) => (
               <button
                 key={c.id}
@@ -144,12 +144,12 @@ export function CurationCarousel({ curations }: Props) {
                 }`}
               />
             ))}
-            <div className="w-px h-3 bg-white/20 mx-1.5 flex-shrink-0" />
+            <div className="w-px h-3 bg-white/35 mx-2.5 flex-shrink-0" />
             <button
               type="button"
               aria-label={isPlaying ? t('browse.carousel.pause') : t('browse.carousel.play')}
               onClick={(e) => { e.stopPropagation(); setIsPlaying((p) => !p); }}
-              className="flex items-center justify-center text-white bg-transparent border-0 cursor-pointer w-5 h-5 flex-shrink-0 p-3 -m-3"
+              className="flex items-center justify-center text-white bg-transparent border-0 cursor-pointer w-5 h-5 flex-shrink-0"
             >
               {isPlaying ? (
                 <svg viewBox="0 0 16 16" className="w-3.5 h-3.5 fill-white flex-shrink-0">
