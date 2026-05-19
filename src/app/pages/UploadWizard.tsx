@@ -1313,6 +1313,7 @@ export default function UploadWizard() {
               contents={contents}
               uploadType={uploadType}
               editingRejectedWork={editingRejectedWork}
+              editingWorkId={editingWorkId}
               fileInputRef={fileInputRef}
               replaceFileInputRef={replaceFileInputRef}
               replaceTargetId={replaceTargetId}
