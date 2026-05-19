@@ -43,6 +43,7 @@ import ExhibitionRoute from './pages/ExhibitionRoute';
 import CurationDetail from './pages/CurationDetail';
 import FlowDemoTools from './pages/FlowDemoTools';
 import DemoReferenceToolkit from './pages/DemoReferenceToolkit';
+import UploadWizard from './pages/UploadWizard';
 
 function redirectWorksToExhibitions({ params }: LoaderFunctionArgs) {
   const id = params.id;
@@ -66,6 +67,7 @@ const demoRoutes = demoRoutesEnabled
   ? [
       { path: 'demo', Component: FlowDemoTools },
       { path: 'demo/reference', Component: DemoReferenceToolkit },
+      { path: 'upload-wizard', Component: UploadWizard },
     ]
   : [];
 

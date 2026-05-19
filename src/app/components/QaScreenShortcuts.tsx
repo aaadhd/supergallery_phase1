@@ -215,6 +215,16 @@ export function QaScreenShortcuts() {
           >
             어드민 로그인 상태 바로가기
           </DropdownMenuItem>
+
+          <DropdownMenuSeparator />
+          <DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+            UI 개발 미리보기
+          </DropdownMenuLabel>
+          <DropdownMenuItem asChild>
+            <Link to="/upload-wizard" className={linkCls}>
+              🆕 새 업로드 UI (wizard)
+            </Link>
+          </DropdownMenuItem>
         </DropdownMenuContent>
       </DropdownMenu>
     </div>
