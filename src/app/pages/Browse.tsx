@@ -528,7 +528,11 @@ export default function Browse() {
       {/* ── 기획전 탭 ── */}
       {activeTab === 'curation' && (
         <div className="mx-auto max-w-[1440px] px-4 sm:px-8 lg:px-12 py-4 sm:py-5 pb-8 md:pb-12">
-          {activeCurations.length > 0 && (
+          {activeCurations.length === 0 ? (
+            <div className="flex flex-col items-center justify-center py-20 text-center rounded-2xl border border-dashed border-border bg-muted/20 px-6">
+              <p className="text-sm text-foreground font-medium">{t('browse.curationEmpty')}</p>
+            </div>
+          ) : (
             <>
               {/* 현재 전시 중 배지 */}
               <div className="flex items-center gap-2 mb-3">
