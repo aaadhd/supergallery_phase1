@@ -67,10 +67,7 @@ export function Step2Titles({
             !exhibitionName.trim() ? 'border-border/60 focus:border-primary' : 'border-primary/30 focus:border-primary'
           }`}
         />
-        <div className="flex justify-between mt-1 px-1">
-          <span className={`text-xs font-medium ${!exhibitionName.trim() && validContents.length > 0 ? 'text-red-500' : 'text-transparent'}`}>
-            {t('upload.blockerExhibitionTitle')}
-          </span>
+        <div className="flex justify-end mt-1 px-1">
           <span className="text-xs text-muted-foreground">{exhibitionName.length}/{TITLE_FIELD_MAX_LEN}</span>
         </div>
       </div>
