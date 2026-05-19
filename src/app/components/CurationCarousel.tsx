@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useCallback, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ChevronLeft, ChevronRight, Pause, Play } from 'lucide-react';
+import { ChevronLeft, ChevronRight } from 'lucide-react';
 import type { CuratedExhibition } from '../utils/curationStore';
 import { useI18n } from '../i18n/I18nProvider';
 import { ImageWithFallback } from '../components/ImageWithFallback';
@@ -151,9 +151,16 @@ export function CurationCarousel({ curations }: Props) {
               onClick={(e) => { e.stopPropagation(); setIsPlaying((p) => !p); }}
               className="flex items-center justify-center text-white bg-transparent border-0 cursor-pointer w-5 h-5 flex-shrink-0 p-3 -m-3"
             >
-              {isPlaying
-                ? <Pause className="w-3 h-3 stroke-white" />
-                : <Play className="w-3 h-3 stroke-white" />}
+              {isPlaying ? (
+                <svg viewBox="0 0 16 16" className="w-3.5 h-3.5 fill-white flex-shrink-0">
+                  <rect x="2" y="2" width="5" height="12" rx="1"/>
+                  <rect x="9" y="2" width="5" height="12" rx="1"/>
+                </svg>
+              ) : (
+                <svg viewBox="0 0 16 16" className="w-3.5 h-3.5 fill-white flex-shrink-0">
+                  <path d="M3 2l10 6-10 6V2z"/>
+                </svg>
+              )}
             </button>
           </div>
         </>
