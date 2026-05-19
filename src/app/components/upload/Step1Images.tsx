@@ -1,5 +1,5 @@
 // src/app/components/upload/Step1Images.tsx
-import { Monitor, Plus, X, Replace, Trash2, GripVertical } from 'lucide-react';
+import { Monitor, Plus, X, Replace, Trash2 } from 'lucide-react';
 import {
   DndContext, closestCenter,
   PointerSensor, TouchSensor, KeyboardSensor,
@@ -58,32 +58,33 @@ function SortableImageItem({ c, idx, onReplace, onDelete, replaceLabel, deleteLa
   };
 
   return (
-    <div ref={setNodeRef} style={style} className="relative aspect-square rounded-xl overflow-hidden bg-muted touch-none">
+    <div
+      ref={setNodeRef}
+      style={style}
+      {...attributes}
+      {...listeners}
+      className="relative aspect-square rounded-xl overflow-hidden bg-muted cursor-grab active:cursor-grabbing touch-none"
+    >
       <ImageWithFallback src={c.url!} alt={fallbackLabel} className="w-full h-full object-contain" />
       <div className="absolute top-2 left-2 bg-black/60 text-white rounded-full px-2 py-0.5 text-xs font-bold backdrop-blur-sm">
         {idx + 1}
       </div>
-      {/* 드래그 핸들 */}
-      <div
-        {...attributes}
-        {...listeners}
-        className="absolute top-2 right-2 min-h-[44px] min-w-[44px] flex items-center justify-center bg-black/40 rounded-full text-white cursor-grab active:cursor-grabbing"
-      >
-        <GripVertical className="h-4 w-4" />
-      </div>
       {/* 교체 버튼 */}
       <button
         type="button"
-        onClick={() => onReplace(c.id)}
-        className="absolute bottom-2 left-2 min-h-[44px] min-w-[44px] flex items-center justify-center bg-black/60 rounded-full text-white hover:bg-black/80 transition-colors"
+        onClick={(e) => { e.stopPropagation(); onReplace(c.id); }}
+        onPointerDown={(e) => e.stopPropagation()}
+        className="absolute bottom-2 left-2 min-h-[44px] flex items-center gap-1 bg-black/60 rounded-xl text-white text-xs font-medium px-2.5 hover:bg-black/80 transition-colors"
         aria-label={replaceLabel}
       >
-        <Replace className="h-4 w-4" />
+        <Replace className="h-3.5 w-3.5 shrink-0" />
+        교체
       </button>
       {/* 삭제 버튼 */}
       <button
         type="button"
-        onClick={() => onDelete(c.id)}
+        onClick={(e) => { e.stopPropagation(); onDelete(c.id); }}
+        onPointerDown={(e) => e.stopPropagation()}
         className="absolute bottom-2 right-2 min-h-[44px] min-w-[44px] flex items-center justify-center bg-red-500/80 rounded-full text-white hover:bg-red-600 transition-colors"
         aria-label={deleteLabel}
       >
