@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** `Upload.tsx` 캔버스+사이드바 구조를 4단계 linear wizard로 전면 교체해 시니어 친화 UX 제공.
+**Goal:** 기존 `Upload.tsx`를 건드리지 않고 `UploadWizard.tsx`를 별도 페이지로 개발. `/upload-wizard` 라우트 + QA 검수 바로가기 메뉴에 추가해 검토 후 교체.
 
-**Architecture:** `Upload.tsx`가 전체 상태·핸들러를 유지하고 `wizardStep` 상태로 단계를 분기. 각 단계는 `src/app/components/upload/` 하위 컴포넌트로 추출. Step 3에만 `registeredArtists` 신규 상태 추가. 기존 데이터 모델(`ContentItem`, `imageArtists`)·핸들러(`handlePublish`, `handleFileSelect` 등) 변경 없음.
+**Architecture:** `Upload.tsx` 완전 무변경. 새 `UploadWizard.tsx`가 동일한 상태·핸들러를 독립적으로 보유하고 `wizardStep` 상태로 단계를 분기. 각 단계는 `src/app/components/upload/` 하위 컴포넌트로 추출. Step 3에만 `registeredArtists` 신규 상태 추가. 기존 데이터 모델(`ContentItem`, `imageArtists`)·핸들러 로직 변경 없음. 검토 완료 후 Task 11(최종 교체)에서 Upload.tsx를 대체.
 
 **Tech Stack:** React 18 · TypeScript · Tailwind CSS · shadcn/ui · Lucide icons · `useI18n()` (`t()`)
 
@@ -21,10 +21,16 @@
 - `src/app/components/upload/Step2Titles.tsx` — 제목 입력 단계
 - `src/app/components/upload/Step3Artists.tsx` — 작가 등록(3A) + 이미지 배분(3B)
 - `src/app/components/upload/Step4Submit.tsx` — 최종 확인·신청 단계
+- `src/app/pages/UploadWizard.tsx` — 새 wizard 페이지 (Upload.tsx 무변경)
 
 **수정:**
-- `src/app/pages/Upload.tsx` — `wizardStep`·`registeredArtists` 추가, 렌더 교체
 - `src/app/i18n/messages.ts` — 신규 카피 키 추가 (ko + en)
+- `src/app/routes.ts` — `/upload-wizard` DEV 전용 라우트 추가
+- `src/app/components/QaScreenShortcuts.tsx` — "새 업로드 UI" 메뉴 항목 추가
+
+**Upload.tsx:** 이 계획에서 절대 수정하지 않음. Task 11(최종 교체)에서만 변경.
+
+**기획 문서 (Task 10):**
 
 **기획 문서 (마지막 태스크):**
 - `_planning/README.md` — 용어 사전 갱신
@@ -259,16 +265,22 @@ git commit -m "feat(upload): WizardProgress 컴포넌트 + 공유 타입"
 
 ---
 
-## Task 3: Upload.tsx — wizardStep 상태·네비게이션 추가
+## Task 3: UploadWizard.tsx — 새 wizard 페이지 생성 (Upload.tsx 무변경)
 
-기존 `showDetailsModal` 상태 기반 흐름을 `wizardStep` 기반으로 전환. 기존 핸들러는 유지.
+Upload.tsx를 복사한 뒤 wizard 구조로 교체. **기존 Upload.tsx 절대 수정 금지.**
 
 **Files:**
-- Modify: `src/app/pages/Upload.tsx`
+- Create: `src/app/pages/UploadWizard.tsx`
 
-- [ ] **Step 1: 신규 import 추가**
+- [ ] **Step 1: Upload.tsx를 UploadWizard.tsx로 복사**
 
-Upload.tsx 상단 import 블록에 추가:
+```bash
+cp "src/app/pages/Upload.tsx" "src/app/pages/UploadWizard.tsx"
+```
+
+- [ ] **Step 2: UploadWizard.tsx 상단 — 신규 import 추가**
+
+UploadWizard.tsx의 import 블록에 추가:
 
 ```typescript
 import { WizardProgress } from '../components/upload/WizardProgress';
@@ -330,10 +342,10 @@ const goBack = useCallback(() => {
 
 - [ ] **Step 4: `uploadType` 선택 시 step 리셋**
 
-기존 Step 0의 `setUploadType('solo')` / `setUploadType('group')` 호출 직후에 추가:
+UploadWizard.tsx Step 0 버튼 onClick:
 
 ```typescript
-// Step 0 버튼의 onClick 내에서:
+// 솔로 버튼:
 onClick={() => { setUploadType('solo'); setWizardStep(1); setRegisteredArtists([]); }}
 // 그룹 버튼:
 onClick={() => { setUploadType('group'); setWizardStep(1); setRegisteredArtists([]); }}
@@ -376,9 +388,9 @@ useEffect(() => {
 }, [editingWorkId]);
 ```
 
-- [ ] **Step 6: 메인 렌더 교체**
+- [ ] **Step 6: UploadWizard.tsx 메인 렌더 교체**
 
-기존 `uploadType !== null` 분기 내의 캔버스+사이드바 전체를 다음으로 교체:
+UploadWizard.tsx에서 `uploadType !== null` 분기 내의 캔버스+사이드바 전체를 다음으로 교체:
 
 ```tsx
 ) : (
@@ -515,8 +527,8 @@ npx tsc --noEmit
 - [ ] **Step 8: 커밋**
 
 ```bash
-git add src/app/pages/Upload.tsx
-git commit -m "feat(upload): wizardStep 상태·네비게이션 추가, 렌더 교체 골격"
+git add src/app/pages/UploadWizard.tsx
+git commit -m "feat(upload-wizard): UploadWizard 페이지 골격 (Upload.tsx 무변경)"
 ```
 
 ---
@@ -1510,71 +1522,76 @@ git commit -m "feat(upload): Step4Submit 컴포넌트"
 
 ---
 
-## Task 8: Upload.tsx 정리 — 기존 세부 정보 모달·사이드바 제거
+## Task 8: 라우트 추가 + QA 검수 메뉴 연결
 
-Task 3~7로 기능이 컴포넌트로 이동됐으므로 Upload.tsx에서 구 코드를 제거.
+**Upload.tsx 수정 없음.** UploadWizard.tsx를 DEV 전용 라우트로 노출하고 QA 메뉴에 추가.
 
 **Files:**
-- Modify: `src/app/pages/Upload.tsx`
+- Modify: `src/app/routes.ts`
+- Modify: `src/app/components/QaScreenShortcuts.tsx`
 
-- [ ] **Step 1: 제거할 상태 목록 확인 후 삭제**
+- [ ] **Step 1: routes.ts — `/upload-wizard` DEV 라우트 추가**
 
-다음 상태는 Step4Submit으로 이동됐으므로 Upload.tsx에서 제거:
-- `showDetailsModal`, `setShowDetailsModal`
-- `artistInputTab`, `setArtistInputTab`
-- `artistSearch`, `setArtistSearch`
-- `artistSearchRef`
-- `selectedContentId`, `setSelectedContentId`
-
-다음은 Step3Artists로 이동됐으나 `registeredArtists`는 Upload.tsx에 유지 (Task 3에서 추가).
-
-- [ ] **Step 2: 제거할 JSX 범위 확인 후 삭제**
-
-삭제 대상 JSX 블록:
-- L1242~L1402: `showDetailsModal` 세부 정보 모달 전체
-- L1634~L1998: 기존 사이드바 전체 (선택된 이미지 편집 패널)
-- L1900~L1998: 기존 하단 제출 박스 (publishBlockers 체크리스트 + 4개 버튼)
-
-> **주의:** 삭제 전 `previewMode` 오버레이(L1088~L1096)와 `reorderMode` 오버레이(L1157~L1176)는 유지. 이들은 전체 화면 오버레이로 모든 단계에서 동작.
-
-- [ ] **Step 3: handleOpenDetails 단순화**
+`routes.ts`에서 `demoRoutes` 배열 참고해 동일한 패턴으로 wizard 라우트 추가:
 
 ```typescript
-// 기존 handleOpenDetails는 wizard에서 불필요 (검증은 단계별로)
-// Step4Submit의 onPublish prop으로 handlePublish 직접 연결됐으므로:
-const handleOpenDetails = () => handlePublish();
+// routes.ts 상단 import에 추가
+import UploadWizard from './pages/UploadWizard';
+
+// demoRoutesEnabled 조건 블록 아래 또는 demoRoutes 배열 안에 추가:
+const wizardRouteEnabled =
+  import.meta.env.DEV || import.meta.env.VITE_FOOTER_QA_LINKS === 'true';
+
+// 라우트 배열(Layout 하위)에 조건부 추가:
+...(wizardRouteEnabled ? [{ path: 'upload-wizard', Component: UploadWizard }] : []),
 ```
 
-- [ ] **Step 4: 전체 타입 체크**
+- [ ] **Step 2: QaScreenShortcuts.tsx — "새 업로드 UI" 메뉴 항목 추가**
+
+기존 `DropdownMenuSeparator` + 그룹 패턴을 따라 맨 아래에 추가:
+
+```tsx
+<DropdownMenuSeparator />
+<DropdownMenuLabel className="text-xs font-normal text-muted-foreground">
+  UI 개발 미리보기
+</DropdownMenuLabel>
+<DropdownMenuItem asChild>
+  <Link to="/upload-wizard" className={linkCls}>
+    🆕 새 업로드 UI (wizard)
+  </Link>
+</DropdownMenuItem>
+```
+
+- [ ] **Step 3: 전체 타입 체크**
 
 ```bash
 npx tsc --noEmit
 ```
 
-오류 없으면 통과.
-
-- [ ] **Step 5: 개발 서버에서 전체 플로우 수동 확인**
+- [ ] **Step 4: 개발 서버에서 전체 플로우 수동 확인**
 
 ```bash
 npm run dev
 ```
 
 확인 항목:
-- [ ] Step 0 → 내 작품 올리기 선택 → Step 1 진입
+- [ ] QA 플로팅 버튼 → "새 업로드 UI (wizard)" 클릭 → `/upload-wizard` 진입
+- [ ] Step 0 → 내 작품 올리기 → Step 1 진입
 - [ ] 이미지 업로드 → 다음 → Step 2
-- [ ] 전시 이름 입력 → 다음 → Step 4 (내 작품)
-- [ ] Step 0 → 여러 작가 함께 올리기 → Step 1 → 2 → 3 → 4
-- [ ] 3A 작가 등록 (회원 검색 + 비회원 입력)
-- [ ] 3B 이미지 배분 → 전시 신청
-- [ ] 완료된 단계 클릭 → 해당 단계로 이동
-- [ ] 초안 저장 버튼
-- [ ] 화면 미리보기 버튼
+- [ ] 전시 이름 입력 → 다음 → Step 4 (내 작품: Step 3 숨김)
+- [ ] Step 0 → 여러 작가 함께 올리기 → Step 1 → 2 → 3(3A+3B) → 4
+- [ ] 3A 회원 검색 + 비회원 이름 입력 작동
+- [ ] 3B 이미지 배분 → 전체 배분 완료 → 전시 신청
+- [ ] 완료된 단계(초록 체크) 클릭 → 해당 단계로 이동
+- [ ] 초안 저장 버튼 작동
+- [ ] 화면 미리보기 버튼 작동
+- [ ] **기존 `/upload` 라우트 완전 정상 동작 확인** ← 핵심
 
-- [ ] **Step 6: 커밋**
+- [ ] **Step 5: 커밋**
 
 ```bash
-git add src/app/pages/Upload.tsx
-git commit -m "feat(upload): 구 캔버스+사이드바+모달 제거, wizard 완성"
+git add src/app/routes.ts src/app/components/QaScreenShortcuts.tsx
+git commit -m "feat(upload-wizard): /upload-wizard DEV 라우트 + QA 메뉴 추가"
 ```
 
 ---
@@ -1685,6 +1702,58 @@ grep -rn "혼자 올리기\|함께 올리기" "_planning/"
 ```bash
 git add "_planning/README.md" "_planning/Copy_v1.md"
 git commit -m "docs(planning): 업로드 모드 용어 갱신 — 내 작품 올리기·여러 작가 함께 올리기"
+```
+
+---
+
+---
+
+## Task 11: 최종 교체 — PM 검토 완료 후 실행
+
+> ⚠️ **이 태스크는 PM이 `/upload-wizard`를 직접 확인하고 "교체해도 좋다"고 명시적으로 승인한 후에만 실행.**
+
+**Files:**
+- Modify: `src/app/pages/Upload.tsx` (UploadWizard.tsx 내용으로 전체 교체)
+- Modify: `src/app/routes.ts` (wizard 라우트 제거)
+- Modify: `src/app/components/QaScreenShortcuts.tsx` (wizard 메뉴 항목 제거)
+- Delete: `src/app/pages/UploadWizard.tsx`
+
+- [ ] **Step 1: Upload.tsx를 UploadWizard.tsx로 교체**
+
+```bash
+cp src/app/pages/UploadWizard.tsx src/app/pages/Upload.tsx
+# UploadWizard.tsx 내 export default 함수명을 Upload로 변경
+# (UploadWizard → Upload)
+```
+
+- [ ] **Step 2: UploadWizard.tsx 삭제**
+
+```bash
+rm src/app/pages/UploadWizard.tsx
+```
+
+- [ ] **Step 3: routes.ts 정리 — wizard 라우트 제거**
+
+`wizardRouteEnabled` 변수와 `upload-wizard` 라우트 항목 제거. `UploadWizard` import 제거.
+
+- [ ] **Step 4: QaScreenShortcuts.tsx — wizard 메뉴 항목 제거**
+
+Task 8 Step 2에서 추가한 "새 업로드 UI" 섹션 제거.
+
+- [ ] **Step 5: 타입 체크 + 기존 업로드 라우트 최종 확인**
+
+```bash
+npx tsc --noEmit
+npm run dev
+# /upload 직접 진입 → wizard UI 정상 작동 확인
+```
+
+- [ ] **Step 6: 커밋**
+
+```bash
+git add src/app/pages/Upload.tsx src/app/routes.ts src/app/components/QaScreenShortcuts.tsx
+git rm src/app/pages/UploadWizard.tsx
+git commit -m "feat(upload): wizard UI로 교체 — 4단계 linear wizard 적용"
 ```
 
 ---
