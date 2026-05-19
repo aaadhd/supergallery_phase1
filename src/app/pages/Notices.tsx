@@ -1,28 +1,9 @@
 import { Link } from 'react-router-dom';
-import { ChevronRight, Megaphone } from 'lucide-react';
+import { ChevronRight, Megaphone, Pin } from 'lucide-react';
 import { noticeStore, useNotices } from '../utils/noticeStore';
 import { useI18n } from '../i18n/I18nProvider';
-import type { MessageKey } from '../i18n/messages';
 
 void noticeStore; // 스토어 초기화 보장
-
-const CATEGORY_COLORS: Record<string, string> = {
-  서비스: 'bg-muted text-muted-foreground',
-  이벤트: 'bg-amber-50 text-amber-600',
-  정책: 'bg-red-50 text-destructive',
-  기타: 'bg-muted text-muted-foreground',
-};
-
-function categoryLabel(cat: string, t: (k: MessageKey) => string): string {
-  const keys: Record<string, MessageKey> = {
-    서비스: 'notices.categoryService',
-    이벤트: 'notices.categoryEvent',
-    정책: 'notices.categoryPolicy',
-    기타: 'notices.categoryOther',
-  };
-  const k = keys[cat];
-  return k ? t(k) : cat;
-}
 
 export default function Notices() {
   const { t, locale } = useI18n();
@@ -64,18 +45,11 @@ export default function Notices() {
                 }`}
               >
                 <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1.5">
-                    {notice.isPinned ? (
-                      <span className="px-2 py-0.5 rounded bg-primary text-primary-foreground text-xs font-bold">
-                        {t('notices.pinned')}
-                      </span>
-                    ) : null}
-                    <span
-                      className={`px-2.5 py-0.5 rounded-full text-xs font-medium ${CATEGORY_COLORS[notice.category] ?? CATEGORY_COLORS['기타']}`}
-                    >
-                      {categoryLabel(notice.category, t)}
-                    </span>
-                  </div>
+                  {notice.isPinned && (
+                    <div className="flex items-center gap-1 mb-1.5">
+                      <Pin className="h-3.5 w-3.5 text-primary" aria-label={t('notices.pinned')} />
+                    </div>
+                  )}
                   <h3 className="text-sm sm:text-base font-semibold text-foreground truncate">
                     {locale === 'en' ? (notice.titleEn || notice.title) : notice.title}
                   </h3>

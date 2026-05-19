@@ -1,26 +1,7 @@
 import { Link, useNavigate, useParams } from 'react-router-dom';
 import { useNotices } from '../utils/noticeStore';
 import { useI18n } from '../i18n/I18nProvider';
-import type { MessageKey } from '../i18n/messages';
 import { Button } from '../components/ui/button';
-
-const CATEGORY_COLORS: Record<string, string> = {
-  서비스: 'bg-muted text-muted-foreground',
-  이벤트: 'bg-amber-50 text-amber-600',
-  정책: 'bg-red-50 text-destructive',
-  기타: 'bg-muted text-muted-foreground',
-};
-
-function categoryLabel(cat: string, t: (k: MessageKey) => string): string {
-  const keys: Record<string, MessageKey> = {
-    서비스: 'notices.categoryService',
-    이벤트: 'notices.categoryEvent',
-    정책: 'notices.categoryPolicy',
-    기타: 'notices.categoryOther',
-  };
-  const k = keys[cat];
-  return k ? t(k) : cat;
-}
 
 export default function NoticeDetail() {
   const { id } = useParams<{ id: string }>();
@@ -57,11 +38,6 @@ export default function NoticeDetail() {
             {t('noticeDetail.back')}
           </Button>
           <div className="flex items-center gap-2 mb-3">
-            <span
-              className={`px-2.5 py-1 rounded-full text-xs font-medium ${CATEGORY_COLORS[notice.category] ?? CATEGORY_COLORS['기타']}`}
-            >
-              {categoryLabel(notice.category, t)}
-            </span>
             <span className="text-xs text-muted-foreground">
               {new Date(notice.createdAt).toLocaleDateString(dateLocale, {
                 year: 'numeric',
