@@ -40,7 +40,7 @@ export type CurationState = {
   curatedExhibitions: CuratedExhibition[];
 };
 
-const STORAGE_KEY = 'artier_curation_v2';
+const STORAGE_KEY = 'artier_curation_v3';
 const CHANGED_EVENT = 'artier-curation-changed';
 
 const DEFAULT_STATE: CurationState = {
@@ -345,6 +345,7 @@ export function seedCurationIfEmpty(): void {
         endAt: '2026-06-30',
         pageUrl: 'https://proud-gallery.notion.site',
         bannerImageUrl: '/images_1/황서현/초록의 휴식.JPG',
+        bannerOverlay: true,
         pieces: pieces1,
       }];
     }
@@ -358,16 +359,17 @@ export function seedCurationIfEmpty(): void {
         endAt: '2026-04-30',
         pageUrl: 'https://proud-gallery.notion.site/spring-summer',
         bannerImageUrl: getBanner(pieces2),
+        bannerOverlay: true,
         pieces: pieces2,
       }];
     }
 
     // 지난 기획전 4종 시드
     const pastSeeds = [
-      { id: 'seed-curation-3', title: '겨울 서정 — 설경과 정물', subtitle: '고요한 계절을 담은 작가들의 겨울 연작', startAt: '2025-12-01', endAt: '2026-01-31', bannerImageUrl: '/images_1/구월/눈 내리는 밤.jpeg', pieces: pieces3 },
-      { id: 'seed-curation-4', title: '빛과 색채 — 추상의 세계', subtitle: '색의 언어로 말하는 작가 5인의 추상 작품전', startAt: '2025-10-01', endAt: '2025-11-30', bannerImageUrl: '/images_1/이고은/01_Still Light · 靜光 · 고요한 빛.png', pieces: pieces4 },
-      { id: 'seed-curation-5', title: '일상의 단면 — 정물화 특별전', subtitle: '소박한 일상을 예술로 담아낸 정물화 모음', startAt: '2025-08-01', endAt: '2025-09-30', bannerImageUrl: '/images_1/구월/노부부의 티타임.jpg', pieces: pieces5 },
-      { id: 'seed-curation-6', title: '자연을 담다 — 풍경화 기획전', subtitle: '산과 들, 바다를 캔버스에 옮긴 풍경화 선집', startAt: '2025-06-01', endAt: '2025-07-31', bannerImageUrl: '/images_1/황서현/빛나는 여름날.JPG', pieces: pieces6 },
+      { id: 'seed-curation-3', title: '겨울 서정 — 설경과 정물', subtitle: '고요한 계절을 담은 작가들의 겨울 연작', startAt: '2025-12-01', endAt: '2026-01-31', bannerImageUrl: '/images_1/구월/눈 내리는 밤.jpeg', bannerOverlay: true, pieces: pieces3 },
+      { id: 'seed-curation-4', title: '빛과 색채 — 추상의 세계', subtitle: '색의 언어로 말하는 작가 5인의 추상 작품전', startAt: '2025-10-01', endAt: '2025-11-30', bannerImageUrl: '/images_1/이고은/01_Still Light · 靜光 · 고요한 빛.png', bannerOverlay: true, pieces: pieces4 },
+      { id: 'seed-curation-5', title: '일상의 단면 — 정물화 특별전', subtitle: '소박한 일상을 예술로 담아낸 정물화 모음', startAt: '2025-08-01', endAt: '2025-09-30', bannerImageUrl: '/images_1/구월/노부부의 티타임.jpg', bannerOverlay: true, pieces: pieces5 },
+      { id: 'seed-curation-6', title: '자연을 담다 — 풍경화 기획전', subtitle: '산과 들, 바다를 캔버스에 옮긴 풍경화 선집', startAt: '2025-06-01', endAt: '2025-07-31', bannerImageUrl: '/images_1/황서현/빛나는 여름날.JPG', bannerOverlay: true, pieces: pieces6 },
     ];
 
     for (const s of pastSeeds) {
