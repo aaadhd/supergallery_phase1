@@ -263,7 +263,9 @@ export function seedCurationIfEmpty(): void {
     const makePieces = (pool: typeof works, count: number, notes?: string[]): CurationPieceRef[] =>
       pool.flatMap((w) => {
         const ids = w.imagePieceIds ?? [];
-        return ids[0] ? [{ workId: w.id, pieceId: ids[0] }] : [];
+        const img = Array.isArray(w.image) ? w.image[0] : w.image;
+        if (!ids[0] || typeof img !== 'string' || img.length < 4) return [];
+        return [{ workId: w.id, pieceId: ids[0] }];
       }).slice(0, count).map((p, i) => ({
         ...p,
         ...(notes?.[i] ? { curatorNote: notes[i] } : {}),
@@ -282,10 +284,11 @@ export function seedCurationIfEmpty(): void {
       const n = (w.exhibitionName || w.title || '').toLowerCase();
       return n.includes('수채') || n.includes('블룸') || n.includes('꽃') || n.includes('일러스트');
     });
-    // 작가가 겹치지 않도록 작가별 첫 작품씩 선택
+    // 컨테스트 시드 작품 제외 + 작가가 겹치지 않도록 작가별 첫 작품씩 선택
+    const stableWorks = works.filter((w) => !w.id.startsWith('contest-seed'));
     const seenArtists = new Set<string>();
     const diversePool: typeof works = [];
-    for (const w of works) {
+    for (const w of stableWorks) {
       if (!seenArtists.has(w.artistId)) {
         seenArtists.add(w.artistId);
         diversePool.push(w);

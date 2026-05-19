@@ -7,6 +7,7 @@ import { useWorkStore } from '../store';
 import { isWorkPublic } from '../utils/workVisibility';
 import { CopyrightProtectedImage } from '../components/work/CopyrightProtectedImage';
 import { displayPieceTitleAtIndex } from '../utils/workDisplay';
+import { imageUrls } from '../imageUrls';
 import type { Work } from '../data';
 
 type ResolvedPiece = {
@@ -24,8 +25,9 @@ function resolvePiece(ref: CurationPieceRef, work: Work | undefined, untitledLab
   const idx = pieceIds.indexOf(ref.pieceId);
   if (idx < 0) return null;
   const images = Array.isArray(work.image) ? work.image : [work.image];
-  const imageUrl = images[idx];
-  if (typeof imageUrl !== 'string' || !imageUrl) return null;
+  const rawUrl = images[idx];
+  if (typeof rawUrl !== 'string' || !rawUrl) return null;
+  const imageUrl = imageUrls[rawUrl] || rawUrl;
   const pieceTitle = displayPieceTitleAtIndex(work, idx, untitledLabel);
   const artistName = work.artist?.name ?? '';
   return { ref, work, imageUrl, pieceTitle, artistName };
