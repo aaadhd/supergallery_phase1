@@ -118,7 +118,7 @@ export function CurationCarousel({ curations }: Props) {
             type="button"
             aria-label={t('browse.carousel.prev')}
             onClick={(e) => { e.stopPropagation(); goTo(current - 1); }}
-            className="hidden sm:flex absolute left-3 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full items-center justify-center bg-black/35 backdrop-blur-sm border border-white/15 text-white opacity-0 group-hover:opacity-100 transition-opacity min-h-[44px]"
+            className="hidden sm:flex absolute left-3 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full items-center justify-center bg-black/35 backdrop-blur-sm border border-white/15 text-white transition-opacity min-h-[44px]"
           >
             <ChevronLeft className="w-5 h-5" />
           </button>
@@ -126,7 +126,7 @@ export function CurationCarousel({ curations }: Props) {
             type="button"
             aria-label={t('browse.carousel.next')}
             onClick={(e) => { e.stopPropagation(); goTo(current + 1); }}
-            className="hidden sm:flex absolute right-3 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full items-center justify-center bg-black/35 backdrop-blur-sm border border-white/15 text-white opacity-0 group-hover:opacity-100 transition-opacity min-h-[44px]"
+            className="hidden sm:flex absolute right-3 top-1/2 -translate-y-1/2 z-10 w-11 h-11 rounded-full items-center justify-center bg-black/35 backdrop-blur-sm border border-white/15 text-white transition-opacity min-h-[44px]"
           >
             <ChevronRight className="w-5 h-5" />
           </button>
