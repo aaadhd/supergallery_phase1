@@ -50,6 +50,7 @@ export default function WorkImageViewer({
   const panTouchRef = useRef<{ id: number; sx: number; sy: number; ox: number; oy: number } | null>(null);
   const lastTapTime = useRef(0);
   const swipeStartX = useRef<number | null>(null);
+  const containerRef = useRef<HTMLDivElement>(null);
 
   const resetView = useCallback(() => {
     setScale(1);
@@ -112,10 +113,16 @@ export default function WorkImageViewer({
     dragStartRef.current = { sx: e.clientX, sy: e.clientY, ox: pos.x, oy: pos.y };
   };
 
-  const handleWheel = (e: React.WheelEvent) => {
-    e.preventDefault();
-    setScale(s => clamp(s * (1 - e.deltaY * 0.0015), MIN_SCALE, MAX_SCALE));
-  };
+  useEffect(() => {
+    const el = containerRef.current;
+    if (!el || !open) return;
+    const handler = (e: WheelEvent) => {
+      e.preventDefault();
+      setScale(s => clamp(s * (1 - e.deltaY * 0.0015), MIN_SCALE, MAX_SCALE));
+    };
+    el.addEventListener('wheel', handler, { passive: false });
+    return () => el.removeEventListener('wheel', handler);
+  }, [open]);
 
   const onTouchStart = (e: React.TouchEvent) => {
     if (e.touches.length === 2) {
@@ -133,7 +140,6 @@ export default function WorkImageViewer({
 
   const onTouchMove = (e: React.TouchEvent) => {
     if (e.touches.length === 2) {
-      e.preventDefault();
       const d = touchDist(e.touches);
       if (lastPinchDist.current > 0 && d > 0)
         setScale(s => clamp(s * (d / lastPinchDist.current), MIN_SCALE, MAX_SCALE));
@@ -215,9 +221,9 @@ export default function WorkImageViewer({
 
       {/* 이미지 영역 */}
       <div
+        ref={containerRef}
         className={`absolute inset-0 flex items-center justify-center overflow-hidden ${isZoomed ? 'cursor-grab active:cursor-grabbing' : ''}`}
         onMouseDown={onMouseDown}
-        onWheel={handleWheel}
         onTouchStart={onTouchStart}
         onTouchMove={onTouchMove}
         onTouchEnd={onTouchEnd}
