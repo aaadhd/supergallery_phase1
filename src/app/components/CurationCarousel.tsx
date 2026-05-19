@@ -86,19 +86,19 @@ export function CurationCarousel({ curations }: Props) {
             const artistNames = getArtistNames(c);
             return (
               <>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/[0.08] to-transparent pointer-events-none" />
-                <div className="absolute bottom-0 left-0 right-0 p-5 pointer-events-none">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/[0.06] to-transparent pointer-events-none" />
+                <div className="absolute bottom-0 left-0 right-0 px-5 py-4 pointer-events-none">
                   {artistNames.length > 0 && (
-                    <p className="text-[11px] text-white/50 mb-2.5 leading-relaxed tracking-wide">
+                    <p className="text-[10px] text-white/50 mb-1.5 leading-relaxed tracking-wide">
                       {artistNames.join(' · ')}
                     </p>
                   )}
-                  <p className="text-white font-bold text-2xl leading-tight mb-0.5">{c.title}</p>
+                  <p className="text-white font-bold text-xl leading-tight mb-0.5">{c.title}</p>
                   {c.subtitle && (
-                    <p className="text-white/70 text-sm leading-snug">{c.subtitle}</p>
+                    <p className="text-white/65 text-[13px] leading-snug">{c.subtitle}</p>
                   )}
                   {(c.startAt && c.endAt) && (
-                    <p className="text-white/40 text-[11px] tracking-[2.5px] mt-3">
+                    <p className="text-white/38 text-[10px] tracking-[2px] mt-2.5">
                       {c.startAt.replace(/-/g, '.')} — {c.endAt.replace(/-/g, '.')}
                     </p>
                   )}

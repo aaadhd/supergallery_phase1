@@ -107,19 +107,19 @@ export default function CurationDetail() {
             />
             {curation.bannerOverlay && (
               <>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/[0.08] to-transparent pointer-events-none" />
-                <div className="absolute bottom-0 left-0 right-0 p-6 pointer-events-none">
+                <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/[0.06] to-transparent pointer-events-none" />
+                <div className="absolute bottom-0 left-0 right-0 px-6 py-5 pointer-events-none">
                   {bannerArtistNames.length > 0 && (
-                    <p className="text-[11px] text-white/50 mb-2.5 leading-relaxed tracking-wide">
+                    <p className="text-[11px] text-white/50 mb-1.5 leading-relaxed tracking-wide">
                       {bannerArtistNames.join(' · ')}
                     </p>
                   )}
-                  <p className="text-white font-bold text-3xl leading-tight mb-0.5">{curation.title}</p>
+                  <p className="text-white font-bold text-2xl leading-tight mb-0.5">{curation.title}</p>
                   {curation.subtitle && (
-                    <p className="text-white/70 text-base leading-snug">{curation.subtitle}</p>
+                    <p className="text-white/65 text-[13px] leading-snug">{curation.subtitle}</p>
                   )}
                   {(curation.startAt && curation.endAt) && (
-                    <p className="text-white/40 text-[11px] tracking-[2.5px] mt-3">
+                    <p className="text-white/38 text-[11px] tracking-[2px] mt-2.5">
                       {curation.startAt.replace(/-/g, '.')} — {curation.endAt.replace(/-/g, '.')}
                     </p>
                   )}

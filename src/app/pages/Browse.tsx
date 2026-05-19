@@ -80,14 +80,14 @@ function EndedCurationsSection({
                 <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/[0.08] to-transparent pointer-events-none" />
                 <div className="absolute bottom-0 left-0 right-0 p-4 pointer-events-none">
                   {artistNames.length > 0 && (
-                    <p className="text-[10px] text-white/50 mb-2 leading-relaxed tracking-wide">{artistNames.join(' · ')}</p>
+                    <p className="text-[9px] text-white/50 mb-1 leading-relaxed tracking-wide">{artistNames.join(' · ')}</p>
                   )}
-                  <p className="text-white font-bold text-lg leading-tight mb-0.5">{c.title}</p>
+                  <p className="text-white font-bold text-base leading-tight mb-0.5">{c.title}</p>
                   {c.subtitle && (
-                    <p className="text-white/70 text-xs leading-snug">{c.subtitle}</p>
+                    <p className="text-white/65 text-[11px] leading-snug">{c.subtitle}</p>
                   )}
                   {(c.startAt && c.endAt) && (
-                    <p className="text-white/40 text-[10px] tracking-[2px] mt-2.5">
+                    <p className="text-white/38 text-[9px] tracking-[1.5px] mt-2">
                       {c.startAt.replace(/-/g, '.')} — {c.endAt.replace(/-/g, '.')}
                     </p>
                   )}
@@ -551,19 +551,19 @@ export default function Browse() {
                   />
                   {activeCurations[0].bannerOverlay && (
                     <>
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/[0.08] to-transparent pointer-events-none" />
-                      <div className="absolute bottom-0 left-0 right-0 p-5 pointer-events-none">
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/[0.06] to-transparent pointer-events-none" />
+                      <div className="absolute bottom-0 left-0 right-0 px-5 py-4 pointer-events-none">
                         {singleCurationArtistNames.length > 0 && (
-                          <p className="text-[11px] text-white/50 mb-2.5 leading-relaxed tracking-wide">
+                          <p className="text-[10px] text-white/50 mb-1.5 leading-relaxed tracking-wide">
                             {singleCurationArtistNames.join(' · ')}
                           </p>
                         )}
-                        <p className="text-white font-bold text-2xl leading-tight mb-0.5">{activeCurations[0].title}</p>
+                        <p className="text-white font-bold text-xl leading-tight mb-0.5">{activeCurations[0].title}</p>
                         {activeCurations[0].subtitle && (
-                          <p className="text-white/70 text-sm leading-snug">{activeCurations[0].subtitle}</p>
+                          <p className="text-white/65 text-[13px] leading-snug">{activeCurations[0].subtitle}</p>
                         )}
                         {(activeCurations[0].startAt && activeCurations[0].endAt) && (
-                          <p className="text-white/40 text-[11px] tracking-[2.5px] mt-3">
+                          <p className="text-white/38 text-[10px] tracking-[2px] mt-2.5">
                             {activeCurations[0].startAt.replace(/-/g, '.')} — {activeCurations[0].endAt.replace(/-/g, '.')}
                           </p>
                         )}
