@@ -49,7 +49,7 @@ import { Step1Images } from '../components/upload/Step1Images';
 import { Step2Titles } from '../components/upload/Step2Titles';
 import { Step3Artists } from '../components/upload/Step3Artists';
 import { Step4Submit } from '../components/upload/Step4Submit';
-import type { RegisteredArtist, WizardStep } from '../components/upload/types';
+import type { WizardStep } from '../components/upload/types';
 
 /* ─── 상수 ─── */
 const MIN_SHORT_SIDE = 800; // px — v1.7 단변 최소 해상도
@@ -128,8 +128,6 @@ export default function UploadWizard() {
 
   // ── Wizard 단계 ──
   const [wizardStep, setWizardStep] = useState<WizardStep>(1);
-  const [registeredArtists, setRegisteredArtists] = useState<RegisteredArtist[]>([]);
-  const [assigningArtistIdx, setAssigningArtistIdx] = useState(0);
   const [step3NeedsReview, setStep3NeedsReview] = useState(false);
   const [isPublishing, setIsPublishing] = useState(false);
   const [previewMode, setPreviewMode] = useState(false);
@@ -395,36 +393,6 @@ export default function UploadWizard() {
     toast.success(t('upload.toastEditLoaded'));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
-
-  // 편집 모드: 기존 imageArtists에서 registeredArtists 재구성
-  useEffect(() => {
-    if (!editingWorkId || contents.length === 0) return;
-    const seen = new Map<string, RegisteredArtist>();
-    contents.forEach((c) => {
-      if (c.artistType === 'member' && c.artist) {
-        if (!seen.has(c.artist.id)) {
-          seen.set(c.artist.id, {
-            id: Math.random().toString(36).slice(2),
-            type: 'member',
-            memberId: c.artist.id,
-            memberName: c.artist.name,
-            memberAvatar: c.artist.avatar,
-          });
-        }
-      } else if (c.artistType === 'non-member' && c.nonMemberArtist?.displayName) {
-        const key = `nm_${c.nonMemberArtist.displayName}`;
-        if (!seen.has(key)) {
-          seen.set(key, {
-            id: Math.random().toString(36).slice(2),
-            type: 'non-member',
-            displayName: c.nonMemberArtist.displayName,
-          });
-        }
-      }
-    });
-    if (seen.size > 0) setRegisteredArtists([...seen.values()]);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [editingWorkId]);
 
   /* ━━━━━━ 파일 핸들러 ━━━━━━ */
 
@@ -1148,7 +1116,7 @@ export default function UploadWizard() {
           <h1 className="text-2xl sm:text-3xl font-bold text-foreground mb-10 text-center">{t('upload.typePromptTitle')}</h1>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-5 w-full max-w-2xl">
             <button
-              onClick={() => { setUploadType('solo'); setWizardStep(1); setRegisteredArtists([]); }}
+              onClick={() => { setUploadType('solo'); setWizardStep(1); }}
               className="flex flex-col items-center text-center p-10 bg-white border-2 border-border/60 hover:border-primary transition-all rounded-2xl group shadow-sm hover:shadow-md"
             >
               <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg shadow-primary/30">
@@ -1158,7 +1126,7 @@ export default function UploadWizard() {
               <p className="text-sm text-muted-foreground font-medium leading-relaxed">{t('upload.typeSoloDesc1')}</p>
             </button>
             <button
-              onClick={() => { setUploadType('group'); setWizardStep(1); setRegisteredArtists([]); }}
+              onClick={() => { setUploadType('group'); setWizardStep(1); }}
               className="flex flex-col items-center text-center p-10 bg-white border-2 border-border/60 hover:border-primary transition-all rounded-2xl group shadow-sm hover:shadow-md"
             >
               <div className="w-16 h-16 rounded-full bg-primary text-primary-foreground flex items-center justify-center mb-6 group-hover:scale-110 transition-transform shadow-lg shadow-primary/30">
@@ -1247,10 +1215,6 @@ export default function UploadWizard() {
             <Step3Artists
               contents={contents}
               setContents={setContents}
-              registeredArtists={registeredArtists}
-              setRegisteredArtists={setRegisteredArtists}
-              assigningArtistIdx={assigningArtistIdx}
-              setAssigningArtistIdx={setAssigningArtistIdx}
               step3NeedsReview={step3NeedsReview}
               setStep3NeedsReview={setStep3NeedsReview}
               onNext={goNext}
