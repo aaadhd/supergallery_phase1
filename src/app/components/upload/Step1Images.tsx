@@ -146,7 +146,7 @@ export function Step1Images({
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8">
+    <div className="max-w-4xl mx-auto px-4 py-8">
       {/* 반려 배너 */}
       {editingRejectedWork && (
         <div className="mb-6 rounded-lg border-2 border-red-300 bg-red-50 px-4 py-3 text-sm text-red-900 leading-relaxed animate-in fade-in duration-500">
@@ -245,7 +245,7 @@ export function Step1Images({
           <Button variant="outline" disabled={!hasImages} onClick={onSaveDraft} className="flex-1 min-h-[44px]">
             {t('upload.saveDraft')}
           </Button>
-          <Button variant="ghost" disabled={!hasImages} onClick={onPreview} className="flex-1 min-h-[44px] gap-1">
+          <Button variant="outline" disabled={!hasImages} onClick={onPreview} className="flex-1 min-h-[44px] gap-1">
             <Monitor className="h-4 w-4" />
             {t('upload.screenPreview')}
           </Button>

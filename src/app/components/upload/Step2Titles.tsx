@@ -44,7 +44,7 @@ export function Step2Titles({
     (uploadType !== 'group' || groupName.trim().length > 0);
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 animate-in fade-in duration-300">
+    <div className="max-w-4xl mx-auto px-4 py-8 animate-in fade-in duration-300">
       <h1 className="text-2xl font-bold text-foreground mb-2">{t('upload.step2Title')}</h1>
       <p className="text-sm text-muted-foreground mb-8">{t('upload.step2Subtitle')}</p>
 
@@ -170,7 +170,7 @@ export function Step2Titles({
             {t('upload.saveDraft')}
           </Button>
           {hasImages && (
-            <Button variant="ghost" onClick={onPreview} className="flex-1 min-h-[44px] gap-1">
+            <Button variant="outline" onClick={onPreview} className="flex-1 min-h-[44px] gap-1">
               <Monitor className="h-4 w-4" />
               {t('upload.screenPreview')}
             </Button>

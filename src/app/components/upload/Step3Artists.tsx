@@ -147,7 +147,7 @@ export function Step3Artists({
   // ── 3A: Register artists ──
   if (subStep === 'register') {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-8 animate-in fade-in duration-300">
+      <div className="max-w-4xl mx-auto px-4 py-8 animate-in fade-in duration-300">
         {step3NeedsReview && (
           <div className="mb-4 rounded-lg border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-900">
             {t('upload.step3ReassignNotice')}
@@ -347,7 +347,7 @@ export function Step3Artists({
   const allAssigned = unassigned.length === 0;
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-8 animate-in fade-in duration-300">
+    <div className="max-w-4xl mx-auto px-4 py-8 animate-in fade-in duration-300">
       {/* Artist progress indicator */}
       <div className="flex gap-1 mb-3">
         {registeredArtists.map((_, i) => (
