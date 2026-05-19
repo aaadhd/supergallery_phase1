@@ -339,7 +339,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
 
       {/* Main content — NoteFolio / Behance layout: 3 Columns. Only center is animated! */}
       <div
-        className="relative z-10 w-full max-w-[1600px] mx-auto h-[100dvh] sm:h-[98vh] sm:my-[1vh] flex items-stretch sm:gap-4 pointer-events-none"
+        className={`relative z-10 w-full max-w-[1600px] mx-auto h-[100dvh] sm:h-[98vh] sm:my-[1vh] flex items-stretch sm:gap-4 pointer-events-none ${isPreview ? 'pt-11' : ''}`}
         onClick={(e) => e.stopPropagation()}
       >
         {/* ── Left sidebar (desktop) - Float Prev Button ── */}
