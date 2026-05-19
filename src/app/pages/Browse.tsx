@@ -557,14 +557,14 @@ export default function Browse() {
                         {activeCurations[0].subtitle && (
                           <p className="text-white/55 text-sm leading-snug">{activeCurations[0].subtitle}</p>
                         )}
-                        {(singleCurationArtistNames.length > 0 || (activeCurations[0].startAt && activeCurations[0].endAt)) && (
-                          <p className="text-white/40 text-xs tracking-wide mt-2.5">
-                            {[
-                              singleCurationArtistNames.length > 0 ? singleCurationArtistNames.join(' · ') : null,
-                              (activeCurations[0].startAt && activeCurations[0].endAt) ? `${activeCurations[0].startAt.replace(/-/g, '.')} — ${activeCurations[0].endAt.replace(/-/g, '.')}` : null,
-                            ].filter(Boolean).join('  ·  ')}
-                          </p>
-                        )}
+                        <div className="mt-2.5 flex flex-col gap-0.5">
+                          {singleCurationArtistNames.length > 0 && (
+                            <p className="text-white/40 text-xs tracking-wide">{singleCurationArtistNames.join(' · ')}</p>
+                          )}
+                          {(activeCurations[0].startAt && activeCurations[0].endAt) && (
+                            <p className="text-white/40 text-xs tracking-[2px]">{activeCurations[0].startAt.replace(/-/g, '.')} — {activeCurations[0].endAt.replace(/-/g, '.')}</p>
+                          )}
+                        </div>
                       </div>
                     </>
                   )}

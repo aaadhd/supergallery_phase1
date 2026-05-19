@@ -113,14 +113,14 @@ export default function CurationDetail() {
                   {curation.subtitle && (
                     <p className="text-white/55 text-xs leading-snug">{curation.subtitle}</p>
                   )}
-                  {(bannerArtistNames.length > 0 || (curation.startAt && curation.endAt)) && (
-                    <p className="text-white/40 text-[11px] tracking-wide mt-2">
-                      {[
-                        bannerArtistNames.length > 0 ? bannerArtistNames.join(' · ') : null,
-                        (curation.startAt && curation.endAt) ? `${curation.startAt.replace(/-/g, '.')} — ${curation.endAt.replace(/-/g, '.')}` : null,
-                      ].filter(Boolean).join('  ·  ')}
-                    </p>
-                  )}
+                  <div className="mt-2 flex flex-col gap-0.5">
+                    {bannerArtistNames.length > 0 && (
+                      <p className="text-white/40 text-[11px] tracking-wide">{bannerArtistNames.join(' · ')}</p>
+                    )}
+                    {(curation.startAt && curation.endAt) && (
+                      <p className="text-white/40 text-[11px] tracking-[2px]">{curation.startAt.replace(/-/g, '.')} — {curation.endAt.replace(/-/g, '.')}</p>
+                    )}
+                  </div>
                 </div>
               </>
             )}

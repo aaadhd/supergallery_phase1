@@ -92,14 +92,14 @@ export function CurationCarousel({ curations }: Props) {
                   {c.subtitle && (
                     <p className="text-white/55 text-sm leading-snug">{c.subtitle}</p>
                   )}
-                  {(artistNames.length > 0 || (c.startAt && c.endAt)) && (
-                    <p className="text-white/40 text-xs tracking-wide mt-2.5">
-                      {[
-                        artistNames.length > 0 ? artistNames.join(' · ') : null,
-                        (c.startAt && c.endAt) ? `${c.startAt.replace(/-/g, '.')} — ${c.endAt.replace(/-/g, '.')}` : null,
-                      ].filter(Boolean).join('  ·  ')}
-                    </p>
-                  )}
+                  <div className="mt-2.5 flex flex-col gap-0.5">
+                    {artistNames.length > 0 && (
+                      <p className="text-white/40 text-xs tracking-wide">{artistNames.join(' · ')}</p>
+                    )}
+                    {(c.startAt && c.endAt) && (
+                      <p className="text-white/40 text-xs tracking-[2px]">{c.startAt.replace(/-/g, '.')} — {c.endAt.replace(/-/g, '.')}</p>
+                    )}
+                  </div>
                 </div>
               </>
             );
