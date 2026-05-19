@@ -916,7 +916,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'upload.unknownSlotReassign': '작가 다시 지정하기',
   // === upload wizard 신규 키 ===
   'upload.step1Title': '작품 파일을 올려주세요',
-  'upload.step1Subtitle': '디지털 드로잉 그림 파일 · 최대 10개 · JPG, PNG, WEBP',
+  'upload.step1Subtitle': '올린 순서대로 전시돼요 · 잡아 끌어서 순서를 바꿀 수 있어요',
   'upload.step2Title': '전시 이름을 지어주세요',
   'upload.step2Subtitle': '작품마다 이름도 따로 붙일 수 있어요',
   'upload.step3Title': '이 전시에 참여한 작가를 알려주세요',
@@ -1616,7 +1616,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'upload.reorderGridBtn': 'Grid view & reorder',
   // === upload wizard new keys ===
   'upload.step1Title': 'Upload your artwork files',
-  'upload.step1Subtitle': 'Digital drawing files only · Up to 10 files · JPG, PNG, WEBP',
+  'upload.step1Subtitle': 'Works display in upload order · Drag to reorder',
   'upload.step2Title': 'Name your exhibition',
   'upload.step2Subtitle': 'You can also name each work individually',
   'upload.step3Title': 'Tell us who participated',

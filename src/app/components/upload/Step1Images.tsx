@@ -163,7 +163,8 @@ export function Step1Images({
         </div>
       )}
 
-      <h1 className="text-2xl font-bold text-foreground mb-6">{t('upload.step1Title')}</h1>
+      <h1 className="text-2xl font-bold text-foreground mb-2">{t('upload.step1Title')}</h1>
+      <p className="text-sm text-muted-foreground mb-6">{t('upload.step1Subtitle')}</p>
 
       {/* 드롭존 (이미지 없을 때) */}
       {validContents.length === 0 ? (
@@ -172,11 +173,11 @@ export function Step1Images({
           tabIndex={0}
           onClick={() => fileInputRef.current?.click()}
           onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
-          className="w-full cursor-pointer rounded-2xl border-2 border-dashed border-input bg-white p-12 text-center transition-all hover:border-primary hover:bg-primary/5 focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full aspect-[4/3] cursor-pointer rounded-2xl border-2 border-dashed border-input bg-white flex flex-col items-center justify-center gap-3 text-center transition-all hover:border-primary hover:bg-primary/5 focus:outline-none focus:ring-2 focus:ring-primary"
         >
-          <p className="mb-2 text-sm font-medium text-foreground">{t('upload.dropzoneTitle')}</p>
-          <p className="text-xs text-muted-foreground mb-4">{t('upload.dropzoneFormats')}</p>
-          <Button type="button" onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}>
+          <p className="text-sm font-medium text-foreground">{t('upload.dropzoneTitle')}</p>
+          <p className="text-xs text-muted-foreground">{t('upload.dropzoneFormats')}</p>
+          <Button type="button" className="mt-2" onClick={(e) => { e.stopPropagation(); fileInputRef.current?.click(); }}>
             {t('upload.step1Title')}
           </Button>
         </div>
