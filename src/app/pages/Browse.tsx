@@ -558,9 +558,9 @@ export default function Browse() {
                             {singleCurationArtistNames.join(' · ')}
                           </p>
                         )}
-                        <p className="text-white font-bold text-3xl leading-tight mb-1">{activeCurations[0].title}</p>
+                        <p className="text-white font-bold text-3xl leading-tight mb-0.5">{activeCurations[0].title}</p>
                         {activeCurations[0].subtitle && (
-                          <p className="text-white/65 text-xl leading-snug">{activeCurations[0].subtitle}</p>
+                          <p className="text-white/55 text-sm leading-snug">{activeCurations[0].subtitle}</p>
                         )}
                         {(activeCurations[0].startAt && activeCurations[0].endAt) && (
                           <p className="text-white/38 text-sm tracking-[2px] mt-3">

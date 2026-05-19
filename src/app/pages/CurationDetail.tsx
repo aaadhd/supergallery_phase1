@@ -116,7 +116,7 @@ export default function CurationDetail() {
                   )}
                   <p className="text-white font-bold text-2xl leading-tight mb-0.5">{curation.title}</p>
                   {curation.subtitle && (
-                    <p className="text-white/65 text-[13px] leading-snug">{curation.subtitle}</p>
+                    <p className="text-white/55 text-xs leading-snug">{curation.subtitle}</p>
                   )}
                   {(curation.startAt && curation.endAt) && (
                     <p className="text-white/38 text-[11px] tracking-[2px] mt-2.5">

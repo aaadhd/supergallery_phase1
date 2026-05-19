@@ -93,9 +93,9 @@ export function CurationCarousel({ curations }: Props) {
                       {artistNames.join(' · ')}
                     </p>
                   )}
-                  <p className="text-white font-bold text-3xl leading-tight mb-1">{c.title}</p>
+                  <p className="text-white font-bold text-3xl leading-tight mb-0.5">{c.title}</p>
                   {c.subtitle && (
-                    <p className="text-white/65 text-xl leading-snug">{c.subtitle}</p>
+                    <p className="text-white/55 text-sm leading-snug">{c.subtitle}</p>
                   )}
                   {(c.startAt && c.endAt) && (
                     <p className="text-white/38 text-sm tracking-[2px] mt-3">
