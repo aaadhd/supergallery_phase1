@@ -133,10 +133,10 @@ export function Step2Titles({
             {validContents.map((c, idx) => (
               <div key={c.id} className="flex items-center gap-3">
                 <div className="w-12 h-12 rounded-lg overflow-hidden bg-muted flex-shrink-0 border border-border/30 relative">
-                  {c.url
-                    ? <ImageWithFallback src={c.url} alt={`${idx + 1}`} className="w-full h-full object-cover" />
-                    : <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-muted-foreground">{idx + 1}</span>
-                  }
+                  {c.url && <ImageWithFallback src={c.url} alt={`${idx + 1}`} className="w-full h-full object-cover" />}
+                  <span className="absolute top-1 left-1 bg-black/60 text-white text-[10px] font-bold rounded-full w-4 h-4 flex items-center justify-center leading-none">
+                    {idx + 1}
+                  </span>
                 </div>
                 <div className="flex-1">
                   <input
