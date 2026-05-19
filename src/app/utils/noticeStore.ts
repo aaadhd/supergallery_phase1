@@ -11,7 +11,6 @@ const STORAGE_KEY = 'artier_admin_notices_v1';
 const MAX_PINNED = 2;
 
 export type NoticeStatus = 'draft' | 'published' | 'stopped';
-export type NoticeCategory = '서비스' | '이벤트' | '정책' | '기타';
 
 export interface AdminNotice {
   id: string;
@@ -19,7 +18,6 @@ export interface AdminNotice {
   titleEn: string;
   content: string;
   contentEn: string;
-  category: NoticeCategory;
   isPinned: boolean;
   status: NoticeStatus;
   createdAt: string;
@@ -33,7 +31,6 @@ function seed(): AdminNotice[] {
     titleEn: n.titleEn,
     content: n.content,
     contentEn: n.contentEn,
-    category: (n.category as NoticeCategory) ?? '서비스',
     isPinned: n.isPinned ?? false,
     status: 'published' as NoticeStatus,
     createdAt: n.createdAt,

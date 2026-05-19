@@ -3,11 +3,9 @@ import { Megaphone, Pin, Pencil, Trash2, Eye, EyeOff, Plus } from 'lucide-react'
 import { toast } from 'sonner';
 import { Button } from '../components/ui/button';
 import { openConfirm } from '../components/ConfirmDialog';
-import { noticeStore, useNotices, type AdminNotice, type NoticeCategory, type NoticeStatus } from '../utils/noticeStore';
+import { noticeStore, useNotices, type AdminNotice, type NoticeStatus } from '../utils/noticeStore';
 import { appendAuditLog } from '../utils/adminAuditLog';
 import { useI18n } from '../i18n/I18nProvider';
-
-const CATEGORIES: NoticeCategory[] = ['서비스', '이벤트', '정책', '기타'];
 
 const STATUS_BADGE: Record<NoticeStatus, string> = {
   draft: 'bg-muted text-muted-foreground',
@@ -22,13 +20,12 @@ type EditorState = {
   titleEn: string;
   content: string;
   contentEn: string;
-  category: NoticeCategory;
   isPinned: boolean;
   status: NoticeStatus;
 };
 
 function emptyEditor(): EditorState {
-  return { mode: 'create', title: '', titleEn: '', content: '', contentEn: '', category: '서비스', isPinned: false, status: 'draft' };
+  return { mode: 'create', title: '', titleEn: '', content: '', contentEn: '', isPinned: false, status: 'draft' };
 }
 
 export default function NoticeManagement() {
@@ -44,7 +41,7 @@ export default function NoticeManagement() {
   const openCreate = () => setEditor(emptyEditor());
 
   const openEdit = (n: AdminNotice) =>
-    setEditor({ mode: 'edit', id: n.id, title: n.title, titleEn: n.titleEn, content: n.content, contentEn: n.contentEn, category: n.category, isPinned: n.isPinned, status: n.status });
+    setEditor({ mode: 'edit', id: n.id, title: n.title, titleEn: n.titleEn, content: n.content, contentEn: n.contentEn, isPinned: n.isPinned, status: n.status });
 
   const closeEditor = () => setEditor(null);
 
@@ -61,11 +58,11 @@ export default function NoticeManagement() {
       }
     }
     if (editor.mode === 'edit' && editor.id) {
-      noticeStore.update(editor.id, { title: editor.title.trim(), titleEn: editor.titleEn.trim(), content: editor.content.trim(), contentEn: editor.contentEn.trim(), category: editor.category, isPinned: editor.isPinned });
+      noticeStore.update(editor.id, { title: editor.title.trim(), titleEn: editor.titleEn.trim(), content: editor.content.trim(), contentEn: editor.contentEn.trim(), isPinned: editor.isPinned });
       appendAuditLog({ action: 'notice_saved', targetId: editor.id, targetSnapshot: { title: editor.title.trim(), status: editor.status }, actorId: 'admin', actorRole: 'admin' });
       toast.success(t('admin.notice.toastUpdated'));
     } else {
-      const created = noticeStore.add({ title: editor.title.trim(), titleEn: editor.titleEn.trim(), content: editor.content.trim(), contentEn: editor.contentEn.trim(), category: editor.category, isPinned: editor.isPinned, status: editor.status });
+      const created = noticeStore.add({ title: editor.title.trim(), titleEn: editor.titleEn.trim(), content: editor.content.trim(), contentEn: editor.contentEn.trim(), isPinned: editor.isPinned, status: editor.status });
       appendAuditLog({ action: 'notice_saved', targetId: created.id, targetSnapshot: { title: editor.title.trim(), status: editor.status }, actorId: 'admin', actorRole: 'admin' });
       toast.success(t('admin.notice.toastSaved'));
     }
@@ -140,7 +137,6 @@ export default function NoticeManagement() {
             <thead>
               <tr className="bg-muted/50 border-b border-border">
                 <th className="text-left px-4 py-3 font-semibold text-xs text-muted-foreground">{t('admin.notice.colTitle')}</th>
-                <th className="text-left px-4 py-3 font-semibold text-xs text-muted-foreground w-20">{t('admin.notice.colCategory')}</th>
                 <th className="text-left px-4 py-3 font-semibold text-xs text-muted-foreground w-24">{t('admin.notice.colStatus')}</th>
                 <th className="text-left px-4 py-3 font-semibold text-xs text-muted-foreground w-28">{t('admin.notice.colPublishedAt')}</th>
                 <th className="px-4 py-3 w-36"></th>
@@ -155,9 +151,6 @@ export default function NoticeManagement() {
                       {n.title}
                     </div>
                     <p className="text-xs text-muted-foreground truncate max-w-xs mt-0.5">{n.titleEn}</p>
-                  </td>
-                  <td className="px-4 py-3">
-                    <span className="text-xs text-muted-foreground">{n.category}</span>
                   </td>
                   <td className="px-4 py-3">
                     <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${STATUS_BADGE[n.status]}`}>
@@ -203,30 +196,18 @@ export default function NoticeManagement() {
               </h2>
             </div>
             <div className="px-6 py-5 space-y-4">
-              {/* 카테고리 + 고정 */}
-              <div className="flex gap-4">
-                <div className="flex-1">
-                  <label className="block text-xs font-semibold text-muted-foreground mb-1">{t('admin.notice.labelCategory')}</label>
-                  <select
-                    value={editor.category}
-                    onChange={(e) => setEditor((p) => p && ({ ...p, category: e.target.value as NoticeCategory }))}
-                    className="w-full border border-border rounded-lg h-9 px-3 py-2 text-sm bg-background"
-                  >
-                    {CATEGORIES.map((c) => <option key={c} value={c}>{c}</option>)}
-                  </select>
-                </div>
-                <div className="flex items-end pb-2 gap-2">
-                  <label className="flex items-center gap-2 text-sm cursor-pointer">
-                    <input
-                      type="checkbox"
-                      checked={editor.isPinned}
-                      onChange={(e) => setEditor((p) => p && ({ ...p, isPinned: e.target.checked }))}
-                      className="w-4 h-4 rounded accent-foreground"
-                    />
-                    <Pin className="w-3.5 h-3.5 text-amber-500" />
-                    {t('admin.notice.labelPinned')}
-                  </label>
-                </div>
+              {/* 고정 */}
+              <div className="flex items-center gap-2">
+                <label className="flex items-center gap-2 text-sm cursor-pointer">
+                  <input
+                    type="checkbox"
+                    checked={editor.isPinned}
+                    onChange={(e) => setEditor((p) => p && ({ ...p, isPinned: e.target.checked }))}
+                    className="w-4 h-4 rounded accent-foreground"
+                  />
+                  <Pin className="w-3.5 h-3.5 text-amber-500" />
+                  {t('admin.notice.labelPinned')}
+                </label>
               </div>
               {/* 제목 ko/en */}
               <div>
