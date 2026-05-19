@@ -422,6 +422,11 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'browse.curationTagline': '주제와 감성으로 엮은 Proud Gallery 큐레이션 팀의 기획 전시',
   'browse.curationEmpty': '진행 중인 기획전이 없어요',
   'browse.curationOnView': '현재 전시 중',
+  'browse.carousel.prev': '이전 전시',
+  'browse.carousel.next': '다음 전시',
+  'browse.carousel.slideN': '{n}번 전시',
+  'browse.carousel.pause': '자동 전환 정지',
+  'browse.carousel.play': '자동 전환 재생',
   'browse.pickEmpty': '현재 Pick이 없어요',
   'browse.groupArtistsLabel': '그룹 작가',
   'browse.groupMembersLabel': '그룹 멤버',
@@ -1552,6 +1557,11 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'browse.curationTagline': 'Curated exhibitions by the Proud Gallery curation team',
   'browse.curationEmpty': 'No curated exhibitions right now',
   'browse.curationOnView': 'On View',
+  'browse.carousel.prev': 'Previous exhibition',
+  'browse.carousel.next': 'Next exhibition',
+  'browse.carousel.slideN': 'Exhibition {n}',
+  'browse.carousel.pause': 'Pause auto-advance',
+  'browse.carousel.play': 'Resume auto-advance',
   'browse.pickEmpty': 'No Pick this week',
   'browse.groupArtistsLabel': 'Group artists',
   'browse.groupMembersLabel': 'Group members',
@@ -2544,7 +2554,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.31 | 2026-05-19 | PM × Claude | browse.curationOnView KO/EN 신규 — Browse 기획전 탭 활성 전시 섹션 레이블 |
+| v1.31 | 2026-05-19 | PM × Claude | browse.curationOnView KO/EN 신규 — Browse 기획전 탭 활성 전시 섹션 레이블; browse.carousel.* 5종 신규 — CurationCarousel aria-label i18n |
 | v1.30 | 2026-05-19 | PM × Claude | 코드 누락 키 추가 — browse.curationTagline; events.tab*/pick*/curation*(15종); evt.entryModal*/entryImage*/errPublishFailed(5종); pickDetail.*(6종) 신설; settings.withdrawOther*(2종); admin.section.communication |
 | v1.29 | 2026-05-19 | PM × Claude | browse.pickHallOfFame 삭제(KO+EN) — USR-EVT-07 Deprecated; §6 i18n 사전 TypeScript 래퍼(const·export function) 제거 — README 코드링크 금지 규칙 준수; §6.2 영어 섹션 헤딩 신설 |
 | v1.28 | 2026-05-18 | PM × Claude | nav.browse; browse.tabBrowse/tabPick/tabCuration 재정의; browse.curationEmpty·pickEmpty 신규; browse.emptyCtaAll 삭제 |
