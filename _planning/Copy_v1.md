@@ -512,15 +512,6 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'events.cancelEntryConfirmTitle': '응모를 취소할까요?',
   'events.cancelEntryConfirmDesc': '응모 취소 시 제출한 작품이 삭제됩니다. 재응모는 가능합니다.',
   'events.cancelEntrySuccess': '응모가 취소되었습니다.',
-  'events.resultsNotFound': '응모전을 찾을 수 없어요.',
-  'events.resultsEmpty': '아직 선정작이 발표되지 않았어요.',
-  'events.resultsNotPublished': '선정작 발표는 아직 게시되지 않았어요.',
-  'events.resultsHeaderLabel': '선정작 발표',
-  'events.resultsHeading': '"{event}" 선정작',
-  'events.resultsEndedAt': '응모 종료 {date}',
-  'events.resultsPublishedAt': '발표 {date}',
-  'events.resultsCount': '선정작 {n}점',
-  'events.viewWinners': '선정작 발표 보기',
   'pickDetail.heading': 'Proud\'s Pick',
   'pickDetail.selectedCount': '{n}개 전시 선정',
   'pickDetail.notFound': '존재하지 않는 Pick 세션입니다',
@@ -1646,15 +1637,6 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'events.cancelEntryConfirmTitle': 'Cancel your entry?',
   'events.cancelEntryConfirmDesc': 'Your submitted work will be deleted. You can re-enter afterwards.',
   'events.cancelEntrySuccess': 'Your entry has been cancelled.',
-  'events.resultsNotFound': 'Contest not found.',
-  'events.resultsEmpty': 'No winners announced yet.',
-  'events.resultsNotPublished': 'Winners haven’t been published yet.',
-  'events.resultsHeaderLabel': 'Winners',
-  'events.resultsHeading': '“{event}” winners',
-  'events.resultsEndedAt': 'Submissions closed {date}',
-  'events.resultsPublishedAt': 'Announced {date}',
-  'events.resultsCount': '{n} winners',
-  'events.viewWinners': 'See winners',
   'pickDetail.heading': 'Proud\'s Pick',
   'pickDetail.selectedCount': '{n} exhibitions selected',
   'pickDetail.notFound': 'Pick session not found',
@@ -2552,7 +2534,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.32 | 2026-05-19 | PM × Claude | curation.endedTitle·endedDesc KO/EN 신규 — 지난 기획전 클릭 종료 알림 모달; curation.pieceCount·fromExhibition·empty 삭제(코드에서 제거된 dead key) |
+| v1.32 | 2026-05-19 | PM × Claude | curation.endedTitle·endedDesc KO/EN 신규 — 지난 기획전 클릭 종료 알림 모달; curation.pieceCount·fromExhibition·empty 삭제; events.results* 8종·viewWinners 삭제 — EventResults 페이지 폐기(결과 발표=외부 resultUrl), 단일 키 viewResult 유지 |
 | v1.31 | 2026-05-19 | PM × Claude | browse.curationOnView KO/EN 신규 — Browse 기획전 탭 활성 전시 섹션 레이블; browse.carousel.* 5종 신규 — CurationCarousel aria-label i18n |
 | v1.30 | 2026-05-19 | PM × Claude | 코드 누락 키 추가 — browse.curationTagline; events.tab*/pick*/curation*(15종); evt.entryModal*/entryImage*/errPublishFailed(5종); pickDetail.*(6종) 신설; settings.withdrawOther*(2종); admin.section.communication |
 | v1.29 | 2026-05-19 | PM × Claude | browse.pickHallOfFame 삭제(KO+EN) — USR-EVT-07 Deprecated; §6 i18n 사전 TypeScript 래퍼(const·export function) 제거 — README 코드링크 금지 규칙 준수; §6.2 영어 섹션 헤딩 신설 |
