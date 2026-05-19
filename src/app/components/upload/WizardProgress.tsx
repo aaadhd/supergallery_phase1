@@ -51,7 +51,7 @@ export function WizardProgress({ currentStep, isGroup, onStepClick }: Props) {
                     : 'bg-muted text-muted-foreground'
                 }`}
               >
-                {isDone ? <Check className="h-3.5 w-3.5" /> : step.number}
+                {isDone ? <Check className="h-3.5 w-3.5" /> : idx + 1}
               </div>
               {/* Desktop: always show label */}
               <span
