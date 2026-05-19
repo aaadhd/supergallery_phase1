@@ -80,14 +80,14 @@ function EndedCurationsSection({
                 <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/[0.08] to-transparent pointer-events-none" />
                 <div className="absolute bottom-0 left-0 right-0 p-4 pointer-events-none">
                   {artistNames.length > 0 && (
-                    <p className="text-xs text-white/65 mb-2 leading-relaxed">{artistNames.join(' · ')}</p>
+                    <p className="text-[10px] text-white/50 mb-2 leading-relaxed tracking-wide">{artistNames.join(' · ')}</p>
                   )}
-                  <p className="text-white font-bold text-base leading-snug mb-1">{c.title}</p>
+                  <p className="text-white font-bold text-lg leading-tight mb-0.5">{c.title}</p>
                   {c.subtitle && (
-                    <p className="text-white/65 text-sm leading-relaxed">{c.subtitle}</p>
+                    <p className="text-white/70 text-xs leading-snug">{c.subtitle}</p>
                   )}
                   {(c.startAt && c.endAt) && (
-                    <p className="text-white/45 text-xs tracking-[2px] mt-2">
+                    <p className="text-white/40 text-[10px] tracking-[2px] mt-2.5">
                       {c.startAt.replace(/-/g, '.')} — {c.endAt.replace(/-/g, '.')}
                     </p>
                   )}
@@ -532,8 +532,8 @@ export default function Browse() {
             <>
               {/* 현재 전시 중 배지 */}
               <div className="flex items-center gap-2 mb-3">
-                <span className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[2px] uppercase text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-full px-3 py-1.5">
-                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />
+                <span className="inline-flex items-center gap-2 text-xs font-bold tracking-[1.5px] uppercase text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-full px-4 py-2">
+                  <span className="w-2 h-2 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />
                   {t('browse.curationOnView')}
                 </span>
               </div>
@@ -554,16 +554,16 @@ export default function Browse() {
                       <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/[0.08] to-transparent pointer-events-none" />
                       <div className="absolute bottom-0 left-0 right-0 p-5 pointer-events-none">
                         {singleCurationArtistNames.length > 0 && (
-                          <p className="text-xs text-white/65 mb-2 leading-relaxed">
+                          <p className="text-[11px] text-white/50 mb-2.5 leading-relaxed tracking-wide">
                             {singleCurationArtistNames.join(' · ')}
                           </p>
                         )}
-                        <p className="text-white font-bold text-lg leading-snug mb-1.5">{activeCurations[0].title}</p>
+                        <p className="text-white font-bold text-2xl leading-tight mb-0.5">{activeCurations[0].title}</p>
                         {activeCurations[0].subtitle && (
-                          <p className="text-white/65 text-sm leading-relaxed">{activeCurations[0].subtitle}</p>
+                          <p className="text-white/70 text-sm leading-snug">{activeCurations[0].subtitle}</p>
                         )}
                         {(activeCurations[0].startAt && activeCurations[0].endAt) && (
-                          <p className="text-white/45 text-xs tracking-[2px] mt-2">
+                          <p className="text-white/40 text-[11px] tracking-[2.5px] mt-3">
                             {activeCurations[0].startAt.replace(/-/g, '.')} — {activeCurations[0].endAt.replace(/-/g, '.')}
                           </p>
                         )}

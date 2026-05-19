@@ -89,16 +89,16 @@ export function CurationCarousel({ curations }: Props) {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/[0.08] to-transparent pointer-events-none" />
                 <div className="absolute bottom-0 left-0 right-0 p-5 pointer-events-none">
                   {artistNames.length > 0 && (
-                    <p className="text-xs text-white/65 mb-2 leading-relaxed">
+                    <p className="text-[11px] text-white/50 mb-2.5 leading-relaxed tracking-wide">
                       {artistNames.join(' · ')}
                     </p>
                   )}
-                  <p className="text-white font-bold text-lg leading-snug mb-1.5">{c.title}</p>
+                  <p className="text-white font-bold text-2xl leading-tight mb-0.5">{c.title}</p>
                   {c.subtitle && (
-                    <p className="text-white/65 text-sm leading-relaxed">{c.subtitle}</p>
+                    <p className="text-white/70 text-sm leading-snug">{c.subtitle}</p>
                   )}
                   {(c.startAt && c.endAt) && (
-                    <p className="text-white/45 text-xs tracking-[2px] mt-2">
+                    <p className="text-white/40 text-[11px] tracking-[2.5px] mt-3">
                       {c.startAt.replace(/-/g, '.')} — {c.endAt.replace(/-/g, '.')}
                     </p>
                   )}
