@@ -1,42 +1,13 @@
 import { useState, useRef, useEffect, useCallback, useMemo } from 'react';
 import { createPortal } from 'react-dom';
 import { Link, useNavigate, useSearchParams, useBlocker } from 'react-router-dom';
-import { Image as ImageIcon, Plus, X, Search, GripVertical, ArrowLeft, ChevronLeft, ChevronRight, Trash2, Replace, ArrowUpDown, Monitor, Users, Star, Check, CircleHelp } from 'lucide-react';
+import { Image as ImageIcon, Plus, X, Search, GripVertical, ArrowLeft, ChevronLeft, ChevronRight, Trash2, Replace, Monitor, Users, Star, Check, CircleHelp } from 'lucide-react';
 import { artists } from '../data';
 import { workStore, draftStore, useAuthStore } from '../store';
 import { issueInviteToken, activateInviteToken, deactivateInviteToken } from '../utils/inviteTokenStore';
 import { InviteShareButton } from '../components/InviteShareButton';
 import { REJECTION_REASON_LABEL_KEY } from '../utils/reviewLabels';
 import { buildVisibilityPatch } from '../utils/workVisibility';
-
-/* ─── @dnd-kit 리오더 아이템 ─── */
-function SortableReorderItem({ item, index }: { item: ContentItem; index: number }) {
-  const { attributes, listeners, setNodeRef, transform, transition, isDragging } = useSortable({ id: item.id });
-  const style: React.CSSProperties = {
-    transform: CSS.Transform.toString(transform),
-    transition,
-    opacity: isDragging ? 0.4 : 1,
-  };
-  return (
-    <div ref={setNodeRef} style={style} {...attributes} {...listeners}
-      className={`flex flex-col gap-2 p-3 border rounded-xl transition-all cursor-grab active:cursor-grabbing touch-none ${
-        isDragging ? 'border-primary bg-muted shadow-sm scale-105 z-10' : 'border-border/40 bg-white hover:border-border/80'
-      }`}
-    >
-      <div className="relative flex aspect-square w-full items-center justify-center rounded-lg overflow-hidden">
-        <BlurDominantBg src={item.url} />
-        {item.url && <ImageWithFallback src={item.url} alt={item.title || ''} className="relative z-10 h-full w-full object-contain object-center" />}
-        <div className="absolute top-2 left-2 z-20 flex items-center gap-1.5">
-          <div className="bg-black/60 text-white text-xs font-bold px-2 py-1 rounded-md backdrop-blur-sm">{index + 1}</div>
-        </div>
-        <div className="absolute top-2 right-2 z-20 bg-black/40 text-white p-1 rounded-md backdrop-blur-sm"><GripVertical className="h-4 w-4" /></div>
-      </div>
-      <span className="text-sm text-foreground truncate w-full text-center font-medium mt-1">
-        {normalizeStoredPieceTitle(item.title) || `${index + 1}`}
-      </span>
-    </div>
-  );
-}
 
 /** 작품 이미지를 통째로 blur해 톤이 자연스럽게 묻어나는 letterbox 배경. */
 function BlurDominantBg({ src }: { src?: string }) {
@@ -73,24 +44,6 @@ import { todayLocalIso } from '../utils/localDate';
 import { generatePieceId, reconcilePieceIds } from '../utils/pieceId';
 import { normalizeStoredPieceTitle } from '../utils/workDisplay';
 import { WorkDetailModal } from '../components/WorkDetailModal';
-import {
-  DndContext,
-  closestCenter,
-  KeyboardSensor,
-  PointerSensor,
-  TouchSensor,
-  useSensor,
-  useSensors,
-  type DragEndEvent,
-} from '@dnd-kit/core';
-import {
-  arrayMove,
-  SortableContext,
-  sortableKeyboardCoordinates,
-  useSortable,
-  rectSortingStrategy,
-} from '@dnd-kit/sortable';
-import { CSS } from '@dnd-kit/utilities';
 import { WizardProgress } from '../components/upload/WizardProgress';
 import { Step1Images } from '../components/upload/Step1Images';
 import { Step2Titles } from '../components/upload/Step2Titles';
@@ -173,8 +126,6 @@ export default function UploadWizard() {
     return s;
   };
 
-  /* ── 모드 ── */
-  const [reorderMode, setReorderMode] = useState(false);
   // ── Wizard 단계 ──
   const [wizardStep, setWizardStep] = useState<WizardStep>(1);
   const [registeredArtists, setRegisteredArtists] = useState<RegisteredArtist[]>([]);
@@ -306,7 +257,6 @@ export default function UploadWizard() {
     setCoverImageIndex(0);
     setCustomCoverUrl(null);
     setPreviewMode(false);
-    setReorderMode(false);
     setShowDetailsModal(false);
     setArtistSearch('');
   }, [newKey]);
@@ -981,29 +931,6 @@ export default function UploadWizard() {
     return () => window.removeEventListener('beforeunload', handler);
   }, [hasContent]);
 
-  /* ━━━━━━ 재정렬 핸들러 (@dnd-kit 터치 호환) ━━━━━━ */
-
-  const dndSensors = useSensors(
-    useSensor(PointerSensor, { activationConstraint: { distance: 5 } }),
-    useSensor(TouchSensor, { activationConstraint: { delay: 150, tolerance: 8 } }),
-    useSensor(KeyboardSensor, { coordinateGetter: sortableKeyboardCoordinates }),
-  );
-
-  const handleDndDragEnd = useCallback((event: DragEndEvent) => {
-    const { active, over } = event;
-    if (!over || active.id === over.id) return;
-    const oldIndex = contents.findIndex((c) => c.id === active.id);
-    const newIndex = contents.findIndex((c) => c.id === over.id);
-    if (oldIndex < 0 || newIndex < 0) return;
-    setContents((prev) => arrayMove(prev, oldIndex, newIndex));
-    setCoverImageIndex((prev) => {
-      if (prev === oldIndex) return newIndex;
-      if (oldIndex < prev && newIndex >= prev) return prev - 1;
-      if (oldIndex > prev && newIndex <= prev) return prev + 1;
-      return prev;
-    });
-  }, [contents]);
-
   /* ━━━━━━ 패널 이전/다음 (v1.7) ━━━━━━ */
 
   const selectedIndex = contents.findIndex((c) => c.id === selectedContentId);
@@ -1219,30 +1146,6 @@ export default function UploadWizard() {
     );
   }
 
-  // ===== 재정렬 모드 =====
-  if (reorderMode) {
-    return (
-      <div className="min-h-screen bg-white">
-        <Toaster position="top-center" richColors toastOptions={{ duration: 5000 }} />
-        <div className="sticky top-0 z-20 flex items-center justify-between px-4 py-3 bg-white border-b border-border/40">
-          <span className="text-sm font-semibold text-foreground">{t('upload.reorderMode')}</span>
-          <Button onClick={() => { setReorderMode(false); toast.success(t('upload.toastOrderSaved')); }} className="px-5 py-2 min-h-[44px] bg-foreground text-white text-sm rounded-lg lg:hover:bg-black transition-colors">
-            {t('upload.reorderDone')}
-          </Button>
-        </div>
-        <DndContext sensors={dndSensors} collisionDetection={closestCenter} onDragEnd={handleDndDragEnd}>
-          <SortableContext items={contents.map((c) => c.id)} strategy={rectSortingStrategy}>
-            <div className="max-w-4xl mx-auto p-4 sm:p-6 grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
-              {contents.map((c, i) => (
-                <SortableReorderItem key={c.id} item={c} index={i} />
-              ))}
-            </div>
-          </SortableContext>
-        </DndContext>
-      </div>
-    );
-  }
-
   // ===== 메인 렌더 =====
   return (
     <div className="min-h-screen bg-white pb-20 md:pb-0">
@@ -1319,8 +1222,6 @@ export default function UploadWizard() {
               setReplaceTargetId={setReplaceTargetId}
               cameraBlockNotice={cameraBlockNotice}
               setCameraBlockNotice={setCameraBlockNotice}
-              reorderMode={reorderMode}
-              setReorderMode={setReorderMode}
               coverImageIndex={coverImageIndex}
               setCoverImageIndex={setCoverImageIndex}
               setContents={setContents}
