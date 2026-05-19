@@ -1219,6 +1219,7 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'admin.contest.toastAdded': '응모전이 등록되었습니다.',
   'admin.contest.confirmDelete': '"{title}" 응모전을 삭제할까요?',
   'admin.contest.confirmDeleteDesc': '되돌릴 수 없습니다. 유저 목록·상세에서 즉시 제거됩니다.',
+  'admin.section.communication': '커뮤니케이션',
   'admin.section.moderation': '모더레이션',
   'admin.section.members': '회원·커뮤니케이션',
   'admin.report.memoTitleDismiss': '신고 기각',
@@ -2354,6 +2355,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'admin.contest.toastAdded': '응모전이 등록되었습니다.',
   'admin.contest.confirmDelete': '"{title}" 응모전을 삭제할까요?',
   'admin.contest.confirmDeleteDesc': '되돌릴 수 없습니다. 유저 목록·상세에서 즉시 제거됩니다.',
+  'admin.section.communication': '커뮤니케이션',
   'admin.section.moderation': '모더레이션',
   'admin.section.members': '회원·커뮤니케이션',
   'admin.report.memoTitleDismiss': '신고 기각',
@@ -2540,7 +2542,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.30 | 2026-05-19 | PM × Claude | 코드 누락 키 추가 — browse.curationTagline; events.tab*/pick*/curation*(15종); evt.entryModal*/entryImage*/errPublishFailed(5종); pickDetail.*(6종) 신설; settings.withdrawOther*(2종) |
+| v1.30 | 2026-05-19 | PM × Claude | 코드 누락 키 추가 — browse.curationTagline; events.tab*/pick*/curation*(15종); evt.entryModal*/entryImage*/errPublishFailed(5종); pickDetail.*(6종) 신설; settings.withdrawOther*(2종); admin.section.communication |
 | v1.29 | 2026-05-19 | PM × Claude | browse.pickHallOfFame 삭제(KO+EN) — USR-EVT-07 Deprecated; §6 i18n 사전 TypeScript 래퍼(const·export function) 제거 — README 코드링크 금지 규칙 준수; §6.2 영어 섹션 헤딩 신설 |
 | v1.28 | 2026-05-18 | PM × Claude | nav.browse; browse.tabBrowse/tabPick/tabCuration 재정의; browse.curationEmpty·pickEmpty 신규; browse.emptyCtaAll 삭제 |
 | v1.27 | 2026-05-18 | PM × Claude | settings.notifSystemAlwaysOn EN "Group exhibition posts" 제거; "발행" → "신청" 용어 변경(nonMemberPreview* KO·EN, faq.a7·a11 KO·EN, errPublishFailed KO, publishing KO·EN, publishedConfirmTitle KO) |
