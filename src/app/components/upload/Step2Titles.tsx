@@ -90,10 +90,7 @@ export function Step2Titles({
               !groupName.trim() && validContents.length > 0 ? 'border-red-300 focus:border-red-400' : 'border-border/60 focus:border-primary'
             }`}
           />
-          <div className="flex justify-between mt-1 px-1">
-            <span className={`text-xs font-medium ${!groupName.trim() && validContents.length > 0 ? 'text-red-500' : 'text-transparent'}`}>
-              {t('upload.blockerGroupName')}
-            </span>
+          <div className="flex justify-end mt-1 px-1">
             <span className="text-xs text-muted-foreground">{groupName.length}/{TITLE_FIELD_MAX_LEN}</span>
           </div>
           {/* 자동완성 */}
