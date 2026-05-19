@@ -173,7 +173,7 @@ export function Step1Images({
           tabIndex={0}
           onClick={() => fileInputRef.current?.click()}
           onKeyDown={(e) => e.key === 'Enter' && fileInputRef.current?.click()}
-          className="w-full aspect-[4/3] cursor-pointer rounded-2xl border-2 border-dashed border-input bg-white flex flex-col items-center justify-center gap-3 text-center transition-all hover:border-primary hover:bg-primary/5 focus:outline-none focus:ring-2 focus:ring-primary"
+          className="w-full aspect-video cursor-pointer rounded-2xl border-2 border-dashed border-input bg-white flex flex-col items-center justify-center gap-3 text-center transition-all hover:border-primary hover:bg-primary/5 focus:outline-none focus:ring-2 focus:ring-primary"
         >
           <p className="text-sm font-medium text-foreground">{t('upload.dropzoneTitle')}</p>
           <p className="text-xs text-muted-foreground">{t('upload.dropzoneFormats')}</p>
