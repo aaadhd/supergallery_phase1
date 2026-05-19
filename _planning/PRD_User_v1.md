@@ -230,7 +230,7 @@
 ### USR-AUT-02b · 이메일 로그인 (매직 링크 요청)
 
 **목적**: 비밀번호를 수집하지 않고 이메일 1회 입력 → 일회용 로그인 링크 발송.
-**트리거**: USR-AUT-02 시트의 "이미 계정이 있으신가요? 로그인 하기" · 이메일 로그인 직접 진입.
+**트리거**: 이메일 로그인 직접 진입 (`/login?mode=email`).
 **우선순위**: **P0**
 
 #### 입력
@@ -1911,7 +1911,7 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 #### 의존
 - 엔티티: USER_PROFILE, NOTIFICATION_SETTING, UI_PREFERENCES
 - 정책: [Policy §19](./Policy_v1.md#19-접근성-시니어-친화-정책)
-- 연결 화면: USR-STG-02, USR-STG-03, USR-STG-04, USR-STG-05, USR-STG-06, USR-INF-07
+- 연결 화면: USR-STG-03, USR-STG-04, USR-STG-05, USR-STG-06, USR-INF-07
 
 ---
 
@@ -2346,7 +2346,7 @@ Policy §2.5 매직 링크 전환으로 비밀번호 개념 제거 → 비밀번
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v2.32 | 2026-05-19 | PM × Claude | EVT-07 Deprecated; INF-03·04 카테고리 제거; Pick 상한 누적 무제한 정정; PICK_SESSION 엔티티 신설 |
+| v2.32 | 2026-05-19 | PM × Claude | EVT-07 Deprecated; INF-03·04 카테고리 제거; Pick 상한 누적 무제한 정정; PICK_SESSION 엔티티 신설; AUT-02b 트리거 "이미 계정이 있으신가요?" 제거 → 직접 진입으로 정정; STG-01 USR-STG-02 연결 제거; Copy tabPick↔tabCuration 순서 동기화 |
 | v2.31 | 2026-05-18 | PM × Claude | BRW-01 배너→프로모 인터리빙·탭 순서·Pick 탭 누적 그리드·기획전 탭 중앙 포스터; EVT-06 전체화면·트리거 정정; EVT-07 Deprecated; CUR-01 전체화면·curatorNote |
 | v2.30 | 2026-05-18 | PM × Claude | EVT-02 "선정작 발표 보기" CTA 제거 — 결과 발표는 resultUrl 외부 링크 단일 CTA로 통일; AC-05 삭제; EVT-05 트리거에서 USR-EVT-02 "선정작 발표 보기" 제거; EVT-02 연결 화면에서 USR-EVT-05 제거 |
 | v2.29 | 2026-05-17 | PM × Claude | NTF-01 알림 14→13종 — 그룹 전시 게시 알림(게시 시점) 제거. 참여 작가는 검수 승인 시점에만 수신(검수 통과 참여자 행 분리 명시). AC-08·강제 수신 목록 정합 |

@@ -168,8 +168,7 @@ Proud Gallery는 시니어·중장년 순수미술 작가를 주 고객으로 �
 
 ### 6.1 한국어 (koMessages)
 
-```ts
-const koMessages = {
+```
   'nav.browse': '전시',
   'nav.events': '이벤트',
   'nav.upload': '작품 올리기',
@@ -363,8 +362,8 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   // ── 런칭 빌드 제거 대상 끝 ───────────────────────────────
   'loginDemo.suspendReason': '콘텐츠·신고 정책 위반 (시연)',
   'browse.tabBrowse': '둘러보기',
-  'browse.tabCuration': '기획전',
   'browse.tabPick': 'Pick',
+  'browse.tabCuration': '기획전',
   'login.email': '이메일',
   'login.or': '또는',
   'socialSignup.title': '{provider} 계정으로 가입',
@@ -1265,9 +1264,11 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'settings.withdrawConsentErr': '데이터 삭제 동의에 체크해 주세요.',
   'settings.sectionServiceInfo': '서비스 정보',
   'settings.notifSystemAlwaysOn': '기획전 선정·Pick 선정·응모전 선정·검수 결과·작품 연결·신고 처리 결과 알림은 설정과 관계없이 항상 수신돼요.',
-} as const;
+```
 
-const enMessages: Record<MessageKey, string> = {
+### 6.2 영어 (enMessages)
+
+```
   'nav.browse': 'Exhibitions',
   'nav.events': 'Events',
   'nav.upload': 'Upload work',
@@ -1461,8 +1462,8 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   // ── 런칭 빌드 제거 대상 끝 ───────────────────────────────
   'loginDemo.suspendReason': 'Policy violation (demo suspension)',
   'browse.tabBrowse': 'Browse',
-  'browse.tabCuration': 'Curated',
   'browse.tabPick': 'Pick',
+  'browse.tabCuration': 'Curated',
   'login.email': 'Email',
   'login.or': 'or',
   'socialSignup.title': 'Sign up with {provider}',
@@ -2366,10 +2367,6 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'settings.withdrawConsentErr': 'Please confirm you agree to delete all data.',
   'settings.sectionServiceInfo': 'Service Info',
   'settings.notifSystemAlwaysOn': 'Curated exhibition picks, Proud\'s Pick selections, contest selections, review results, work connections, and report outcomes are always sent regardless of your settings.',
-} as const;
-
-export function translate(locale: Locale, key: MessageKey): string {
-};
 ```
 
 ---
@@ -2487,7 +2484,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.29 | 2026-05-19 | PM × Claude | browse.pickHallOfFame 삭제(KO+EN) — USR-EVT-07 Deprecated |
+| v1.29 | 2026-05-19 | PM × Claude | browse.pickHallOfFame 삭제(KO+EN) — USR-EVT-07 Deprecated; §6 i18n 사전 TypeScript 래퍼(const·export function) 제거 — README 코드링크 금지 규칙 준수; §6.2 영어 섹션 헤딩 신설 |
 | v1.28 | 2026-05-18 | PM × Claude | nav.browse; browse.tabBrowse/tabPick/tabCuration 재정의; browse.curationEmpty·pickEmpty 신규; browse.emptyCtaAll 삭제 |
 | v1.27 | 2026-05-18 | PM × Claude | settings.notifSystemAlwaysOn EN "Group exhibition posts" 제거; "발행" → "신청" 용어 변경(nonMemberPreview* KO·EN, faq.a7·a11 KO·EN, errPublishFailed KO, publishing KO·EN, publishedConfirmTitle KO) |
 | v1.26 | 2026-05-15 | PM × Claude | signup.linkSentAutoFlow "(미사용)" 삭제; upload.editSoloConvertTitle·editSoloConvertDesc·editSoloConvertConfirm KO·EN 신규(Policy §13.6.1 SSoT); signup.emailStepDesc "비밀번호는 따로 만들 필요 없어요." 문구 제거(KO·EN) |
