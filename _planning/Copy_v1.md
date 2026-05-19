@@ -422,7 +422,6 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'browse.emptyCtaUpload': '내 작품 올리기',
   'browse.curationEmpty': '진행 중인 기획전이 없어요',
   'browse.pickEmpty': '현재 Pick이 없어요',
-  'browse.pickHallOfFame': '명예의 전당',
   'browse.groupArtistsLabel': '그룹 작가',
   'browse.groupMembersLabel': '그룹 멤버',
   'browse.unliked': '좋아요를 취소했어요',
@@ -1521,7 +1520,6 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'browse.emptyCtaUpload': 'Upload my work',
   'browse.curationEmpty': 'No curated exhibitions right now',
   'browse.pickEmpty': 'No Pick this week',
-  'browse.pickHallOfFame': 'Hall of Fame',
   'browse.groupArtistsLabel': 'Group artists',
   'browse.groupMembersLabel': 'Group members',
   'browse.unliked': 'Like removed',
@@ -2492,6 +2490,7 @@ export function translate(locale: Locale, key: MessageKey): string {
 | v1.27 | 2026-05-18 | PM × Claude | settings.notifSystemAlwaysOn EN "Group exhibition posts" 제거; "발행" → "신청" 용어 변경(nonMemberPreview* KO·EN, faq.a7·a11 KO·EN, errPublishFailed KO, publishing KO·EN, publishedConfirmTitle KO) |
 | v1.26 | 2026-05-15 | PM × Claude | signup.linkSentAutoFlow "(미사용)" 삭제; upload.editSoloConvertTitle·editSoloConvertDesc·editSoloConvertConfirm KO·EN 신규(Policy §13.6.1 SSoT); signup.emailStepDesc "비밀번호는 따로 만들 필요 없어요." 문구 제거(KO·EN) |
 | v1.25 | 2026-05-14 | PM × Claude | 이중 이스케이프 정리 — notifApprovedForParticipant·notifAutoMatched·notifTargetWork 3종·nonMemberPreviewInfo `\\\'` → `\'` |
+| v1.26 | 2026-05-19 | PM × Claude | browse.pickHallOfFame 삭제(KO+EN) — USR-EVT-07 명예의 전당 Deprecated |
 | v1.25 | 2026-05-18 | PM × Claude | nav.browse 둘러보기→전시(KO)/Browse→Exhibitions(EN); browse.tabAll/tabSolo/tabGroup → tabBrowse/tabCuration/tabPick; emptyHint 카테고리 문구 제거; browse.curationEmpty·pickEmpty·pickHallOfFame 신규(KO+EN); browse.emptyCtaAll 삭제 |
 | v1.24 | 2026-05-14 | PM × Claude | tabGuideLikes·tabGuideSaves·search.goBrowse "작품"→"전시" 누락분 보정(KO+EN); 프로필 빈 상태 prose 예시 정합 |
 | v1.23 | 2026-05-14 | PM × Claude | settings.notifSystemAlwaysOn 강제 수신 7종 전체 열거; browse/profile 빈 상태 카피 "작품"→"전시" 통일(KO+EN) |
