@@ -603,7 +603,7 @@ export default function Browse() {
                 onClick={() => navigate(`/picks/${bannerPickSession.id}`)}
                 className="group self-stretch cursor-pointer"
               >
-                <div className="relative h-full overflow-hidden rounded-sm bg-black">
+                <div className="relative h-full overflow-hidden rounded-sm bg-black ring-2 ring-primary/25">
                   {(() => {
                     const firstWork = pickWorks[0];
                     const coverKey = firstWork ? getCoverImage(firstWork.image, firstWork.coverImageIndex) : null;
@@ -612,14 +612,16 @@ export default function Browse() {
                       <ImageWithFallback
                         src={src}
                         alt=""
-                        className="absolute inset-0 w-full h-full object-cover opacity-60 transition-transform duration-500 lg:group-hover:scale-[1.03]"
+                        className="absolute inset-0 w-full h-full object-cover opacity-80 transition-transform duration-500 lg:group-hover:scale-[1.03]"
                       />
                     ) : null;
                   })()}
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/75 via-black/10 to-transparent" />
-                  <div className="absolute top-3 left-3 flex items-center gap-1.5">
-                    <Palette className="h-3.5 w-3.5 text-white/90 drop-shadow-sm" />
-                    <span className="text-[11px] font-semibold text-white/90 tracking-tight drop-shadow-sm">Proud Gallery</span>
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/15 to-black/20" />
+                  <div className="absolute top-3 left-3">
+                    <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-[11px] font-bold tracking-wide bg-primary text-primary-foreground shadow-sm">
+                      <Palette className="h-3 w-3" />
+                      Proud Gallery
+                    </span>
                   </div>
                   <div className="absolute inset-0 flex items-end p-5 sm:p-6 lg:p-8">
                     <div>
