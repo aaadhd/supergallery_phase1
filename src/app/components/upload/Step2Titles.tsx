@@ -3,6 +3,7 @@ import { Monitor } from 'lucide-react';
 import { useI18n } from '../../i18n/I18nProvider';
 import { Button } from '../ui/button';
 import { RequiredMark } from '../RequiredMark';
+import { ImageWithFallback } from '../ImageWithFallback';
 import { TITLE_FIELD_MAX_LEN } from '../../utils/workDisplay';
 import type { ContentItem } from './types';
 import type { MessageKey } from '../../i18n/messages';
@@ -131,8 +132,11 @@ export function Step2Titles({
           <div className="flex flex-col gap-3">
             {validContents.map((c, idx) => (
               <div key={c.id} className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-lg overflow-hidden bg-muted flex-shrink-0 flex items-center justify-center text-xs font-bold text-muted-foreground border border-border/30">
-                  {idx + 1}
+                <div className="w-12 h-12 rounded-lg overflow-hidden bg-muted flex-shrink-0 border border-border/30 relative">
+                  {c.url
+                    ? <ImageWithFallback src={c.url} alt={`${idx + 1}`} className="w-full h-full object-cover" />
+                    : <span className="absolute inset-0 flex items-center justify-center text-xs font-bold text-muted-foreground">{idx + 1}</span>
+                  }
                 </div>
                 <div className="flex-1">
                   <input
