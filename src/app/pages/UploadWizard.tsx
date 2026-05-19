@@ -523,13 +523,7 @@ export default function UploadWizard() {
 
   /* ━━━━━━ 전시 생성 ━━━━━━ */
 
-  const handleOpenDetails = () => {
-    if (!exhibitionName.trim()) {
-      toast.error(t('upload.errExhibitionNameRequired'));
-      return;
-    }
-    setShowDetailsModal(true);
-  };
+  const handleOpenDetails = () => handlePublish();
 
   const handlePublish = async () => {
     if (isPublishing) return;
