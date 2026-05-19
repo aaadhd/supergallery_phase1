@@ -553,18 +553,16 @@ export default function Browse() {
                     <>
                       <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/[0.08] to-transparent pointer-events-none" />
                       <div className="absolute bottom-0 left-0 right-0 px-7 py-6 pointer-events-none">
-                        {singleCurationArtistNames.length > 0 && (
-                          <p className="text-sm text-white/50 mb-2 leading-relaxed tracking-wide">
-                            {singleCurationArtistNames.join(' · ')}
-                          </p>
-                        )}
                         <p className="text-white font-bold text-3xl leading-tight mb-0.5">{activeCurations[0].title}</p>
                         {activeCurations[0].subtitle && (
                           <p className="text-white/55 text-sm leading-snug">{activeCurations[0].subtitle}</p>
                         )}
-                        {(activeCurations[0].startAt && activeCurations[0].endAt) && (
-                          <p className="text-white/38 text-sm tracking-[2px] mt-3">
-                            {activeCurations[0].startAt.replace(/-/g, '.')} — {activeCurations[0].endAt.replace(/-/g, '.')}
+                        {(singleCurationArtistNames.length > 0 || (activeCurations[0].startAt && activeCurations[0].endAt)) && (
+                          <p className="text-white/40 text-xs tracking-wide mt-2.5">
+                            {[
+                              singleCurationArtistNames.length > 0 ? singleCurationArtistNames.join(' · ') : null,
+                              (activeCurations[0].startAt && activeCurations[0].endAt) ? `${activeCurations[0].startAt.replace(/-/g, '.')} — ${activeCurations[0].endAt.replace(/-/g, '.')}` : null,
+                            ].filter(Boolean).join('  ·  ')}
                           </p>
                         )}
                       </div>
