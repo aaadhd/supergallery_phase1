@@ -221,7 +221,7 @@ UI 기본 언어는 한국어(KO)이며 영어(EN) 전환 지원. 가입 폼은 
   - **탭 바**: 둘러보기 / Pick / 기획전 (탭 상태 URL 동기화)
     - **둘러보기 탭**: 개인전시·그룹전시 통합 피드. 모바일 1열 · 태블릿 2열 · 데스크톱 3열. 24건씩 무한 스크롤 + skeleton. 카드 = 썸네일 + 좋아요·저장 아이콘 + Pick 배지 + 다장 배지. 피드 중간(7번째~)에 프로모 카드 인터리빙(Proud Gallery 배지, 어드민 배너 또는 응모전 소스). 빈 상태: "곧 새 전시가 공개됩니다"
     - **Pick 탭**: 최신 세션 프로모 배너 카드(1번째, Proud Gallery 배지 · 둘러보기 프로모 카드와 동일 사양, → USR-EVT-06) + 전 세션 누적 선정작 그리드. 빈 상태 UI
-    - **기획전 탭**: 활성 기획전 포스터 중앙 배치(세로형, 최대 뷰포트 높이). 포스터 탭 → USR-CUR-01 전체화면. 하단 지난 기획전 포스터 그리드(클릭 비활성, 그레이스케일). 빈 상태 UI
+    - **기획전 탭**: "현재 전시 중" 배지 · 21:9 와이드 배너(1개=정적·2개 이상=CurationCarousel fade·3초·좌우 버튼·우하단 pill). 배너 탭 → `/curations/:id`. 하단 지난 기획전 2열 그리드(21:9, 그레이스케일 · 클릭=종료 알림 모달). 빈 상태 UI
   - **Footer**(조건부 숨김 on `/upload`): 정책·문의·FAQ 링크
 - 연결: USR-EXH-01, USR-PRF-01, USR-CUR-01, USR-EVT-02(프로모 카드 탭), USR-EVT-06(Pick 배너), USR-AUT-02(비로그인 시), CM-02, CM-06
 - 엔티티·정책: EXHIBITION, INTERACTION, FOLLOW, BANNER, EVENT, CURATION, PICK · [Policy §15](./Policy_v1.md#15-큐레이션-배지-정책) · [Policy §16](./Policy_v1.md#16-피드-랭킹-검색-스코어링-정책)
@@ -781,7 +781,7 @@ UI 기본 언어는 한국어(KO)이며 영어(EN) 전환 지원. 가입 폼은 
 
 #### ADM-CUR-01 · 기획전 관리
 - 경로: `/admin/curation`
-- 구성: 2-panel(좌: 기획전 목록(썸네일·제목·piece 수·미리보기·삭제) · 신규 생성 버튼 / 우: 편집 폼(제목·부제·기간·**포스터 이미지 직접 파일 업로드** — URL 입력 아님) · 전시·작가명 검색 · 평면 piece 이미지 그리드(클릭 선택·해제) · 하단 고정 바(선정 piece DnD 순서 변경 · 게시))
+- 구성: 2-panel(좌: 기획전 목록(썸네일·제목·piece 수·미리보기·삭제) · 신규 생성 버튼 / 우: 편집 폼(제목·부제·기간·**포스터 이미지 직접 파일 업로드** — URL 입력 아님·**배너 정보 표시 토글(bannerOverlay)**) · 전시·작가명 검색 · 평면 piece 이미지 그리드(클릭 선택·해제) · 하단 고정 바(선정 piece DnD 순서 변경 · 게시))
 - 연결: USR-CUR-01
 - 엔티티·정책: CURATION, EXHIBITION · [Policy §15.4](./Policy_v1.md#15-4-pick-vs-기획전-경계)
 - 우선순위: **P0**
@@ -1008,7 +1008,7 @@ UI 기본 언어는 한국어(KO)이며 영어(EN) 전환 지원. 가입 폼은 
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
-| v1.34 | 2026-05-19 | PM × Claude | ADM-NTC-01 테이블 컬럼 본문 카테고리 제거 (코드 정합); EXH-01 이미지 탭→WorkImageViewer 진입 명세 추가; PRF-14 WorkImageViewer 딥줌 구성 갱신; BRW-01 Pick 탭 프로모 배너 카드 Proud Gallery 배지 명세 추가 |
+| v1.34 | 2026-05-19 | PM × Claude | ADM-NTC-01 테이블 컬럼 본문 카테고리 제거 (코드 정합); EXH-01 이미지 탭→WorkImageViewer 진입 명세 추가; PRF-14 WorkImageViewer 딥줌 구성 갱신; BRW-01 Pick 탭 프로모 배너 카드 Proud Gallery 배지 명세 추가; BRW-01 기획전 탭 21:9 와이드 배너·CurationCarousel·현재 전시 중 배지·지난 기획전 종료 모달로 전면 갱신; ADM-CUR-01 bannerOverlay 토글 추가 |
 | v1.33 | 2026-05-19 | PM × Claude | INF-03·04 카테고리 배지 제거; ADM-NTC-01 카테고리 필터·입력 제거; AUT-10b 카드 그리드 2열→PC 3열·모바일 1열 정정; PRF-01·02 닉네임(20자) 수정; STG-01 USR-STG-02 연결 제거 |
 | v1.32 | 2026-05-18 | PM × Claude | BRW-01 배너→프로모 인터리빙·탭 순서 둘러보기/Pick/기획전·Pick 탭 누적 그리드·기획전 탭 중앙 포스터; EVT-06 전체화면·뒤로가기; EVT-07 Deprecated; CUR-01 전체화면·X버튼·curatorNote·리듬 레이아웃 |
 | v1.31 | 2026-05-18 | PM × Claude | BRW 영역명 둘러보기→전시; USR-BRW-01 탭 바 재구성(전체/개인전시/그룹전시→둘러보기/기획전/Pick) — 기획전 탭 세로형 포스터 캐러셀(파일 업로드, 탭→USR-CUR-01 즉시 시작)·Pick 탭 작품 피드 바로 노출; USR-EVT-01 Pick·기획전 탭 제거 → 응모전·일반이벤트 단일 목록; USR-EVT-06 진입 EVT-01→EVT-07; USR-EVT-07 진입 EVT-01→BRW-01; USR-CUR-01 진입 배너→BRW-01 기획전 탭; ADM-CUR-01 포스터 이미지 파일 업로드 추가 |

@@ -614,8 +614,8 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'work.unknownUploader': '알 수 없음',
   'curation.notFound': '기획전을 찾을 수 없어요.',
   'curation.empty': '아직 작품이 모이지 않았어요.',
-  'curation.pieceCount': '작품 {n}점',
-  'curation.fromExhibition': '전시 · {name}',
+  'curation.endedTitle': '종료된 전시입니다',
+  'curation.endedDesc': '이 기획전의 전시 기간이 종료됐어요.',
   'work.autoTitleArtist': '{name}의 작품 {n}',
   'work.autoTitleNumbered': '작품 {n}',
   'work.exhibitionFallback': '일반 전시',
@@ -1749,8 +1749,8 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'work.unknownUploader': 'Unknown',
   'curation.notFound': 'Curated exhibition not found.',
   'curation.empty': 'No pieces yet.',
-  'curation.pieceCount': '{n} pieces',
-  'curation.fromExhibition': 'From · {name}',
+  'curation.endedTitle': 'Exhibition Ended',
+  'curation.endedDesc': 'The exhibition period for this show has ended.',
   'work.autoTitleArtist': '{name}\u2019s work {n}',
   'work.autoTitleNumbered': 'Work {n}',
   'work.exhibitionFallback': 'General exhibition',
@@ -2554,6 +2554,7 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
 
 | 버전 | 일자 | 작성 | 변경 내용 |
 |------|------|------|----------|
+| v1.32 | 2026-05-19 | PM × Claude | curation.endedTitle·endedDesc KO/EN 신규 — 지난 기획전 클릭 종료 알림 모달; curation.pieceCount·fromExhibition 삭제(코드에서 제거된 dead key) |
 | v1.31 | 2026-05-19 | PM × Claude | browse.curationOnView KO/EN 신규 — Browse 기획전 탭 활성 전시 섹션 레이블; browse.carousel.* 5종 신규 — CurationCarousel aria-label i18n |
 | v1.30 | 2026-05-19 | PM × Claude | 코드 누락 키 추가 — browse.curationTagline; events.tab*/pick*/curation*(15종); evt.entryModal*/entryImage*/errPublishFailed(5종); pickDetail.*(6종) 신설; settings.withdrawOther*(2종); admin.section.communication |
 | v1.29 | 2026-05-19 | PM × Claude | browse.pickHallOfFame 삭제(KO+EN) — USR-EVT-07 Deprecated; §6 i18n 사전 TypeScript 래퍼(const·export function) 제거 — README 코드링크 금지 규칙 준수; §6.2 영어 섹션 헤딩 신설 |
