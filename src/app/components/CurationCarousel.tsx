@@ -89,7 +89,7 @@ export function CurationCarousel({ curations }: Props) {
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none" />
                 <div className="absolute bottom-0 left-0 right-0 px-7 py-6 pointer-events-none">
                   <div>
-                    <p className="text-white font-bold text-2xl sm:text-[34px] leading-tight">{c.title}</p>
+                    <p className="text-white font-bold text-2xl sm:text-3xl leading-tight">{c.title}</p>
                     {c.subtitle && (
                       <p className="text-white/65 text-xs sm:text-sm leading-snug mt-0.5">{c.subtitle}</p>
                     )}
