@@ -26,6 +26,7 @@ import { useManagedEvents, deriveEventStatus } from '../utils/eventsStore';
 import { useCuration } from '../utils/curationStore';
 import { usePickSessions, derivePickStatus } from '../utils/pickStore';
 import { todayLocalIso } from '../utils/localDate';
+import { CurationCarousel } from '../components/CurationCarousel';
 
 // ---------------------------------------------------------------------------
 // Helpers
@@ -480,70 +481,31 @@ export default function Browse() {
               <p className="text-sm text-foreground font-medium">{t('browse.curationEmpty')}</p>
             </div>
           ) : (
-            <div className={`flex items-start justify-center gap-6 sm:gap-8 ${activeCurations.length === 1 ? '' : 'flex-wrap sm:flex-nowrap'}`}>
-              {(() => {
-                return activeCurations.map((c, i) => {
-                  const seen = new Set<string>();
-                const artistNames: string[] = [];
-                const allWorksMap = new Map([...workStore.getWorks(), ...allWorks].map((w) => [w.id, w]));
-                for (const piece of (c.pieces ?? [])) {
-                  const work = allWorksMap.get(piece.workId);
-                  if (!work) continue;
-                  const artist = allArtists.find((a) => a.id === work.artistId);
-                  const name = artist?.name ?? work.artist?.name ?? '';
-                  if (name && !seen.has(name)) { seen.add(name); artistNames.push(name); }
-                }
-                return (
-                  <div
-                    key={c.id}
-                    onClick={() => navigate(`/curations/${c.id}`)}
-                    className={`group cursor-pointer ${activeCurations.length === 1 ? 'w-full max-w-[360px] sm:max-w-[400px] lg:max-w-[440px]' : 'w-full sm:w-1/2 max-w-[360px]'}`}
-                  >
-                    <div className="relative overflow-hidden rounded-lg aspect-[3/4] max-h-[calc(100svh-210px)] shadow-[0_12px_48px_-8px_rgba(0,0,0,0.22)] transition-all duration-500 lg:group-hover:shadow-[0_24px_64px_-8px_rgba(0,0,0,0.32)] lg:group-hover:scale-[1.02]">
-                      <ImageWithFallback
-                        src={c.bannerImageUrl}
-                        alt={c.title}
-                        className="w-full h-full object-cover"
-                      />
-                      {/* 상단: 기획전 레이블 + 날짜 */}
-                      <div className="absolute inset-x-0 top-0 h-28" style={{ background: 'linear-gradient(to bottom, rgba(0,0,0,0.55), transparent)' }} />
-                      <div className="absolute top-5 left-5 right-5 flex items-center justify-between">
-                        <span className="text-[10px] font-semibold tracking-[0.22em] uppercase text-white/70">
-                          {t('browse.tabCuration')} {String(i + 1).padStart(2, '0')}
-                        </span>
-                        {(c.startAt && c.endAt) && (
-                          <span className="text-[10px] text-white/60 tracking-wide">
-                            {c.startAt.replace(/-/g, '.')} — {c.endAt.replace(/-/g, '.')}
-                          </span>
-                        )}
-                      </div>
-                      {/* 하단: 작가명 + 제목 + 서브타이틀 */}
-                      <div className="absolute inset-x-0 bottom-0 h-60" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.85), transparent)' }} />
-                      <div className="absolute inset-x-0 bottom-0 p-5 sm:p-7">
-                        {artistNames.length > 0 && (
-                          <div className="mb-3">
-                            {artistNames.map((name) => (
-                              <span key={name} className="inline-block text-[11px] sm:text-xs font-medium text-white/70 mr-3 mb-1">
-                                {name}
-                              </span>
-                            ))}
-                          </div>
-                        )}
-                        <h3 className="text-xl sm:text-2xl font-bold text-white leading-snug mb-1.5">
-                          {c.title}
-                        </h3>
-                        {c.subtitle && (
-                          <p className="text-xs text-white/65 leading-relaxed line-clamp-2">
-                            {c.subtitle}
-                          </p>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-                );
-              });
-              })()}
-            </div>
+            <>
+              {/* 현재 전시 중 배지 */}
+              <div className="flex items-center gap-2 mb-3">
+                <span className="inline-flex items-center gap-1.5 text-[10px] font-bold tracking-[2px] uppercase text-emerald-600 bg-emerald-50 border border-emerald-200 rounded-full px-3 py-1.5">
+                  <span className="w-1.5 h-1.5 rounded-full bg-emerald-400 animate-pulse flex-shrink-0" />
+                  {t('browse.curationOnView')}
+                </span>
+              </div>
+              {/* 1개: 정적 배너 / 2개 이상: 캐러셀 */}
+              {activeCurations.length === 1 ? (
+                <div
+                  className="aspect-[21/9] w-full overflow-hidden rounded-xl cursor-pointer"
+                  onClick={() => navigate(`/curations/${activeCurations[0].id}`)}
+                >
+                  <img
+                    src={activeCurations[0].bannerImageUrl}
+                    alt={activeCurations[0].title}
+                    className="w-full h-full object-cover"
+                    draggable={false}
+                  />
+                </div>
+              ) : (
+                <CurationCarousel curations={activeCurations} />
+              )}
+            </>
           )}
 
           {/* 지난 기획전 */}
