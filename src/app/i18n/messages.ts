@@ -1113,6 +1113,12 @@ Phase 1: 백그라운드 적립만(PR·유저 플로우). 포인트 UI·/points 
   'tosModal.toastAgreed': '약관에 동의했어요.',
   'tosModal.disagreeConfirmTitle': '탈퇴 처리됩니다',
   'tosModal.disagreeConfirmDesc': '동의하지 않으시면 계정이 삭제돼요. 계속하시겠어요?',
+  'viewer.close': '닫기',
+  'viewer.fitScreen': '원래 크기',
+  'viewer.prev': '이전 작품',
+  'viewer.next': '다음 작품',
+  'viewer.zoomIn': '확대',
+  'viewer.zoomOut': '축소',
 } as const;
 
 const enMessages: Record<MessageKey, string> = {
@@ -2228,6 +2234,12 @@ Phase 1: background earn only (PRD & user flow). Points UI and /points come afte
   'tosModal.toastAgreed': 'You have agreed to the updated terms.',
   'tosModal.disagreeConfirmTitle': 'Your account will be deleted',
   'tosModal.disagreeConfirmDesc': 'Declining will permanently delete your account. Continue?',
+  'viewer.close': 'Close',
+  'viewer.fitScreen': 'Fit to screen',
+  'viewer.prev': 'Previous work',
+  'viewer.next': 'Next work',
+  'viewer.zoomIn': 'Zoom in',
+  'viewer.zoomOut': 'Zoom out',
 };
 
 export function translate(locale: Locale, key: MessageKey): string {
