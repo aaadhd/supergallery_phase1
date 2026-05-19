@@ -85,7 +85,7 @@ export function Step4Submit({
                 setCoverImageIndex(i);
                 setCustomCoverUrl(null);
               }}
-              className={`shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all min-h-[44px] ${
+              className={`relative shrink-0 w-16 h-16 rounded-xl overflow-hidden border-2 transition-all min-h-[44px] ${
                 coverImageIndex === i && !customCoverUrl
                   ? 'border-blue-500 ring-2 ring-blue-400'
                   : 'border-border/40 hover:border-border'
