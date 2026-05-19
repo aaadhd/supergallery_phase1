@@ -77,20 +77,20 @@ function EndedCurationsSection({
             />
             {c.bannerOverlay && (
               <>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/[0.08] to-transparent pointer-events-none" />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent pointer-events-none" />
                 <div className="absolute bottom-0 left-0 right-0 px-4 py-3 pointer-events-none">
                   <div>
                     <p className="text-white font-bold text-lg leading-tight">{c.title}</p>
                     {c.subtitle && (
-                      <p className="text-white/40 text-[10px] leading-snug mt-0.5">{c.subtitle}</p>
+                      <p className="text-white/75 text-[10px] leading-snug mt-0.5">{c.subtitle}</p>
                     )}
                     {(artistNames.length > 0 || (c.startAt && c.endAt)) && (
                       <div className="mt-2.5 flex flex-col space-y-0.5">
                         {artistNames.length > 0 && (
-                          <p className="text-white/65 text-[10px] tracking-wide">{artistNames.join(' · ')}</p>
+                          <p className="text-white text-[10px] tracking-wide">{artistNames.join(' · ')}</p>
                         )}
                         {(c.startAt && c.endAt) && (
-                          <p className="text-white/70 text-[10px] tracking-[2px]">{c.startAt.replace(/-/g, '.')} — {c.endAt.replace(/-/g, '.')}</p>
+                          <p className="text-white text-[10px] tracking-[2px]">{c.startAt.replace(/-/g, '.')} — {c.endAt.replace(/-/g, '.')}</p>
                         )}
                       </div>
                     )}
@@ -555,20 +555,20 @@ export default function Browse() {
                   />
                   {activeCurations[0].bannerOverlay && (
                     <>
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/[0.08] to-transparent pointer-events-none" />
+                      <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none" />
                       <div className="absolute bottom-0 left-0 right-0 px-7 py-6 pointer-events-none">
                         <div>
-                          <p className="text-white font-bold text-[34px] leading-tight">{activeCurations[0].title}</p>
+                          <p className="text-white font-bold text-2xl sm:text-[34px] leading-tight">{activeCurations[0].title}</p>
                           {activeCurations[0].subtitle && (
-                            <p className="text-white/40 text-sm leading-snug mt-0.5">{activeCurations[0].subtitle}</p>
+                            <p className="text-white/65 text-xs sm:text-sm leading-snug mt-0.5">{activeCurations[0].subtitle}</p>
                           )}
                           {(singleCurationArtistNames.length > 0 || (activeCurations[0].startAt && activeCurations[0].endAt)) && (
                             <div className="mt-4 flex flex-col space-y-1">
                               {singleCurationArtistNames.length > 0 && (
-                                <p className="text-white/65 text-sm tracking-wide">{singleCurationArtistNames.join(' · ')}</p>
+                                <p className="text-white/85 text-xs sm:text-sm tracking-wide">{singleCurationArtistNames.join(' · ')}</p>
                               )}
                               {(activeCurations[0].startAt && activeCurations[0].endAt) && (
-                                <p className="text-white/70 text-sm tracking-[2px]">{activeCurations[0].startAt.replace(/-/g, '.')} — {activeCurations[0].endAt.replace(/-/g, '.')}</p>
+                                <p className="text-white/90 text-xs sm:text-sm tracking-[2px]">{activeCurations[0].startAt.replace(/-/g, '.')} — {activeCurations[0].endAt.replace(/-/g, '.')}</p>
                               )}
                             </div>
                           )}
