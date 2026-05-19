@@ -176,12 +176,10 @@ export function Step1Images({
             <Monitor className="h-4 w-4" />
             {t('upload.screenPreview')}
           </Button>
-          {validContents.length >= 2 && (
-            <Button variant="ghost" onClick={() => setReorderMode(true)} className="flex-1 min-h-[44px] gap-1">
-              <ArrowUpDown className="h-4 w-4" />
-              {t('upload.reorderGridBtn')}
-            </Button>
-          )}
+          <Button variant="ghost" disabled={validContents.length < 2} onClick={() => setReorderMode(true)} className="flex-1 min-h-[44px] gap-1">
+            <ArrowUpDown className="h-4 w-4" />
+            {t('upload.reorderGridBtn')}
+          </Button>
         </div>
       </div>
     </div>
