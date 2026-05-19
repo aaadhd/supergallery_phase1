@@ -22,6 +22,8 @@ export type CuratedExhibition = {
   subtitle?: string;
   /** 기획전 대표 이미지. Events 페이지 카드에 노출 */
   bannerImageUrl: string;
+  /** true → 배너 이미지 위에 아티스트·제목·날짜 오버레이 표시. default false */
+  bannerOverlay?: boolean;
   /** YYYY-MM-DD. 이벤트 메뉴 게시 시작일 */
   startAt: string;
   /** YYYY-MM-DD. 이벤트 메뉴 게시 종료일 */
@@ -143,6 +145,7 @@ function readFromStorage(): CurationState {
             title,
             subtitle: typeof t.subtitle === 'string' ? (t.subtitle as string) : undefined,
             bannerImageUrl: typeof t.bannerImageUrl === 'string' ? (t.bannerImageUrl as string) : undefined,
+            bannerOverlay: typeof t.bannerOverlay === 'boolean' ? (t.bannerOverlay as boolean) : false,
             startAt: typeof t.startAt === 'string' ? (t.startAt as string) : undefined,
             endAt: typeof t.endAt === 'string' ? (t.endAt as string) : undefined,
             pageUrl: typeof t.pageUrl === 'string' && t.pageUrl ? (t.pageUrl as string) : undefined,
