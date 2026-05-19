@@ -161,8 +161,7 @@ export function Step1Images({
         </div>
       )}
 
-      <h1 className="text-2xl font-bold text-foreground mb-2">{t('upload.step1Title')}</h1>
-      <p className="text-sm text-muted-foreground mb-6">{t('upload.step1Subtitle')}</p>
+      <h1 className="text-2xl font-bold text-foreground mb-6">{t('upload.step1Title')}</h1>
 
       {/* 드롭존 (이미지 없을 때) */}
       {validContents.length === 0 ? (
