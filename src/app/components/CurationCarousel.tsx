@@ -86,7 +86,7 @@ export function CurationCarousel({ curations }: Props) {
             const artistNames = getArtistNames(c);
             return (
               <>
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent pointer-events-none" />
+                <div className="absolute inset-0 pointer-events-none" style={{ background: 'linear-gradient(to top, rgba(0,0,0,0.8), rgba(0,0,0,0.3) 50%, transparent)' }} />
                 <div className="absolute bottom-0 left-0 right-0 px-7 py-6 pointer-events-none">
                   <div>
                     <p className="text-white font-bold text-2xl sm:text-3xl leading-tight">{c.title}</p>
