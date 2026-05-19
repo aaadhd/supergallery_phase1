@@ -227,7 +227,7 @@ export default function WorkImageViewer({
             alt={current.title}
             preventRightClick
             preventDrag
-            className="max-h-[100dvh] max-w-[100vw] select-none object-contain"
+            className="h-dvh w-screen select-none object-contain"
           />
         </div>
       </div>
