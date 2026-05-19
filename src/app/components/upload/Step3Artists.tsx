@@ -195,6 +195,7 @@ export function Step3Artists({
 
         {/* Add artist form */}
         {addingType === null ? (
+          registeredArtists.length < validContents.length ? (
           <button
             type="button"
             onClick={() => setAddingType('member')}
@@ -202,6 +203,11 @@ export function Step3Artists({
           >
             {t('upload.addArtist')}
           </button>
+          ) : (
+          <p className="text-xs text-muted-foreground text-center py-2">
+            작품 수({validContents.length}장)만큼 작가를 추가했어요
+          </p>
+          )
         ) : (
           <div className="border-2 border-primary/30 rounded-xl p-4 bg-primary/[0.02]">
             {/* Member / Non-member toggle */}
