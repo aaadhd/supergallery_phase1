@@ -215,6 +215,7 @@ export default function WorkImageViewer({
         style={{ touchAction: 'none' }}
       >
         <div
+          className="h-full w-full"
           style={{
             transform: `translate(${pos.x}px, ${pos.y}px) scale(${scale})`,
             transition,
@@ -227,7 +228,7 @@ export default function WorkImageViewer({
             alt={current.title}
             preventRightClick
             preventDrag
-            className="h-dvh w-screen select-none object-contain"
+            className="h-full w-full select-none object-contain"
           />
         </div>
       </div>
