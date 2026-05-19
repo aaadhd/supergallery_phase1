@@ -1,0 +1,87 @@
+<h2>전시 탭 — 최종 구조 확정</h2>
+<p class="subtitle">각 탭의 진입·탐색 방식 정리</p>
+
+<div style="display:flex;flex-direction:column;gap:16px;">
+
+  <!-- 둘러보기 탭 -->
+  <div style="border:2px solid #e0e0e0;border-radius:12px;overflow:hidden;">
+    <div style="background:#333;color:#fff;padding:10px 16px;font-weight:700;font-size:13px;">둘러보기 탭</div>
+    <div style="padding:14px 16px;display:flex;gap:16px;align-items:center;">
+      <div style="flex:1;">
+        <div style="font-size:12px;color:#555;margin-bottom:8px;">개인+그룹 전시 통합 피드 그리드</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#888;">
+          <span style="background:#eee;padding:2px 8px;border-radius:4px;">탭 진입</span>
+          <span>→</span>
+          <span style="background:#eee;padding:2px 8px;border-radius:4px;">작품 클릭</span>
+          <span>→</span>
+          <span style="background:#333;color:#fff;padding:2px 8px;border-radius:4px;">전시 모달</span>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:4px;width:80px;flex-shrink:0;">
+        <div style="height:32px;background:#d8e8d0;border-radius:4px;"></div>
+        <div style="height:32px;background:#d0d8e8;border-radius:4px;"></div>
+        <div style="height:32px;background:#e8d0d8;border-radius:4px;"></div>
+        <div style="height:32px;background:#e8e0d0;border-radius:4px;"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 기획전 탭 -->
+  <div style="border:2px solid #c0a060;border-radius:12px;overflow:hidden;">
+    <div style="background:#a07030;color:#fff;padding:10px 16px;font-weight:700;font-size:13px;">기획전 탭</div>
+    <div style="padding:14px 16px;">
+      <div style="font-size:12px;color:#555;margin-bottom:8px;">기획전별 <strong>멋들어진 전용 썸네일</strong> → 클릭 → 기획전 상세(작품 목록)</div>
+      <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#888;margin-bottom:12px;">
+        <span style="background:#eee;padding:2px 8px;border-radius:4px;">탭 진입</span>
+        <span>→</span>
+        <span style="background:#a07030;color:#fff;padding:2px 8px;border-radius:4px;">기획전 썸네일</span>
+        <span>→</span>
+        <span style="background:#eee;padding:2px 8px;border-radius:4px;">기획전 상세</span>
+        <span>→</span>
+        <span style="background:#333;color:#fff;padding:2px 8px;border-radius:4px;">전시 모달</span>
+      </div>
+      <!-- 기획전 썸네일 예시 -->
+      <div style="background:#1a1208;border-radius:8px;overflow:hidden;position:relative;height:90px;display:flex;align-items:flex-end;padding:10px;">
+        <div style="position:absolute;inset:0;background:linear-gradient(135deg,#3a2808,#1a0808,#081820);opacity:0.9;"></div>
+        <div style="position:relative;z-index:1;">
+          <div style="font-size:9px;color:#c0a060;font-weight:700;letter-spacing:2px;margin-bottom:3px;">기획전</div>
+          <div style="font-size:14px;color:#fff;font-weight:800;line-height:1.2;">봄의 색</div>
+          <div style="font-size:9px;color:#aaa;margin-top:2px;">12작품 · 2026.04~05</div>
+        </div>
+      </div>
+      <div style="font-size:11px;color:#888;margin-top:8px;">↑ 이런 식으로 각 기획전마다 별도 썸네일 디자인. pageUrl 외부 링크 아니고 앱 내 상세로</div>
+    </div>
+  </div>
+
+  <!-- Pick 탭 -->
+  <div style="border:2px solid #c0a820;border-radius:12px;overflow:hidden;">
+    <div style="background:#8a7010;color:#fff;padding:10px 16px;font-weight:700;font-size:13px;">Pick 탭</div>
+    <div style="padding:14px 16px;display:flex;gap:16px;align-items:center;">
+      <div style="flex:1;">
+        <div style="font-size:12px;color:#555;margin-bottom:8px;">이번 주 Pick 작품 피드 바로 노출</div>
+        <div style="display:flex;align-items:center;gap:6px;font-size:11px;color:#888;">
+          <span style="background:#eee;padding:2px 8px;border-radius:4px;">탭 진입</span>
+          <span>→</span>
+          <span style="background:#eee;padding:2px 8px;border-radius:4px;">작품 클릭</span>
+          <span>→</span>
+          <span style="background:#333;color:#fff;padding:2px 8px;border-radius:4px;">전시 모달</span>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:4px;width:80px;flex-shrink:0;">
+        <div style="height:32px;background:#e8d8b0;border-radius:4px;position:relative;"><span style="position:absolute;top:2px;left:2px;background:#d4af37;font-size:6px;font-weight:700;padding:1px 3px;border-radius:2px;">P</span></div>
+        <div style="height:32px;background:#b0d0e8;border-radius:4px;position:relative;"><span style="position:absolute;top:2px;left:2px;background:#d4af37;font-size:6px;font-weight:700;padding:1px 3px;border-radius:2px;">P</span></div>
+        <div style="height:32px;background:#d0b0e8;border-radius:4px;position:relative;"><span style="position:absolute;top:2px;left:2px;background:#d4af37;font-size:6px;font-weight:700;padding:1px 3px;border-radius:2px;">P</span></div>
+        <div style="height:32px;background:#b0e8b0;border-radius:4px;position:relative;"><span style="position:absolute;top:2px;left:2px;background:#d4af37;font-size:6px;font-weight:700;padding:1px 3px;border-radius:2px;">P</span></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div style="margin-top:20px;background:#f0f4ff;border-radius:8px;padding:14px;font-size:12px;line-height:1.9;">
+  <strong>확정 사항</strong><br>
+  · 기획전 썸네일은 별도 디자인 — 각 기획전의 분위기를 담은 전용 이미지<br>
+  · 기획전 클릭 → 앱 내 기획전 상세 (외부 링크 아님)<br>
+  · Pick → 작품 피드 바로 노출<br>
+  · 기획전만 3단계 뎁스 (의도적 — 기획전 자체가 하나의 전시 경험)
+</div>

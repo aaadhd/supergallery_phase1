@@ -1,0 +1,94 @@
+<h2>명예의 전당 — 어디에 놓을까요?</h2>
+<p class="subtitle">"4월 3주차 Proud's Pick"과 역대 픽 갤러리의 관계</p>
+
+<div class="cards">
+
+  <!-- Option A -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: #f8f9fa;">
+      <!-- Events → Pick 탭 -->
+      <div style="font-size: 10px; color: #6c757d; margin-bottom: 8px; font-family: monospace;">Events → [이벤트 | Pick* | 기획전]</div>
+
+      <div style="background: #212529; border-radius: 10px; padding: 14px; color: white; margin-bottom: 8px;">
+        <div style="font-size: 10px; color: #ffd700; letter-spacing: 1px; margin-bottom: 4px;">★ 이번 주 Proud's Pick</div>
+        <div style="font-size: 13px; font-weight: 700;">4월 3주차 Proud's Pick</div>
+        <div style="font-size: 11px; color: #adb5bd; margin-top: 2px;">2026.04.14 ~ 04.20 · 8개 전시</div>
+        <div style="margin-top: 10px; background: white; color: #212529; font-size: 11px; font-weight: 600; padding: 6px 12px; border-radius: 6px; display: inline-block;">선정 전시 보기 →</div>
+      </div>
+
+      <div style="border: 1px solid #e9ecef; border-radius: 10px; padding: 12px; text-align: center;">
+        <div style="font-size: 11px; font-weight: 600; margin-bottom: 2px;">🏆 명예의 전당</div>
+        <div style="font-size: 10px; color: #6c757d;">역대 Proud's Pick 선정 전시 모음</div>
+        <div style="margin-top: 8px; font-size: 11px; color: #495057; border: 1px solid #dee2e6; padding: 4px 10px; border-radius: 6px; display: inline-block;">갤러리 보기 →</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — Pick 탭 안에 두 섹션</h3>
+      <p>이번 주 픽 카드 + 명예의 전당 진입 카드. 탭 하나에서 모두 접근.</p>
+    </div>
+  </div>
+
+  <!-- Option B -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: #f8f9fa;">
+      <div style="font-size: 10px; color: #6c757d; margin-bottom: 8px; font-family: monospace;">Events → [이벤트 | Pick* | 기획전 | 🏆]</div>
+
+      <div style="display: flex; gap: 6px; margin-bottom: 10px;">
+        <span style="background: #e9ecef; padding: 5px 10px; border-radius: 20px; font-size: 11px;">이벤트</span>
+        <span style="background: #e9ecef; padding: 5px 10px; border-radius: 20px; font-size: 11px;">Pick</span>
+        <span style="background: #e9ecef; padding: 5px 10px; border-radius: 20px; font-size: 11px;">기획전</span>
+        <span style="background: #212529; color: #ffd700; padding: 5px 10px; border-radius: 20px; font-size: 11px;">🏆 명예</span>
+      </div>
+
+      <div style="background: linear-gradient(135deg, #1a1a2e, #16213e); border-radius: 10px; padding: 14px; color: white;">
+        <div style="font-size: 12px; font-weight: 700; color: #ffd700; margin-bottom: 8px;">🏆 명예의 전당</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 4px;">
+          <div style="aspect-ratio:1; background:#2d3561; border-radius:4px;"></div>
+          <div style="aspect-ratio:1; background:#2d3561; border-radius:4px;"></div>
+          <div style="aspect-ratio:1; background:#2d3561; border-radius:4px;"></div>
+          <div style="aspect-ratio:1; background:#2d3561; border-radius:4px;"></div>
+          <div style="aspect-ratio:1; background:#2d3561; border-radius:4px;"></div>
+          <div style="aspect-ratio:1; background:#2d3561; border-radius:4px;"></div>
+        </div>
+        <div style="font-size: 10px; color: #adb5bd; margin-top: 6px; text-align: center;">역대 Proud's Pick 선정 전시 42개</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — 명예의 전당을 별도 탭으로</h3>
+      <p>Events 탭에 4번째 탭으로 추가. 독립적인 갤러리 공간. 탭이 4개로 늘어남.</p>
+    </div>
+  </div>
+
+  <!-- Option C -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: #f8f9fa;">
+      <div style="font-size: 10px; color: #6c757d; margin-bottom: 8px; font-family: monospace;">/picks/:id 상세 페이지 하단</div>
+
+      <!-- Pick detail page -->
+      <div style="background: #212529; border-radius: 10px; padding: 12px; color: white; margin-bottom: 6px;">
+        <div style="font-size: 10px; color: #ffd700; margin-bottom: 2px;">★ Proud's Pick</div>
+        <div style="font-size: 13px; font-weight: 700;">4월 3주차</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 4px; margin-top: 8px;">
+          <div style="aspect-ratio:1.2; background:#374151; border-radius:4px;"></div>
+          <div style="aspect-ratio:1.2; background:#374151; border-radius:4px;"></div>
+        </div>
+      </div>
+
+      <div style="border-top: 2px solid #ffd700; padding-top: 8px;">
+        <div style="font-size: 10px; color: #6c757d; margin-bottom: 6px;">🏆 역대 Proud's Pick 선정 전시</div>
+        <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 3px;">
+          <div style="aspect-ratio:1; background:#e9ecef; border-radius:3px;"></div>
+          <div style="aspect-ratio:1; background:#e9ecef; border-radius:3px;"></div>
+          <div style="aspect-ratio:1; background:#e9ecef; border-radius:3px;"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — 픽 상세 페이지 하단에 명예의 전당</h3>
+      <p>이번 주 픽 상세를 보고 스크롤하면 "역대 픽 선정 전시" 갤러리가 이어짐.</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top: 8px;">클릭해서 선택하거나 터미널에서 의견 주세요.</p>

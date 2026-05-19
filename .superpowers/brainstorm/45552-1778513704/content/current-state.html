@@ -1,0 +1,61 @@
+<h2>현재 검색 화면 구조</h2>
+<p class="subtitle">지금 어떻게 생겼는지 짚어보고, 뭘 바꿀지 얘기해봐요</p>
+
+<div style="display: flex; gap: 24px; margin-top: 24px; flex-wrap: wrap;">
+
+  <!-- 상태 1: 검색 전 -->
+  <div class="mockup" style="flex: 1; min-width: 260px;">
+    <div class="mockup-header">① 검색 전 (빈 상태)</div>
+    <div class="mockup-body" style="background: #faf9f7; padding: 16px; font-size: 13px;">
+      <div style="background: white; border: 2px solid #e2e0dc; border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 8px; margin-bottom: 16px;">
+        <span style="color: #aaa;">🔍</span>
+        <span style="color: #aaa;">작품명, 작가명, 전시명, 그룹명 검색</span>
+      </div>
+      <div style="font-size: 11px; font-weight: 600; color: #888; margin-bottom: 8px;">최근 검색</div>
+      <div style="display: flex; flex-wrap: wrap; gap: 6px;">
+        <div style="border: 1px solid #ddd; border-radius: 20px; padding: 6px 14px; font-size: 12px; display: flex; align-items: center; gap: 4px;">봄 <span style="color:#aaa;">✕</span></div>
+        <div style="border: 1px solid #ddd; border-radius: 20px; padding: 6px 14px; font-size: 12px; display: flex; align-items: center; gap: 4px;">수채화 <span style="color:#aaa;">✕</span></div>
+        <div style="border: 1px solid #ddd; border-radius: 20px; padding: 6px 14px; font-size: 12px; display: flex; align-items: center; gap: 4px;">카테 <span style="color:#aaa;">✕</span></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 상태 2: 검색 결과 -->
+  <div class="mockup" style="flex: 1; min-width: 260px;">
+    <div class="mockup-header">② 검색 후 — "봄" 검색 결과</div>
+    <div class="mockup-body" style="background: #faf9f7; padding: 16px; font-size: 13px;">
+      <div style="background: white; border: 2px solid #7c3aed; border-radius: 12px; padding: 12px 16px; display: flex; align-items: center; gap: 8px; margin-bottom: 8px;">
+        <span>🔍</span>
+        <span>봄</span>
+        <span style="margin-left: auto; color: #aaa;">✕</span>
+      </div>
+      <div style="font-size: 11px; color: #888; margin-bottom: 12px;">"봄" 검색 결과 63건</div>
+
+      <div style="font-weight: 600; margin-bottom: 6px;">작가 (1)</div>
+      <div style="display: flex; align-items: center; gap: 8px; padding: 8px; background: white; border-radius: 8px; margin-bottom: 12px;">
+        <div style="width: 32px; height: 32px; border-radius: 50%; background: #ddd;"></div>
+        <span style="font-size: 12px;">봄날의화가</span>
+      </div>
+
+      <div style="font-weight: 600; margin-bottom: 6px;">전시 (48)</div>
+      <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 6px; margin-bottom: 12px;">
+        <div style="aspect-ratio:1; background: #e8e4de; border-radius: 6px;"></div>
+        <div style="aspect-ratio:1; background: #d4cfc8; border-radius: 6px;"></div>
+        <div style="aspect-ratio:1; background: #c9c3bb; border-radius: 6px;"></div>
+      </div>
+
+      <div style="font-weight: 600; margin-bottom: 6px; color: #888; font-size: 11px;">(그룹·작품명 섹션도 아래 계속…)</div>
+    </div>
+  </div>
+
+</div>
+
+<div style="margin-top: 24px; padding: 16px; background: #f0edf8; border-radius: 12px; border-left: 3px solid #7c3aed;">
+  <div style="font-weight: 600; margin-bottom: 8px; font-size: 14px;">지금 구조 요약</div>
+  <ul style="margin: 0; padding-left: 16px; font-size: 13px; line-height: 1.8; color: #555;">
+    <li>검색 전: 입력창 + 최근 검색어 칩</li>
+    <li>검색 후: 결과 수 표시 → <strong>작가 / 그룹 / 전시 / 작품명</strong> 4개 섹션</li>
+    <li>각 섹션은 해당 필드에 키워드가 포함된 경우만 노출</li>
+    <li>자동완성 없음 (Enter로 검색)</li>
+  </ul>
+</div>

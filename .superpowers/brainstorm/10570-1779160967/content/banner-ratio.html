@@ -1,0 +1,106 @@
+<h2>배너 이미지 비율 비교</h2>
+<p class="subtitle">전폭(edge-to-edge) 기준, 실제 이미지가 들어갔을 때의 비율감이에요</p>
+
+<style>
+  .ratio-wrap { font-family: 'Pretendard','Apple SD Gothic Neo',sans-serif; margin-bottom:6px; border-radius:10px; overflow:hidden; border:1.5px solid #e2e2e2; }
+  .banner-img {
+    width: 100%;
+    background: linear-gradient(135deg, #2c2a36 0%, #4a3f5c 35%, #7a6580 60%, #c4957a 85%, #e8c49a 100%);
+    position: relative;
+  }
+  .banner-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.65) 0%, rgba(0,0,0,0.05) 50%, transparent 100%);
+  }
+  .banner-content {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 20px 28px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+  }
+  .banner-title { color:#fff; font-size:18px; font-weight:700; margin:0 0 4px; }
+  .banner-sub { color:rgba(255,255,255,0.65); font-size:11px; margin:0; }
+  .dot { width:7px;height:7px;border-radius:50%;background:#4ade80;box-shadow:0 0 0 2px rgba(74,222,128,0.3);display:inline-block;margin-right:5px; }
+  .badge { display:inline-flex;align-items:center;background:rgba(255,255,255,0.12);backdrop-filter:blur(8px);border:1px solid rgba(255,255,255,0.25);color:#fff;font-size:10px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:4px 10px;border-radius:16px; }
+  .ratio-label { text-align:right; color:rgba(255,255,255,0.45); font-size:9px; letter-spacing:2px; }
+</style>
+
+<div class="cards">
+
+  <!-- 16:9 -->
+  <div class="card" data-choice="16-9" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:0;">
+      <div class="ratio-wrap">
+        <div class="banner-img" style="aspect-ratio:16/9;">
+          <div class="banner-overlay"></div>
+          <div class="banner-content">
+            <div>
+              <p class="banner-title">봄의 서정 — 꽃과 빛의 기록</p>
+              <p class="banner-sub">봄을 캔버스에 담은 작가 7인</p>
+            </div>
+            <div style="text-align:right;">
+              <div class="badge"><span class="dot"></span>On View</div>
+              <p class="ratio-label" style="margin-top:6px;">2026.05.01 — 06.30</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>16 : 9 — 표준 와이드</h3>
+      <p>유튜브·TV 비율. 친숙하고 안정감 있음. 세로가 충분해서 이미지 내용이 잘 보임. <strong>모바일에서도 자연스러움.</strong></p>
+    </div>
+  </div>
+
+  <!-- 21:9 -->
+  <div class="card" data-choice="21-9" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:0;">
+      <div class="ratio-wrap">
+        <div class="banner-img" style="aspect-ratio:21/9;">
+          <div class="banner-overlay"></div>
+          <div class="banner-content">
+            <div>
+              <p class="banner-title">봄의 서정 — 꽃과 빛의 기록</p>
+              <p class="banner-sub">봄을 캔버스에 담은 작가 7인</p>
+            </div>
+            <div style="text-align:right;">
+              <div class="badge"><span class="dot"></span>On View</div>
+              <p class="ratio-label" style="margin-top:6px;">2026.05.01 — 06.30</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>21 : 9 — 시네마틱 ✦ 추천</h3>
+      <p>영화관 화면 비율. 옆으로 넓어서 "전시 포스터" 느낌을 가장 확실히 탈출. 갤러리·미술관 사이트에서 많이 씀.</p>
+    </div>
+  </div>
+
+  <!-- 3:1 -->
+  <div class="card" data-choice="3-1" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:0;">
+      <div class="ratio-wrap">
+        <div class="banner-img" style="aspect-ratio:3/1;">
+          <div class="banner-overlay"></div>
+          <div class="banner-content">
+            <div>
+              <p class="banner-title">봄의 서정 — 꽃과 빛의 기록</p>
+              <p class="banner-sub">봄을 캔버스에 담은 작가 7인</p>
+            </div>
+            <div style="text-align:right;">
+              <div class="badge"><span class="dot"></span>On View</div>
+              <p class="ratio-label" style="margin-top:6px;">2026.05.01 — 06.30</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>3 : 1 — 울트라 와이드 스트립</h3>
+      <p>매우 납작한 띠형. 이미지가 얇아서 배경 느낌이 강해짐. 임팩트는 있지만 이미지 감상은 어려움.</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:10px;font-size:12px;">모바일에서는 세 옵션 모두 <code>aspect-ratio: 4/3</code> 또는 고정 높이로 override할 예정이에요.</p>

@@ -1,0 +1,82 @@
+<h2>기획전 썸네일 — 포스터 스타일 방향</h2>
+<p class="subtitle">전시 포스터처럼 타이포·이미지·여백이 조화로운 느낌</p>
+
+<div class="cards">
+
+  <!-- 포스터 A: 작품 이미지 풀블리드 + 하단 텍스트 블록 -->
+  <div class="card" data-choice="poster-a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:0;">
+      <div style="height:220px;background:linear-gradient(160deg,#2c1810,#0a0a0a,#101828);position:relative;overflow:hidden;">
+        <!-- 작품 이미지 시뮬레이션 -->
+        <div style="position:absolute;top:0;left:0;right:0;bottom:40px;background:linear-gradient(135deg,rgba(120,80,40,0.4),rgba(20,40,80,0.6));"></div>
+        <div style="position:absolute;top:16px;right:16px;font-size:9px;letter-spacing:3px;color:rgba(255,255,255,0.5);text-transform:uppercase;">Proud Gallery</div>
+        <!-- 하단 텍스트 블록 -->
+        <div style="position:absolute;bottom:0;left:0;right:0;padding:16px;background:rgba(0,0,0,0.7);backdrop-filter:blur(4px);">
+          <div style="font-size:8px;letter-spacing:3px;color:#c0a060;margin-bottom:4px;">기획전</div>
+          <div style="font-size:18px;font-weight:900;color:#fff;line-height:1.1;margin-bottom:4px;">봄의 색</div>
+          <div style="font-size:9px;color:rgba(255,255,255,0.6);">2026. 04 — 2026. 05</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>풀블리드 + 하단 텍스트</h3>
+      <p>작품 이미지가 포스터 전체를 채우고, 하단 블록에 타이틀·날짜. 갤러리 포스터 클래식 형식</p>
+    </div>
+  </div>
+
+  <!-- 포스터 B: 여백 있는 미니멀 레이아웃 -->
+  <div class="card" data-choice="poster-b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:0;">
+      <div style="height:220px;background:#f4f0ec;position:relative;display:flex;flex-direction:column;justify-content:space-between;padding:20px;">
+        <!-- 상단 라벨 -->
+        <div style="display:flex;justify-content:space-between;align-items:flex-start;">
+          <div style="font-size:8px;letter-spacing:2px;color:#888;text-transform:uppercase;">Exhibition</div>
+          <div style="font-size:8px;color:#888;">No. 07</div>
+        </div>
+        <!-- 중앙 작품 이미지 (작은 크기, 여백 강조) -->
+        <div style="display:flex;justify-content:center;">
+          <div style="width:80px;height:80px;background:linear-gradient(135deg,#c8a060,#806030);border-radius:2px;"></div>
+        </div>
+        <!-- 하단 타이틀 -->
+        <div>
+          <div style="font-size:20px;font-weight:900;color:#1a1a1a;line-height:1;">봄의 색</div>
+          <div style="font-size:9px;color:#888;margin-top:4px;">Spring Palette · 2026.04</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>미니멀 · 여백 강조</h3>
+      <p>밝은 배경에 여백을 살린 구조. 작품을 작게 올리고 타이포가 강조. 현대 갤러리 포스터 느낌</p>
+    </div>
+  </div>
+
+  <!-- 포스터 C: 세로 분할 레이아웃 -->
+  <div class="card" data-choice="poster-c" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:0;">
+      <div style="height:220px;display:flex;overflow:hidden;">
+        <!-- 왼쪽: 작품 이미지 영역 -->
+        <div style="flex:1;background:linear-gradient(160deg,#3a2808,#101820);position:relative;">
+          <div style="position:absolute;inset:0;background:linear-gradient(180deg,rgba(60,40,20,0.3),rgba(10,20,40,0.5));"></div>
+        </div>
+        <!-- 오른쪽: 텍스트 영역 (회전된 레이아웃) -->
+        <div style="width:90px;background:#1a1a1a;display:flex;flex-direction:column;justify-content:flex-end;padding:14px 10px;">
+          <div style="font-size:7px;letter-spacing:2px;color:#c0a060;margin-bottom:6px;text-transform:uppercase;">기획전</div>
+          <div style="font-size:14px;font-weight:900;color:#fff;line-height:1.2;margin-bottom:8px;">봄<br>의<br>색</div>
+          <div style="font-size:7px;color:#666;line-height:1.4;">04<br>—<br>05</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>세로 분할 · 타이포 중심</h3>
+      <p>이미지와 텍스트 영역을 좌우로 분할. 타이포가 세로로 흐름. 독특한 포스터 느낌</p>
+    </div>
+  </div>
+
+</div>
+
+<div style="margin-top:16px;background:#f9f5f0;border-radius:8px;padding:12px;font-size:12px;color:#555;line-height:1.7;">
+  <strong>공통 원칙</strong><br>
+  · 클릭하면 바로 기획전 뷰어 시작 (리스트 페이지 없음)<br>
+  · 기획전 = 작품(이미지) 단위 큐레이션<br>
+  · 썸네일 디자인은 운영팀이 기획전마다 별도 제작
+</div>

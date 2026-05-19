@@ -1,0 +1,106 @@
+<h2>"지난 기획전" 목록 레이아웃</h2>
+<p class="subtitle">21:9로 바꾸면 카드 그리드가 너무 납작해져요 — 배치 방식을 고를게요</p>
+
+<style>
+  .preview-wrap { font-family:'Pretendard','Apple SD Gothic Neo',sans-serif; border-radius:10px; overflow:hidden; border:1.5px solid #e2e2e2; padding:16px; background:#f9f8f6; }
+  .preview-wrap * { box-sizing:border-box; }
+
+  /* 지난 기획전 공통 카드 스타일 */
+  .c-card {
+    position:relative; overflow:hidden; border-radius:8px;
+    background: linear-gradient(135deg, #2c2a36 0%, #4a3f5c 40%, #8a7090 70%, #c4957a 100%);
+  }
+  .c-card-overlay {
+    position:absolute;inset:0;
+    background:linear-gradient(to top, rgba(0,0,0,0.7) 0%, transparent 55%);
+  }
+  .c-card-text { position:absolute;bottom:0;left:0;right:0;padding:10px 12px; }
+  .c-card-text .dates { color:rgba(255,255,255,0.45); font-size:9px; letter-spacing:1.5px; margin:0 0 3px; }
+  .c-card-text .title { color:#fff; font-size:12px; font-weight:700; margin:0; line-height:1.35; }
+
+  /* grayscale effect on cards */
+  .c-ended { filter:grayscale(1); opacity:0.55; }
+
+  /* ---- Option A: 1열 리스트 ---- */
+  .list-single { display:flex; flex-direction:column; gap:10px; }
+  .list-single .c-card { aspect-ratio:21/9; }
+
+  /* ---- Option B: 2열 그리드 ---- */
+  .grid-2col { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .grid-2col .c-card { aspect-ratio:21/9; }
+
+  /* ---- Option C: 2열, 16:9 ---- */
+  .grid-2col-16 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .grid-2col-16 .c-card { aspect-ratio:16/9; }
+
+  .section-label { font-size:11px; font-weight:600; color:#999; margin:0 0 8px; }
+</style>
+
+<div class="cards">
+
+  <!-- Option A -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:0;">
+      <div class="preview-wrap">
+        <p class="section-label">지난 기획전</p>
+        <div class="list-single">
+          <div class="c-card c-ended">
+            <div class="c-card-overlay"></div>
+            <div class="c-card-text"><p class="dates">2026.03.01 — 04.30</p><p class="title">겨울 서정 — 설경과 정물</p></div>
+          </div>
+          <div class="c-card c-ended">
+            <div class="c-card-overlay"></div>
+            <div class="c-card-text"><p class="dates">2026.01.01 — 02.28</p><p class="title">빛과 색채 — 추상의 세계</p></div>
+          </div>
+          <div class="c-card c-ended">
+            <div class="c-card-overlay"></div>
+            <div class="c-card-text"><p class="dates">2025.11.01 — 12.31</p><p class="title">일상의 단면 — 정물화 특별전</p></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. 1열 리스트 ✦ 추천</h3>
+      <p>전폭 21:9 카드를 한 줄로 나열. 이미지가 충분히 보이고 각 전시가 독립적으로 눈에 들어옴. 스크롤로 탐색하는 느낌이 뚜렷해서 아카이브 느낌 강함.</p>
+    </div>
+  </div>
+
+  <!-- Option B -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:0;">
+      <div class="preview-wrap">
+        <p class="section-label">지난 기획전</p>
+        <div class="grid-2col">
+          <div class="c-card c-ended"><div class="c-card-overlay"></div><div class="c-card-text"><p class="dates">2026.03.01 — 04.30</p><p class="title">겨울 서정</p></div></div>
+          <div class="c-card c-ended"><div class="c-card-overlay"></div><div class="c-card-text"><p class="dates">2026.01.01 — 02.28</p><p class="title">빛과 색채</p></div></div>
+          <div class="c-card c-ended"><div class="c-card-overlay"></div><div class="c-card-text"><p class="dates">2025.11.01 — 12.31</p><p class="title">일상의 단면</p></div></div>
+          <div class="c-card c-ended"><div class="c-card-overlay"></div><div class="c-card-text"><p class="dates">2025.09.01 — 10.31</p><p class="title">자연을 담다</p></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. 2열 그리드 21:9</h3>
+      <p>현재 그리드 구조 유지하되 비율만 교체. 카드가 작아서 이미지는 얇게 보이지만 한눈에 많이 볼 수 있음. 21:9가 좁아서 살짝 답답할 수 있음.</p>
+    </div>
+  </div>
+
+  <!-- Option C -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:0;">
+      <div class="preview-wrap">
+        <p class="section-label">지난 기획전</p>
+        <div class="grid-2col-16">
+          <div class="c-card c-ended"><div class="c-card-overlay"></div><div class="c-card-text"><p class="dates">2026.03.01 — 04.30</p><p class="title">겨울 서정</p></div></div>
+          <div class="c-card c-ended"><div class="c-card-overlay"></div><div class="c-card-text"><p class="dates">2026.01.01 — 02.28</p><p class="title">빛과 색채</p></div></div>
+          <div class="c-card c-ended"><div class="c-card-overlay"></div><div class="c-card-text"><p class="dates">2025.11.01 — 12.31</p><p class="title">일상의 단면</p></div></div>
+          <div class="c-card c-ended"><div class="c-card-overlay"></div><div class="c-card-text"><p class="dates">2025.09.01 — 10.31</p><p class="title">자연을 담다</p></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. 2열 그리드 16:9</h3>
+      <p>그리드는 유지하되 16:9로 타협. 카드 크기와 비율이 자연스럽게 맞아떨어짐. 21:9보다 이미지가 더 잘 보임.</p>
+    </div>
+  </div>
+
+</div>

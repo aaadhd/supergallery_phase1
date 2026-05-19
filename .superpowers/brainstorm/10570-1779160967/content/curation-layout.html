@@ -1,0 +1,190 @@
+<h2>기획전 페이지 — 헤더 레이아웃 방향</h2>
+<p class="subtitle">세 가지 가로형 판형 중 방향을 먼저 잡아볼게요</p>
+
+<style>
+  /* ---- 공통 리셋 ---- */
+  .preview-wrap { font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif; margin-bottom: 8px; border-radius: 10px; overflow: hidden; border: 1.5px solid #e2e2e2; }
+  .preview-wrap * { box-sizing: border-box; }
+
+  /* ---- Option A: 시네마틱 풀블리드 ---- */
+  .hero-a {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 21/9;
+    background: linear-gradient(135deg, #2c2a36 0%, #4a3f5c 40%, #7a5c6e 70%, #b8896a 100%);
+    display: flex;
+    align-items: flex-end;
+  }
+  .hero-a-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.1) 55%, transparent 100%);
+  }
+  .hero-a-content {
+    position: relative; z-index: 2;
+    padding: 28px 36px;
+    width: 100%;
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+  }
+  .hero-a-left h3 { color: #fff; font-size: 22px; font-weight: 700; margin: 0 0 5px; line-height: 1.3; }
+  .hero-a-left .sub { color: rgba(255,255,255,0.7); font-size: 12px; margin: 0; }
+  .hero-a-right { text-align: right; }
+  .badge-live {
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(255,255,255,0.15); backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.3);
+    color: #fff; font-size: 11px; font-weight: 600;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 5px 12px; border-radius: 20px;
+  }
+  .dot-live {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #4ade80;
+    box-shadow: 0 0 0 2px rgba(74,222,128,0.35);
+  }
+  .hero-a-right .dates { color: rgba(255,255,255,0.55); font-size: 10px; margin-top: 6px; letter-spacing: 2px; }
+
+  /* ---- Option B: 좌우 분할 패널 ---- */
+  .hero-b {
+    display: flex;
+    width: 100%;
+    min-height: 200px;
+    background: #faf9f7;
+  }
+  .hero-b-img {
+    width: 58%;
+    background: linear-gradient(135deg, #3d3550 0%, #6b5b7a 50%, #c4957a 100%);
+    position: relative;
+  }
+  .hero-b-img-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to right, transparent 70%, #faf9f7 100%);
+  }
+  .hero-b-info {
+    width: 42%;
+    padding: 32px 28px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  }
+  .badge-onview {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: #f0f9f4; border: 1px solid #86efac;
+    color: #16a34a; font-size: 10px; font-weight: 700;
+    letter-spacing: 1.5px; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 4px;
+    width: fit-content; margin-bottom: 14px;
+  }
+  .hero-b-info h3 { font-size: 20px; font-weight: 700; color: #1a1a1a; margin: 0 0 8px; line-height: 1.35; }
+  .hero-b-info .sub { font-size: 12px; color: #888; margin: 0 0 16px; line-height: 1.6; }
+  .hero-b-dates { font-size: 10px; letter-spacing: 2px; color: #aaa; }
+
+  /* ---- Option C: 와이드 스트립 + 정보 바 ---- */
+  .hero-c {
+    width: 100%;
+  }
+  .hero-c-img {
+    width: 100%;
+    aspect-ratio: 3/1;
+    background: linear-gradient(135deg, #1a1825 0%, #3d3550 30%, #7a5c6e 65%, #d4a57a 100%);
+    position: relative;
+  }
+  .hero-c-info-bar {
+    background: #1a1825;
+    padding: 16px 32px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+  }
+  .hero-c-info-bar h3 { color: #fff; font-size: 18px; font-weight: 700; margin: 0; }
+  .hero-c-meta { display: flex; align-items: center; gap: 16px; }
+  .badge-strip {
+    display: inline-flex; align-items: center; gap: 5px;
+    background: transparent; border: 1px solid #4ade80;
+    color: #4ade80; font-size: 10px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    padding: 4px 10px; border-radius: 2px;
+    white-space: nowrap;
+  }
+  .hero-c-dates { color: rgba(255,255,255,0.45); font-size: 10px; letter-spacing: 2px; }
+  .hero-c-sub { color: rgba(255,255,255,0.55); font-size: 11px; }
+
+  .option-label { font-size: 11px; color: #999; margin: 8px 0 4px; font-weight: 600; letter-spacing: 0.5px; }
+</style>
+
+<div class="cards">
+
+  <!-- Option A -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:0;">
+      <div class="preview-wrap">
+        <div class="hero-a">
+          <div class="hero-a-overlay"></div>
+          <div class="hero-a-content">
+            <div class="hero-a-left">
+              <h3>봄의 서정 — 꽃과 빛의 기록</h3>
+              <p class="sub">봄을 캔버스에 담은 작가 7인의 기획전</p>
+            </div>
+            <div class="hero-a-right">
+              <div class="badge-live"><span class="dot-live"></span> On View</div>
+              <p class="dates">2026.05.01 — 2026.06.30</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. 시네마틱 풀블리드</h3>
+      <p>배너 이미지가 화면 전체를 채우는 21:9 시네마 비율. 제목·진행 상태는 이미지 위에 오버레이. 가장 몰입감 있고 갤러리 느낌 강함.</p>
+    </div>
+  </div>
+
+  <!-- Option B -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:0;">
+      <div class="preview-wrap">
+        <div class="hero-b">
+          <div class="hero-b-img"><div class="hero-b-img-overlay"></div></div>
+          <div class="hero-b-info">
+            <div class="badge-onview"><span class="dot-live" style="background:#16a34a;box-shadow:none;"></span> On View</div>
+            <h3>봄의 서정 —<br>꽃과 빛의 기록</h3>
+            <p class="sub">봄을 캔버스에 담은 작가 7인의 기획전</p>
+            <p class="hero-b-dates">2026.05.01 — 2026.06.30</p>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. 좌우 분할 패널</h3>
+      <p>이미지 58% + 정보 패널 42%로 좌우 분할. 진행 상태 배지가 밝은 배경 위에 초록으로 눈에 잘 들어옴. 에디토리얼·잡지 느낌.</p>
+    </div>
+  </div>
+
+  <!-- Option C -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding:0;">
+      <div class="preview-wrap">
+        <div class="hero-c">
+          <div class="hero-c-img"></div>
+          <div class="hero-c-info-bar">
+            <h3>봄의 서정 — 꽃과 빛의 기록</h3>
+            <div class="hero-c-meta">
+              <span class="hero-c-sub">봄을 담은 작가 7인</span>
+              <div class="badge-strip"><span class="dot-live"></span> On View</div>
+              <span class="hero-c-dates">2026.05.01 — 06.30</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. 와이드 이미지 + 하단 정보 바</h3>
+      <p>3:1 비율의 와이드 이미지 아래 다크 정보 바가 붙음. 제목·진행 배지·날짜를 한 줄로 정렬. 미술관 공식 사이트 느낌.</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:12px; font-size:12px;">💡 세 옵션 모두 "현재 진행 중" 표시를 초록 도트 + "On View"로 표현했어요 — 노골적인 텍스트 없이도 충분히 전달되는지 같이 확인해봐요.</p>

@@ -1,0 +1,126 @@
+<h2>추천 전시 — 전시가 쌓여도 쓸 수 있는 구조</h2>
+<p class="subtitle">핵심 질문: 미추천 전시 수백 건을 어떻게 다루나?</p>
+
+<div class="options">
+
+  <!-- Option A -->
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>추천 목록만 표시 + "추천 추가" 버튼 → 갤러리 팝업</h3>
+      <p>메인 화면엔 현재 추천 중인 전시만 보입니다. 새로 추가하고 싶으면 "추천 추가" 버튼 클릭 → 전체 전시 갤러리(검색 가능) 팝업에서 선택. 미추천 목록은 평소에 안 보임.</p>
+      <div style="margin-top:10px;font-size:11px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;">
+        <!-- 헤더 -->
+        <div style="padding:7px 12px;background:#f8fafc;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-weight:700;font-size:11px;">추천 전시 <span style="color:#059669;font-size:10px;">3개 추천 중</span></div>
+          <div style="background:#059669;color:#fff;border-radius:5px;padding:3px 9px;font-size:9px;cursor:pointer;">+ 추천 추가</div>
+        </div>
+        <!-- 추천 중 목록만 -->
+        <div style="padding:8px 12px;display:flex;flex-direction:column;gap:4px;">
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:#fff;border-radius:6px;border:1px solid #bbf7d0;">
+            <div style="width:32px;height:32px;background:#c4b5fd;border-radius:4px;shrink-0;"></div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-weight:600;font-size:10px;">봄날의 기록</div>
+              <div style="font-size:8px;color:#64748b;">구월 · 2026-05-08 업로드</div>
+            </div>
+            <div style="width:34px;height:18px;background:#059669;border-radius:9px;position:relative;cursor:pointer;shrink-0;">
+              <div style="position:absolute;right:2px;top:2px;width:14px;height:14px;background:#fff;border-radius:50%;"></div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:#fff;border-radius:6px;border:1px solid #bbf7d0;">
+            <div style="width:32px;height:32px;background:#93c5fd;border-radius:4px;shrink-0;"></div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-weight:600;font-size:10px;">도시의 빛 2026</div>
+              <div style="font-size:8px;color:#64748b;">정호아트 · 2026-05-07 업로드</div>
+            </div>
+            <div style="width:34px;height:18px;background:#059669;border-radius:9px;position:relative;cursor:pointer;shrink-0;">
+              <div style="position:absolute;right:2px;top:2px;width:14px;height:14px;background:#fff;border-radius:50%;"></div>
+            </div>
+          </div>
+          <div style="display:flex;align-items:center;gap:8px;padding:6px 8px;background:#fff;border-radius:6px;border:1px solid #bbf7d0;">
+            <div style="width:32px;height:32px;background:#6ee7b7;border-radius:4px;shrink-0;"></div>
+            <div style="flex:1;min-width:0;">
+              <div style="font-weight:600;font-size:10px;">전통의 선</div>
+              <div style="font-size:8px;color:#64748b;">은수워터컬러 · 2026-05-01 업로드</div>
+            </div>
+            <div style="width:34px;height:18px;background:#059669;border-radius:9px;position:relative;cursor:pointer;shrink-0;">
+              <div style="position:absolute;right:2px;top:2px;width:14px;height:14px;background:#fff;border-radius:50%;"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 팝업 (추천 추가 클릭 시) -->
+        <div style="margin:0 12px 10px;border:2px dashed #059669;border-radius:7px;padding:8px;background:#f0fdf4;">
+          <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px;">
+            <div style="font-size:10px;font-weight:700;color:#166534;">추천 추가 — 전시 선택</div>
+            <div style="font-size:9px;color:#94a3b8;">✕ 닫기</div>
+          </div>
+          <input placeholder="최근 전시 검색…" style="width:100%;border:1px solid #bbf7d0;border-radius:5px;padding:3px 7px;font-size:9px;margin-bottom:5px;box-sizing:border-box;background:#fff;"/>
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;">
+            <div style="border-radius:3px;overflow:hidden;cursor:pointer;">
+              <div style="background:#fde68a;aspect-ratio:1;"></div>
+              <div style="font-size:7px;margin-top:1px;color:#374151;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">노부부의…</div>
+            </div>
+            <div style="border-radius:3px;overflow:hidden;cursor:pointer;">
+              <div style="background:#fca5a5;aspect-ratio:1;"></div>
+              <div style="font-size:7px;margin-top:1px;color:#374151;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">꿈의 색채</div>
+            </div>
+            <div style="border-radius:3px;overflow:hidden;cursor:pointer;">
+              <div style="background:#d9f99d;aspect-ratio:1;"></div>
+              <div style="font-size:7px;margin-top:1px;color:#374151;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">산수화…</div>
+            </div>
+            <div style="border-radius:3px;overflow:hidden;cursor:pointer;">
+              <div style="background:#e0e7ff;aspect-ratio:1;"></div>
+              <div style="font-size:7px;margin-top:1px;color:#374151;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">겨울 빛</div>
+            </div>
+            <div style="border-radius:3px;overflow:hidden;cursor:pointer;">
+              <div style="background:#fee2e2;aspect-ratio:1;"></div>
+              <div style="font-size:7px;margin-top:1px;color:#374151;overflow:hidden;white-space:nowrap;text-overflow:ellipsis;">조용한…</div>
+            </div>
+          </div>
+          <div style="font-size:8px;color:#64748b;margin-top:3px;text-align:center;">최신 업로드 순 · 검색으로 찾기</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option B -->
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>검수 통과 목록에서 바로 ⭐ 토글</h3>
+      <p>추천 전시 전용 페이지 없음. 콘텐츠 검수(ContentReview) 승인 목록에서 ⭐ 아이콘으로 추천 즉시 토글. 추천 관리 탭엔 추천 중인 것만 보여줌.</p>
+      <div style="margin-top:10px;font-size:11px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;">
+        <!-- 검수 목록에 ⭐ 컬럼 추가 예시 -->
+        <div style="padding:5px 8px;background:#0f172a;">
+          <div style="color:#94a3b8;font-size:9px;">콘텐츠 검수 — 승인됨 탭 (기존 화면에 ⭐ 추가)</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;padding:6px 8px;border-bottom:1px solid #f1f5f9;background:#fff;">
+          <div style="width:28px;height:28px;background:#c4b5fd;border-radius:3px;shrink-0;"></div>
+          <div style="flex:1;font-size:10px;font-weight:600;">봄날의 기록</div>
+          <div style="font-size:9px;color:#64748b;">구월</div>
+          <div style="font-size:14px;cursor:pointer;color:#f59e0b;" title="추천 중 — 클릭해서 해제">⭐</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;padding:6px 8px;border-bottom:1px solid #f1f5f9;background:#fff;">
+          <div style="width:28px;height:28px;background:#a5b4fc;border-radius:3px;shrink-0;"></div>
+          <div style="flex:1;font-size:10px;">도시의 빛</div>
+          <div style="font-size:9px;color:#64748b;">정호아트</div>
+          <div style="font-size:14px;cursor:pointer;color:#e2e8f0;" title="추천 안 됨 — 클릭해서 추천">☆</div>
+        </div>
+        <div style="display:flex;gap:6px;align-items:center;padding:6px 8px;background:#fff;">
+          <div style="width:28px;height:28px;background:#93c5fd;border-radius:3px;shrink-0;"></div>
+          <div style="flex:1;font-size:10px;">전통의 선</div>
+          <div style="font-size:9px;color:#64748b;">은수워터</div>
+          <div style="font-size:14px;cursor:pointer;color:#e2e8f0;" title="추천 안 됨">☆</div>
+        </div>
+        <div style="padding:5px 8px;background:#f8fafc;border-top:1px solid #e2e8f0;">
+          <div style="font-size:8px;color:#94a3b8;">⭐ 아이콘 클릭으로 즉시 추천·해제. 별도 저장 불필요.</div>
+        </div>
+      </div>
+      <div style="font-size:10px;color:#64748b;margin-top:5px;">장점: 검수하면서 바로 추천 결정 가능. 단점: 추천 전시 전체 현황을 한눈에 보기 어려움</div>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:14px;">두 방식 모두 "미추천 전시 수백 건 스크롤" 문제는 해결됩니다. 추천 전시 관리를 <strong>별도 페이지에서</strong> 할지, <strong>검수 화면에서 즉시</strong> 할지 차이입니다.</p>

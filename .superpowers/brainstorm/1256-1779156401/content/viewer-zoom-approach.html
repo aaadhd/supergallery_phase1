@@ -1,0 +1,107 @@
+<h2>뷰어에서 딥줌 — 어떤 방식이 맞을까요?</h2>
+<p class="subtitle">PRF-14 스타일 뷰어(어둠 배경 + 작가/작품명 하단 바)에 딥줌을 붙이는 방식 3가지입니다.</p>
+
+<div class="cards">
+
+  <!-- Option A -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#111;padding:16px;border-radius:8px;">
+      <!-- Top bar -->
+      <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-bottom:12px;">
+        <span style="background:rgba(255,255,255,0.15);color:#fff;font-size:11px;padding:3px 8px;border-radius:6px;">×1.0</span>
+        <div style="background:rgba(255,255,255,0.15);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;">−</div>
+        <div style="background:rgba(255,255,255,0.15);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;">+</div>
+        <div style="background:rgba(255,255,255,0.15);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:14px;">↺</div>
+        <div style="background:rgba(255,255,255,0.15);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;">✕</div>
+      </div>
+      <!-- Image placeholder -->
+      <div style="background:#2a2a2a;border-radius:8px;height:140px;display:flex;align-items:center;justify-content:center;color:#666;font-size:13px;margin-bottom:12px;">작품 이미지</div>
+      <!-- Bottom bar -->
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div style="width:28px;height:28px;border-radius:50%;background:#555;"></div>
+          <span style="color:#ccc;font-size:12px;">작가명</span>
+        </div>
+        <span style="color:#fff;font-size:12px;font-weight:600;">작품명</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A. 항상 표시</h3>
+      <p>−/+/↺ 버튼이 항상 상단에 노출. 더블탭으로도 2배↔원래대로 토글. 시니어에게 가장 명확하지만 버튼이 많아 보일 수 있음.</p>
+    </div>
+  </div>
+
+  <!-- Option B -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#111;padding:16px;border-radius:8px;">
+      <!-- Top bar - normal state -->
+      <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-bottom:4px;">
+        <div style="background:rgba(255,255,255,0.15);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;">🔍</div>
+        <div style="background:rgba(255,255,255,0.15);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;">✕</div>
+      </div>
+      <p style="color:#888;font-size:10px;text-align:right;margin:0 0 8px;">일반 상태</p>
+      <!-- Image placeholder -->
+      <div style="background:#2a2a2a;border-radius:8px;height:80px;display:flex;align-items:center;justify-content:center;color:#666;font-size:12px;margin-bottom:8px;">작품 이미지 (← → 스와이프 이동)</div>
+      <!-- Zoom mode indicator -->
+      <div style="border:1px dashed #555;border-radius:8px;padding:8px;margin-bottom:8px;">
+        <p style="color:#888;font-size:10px;text-align:center;margin:0 0 4px;">🔍 탭 후 줌 모드</p>
+        <div style="display:flex;align-items:center;justify-content:flex-end;gap:6px;margin-bottom:6px;">
+          <span style="background:rgba(255,255,255,0.15);color:#fff;font-size:10px;padding:2px 6px;border-radius:4px;">×2.0</span>
+          <div style="background:rgba(255,255,255,0.15);border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;">−</div>
+          <div style="background:rgba(255,255,255,0.15);border-radius:50%;width:30px;height:30px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;">+</div>
+          <div style="background:rgba(255,255,255,0.15);border-radius:8px;height:30px;padding:0 10px;display:flex;align-items:center;color:#fff;font-size:11px;">원래 크기</div>
+        </div>
+        <div style="background:#2a2a2a;border-radius:6px;height:40px;display:flex;align-items:center;justify-content:center;color:#666;font-size:11px;">이미지 (핀치·드래그 이동)</div>
+      </div>
+      <!-- Bottom bar -->
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div style="width:24px;height:24px;border-radius:50%;background:#555;"></div>
+          <span style="color:#ccc;font-size:11px;">작가명</span>
+        </div>
+        <span style="color:#fff;font-size:11px;font-weight:600;">작품명</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B. 돋보기 버튼으로 진입</h3>
+      <p>평소엔 🔍+✕만 표시. 🔍 탭 시 줌 모드 전환 — −/+/"원래 크기" 버튼 등장. 스와이프 이동은 줌 모드일 때 비활성. 두 모드가 명확히 구분됨.</p>
+    </div>
+  </div>
+
+  <!-- Option C -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="background:#111;padding:16px;border-radius:8px;">
+      <!-- Top bar -->
+      <div style="display:flex;align-items:center;justify-content:flex-end;gap:8px;margin-bottom:12px;">
+        <div style="background:rgba(255,255,255,0.15);border-radius:50%;width:36px;height:36px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;">✕</div>
+      </div>
+      <!-- Image placeholder -->
+      <div style="background:#2a2a2a;border-radius:8px;height:110px;display:flex;flex-direction:column;align-items:center;justify-content:center;color:#666;font-size:12px;margin-bottom:8px;gap:6px;">
+        <span>작품 이미지</span>
+        <span style="font-size:10px;background:#333;padding:3px 8px;border-radius:4px;">두 손가락으로 확대해 보세요</span>
+      </div>
+      <!-- Zoomed hint -->
+      <div style="border:1px dashed #444;border-radius:8px;padding:8px;margin-bottom:8px;text-align:center;">
+        <p style="color:#888;font-size:10px;margin:0 0 4px;">확대 중일 때 우하단에만 표시</p>
+        <div style="display:flex;justify-content:flex-end;">
+          <div style="background:rgba(255,255,255,0.2);border-radius:20px;padding:4px 12px;color:#fff;font-size:11px;">원래 크기로</div>
+        </div>
+      </div>
+      <!-- Bottom bar -->
+      <div style="display:flex;align-items:center;justify-content:space-between;">
+        <div style="display:flex;align-items:center;gap:6px;">
+          <div style="width:24px;height:24px;border-radius:50%;background:#555;"></div>
+          <span style="color:#ccc;font-size:11px;">작가명</span>
+        </div>
+        <span style="color:#fff;font-size:11px;font-weight:600;">작품명</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C. 제스처 위주 + 힌트</h3>
+      <p>버튼 최소화. 핀치/더블탭으로 확대, 확대 중일 때만 "원래 크기로" 버튼 등장. 화면 진입 시 짧은 힌트 표시. 가장 깔끔하지만 시니어에게 제스처가 낯설 수 있음.</p>
+    </div>
+  </div>
+
+</div>
+
+<p style="color:#888;font-size:13px;margin-top:16px;">* 세 옵션 모두 더블탭으로 2배 확대 / 다시 더블탭으로 원래 크기 복귀를 지원합니다.</p>

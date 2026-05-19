@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>전시 카드 UI 비교</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f1f5f9; color: #1e293b; padding: 24px; }
+
+  h1 { font-size: 18px; font-weight: 700; margin-bottom: 6px; }
+  .subtitle { font-size: 13px; color: #64748b; margin-bottom: 28px; }
+
+  .section { margin-bottom: 40px; }
+  .section-label { font-size: 11px; font-weight: 600; text-transform: uppercase; letter-spacing: .06em; color: #94a3b8; margin-bottom: 14px; display: flex; align-items: center; gap: 8px; }
+  .section-label span { background: #e2e8f0; padding: 2px 8px; border-radius: 4px; color: #475569; }
+
+  .grid { display: grid; grid-template-columns: repeat(8, 1fr); gap: 10px; }
+
+  /* ── 공통 카드 베이스 ── */
+  .card {
+    position: relative; border-radius: 8px; overflow: hidden;
+    border: 2px solid transparent; cursor: pointer;
+    transition: border-color .15s, box-shadow .15s;
+    background: #e2e8f0;
+  }
+  .card.selected { border-color: #7c3aed; box-shadow: 0 0 0 1px #7c3aed; }
+  .card img { width: 100%; display: block; }
+  .card .aspect { aspect-ratio: 1; }
+
+  /* 선정 배지 */
+  .badge {
+    position: absolute; top: 4px; right: 4px;
+    background: #7c3aed; color: white; font-size: 10px; font-weight: 700;
+    width: 20px; height: 20px; border-radius: 50%;
+    display: flex; align-items: center; justify-content: center;
+  }
+
+  /* ── A: 현재 상태 ── */
+  .card-current .cover { aspect-ratio: 1; background: #cbd5e1; overflow: hidden; }
+  .card-current .cover img { width: 100%; height: 100%; object-fit: cover; }
+  .card-current .title-hover {
+    position: absolute; inset-x: 0; bottom: 0;
+    background: rgba(0,0,0,.6); padding: 4px 6px;
+    font-size: 9px; color: white; opacity: 0; transition: opacity .15s; white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .card-current:hover .title-hover { opacity: 1; }
+
+  /* ── B: 호버 시 작품 스트립 ── */
+  .card-hover .cover { aspect-ratio: 1; overflow: hidden; position: relative; }
+  .card-hover .cover img { width: 100%; height: 100%; object-fit: cover; transition: opacity .2s; }
+  .card-hover:hover .cover img { opacity: .5; }
+
+  .card-hover .strip {
+    position: absolute; inset: 0;
+    display: flex; flex-direction: column; justify-content: flex-end;
+    opacity: 0; transition: opacity .2s;
+    padding: 0 0 4px;
+  }
+  .card-hover:hover .strip { opacity: 1; }
+
+  .card-hover .strip-title {
+    font-size: 9px; color: white; font-weight: 600;
+    padding: 2px 5px 3px; text-shadow: 0 1px 2px rgba(0,0,0,.8);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+  }
+  .card-hover .strip-imgs {
+    display: flex; gap: 2px; padding: 0 4px;
+  }
+  .card-hover .strip-imgs .thumb {
+    flex: 1; aspect-ratio: 1; border-radius: 3px; overflow: hidden;
+    border: 1px solid rgba(255,255,255,.4);
+  }
+  .card-hover .strip-imgs .thumb img { width: 100%; height: 100%; object-fit: cover; }
+  .card-hover .strip-imgs .more {
+    flex: 1; aspect-ratio: 1; border-radius: 3px;
+    background: rgba(0,0,0,.5); border: 1px solid rgba(255,255,255,.3);
+    display: flex; align-items: center; justify-content: center;
+    font-size: 9px; color: white; font-weight: 600;
+  }
+  .card-hover .strip-artist {
+    font-size: 8px; color: rgba(255,255,255,.75);
+    padding: 0 5px; margin-top: 2px;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    text-shadow: 0 1px 2px rgba(0,0,0,.8);
+  }
+
+  /* ── C: 항상 보이는 스트립 (카드 세로 확장) ── */
+  .grid-c { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; }
+
+  .card-always { border-radius: 8px; overflow: hidden; border: 2px solid transparent; cursor: pointer; transition: border-color .15s; background: white; box-shadow: 0 1px 3px rgba(0,0,0,.08); }
+  .card-always.selected { border-color: #7c3aed; }
+  .card-always .cover { aspect-ratio: 1; overflow: hidden; position: relative; }
+  .card-always .cover img { width: 100%; height: 100%; object-fit: cover; }
+  .card-always .info { padding: 5px 6px 4px; }
+  .card-always .info .name { font-size: 9px; font-weight: 600; color: #1e293b; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .card-always .info .artist { font-size: 8px; color: #94a3b8; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; margin-top: 1px; }
+  .card-always .thumbs { display: flex; gap: 2px; padding: 0 5px 5px; }
+  .card-always .thumbs .t { flex: 1; aspect-ratio: 1; border-radius: 3px; overflow: hidden; background: #e2e8f0; }
+  .card-always .thumbs .t img { width: 100%; height: 100%; object-fit: cover; }
+  .card-always .thumbs .t.more {
+    display: flex; align-items: center; justify-content: center;
+    font-size: 8px; font-weight: 700; color: #94a3b8;
+  }
+
+  /* 선택 영역 */
+  .choice-wrap {
+    border: 2px solid transparent; border-radius: 12px; padding: 16px;
+    cursor: pointer; transition: border-color .15s, background .15s;
+    margin-bottom: 24px;
+  }
+  .choice-wrap:hover { background: rgba(124,58,237,.04); border-color: #ddd6fe; }
+  .choice-wrap.picked { border-color: #7c3aed; background: rgba(124,58,237,.05); }
+  .choice-wrap.picked .choice-tag { background: #7c3aed; color: white; }
+
+  .choice-header { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; }
+  .choice-tag { font-size: 11px; font-weight: 700; padding: 3px 10px; border-radius: 20px; background: #e2e8f0; color: #475569; flex-shrink: 0; margin-top: 1px; }
+  .choice-title { font-size: 14px; font-weight: 700; }
+  .choice-desc { font-size: 12px; color: #64748b; margin-top: 2px; line-height: 1.5; }
+  .choice-pros { font-size: 11px; color: #059669; margin-top: 6px; display: flex; gap: 4px; flex-wrap: wrap; }
+  .choice-pros span { background: #d1fae5; padding: 2px 7px; border-radius: 10px; }
+  .choice-cons { font-size: 11px; color: #dc2626; margin-top: 4px; display: flex; gap: 4px; flex-wrap: wrap; }
+  .choice-cons span { background: #fee2e2; padding: 2px 7px; border-radius: 10px; }
+
+  .my-pick { display: inline-flex; align-items: center; gap: 5px; font-size: 11px; font-weight: 700; color: #7c3aed; background: #f3e8ff; padding: 3px 10px; border-radius: 20px; margin-top: 4px; }
+
+  /* unsplash 이미지 색상 플레이스홀더 */
+  .img-1 { background: linear-gradient(135deg, #f093fb, #f5576c); }
+  .img-2 { background: linear-gradient(135deg, #4facfe, #00f2fe); }
+  .img-3 { background: linear-gradient(135deg, #43e97b, #38f9d7); }
+  .img-4 { background: linear-gradient(135deg, #fa709a, #fee140); }
+  .img-5 { background: linear-gradient(135deg, #a18cd1, #fbc2eb); }
+  .img-6 { background: linear-gradient(135deg, #fda085, #f6d365); }
+  .img-7 { background: linear-gradient(135deg, #89f7fe, #66a6ff); }
+  .img-8 { background: linear-gradient(135deg, #fddb92, #d1fdff); }
+
+  .color-cover { width: 100%; height: 100%; }
+</style>
+</head>
+<body>
+
+<h1>Pick / 추천 전시 — 전시 카드 UI 비교</h1>
+<p class="subtitle">어드민이 전시를 선정할 때, 안에 어떤 작품이 있는지 어떻게 보여줄까요?</p>
+
+<!-- ── OPTION A ── -->
+<div class="choice-wrap" id="opt-a" onclick="pick('a')">
+  <div class="choice-header">
+    <div class="choice-tag">A</div>
+    <div>
+      <div class="choice-title">현재 상태 — 커버 이미지만</div>
+      <div class="choice-desc">지금처럼 커버 1장만 보임. hover 시 제목 노출.</div>
+      <div class="choice-cons"><span>내부 작품 알 수 없음</span></div>
+    </div>
+  </div>
+  <div class="section-label">현재 Pick 갤러리 (8열)</div>
+  <div class="grid">
+    <div class="card card-current selected"><div class="cover"><div class="color-cover img-1"></div></div><div class="badge">1</div><div class="title-hover">구월 개인전</div></div>
+    <div class="card card-current selected"><div class="cover"><div class="color-cover img-2"></div></div><div class="badge">2</div><div class="title-hover">봄의 감성전</div></div>
+    <div class="card card-current selected"><div class="cover"><div class="color-cover img-3"></div></div><div class="badge">3</div><div class="title-hover">장생마을 연작전</div></div>
+    <div class="card card-current"><div class="cover"><div class="color-cover img-4"></div></div><div class="title-hover">컬러링북 아티스트</div></div>
+    <div class="card card-current"><div class="cover"><div class="color-cover img-5"></div></div><div class="title-hover">나랑하루 개인전</div></div>
+    <div class="card card-current"><div class="cover"><div class="color-cover img-6"></div></div><div class="title-hover">동그라미 일러스트</div></div>
+    <div class="card card-current"><div class="cover"><div class="color-cover img-7"></div></div><div class="title-hover">모바일아트협동조합</div></div>
+    <div class="card card-current"><div class="cover"><div class="color-cover img-8"></div></div><div class="title-hover">김안에 일러스트</div></div>
+  </div>
+</div>
+
+<!-- ── OPTION B ── -->
+<div class="choice-wrap" id="opt-b" onclick="pick('b')">
+  <div class="choice-header">
+    <div class="choice-tag">B</div>
+    <div>
+      <div class="choice-title">호버 시 내부 작품 스트립 표시</div>
+      <div class="choice-desc">커서를 올리면 커버가 반투명해지고 아래 작품 썸네일 줄이 나타남. 클릭 없이 훑어볼 수 있음.</div>
+      <div class="my-pick">✦ 추천 옵션</div>
+      <div class="choice-pros"><span>클릭 0회</span><span>밀도 유지 (8열)</span><span>자연스러운 탐색</span></div>
+      <div class="choice-cons"><span>마우스 없으면 못 봄 (터치 불가)</span></div>
+    </div>
+  </div>
+  <div class="section-label">Pick 갤러리 — 마우스를 카드 위로 올려보세요</div>
+  <div class="grid">
+
+    <div class="card card-hover selected">
+      <div class="cover">
+        <div class="color-cover img-1"></div>
+        <div class="strip">
+          <div class="strip-title">구월 개인전</div>
+          <div class="strip-imgs">
+            <div class="thumb"><div class="color-cover img-2" style="height:100%"></div></div>
+            <div class="thumb"><div class="color-cover img-3" style="height:100%"></div></div>
+            <div class="thumb"><div class="color-cover img-4" style="height:100%"></div></div>
+            <div class="more">+1</div>
+          </div>
+          <div class="strip-artist">구월 · 4장</div>
+        </div>
+      </div>
+      <div class="badge">1</div>
+    </div>
+
+    <div class="card card-hover selected">
+      <div class="cover">
+        <div class="color-cover img-2"></div>
+        <div class="strip">
+          <div class="strip-title">봄의 감성전</div>
+          <div class="strip-imgs">
+            <div class="thumb"><div class="color-cover img-5" style="height:100%"></div></div>
+            <div class="thumb"><div class="color-cover img-6" style="height:100%"></div></div>
+            <div class="thumb"><div class="color-cover img-7" style="height:100%"></div></div>
+            <div class="more">+2</div>
+          </div>
+          <div class="strip-artist">달들리에(김승혜) · 5장</div>
+        </div>
+      </div>
+      <div class="badge">2</div>
+    </div>
+
+    <div class="card card-hover selected">
+      <div class="cover">
+        <div class="color-cover img-3"></div>
+        <div class="strip">
+          <div class="strip-title">동그라미 일러스트</div>
+          <div class="strip-imgs">
+            <div class="thumb"><div class="color-cover img-1" style="height:100%"></div></div>
+            <div class="thumb"><div class="color-cover img-8" style="height:100%"></div></div>
+            <div class="thumb"><div class="color-cover img-4" style="height:100%"></div></div>
+            <div class="more">+7</div>
+          </div>
+          <div class="strip-artist">김아흔 · 10장</div>
+        </div>
+      </div>
+      <div class="badge">3</div>
+    </div>
+
+    <div class="card card-hover">
+      <div class="cover">
+        <div class="color-cover img-4"></div>
+        <div class="strip">
+          <div class="strip-title">컬러링북 아티스트</div>
+          <div class="strip-imgs">
+            <div class="thumb"><div class="color-cover img-2" style="height:100%"></div></div>
+            <div class="thumb"><div class="color-cover img-6" style="height:100%"></div></div>
+            <div class="thumb"><div class="color-cover img-7" style="height:100%"></div></div>
+            <div class="more">+7</div>
+          </div>
+          <div class="strip-artist">김현경 · 10장</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-hover">
+      <div class="cover">
+        <div class="color-cover img-5"></div>
+        <div class="strip">
+          <div class="strip-title">나랑하루 개인전</div>
+          <div class="strip-imgs">
+            <div class="thumb"><div class="color-cover img-1" style="height:100%"></div></div>
+            <div class="thumb"><div class="color-cover img-3" style="height:100%"></div></div>
+            <div class="thumb"><div class="color-cover img-8" style="height:100%"></div></div>
+            <div class="more">+2</div>
+          </div>
+          <div class="strip-artist">나랑하루 · 5장</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-hover">
+      <div class="cover">
+        <div class="color-cover img-6"></div>
+        <div class="strip">
+          <div class="strip-title">장생마을 연작전</div>
+          <div class="strip-imgs">
+            <div class="thumb"><div class="color-cover img-2" style="height:100%"></div></div>
+            <div class="thumb"><div class="color-cover img-5" style="height:100%"></div></div>
+            <div class="thumb"><div class="color-cover img-3" style="height:100%"></div></div>
+            <div class="more">+1</div>
+          </div>
+          <div class="strip-artist">달들리에(김승혜) · 4장</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-hover">
+      <div class="cover">
+        <div class="color-cover img-7"></div>
+        <div class="strip">
+          <div class="strip-title">김안에 일러스트</div>
+          <div class="strip-imgs">
+            <div class="thumb"><div class="color-cover img-4" style="height:100%"></div></div>
+            <div class="thumb"><div class="color-cover img-6" style="height:100%"></div></div>
+            <div class="thumb"><div class="color-cover img-1" style="height:100%"></div></div>
+            <div class="more">+2</div>
+          </div>
+          <div class="strip-artist">김안에 · 5장</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="card card-hover">
+      <div class="cover">
+        <div class="color-cover img-8"></div>
+        <div class="strip">
+          <div class="strip-title">모바일아트협동조합</div>
+          <div class="strip-imgs">
+            <div class="thumb"><div class="color-cover img-3" style="height:100%"></div></div>
+            <div class="thumb"><div class="color-cover img-5" style="height:100%"></div></div>
+            <div class="thumb"><div class="color-cover img-7" style="height:100%"></div></div>
+            <div class="more">+2</div>
+          </div>
+          <div class="strip-artist">김정숙 · 5장</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ── OPTION C ── -->
+<div class="choice-wrap" id="opt-c" onclick="pick('c')">
+  <div class="choice-header">
+    <div class="choice-tag">C</div>
+    <div>
+      <div class="choice-title">항상 표시 — 카드 안에 썸네일 스트립 내장</div>
+      <div class="choice-desc">커버 + 아래에 작품 썸네일 3개 + 작가명을 항상 노출. 카드가 세로로 조금 길어지므로 열 수가 줄어듦.</div>
+      <div class="choice-pros"><span>클릭 0회</span><span>호버 없이도 보임</span></div>
+      <div class="choice-cons"><span>카드가 커져 8열 → 6열</span><span>화면 밀도 감소</span></div>
+    </div>
+  </div>
+  <div class="section-label">Pick 갤러리 (6열로 줄어듦)</div>
+  <div class="grid-c">
+
+    <div class="card-always selected" style="position:relative">
+      <div class="cover"><div class="color-cover img-1" style="height:100%"></div></div>
+      <div class="info"><div class="name">구월 개인전</div><div class="artist">구월 · 4장</div></div>
+      <div class="thumbs">
+        <div class="t"><div class="color-cover img-2" style="height:100%"></div></div>
+        <div class="t"><div class="color-cover img-3" style="height:100%"></div></div>
+        <div class="t"><div class="color-cover img-4" style="height:100%"></div></div>
+        <div class="t more">+1</div>
+      </div>
+      <div class="badge">1</div>
+    </div>
+
+    <div class="card-always selected" style="position:relative">
+      <div class="cover"><div class="color-cover img-2" style="height:100%"></div></div>
+      <div class="info"><div class="name">봄의 감성전</div><div class="artist">달들리에 · 5장</div></div>
+      <div class="thumbs">
+        <div class="t"><div class="color-cover img-5" style="height:100%"></div></div>
+        <div class="t"><div class="color-cover img-6" style="height:100%"></div></div>
+        <div class="t"><div class="color-cover img-7" style="height:100%"></div></div>
+        <div class="t more">+2</div>
+      </div>
+      <div class="badge">2</div>
+    </div>
+
+    <div class="card-always selected" style="position:relative">
+      <div class="cover"><div class="color-cover img-3" style="height:100%"></div></div>
+      <div class="info"><div class="name">동그라미 일러스트</div><div class="artist">김아흔 · 10장</div></div>
+      <div class="thumbs">
+        <div class="t"><div class="color-cover img-1" style="height:100%"></div></div>
+        <div class="t"><div class="color-cover img-8" style="height:100%"></div></div>
+        <div class="t"><div class="color-cover img-4" style="height:100%"></div></div>
+        <div class="t more">+7</div>
+      </div>
+      <div class="badge">3</div>
+    </div>
+
+    <div class="card-always">
+      <div class="cover"><div class="color-cover img-4" style="height:100%"></div></div>
+      <div class="info"><div class="name">컬러링북 아티스트</div><div class="artist">김현경 · 10장</div></div>
+      <div class="thumbs">
+        <div class="t"><div class="color-cover img-2" style="height:100%"></div></div>
+        <div class="t"><div class="color-cover img-6" style="height:100%"></div></div>
+        <div class="t"><div class="color-cover img-7" style="height:100%"></div></div>
+        <div class="t more">+7</div>
+      </div>
+    </div>
+
+    <div class="card-always">
+      <div class="cover"><div class="color-cover img-5" style="height:100%"></div></div>
+      <div class="info"><div class="name">나랑하루 개인전</div><div class="artist">나랑하루 · 5장</div></div>
+      <div class="thumbs">
+        <div class="t"><div class="color-cover img-1" style="height:100%"></div></div>
+        <div class="t"><div class="color-cover img-3" style="height:100%"></div></div>
+        <div class="t"><div class="color-cover img-8" style="height:100%"></div></div>
+        <div class="t more">+2</div>
+      </div>
+    </div>
+
+    <div class="card-always">
+      <div class="cover"><div class="color-cover img-6" style="height:100%"></div></div>
+      <div class="info"><div class="name">장생마을 연작전</div><div class="artist">달들리에 · 4장</div></div>
+      <div class="thumbs">
+        <div class="t"><div class="color-cover img-2" style="height:100%"></div></div>
+        <div class="t"><div class="color-cover img-5" style="height:100%"></div></div>
+        <div class="t"><div class="color-cover img-3" style="height:100%"></div></div>
+        <div class="t more">+1</div>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<script>
+function pick(id) {
+  document.querySelectorAll('.choice-wrap').forEach(el => el.classList.remove('picked'));
+  document.getElementById('opt-' + id).classList.add('picked');
+  if (window.__sp_select) window.__sp_select(id, document.getElementById('opt-' + id).querySelector('.choice-title').textContent);
+}
+</script>
+</body>
+</html>

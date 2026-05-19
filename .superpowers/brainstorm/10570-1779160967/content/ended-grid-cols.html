@@ -1,0 +1,58 @@
+<h2>데스크톱 기준 — 2열 vs 3열 (21:9)</h2>
+<p class="subtitle">모바일은 둘 다 1열. 카드 크기가 충분한지 확인해봐요</p>
+
+<style>
+  .preview-wrap { font-family:'Pretendard','Apple SD Gothic Neo',sans-serif; border-radius:10px; overflow:hidden; border:1.5px solid #e2e2e2; padding:16px; background:#f9f8f6; }
+  .preview-wrap * { box-sizing:border-box; }
+  .c-card {
+    position:relative; overflow:hidden; border-radius:8px;
+    background: linear-gradient(135deg, #2c2a36 0%, #4a3f5c 40%, #8a7090 70%, #c4957a 100%);
+    aspect-ratio: 21/9;
+  }
+  .c-card-overlay { position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 55%); }
+  .c-card-text { position:absolute;bottom:0;left:0;right:0;padding:10px 12px; }
+  .c-card-text .dates { color:rgba(255,255,255,0.45);font-size:9px;letter-spacing:1.5px;margin:0 0 3px; }
+  .c-card-text .title { color:#fff;font-size:12px;font-weight:700;margin:0;line-height:1.35; }
+  .c-ended { filter:grayscale(1);opacity:0.55; }
+  .section-label { font-size:11px;font-weight:600;color:#999;margin:0 0 8px; }
+
+  .grid-2 { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
+  .grid-3 { display:grid; grid-template-columns:1fr 1fr 1fr; gap:8px; }
+</style>
+
+<div class="split">
+
+  <div class="mockup">
+    <div class="mockup-header">2열 그리드</div>
+    <div class="mockup-body" style="padding:12px;">
+      <p class="section-label">지난 기획전</p>
+      <div class="grid-2">
+        <div class="c-card c-ended"><div class="c-card-overlay"></div><div class="c-card-text"><p class="dates">2026.03 — 04</p><p class="title">겨울 서정 — 설경과 정물</p></div></div>
+        <div class="c-card c-ended"><div class="c-card-overlay"></div><div class="c-card-text"><p class="dates">2026.01 — 02</p><p class="title">빛과 색채 — 추상의 세계</p></div></div>
+        <div class="c-card c-ended"><div class="c-card-overlay"></div><div class="c-card-text"><p class="dates">2025.11 — 12</p><p class="title">일상의 단면 — 정물화</p></div></div>
+        <div class="c-card c-ended"><div class="c-card-overlay"></div><div class="c-card-text"><p class="dates">2025.09 — 10</p><p class="title">자연을 담다 — 풍경화</p></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">3열 그리드</div>
+    <div class="mockup-body" style="padding:12px;">
+      <p class="section-label">지난 기획전</p>
+      <div class="grid-3">
+        <div class="c-card c-ended"><div class="c-card-overlay"></div><div class="c-card-text"><p class="dates">2026.03 — 04</p><p class="title">겨울 서정</p></div></div>
+        <div class="c-card c-ended"><div class="c-card-overlay"></div><div class="c-card-text"><p class="dates">2026.01 — 02</p><p class="title">빛과 색채</p></div></div>
+        <div class="c-card c-ended"><div class="c-card-overlay"></div><div class="c-card-text"><p class="dates">2025.11 — 12</p><p class="title">일상의 단면</p></div></div>
+        <div class="c-card c-ended"><div class="c-card-overlay"></div><div class="c-card-text"><p class="dates">2025.09 — 10</p><p class="title">자연을 담다</p></div></div>
+        <div class="c-card c-ended"><div class="c-card-overlay"></div><div class="c-card-text"><p class="dates">2025.07 — 08</p><p class="title">여름 서정</p></div></div>
+        <div class="c-card c-ended"><div class="c-card-overlay"></div><div class="c-card-text"><p class="dates">2025.05 — 06</p><p class="title">봄날의 기록</p></div></div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:14px;font-size:12px;">
+  2열은 카드 높이가 충분해서 이미지가 잘 보여요. 3열은 카드가 좀 얇아지지만 아카이브 느낌은 더 강해요.<br>
+  현재 코드는 <code>sm:grid-cols-3</code>이라 그 breakpoint만 조정하면 돼요.
+</p>

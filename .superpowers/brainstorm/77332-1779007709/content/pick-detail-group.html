@@ -1,0 +1,75 @@
+<h2>Pick 카드 — 단독 vs 그룹전시</h2>
+<p class="subtitle">같은 그리드 안에서 두 유형을 어떻게 구분할까요?</p>
+
+<style>
+@keyframes float { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-5px)} }
+.float-anim { animation: float 3s ease-in-out infinite; }
+</style>
+
+<div style="max-width: 390px; margin: 0 auto; background: #0d0d0d; border-radius: 16px; overflow: hidden; padding: 16px;">
+
+  <div style="font-size:10px;color:#4a3f2a;letter-spacing:1.5px;text-transform:uppercase;margin-bottom:14px;text-align:center;">선정 전시</div>
+
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+
+    <!-- 단독 전시 -->
+    <div style="border-radius:10px;overflow:hidden;border:1px solid rgba(255,200,0,0.15);background:#161616;">
+      <div style="height:80px;background:linear-gradient(135deg,#a8edea,#fed6e3);"></div>
+      <div style="padding:8px 10px;">
+        <div style="font-size:11px;font-weight:700;color:#e2e8f0;margin-bottom:3px;">봄날의 기억</div>
+        <div style="font-size:10px;color:#4a5568;">김민서 작가</div>
+      </div>
+    </div>
+
+    <!-- 그룹 전시 A안: 그룹명 + 배지 -->
+    <div style="border-radius:10px;overflow:hidden;border:1px solid rgba(255,200,0,0.15);background:#161616;">
+      <div style="height:80px;background:linear-gradient(135deg,#a1c4fd,#c2e9fb); position:relative;">
+        <div style="position:absolute;top:6px;left:6px;background:rgba(0,0,0,0.55);color:white;font-size:8px;font-weight:700;padding:2px 6px;border-radius:8px;letter-spacing:0.5px;">그룹</div>
+      </div>
+      <div style="padding:8px 10px;">
+        <div style="font-size:11px;font-weight:700;color:#e2e8f0;margin-bottom:3px;">봄빛 수채화展</div>
+        <div style="font-size:10px;color:#4a5568;">수채화 동호회</div>
+      </div>
+    </div>
+
+    <!-- 단독 전시 -->
+    <div style="border-radius:10px;overflow:hidden;border:1px solid rgba(255,200,0,0.15);background:#161616;">
+      <div style="height:80px;background:linear-gradient(135deg,#ffecd2,#fcb69f);"></div>
+      <div style="padding:8px 10px;">
+        <div style="font-size:11px;font-weight:700;color:#e2e8f0;margin-bottom:3px;">도시의 오후</div>
+        <div style="font-size:10px;color:#4a5568;">이하준 작가</div>
+      </div>
+    </div>
+
+    <!-- 그룹 전시 B안: 작가 N명 -->
+    <div style="border-radius:10px;overflow:hidden;border:1px solid rgba(255,200,0,0.15);background:#161616;">
+      <div style="height:80px;background:linear-gradient(135deg,#d4fc79,#96e6a1); position:relative;">
+        <div style="position:absolute;top:6px;left:6px;background:rgba(0,0,0,0.55);color:white;font-size:8px;font-weight:700;padding:2px 6px;border-radius:8px;letter-spacing:0.5px;">그룹</div>
+      </div>
+      <div style="padding:8px 10px;">
+        <div style="font-size:11px;font-weight:700;color:#e2e8f0;margin-bottom:3px;">사계절 드로잉展</div>
+        <div style="font-size:10px;color:#4a5568;">김민서 외 3명</div>
+      </div>
+    </div>
+
+  </div>
+
+  <div style="margin-top:16px;padding:10px;background:#1a1a1a;border-radius:8px;">
+    <div style="font-size:10px;color:#6b7280;margin-bottom:6px;">그룹전시 하단 표기 옵션</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;">
+      <div style="background:#262626;border-radius:6px;padding:6px 10px;font-size:10px;">
+        <div style="color:#9ca3af;margin-bottom:2px;">A안</div>
+        <div style="color:#e2e8f0;font-weight:600;">수채화 동호회</div>
+        <div style="color:#4a5568;font-size:9px;">그룹명 표시</div>
+      </div>
+      <div style="background:#262626;border-radius:6px;padding:6px 10px;font-size:10px;">
+        <div style="color:#9ca3af;margin-bottom:2px;">B안</div>
+        <div style="color:#e2e8f0;font-weight:600;">김민서 외 3명</div>
+        <div style="color:#4a5568;font-size:9px;">대표작가 + 인원</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:16px;">이미지 위 "그룹" 배지는 공통. 하단 표기만 결정하면 됩니다.</p>

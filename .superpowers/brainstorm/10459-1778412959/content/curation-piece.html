@@ -1,0 +1,213 @@
+<h2>기획전 — piece(개별 이미지) 선정 방식</h2>
+<p class="subtitle">전시 1개에 이미지가 여러 장 있을 때, 원하는 장만 고르는 흐름</p>
+
+<div class="options">
+
+  <!-- Option A -->
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>전체 이미지 평면 갤러리</h3>
+      <p>작품 단위 구분 없이 모든 이미지를 한 그리드에 펼침. 이미지 아래 작품명·작가명 표시. 클릭=즉시 추가. 가장 빠른 선택.</p>
+      <div style="margin-top:10px;font-size:11px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;">
+        <div style="padding:6px 10px;background:#f8fafc;border-bottom:1px solid #e2e8f0;display:flex;gap:5px;align-items:center;">
+          <input placeholder="이미지·작품·작가 검색…" style="flex:1;border:1px solid #e2e8f0;border-radius:5px;padding:3px 7px;font-size:9px;"/>
+          <div style="font-size:9px;color:#7c3aed;font-weight:600;">3개 선정됨</div>
+        </div>
+        <div style="padding:8px;background:#f8fafc;">
+          <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:5px;">
+            <!-- 선정됨 -->
+            <div style="cursor:pointer;">
+              <div style="border-radius:4px;overflow:hidden;border:2px solid #7c3aed;position:relative;">
+                <div style="background:#c4b5fd;aspect-ratio:1;"></div>
+                <div style="position:absolute;top:2px;right:2px;background:#7c3aed;color:#fff;border-radius:50%;width:12px;height:12px;font-size:7px;display:flex;align-items:center;justify-content:center;font-weight:700;">✓</div>
+              </div>
+              <div style="font-size:8px;color:#374151;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">봄날의 기록</div>
+              <div style="font-size:7px;color:#94a3b8;">구월</div>
+            </div>
+            <div style="cursor:pointer;">
+              <div style="border-radius:4px;overflow:hidden;border:2px solid #7c3aed;position:relative;">
+                <div style="background:#a5b4fc;aspect-ratio:1;"></div>
+                <div style="position:absolute;top:2px;right:2px;background:#7c3aed;color:#fff;border-radius:50%;width:12px;height:12px;font-size:7px;display:flex;align-items:center;justify-content:center;font-weight:700;">✓</div>
+              </div>
+              <div style="font-size:8px;color:#374151;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">봄날의 기록</div>
+              <div style="font-size:7px;color:#94a3b8;">구월</div>
+            </div>
+            <div style="cursor:pointer;">
+              <div style="border-radius:4px;overflow:hidden;border:2px solid transparent;">
+                <div style="background:#fbcfe8;aspect-ratio:1;"></div>
+              </div>
+              <div style="font-size:8px;color:#374151;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">봄날의 기록</div>
+              <div style="font-size:7px;color:#94a3b8;">구월</div>
+            </div>
+            <!-- 다른 작품 이미지들 -->
+            <div style="cursor:pointer;">
+              <div style="border-radius:4px;overflow:hidden;border:2px solid #7c3aed;position:relative;">
+                <div style="background:#93c5fd;aspect-ratio:1;"></div>
+                <div style="position:absolute;top:2px;right:2px;background:#7c3aed;color:#fff;border-radius:50%;width:12px;height:12px;font-size:7px;display:flex;align-items:center;justify-content:center;font-weight:700;">✓</div>
+              </div>
+              <div style="font-size:8px;color:#374151;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">도시의 빛</div>
+              <div style="font-size:7px;color:#94a3b8;">정호아트</div>
+            </div>
+            <div style="cursor:pointer;">
+              <div style="border-radius:4px;overflow:hidden;border:2px solid transparent;">
+                <div style="background:#6ee7b7;aspect-ratio:1;"></div>
+              </div>
+              <div style="font-size:8px;color:#374151;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">도시의 빛</div>
+              <div style="font-size:7px;color:#94a3b8;">정호아트</div>
+            </div>
+            <div style="cursor:pointer;">
+              <div style="border-radius:4px;overflow:hidden;border:2px solid transparent;">
+                <div style="background:#fde68a;aspect-ratio:1;"></div>
+              </div>
+              <div style="font-size:8px;color:#374151;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">전통의 선</div>
+              <div style="font-size:7px;color:#94a3b8;">은수워터</div>
+            </div>
+            <div style="cursor:pointer;">
+              <div style="border-radius:4px;overflow:hidden;border:2px solid transparent;">
+                <div style="background:#fca5a5;aspect-ratio:1;"></div>
+              </div>
+              <div style="font-size:8px;color:#374151;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">전통의 선</div>
+              <div style="font-size:7px;color:#94a3b8;">은수워터</div>
+            </div>
+            <div style="cursor:pointer;">
+              <div style="border-radius:4px;overflow:hidden;border:2px solid transparent;">
+                <div style="background:#d9f99d;aspect-ratio:1;"></div>
+              </div>
+              <div style="font-size:8px;color:#374151;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">노부부의 티타임</div>
+              <div style="font-size:7px;color:#94a3b8;">내면의풍경</div>
+            </div>
+            <div style="cursor:pointer;">
+              <div style="border-radius:4px;overflow:hidden;border:2px solid transparent;">
+                <div style="background:#e0e7ff;aspect-ratio:1;"></div>
+              </div>
+              <div style="font-size:8px;color:#374151;margin-top:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">노부부의 티타임</div>
+              <div style="font-size:7px;color:#94a3b8;">내면의풍경</div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:10px;color:#64748b;margin-top:5px;">단점: 이미지가 많아지면 같은 작품 이미지가 반복돼 보임</div>
+    </div>
+  </div>
+
+  <!-- Option B -->
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>작품 카드 클릭 → 이미지 펼침(인라인)</h3>
+      <p>작품 썸네일 그리드. 단일 이미지 전시는 클릭 즉시 선정. 다중 이미지 전시는 카드가 아래로 펼쳐져 piece들 표시.</p>
+      <div style="margin-top:10px;font-size:11px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;padding:8px;background:#f8fafc;">
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:5px;">
+          <!-- 단일 이미지 작품 (선정됨) -->
+          <div>
+            <div style="border-radius:4px;overflow:hidden;border:2px solid #7c3aed;position:relative;cursor:pointer;">
+              <div style="background:#93c5fd;aspect-ratio:1;"></div>
+              <div style="position:absolute;top:2px;right:2px;background:#7c3aed;color:#fff;border-radius:50%;width:12px;height:12px;font-size:7px;display:flex;align-items:center;justify-content:center;">✓</div>
+            </div>
+            <div style="font-size:8px;margin-top:2px;color:#374151;">도시의 빛</div>
+            <div style="font-size:7px;color:#94a3b8;">1장 · 바로 선정</div>
+          </div>
+          <!-- 다중 이미지 작품 (펼쳐진 상태) -->
+          <div style="grid-column:span 2;background:#ede9fe;border-radius:6px;padding:5px;">
+            <div style="font-size:9px;font-weight:600;color:#5b21b6;margin-bottom:4px;">봄날의 기록 (5장) ▲</div>
+            <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:3px;">
+              <div style="border-radius:3px;overflow:hidden;border:2px solid #7c3aed;cursor:pointer;">
+                <div style="background:#c4b5fd;aspect-ratio:1;"></div>
+              </div>
+              <div style="border-radius:3px;overflow:hidden;border:2px solid #7c3aed;cursor:pointer;">
+                <div style="background:#a5b4fc;aspect-ratio:1;"></div>
+              </div>
+              <div style="border-radius:3px;overflow:hidden;border:1px solid #ddd6fe;cursor:pointer;">
+                <div style="background:#fbcfe8;aspect-ratio:1;"></div>
+              </div>
+              <div style="border-radius:3px;overflow:hidden;border:1px solid #ddd6fe;cursor:pointer;">
+                <div style="background:#fde68a;aspect-ratio:1;"></div>
+              </div>
+              <div style="border-radius:3px;overflow:hidden;border:1px solid #ddd6fe;cursor:pointer;">
+                <div style="background:#d9f99d;aspect-ratio:1;"></div>
+              </div>
+            </div>
+            <div style="font-size:8px;color:#7c3aed;margin-top:3px;">2개 선정됨 (보라 테두리)</div>
+          </div>
+          <!-- 다중 이미지 작품 (접힌 상태) -->
+          <div>
+            <div style="border-radius:4px;overflow:hidden;border:1px solid #e2e8f0;cursor:pointer;">
+              <div style="background:#6ee7b7;aspect-ratio:1;"></div>
+            </div>
+            <div style="font-size:8px;margin-top:2px;color:#374151;">전통의 선</div>
+            <div style="font-size:7px;color:#94a3b8;">3장 · 클릭해서 펼치기 ▼</div>
+          </div>
+          <div>
+            <div style="border-radius:4px;overflow:hidden;border:1px solid #e2e8f0;cursor:pointer;">
+              <div style="background:#fca5a5;aspect-ratio:1;"></div>
+            </div>
+            <div style="font-size:8px;margin-top:2px;color:#374151;">노부부의 티타임</div>
+            <div style="font-size:7px;color:#94a3b8;">2장 · 클릭해서 펼치기 ▼</div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:10px;color:#64748b;margin-top:5px;">장점: 작품-이미지 관계가 명확, 다중 이미지일 때만 펼침</div>
+    </div>
+  </div>
+
+  <!-- Option C -->
+  <div class="option" data-choice="c" onclick="toggleSelect(this)">
+    <div class="letter">C</div>
+    <div class="content">
+      <h3>작품 클릭 → 오른쪽에 piece 패널 열림</h3>
+      <p>좌측: 작품 갤러리. 클릭하면 우측에 해당 작품의 이미지들이 큼직하게 표시. 선정하고 싶은 이미지 클릭. 이미지를 충분히 크게 볼 수 있음.</p>
+      <div style="margin-top:10px;font-size:11px;border:1px solid #e2e8f0;border-radius:8px;overflow:hidden;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;min-height:130px;">
+          <!-- 좌: 작품 목록 -->
+          <div style="padding:6px;background:#f8fafc;border-right:1px solid #e2e8f0;">
+            <div style="font-size:9px;font-weight:600;color:#64748b;margin-bottom:4px;">작품 목록</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;">
+              <div style="border-radius:3px;overflow:hidden;border:2px solid #7c3aed;cursor:pointer;position:relative;">
+                <div style="background:#c4b5fd;aspect-ratio:1;"></div>
+                <div style="position:absolute;bottom:1px;right:1px;background:#7c3aed;color:#fff;border-radius:2px;padding:0 2px;font-size:7px;">5장</div>
+              </div>
+              <div style="border-radius:3px;overflow:hidden;border:1px solid #ddd;cursor:pointer;position:relative;">
+                <div style="background:#93c5fd;aspect-ratio:1;"></div>
+                <div style="position:absolute;bottom:1px;right:1px;background:#64748b;color:#fff;border-radius:2px;padding:0 2px;font-size:7px;">1장</div>
+              </div>
+              <div style="border-radius:3px;overflow:hidden;border:1px solid #ddd;cursor:pointer;position:relative;">
+                <div style="background:#6ee7b7;aspect-ratio:1;"></div>
+                <div style="position:absolute;bottom:1px;right:1px;background:#64748b;color:#fff;border-radius:2px;padding:0 2px;font-size:7px;">3장</div>
+              </div>
+              <div style="border-radius:3px;overflow:hidden;border:1px solid #ddd;cursor:pointer;position:relative;">
+                <div style="background:#fde68a;aspect-ratio:1;"></div>
+                <div style="position:absolute;bottom:1px;right:1px;background:#64748b;color:#fff;border-radius:2px;padding:0 2px;font-size:7px;">2장</div>
+              </div>
+            </div>
+          </div>
+          <!-- 우: piece 패널 -->
+          <div style="padding:6px;background:#fff;">
+            <div style="font-size:9px;font-weight:600;color:#7c3aed;margin-bottom:4px;">봄날의 기록 — 5장</div>
+            <div style="display:grid;grid-template-columns:1fr 1fr;gap:3px;">
+              <div style="border-radius:4px;overflow:hidden;border:2px solid #7c3aed;position:relative;cursor:pointer;">
+                <div style="background:#c4b5fd;aspect-ratio:1;"></div>
+                <div style="position:absolute;top:2px;right:2px;background:#7c3aed;color:#fff;border-radius:50%;width:12px;height:12px;font-size:7px;display:flex;align-items:center;justify-content:center;">✓</div>
+              </div>
+              <div style="border-radius:4px;overflow:hidden;border:2px solid #7c3aed;position:relative;cursor:pointer;">
+                <div style="background:#a5b4fc;aspect-ratio:1;"></div>
+                <div style="position:absolute;top:2px;right:2px;background:#7c3aed;color:#fff;border-radius:50%;width:12px;height:12px;font-size:7px;display:flex;align-items:center;justify-content:center;">✓</div>
+              </div>
+              <div style="border-radius:4px;overflow:hidden;border:1px solid #e2e8f0;cursor:pointer;">
+                <div style="background:#fbcfe8;aspect-ratio:1;"></div>
+              </div>
+              <div style="border-radius:4px;overflow:hidden;border:1px solid #e2e8f0;cursor:pointer;">
+                <div style="background:#fde68a;aspect-ratio:1;"></div>
+              </div>
+            </div>
+            <div style="font-size:8px;color:#7c3aed;margin-top:3px;">2/5장 선정됨</div>
+          </div>
+        </div>
+      </div>
+      <div style="font-size:10px;color:#64748b;margin-top:5px;">장점: 이미지를 크게 보면서 고를 수 있음. 단점: 작품마다 따로 클릭해야 함</div>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top:14px;">기획전의 핵심은 <strong>단일 이미지 전시(1장)는 빠르게, 다중 이미지 전시(여러 장)는 어떤 장인지 구분하면서</strong> 선정하는 것입니다.</p>

@@ -1,0 +1,69 @@
+<h2>결과 카드에 뭘 보여줄까요?</h2>
+<p class="subtitle">이미지 아래 타이틀 구조 — 어떤 게 제일 명확해요?</p>
+
+<div class="options" style="flex-direction: column; gap: 24px; margin-top: 24px;">
+
+  <!-- Option A: 전시명만 -->
+  <div class="option" data-choice="a" onclick="toggleSelect(this)" style="align-items: flex-start;">
+    <div class="letter">A</div>
+    <div class="content" style="width:100%;">
+      <h3>전시명 + 작가명만</h3>
+      <p>항상 전시명을 메인 타이틀로. 어떤 필드에서 매칭됐든 동일한 포맷.</p>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:12px; max-width:340px;">
+        <div>
+          <div style="aspect-ratio:1; background:#e8e4de; border-radius:8px; margin-bottom:6px;"></div>
+          <div style="font-size:12px; font-weight:600; color:#222; line-height:1.3;">이른 봄의 산책로</div>
+          <div style="font-size:11px; color:#888; margin-top:2px;">최파랑</div>
+        </div>
+        <div>
+          <div style="aspect-ratio:1; background:#d4cfc8; border-radius:8px; margin-bottom:6px;"></div>
+          <div style="font-size:12px; font-weight:600; color:#222; line-height:1.3;">봄을 담은 꽃잎</div>
+          <div style="font-size:11px; color:#888; margin-top:2px;">윤도훈</div>
+        </div>
+        <div>
+          <div style="aspect-ratio:1; background:#bfb9b1; border-radius:8px; margin-bottom:6px;"></div>
+          <div style="font-size:12px; font-weight:600; color:#222; line-height:1.3;">초록 위의 아침 이슬</div>
+          <div style="font-size:11px; color:#888; margin-top:2px;">봄날의화가</div>
+        </div>
+      </div>
+      <div class="pros-cons" style="margin-top:10px;">
+        <div class="pros"><h4>장점</h4><ul><li>심플하고 일관됨</li><li>클릭하면 전시 상세로 바로 이동</li></ul></div>
+        <div class="cons"><h4>단점</h4><ul><li>"왜 이게 결과로 나왔지?" 가끔 의문</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option B: 전시명 + 매칭 힌트 -->
+  <div class="option" data-choice="b" onclick="toggleSelect(this)" style="align-items: flex-start;">
+    <div class="letter">B</div>
+    <div class="content" style="width:100%;">
+      <h3>전시명 + 매칭 힌트</h3>
+      <p>전시명이 메인. 작품명/그룹명이 매칭된 경우엔 작은 텍스트로 힌트 표시.</p>
+      <div style="display:grid; grid-template-columns:repeat(3,1fr); gap:12px; margin-top:12px; max-width:340px;">
+        <div>
+          <div style="aspect-ratio:1; background:#e8e4de; border-radius:8px; margin-bottom:6px;"></div>
+          <div style="font-size:12px; font-weight:600; color:#222; line-height:1.3;">이른 봄의 산책로</div>
+          <div style="font-size:11px; color:#888; margin-top:2px;">최파랑</div>
+          <div style="font-size:10px; color:#7c3aed; margin-top:3px; background:#f0edf8; padding:2px 6px; border-radius:4px; display:inline-block;">전시명 일치</div>
+        </div>
+        <div>
+          <div style="aspect-ratio:1; background:#d4cfc8; border-radius:8px; margin-bottom:6px;"></div>
+          <div style="font-size:12px; font-weight:600; color:#222; line-height:1.3;">수채화 모임</div>
+          <div style="font-size:11px; color:#888; margin-top:2px;">봄날의화가</div>
+          <div style="font-size:10px; color:#7c3aed; margin-top:3px; background:#f0edf8; padding:2px 6px; border-radius:4px; display:inline-block;">그룹명 일치</div>
+        </div>
+        <div>
+          <div style="aspect-ratio:1; background:#bfb9b1; border-radius:8px; margin-bottom:6px;"></div>
+          <div style="font-size:12px; font-weight:600; color:#222; line-height:1.3;">사계절 풍경</div>
+          <div style="font-size:11px; color:#888; margin-top:2px;">임지은</div>
+          <div style="font-size:10px; color:#7c3aed; margin-top:3px; background:#f0edf8; padding:2px 6px; border-radius:4px; display:inline-block;">작품명 일치: 봄 소나타</div>
+        </div>
+      </div>
+      <div class="pros-cons" style="margin-top:10px;">
+        <div class="pros"><h4>장점</h4><ul><li>"왜 나왔지?" 의문 해소</li><li>정보 투명함</li></ul></div>
+        <div class="cons"><h4>단점</h4><ul><li>카드가 바빠 보임</li><li>시니어한테 오히려 혼란일 수도</li></ul></div>
+      </div>
+    </div>
+  </div>
+
+</div>

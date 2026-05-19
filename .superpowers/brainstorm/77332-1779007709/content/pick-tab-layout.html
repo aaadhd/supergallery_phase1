@@ -1,0 +1,112 @@
+<h2>Pick 탭 — 레이아웃 옵션</h2>
+<p class="subtitle">현재 활성 픽 세션과 이전 픽 세션을 어떻게 배치할까요?</p>
+
+<div class="cards">
+
+  <!-- Option A -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: #f8f9fa;">
+      <!-- Hero card for current -->
+      <div style="background: #212529; border-radius: 10px; padding: 16px; color: white; margin-bottom: 10px;">
+        <div style="font-size: 10px; color: #adb5bd; letter-spacing: 1px; text-transform: uppercase; margin-bottom: 4px;">이번 주 Proud's Pick</div>
+        <div style="font-size: 14px; font-weight: 700; margin-bottom: 2px;">봄의 색채展</div>
+        <div style="font-size: 11px; color: #adb5bd;">2026.05.12 ~ 05.18 · 선정 8개 전시</div>
+        <div style="display: flex; gap: 6px; margin-top: 10px;">
+          <div style="width: 36px; height: 36px; background: #6c757d; border-radius: 4px;"></div>
+          <div style="width: 36px; height: 36px; background: #6c757d; border-radius: 4px;"></div>
+          <div style="width: 36px; height: 36px; background: #6c757d; border-radius: 4px;"></div>
+          <div style="width: 36px; height: 36px; background: #6c757d; border-radius: 4px; opacity: 0.5;"></div>
+          <div style="font-size: 10px; color: #adb5bd; display: flex; align-items: center; padding-left: 4px;">+4</div>
+        </div>
+      </div>
+      <!-- Past picks list -->
+      <div style="font-size: 10px; color: #6c757d; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.5px;">이전 Pick</div>
+      <div style="background: white; border-radius: 8px; padding: 8px 10px; margin-bottom: 4px; display: flex; justify-content: space-between; font-size: 11px; border: 1px solid #e9ecef;">
+        <span>겨울 풍경展</span><span style="color: #adb5bd;">05.05 ~ 05.11</span>
+      </div>
+      <div style="background: white; border-radius: 8px; padding: 8px 10px; margin-bottom: 4px; display: flex; justify-content: space-between; font-size: 11px; border: 1px solid #e9ecef;">
+        <span>도시의 시선展</span><span style="color: #adb5bd;">04.28 ~ 05.04</span>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — 현재 픽 히어로 + 이전 목록</h3>
+      <p>현재 활성 세션을 큰 다크 카드로 강조. 그 아래 이전 픽을 날짜순 목록으로.</p>
+    </div>
+  </div>
+
+  <!-- Option B -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: #f8f9fa;">
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 8px;">
+        <!-- Current (featured) -->
+        <div style="background: #212529; border-radius: 10px; padding: 12px; color: white; position: relative; grid-column: 1 / -1;">
+          <div style="position: absolute; top: 8px; right: 8px; background: #ffd700; color: #212529; font-size: 9px; font-weight: 700; padding: 2px 6px; border-radius: 20px;">NOW</div>
+          <div style="font-size: 13px; font-weight: 700;">봄의 색채展</div>
+          <div style="font-size: 10px; color: #adb5bd; margin-top: 2px;">8개 전시 선정</div>
+        </div>
+        <!-- Past ones - grid -->
+        <div style="background: white; border-radius: 8px; padding: 10px; border: 1px solid #e9ecef;">
+          <div style="font-size: 11px; font-weight: 600;">겨울 풍경展</div>
+          <div style="font-size: 10px; color: #adb5bd; margin-top: 2px;">05.05 ~ 05.11</div>
+        </div>
+        <div style="background: white; border-radius: 8px; padding: 10px; border: 1px solid #e9ecef;">
+          <div style="font-size: 11px; font-weight: 600;">도시의 시선展</div>
+          <div style="font-size: 10px; color: #adb5bd; margin-top: 2px;">04.28 ~ 05.04</div>
+        </div>
+        <div style="background: white; border-radius: 8px; padding: 10px; border: 1px solid #e9ecef;">
+          <div style="font-size: 11px; font-weight: 600;">빛과 그림자展</div>
+          <div style="font-size: 10px; color: #adb5bd; margin-top: 2px;">04.21 ~ 04.27</div>
+        </div>
+        <div style="background: white; border-radius: 8px; padding: 10px; border: 1px solid #e9ecef;">
+          <div style="font-size: 11px; font-weight: 600;">수채화 세계展</div>
+          <div style="font-size: 10px; color: #adb5bd; margin-top: 2px;">04.14 ~ 04.20</div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — 현재 픽 강조 + 이전 그리드</h3>
+      <p>현재 픽은 전폭 카드(NOW 배지), 이전 픽은 2열 그리드로. 더 많은 이전 픽을 한눈에.</p>
+    </div>
+  </div>
+
+  <!-- Option C -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 16px; background: #f8f9fa;">
+      <div style="font-size: 10px; color: #6c757d; margin-bottom: 8px; text-transform: uppercase; letter-spacing: 0.5px;">전체 픽 세션</div>
+      <div style="background: white; border-radius: 8px; padding: 10px 12px; margin-bottom: 6px; border-left: 3px solid #212529; border-top: 1px solid #e9ecef; border-right: 1px solid #e9ecef; border-bottom: 1px solid #e9ecef;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-size: 11px; font-weight: 700;">봄의 색채展</div>
+            <div style="font-size: 10px; color: #adb5bd;">05.12 ~ 05.18 · 8개 전시</div>
+          </div>
+          <span style="background: #212529; color: white; font-size: 9px; padding: 2px 7px; border-radius: 20px;">진행 중</span>
+        </div>
+      </div>
+      <div style="background: white; border-radius: 8px; padding: 10px 12px; margin-bottom: 6px; border: 1px solid #e9ecef; opacity: 0.8;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-size: 11px; font-weight: 600;">겨울 풍경展</div>
+            <div style="font-size: 10px; color: #adb5bd;">05.05 ~ 05.11 · 10개 전시</div>
+          </div>
+          <span style="background: #e9ecef; color: #6c757d; font-size: 9px; padding: 2px 7px; border-radius: 20px;">종료</span>
+        </div>
+      </div>
+      <div style="background: white; border-radius: 8px; padding: 10px 12px; border: 1px solid #e9ecef; opacity: 0.8;">
+        <div style="display: flex; justify-content: space-between; align-items: center;">
+          <div>
+            <div style="font-size: 11px; font-weight: 600;">도시의 시선展</div>
+            <div style="font-size: 10px; color: #adb5bd;">04.28 ~ 05.04 · 9개 전시</div>
+          </div>
+          <span style="background: #e9ecef; color: #6c757d; font-size: 9px; padding: 2px 7px; border-radius: 20px;">종료</span>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — 단순 시간순 목록</h3>
+      <p>현재/이전 구분 없이 최신순 목록. 진행 중 배지로만 현재 표시. 가장 단순.</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top: 8px;">클릭으로 선택하거나, 터미널에서 의견 주세요.</p>

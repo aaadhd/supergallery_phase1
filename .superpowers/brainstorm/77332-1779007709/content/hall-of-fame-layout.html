@@ -1,0 +1,114 @@
+<h2>명예의 전당 — /picks/hall-of-fame</h2>
+<p class="subtitle">역대 Proud's Pick 선정 전시 갤러리. pickBadge:true인 전시 전체.</p>
+
+<style>
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.gold-title {
+  background: linear-gradient(90deg, #b8862f, #ffd700, #e8c04a, #ffd700, #b8862f);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 4s linear infinite;
+}
+</style>
+
+<div class="cards">
+
+  <!-- Option A: 픽 세션별 묶음 -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 0; border-radius: 8px 8px 0 0; overflow: hidden; background: #080808;">
+
+      <div style="padding: 14px 14px 10px; text-align:center; background: linear-gradient(180deg,#0a0600,#080808);">
+        <div class="gold-title" style="font-size:15px;font-weight:900;">🏅 명예의 전당</div>
+        <div style="font-size:10px;color:#4a3f2a;margin-top:3px;">역대 Proud's Pick · 32개 전시</div>
+      </div>
+
+      <div style="padding: 0 14px 14px;">
+        <!-- 세션 그룹 1 -->
+        <div style="margin-bottom:14px;">
+          <div style="font-size:10px;color:#b8862f;font-weight:700;letter-spacing:1px;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid rgba(255,200,0,0.15);">4월 3주차</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;">
+            <div style="border-radius:6px;overflow:hidden;border:1px solid rgba(255,200,0,0.1);">
+              <div style="height:50px;background:linear-gradient(135deg,#a8edea,#fed6e3);"></div>
+            </div>
+            <div style="border-radius:6px;overflow:hidden;border:1px solid rgba(255,200,0,0.1);">
+              <div style="height:50px;background:linear-gradient(135deg,#ffecd2,#fcb69f);"></div>
+            </div>
+            <div style="border-radius:6px;overflow:hidden;border:1px solid rgba(255,200,0,0.1);">
+              <div style="height:50px;background:linear-gradient(135deg,#a1c4fd,#c2e9fb);"></div>
+            </div>
+          </div>
+        </div>
+        <!-- 세션 그룹 2 -->
+        <div>
+          <div style="font-size:10px;color:#b8862f;font-weight:700;letter-spacing:1px;margin-bottom:8px;padding-bottom:4px;border-bottom:1px solid rgba(255,200,0,0.15);">4월 2주차</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;">
+            <div style="border-radius:6px;overflow:hidden;border:1px solid rgba(255,200,0,0.1);">
+              <div style="height:50px;background:linear-gradient(135deg,#d4fc79,#96e6a1);"></div>
+            </div>
+            <div style="border-radius:6px;overflow:hidden;border:1px solid rgba(255,200,0,0.1);">
+              <div style="height:50px;background:linear-gradient(135deg,#f6d365,#fda085);"></div>
+            </div>
+            <div style="border-radius:6px;overflow:hidden;border:1px solid rgba(255,200,0,0.1);">
+              <div style="height:50px;background:linear-gradient(135deg,#e0c3fc,#8ec5fc);"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — 픽 세션별 묶음</h3>
+      <p>"4월 3주차", "4월 2주차" 등 세션 단위로 그룹핑. 언제 어떤 주에 선정됐는지 맥락이 남음.</p>
+    </div>
+  </div>
+
+  <!-- Option B: 평면 갤러리 그리드 -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 0; border-radius: 8px 8px 0 0; overflow: hidden; background: #080808;">
+
+      <div style="padding: 14px 14px 10px; text-align:center; background: linear-gradient(180deg,#0a0600,#080808);">
+        <div class="gold-title" style="font-size:15px;font-weight:900;">🏅 명예의 전당</div>
+        <div style="font-size:10px;color:#4a3f2a;margin-top:3px;">역대 Proud's Pick · 32개 전시</div>
+      </div>
+
+      <div style="padding: 0 14px 14px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:5px;">
+          <div style="border-radius:8px;overflow:hidden;border:1px solid rgba(255,200,0,0.15);">
+            <div style="height:60px;background:linear-gradient(135deg,#a8edea,#fed6e3);"></div>
+            <div style="padding:4px 6px;"><div style="font-size:9px;color:#9ca3af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">봄날의 기억</div></div>
+          </div>
+          <div style="border-radius:8px;overflow:hidden;border:1px solid rgba(255,200,0,0.15);">
+            <div style="height:60px;background:linear-gradient(135deg,#ffecd2,#fcb69f);"></div>
+            <div style="padding:4px 6px;"><div style="font-size:9px;color:#9ca3af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">도시의 오후</div></div>
+          </div>
+          <div style="border-radius:8px;overflow:hidden;border:1px solid rgba(255,200,0,0.15);">
+            <div style="height:60px;background:linear-gradient(135deg,#a1c4fd,#c2e9fb);"></div>
+            <div style="padding:4px 6px;"><div style="font-size:9px;color:#9ca3af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">빛의 파장</div></div>
+          </div>
+          <div style="border-radius:8px;overflow:hidden;border:1px solid rgba(255,200,0,0.15);">
+            <div style="height:60px;background:linear-gradient(135deg,#d4fc79,#96e6a1);"></div>
+            <div style="padding:4px 6px;"><div style="font-size:9px;color:#9ca3af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">여름의 단면</div></div>
+          </div>
+          <div style="border-radius:8px;overflow:hidden;border:1px solid rgba(255,200,0,0.15);">
+            <div style="height:60px;background:linear-gradient(135deg,#f6d365,#fda085);"></div>
+            <div style="padding:4px 6px;"><div style="font-size:9px;color:#9ca3af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">고요한 오전</div></div>
+          </div>
+          <div style="border-radius:8px;overflow:hidden;border:1px solid rgba(255,200,0,0.15);">
+            <div style="height:60px;background:linear-gradient(135deg,#e0c3fc,#8ec5fc);"></div>
+            <div style="padding:4px 6px;"><div style="font-size:9px;color:#9ca3af;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;">보랏빛 저녁</div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — 평면 갤러리 그리드</h3>
+      <p>세션 구분 없이 전시 이미지만 쭉. 갤러리처럼 작품이 주인공. 단순하고 시각적으로 강함.</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top: 8px;">클릭해서 선택하거나 터미널에서 의견 주세요.</p>

@@ -1,0 +1,88 @@
+<h2>내비게이션 구조 변경 — Before / After</h2>
+<p class="subtitle">GNB + 각 메뉴 내부 탭 구조 비교 (수정)</p>
+
+<div class="split">
+  <div class="mockup">
+    <div class="mockup-header">🔴 현재 (Before)</div>
+    <div class="mockup-body">
+
+      <div style="background:#f5f5f5;border-radius:8px;padding:10px 12px;margin-bottom:20px;">
+        <div class="label" style="margin-bottom:8px;">GNB (하단 탭 바)</div>
+        <div style="display:flex;gap:6px;">
+          <div style="flex:1;text-align:center;background:#333;color:#fff;border-radius:6px;padding:8px 4px;font-size:11px;font-weight:700;">둘러보기<br><span style="font-size:9px;opacity:0.7;">(홈 · /)</span></div>
+          <div style="flex:1;text-align:center;background:#fff;border-radius:6px;padding:8px 4px;font-size:11px;border:1px solid #ddd;">이벤트<br><span style="font-size:9px;color:#999;">/events</span></div>
+          <div style="flex:1;text-align:center;background:#fff;border-radius:6px;padding:8px 4px;font-size:11px;border:1px solid #ddd;">업로드<br><span style="font-size:9px;color:#999;">/upload</span></div>
+          <div style="flex:1;text-align:center;background:#fff;border-radius:6px;padding:8px 4px;font-size:11px;border:1px solid #ddd;">프로필<br><span style="font-size:9px;color:#999;">/me</span></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <div class="label" style="margin-bottom:6px;">둘러보기(홈) 내부 탭</div>
+        <div style="display:flex;gap:6px;">
+          <div style="flex:1;text-align:center;background:#333;color:#fff;border-radius:6px;padding:6px 4px;font-size:10px;">전체</div>
+          <div style="flex:1;text-align:center;background:#eee;border-radius:6px;padding:6px 4px;font-size:10px;">개인전시</div>
+          <div style="flex:1;text-align:center;background:#eee;border-radius:6px;padding:6px 4px;font-size:10px;">그룹전시</div>
+        </div>
+        <div style="margin-top:6px;font-size:11px;color:#666;">→ 전시 피드 그리드</div>
+      </div>
+
+      <div>
+        <div class="label" style="margin-bottom:6px;">이벤트 내부 탭</div>
+        <div style="display:flex;gap:6px;">
+          <div style="flex:1;text-align:center;background:#333;color:#fff;border-radius:6px;padding:6px 4px;font-size:10px;">이벤트</div>
+          <div style="flex:1;text-align:center;background:#ffe0e0;border-radius:6px;padding:6px 4px;font-size:10px;border:1px dashed #f66;">Pick ⚠️</div>
+          <div style="flex:1;text-align:center;background:#ffe0e0;border-radius:6px;padding:6px 4px;font-size:10px;border:1px dashed #f66;">기획전 ⚠️</div>
+        </div>
+        <div style="margin-top:6px;font-size:10px;color:#e44;">⚠️ 참여형 이벤트와 성격이 다른 Pick·기획전이 섞여 있음</div>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="mockup">
+    <div class="mockup-header">🟢 제안 (After)</div>
+    <div class="mockup-body">
+
+      <div style="background:#f5f5f5;border-radius:8px;padding:10px 12px;margin-bottom:20px;">
+        <div class="label" style="margin-bottom:8px;">GNB (하단 탭 바)</div>
+        <div style="display:flex;gap:6px;">
+          <div style="flex:1;text-align:center;background:#333;color:#fff;border-radius:6px;padding:8px 4px;font-size:11px;font-weight:700;">전시<br><span style="font-size:9px;opacity:0.7;">(홈 · /)</span></div>
+          <div style="flex:1;text-align:center;background:#fff;border-radius:6px;padding:8px 4px;font-size:11px;border:1px solid #ddd;">이벤트<br><span style="font-size:9px;color:#999;">/events</span></div>
+          <div style="flex:1;text-align:center;background:#fff;border-radius:6px;padding:8px 4px;font-size:11px;border:1px solid #ddd;">업로드<br><span style="font-size:9px;color:#999;">/upload</span></div>
+          <div style="flex:1;text-align:center;background:#fff;border-radius:6px;padding:8px 4px;font-size:11px;border:1px solid #ddd;">프로필<br><span style="font-size:9px;color:#999;">/me</span></div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:16px;">
+        <div class="label" style="margin-bottom:6px;">전시(홈) 내부 탭</div>
+        <div style="display:flex;gap:6px;">
+          <div style="flex:1;text-align:center;background:#333;color:#fff;border-radius:6px;padding:6px 4px;font-size:10px;">둘러보기</div>
+          <div style="flex:1;text-align:center;background:#eee;border-radius:6px;padding:6px 4px;font-size:10px;">기획전</div>
+          <div style="flex:1;text-align:center;background:#eee;border-radius:6px;padding:6px 4px;font-size:10px;">Pick</div>
+        </div>
+        <div style="margin-top:6px;font-size:11px;color:#444;">
+          · <b>둘러보기</b> → 개인+그룹 통합 피드 (구분 없이)<br>
+          · <b>기획전</b> → 기획전 목록<br>
+          · <b>Pick</b> → Pick 세션
+        </div>
+      </div>
+
+      <div>
+        <div class="label" style="margin-bottom:6px;">이벤트 내부</div>
+        <div style="display:flex;gap:6px;">
+          <div style="flex:2;text-align:center;background:#333;color:#fff;border-radius:6px;padding:6px 4px;font-size:10px;">응모전 + 일반이벤트</div>
+        </div>
+        <div style="margin-top:6px;font-size:11px;color:#444;">→ 탭 없이 단순 목록. 나중에 필터 추가 예정</div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:20px;background:#f0f4ff;border-radius:8px;padding:14px;font-size:13px;line-height:1.8;">
+  <strong>변경 요약</strong><br>
+  1. GNB 메뉴명: <code>둘러보기</code> → <code>전시</code> (홈 = /)<br>
+  2. 전시(홈) 내부: 3탭 — 둘러보기 | 기획전 | Pick<br>
+  3. 이벤트: Pick·기획전 제거, 응모전+일반이벤트만<br>
+  4. 전시탭 내 개인/그룹 구분 없애고 통합 (필터는 나중에)
+</div>

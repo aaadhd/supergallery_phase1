@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Carousel Mockup</title>
+<style>
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Pretendard', 'Apple SD Gothic Neo', sans-serif; background: #f2f0ec; padding: 24px; }
+
+  h2 { font-size: 17px; font-weight: 700; color: #1a1a1a; margin-bottom: 6px; }
+  .subtitle { font-size: 12px; color: #888; margin-bottom: 20px; line-height: 1.6; }
+
+  /* ---- 캐러셀 래퍼 ---- */
+  .carousel-wrap {
+    border-radius: 14px;
+    overflow: hidden;
+    background: #1a1825;
+    box-shadow: 0 16px 56px -8px rgba(0,0,0,0.28);
+    max-width: 760px;
+    margin: 0 auto 24px;
+  }
+
+  /* ---- 슬라이드 ---- */
+  .slide {
+    position: relative;
+    aspect-ratio: 21/9;
+    display: none;
+    cursor: pointer;
+  }
+  .slide.active { display: block; }
+
+  .slide-bg {
+    position: absolute; inset: 0;
+    background-size: cover; background-position: center;
+  }
+  .slide-bg-1 { background: linear-gradient(135deg, #2c2a36 0%, #4a3f5c 35%, #8a7090 65%, #c4957a 100%); }
+  .slide-bg-2 { background: linear-gradient(135deg, #1a3040 0%, #2d5a6e 35%, #5a9aaa 65%, #a0d4c4 100%); }
+  .slide-bg-3 { background: linear-gradient(135deg, #3a2418 0%, #6b4532 35%, #a87050 65%, #d4b080 100%); }
+
+  /* 이미지 느낌 텍스처 */
+  .slide-bg::after {
+    content: '';
+    position: absolute; inset: 0;
+    background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='300' height='300'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='300' height='300' filter='url(%23n)' opacity='0.06'/%3E%3C/svg%3E");
+    opacity: 0.5;
+  }
+
+  .slide-overlay {
+    position: absolute; inset: 0;
+    background: linear-gradient(to top, rgba(0,0,0,0.72) 0%, rgba(0,0,0,0.05) 50%, transparent 100%);
+  }
+
+  /* 진행중 배지 (좌상단) */
+  .badge-live {
+    position: absolute; top: 16px; left: 18px;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: rgba(0,0,0,0.45); backdrop-filter: blur(8px);
+    border: 1px solid rgba(255,255,255,0.22);
+    color: #fff; font-size: 10px; font-weight: 700;
+    letter-spacing: 2px; text-transform: uppercase;
+    padding: 5px 12px; border-radius: 20px;
+    z-index: 2;
+  }
+  .dot-live {
+    width: 7px; height: 7px; border-radius: 50%;
+    background: #4ade80;
+    animation: pulse 1.8s ease-in-out infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(74,222,128,0.6); }
+    50% { box-shadow: 0 0 0 5px rgba(74,222,128,0); }
+  }
+
+  /* 텍스트 영역 */
+  .slide-text {
+    position: absolute; bottom: 0; left: 0; right: 0;
+    padding: 18px 22px;
+    z-index: 2;
+  }
+  .slide-text h3 { color: #fff; font-size: 18px; font-weight: 700; margin: 0 0 5px; line-height: 1.3; }
+  .slide-text .sub { color: rgba(255,255,255,0.6); font-size: 11px; }
+  .slide-text .dates { color: rgba(255,255,255,0.45); font-size: 9px; letter-spacing: 2px; margin-top: 8px; }
+
+  /* ---- 인디케이터 바 ---- */
+  .indicator-bar {
+    background: #111018;
+    padding: 12px 20px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+  }
+  .indicator-dots {
+    display: flex; align-items: center; gap: 6px;
+  }
+  .ind-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: rgba(255,255,255,0.25);
+    transition: all 0.3s;
+    cursor: pointer;
+  }
+  .ind-dot.active {
+    background: #fff;
+    width: 20px;
+    border-radius: 3px;
+  }
+  /* 진행 바 */
+  .progress-wrap {
+    flex: 1; height: 2px; background: rgba(255,255,255,0.1); border-radius: 1px; overflow: hidden;
+  }
+  .progress-bar {
+    height: 100%; background: rgba(255,255,255,0.5); border-radius: 1px;
+    width: 0%;
+    transition: width 3s linear;
+  }
+  .progress-bar.running { width: 100%; }
+
+  .ind-count {
+    color: rgba(255,255,255,0.35); font-size: 9px; letter-spacing: 1.5px; white-space: nowrap;
+  }
+
+  /* ---- 지난 기획전 섹션 ---- */
+  .ended-section {
+    max-width: 760px; margin: 0 auto;
+  }
+  .ended-label {
+    font-size: 10px; font-weight: 700; color: #bbb;
+    letter-spacing: 2px; text-transform: uppercase;
+    margin: 0 0 12px;
+  }
+  .ended-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+  }
+  .ended-card {
+    position: relative; overflow: hidden; border-radius: 8px;
+    aspect-ratio: 21/9;
+    filter: grayscale(1); opacity: 0.5; cursor: pointer;
+  }
+  .ec-bg1 { background: linear-gradient(135deg, #2c2a36, #7a6580, #c4957a); }
+  .ec-bg2 { background: linear-gradient(135deg, #1a3040, #5a9aaa, #a0d4c4); }
+  .ec-bg3 { background: linear-gradient(135deg, #3a2418, #a87050, #d4b080); }
+  .ec-bg4 { background: linear-gradient(135deg, #1e2a1e, #4a7a4a, #a0c480); }
+  .ended-card-overlay { position:absolute;inset:0;background:linear-gradient(to top,rgba(0,0,0,0.7) 0%,transparent 55%); }
+  .ended-card-text { position:absolute;bottom:0;left:0;right:0;padding:8px 10px; }
+  .ended-card-text .ecd { color:rgba(255,255,255,0.45);font-size:8px;letter-spacing:1px;margin:0 0 2px; }
+  .ended-card-text .ect { color:#fff;font-size:10px;font-weight:700;margin:0;line-height:1.3; }
+
+  /* 슬라이드 전환 애니메이션 */
+  .slide { animation: none; }
+  .slide.fade-in { animation: fadeIn 0.5s ease; }
+  @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+
+  .note { font-size: 11px; color: #888; line-height: 1.7; margin: 16px auto 0; max-width: 760px; padding: 12px 16px; background: #fff; border-radius: 8px; border: 1px solid #e8e8e8; }
+  .note strong { color: #444; }
+</style>
+</head>
+<body>
+
+<h2>캐러셀 방식 — 진행중 전시 full-width + 3초 자동 전환</h2>
+<p class="subtitle">전시가 2개 이상일 때 한 번에 하나씩 보여주고, 하단 인디케이터로 몇 번째인지 표시해요</p>
+
+<!-- 캐러셀 -->
+<div class="carousel-wrap">
+  <div class="slide active fade-in" id="slide-0">
+    <div class="slide-bg slide-bg-1"></div>
+    <div class="slide-overlay"></div>
+    <div class="badge-live"><span class="dot-live"></span> 현재 전시 중</div>
+    <div class="slide-text">
+      <h3>봄의 서정 — 꽃과 빛의 기록</h3>
+      <p class="sub">봄을 캔버스에 담은 작가 7인의 기획전</p>
+      <p class="dates">2026.05.01 — 2026.06.30</p>
+    </div>
+  </div>
+  <div class="slide" id="slide-1">
+    <div class="slide-bg slide-bg-2"></div>
+    <div class="slide-overlay"></div>
+    <div class="badge-live"><span class="dot-live"></span> 현재 전시 중</div>
+    <div class="slide-text">
+      <h3>빛의 기억 — 수채화 특별전</h3>
+      <p class="sub">물과 빛으로 빚어낸 수채화 작가 5인</p>
+      <p class="dates">2026.05.15 — 2026.07.15</p>
+    </div>
+  </div>
+  <div class="slide" id="slide-2">
+    <div class="slide-bg slide-bg-3"></div>
+    <div class="slide-overlay"></div>
+    <div class="badge-live"><span class="dot-live"></span> 현재 전시 중</div>
+    <div class="slide-text">
+      <h3>황혼의 팔레트 — 노을 드로잉전</h3>
+      <p class="sub">하루의 끝을 그림으로 기록한 작가들</p>
+      <p class="dates">2026.05.20 — 2026.07.31</p>
+    </div>
+  </div>
+
+  <!-- 인디케이터 바 -->
+  <div class="indicator-bar">
+    <div class="indicator-dots">
+      <div class="ind-dot active" onclick="goTo(0)"></div>
+      <div class="ind-dot" onclick="goTo(1)"></div>
+      <div class="ind-dot" onclick="goTo(2)"></div>
+    </div>
+    <div class="progress-wrap">
+      <div class="progress-bar running" id="progressBar"></div>
+    </div>
+    <span class="ind-count" id="slideCount">1 / 3</span>
+  </div>
+</div>
+
+<!-- 지난 기획전 -->
+<div class="ended-section">
+  <p class="ended-label">지난 기획전</p>
+  <div class="ended-grid">
+    <div class="ended-card ec-bg1"><div class="ended-card-overlay"></div><div class="ended-card-text"><p class="ecd">2026.03.01 — 04.30</p><p class="ect">겨울 서정 — 설경과 정물</p></div></div>
+    <div class="ended-card ec-bg2"><div class="ended-card-overlay"></div><div class="ended-card-text"><p class="ecd">2026.01.01 — 02.28</p><p class="ect">빛과 색채 — 추상의 세계</p></div></div>
+    <div class="ended-card ec-bg3"><div class="ended-card-overlay"></div><div class="ended-card-text"><p class="ecd">2025.11.01 — 12.31</p><p class="ect">일상의 단면 — 정물화 특별전</p></div></div>
+    <div class="ended-card ec-bg4"><div class="ended-card-overlay"></div><div class="ended-card-text"><p class="ecd">2025.09.01 — 10.31</p><p class="ect">자연을 담다 — 풍경화 기획전</p></div></div>
+  </div>
+</div>
+
+<div class="note">
+  <strong>구현 참고사항</strong><br>
+  • 진행중 전시가 1개면 캐러셀 없이 단순 full-width 배너<br>
+  • hover 시 3초 타이머 일시정지 (시니어 배려)<br>
+  • 인디케이터 도트 클릭으로 수동 이동 가능<br>
+  • CurationDetail 페이지 배너도 동일 21:9, 하지만 캐러셀 아님 (단일 전시 상세)
+</div>
+
+<script>
+  let current = 0;
+  const total = 3;
+  let timer = null;
+  let progressTimer = null;
+
+  function goTo(idx) {
+    document.getElementById('slide-' + current).classList.remove('active', 'fade-in');
+    current = idx;
+    const slide = document.getElementById('slide-' + current);
+    slide.classList.add('active');
+    requestAnimationFrame(() => slide.classList.add('fade-in'));
+    document.querySelectorAll('.ind-dot').forEach((d, i) => d.classList.toggle('active', i === current));
+    document.getElementById('slideCount').textContent = (current + 1) + ' / ' + total;
+    resetProgress();
+  }
+
+  function next() { goTo((current + 1) % total); }
+
+  function resetProgress() {
+    const bar = document.getElementById('progressBar');
+    bar.style.transition = 'none';
+    bar.style.width = '0%';
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        bar.style.transition = 'width 3s linear';
+        bar.style.width = '100%';
+      });
+    });
+    clearTimeout(timer);
+    timer = setTimeout(next, 3000);
+  }
+
+  // 호버 시 일시정지
+  const wrap = document.querySelector('.carousel-wrap');
+  wrap.addEventListener('mouseenter', () => {
+    clearTimeout(timer);
+    const bar = document.getElementById('progressBar');
+    const computed = getComputedStyle(bar).width;
+    const total_w = bar.parentElement.offsetWidth;
+    bar.style.transition = 'none';
+    bar.style.width = computed;
+  });
+  wrap.addEventListener('mouseleave', () => resetProgress());
+
+  resetProgress();
+</script>
+</body>
+</html>

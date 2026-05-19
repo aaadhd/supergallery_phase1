@@ -1,0 +1,372 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pick — 필름스트립 v3</title>
+<style>
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #f8fafc; color: #1e293b; }
+
+.shell { display: flex; min-height: 100vh; }
+.sidebar { width: 180px; background: #0f172a; flex-shrink: 0; padding: 16px 12px; }
+.sidebar .logo { color: #fff; font-size: 13px; font-weight: 700; margin-bottom: 20px; padding: 0 4px; }
+.sidebar nav a { display: block; padding: 7px 10px; border-radius: 8px; font-size: 12px; font-weight: 500; color: #94a3b8; margin-bottom: 2px; text-decoration: none; }
+.sidebar nav a.active { background: white; color: #0f172a; }
+
+.main { flex: 1; overflow: auto; }
+.content { max-width: 1200px; margin: 0 auto; padding: 24px; }
+.page-header { margin-bottom: 20px; }
+.page-header h1 { font-size: 20px; font-weight: 700; }
+.page-header p { font-size: 13px; color: #64748b; margin-top: 4px; }
+
+.panel { display: grid; grid-template-columns: 200px 1fr; border: 1px solid #e2e8f0; border-radius: 12px; overflow: hidden; background: white; min-height: 72vh; }
+
+.sessions { border-right: 1px solid #e2e8f0; background: #f8fafc; }
+.sessions-head { padding: 12px 14px; border-bottom: 1px solid #e2e8f0; display: flex; justify-content: space-between; align-items: center; }
+.sessions-head span { font-size: 13px; font-weight: 600; }
+.sessions-head button { background: #7c3aed; color: white; font-size: 11px; font-weight: 600; padding: 4px 10px; border-radius: 6px; border: none; cursor: pointer; }
+.session-item { padding: 10px 14px; cursor: pointer; border-bottom: 1px solid #f1f5f9; }
+.session-item.active { background: white; border-left: 3px solid #7c3aed; padding-left: 11px; }
+.session-item .s-name { font-size: 12px; font-weight: 600; }
+.session-item .s-meta { font-size: 11px; color: #94a3b8; margin-top: 2px; }
+.bs { display: inline-flex; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 10px; margin-left: 4px; }
+.bs-sch { background: #fef3c7; color: #92400e; }
+.bs-act { background: #d1fae5; color: #065f46; }
+
+.gallery { display: flex; flex-direction: column; }
+.gallery-head { padding: 12px 16px; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; gap: 12px; }
+.gallery-head h2 { font-size: 13px; font-weight: 700; flex: 1; }
+.search-box { border: 1px solid #e2e8f0; border-radius: 8px; padding: 5px 10px; font-size: 12px; color: #94a3b8; width: 180px; }
+
+.gallery-body { flex: 1; overflow-y: auto; padding: 10px 14px; display: flex; flex-direction: column; gap: 5px; }
+
+.tip { font-size: 11px; color: #94a3b8; padding: 4px 0 6px; display: flex; align-items: center; gap: 6px; }
+.tip::before { content: '✦'; color: #c4b5fd; }
+
+.section-divider { font-size: 10px; color: #94a3b8; padding: 8px 2px 4px; font-weight: 700; letter-spacing: .05em; text-transform: uppercase; }
+
+/* ─── 전시 행 ─── */
+.ex-row {
+  display: flex; align-items: center;
+  border: 2px solid #e2e8f0; border-radius: 10px;
+  cursor: pointer; transition: border-color .15s;
+  background: white;
+  /* 11개 꽉 채울 때도 안 넘치도록 */
+  min-height: 72px;
+}
+.ex-row:hover { border-color: #c4b5fd; }
+.ex-row.selected { border-color: #7c3aed; background: #fdf8ff; }
+
+/* 전시 정보 (왼쪽 고정) */
+.ex-info {
+  width: 128px; flex-shrink: 0;
+  padding: 10px 11px;
+  border-right: 1px solid #e2e8f0;
+  align-self: stretch;
+  display: flex; flex-direction: column; justify-content: center; gap: 2px;
+}
+.pick-num {
+  width: 18px; height: 18px; border-radius: 50%;
+  background: #7c3aed; color: white; font-size: 10px; font-weight: 700;
+  display: flex; align-items: center; justify-content: center;
+  margin-bottom: 3px;
+}
+.ex-title { font-size: 11px; font-weight: 700; color: #1e293b; line-height: 1.3; }
+.ex-artist { font-size: 10px; color: #64748b; }
+.ex-count { font-size: 10px; color: #94a3b8; margin-top: 1px; }
+
+/*
+  스트립: 최대 11개(10장+커버?) 또는 10장 기준
+  가용 너비 ≈ 1200 - 180(사이드바) - 200(세션) - 128(ex-info) - 48(패딩/보더) ≈ 644px
+  11개 썸네일 + 10개 gap(4px) = 11*thumb + 40
+  thumb = (644 - 40) / 11 ≈ 54.9px  → 54px 사용
+*/
+.ex-strip {
+  flex: 1;
+  display: flex; align-items: center;
+  gap: 4px; padding: 9px 10px;
+  overflow-x: auto;
+  scrollbar-width: thin; scrollbar-color: #e2e8f0 transparent;
+}
+.ex-strip::-webkit-scrollbar { height: 3px; }
+.ex-strip::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 2px; }
+
+/* 썸네일: 54px × 54px (11개 꼭 맞게) */
+.thumb {
+  flex-shrink: 0;
+  width: 54px; height: 54px;
+  border-radius: 6px; overflow: hidden;
+  position: relative; cursor: pointer;
+  border: 1.5px solid transparent;
+  transition: border-color .1s;
+}
+.thumb:hover { border-color: #7c3aed; }
+.thumb .img { width: 100%; height: 100%; }
+.thumb .num {
+  position: absolute; bottom: 2px; left: 2px;
+  background: rgba(0,0,0,.6); color: white;
+  font-size: 8px; font-weight: 700;
+  padding: 1px 3px; border-radius: 3px;
+  pointer-events: none;
+}
+
+/* ─── 호버 팝업 — 240×240 고정 ─── */
+#hover-popup {
+  display: none;
+  position: fixed;
+  z-index: 9999;
+  pointer-events: none;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 24px 64px rgba(0,0,0,.5), 0 0 0 2px #7c3aed;
+}
+#hover-popup .pop-img { width: 240px; height: 240px; }
+#hover-popup .pop-label {
+  background: #0f172a; padding: 9px 13px;
+}
+#hover-popup .pop-title { font-size: 12px; font-weight: 700; color: white; }
+#hover-popup .pop-sub { font-size: 10px; color: #94a3b8; margin-top: 2px; }
+
+/* 클릭 모달 */
+.modal-bg { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.88); z-index: 1000; align-items: center; justify-content: center; }
+.modal-bg.open { display: flex; }
+.modal-box { background: #0f172a; border-radius: 16px; overflow: hidden; max-width: 580px; width: 92%; position: relative; }
+.modal-img { width: 100%; aspect-ratio: 1; }
+.modal-footer { padding: 14px 18px; }
+.modal-footer .m-title { font-size: 15px; font-weight: 700; color: white; }
+.modal-footer .m-meta { font-size: 12px; color: #94a3b8; margin-top: 4px; }
+.modal-close { position: absolute; top: 12px; right: 12px; background: rgba(255,255,255,.15); color: white; border: none; width: 30px; height: 30px; border-radius: 50%; font-size: 14px; cursor: pointer; pointer-events: all; display: flex; align-items: center; justify-content: center; }
+
+.bottom-bar { background: #0f172a; padding: 10px 16px; display: flex; align-items: center; gap: 10px; }
+.count { font-size: 12px; color: #c4b5fd; font-weight: 600; }
+.spacer { flex: 1; }
+.btn-pub { background: #7c3aed; color: white; font-size: 12px; font-weight: 700; padding: 7px 18px; border-radius: 8px; border: none; cursor: pointer; }
+.btn-end { background: transparent; border: 1px solid #ef4444; color: #f87171; font-size: 12px; padding: 6px 14px; border-radius: 8px; cursor: pointer; }
+
+.c1{background:linear-gradient(135deg,#f093fb,#f5576c)}
+.c2{background:linear-gradient(135deg,#4facfe,#00f2fe)}
+.c3{background:linear-gradient(135deg,#43e97b,#38f9d7)}
+.c4{background:linear-gradient(135deg,#fa709a,#fee140)}
+.c5{background:linear-gradient(135deg,#a18cd1,#fbc2eb)}
+.c6{background:linear-gradient(135deg,#fda085,#f6d365)}
+.c7{background:linear-gradient(135deg,#89f7fe,#66a6ff)}
+.c8{background:linear-gradient(135deg,#fddb92,#d1fdff)}
+.c9{background:linear-gradient(135deg,#667eea,#764ba2)}
+.c10{background:linear-gradient(135deg,#f77062,#fe5196)}
+</style>
+</head>
+<body>
+
+<div id="hover-popup">
+  <div id="pop-img" class="pop-img"></div>
+  <div class="pop-label">
+    <div class="pop-title" id="pop-title"></div>
+    <div class="pop-sub" id="pop-sub"></div>
+  </div>
+</div>
+
+<div class="shell">
+  <div class="sidebar">
+    <div class="logo">Proud Gallery 어드민</div>
+    <nav>
+      <a href="#">대시보드</a>
+      <a href="#">검수</a>
+      <a href="#">신고</a>
+      <a href="#">회원</a>
+      <a href="#" class="active">Pick</a>
+      <a href="#">기획전</a>
+      <a href="#">추천 전시</a>
+    </nav>
+  </div>
+
+  <div class="main">
+    <div class="content">
+      <div class="page-header">
+        <h1>픽 관리</h1>
+        <p>Proud's Pick 세션을 만들고 선정 전시를 관리합니다.</p>
+      </div>
+
+      <div class="panel">
+        <div class="sessions">
+          <div class="sessions-head"><span>픽 세션</span><button>+ 새로</button></div>
+          <div class="session-item active">
+            <div class="s-name">5월 3주차 Proud's Pick <span class="bs bs-sch">발행예정</span></div>
+            <div class="s-meta">05-19 ~ 05-25 · 3개</div>
+          </div>
+          <div class="session-item">
+            <div class="s-name">5월 2주차 Proud's Pick <span class="bs bs-act">발행됨</span></div>
+            <div class="s-meta">05-12 ~ 05-18 · 6개</div>
+          </div>
+        </div>
+
+        <div class="gallery">
+          <div class="gallery-head">
+            <h2>5월 3주차 Proud's Pick</h2>
+            <div class="search-box">🔍 전시·작가 검색…</div>
+          </div>
+
+          <div class="gallery-body">
+            <div class="tip">이미지에 마우스를 올리면 크게 보여요. 클릭하면 더 크게 볼 수 있어요. 행을 클릭하면 선정/해제.</div>
+
+            <!-- 선정 -->
+            <div class="ex-row selected" onclick="toggleRow(this)">
+              <div class="ex-info"><div class="pick-num">1</div><div class="ex-title">구월 개인전</div><div class="ex-artist">구월</div><div class="ex-count">작품 4장</div></div>
+              <div class="ex-strip">
+                <div class="thumb" data-t="구월 개인전" data-s="1번 작품 · 구월" data-c="c1" onclick="openModal(event,'구월 개인전','1번 작품 · 구월','c1')"><div class="img c1"></div><div class="num">1</div></div>
+                <div class="thumb" data-t="구월 개인전" data-s="2번 작품 · 구월" data-c="c2" onclick="openModal(event,'구월 개인전','2번 작품 · 구월','c2')"><div class="img c2"></div><div class="num">2</div></div>
+                <div class="thumb" data-t="구월 개인전" data-s="3번 작품 · 구월" data-c="c3" onclick="openModal(event,'구월 개인전','3번 작품 · 구월','c3')"><div class="img c3"></div><div class="num">3</div></div>
+                <div class="thumb" data-t="구월 개인전" data-s="4번 작품 · 구월" data-c="c4" onclick="openModal(event,'구월 개인전','4번 작품 · 구월','c4')"><div class="img c4"></div><div class="num">4</div></div>
+              </div>
+            </div>
+
+            <div class="ex-row selected" onclick="toggleRow(this)">
+              <div class="ex-info"><div class="pick-num">2</div><div class="ex-title">봄의 감성전</div><div class="ex-artist">달들리에(김승혜)</div><div class="ex-count">작품 5장</div></div>
+              <div class="ex-strip">
+                <div class="thumb" data-t="봄의 감성전" data-s="1번 작품" data-c="c5" onclick="openModal(event,'봄의 감성전','1번 작품','c5')"><div class="img c5"></div><div class="num">1</div></div>
+                <div class="thumb" data-t="봄의 감성전" data-s="2번 작품" data-c="c6" onclick="openModal(event,'봄의 감성전','2번 작품','c6')"><div class="img c6"></div><div class="num">2</div></div>
+                <div class="thumb" data-t="봄의 감성전" data-s="3번 작품" data-c="c7" onclick="openModal(event,'봄의 감성전','3번 작품','c7')"><div class="img c7"></div><div class="num">3</div></div>
+                <div class="thumb" data-t="봄의 감성전" data-s="4번 작품" data-c="c8" onclick="openModal(event,'봄의 감성전','4번 작품','c8')"><div class="img c8"></div><div class="num">4</div></div>
+                <div class="thumb" data-t="봄의 감성전" data-s="5번 작품" data-c="c9" onclick="openModal(event,'봄의 감성전','5번 작품','c9')"><div class="img c9"></div><div class="num">5</div></div>
+              </div>
+            </div>
+
+            <!-- 10장짜리 — 11개 딱 맞게 -->
+            <div class="ex-row selected" onclick="toggleRow(this)">
+              <div class="ex-info"><div class="pick-num">3</div><div class="ex-title">동그라미 일러스트 모음전</div><div class="ex-artist">김아흔</div><div class="ex-count">작품 10장</div></div>
+              <div class="ex-strip">
+                <div class="thumb" data-t="동그라미" data-s="1번 작품 · 김아흔" data-c="c10" onclick="openModal(event,'동그라미','1번 작품','c10')"><div class="img c10"></div><div class="num">1</div></div>
+                <div class="thumb" data-t="동그라미" data-s="2번 작품 · 김아흔" data-c="c1" onclick="openModal(event,'동그라미','2번 작품','c1')"><div class="img c1"></div><div class="num">2</div></div>
+                <div class="thumb" data-t="동그라미" data-s="3번 작품 · 김아흔" data-c="c3" onclick="openModal(event,'동그라미','3번 작품','c3')"><div class="img c3"></div><div class="num">3</div></div>
+                <div class="thumb" data-t="동그라미" data-s="4번 작품 · 김아흔" data-c="c5" onclick="openModal(event,'동그라미','4번 작품','c5')"><div class="img c5"></div><div class="num">4</div></div>
+                <div class="thumb" data-t="동그라미" data-s="5번 작품 · 김아흔" data-c="c7" onclick="openModal(event,'동그라미','5번 작품','c7')"><div class="img c7"></div><div class="num">5</div></div>
+                <div class="thumb" data-t="동그라미" data-s="6번 작품 · 김아흔" data-c="c2" onclick="openModal(event,'동그라미','6번 작품','c2')"><div class="img c2"></div><div class="num">6</div></div>
+                <div class="thumb" data-t="동그라미" data-s="7번 작품 · 김아흔" data-c="c4" onclick="openModal(event,'동그라미','7번 작품','c4')"><div class="img c4"></div><div class="num">7</div></div>
+                <div class="thumb" data-t="동그라미" data-s="8번 작품 · 김아흔" data-c="c6" onclick="openModal(event,'동그라미','8번 작품','c6')"><div class="img c6"></div><div class="num">8</div></div>
+                <div class="thumb" data-t="동그라미" data-s="9번 작품 · 김아흔" data-c="c9" onclick="openModal(event,'동그라미','9번 작품','c9')"><div class="img c9"></div><div class="num">9</div></div>
+                <div class="thumb" data-t="동그라미" data-s="10번 작품 · 김아흔" data-c="c8" onclick="openModal(event,'동그라미','10번 작품','c8')"><div class="img c8"></div><div class="num">10</div></div>
+              </div>
+            </div>
+
+            <div class="section-divider">── 미선정 전시</div>
+
+            <div class="ex-row" onclick="toggleRow(this)">
+              <div class="ex-info"><div class="ex-title">컬러링북 아티스트 개인전</div><div class="ex-artist">김현경</div><div class="ex-count">작품 10장</div></div>
+              <div class="ex-strip">
+                <div class="thumb" data-t="컬러링북" data-s="1번 작품" data-c="c2" onclick="openModal(event,'컬러링북 아티스트','1번 작품','c2')"><div class="img c2"></div><div class="num">1</div></div>
+                <div class="thumb" data-t="컬러링북" data-s="2번 작품" data-c="c6" onclick="openModal(event,'컬러링북 아티스트','2번 작품','c6')"><div class="img c6"></div><div class="num">2</div></div>
+                <div class="thumb" data-t="컬러링북" data-s="3번 작품" data-c="c8" onclick="openModal(event,'컬러링북 아티스트','3번 작품','c8')"><div class="img c8"></div><div class="num">3</div></div>
+                <div class="thumb" data-t="컬러링북" data-s="4번 작품" data-c="c4" onclick="openModal(event,'컬러링북 아티스트','4번 작품','c4')"><div class="img c4"></div><div class="num">4</div></div>
+                <div class="thumb" data-t="컬러링북" data-s="5번 작품" data-c="c1" onclick="openModal(event,'컬러링북 아티스트','5번 작품','c1')"><div class="img c1"></div><div class="num">5</div></div>
+                <div class="thumb" data-t="컬러링북" data-s="6번 작품" data-c="c9" onclick="openModal(event,'컬러링북 아티스트','6번 작품','c9')"><div class="img c9"></div><div class="num">6</div></div>
+                <div class="thumb" data-t="컬러링북" data-s="7번 작품" data-c="c3" onclick="openModal(event,'컬러링북 아티스트','7번 작품','c3')"><div class="img c3"></div><div class="num">7</div></div>
+                <div class="thumb" data-t="컬러링북" data-s="8번 작품" data-c="c7" onclick="openModal(event,'컬러링북 아티스트','8번 작품','c7')"><div class="img c7"></div><div class="num">8</div></div>
+                <div class="thumb" data-t="컬러링북" data-s="9번 작품" data-c="c10" onclick="openModal(event,'컬러링북 아티스트','9번 작품','c10')"><div class="img c10"></div><div class="num">9</div></div>
+                <div class="thumb" data-t="컬러링북" data-s="10번 작품" data-c="c5" onclick="openModal(event,'컬러링북 아티스트','10번 작품','c5')"><div class="img c5"></div><div class="num">10</div></div>
+              </div>
+            </div>
+
+            <div class="ex-row" onclick="toggleRow(this)">
+              <div class="ex-info"><div class="ex-title">나랑하루 개인전</div><div class="ex-artist">나랑하루</div><div class="ex-count">작품 5장</div></div>
+              <div class="ex-strip">
+                <div class="thumb" data-t="나랑하루" data-s="1번 작품" data-c="c3" onclick="openModal(event,'나랑하루 개인전','1번 작품','c3')"><div class="img c3"></div><div class="num">1</div></div>
+                <div class="thumb" data-t="나랑하루" data-s="2번 작품" data-c="c7" onclick="openModal(event,'나랑하루 개인전','2번 작품','c7')"><div class="img c7"></div><div class="num">2</div></div>
+                <div class="thumb" data-t="나랑하루" data-s="3번 작품" data-c="c10" onclick="openModal(event,'나랑하루 개인전','3번 작품','c10')"><div class="img c10"></div><div class="num">3</div></div>
+                <div class="thumb" data-t="나랑하루" data-s="4번 작품" data-c="c1" onclick="openModal(event,'나랑하루 개인전','4번 작품','c1')"><div class="img c1"></div><div class="num">4</div></div>
+                <div class="thumb" data-t="나랑하루" data-s="5번 작품" data-c="c6" onclick="openModal(event,'나랑하루 개인전','5번 작품','c6')"><div class="img c6"></div><div class="num">5</div></div>
+              </div>
+            </div>
+
+          </div>
+
+          <div class="bottom-bar">
+            <span class="count">✦ 3 / 10개 선정</span>
+            <div class="spacer"></div>
+            <button class="btn-end">게시 종료</button>
+            <button class="btn-pub">발행</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- 클릭 모달 -->
+<div class="modal-bg" id="modal" onclick="if(event.target.id==='modal')closeModal()">
+  <div class="modal-box">
+    <button class="modal-close" onclick="closeModal()">✕</button>
+    <div id="modal-img" class="modal-img"></div>
+    <div class="modal-footer">
+      <div class="m-title" id="modal-title"></div>
+      <div class="m-meta" id="modal-meta"></div>
+    </div>
+  </div>
+</div>
+
+<script>
+/* ── 호버 팝업 (240×240, 마우스 오른쪽에 고정) ── */
+const popup = document.getElementById('hover-popup');
+const popImg = document.getElementById('pop-img');
+const popTitle = document.getElementById('pop-title');
+const popSub = document.getElementById('pop-sub');
+const PW = 240, PH = 240 + 52;
+let hideTimer;
+
+document.querySelectorAll('.thumb').forEach(t => {
+  t.addEventListener('mouseenter', e => {
+    clearTimeout(hideTimer);
+    popImg.className = 'pop-img ' + t.dataset.c;
+    popTitle.textContent = t.dataset.t;
+    popSub.textContent = t.dataset.s;
+    popup.style.display = 'block';
+    place(e);
+  });
+  t.addEventListener('mousemove', place);
+  t.addEventListener('mouseleave', () => {
+    hideTimer = setTimeout(() => { popup.style.display = 'none'; }, 80);
+  });
+});
+
+function place(e) {
+  const vw = window.innerWidth, vh = window.innerHeight;
+  let x = e.clientX + 18, y = e.clientY - PH / 2;
+  if (x + PW > vw - 8) x = e.clientX - PW - 18;
+  if (y + PH > vh - 8) y = vh - PH - 8;
+  if (y < 8) y = 8;
+  popup.style.left = x + 'px';
+  popup.style.top = y + 'px';
+}
+
+/* ── 행 선택 ── */
+let count = 3;
+function toggleRow(row) {
+  if (event.target.closest('.thumb')) return;
+  const was = row.classList.contains('selected');
+  row.classList.toggle('selected');
+  const info = row.querySelector('.ex-info');
+  if (!was) {
+    count = Math.min(count + 1, 10);
+    let n = info.querySelector('.pick-num');
+    if (!n) { n = document.createElement('div'); n.className = 'pick-num'; info.insertBefore(n, info.firstChild); }
+    n.textContent = count;
+  } else {
+    count = Math.max(count - 1, 0);
+    const n = info.querySelector('.pick-num');
+    if (n) n.remove();
+  }
+  document.querySelector('.count').textContent = `✦ ${count} / 10개 선정`;
+}
+
+/* ── 클릭 모달 ── */
+function openModal(e, title, meta, color) {
+  e.stopPropagation();
+  popup.style.display = 'none';
+  document.getElementById('modal-title').textContent = title;
+  document.getElementById('modal-meta').textContent = meta;
+  document.getElementById('modal-img').className = 'modal-img ' + color;
+  document.getElementById('modal').classList.add('open');
+}
+function closeModal() { document.getElementById('modal').classList.remove('open'); }
+</script>
+</body>
+</html>

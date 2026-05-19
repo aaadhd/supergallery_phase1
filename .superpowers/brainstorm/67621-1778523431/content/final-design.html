@@ -1,0 +1,83 @@
+<h2>검색 최종 설계</h2>
+<p class="subtitle">이 방향이 맞는지 확인해주세요</p>
+
+<div style="display:flex; gap:24px; flex-wrap:wrap; margin-top:20px;">
+
+  <!-- 검색 전 -->
+  <div style="flex:1; min-width:240px;">
+    <div class="label" style="margin-bottom:8px;">① 검색 전</div>
+    <div class="mockup">
+      <div class="mockup-header">검색</div>
+      <div class="mockup-body" style="background:#faf9f7; padding:16px;">
+        <div style="background:white; border:2px solid #e2e0dc; border-radius:12px; padding:12px 14px; display:flex; align-items:center; gap:8px; margin-bottom:16px; font-size:12px; color:#aaa;">
+          <span>🔍</span> 작품명, 작가명, 전시명, 그룹명 검색
+        </div>
+        <div style="font-size:11px; font-weight:600; color:#888; margin-bottom:8px;">최근 검색</div>
+        <div style="display:flex; flex-wrap:wrap; gap:6px;">
+          <div style="border:1px solid #ddd; border-radius:20px; padding:5px 12px; font-size:12px; display:flex; align-items:center; gap:4px;">봄 <span style="color:#bbb;">✕</span></div>
+          <div style="border:1px solid #ddd; border-radius:20px; padding:5px 12px; font-size:12px; display:flex; align-items:center; gap:4px;">수채화 <span style="color:#bbb;">✕</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 검색 후 -->
+  <div style="flex:1.4; min-width:280px;">
+    <div class="label" style="margin-bottom:8px;">② 검색 후 — "봄" 52건</div>
+    <div class="mockup">
+      <div class="mockup-header">검색: "봄" &nbsp;✕</div>
+      <div class="mockup-body" style="background:#faf9f7; padding:14px;">
+
+        <!-- 필터 탭 -->
+        <div style="display:flex; gap:6px; flex-wrap:wrap; margin-bottom:12px;">
+          <div style="background:#222; color:white; border-radius:20px; padding:5px 12px; font-size:11px; font-weight:600;">전체 52</div>
+          <div style="background:white; border:1px solid #ddd; border-radius:20px; padding:5px 12px; font-size:11px; color:#666;">작가명 1</div>
+          <div style="background:white; border:1px solid #ddd; border-radius:20px; padding:5px 12px; font-size:11px; color:#666;">그룹명 3</div>
+          <div style="background:white; border:1px solid #ddd; border-radius:20px; padding:5px 12px; font-size:11px; color:#666;">전시명 34</div>
+          <div style="background:white; border:1px solid #ddd; border-radius:20px; padding:5px 12px; font-size:11px; color:#666;">작품명 14</div>
+        </div>
+
+        <!-- 카드 그리드 (둘러보기와 동일) -->
+        <div style="display:grid; grid-template-columns:1fr 1fr; gap:10px;">
+          <div>
+            <div style="aspect-ratio:1; background:#e8e4de; border-radius:8px; margin-bottom:5px;"></div>
+            <div style="font-size:11px; font-weight:600; color:#222; line-height:1.3;">이른 봄의 산책로</div>
+            <div style="font-size:10px; color:#888; margin-top:1px;">최파랑</div>
+          </div>
+          <div>
+            <div style="aspect-ratio:1; background:#d4cfc8; border-radius:8px; margin-bottom:5px;"></div>
+            <div style="font-size:11px; font-weight:600; color:#222; line-height:1.3;">봄을 담은 꽃잎</div>
+            <div style="font-size:10px; color:#888; margin-top:1px;">봄날의화가</div>
+          </div>
+          <div>
+            <div style="aspect-ratio:1; background:#bfb9b1; border-radius:8px; margin-bottom:5px;"></div>
+            <div style="font-size:11px; font-weight:600; color:#222; line-height:1.3;">초록 위의 아침 이슬</div>
+            <div style="font-size:10px; color:#888; margin-top:1px;">윤도훈</div>
+          </div>
+          <div>
+            <div style="aspect-ratio:1; background:#c9c3bb; border-radius:8px; margin-bottom:5px;"></div>
+            <div style="font-size:11px; font-weight:600; color:#222; line-height:1.3;">봄 소나타</div>
+            <div style="font-size:10px; color:#888; margin-top:1px;">임지은</div>
+          </div>
+        </div>
+        <div style="text-align:center; color:#aaa; font-size:11px; margin-top:10px;">↓ 스크롤로 계속</div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<!-- 필터 탭 동작 설명 -->
+<div style="margin-top:24px; padding:16px; background:#f0edf8; border-radius:12px; border-left:3px solid #7c3aed;">
+  <div style="font-weight:700; font-size:13px; margin-bottom:10px;">필터 탭 동작</div>
+  <ul style="margin:0; padding-left:16px; font-size:12px; line-height:2; color:#555;">
+    <li><strong>전체</strong> — 4개 필드 중 하나라도 매칭된 전시 카드, 중복 제거, 최신순</li>
+    <li><strong>작가명</strong> — 전시 작가 닉네임에 키워드 포함된 전시만</li>
+    <li><strong>그룹명</strong> — 그룹명에 키워드 포함된 그룹 전시만</li>
+    <li><strong>전시명</strong> — 전시명(exhibitionName / title)에 키워드 포함된 전시만</li>
+    <li><strong>작품명</strong> — 개별 작품명(imagePieceTitles)에 키워드 포함된 전시만</li>
+  </ul>
+  <div style="margin-top:10px; font-size:12px; color:#7c3aed; font-weight:600;">
+    카드 디자인 = 둘러보기 전시카드 그대로. 페이지 이동 없음. 페이지네이션 없음.
+  </div>
+</div>

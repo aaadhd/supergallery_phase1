@@ -1,0 +1,157 @@
+<h2>Pick — 세션 목록과 작품 갤러리 관계</h2>
+<p class="subtitle">세션을 클릭했을 때, 갤러리가 어떻게 나타나나요?</p>
+
+<div class="split">
+
+  <!-- Option A: 드릴다운 (갤러리가 전체 화면 차지) -->
+  <div class="mockup">
+    <div class="mockup-header" style="background:#0f172a;color:#fff;">A — 드릴다운: 갤러리가 전체 화면</div>
+    <div class="mockup-body" style="padding:0;font-size:11px;">
+
+      <!-- 세션 목록 화면 -->
+      <div style="padding:8px 12px;border-bottom:2px dashed #e2e8f0;background:#f8fafc;">
+        <div style="font-size:9px;color:#94a3b8;margin-bottom:5px;">STEP 1 — 세션 목록</div>
+        <div style="background:#fff;border:1px solid #e2e8f0;border-radius:6px;overflow:hidden;">
+          <div style="display:grid;grid-template-columns:1fr 70px 70px 60px;gap:0;padding:5px 8px;align-items:center;background:#7c3aed08;border-bottom:1px solid #e2e8f0;">
+            <div style="font-size:10px;font-weight:600;">5월 2주차 Proud's Pick</div>
+            <div style="font-size:9px;color:#64748b;">5-11~5-17</div>
+            <div style="font-size:9px;background:#dcfce7;color:#166534;border-radius:10px;padding:1px 5px;text-align:center;">활성</div>
+            <div style="font-size:9px;color:#7c3aed;font-weight:600;cursor:pointer;">편집 →</div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 70px 70px 60px;gap:0;padding:5px 8px;align-items:center;opacity:.6;">
+            <div style="font-size:10px;">5월 1주차</div>
+            <div style="font-size:9px;color:#94a3b8;">5-04~5-10</div>
+            <div style="font-size:9px;background:#f1f5f9;color:#94a3b8;border-radius:10px;padding:1px 5px;text-align:center;">완료</div>
+            <div style="font-size:9px;color:#94a3b8;">보기 →</div>
+          </div>
+        </div>
+        <div style="margin-top:5px;display:flex;justify-content:flex-end;">
+          <div style="background:#7c3aed;color:#fff;border-radius:5px;padding:3px 8px;font-size:9px;">+ 새 픽 만들기</div>
+        </div>
+      </div>
+
+      <!-- 갤러리 화면 (전체 교체) -->
+      <div style="padding:8px 12px;">
+        <div style="font-size:9px;color:#94a3b8;margin-bottom:5px;">STEP 2 — 작품 선정 (갤러리가 전체 차지)</div>
+        <div style="display:flex;align-items:center;gap:6px;margin-bottom:6px;">
+          <div style="font-size:9px;color:#7c3aed;cursor:pointer;">← 세션 목록</div>
+          <div style="font-size:10px;font-weight:700;">5월 2주차 Proud's Pick</div>
+        </div>
+        <input placeholder="작품·작가 검색…" style="width:100%;border:1px solid #e2e8f0;border-radius:5px;padding:3px 7px;font-size:9px;margin-bottom:6px;box-sizing:border-box;"/>
+        <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin-bottom:6px;">
+          <div style="border-radius:4px;overflow:hidden;border:2px solid #7c3aed;position:relative;">
+            <div style="background:#c4b5fd;aspect-ratio:1;"></div>
+            <div style="position:absolute;top:2px;right:2px;background:#7c3aed;color:#fff;border-radius:50%;width:13px;height:13px;font-size:8px;display:flex;align-items:center;justify-content:center;font-weight:700;">1</div>
+          </div>
+          <div style="border-radius:4px;overflow:hidden;border:2px solid #7c3aed;position:relative;">
+            <div style="background:#a5b4fc;aspect-ratio:1;"></div>
+            <div style="position:absolute;top:2px;right:2px;background:#7c3aed;color:#fff;border-radius:50%;width:13px;height:13px;font-size:8px;display:flex;align-items:center;justify-content:center;font-weight:700;">2</div>
+          </div>
+          <div style="border-radius:4px;overflow:hidden;border:2px solid transparent;"><div style="background:#93c5fd;aspect-ratio:1;"></div></div>
+          <div style="border-radius:4px;overflow:hidden;border:2px solid transparent;"><div style="background:#6ee7b7;aspect-ratio:1;"></div></div>
+          <div style="border-radius:4px;overflow:hidden;border:2px solid transparent;"><div style="background:#fde68a;aspect-ratio:1;"></div></div>
+          <div style="border-radius:4px;overflow:hidden;border:2px solid transparent;"><div style="background:#fca5a5;aspect-ratio:1;"></div></div>
+          <div style="border-radius:4px;overflow:hidden;border:2px solid transparent;"><div style="background:#d9f99d;aspect-ratio:1;"></div></div>
+          <div style="border-radius:4px;overflow:hidden;border:2px solid transparent;"><div style="background:#e0e7ff;aspect-ratio:1;"></div></div>
+          <div style="border-radius:4px;overflow:hidden;border:2px solid transparent;"><div style="background:#fee2e2;aspect-ratio:1;"></div></div>
+          <div style="border-radius:4px;overflow:hidden;border:2px solid transparent;"><div style="background:#f0abfc;aspect-ratio:1;"></div></div>
+        </div>
+        <!-- 하단 바 -->
+        <div style="background:#1e1b4b;border-radius:6px;padding:6px 10px;display:flex;align-items:center;gap:6px;">
+          <div style="display:flex;gap:2px;">
+            <div style="width:18px;height:18px;background:#c4b5fd;border-radius:2px;border:1.5px solid #7c3aed;"></div>
+            <div style="width:18px;height:18px;background:#a5b4fc;border-radius:2px;border:1.5px solid #7c3aed;"></div>
+          </div>
+          <div style="color:#c4b5fd;font-size:9px;font-weight:600;">2 / 10개</div>
+          <div style="flex:1;"></div>
+          <div style="color:#94a3b8;font-size:8px;">순서 조정</div>
+          <div style="background:#7c3aed;color:#fff;border-radius:4px;padding:2px 7px;font-size:9px;">발행</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Option B: 항상 분할 (목록 유지) -->
+  <div class="mockup">
+    <div class="mockup-header" style="background:#0f172a;color:#fff;">B — 분할 유지: 목록 + 갤러리 동시 표시</div>
+    <div class="mockup-body" style="padding:0;font-size:11px;display:flex;height:340px;">
+
+      <!-- 좌: 세션 목록 고정 -->
+      <div style="width:38%;border-right:1px solid #e2e8f0;overflow-y:auto;background:#f8fafc;">
+        <div style="padding:6px 8px;border-bottom:1px solid #e2e8f0;display:flex;justify-content:space-between;align-items:center;">
+          <div style="font-size:9px;font-weight:600;color:#374151;">픽 세션</div>
+          <div style="background:#7c3aed;color:#fff;border-radius:4px;padding:1px 5px;font-size:8px;">+새로</div>
+        </div>
+        <!-- 활성 세션 (선택됨) -->
+        <div style="padding:7px 8px;background:#7c3aed08;border-left:2px solid #7c3aed;border-bottom:1px solid #f1f5f9;cursor:pointer;">
+          <div style="font-size:10px;font-weight:600;margin-bottom:1px;">5월 2주차</div>
+          <div style="font-size:8px;color:#64748b;margin-bottom:2px;">5-11 ~ 5-17</div>
+          <div style="font-size:8px;background:#dcfce7;color:#166534;border-radius:8px;padding:0px 4px;display:inline-block;">활성 · 2개 선정</div>
+        </div>
+        <!-- 완료 세션들 -->
+        <div style="padding:6px 8px;border-bottom:1px solid #f8fafc;cursor:pointer;opacity:.6;">
+          <div style="font-size:10px;color:#475569;margin-bottom:1px;">5월 1주차</div>
+          <div style="font-size:8px;background:#f1f5f9;color:#94a3b8;border-radius:8px;padding:0px 4px;display:inline-block;">완료 · 8개</div>
+        </div>
+        <div style="padding:6px 8px;cursor:pointer;opacity:.5;">
+          <div style="font-size:10px;color:#94a3b8;margin-bottom:1px;">4월 4주차</div>
+          <div style="font-size:8px;background:#f1f5f9;color:#94a3b8;border-radius:8px;padding:0px 4px;display:inline-block;">완료 · 10개</div>
+        </div>
+      </div>
+
+      <!-- 우: 갤러리 (항상 여기) -->
+      <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+        <div style="padding:7px 10px;border-bottom:1px solid #e2e8f0;background:#fff;">
+          <div style="font-size:10px;font-weight:700;">5월 2주차 Proud's Pick</div>
+          <input placeholder="작품·작가 검색…" style="width:100%;border:1px solid #e2e8f0;border-radius:5px;padding:2px 6px;font-size:9px;margin-top:4px;box-sizing:border-box;"/>
+        </div>
+        <div style="flex:1;overflow-y:auto;padding:7px;background:#f8fafc;">
+          <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:4px;">
+            <div style="border-radius:4px;overflow:hidden;border:2px solid #7c3aed;position:relative;">
+              <div style="background:#c4b5fd;aspect-ratio:1;"></div>
+              <div style="position:absolute;top:2px;right:2px;background:#7c3aed;color:#fff;border-radius:50%;width:13px;height:13px;font-size:8px;display:flex;align-items:center;justify-content:center;font-weight:700;">1</div>
+            </div>
+            <div style="border-radius:4px;overflow:hidden;border:2px solid #7c3aed;position:relative;">
+              <div style="background:#a5b4fc;aspect-ratio:1;"></div>
+              <div style="position:absolute;top:2px;right:2px;background:#7c3aed;color:#fff;border-radius:50%;width:13px;height:13px;font-size:8px;display:flex;align-items:center;justify-content:center;font-weight:700;">2</div>
+            </div>
+            <div style="border-radius:4px;overflow:hidden;border:2px solid transparent;"><div style="background:#93c5fd;aspect-ratio:1;"></div></div>
+            <div style="border-radius:4px;overflow:hidden;border:2px solid transparent;"><div style="background:#6ee7b7;aspect-ratio:1;"></div></div>
+            <div style="border-radius:4px;overflow:hidden;border:2px solid transparent;"><div style="background:#fde68a;aspect-ratio:1;"></div></div>
+            <div style="border-radius:4px;overflow:hidden;border:2px solid transparent;"><div style="background:#fca5a5;aspect-ratio:1;"></div></div>
+            <div style="border-radius:4px;overflow:hidden;border:2px solid transparent;"><div style="background:#d9f99d;aspect-ratio:1;"></div></div>
+            <div style="border-radius:4px;overflow:hidden;border:2px solid transparent;"><div style="background:#e0e7ff;aspect-ratio:1;"></div></div>
+          </div>
+        </div>
+        <!-- 하단 바 -->
+        <div style="background:#1e1b4b;padding:5px 8px;display:flex;align-items:center;gap:5px;shrink-0;">
+          <div style="display:flex;gap:2px;">
+            <div style="width:16px;height:16px;background:#c4b5fd;border-radius:2px;border:1.5px solid #7c3aed;"></div>
+            <div style="width:16px;height:16px;background:#a5b4fc;border-radius:2px;border:1.5px solid #7c3aed;"></div>
+          </div>
+          <div style="color:#c4b5fd;font-size:9px;font-weight:600;">2 / 10개</div>
+          <div style="flex:1;"></div>
+          <div style="background:#7c3aed;color:#fff;border-radius:4px;padding:2px 7px;font-size:9px;">발행</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+<div class="options" style="margin-top:16px;">
+  <div class="option" data-choice="a" onclick="toggleSelect(this)">
+    <div class="letter">A</div>
+    <div class="content">
+      <h3>드릴다운</h3>
+      <p>세션 클릭 → 갤러리가 전체 화면 차지. 작품 선정에 집중 가능. 뒤로가기로 목록 복귀.</p>
+    </div>
+  </div>
+  <div class="option" data-choice="b" onclick="toggleSelect(this)">
+    <div class="letter">B</div>
+    <div class="content">
+      <h3>분할 유지</h3>
+      <p>세션 목록과 갤러리를 항상 동시에. 다른 세션으로 빠르게 전환 가능.</p>
+    </div>
+  </div>
+</div>

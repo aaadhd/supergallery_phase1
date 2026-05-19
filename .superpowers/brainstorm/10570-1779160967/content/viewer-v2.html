@@ -1,0 +1,102 @@
+<h2>뷰어 레이아웃 — 플로팅 버튼 방식</h2>
+<p class="subtitle">바(bar) 없이 이미지가 화면 전체를 채우고, 버튼은 이미지 위에 올라옵니다.</p>
+
+<div class="split">
+
+  <!-- Left: Normal state -->
+  <div class="mockup">
+    <div class="mockup-header">① 일반 상태 (scale = 1)</div>
+    <div class="mockup-body" style="background:#111;padding:0;border-radius:8px;overflow:hidden;position:relative;height:320px;">
+
+      <!-- Full-screen image -->
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#1a1a1a;">
+        <div style="width:160px;height:200px;background:#2d2d2d;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#555;font-size:11px;">작품 이미지</div>
+      </div>
+
+      <!-- ✕ close — top right -->
+      <div style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;">✕</div>
+
+      <!-- ‹ prev — left center -->
+      <div style="position:absolute;left:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;">‹</div>
+
+      <!-- › next — right center -->
+      <div style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;">›</div>
+
+      <!-- −/+ — bottom right -->
+      <div style="position:absolute;bottom:12px;right:10px;display:flex;gap:6px;">
+        <div style="background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:20px;font-weight:300;">−</div>
+        <div style="background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;font-weight:300;">+</div>
+      </div>
+
+      <!-- page indicator — bottom center -->
+      <div style="position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:#666;font-size:11px;">2 / 4</div>
+    </div>
+    <p style="font-size:12px;color:#888;margin-top:8px;">
+      • 이미지가 화면 전체 차지<br>
+      • ✕ 우상단 · ‹ › 양옆 수직 중앙<br>
+      • −/+ 우하단 · 페이지 번호 하단 중앙<br>
+      • "원래 크기" 버튼 없음 (scale=1이므로 불필요)
+    </p>
+  </div>
+
+  <!-- Right: Zoomed state -->
+  <div class="mockup">
+    <div class="mockup-header">② 확대 중 (scale > 1)</div>
+    <div class="mockup-body" style="background:#111;padding:0;border-radius:8px;overflow:hidden;position:relative;height:320px;">
+
+      <!-- Full-screen image (zoomed) -->
+      <div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#1a1a1a;overflow:hidden;">
+        <div style="width:280px;height:340px;background:#2d2d2d;border-radius:4px;display:flex;align-items:center;justify-content:center;color:#555;font-size:11px;">작품 일부 (확대됨)</div>
+      </div>
+
+      <!-- ✕ close — top right -->
+      <div style="position:absolute;top:10px;right:10px;background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:16px;">✕</div>
+
+      <!-- scale badge + 원래 크기 — top left -->
+      <div style="position:absolute;top:12px;left:10px;display:flex;align-items:center;gap:6px;">
+        <span style="background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);color:#fff;font-size:11px;padding:4px 8px;border-radius:6px;">×2.5</span>
+        <div style="background:rgba(0,0,0,0.6);backdrop-filter:blur(4px);border-radius:16px;padding:5px 12px;color:#fff;font-size:12px;cursor:pointer;">원래 크기</div>
+      </div>
+
+      <!-- ‹ › hidden when zoomed -->
+      <div style="position:absolute;left:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.2);border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#333;font-size:20px;">‹</div>
+      <div style="position:absolute;right:8px;top:50%;transform:translateY(-50%);background:rgba(0,0,0,0.2);border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#333;font-size:20px;">›</div>
+
+      <!-- −/+ — bottom right -->
+      <div style="position:absolute;bottom:12px;right:10px;display:flex;gap:6px;">
+        <div style="background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;font-weight:300;">−</div>
+        <div style="background:rgba(0,0,0,0.55);backdrop-filter:blur(4px);border-radius:50%;width:40px;height:40px;display:flex;align-items:center;justify-content:center;color:#fff;font-size:20px;font-weight:300;">+</div>
+      </div>
+
+      <!-- drag hint -->
+      <div style="position:absolute;bottom:16px;left:50%;transform:translateX(-50%);color:#555;font-size:10px;background:rgba(0,0,0,0.5);padding:2px 8px;border-radius:8px;">드래그로 이동</div>
+    </div>
+    <p style="font-size:12px;color:#888;margin-top:8px;">
+      • ×2.5 배율 + "원래 크기" 버튼 좌상단 등장<br>
+      • ‹ › 화살표 흐리게(비활성) — 스와이프도 비활성<br>
+      • 더블탭으로 즉시 1배 복귀<br>
+      • 드래그로 이미지 이동
+    </p>
+  </div>
+
+</div>
+
+<div class="section" style="margin-top:20px;">
+  <h3>작품명 / 작가 정보는 어떻게 할까요?</h3>
+  <div class="options">
+    <div class="option" data-choice="no-info" onclick="toggleSelect(this)">
+      <div class="letter">A</div>
+      <div class="content">
+        <h3>표시 안 함</h3>
+        <p>버튼만. 이미지 감상에 집중. 뒤로 나가면 모달에서 정보 확인.</p>
+      </div>
+    </div>
+    <div class="option" data-choice="fade-info" onclick="toggleSelect(this)">
+      <div class="letter">B</div>
+      <div class="content">
+        <h3>하단에 반투명 오버레이로 표시</h3>
+        <p>작가명 + 작품명을 이미지 위 하단에 흐릿하게 올림. 탭 시 사라짐(토글).</p>
+      </div>
+    </div>
+  </div>
+</div>

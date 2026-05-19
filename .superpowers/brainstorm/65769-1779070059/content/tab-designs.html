@@ -1,0 +1,92 @@
+<h2>기획전 · Pick 탭 — 전시 맥락에서의 재설계</h2>
+<p class="subtitle">이벤트에서 가져온 UI를 그대로 쓰면 어색한 이유와 대안</p>
+
+<!-- 기획전 섹션 -->
+<div class="section">
+  <h3>기획전 탭</h3>
+  <p class="subtitle">현재 문제: 배너 클릭 → 외부 pageUrl로 이탈. 전시 탭 안인데 앱 밖으로 나감</p>
+
+  <div class="options">
+    <div class="option" data-choice="curation-a" onclick="toggleSelect(this)">
+      <div class="letter">A</div>
+      <div class="content">
+        <h3>배너 카드 → 앱 내 기획전 상세</h3>
+        <p>현재 배너 레이아웃 유지. 단 클릭 시 외부 링크 대신 앱 내 기획전 상세 화면(USR-CUR-01)으로 이동. 기획전 상세에서 선정 작품들을 그리드로 감상</p>
+        <div style="margin-top:10px;background:#f9f9f9;border-radius:8px;padding:10px;font-size:11px;">
+          <div style="height:60px;background:#ddd;border-radius:6px;margin-bottom:6px;display:flex;align-items:flex-end;padding:8px;">
+            <span style="background:#333;color:#fff;padding:2px 8px;border-radius:4px;font-size:10px;">봄의 색 · 12작품</span>
+          </div>
+          <div style="color:#666;">클릭 → 기획전 상세 (앱 내)</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="option" data-choice="curation-b" onclick="toggleSelect(this)">
+      <div class="letter">B</div>
+      <div class="content">
+        <h3>기획전 목록 + 인라인 작품 미리보기</h3>
+        <p>기획전마다 대표 작품 3~4장을 탭 안에서 바로 미리보기. "더 보기"로 상세 진입. 스크롤 없이도 각 기획전 분위기를 바로 확인 가능</p>
+        <div style="margin-top:10px;background:#f9f9f9;border-radius:8px;padding:10px;font-size:11px;">
+          <div style="font-weight:600;margin-bottom:4px;">봄의 색</div>
+          <div style="display:flex;gap:4px;margin-bottom:4px;">
+            <div style="width:40px;height:40px;background:#c8d8b0;border-radius:4px;"></div>
+            <div style="width:40px;height:40px;background:#f0c8a0;border-radius:4px;"></div>
+            <div style="width:40px;height:40px;background:#d0c0e0;border-radius:4px;"></div>
+            <div style="width:40px;height:40px;background:#a0c8d8;border-radius:4px;flex-shrink:0;"></div>
+          </div>
+          <div style="color:#888;font-size:10px;">12작품 · 더 보기 →</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- Pick 섹션 -->
+<div class="section">
+  <h3>Pick 탭</h3>
+  <p class="subtitle">현재 문제: 탭인데 콘텐츠 없이 클릭하면 바로 /picks/:id로 리다이렉트만 함</p>
+
+  <div class="options">
+    <div class="option" data-choice="pick-a" onclick="toggleSelect(this)">
+      <div class="letter">A</div>
+      <div class="content">
+        <h3>현재 Pick 작품 피드 바로 노출</h3>
+        <p>이번 주 Pick된 전시들을 탭 안에서 바로 그리드로 보여줌. 세션 상세 페이지 없이 탭 자체가 피드. 하단에 "명예의 전당" 링크 유지</p>
+        <div style="margin-top:10px;background:#f9f9f9;border-radius:8px;padding:10px;">
+          <div style="font-size:10px;color:#888;margin-bottom:6px;">이번 주 Pick · 8작품</div>
+          <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:4px;">
+            <div style="height:50px;background:#e8d8c0;border-radius:4px;"></div>
+            <div style="height:50px;background:#c0d8e8;border-radius:4px;"></div>
+            <div style="height:50px;background:#d8c0e8;border-radius:4px;"></div>
+            <div style="height:50px;background:#c8e8c0;border-radius:4px;"></div>
+          </div>
+          <div style="font-size:10px;color:#888;margin-top:6px;">명예의 전당 →</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="option" data-choice="pick-b" onclick="toggleSelect(this)">
+      <div class="letter">B</div>
+      <div class="content">
+        <h3>세션 카드 유지 + 작품 미리보기</h3>
+        <p>현재 세션 카드(제목·기간)는 유지하되, 카드 안에 대표 작품 3~4장을 인라인으로 미리 보여줌. 클릭하면 세션 상세로. 아카이브 목적으로 지난 세션도 표시</p>
+        <div style="margin-top:10px;background:#f9f9f9;border-radius:8px;padding:10px;">
+          <div style="background:#1a1a1a;color:#d4af37;border-radius:6px;padding:8px;font-size:10px;">
+            <div style="font-weight:700;margin-bottom:4px;">2026년 20주차 Pick</div>
+            <div style="display:flex;gap:3px;margin-bottom:4px;">
+              <div style="width:36px;height:36px;background:#555;border-radius:3px;"></div>
+              <div style="width:36px;height:36px;background:#666;border-radius:3px;"></div>
+              <div style="width:36px;height:36px;background:#777;border-radius:3px;"></div>
+              <div style="width:20px;height:36px;background:#444;border-radius:3px;display:flex;align-items:center;justify-content:center;color:#aaa;font-size:9px;">+5</div>
+            </div>
+            <div style="color:#aaa;font-size:9px;">진행 중 · 8작품</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div style="margin-top:16px;background:#fff8e1;border-radius:8px;padding:12px;font-size:12px;color:#555;">
+  💡 기획전·Pick 모두 "전시 탐색"의 하위 탭이니, 앱 밖으로 나가지 않고 전시 상세 모달까지 이어지는 흐름이 중요합니다.
+</div>

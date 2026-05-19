@@ -1,0 +1,171 @@
+<h2>Pick 상세 페이지 — 축하 분위기 스타일</h2>
+<p class="subtitle">배너 이미지 없이, 배경 자체로 특별함을 표현</p>
+
+<style>
+@keyframes twinkle {
+  0%, 100% { opacity: 0.2; transform: scale(0.8); }
+  50% { opacity: 1; transform: scale(1.2); }
+}
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-4px); }
+}
+@keyframes shimmer {
+  0% { background-position: -200% center; }
+  100% { background-position: 200% center; }
+}
+.star { position: absolute; background: #ffd700; border-radius: 50%; animation: twinkle linear infinite; }
+.float-anim { animation: float 3s ease-in-out infinite; }
+.shimmer-text {
+  background: linear-gradient(90deg, #b8862f, #ffd700, #e8c04a, #ffd700, #b8862f);
+  background-size: 200% auto;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  animation: shimmer 3s linear infinite;
+}
+</style>
+
+<div class="cards">
+
+  <!-- Option A: 별이 반짝이는 밤하늘 -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 0; border-radius: 8px 8px 0 0; overflow: hidden;">
+      <div style="background: linear-gradient(180deg, #0a0a1a 0%, #1a1040 50%, #0d0d2b 100%); padding: 24px 16px 20px; position: relative; min-height: 120px; overflow: hidden;">
+        <!-- 별들 -->
+        <div class="star" style="width:2px;height:2px;top:10%;left:15%;animation-duration:2.1s;animation-delay:0s;"></div>
+        <div class="star" style="width:3px;height:3px;top:20%;left:40%;animation-duration:1.8s;animation-delay:0.3s;"></div>
+        <div class="star" style="width:2px;height:2px;top:8%;left:70%;animation-duration:2.4s;animation-delay:0.6s;"></div>
+        <div class="star" style="width:2px;height:2px;top:35%;left:85%;animation-duration:1.6s;animation-delay:0.2s;"></div>
+        <div class="star" style="width:3px;height:3px;top:50%;left:10%;animation-duration:2.2s;animation-delay:0.8s;"></div>
+        <div class="star" style="width:2px;height:2px;top:15%;left:55%;animation-duration:1.9s;animation-delay:0.4s;"></div>
+        <div class="star" style="width:2px;height:2px;top:60%;left:60%;animation-duration:2.3s;animation-delay:1s;"></div>
+        <div class="star" style="width:3px;height:3px;top:70%;left:30%;animation-duration:1.7s;animation-delay:0.5s;"></div>
+        <!-- 중앙 빛 -->
+        <div style="position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);width:120px;height:120px;background:radial-gradient(circle,rgba(255,215,0,0.12) 0%,transparent 70%);"></div>
+        <!-- 텍스트 -->
+        <div style="position: relative; text-align: center;">
+          <div style="font-size: 11px; color: #ffd700; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 8px;">✦ Proud's Pick ✦</div>
+          <div class="shimmer-text" style="font-size: 22px; font-weight: 900; margin-bottom: 4px;">4월 3주차</div>
+          <div style="font-size: 11px; color: #64748b;">2026.04.14 ~ 04.20 · 8개 전시</div>
+        </div>
+      </div>
+      <!-- 그리드 -->
+      <div style="padding: 12px; background: #0d0d2b;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+          <div style="border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,215,0,0.2);">
+            <div style="height: 52px; background: linear-gradient(135deg, #a8edea, #fed6e3);"></div>
+            <div style="padding: 6px 8px; background: #111827;">
+              <div style="font-size: 10px; font-weight: 600; color: #e2e8f0;">봄날의 기억</div>
+              <div style="font-size: 9px; color: #64748b;">김민서</div>
+            </div>
+          </div>
+          <div style="border-radius: 8px; overflow: hidden; border: 1px solid rgba(255,215,0,0.2);">
+            <div style="height: 52px; background: linear-gradient(135deg, #ffecd2, #fcb69f);"></div>
+            <div style="padding: 6px 8px; background: #111827;">
+              <div style="font-size: 10px; font-weight: 600; color: #e2e8f0;">도시의 오후</div>
+              <div style="font-size: 9px; color: #64748b;">이하준</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — 별빛 밤하늘 + 골드 시머</h3>
+      <p>다크 우주 배경에 별이 반짝임. 제목이 골드 쉬머로 빛남. 전시 카드도 다크톤. 고급스러운 시상식 분위기.</p>
+    </div>
+  </div>
+
+  <!-- Option B: 골드 리본 축제 -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 0; border-radius: 8px 8px 0 0; overflow: hidden;">
+      <div style="background: linear-gradient(135deg, #1c1408 0%, #2d1f00 40%, #1a1200 100%); padding: 24px 16px 20px; position: relative; overflow: hidden; min-height: 120px;">
+        <!-- 골드 광선 효과 -->
+        <div style="position:absolute;top:-20px;left:50%;transform:translateX(-50%);width:2px;height:60%;background:linear-gradient(180deg,rgba(255,215,0,0.6),transparent);box-shadow:0 0 20px rgba(255,215,0,0.3);"></div>
+        <div style="position:absolute;top:-20px;left:40%;width:1px;height:50%;background:linear-gradient(180deg,rgba(255,215,0,0.3),transparent);transform:rotate(-15deg);transform-origin:top;"></div>
+        <div style="position:absolute;top:-20px;left:60%;width:1px;height:50%;background:linear-gradient(180deg,rgba(255,215,0,0.3),transparent);transform:rotate(15deg);transform-origin:top;"></div>
+        <!-- 트로피 아이콘 -->
+        <div class="float-anim" style="position:relative;text-align:center;margin-bottom:8px;">
+          <div style="font-size: 28px;">🏆</div>
+        </div>
+        <div style="position: relative; text-align: center;">
+          <div style="font-size: 10px; color: #b8862f; letter-spacing: 2px; text-transform: uppercase; margin-bottom: 6px;">Proud's Pick</div>
+          <div style="font-size: 20px; font-weight: 900; color: #ffd700; margin-bottom: 4px;">4월 3주차</div>
+          <div style="font-size: 11px; color: #78716c;">2026.04.14 ~ 04.20 · 8개 전시</div>
+        </div>
+      </div>
+      <!-- 그리드 (밝은 배경) -->
+      <div style="padding: 12px; background: #fffbf0;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+          <div style="border-radius: 8px; overflow: hidden; border: 1px solid #e8c04a;">
+            <div style="height: 52px; background: linear-gradient(135deg, #a8edea, #fed6e3);"></div>
+            <div style="padding: 6px 8px; background: white;">
+              <div style="font-size: 10px; font-weight: 600;">봄날의 기억</div>
+              <div style="font-size: 9px; color: #6c757d;">김민서</div>
+            </div>
+          </div>
+          <div style="border-radius: 8px; overflow: hidden; border: 1px solid #e8c04a;">
+            <div style="height: 52px; background: linear-gradient(135deg, #ffecd2, #fcb69f);"></div>
+            <div style="padding: 6px 8px; background: white;">
+              <div style="font-size: 10px; font-weight: 600;">도시의 오후</div>
+              <div style="font-size: 9px; color: #6c757d;">이하준</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — 트로피 + 골드 광선</h3>
+      <p>트로피 이모지가 둥실. 위에서 골드 빛이 방사. 전시 카드는 따뜻한 크림 배경 + 골드 테두리.</p>
+    </div>
+  </div>
+
+  <!-- Option C: 축제 콘페티 -->
+  <div class="card" data-choice="c" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 0; border-radius: 8px 8px 0 0; overflow: hidden;">
+      <div style="background: linear-gradient(135deg, #fdf6e3 0%, #fef9f0 100%); padding: 24px 16px 20px; position: relative; overflow: hidden; min-height: 120px; border-bottom: 3px solid #b8862f;">
+        <!-- 콘페티 점들 -->
+        <div style="position:absolute;top:8px;left:12%;width:6px;height:6px;background:#ffd700;border-radius:1px;transform:rotate(25deg);"></div>
+        <div style="position:absolute;top:15px;left:35%;width:4px;height:4px;background:#b8862f;border-radius:50%;"></div>
+        <div style="position:absolute;top:10px;left:60%;width:6px;height:6px;background:#ffd700;border-radius:1px;transform:rotate(-20deg);"></div>
+        <div style="position:absolute;top:20px;left:80%;width:4px;height:4px;background:#e8c04a;border-radius:50%;"></div>
+        <div style="position:absolute;top:30px;left:5%;width:5px;height:5px;background:#b8862f;border-radius:1px;transform:rotate(45deg);"></div>
+        <div style="position:absolute;top:25px;left:90%;width:6px;height:6px;background:#ffd700;border-radius:1px;transform:rotate(10deg);"></div>
+        <!-- 가로 리본 라인 -->
+        <div style="position:absolute;top:0;left:0;right:0;height:4px;background:linear-gradient(90deg,#b8862f,#ffd700,#e8c04a,#ffd700,#b8862f);"></div>
+        <!-- 텍스트 -->
+        <div style="position: relative; text-align: center;">
+          <div style="font-size: 20px; margin-bottom: 6px;">🎉</div>
+          <div style="font-size: 11px; color: #b8862f; letter-spacing: 1.5px; font-weight: 700; text-transform: uppercase; margin-bottom: 6px;">Proud's Pick</div>
+          <div style="font-size: 20px; font-weight: 900; color: #1a1200; margin-bottom: 4px;">4월 3주차</div>
+          <div style="font-size: 11px; color: #92400e;">2026.04.14 ~ 04.20 · 8개 전시</div>
+        </div>
+      </div>
+      <!-- 그리드 -->
+      <div style="padding: 12px; background: white;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+          <div style="border-radius: 8px; overflow: hidden; border: 1px solid #e9ecef;">
+            <div style="height: 52px; background: linear-gradient(135deg, #a8edea, #fed6e3);"></div>
+            <div style="padding: 6px 8px;">
+              <div style="font-size: 10px; font-weight: 600;">봄날의 기억</div>
+              <div style="font-size: 9px; color: #6c757d;">김민서</div>
+            </div>
+          </div>
+          <div style="border-radius: 8px; overflow: hidden; border: 1px solid #e9ecef;">
+            <div style="height: 52px; background: linear-gradient(135deg, #ffecd2, #fcb69f);"></div>
+            <div style="padding: 6px 8px;">
+              <div style="font-size: 10px; font-weight: 600;">도시의 오후</div>
+              <div style="font-size: 9px; color: #6c757d;">이하준</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>C — 골드 콘페티 + 밝은 톤</h3>
+      <p>밝은 크림 배경에 골드 콘페티 장식. 가장 가볍고 친근한 축제 느낌. 전시 카드는 일반 흰 배경.</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top: 8px;">클릭해서 선택하거나 터미널에서 의견 주세요.</p>

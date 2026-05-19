@@ -1,0 +1,95 @@
+<h2>Pick 상세 페이지 — /picks/:id</h2>
+<p class="subtitle">"4월 3주차 Proud's Pick" 선정 전시들을 어떻게 보여줄까요?</p>
+
+<div class="cards">
+
+  <!-- Option A: Hero + 전시 카드 그리드 -->
+  <div class="card" data-choice="a" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 0; overflow: hidden; border-radius: 8px 8px 0 0;">
+      <!-- Hero -->
+      <div style="background: linear-gradient(160deg, #1a1a2e 60%, #2d3561); padding: 20px 16px 16px; color: white;">
+        <div style="font-size: 10px; color: #ffd700; letter-spacing: 1.5px; text-transform: uppercase; margin-bottom: 6px;">★ Proud's Pick</div>
+        <div style="font-size: 16px; font-weight: 800; margin-bottom: 4px;">4월 3주차</div>
+        <div style="font-size: 11px; color: #94a3b8;">2026.04.14 ~ 04.20 · 8개 전시 선정</div>
+        <!-- 배너 이미지 있으면 우측에 표시 -->
+        <div style="margin-top: 12px; background: rgba(255,255,255,0.08); border-radius: 8px; height: 60px; display: flex; align-items: center; justify-content: center;">
+          <span style="font-size: 10px; color: #64748b;">배너 이미지 (어드민에서 설정)</span>
+        </div>
+      </div>
+      <!-- 전시 그리드 -->
+      <div style="padding: 12px; background: #f8f9fa;">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 6px;">
+          <div style="background: white; border-radius: 8px; overflow: hidden; border: 1px solid #e9ecef;">
+            <div style="height: 52px; background: linear-gradient(135deg, #a8edea, #fed6e3);"></div>
+            <div style="padding: 6px 8px;">
+              <div style="font-size: 10px; font-weight: 600; color: #212529;">봄날의 기억</div>
+              <div style="font-size: 9px; color: #6c757d;">김민서 작가</div>
+            </div>
+          </div>
+          <div style="background: white; border-radius: 8px; overflow: hidden; border: 1px solid #e9ecef;">
+            <div style="height: 52px; background: linear-gradient(135deg, #ffecd2, #fcb69f);"></div>
+            <div style="padding: 6px 8px;">
+              <div style="font-size: 10px; font-weight: 600; color: #212529;">도시의 오후</div>
+              <div style="font-size: 9px; color: #6c757d;">이하준 작가</div>
+            </div>
+          </div>
+          <div style="background: white; border-radius: 8px; overflow: hidden; border: 1px solid #e9ecef;">
+            <div style="height: 52px; background: linear-gradient(135deg, #a1c4fd, #c2e9fb);"></div>
+            <div style="padding: 6px 8px;">
+              <div style="font-size: 10px; font-weight: 600; color: #212529;">빛의 파장</div>
+              <div style="font-size: 9px; color: #6c757d;">박유나 작가</div>
+            </div>
+          </div>
+          <div style="background: white; border-radius: 8px; overflow: hidden; border: 1px solid #e9ecef; display: flex; align-items: center; justify-content: center;">
+            <div style="font-size: 10px; color: #adb5bd;">+5개 더</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>A — 다크 히어로 + 전시 카드 그리드</h3>
+      <p>세션 정보를 다크 헤더로 강조. 아래 선정 전시 카드 그리드. 클릭 시 전시 상세 모달.</p>
+    </div>
+  </div>
+
+  <!-- Option B: 에디토리얼 스타일 -->
+  <div class="card" data-choice="b" onclick="toggleSelect(this)">
+    <div class="card-image" style="padding: 0; overflow: hidden; border-radius: 8px 8px 0 0;">
+      <!-- 배너 이미지 풀 히어로 -->
+      <div style="height: 80px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); position: relative; display: flex; align-items: flex-end;">
+        <div style="position: absolute; inset: 0; background: linear-gradient(to top, rgba(0,0,0,0.7), transparent);"></div>
+        <div style="position: relative; padding: 12px; color: white;">
+          <div style="font-size: 9px; color: #ffd700; letter-spacing: 1px; margin-bottom: 2px;">★ PROUD'S PICK</div>
+          <div style="font-size: 14px; font-weight: 800;">4월 3주차</div>
+        </div>
+      </div>
+      <!-- 전시 목록 — 세로 스크롤 카드 -->
+      <div style="padding: 10px; background: white;">
+        <div style="display: flex; gap: 8px; margin-bottom: 6px; align-items: center;">
+          <div style="width: 44px; height: 44px; background: linear-gradient(135deg, #a8edea, #fed6e3); border-radius: 6px; flex-shrink: 0;"></div>
+          <div style="flex: 1;">
+            <div style="font-size: 11px; font-weight: 700;">봄날의 기억</div>
+            <div style="font-size: 10px; color: #6c757d;">김민서 · 수채화 3점</div>
+          </div>
+          <div style="font-size: 10px; color: #7c3aed; font-weight: 600;">Pick ★</div>
+        </div>
+        <div style="display: flex; gap: 8px; margin-bottom: 6px; align-items: center;">
+          <div style="width: 44px; height: 44px; background: linear-gradient(135deg, #ffecd2, #fcb69f); border-radius: 6px; flex-shrink: 0;"></div>
+          <div style="flex: 1;">
+            <div style="font-size: 11px; font-weight: 700;">도시의 오후</div>
+            <div style="font-size: 10px; color: #6c757d;">이하준 · 디지털 드로잉 5점</div>
+          </div>
+          <div style="font-size: 10px; color: #7c3aed; font-weight: 600;">Pick ★</div>
+        </div>
+        <div style="text-align: center; font-size: 10px; color: #adb5bd; padding: 4px;">+6개 더 보기</div>
+      </div>
+    </div>
+    <div class="card-body">
+      <h3>B — 배너 풀 히어로 + 전시 목록</h3>
+      <p>배너 이미지로 분위기 설정. 선정 전시는 목록형. 작가명·작품 수 정보 노출.</p>
+    </div>
+  </div>
+
+</div>
+
+<p class="subtitle" style="margin-top: 8px;">클릭해서 선택하거나 터미널에서 의견 주세요.</p>

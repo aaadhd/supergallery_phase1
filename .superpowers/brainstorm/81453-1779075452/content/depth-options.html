@@ -1,0 +1,85 @@
+<h2>뎁스 줄이기 — 기획전 · Pick 탭</h2>
+<p class="subtitle">상세 페이지 없이 탭 안에서 바로 작품까지 닿는 구조</p>
+
+<div class="section">
+  <h3>기획전 탭</h3>
+  <p class="subtitle">기획전 상세 페이지를 없애고, 탭 안에서 기획전별 섹션으로 바로 보여주기</p>
+
+  <div class="options">
+    <div class="option" data-choice="cur-deep" onclick="toggleSelect(this)">
+      <div class="letter">현재</div>
+      <div class="content">
+        <h3>기획전 배너 → 상세 페이지 → 작품</h3>
+        <p style="color:#e44;">뎁스: 탭 → 배너 클릭 → 기획전 상세 → 작품 클릭 → 전시 모달 (4단계)</p>
+        <div style="display:flex;align-items:center;gap:6px;margin-top:8px;font-size:11px;color:#999;">
+          <span style="background:#eee;padding:2px 8px;border-radius:4px;">기획전 탭</span>
+          <span>→</span>
+          <span style="background:#eee;padding:2px 8px;border-radius:4px;">배너</span>
+          <span>→</span>
+          <span style="background:#fcc;padding:2px 8px;border-radius:4px;">상세 페이지</span>
+          <span>→</span>
+          <span style="background:#eee;padding:2px 8px;border-radius:4px;">전시 모달</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="option" data-choice="cur-flat" onclick="toggleSelect(this)">
+      <div class="letter">추천</div>
+      <div class="content">
+        <h3>기획전별 섹션 + 인라인 작품 가로 스크롤</h3>
+        <p style="color:#2a2;">뎁스: 탭 → 작품 클릭 → 전시 모달 (2단계). 상세 페이지 없음</p>
+        <div style="margin-top:10px;background:#f9f9f9;border-radius:8px;padding:10px;font-size:11px;">
+          <div style="font-weight:700;margin-bottom:2px;">봄의 색 · 12작품</div>
+          <div style="font-size:10px;color:#888;margin-bottom:6px;">2026.04 ~ 2026.05</div>
+          <div style="display:flex;gap:6px;overflow:hidden;">
+            <div style="min-width:64px;height:64px;background:#c8d8b0;border-radius:6px;flex-shrink:0;"></div>
+            <div style="min-width:64px;height:64px;background:#f0c8a0;border-radius:6px;flex-shrink:0;"></div>
+            <div style="min-width:64px;height:64px;background:#d0c0e0;border-radius:6px;flex-shrink:0;"></div>
+            <div style="min-width:32px;height:64px;background:#e8e8e8;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#aaa;">+9</div>
+          </div>
+          <div style="border-top:1px solid #eee;margin-top:10px;padding-top:10px;">
+            <div style="font-weight:700;margin-bottom:2px;">디지털과 수묵 · 8작품</div>
+            <div style="font-size:10px;color:#888;margin-bottom:6px;">2026.03 ~ 2026.04</div>
+            <div style="display:flex;gap:6px;overflow:hidden;">
+              <div style="min-width:64px;height:64px;background:#c0c8d8;border-radius:6px;flex-shrink:0;"></div>
+              <div style="min-width:64px;height:64px;background:#d8c8c0;border-radius:6px;flex-shrink:0;"></div>
+              <div style="min-width:32px;height:64px;background:#e8e8e8;border-radius:6px;flex-shrink:0;display:flex;align-items:center;justify-content:center;font-size:10px;color:#aaa;">+6</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<div class="section">
+  <h3>Pick 탭</h3>
+  <p class="subtitle">이미 옵션 A(바로 피드)로 뎁스 2단계 — 추가 변경 없이 OK</p>
+
+  <div style="background:#f9f9f9;border-radius:8px;padding:12px;">
+    <div style="font-size:11px;color:#888;margin-bottom:8px;">이번 주 Pick · 8작품</div>
+    <div style="display:grid;grid-template-columns:repeat(2,1fr);gap:6px;margin-bottom:8px;">
+      <div style="height:70px;background:#e8d8c0;border-radius:6px;position:relative;">
+        <span style="position:absolute;top:4px;left:4px;background:#d4af37;color:#000;font-size:8px;font-weight:700;padding:1px 5px;border-radius:3px;">PICK</span>
+      </div>
+      <div style="height:70px;background:#c0d8e8;border-radius:6px;position:relative;">
+        <span style="position:absolute;top:4px;left:4px;background:#d4af37;color:#000;font-size:8px;font-weight:700;padding:1px 5px;border-radius:3px;">PICK</span>
+      </div>
+      <div style="height:70px;background:#d8c0e8;border-radius:6px;position:relative;">
+        <span style="position:absolute;top:4px;left:4px;background:#d4af37;color:#000;font-size:8px;font-weight:700;padding:1px 5px;border-radius:3px;">PICK</span>
+      </div>
+      <div style="height:70px;background:#c8e8c0;border-radius:6px;position:relative;">
+        <span style="position:absolute;top:4px;left:4px;background:#d4af37;color:#000;font-size:8px;font-weight:700;padding:1px 5px;border-radius:3px;">PICK</span>
+      </div>
+    </div>
+    <div style="text-align:center;font-size:11px;color:#888;">명예의 전당 보기 →</div>
+  </div>
+  <p style="font-size:12px;color:#555;margin-top:8px;">탭 → 작품 클릭 → 전시 모달 (2단계). 뎁스 문제 없음</p>
+</div>
+
+<div style="background:#f0f4ff;border-radius:8px;padding:12px;font-size:12px;line-height:1.8;">
+  <strong>정리</strong><br>
+  · 기획전: 섹션형 인라인 구조로 상세 페이지 제거 → 뎁스 동일하게<br>
+  · Pick: 바로 피드 (옵션 A) → 뎁스 해결<br>
+  · 둘러보기 탭과 같은 2단계 구조로 통일
+</div>
