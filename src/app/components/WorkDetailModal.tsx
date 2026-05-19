@@ -496,8 +496,6 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                       />
                     </div>
                   </div>
-                  {/* Image index indicator — 우상단(원래 자리) */}
-
                   {/* 이미지 하단: 작가 + 작품명 (가로 한줄) — 커버 슬라이드는 작가 오버레이 생략 */}
                   {!isCoverSlide && (() => {
                     const ia = work.imageArtists?.[workImageIndex];

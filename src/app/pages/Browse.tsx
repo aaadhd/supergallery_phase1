@@ -59,7 +59,7 @@ function EndedCurationsSection({
   }, [worksMap]);
   return (
     <section className="mt-14 sm:mt-16">
-      <h2 className="text-sm font-semibold text-muted-foreground mb-5">지난 기획전</h2>
+      <h2 className="text-sm font-semibold text-muted-foreground mb-5">{t('events.curationEnded')}</h2>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-5">
         {visible.map((c) => {
           const artistNames = c.bannerOverlay ? getArtistNames(c) : [];
@@ -108,7 +108,7 @@ function EndedCurationsSection({
           onClick={() => setShowAll(true)}
           className="mt-5 text-sm text-muted-foreground lg:hover:text-foreground transition-colors min-h-[44px]"
         >
-          지난 기획전 더 보기 →
+          {t('events.curationEndedShowMore')}
         </button>
       )}
     </section>

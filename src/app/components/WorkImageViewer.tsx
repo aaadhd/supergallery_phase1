@@ -203,7 +203,6 @@ export default function WorkImageViewer({
         <X className="h-5 w-5" />
       </button>
 
-
       {/* 이미지 영역 */}
       <div
         ref={containerRef}
