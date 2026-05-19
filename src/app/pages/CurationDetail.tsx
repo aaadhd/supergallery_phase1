@@ -86,6 +86,7 @@ export default function CurationDetail() {
               src={curation.bannerImageUrl}
               alt={curation.title}
               className="w-full h-full object-cover"
+              loading="lazy"
               draggable={false}
             />
           </div>
