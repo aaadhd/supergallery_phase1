@@ -168,23 +168,23 @@ export function Step1Images({
             {uploadType === 'group' ? t('upload.blockerGroupMinImages') : t('upload.blockerImage')}
           </p>
         )}
-        <div className="flex gap-2 flex-wrap">
-          <Button variant="outline" onClick={onSaveDraft} className="flex-1 min-h-[44px]">
-            {t('upload.saveDraft')}
-          </Button>
-          {hasImages && (
+        {hasImages && (
+          <div className="flex gap-2 flex-wrap">
+            <Button variant="outline" onClick={onSaveDraft} className="flex-1 min-h-[44px]">
+              {t('upload.saveDraft')}
+            </Button>
             <Button variant="ghost" onClick={onPreview} className="flex-1 min-h-[44px] gap-1">
               <Monitor className="h-4 w-4" />
               {t('upload.screenPreview')}
             </Button>
-          )}
-          {validContents.length >= 2 && (
-            <Button variant="ghost" onClick={() => setReorderMode(true)} className="flex-1 min-h-[44px] gap-1">
-              <ArrowUpDown className="h-4 w-4" />
-              {t('upload.reorderGridBtn')}
-            </Button>
-          )}
-        </div>
+            {validContents.length >= 2 && (
+              <Button variant="ghost" onClick={() => setReorderMode(true)} className="flex-1 min-h-[44px] gap-1">
+                <ArrowUpDown className="h-4 w-4" />
+                {t('upload.reorderGridBtn')}
+              </Button>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );
