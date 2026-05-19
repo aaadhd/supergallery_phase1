@@ -44,6 +44,7 @@ import { openConfirm } from '../components/ConfirmDialog';
 import { curationStore } from '../utils/curationStore';
 import { containsProfanity } from '../utils/profanityFilter';
 import { WorkDetailModal } from '../components/WorkDetailModal';
+import WorkImageViewer, { type ViewerImage } from '../components/WorkImageViewer';
 import { hydrateGroupWorks } from '../groupData';
 import { isWorkPublic, isWorkHidden } from '../utils/workVisibility';
 import { InviteShareButton } from '../components/InviteShareButton';
@@ -94,7 +95,6 @@ export default function Profile() {
   const loginPrompt = useLoginPrompt();
   const [detailWorkId, setDetailWorkId] = useState<string | null>(null);
   const [worksViewerIndex, setWorksViewerIndex] = useState<number | null>(null);
-  const swipeTouchStartX = useRef<number | null>(null);
   const [profileTab, setProfileTab] = useState<ProfileTabValue>('exhibition');
 
   /**
@@ -382,20 +382,7 @@ export default function Profile() {
     });
   }, [artistWorks, taggedWorks, profileArtist.id, imageUrls, t]);
 
-  // 작품 관리 뷰어 키보드 네비게이션
-  useEffect(() => {
-    if (worksViewerIndex === null) return;
-    const total = worksManageFlatImages.length;
-    const handler = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') setWorksViewerIndex(null);
-      if (e.key === 'ArrowLeft') setWorksViewerIndex(i => i !== null && i > 0 ? i - 1 : i);
-      if (e.key === 'ArrowRight') setWorksViewerIndex(i => i !== null && i < total - 1 ? i + 1 : i);
-    };
-    window.addEventListener('keydown', handler);
-    return () => window.removeEventListener('keydown', handler);
-  }, [worksViewerIndex, worksManageFlatImages.length]);
-
-  const allowedProfileTabs = useMemo((): ProfileTabValue[] => {
+const allowedProfileTabs = useMemo((): ProfileTabValue[] => {
     const tabs: ProfileTabValue[] = ['exhibition'];
     if (isOwnProfile) tabs.push('works', 'likes', 'saved', 'drafts');
     return tabs;
@@ -1481,100 +1468,25 @@ export default function Profile() {
         />
       )}
 
-      {/* 작품 관리 전용 이미지 뷰어 */}
-      {worksViewerIndex !== null && worksManageFlatImages.length > 0 && (() => {
-        const fi = worksManageFlatImages[worksViewerIndex];
-        if (!fi) return null;
-        const hasPrev = worksViewerIndex > 0;
-        const hasNext = worksViewerIndex < worksManageFlatImages.length - 1;
-        const viewerArtist = (() => {
-          const ias = fi.work.imageArtists;
-          if (ias && ias[fi.imgIndex]?.type === 'member' && ias[fi.imgIndex].memberId) {
-            const found = artists.find(a => a.id === ias[fi.imgIndex].memberId);
-            if (found) return found;
-          }
-          return fi.work.artist;
-        })();
-        return (
-          <div
-            className="fixed inset-0 z-[9999] flex items-center justify-center"
-            onClick={() => setWorksViewerIndex(null)}
-          >
-            {/* 배경 딤 */}
-            <div className="absolute inset-0 bg-black/80" />
-
-            {/* 모달 컨테이너 — WorkDetailModal과 동일 폭 */}
-            <div
-              className="relative z-10 w-full max-w-[1280px] mx-auto h-[100dvh] sm:h-[96vh] sm:my-[2vh] flex flex-col bg-zinc-900 sm:rounded-2xl overflow-hidden"
-              onClick={(e) => e.stopPropagation()}
-            >
-              {/* 상단 바: 닫기만 (작품 단위 공유 기능 제거 — Policy §10·USR-PRF-14) */}
-              <div className="flex items-center justify-end gap-2 px-4 py-3">
-                <button
-                  type="button"
-                  className="flex items-center justify-center h-10 w-10 rounded-full bg-white/10 text-white lg:hover:bg-white/20"
-                  onClick={() => setWorksViewerIndex(null)}
-                >
-                  <X className="h-5 w-5" />
-                </button>
-              </div>
-
-              {/* 이미지 영역 */}
-              <div
-                className="relative flex-1 flex items-center justify-center px-16"
-                onTouchStart={(e) => { swipeTouchStartX.current = e.touches[0].clientX; }}
-                onTouchEnd={(e) => {
-                  if (swipeTouchStartX.current === null) return;
-                  const dx = e.changedTouches[0].clientX - swipeTouchStartX.current;
-                  swipeTouchStartX.current = null;
-                  if (Math.abs(dx) < 40) return;
-                  if (dx < 0 && hasNext) setWorksViewerIndex(i => i !== null ? i + 1 : i);
-                  if (dx > 0 && hasPrev) setWorksViewerIndex(i => i !== null ? i - 1 : i);
-                }}
-              >
-                {/* 이전 버튼 */}
-                {hasPrev && (
-                  <button
-                    type="button"
-                    className="absolute left-3 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center h-11 w-11 rounded-full bg-white/10 text-white lg:hover:bg-white/20"
-                    onClick={() => setWorksViewerIndex(worksViewerIndex - 1)}
-                  >
-                    <ChevronLeft className="h-6 w-6" />
-                  </button>
-                )}
-
-                {/* 다음 버튼 */}
-                {hasNext && (
-                  <button
-                    type="button"
-                    className="absolute right-3 top-1/2 -translate-y-1/2 z-10 flex items-center justify-center h-11 w-11 rounded-full bg-white/10 text-white lg:hover:bg-white/20"
-                    onClick={() => setWorksViewerIndex(worksViewerIndex + 1)}
-                  >
-                    <ChevronRight className="h-6 w-6" />
-                  </button>
-                )}
-
-                <img
-                  src={fi.imgSrc}
-                  alt={fi.pieceTitle}
-                  className="max-w-full max-h-full object-contain rounded"
-                />
-              </div>
-
-              {/* 하단: 아바타+이름 · 제목 */}
-              <div className="px-6 pb-5 pt-3">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
-                    <img src={viewerArtist.avatar} alt="" className="h-8 w-8 rounded-full object-cover" />
-                    <span className="text-white text-sm font-medium">{viewerArtist.name}</span>
-                  </div>
-                  <p className="text-white text-base font-semibold">{fi.pieceTitle}</p>
-                </div>
-              </div>
-            </div>
-          </div>
-        );
-      })()}
+      {worksViewerIndex !== null && (
+        <WorkImageViewer
+          images={worksManageFlatImages.map((fi): ViewerImage => {
+            const ias = fi.work.imageArtists;
+            const ia = ias?.[fi.imgIndex];
+            const artist = (ia?.type === 'member' && ia.memberId)
+              ? artists.find(a => a.id === ia.memberId) ?? fi.work.artist
+              : fi.work.artist;
+            return {
+              src: fi.imgSrc,
+              title: fi.pieceTitle,
+              artist: { name: artist?.name ?? '', avatar: artist?.avatar },
+            };
+          })}
+          initialIndex={worksViewerIndex}
+          open
+          onClose={() => setWorksViewerIndex(null)}
+        />
+      )}
 
       {rejectedModalWork && (() => {
         return (
