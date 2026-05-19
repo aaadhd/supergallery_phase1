@@ -88,11 +88,11 @@ export function CurationCarousel({ curations }: Props) {
               <>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/60 via-black/[0.08] to-transparent pointer-events-none" />
                 <div className="absolute bottom-0 left-0 right-0 px-7 py-6 pointer-events-none">
-                  <p className="text-white font-bold text-3xl leading-tight mb-0.5">{c.title}</p>
-                  {c.subtitle && (
-                    <p className="text-white/55 text-sm leading-snug">{c.subtitle}</p>
-                  )}
-                  <div className="mt-2.5 flex flex-col gap-0.5">
+                  <div className="flex flex-col space-y-1.5">
+                    <p className="text-white font-bold text-3xl leading-tight">{c.title}</p>
+                    {c.subtitle && (
+                      <p className="text-white/55 text-sm leading-snug">{c.subtitle}</p>
+                    )}
                     {artistNames.length > 0 && (
                       <p className="text-white/40 text-xs tracking-wide">{artistNames.join(' · ')}</p>
                     )}

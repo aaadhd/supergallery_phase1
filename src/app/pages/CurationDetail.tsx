@@ -109,11 +109,11 @@ export default function CurationDetail() {
               <>
                 <div className="absolute inset-0 bg-gradient-to-t from-black/55 via-black/[0.06] to-transparent pointer-events-none" />
                 <div className="absolute bottom-0 left-0 right-0 px-6 py-5 pointer-events-none">
-                  <p className="text-white font-bold text-2xl leading-tight mb-0.5">{curation.title}</p>
-                  {curation.subtitle && (
-                    <p className="text-white/55 text-xs leading-snug">{curation.subtitle}</p>
-                  )}
-                  <div className="mt-2 flex flex-col gap-0.5">
+                  <div className="flex flex-col space-y-1.5">
+                    <p className="text-white font-bold text-2xl leading-tight">{curation.title}</p>
+                    {curation.subtitle && (
+                      <p className="text-white/55 text-xs leading-snug">{curation.subtitle}</p>
+                    )}
                     {bannerArtistNames.length > 0 && (
                       <p className="text-white/40 text-[11px] tracking-wide">{bannerArtistNames.join(' · ')}</p>
                     )}
