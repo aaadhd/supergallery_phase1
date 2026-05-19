@@ -17,7 +17,7 @@ import { CopyrightProtectedImage } from './work';
 import { toast } from 'sonner';
 import { LoginPromptModal } from './LoginPromptModal';
 import { ReportModal } from './ReportModal';
-import DeepZoomViewer from './DeepZoomViewer';
+import WorkImageViewer, { type ViewerImage } from './WorkImageViewer';
 import { Button } from './ui/button';
 import {
   displayExhibitionTitle,
@@ -50,9 +50,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
   const [isLiked, setIsLiked] = useState(() => userInteractionStore.isLiked(workId));
   const [isSaved, setIsSaved] = useState(() => userInteractionStore.isSaved(workId));
   const follows = useFollowStore();
-  const [isZoomed, setIsZoomed] = useState(false);
-  const [zoomOrigin, setZoomOrigin] = useState('center center');
-  const [deepZoomSrc, setDeepZoomSrc] = useState<string | null>(null);
+  const [viewerIndex, setViewerIndex] = useState<number | null>(null);
   const [showLoginPrompt, setShowLoginPrompt] = useState(false);
   const [loginPromptAction, setLoginPromptAction] = useState<import('./LoginPromptModal').LoginPromptAction>('general');
   const [showReport, setShowReport] = useState(false);
@@ -79,7 +77,6 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
   useEffect(() => {
     setIsLiked(userInteractionStore.isLiked(workId));
     setIsSaved(userInteractionStore.isSaved(workId));
-    setIsZoomed(false);
     if (scrollContainerRef.current) scrollContainerRef.current.scrollTop = 0;
   }, [workId]);
 
@@ -211,21 +208,6 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
     return { relatedWorks: out, hasMore: false };
   })();
 
-  // Simple click-to-zoom toggle
-  const handleZoomClick = (e: React.MouseEvent<HTMLDivElement>) => {
-    e.stopPropagation();
-    if (isZoomed) {
-      setIsZoomed(false);
-      setZoomOrigin('center center');
-    } else {
-      const rect = e.currentTarget.getBoundingClientRect();
-      const x = ((e.clientX - rect.left) / rect.width) * 100;
-      const y = ((e.clientY - rect.top) / rect.height) * 100;
-      setZoomOrigin(`${x}% ${y}%`);
-      setIsZoomed(true);
-    }
-  };
-
   const handleLike = () => {
     if (isWithdrawnArtist) return; // Policy §4.2: 탈퇴 작가 작품 인터랙션 차단
     const wasLiked = userInteractionStore.isLiked(workId);
@@ -316,9 +298,25 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
       exit={{ opacity: 0 }}
       transition={{ duration: 0.22, ease: [0.25, 0.46, 0.45, 0.94] }}
     >
-      {/* Deep Zoom Viewer */}
-      {deepZoomSrc && (
-        <DeepZoomViewer src={deepZoomSrc} alt={headline} open onClose={() => setDeepZoomSrc(null)} />
+      {/* Work Image Viewer */}
+      {viewerIndex !== null && (
+        <WorkImageViewer
+          images={workImages.map((img, i): ViewerImage => {
+            const src = imageUrls[img] || img;
+            const ia = work.imageArtists?.[i];
+            const artist = (ia?.type === 'member' && ia.memberId)
+              ? allArtists.find(a => a.id === ia.memberId) ?? work.artist
+              : work.artist;
+            return {
+              src,
+              title: displayPieceTitleAtIndex(work, i, t('work.untitled')),
+              artist: { name: artist?.name ?? '', avatar: artist?.avatar },
+            };
+          })}
+          initialIndex={viewerIndex}
+          open
+          onClose={() => setViewerIndex(null)}
+        />
       )}
       {/* Dim backdrop */}
       <div className="absolute inset-0 bg-black/80" onClick={onClose} />
@@ -461,10 +459,7 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
           <div
             ref={scrollContainerRef}
             className="relative flex-1 overflow-auto scroll-smooth flex flex-col items-center dark-scrollbar bg-[#1a1a2e] sm:bg-white"
-            onClick={(e) => {
-              e.stopPropagation();
-              if (isZoomed) { setIsZoomed(false); setZoomOrigin('center center'); }
-            }}
+            onClick={(e) => { e.stopPropagation(); }}
           >
             {/* Images - 그림 소스에서 추출된 블러 배경 적용 (Notefolio Style: No extra padding) */}
             <div className="w-full flex-col flex">
@@ -488,12 +483,8 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
 
                   <div className="relative z-10 w-full flex flex-col items-center justify-center px-4 sm:px-6">
                     <div
-                      className={`relative flex justify-center text-center transition-transform duration-500 ease-[cubic-bezier(0.25,0.46,0.45,0.94)] shadow-[0_15px_50px_rgba(0,0,0,0.2)] bg-black/5 ${isZoomed ? 'cursor-zoom-out' : 'cursor-zoom-in'}`}
-                      onClick={handleZoomClick}
-                      style={{
-                        transform: `scale(${isZoomed ? 2.5 : 1})`,
-                        transformOrigin: isZoomed ? zoomOrigin : 'top center',
-                      }}
+                      className="relative flex justify-center text-center shadow-[0_15px_50px_rgba(0,0,0,0.2)] bg-black/5 cursor-pointer"
+                      onClick={!isCoverSlide ? (e) => { e.stopPropagation(); setViewerIndex(workImageIndex); } : undefined}
                     >
                       <CopyrightProtectedImage
                         src={src}
@@ -501,7 +492,6 @@ export function WorkDetailModal({ workId, onClose, onNavigate, allWorks: provide
                         preventRightClick
                         preventDrag
                         className="block h-[66vh] w-auto mx-auto"
-                        onDoubleClick={() => setDeepZoomSrc(src)}
                       />
                     </div>
                   </div>
