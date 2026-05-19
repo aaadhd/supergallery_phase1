@@ -263,9 +263,7 @@ export default function CurationDetail() {
           );
         })}
 
-        {pieces.length === 0 && (
-          <p className="text-center text-sm text-neutral-400 py-20">{t('curation.empty')}</p>
-        )}
+
       </div>
     </div>
   );
